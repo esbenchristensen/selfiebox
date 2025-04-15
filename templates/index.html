@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Selfie App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div id="container">
+    <!-- Live video feed element -->
+    <img id="video" src="/video_feed" alt="Live Stream">
+    
+    <!-- Overlay container for UI elements -->
+    <div id="overlay">
+      <!-- Button to start picture capture -->
+      <button id="take-picture-btn">
+        
+      </button>
+      
+      <!-- Countdown display -->
+      <div id="countdown" class="hidden"></div>
+      
+      <!-- Captured image element (hidden by default) -->
+      <img id="captured-image" class="hidden" src="" alt="Captured">
+      
+      <!-- Button for taking a new photo (over captured image) -->
+      <button id="new-picture-btn" class="hidden">Take a new photo</button>
+    </div>
+  </div>
+  
+  <script>
+    const takePictureBtn = document.getElementById('take-picture-btn');
+    const newPictureBtn = document.getElementById('new-picture-btn');
+    const countdownDiv = document.getElementById('countdown');
+    const videoEl = document.getElementById('video');
+    const capturedImageEl = document.getElementById('captured-image');
+    let inactivityTimer;
+
+    // Restart the inactivity timer for auto-restart (10 seconds)
+    function startInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        // Return to the live video stream automatically.
+        showVideoStream();
+      }, 10000);
+    }
+
+    // Show the countdown number.
+    function showCountdown(count) {
+      countdownDiv.textContent = count;
+      countdownDiv.classList.remove('hidden');
+    }
+
+    // Hide the countdown display.
+    function hideCountdown() {
+      countdownDiv.classList.add('hidden');
+    }
+
+    // Display the live video stream view.
+    function showVideoStream() {
+      videoEl.classList.remove('hidden');
+      capturedImageEl.classList.add('hidden');
+      takePictureBtn.classList.remove('hidden');
+      newPictureBtn.classList.add('hidden');
+    }
+
+    // Display the captured image view along with the "Take a new photo" button.
+    function showCapturedImage(src) {
+      videoEl.classList.add('hidden');
+      capturedImageEl.src = src + '?t=' + new Date().getTime(); // Prevent caching.
+      capturedImageEl.classList.remove('hidden');
+      newPictureBtn.classList.remove('hidden');
+      // Start the auto-restart timer.
+      startInactivityTimer();
+    }
+
+    // Handle the "Take Picture" button click.
+    takePictureBtn.addEventListener('click', () => {
+      takePictureBtn.classList.add('hidden');
+      // Start a 3-second countdown.
+      let count = 3;
+      showCountdown(count);
+      let countdownInterval = setInterval(() => {
+        count--;
+        if(count > 0) {
+          showCountdown(count);
+        } else {
+          clearInterval(countdownInterval);
+          hideCountdown();
+          // Request the capture endpoint.
+          fetch('/capture', { method: 'POST' })
+            .then(response => response.blob())
+            .then(blob => {
+              const imageUrl = URL.createObjectURL(blob);
+              showCapturedImage(imageUrl);
+            })
+            .catch(err => {
+              console.error("Error capturing image", err);
+              showVideoStream();
+            });
+        }
+      }, 1000);
+    });
+
+    // Handle the "Take a new photo" button click.
+    newPictureBtn.addEventListener('click', () => {
+      showVideoStream();
+      // Optional: Restart timer if needed.
+      startInactivityTimer();
+    });
+
+    // Initialize UI with live video stream.
+    showVideoStream();
+  </script>
+</body>
+</html>
