@@ -1,18 +1,11 @@
-# Selfiebox "Halo" – 3D-printed enclosure (rev D)
+# Selfiebox "Halo Ring" – 3D-printed enclosure (rev G)
 
-Concept A in portrait. One front piece holds the official 7" display (rotated to portrait) and the
-Camera Module 3 Wide. Two 185 mm light bars run beside the screen, a translucent stripe glows around
-the body, and a strip on the back lights the wall. The unit is 172 × 232 × 66 mm and prints on a
-Bambu Lab P2S Combo inside the bed safe zone.
-
-Attachments bolt on through a 6 mm joint spacer that leaves a shadow gap:
-
-- **Strip printer** (below): 58 mm thermal photo strips; works on the wall
-- **Photo printer base** (below): hides a Canon SELPHY CP1500 for 10 × 15 cm colour prints; for bar tops
-- **Venue sign** (on top): backlit name with translucent letters co-printed in the black front
-- **Festival roof** (on top): 75 mm canopy, drip edge, side cheeks
-- **Foot** (below): weighted bar-top foot
-- **Wall cleat** with lock, **1/4"-20** tripod thread, **VESA 75**
+A portrait selfie box with a raised 14 mm light ring around a 10" Raspberry Pi Touch Display 2
+and the camera. The enclosure is all black, with no colour details. The ring runs a high-CRI
+12 V COB strip (photo light) next to an SK6812 RGBW strip (colour and animation). The unit is
+234 × 306 × 66 mm and prints on a **Bambu Lab H2C** (305 × 320 × 325 mm, heated chamber).
+Attachments (strip printer, SELPHY photo base, venue sign, festival roof, foot, wall cleat)
+bolt on through a joint spacer.
 
 | Unit | Nightclub wall | Bar with photo prints | Festival | Exploded |
 |---|---|---|---|---|
@@ -22,74 +15,43 @@ Attachments bolt on through a 6 mm joint spacer that leaves a shadow gap:
 
 | Path | What |
 |---|---|
-| `cad/halo.scad` | Parametric source: unit, every attachment, assembly, print orientation |
-| `stl/*.stl` | Print-ready, already rotated to print orientation |
-| `tools/check_bed.py` | Checks every STL against the P2S safe zone |
-| `cad/archive/halo_landscape.scad` | Rev B, the landscape version |
+| `cad/components.scad` | Bought parts with every dimension and its source ([A] official, [B] CAD library, [C] measured from an official photo, [M] must be measured) |
+| `cad/halo.scad` | Parametric enclosure: unit, attachments, assembly, print orientation |
+| `stl/*.stl` | Print-ready, already in print orientation |
+| `tools/check_bed.py` | Every STL fits the H2C plate (285 × 306 × 305 mm, ≥ 7 mm from the edges) |
+| `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
+| `cad/archive/` | Earlier landscape design |
 
 ```sh
 openscad -D 'PART="bezel"' -D 'PRINT=true' -o stl/bezel.stl cad/halo.scad
-openscad -D 'DISPLAY="td2"' ...      # Touch Display 2 instead of the official 7" display
-python3 tools/check_bed.py           # needs: pip install trimesh numpy networkx
+python3 tools/check_bed.py && python3 tools/check_fit.py   # needs trimesh, manifold3d, rtree
 ```
 
-`PART="assembly"` shows a setup. Set it with `BOTTOM` (`strip`, `photo`, `foot` or `none`),
-`WITH_SIGN`, `WITH_ROOF` and `EXPLODE`.
+## How the parts are held
 
-## P2S safe zone
+| Part | Held by |
+|---|---|
+| 10" Touch Display 2 (166.9 × 248.1 × 15.5) | The LED rail's two cross bars press its metal back through 1 mm EVA pads. The glass sits on a 1 mm EVA ring. The light-ring ribs locate it with 1.2 mm clearance all round. |
+| Camera Module 3 Wide | Rotated 90° for native portrait frames. 4 × M2×6 thread-forming screws into Ø1.7 bosses. The lens sits 1.2 mm behind the front, in a gap at the top of the ring. |
+| Raspberry Pi 5 | On the display's own M2.5 stand-offs. |
+| LED strips | Self-adhesive on the rail: ring runs 12 + 12 + 7 + 2 + 2 LEDs (RGBW + COB), plus a glow strip on each side. |
+| Power | 2 × Pololu D36V50F5 in snap cradles. A 70 × 50 mm perfboard in slide rails. Panel DC jack. |
+| Front | 2 × M3 Torx per side into brass inserts. |
 
-Every part fits inside 236 × 236 mm, which keeps it 10 mm clear of every bed edge. No part is taller
-than 240 mm. AMS prints also leave at least 50 mm free for the prime tower.
-`tools/check_bed.py` checks all of this: 19 of 19 parts pass. The unit front and shell (172 × 232 mm)
-and the photo base (228 × 206 mm) are the largest parts. Three full setups (strip printer + sign +
-roof, photo base, foot + roof) are collision-free.
+## Check results
 
-## The joint
-
-Every piece has 2 × M3 brass inserts underneath at x = ±55, y = 44, two Ø6 dowel holes at x = ±30,
-y = 50, and a Ø20 cable hole. The piece below screws **up** from inside, through the joint spacer,
-into those inserts. Nothing is screwed in from the top. Each front comes off with 2 Torx screws per
-side, so the unit opens while it is mounted.
+All 15 printed parts fit the H2C plate. There is no interference. Minimum clearances:
+glass to ring ribs 0.5 mm, camera bosses to glass 0.5 mm, camera to shell top 1.3 mm,
+glow strip to translucent stripe 5.8 mm.
 
 ## Measure before the first print
 
-- `GLASS_T` (2.0 mm) and `VIEW_DZ`: glass thickness, and whether the picture is centred on the glass.
-- `CAM_LENS_FROM_TOP` (9.5 mm): lens centre measured from the top edge of the camera board.
-- `PRN_CUT_W/H` (103 × 57 mm): strip printer cutout. `SELPHY`: printer footprint (182.2 × 133 × 57.6 mm).
-- Insert holes: `INS_M3_D` 4.0, `INS_M4_D` 5.6, `INS_Q_D` 7.9.
+- `TD10_D`: total display depth (officially 15.5 mm). It sets how hard the cross bars press.
+- Whether the picture is centred on the glass, and the Pi height on the display stand-offs (`PI_Y`).
+- The exact lens centre on the Camera Module 3. The hole has ±0.8 mm tolerance, so this is only a check.
 
-## Print settings
+## Materials (H2C)
 
-| Part | Material | Notes |
-|---|---|---|
-| bezel (+ camera_ring) | PETG HF + accent colour | Face down on the textured PEI plate; the ring is the first 3 layers |
-| shell / shell_closed_top | PETG HF + PETG translucent | Back down. Change to translucent at **34.0 mm** and back at **44.0 mm** |
-| diffuser ×2 | PETG translucent | 100 % infill |
-| led_rail, clamp_pad ×4, camera_clamp | PETG black | Flat (pads standing) |
-| joint_spacer | PETG, or TPU outdoors | One per joint |
-| printer_front (+ printer_label), printer_shell | PETG HF | Same as the unit |
-| photo_base | PETG HF | Upside down, top plate on the bed |
-| sign_front + sign_letters, sign_shell | PETG HF + translucent | Load the letters as a second part of the front |
-| roof | PETG, or ASA outdoors | Standing on its back face |
-| foot, wall_cleat | PETG | Flat side down |
-
-Use 4 walls everywhere so the brass inserts sit in solid plastic.
-
-## Electronics (12 V input)
-
-- Mean Well GST90A12-P1M (12 V 6.67 A) → jack low on the back of the shell.
-- 12→5 V 10 A buck for the Pi 5, display and LEDs; 12→9 V buck for the strip printer.
-  The SELPHY uses its own Canon adapter.
-- SK6812 RGBW 60/m: bars 2 × 11, glow stripe 2 × 12, wall glow 40, sign 10.
-  Data on GPIO10 (SPI) → 74AHCT125. Cap the LEDs at 3 A in software.
-- Rotate the official display to portrait in the boot config.
-
-## Assembly
-
-1. Install the inserts.
-2. Press the diffusers into the front, then fit the camera and its clamp.
-3. Lay the display between the end stops. Push the 4 clamp pads, with foam on their tips, into the LED rail.
-4. Stick the LEDs into the channels and onto the rail's outer walls, then screw the rail down. It clamps the display.
-5. Mount the Pi on the display back and connect everything.
-6. Fit the jack and the wall-glow strip into the shell, then close it with 2 side screws per side.
-7. Attachments: spacer, two dowels, screws up from inside the lower piece.
+- Shell and front: matte black ASA, or PC for hard-use rental units.
+- Diffuser ring: frosted PC or translucent PETG.
+- Shell glow stripe: change to translucent at 34.0 mm and back at 44.0 mm.
