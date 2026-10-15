@@ -20,6 +20,8 @@ bolt on through a joint spacer.
 | `stl/*.stl` | Print-ready, already in print orientation |
 | `tools/check_bed.py` | Every STL fits the H2C plate (285 × 306 × 305 mm, ≥ 7 mm from the edges) |
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
+| `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
+| `docs/` | Sources of the 3D presentation pages (Halo and event themes) |
 | `cad/archive/` | Earlier landscape design |
 
 ```sh

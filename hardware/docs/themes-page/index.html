@@ -1,0 +1,405 @@
+<title>Selfiebox Event Themes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Familjen+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Theme kit for the Halo selfiebox. A dark stage (the club at night), then a reading column.
+   The page itself stays neutral so the theme colours are the only colour on it. */
+:root {
+  --bg: #0e0d11;
+  --surface: #17161c;
+  --sunk: #0a0a0d;
+  --line: #2a2830;
+  --fg: #ecebef;
+  --muted: #9a98a3;
+  --accent: #f2c46b;
+  --accent-ink: #1a1306;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f6f5f2; --surface: #ffffff; --sunk: #ecebe6; --line: #dcdad3;
+    --fg: #17161a; --muted: #5e5c64; --accent: #96610a; --accent-ink: #ffffff; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f6f5f2; --surface: #ffffff; --sunk: #ecebe6; --line: #dcdad3;
+  --fg: #17161a; --muted: #5e5c64; --accent: #96610a; --accent-ink: #ffffff; color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 72px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+.col { max-width: 720px; display: flex; flex-direction: column; gap: 16px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.1; margin: 0; }
+h1 { font-size: clamp(2.5rem, 6.5vw, 4.4rem); font-weight: 800; letter-spacing: -0.03em; }
+h2 { font-size: clamp(1.55rem, 3.2vw, 2.1rem); font-weight: 700; letter-spacing: -0.015em; }
+h3 { font-size: 1.1rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+
+header.top { display: flex; flex-direction: column; gap: 14px; padding-top: 40px; }
+header.top .lede { font-size: 1.15rem; max-width: 64ch; color: var(--muted); }
+header.top .lede strong { color: var(--fg); font-weight: 600; }
+
+/* ---------- loop diagram ---------- */
+.loop { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.loop div { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--surface); display: flex; flex-direction: column; gap: 4px; }
+.loop b { font-family: var(--f-display); font-size: 1.05rem; }
+.loop span { color: var(--muted); font-size: 0.9rem; }
+.loop .src { grid-column: 1 / -1; background: var(--sunk); border-style: dashed; flex-direction: row; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+
+/* ---------- stage ---------- */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 320px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--sunk); }
+#view { position: relative; min-height: 600px; }
+#view canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
+#view .hint { position: absolute; left: 14px; bottom: 12px; font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); pointer-events: none; }
+#view .loading { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); color: var(--muted); font-size: 0.85rem; padding: 16px; text-align: center; }
+.panel { border-left: 1px solid var(--line); background: var(--surface); padding: 18px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.ctl { display: flex; flex-direction: column; gap: 8px; }
+.ctl > .lbl { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button {
+  font: inherit; font-size: 0.86rem; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--fg);
+  padding: 6px 10px; border-radius: 8px;
+}
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.checks { display: flex; flex-direction: column; gap: 6px; }
+.checks label { display: flex; gap: 8px; align-items: center; font-size: 0.92rem; cursor: pointer; }
+.checks input { accent-color: var(--accent); width: 16px; height: 16px; }
+.pal { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px 3px 4px; }
+.chip i { width: 16px; height: 16px; border-radius: 50%; display: block; border: 1px solid rgba(255,255,255,0.18); }
+.phone { border-radius: 14px; overflow: hidden; border: 6px solid #050506; background: #050506; aspect-ratio: 5 / 8; max-width: 100%; }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.note { font-size: 0.86rem; color: var(--muted); }
+
+/* ---------- ideas ---------- */
+.ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.idea { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+.idea .tag { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.idea p { color: var(--muted); font-size: 0.94rem; }
+.idea p b { color: var(--fg); font-weight: 600; }
+
+/* ---------- previews ---------- */
+.previews { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 14px; align-items: start; }
+.previews .stack { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.previews img { display: block; width: 100%; height: auto; }
+.previews figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+figcaption { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); }
+
+/* ---------- tables & code ---------- */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 400; background: var(--surface); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--f-mono); white-space: nowrap; }
+pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid var(--line); border-radius: 12px; padding: 16px; font-family: var(--f-mono); font-size: 0.8rem; line-height: 1.55; }
+ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 14px; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
+ol.steps li::before { content: counter(s); font-family: var(--f-display); font-weight: 800; font-size: 1.05rem; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--accent); }
+ol.steps li div { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.callout { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+
+@media (max-width: 860px) {
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .panel { border-left: 0; border-top: 1px solid var(--line); }
+  #view { min-height: 460px; }
+  .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .phone { max-width: 260px; }
+}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Halo selfiebox · tema-kit</div>
+  <h1>Én fil styrer kassen, lyset og skærmen</h1>
+  <p class="lede">Hvert event får sit eget tema. Kassen er stadig <strong>helt sort</strong>. Temaet ligger på printbare <strong>sidevinger, en topper og fronter</strong>, som skrues på de eksisterende skruer. Den samme <code>theme.json</code> laver også skærmens bølger og ticker, ringlysets farver og rammen på det printede foto. Kassen og skærmen matcher altid hinanden.</p>
+</header>
+
+<section class="col" aria-labelledby="h-loop">
+  <h2 id="h-loop">Sådan hænger det sammen</h2>
+  <div class="loop">
+    <div class="src"><b>themes/&lt;event&gt;/theme.json</b><span>palet (= filamenter) · stil · tekst · lys · skærm</span></div>
+    <div><b>Kasse</b><span>STL pr. farve + 3MF til H2C, 0,8 mm farve-inlays i forsiden</span></div>
+    <div><b>Lys</b><span>idle-animation og farver til ringen, nedtælling og foto-lys</span></div>
+    <div><b>Skærm</b><span>samme bølger, ticker, knap- og tekstfarver</span></div>
+    <div><b>Foto</b><span>bølgerammen lægges på hvert billede og print</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-stage" style="display:flex;flex-direction:column;gap:16px">
+  <h2 id="h-stage">Prøv temaerne</h2>
+  <div class="stage">
+    <div id="view"><div class="loading" id="loading">Indlæser 3D-model …</div><div class="hint">Træk for at dreje · scroll for zoom</div></div>
+    <div class="panel">
+      <div class="ctl"><span class="lbl">Tema</span>
+        <div class="seg" id="seg-theme">
+          <button data-v="base" aria-pressed="false">Sort (uden tema)</button>
+          <button data-v="sommernat" aria-pressed="true">Sommernat</button>
+          <button data-v="neon" aria-pressed="false">Neon Club</button>
+        </div>
+      </div>
+      <div class="ctl"><span class="lbl">Tema-dele</span>
+        <div class="checks">
+          <label><input type="checkbox" id="t-wings" checked> Sidevinger</label>
+          <label><input type="checkbox" id="t-topper" checked> Topper</label>
+          <label><input type="checkbox" id="t-sign"> Skilt</label>
+          <label><input type="checkbox" id="t-printer" checked> Printer-front</label>
+        </div>
+      </div>
+      <div class="ctl"><span class="lbl">Filamenter</span><div class="pal" id="pal"></div></div>
+      <div class="ctl"><span class="lbl">Skærm (10", 1200 × 1920)</span>
+        <div class="phone"><img id="screen-img" src="screen_sommernat.png" alt="Skærmen med Sommernat-temaet: bølger, ticker og knap"></div>
+      </div>
+      <p class="note" id="theme-note"></p>
+    </div>
+  </div>
+</section>
+
+<section class="col" aria-labelledby="h-ideas">
+  <h2 id="h-ideas">Ideer til et festival-tema som Smukfest</h2>
+  <p class="muted">Smukfests visuelle sprog er lagdelte, bløde bakker i grøn, lilla og koral under en sort stjernehimmel, en kørende ticker og legende figurer. Her er måder at lade kassen og skærmen spille sammen på:</p>
+</section>
+<div class="ideas">
+  <div class="idea"><span class="tag">Kasse ↔ skærm</span><h3>Bakkerne fortsætter</h3><p>Bakkerne på <b>sidevingerne</b> fortsætter ind over <b>skærmens nederste kant</b> i samme farver. Når man står foran, ser det ud som ét landskab omkring ens ansigt.</p></div>
+  <div class="idea"><span class="tag">Topper</span><h3>Skyline og figur</h3><p>Toppen får skyer eller bakker i silhuet. Den kan også bære festivalens <b>maskot eller figur</b> som et 3D-relief, printet i farver, der kigger ned i kameraet.</p></div>
+  <div class="idea"><span class="tag">Lys</span><h3>Stjernehimmel om natten</h3><p>Hvide prikker i cremefarvet PETG på den sorte front, og en <b>idle-animation</b>, hvor ringen bølger roligt i grøn, lilla og koral. Under nedtællingen skifter den til creme.</p></div>
+  <div class="idea"><span class="tag">Skærm</span><h3>Ticker som på sitet</h3><p>Det løbende bånd øverst på skærmen spejler hjemmesidens ticker, fx “Nonprofit siden 1980” eller dagens program: <b>“Kl. 22 på Bøgescenerne”</b>.</p></div>
+  <div class="idea"><span class="tag">Foto</span><h3>Print der matcher kassen</h3><p>Hvert billede får bølgerammen og eventnavnet. Printet folk tager med hjem, har <b>samme motiv som kassen</b>. Det er gratis markedsføring for festivalen og venuet.</p></div>
+  <div class="idea"><span class="tag">Programmet</span><h3>Lyset følger scenen</h3><p>Ringens farve kan skifte efter tidspunkt: rolig og varm om eftermiddagen, mere kontrast og fart efter kl. 23. Det er en tidsplan i temaet og kræver ingen ny hardware.</p></div>
+  <div class="idea"><span class="tag">UV</span><h3>Klub-version: neon</h3><p>Til klubber: fluorescerende PETG (pink, cyan, lime) i zigzag-striber. Under klubbens <b>UV-lys gløder kassen</b>, også når den er slukket.</p></div>
+  <div class="idea"><span class="tag">Sponsor</span><h3>Skift kun fronten</h3><p>Skilt- og printer-fronterne er hurtige at bytte: 2 skruer hver. Den samme kasse kan køre <b>sponsor-fronter</b> én weekend og festival-temaet den næste.</p></div>
+</div>
+
+<section class="col" aria-labelledby="h-parts">
+  <h2 id="h-parts">Det, der printes pr. tema</h2>
+  <p class="muted">Selve kassen ændres ikke. Vingerne bruger de eksisterende skruer på siden (M3 × 12, gennem en 4 mm ribbe). Toppen sidder på den øverste samling via afstandsstykket.</p>
+</section>
+<div class="tbl">
+  <table>
+    <thead><tr><th>Del</th><th>Mål (b × h × d)</th><th>Montering</th><th>Sommernat</th><th>Neon</th></tr></thead>
+    <tbody>
+      <tr><td>Sidevinge ×2</td><td class="num">43 × 258 × 20 mm</td><td>2 × M3 × 12 i kassens sideskruer</td><td class="num">6 farver</td><td class="num">4 farver</td></tr>
+      <tr><td>Topper</td><td class="num">234 × 103 × 62 mm</td><td>afstandsstykke + 2 × M3 i inserts</td><td class="num">5 farver</td><td class="num">4 farver</td></tr>
+      <tr><td>Skilt-front</td><td class="num">234 × 72 × 20 mm</td><td>2 × M3 Torx, som i dag</td><td class="num">4 farver</td><td class="num">4 farver</td></tr>
+      <tr><td>Printer-front</td><td class="num">234 × 84 × 33 mm</td><td>2 × M3 Torx, som i dag</td><td class="num">5 farver</td><td class="num">–</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="col">
+  <p class="muted">Farverne er 0,8 mm inlays i de første lag, med forsiden ned mod den teksturerede plade. Fladen bliver helt glat, og farverne kan ikke slides af. Sort er den samme spole som kassen. H2C'en med AMS kan køre 6 farver i ét print.</p>
+  <h3>Sommernat, printfladerne</h3>
+</div>
+<div class="previews">
+  <figure><img src="p_sommernat_wing_left.png" alt="Venstre sidevinge med bakker i lilla, grøn og koral"><figcaption>vinge</figcaption></figure>
+  <div class="stack">
+    <figure><img src="p_sommernat_topper.png" alt="Topper med skykant, stjerner og teksten SOMMERNAT"><figcaption>topper</figcaption></figure>
+    <figure><img src="p_sommernat_sign_front.png" alt="Skilt-front med bakker og tekst"><figcaption>skilt-front</figcaption></figure>
+    <figure><img src="p_sommernat_printer_front.png" alt="Printer-front med bakker"><figcaption>printer-front</figcaption></figure>
+  </div>
+</div>
+
+<section class="col" aria-labelledby="h-how">
+  <h2 id="h-how">Nyt tema på 5 trin</h2>
+  <ol class="steps">
+    <li><div><b>Kopiér et tema</b><pre>cp -r themes/sommernat themes/roskilde-2027</pre></div></li>
+    <li><div><b>Ret <code>theme.json</code></b><p class="muted">Paletten er de filamenter, I har på hylden. Rollerne bestemmer, hvilken farve der bruges til himmel, bakker og stjerner. Stilen kan være <code>waves</code>, <code>neon</code> eller <code>confetti</code>. Kanten kan være <code>hills</code>, <code>clouds</code> eller <code>spikes</code>.</p>
+<pre>{
+  "name": "Roskilde 2027",
+  "palette": {
+    "base":  {"hex": "#0b0b0d", "filament": "PETG HF black"},
+    "sun":   {"hex": "#f28c28", "filament": "PETG HF orange"},
+    "sky":   {"hex": "#1e5aa8", "filament": "PETG HF blue"}
+  },
+  "casing": {
+    "style": "waves",
+    "roles": {"sky": "base", "hills": ["sun", "sky"], "top": "sky", "stars": "sun"},
+    "sign_text": "ROSKILDE",
+    "parts": {"wings": {"width": 46, "edge": "hills"}, "topper": {"height": 110, "edge": "clouds", "text": true}}
+  },
+  "light":  {"idle": {"animation": "slow-wave", "colors": ["#f28c28", "#1e5aa8"], "period_s": 8}},
+  "screen": {"ticker": "Roskilde 2027 ✦ Tryk på skærmen ✦", "cta": "Tryk for at tage et billede", "accent": "sun"}
+}</pre></div></li>
+    <li><div><b>Eget artwork (valgfrit)</b><p class="muted">Læg en SVG pr. farve i <code>themes/&lt;id&gt;/art/&lt;del&gt;/</code>, fx <code>art/topper/1_sun.svg</code>. Filnavnet efter tallet er palet-nøglen, og tallet er rækkefølgen bagfra og frem. Så bruges dit eget motiv i stedet for det genererede. Detaljer under 1,2 mm fjernes automatisk.</p></div></li>
+    <li><div><b>Byg</b><pre>python3 hardware/tools/theme_builder.py themes/roskilde-2027</pre><p class="muted">Den laver en STL pr. farve og en 3MF pr. del i <code>themes/&lt;id&gt;/build/</code>, previews og skærm-filerne i <code>static/themes/&lt;id&gt;/</code>. Den skriver også, hvilke filamenter der skal i AMS'en.</p></div></li>
+    <li><div><b>Print og aktivér</b><p class="muted">Åbn 3MF'en i Bambu Studio med forsiden ned mod den teksturerede PEI-plade. På boksen sætter du temaet med:</p><pre>SELFIEBOX_THEME=roskilde-2027 python3 app.py</pre></div></li>
+  </ol>
+</section>
+
+<section class="col">
+  <div class="callout"><b>Rettigheder.</b> Sommernat-temaet er lavet med originalt artwork i den samme stemning. Smukfests egne bakker, figurer og logo må kun bruges med festivalens tilladelse. Spørg dem: et officielt tema-sæt med deres SVG'er kan bygges på få minutter med trin 3.</div>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const THEMES = {
+    base: { name: "Sort", pal: { base: ["#0b0b0d", "PETG HF sort"] }, idle: ["#fff1de"], period: 6,
+      note: "Den rene kasse: sort ASA eller PETG og varmt hvidt lys. Den passer overalt." },
+    sommernat: { name: "Sommernat", idle: ["#2e8b57", "#b48ac9", "#e8553d"], period: 8,
+      pal: { base: ["#0b0b0d", "sort"], forest: ["#0f5c3e", "mørkegrøn"], leaf: ["#2e8b57", "grøn"], lilac: ["#b48ac9", "lilla"], coral: ["#e8553d", "koral"], cream: ["#f3e3d3", "creme"] },
+      note: "Bakker og stjernehimmel. Ringen bølger langsomt i grøn, lilla og koral (8 s), og nedtællingen er creme." },
+    neon: { name: "Neon Club", idle: ["#ff2fb4", "#22e6ff", "#c8ff3a"], period: 3,
+      pal: { base: ["#0b0b0d", "sort"], magenta: ["#ff2fb4", "fluo pink"], cyan: ["#22e6ff", "fluo blå"], lime: ["#c8ff3a", "fluo grøn"] },
+      note: "Fluorescerende PETG gløder under klubbens UV-lys. Ringen kører en hurtig chase (3 s)." }
+  };
+  const state = { theme: "sommernat", wings: true, topper: true, sign: false, printer: true };
+  const UH = 306, SP = 6, PH = 84, SH = 72, GC = 151.85;
+  const $ = id => document.getElementById(id);
+
+  function renderSide() {
+    const t = THEMES[state.theme];
+    $("pal").innerHTML = Object.values(t.pal).map(([hex, n]) => `<span class="chip"><i style="background:${hex}"></i>${n}</span>`).join("");
+    $("theme-note").textContent = t.note;
+    const img = $("screen-img");
+    img.src = "screen_" + state.theme + ".png";
+    img.alt = "Skærmen med temaet " + t.name;
+  }
+
+  const host = $("view");
+  if (!window.THREE) { $("loading").textContent = "3D-viseren kunne ikke indlæses. Resten af siden virker."; renderSide(); return; }
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  host.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 1, 5, 8000);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.minDistance = 250; controls.maxDistance = 3000;
+  // Neutral white light only, so black filament renders black and theme colours stay true.
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 0.35));
+  const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(450, 700, 800); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.15); rim.position.set(-500, 300, -400); scene.add(rim);
+  const C = h => new THREE.Color(h).convertSRGBToLinear();   // theme hex values are sRGB
+  const M = o => { ['color', 'emissive'].forEach(k => { if (o[k] !== undefined) o[k] = C(o[k]); }); return new THREE.MeshStandardMaterial(o); };
+  const mats = {
+    body: M({ color: 0x0b0b0d, roughness: 0.9 }), inner: M({ color: 0x2c2b31, roughness: 0.8 }),
+    diff: M({ color: 0xffffff, emissive: 0xffffff, roughness: 0.3 }), band: M({ color: 0xf4f2f8, emissive: 0xffffff, roughness: 0.35 }),
+    glass: M({ color: 0x07070a, roughness: 0.2, metalness: 0.2 }), dark: M({ color: 0x26262a, roughness: 0.6 }), letters: M({ color: 0xf3e3d3, emissive: 0xffffff, emissiveIntensity: 0.4 })
+  };
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), M({ color: 0x3a3a3c, roughness: 0.95 })); wall.position.z = -80.2; scene.add(wall);
+  const glowC = document.createElement("canvas"); glowC.width = glowC.height = 256;
+  (g => { const r = g.createRadialGradient(128, 128, 8, 128, 128, 128); r.addColorStop(0, "rgba(255,255,255,0.9)"); r.addColorStop(0.45, "rgba(255,255,255,0.25)"); r.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = r; g.fillRect(0, 0, 256, 256); })(glowC.getContext("2d"));
+  const wallGlowMat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(glowC), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const wallGlow = new THREE.Mesh(new THREE.PlaneGeometry(560, 720), wallGlowMat); wallGlow.position.z = -79.8; scene.add(wallGlow);
+
+  const groups = {}; ["unit", "printer", "sign", "topper"].forEach(k => { groups[k] = new THREE.Group(); scene.add(groups[k]); });
+  const spacers = [0, 1, 2].map(() => { const g = new THREE.Group(); scene.add(g); return g; });
+  const texLoader = new THREE.TextureLoader(); const screenTex = {};
+  ["base", "sommernat", "neon"].forEach(t => { screenTex[t] = texLoader.load("screen_" + t + ".png", tx => { tx.encoding = THREE.sRGBEncoding; }); });
+  const screenMat = new THREE.MeshBasicMaterial({ toneMapped: false });
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(136.4, 217.6), screenMat); screen.position.set(0, GC, -3.6); groups.unit.add(screen);
+
+  const UNIT = { bezel: "body", diffuser_ring: "diff", shell: "body", shell_band: "band", v_display: "glass", v_camera: "dark", wall_cleat: "inner" };
+  const PRN = { printer_front: "body", printer_shell: "body", printer_shell_band: "band", v_printer: "dark" };
+  const SIGN = { sign_front: "body", sign_letters: "letters", sign_shell: "body", sign_shell_band: "band" };
+  const themed = {};       // theme -> part -> [meshes]
+  const plain = {};        // base fronts that a theme front replaces
+
+  function place(obj, part) {
+    if (part === "printer_front" || part === "printer") return groups.printer;
+    if (part === "sign_front") return groups.sign;
+    if (part === "topper") return groups.topper;
+    return groups.unit;      // wings are in unit coordinates
+  }
+  function layout() {
+    let y = 0, si = 0; spacers.forEach(s => s.visible = false);
+    const at = v => { const s = spacers[si++]; s.visible = true; s.position.y = v; };
+    groups.printer.visible = state.printer;
+    if (state.printer) { groups.printer.position.y = 0; y = PH; at(y); y += SP; }
+    groups.unit.position.y = y; y += UH;
+    groups.sign.visible = state.sign;
+    if (state.sign) { at(y); y += SP; groups.sign.position.y = y; y += SH; }
+    const t = state.theme, hasTop = t !== "base" && state.topper && themed[t] && themed[t].topper;
+    groups.topper.visible = !!hasTop;
+    if (hasTop) { at(y); y += SP; groups.topper.position.y = y; y += 103; }
+    wallGlow.position.y = groups.unit.position.y + GC;
+    return y;
+  }
+  function applyTheme() {
+    const t = state.theme;
+    Object.keys(themed).forEach(th => Object.keys(themed[th]).forEach(part => {
+      const on = th === t && (part.startsWith("wing") ? state.wings : part === "topper" ? state.topper : true);
+      themed[th][part].forEach(m => m.visible = on);
+    }));
+    const has = p => t !== "base" && themed[t] && themed[t][p];
+    if (plain.printer_front) plain.printer_front.visible = !has("printer_front");
+    if (plain.sign_front) plain.sign_front.visible = !has("sign_front");
+    screenMat.map = screenTex[t]; screenMat.needsUpdate = true;
+    renderSide();
+  }
+  function frame() {
+    const top = layout(); const h = top + 160, d = h / (2 * Math.tan(15 * Math.PI / 180));
+    controls.target.set(0, top / 2, -20);
+    camera.position.set(d * 0.38, top / 2 + h * 0.1, d * 0.92); controls.update();
+  }
+  const cA = new THREE.Color(), cB = new THREE.Color();
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function animate(s) {
+    const t = THEMES[state.theme], cols = t.idle, n = cols.length;
+    const ph = reduce ? 0 : (s / t.period) * n, i = Math.floor(ph) % n, f = ph - Math.floor(ph);
+    cA.set(cols[i]).convertSRGBToLinear().lerp(cB.set(cols[(i + 1) % n]).convertSRGBToLinear(), f * f * (3 - 2 * f));
+    const k = reduce ? 0.8 : 0.65 + 0.35 * Math.sin(s * 1.3);
+    mats.diff.emissive.copy(cA); mats.diff.emissiveIntensity = 0.25 + 0.35 * k;
+    mats.band.emissive.copy(cA); mats.band.emissiveIntensity = 0.2 + 0.35 * k;
+    wallGlowMat.color.copy(cA); wallGlowMat.opacity = 0.15 + 0.25 * k;
+  }
+
+  new THREE.GLTFLoader().load("themes.json", gltf => {
+    const meshes = []; gltf.scene.traverse(o => { if (o.isMesh) meshes.push(o); });
+    meshes.forEach(o => {
+      const full = (o.name || (o.parent && o.parent.name) || "").replace(/_\d+$/, "");
+      const [src, rest] = full.split("--"); if (!rest) return;
+      o.geometry = o.geometry.toNonIndexed(); o.geometry.computeVertexNormals();
+      o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1);
+      if (src === "base") {
+        if (rest === "joint_spacer") { o.material = mats.inner; spacers.forEach(s => s.add(o.clone())); return; }
+        const role = UNIT[rest] || PRN[rest] || SIGN[rest]; if (!role) return;
+        o.material = mats[role];
+        (UNIT[rest] ? groups.unit : PRN[rest] ? groups.printer : groups.sign).add(o);
+        if (rest === "printer_front" || rest === "sign_front") plain[rest] = o;
+        return;
+      }
+      const [part, colour] = rest.split("__");
+      const hex = (THEMES[src].pal[colour] || THEMES[src].pal.base)[0];
+      const glowy = src === "neon" && colour !== "base";
+      o.material = M({ color: hex, roughness: colour === "base" ? 0.9 : 0.6, emissive: glowy ? hex : 0x000000, emissiveIntensity: glowy ? 0.35 : 0 });
+      if (colour !== "base") o.position.z = 0.05;   // inlay faces sit in the front plane
+      place(o, part).add(o);
+      ((themed[src] = themed[src] || {})[part] = themed[src][part] || []).push(o);
+    });
+    $("loading").hidden = true; applyTheme(); frame();
+  }, undefined, () => { $("loading").textContent = "3D-modellen kunne ikke indlæses. Resten af siden virker."; });
+
+  function resize() { const w = host.clientWidth, h = host.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(host); resize(); frame();
+  (function loop(ms) { animate((ms || 0) / 1000); controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+
+  const seg = $("seg-theme");
+  seg.addEventListener("click", ev => {
+    const b = ev.target.closest("button"); if (!b) return;
+    state.theme = b.dataset.v; seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    applyTheme(); frame();
+  });
+  ["wings", "topper", "sign", "printer"].forEach(k => $("t-" + k).addEventListener("change", ev => { state[k] = ev.target.checked; applyTheme(); frame(); }));
+  renderSide();
+})();
+</script>
