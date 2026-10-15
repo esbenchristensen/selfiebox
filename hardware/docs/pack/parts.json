@@ -1,0 +1,152 @@
+{
+"bezel": {
+"dims": [
+234.0,
+306.0,
+19.7
+],
+"g": 185,
+"overhang_cm2": 14.5,
+"hours": 6.6
+},
+"diffuser_ring": {
+"dims": [
+206.9,
+290.4,
+4.8
+],
+"g": 75,
+"overhang_cm2": 0.0,
+"hours": 2.7
+},
+"led_rail": {
+"dims": [
+226.7,
+292.8,
+12.8
+],
+"g": 84,
+"overhang_cm2": 0.0,
+"hours": 3.0
+},
+"shell": {
+"dims": [
+234.0,
+306.0,
+60.0
+],
+"g": 474,
+"overhang_cm2": 168.1,
+"hours": 16.9
+},
+"shell_closed_top": {
+"dims": [
+234.0,
+306.0,
+60.0
+],
+"g": 474,
+"overhang_cm2": 163.5,
+"hours": 16.9
+},
+"wall_cleat": {
+"dims": [
+124.0,
+256.0,
+22.5
+],
+"g": 99,
+"overhang_cm2": 0.0,
+"hours": 3.5
+},
+"joint_spacer": {
+"dims": [
+182.0,
+56.0,
+6.0
+],
+"g": 48,
+"overhang_cm2": 0.0,
+"hours": 1.7
+},
+"printer_front": {
+"dims": [
+234.0,
+84.0,
+32.5
+],
+"g": 76,
+"overhang_cm2": 15.1,
+"hours": 2.7
+},
+"printer_shell": {
+"dims": [
+234.0,
+84.0,
+60.0
+],
+"g": 190,
+"overhang_cm2": 10.3,
+"hours": 6.8
+},
+"sign_front": {
+"dims": [
+234.0,
+72.0,
+19.7
+],
+"g": 77,
+"overhang_cm2": 7.7,
+"hours": 2.7
+},
+"sign_letters": {
+"dims": [
+101.0,
+12.3,
+3.2
+],
+"g": 2,
+"overhang_cm2": 0.0,
+"hours": 0.1
+},
+"sign_shell": {
+"dims": [
+234.0,
+72.0,
+60.0
+],
+"g": 172,
+"overhang_cm2": 8.8,
+"hours": 6.1
+},
+"roof": {
+"dims": [
+264.0,
+90.0,
+141.0
+],
+"g": 322,
+"overhang_cm2": 60.8,
+"hours": 11.5
+},
+"photo_base": {
+"dims": [
+228.0,
+206.0,
+66.0
+],
+"g": 301,
+"overhang_cm2": 0.0,
+"hours": 10.8
+},
+"foot": {
+"dims": [
+220.0,
+170.0,
+26.0
+],
+"g": 229,
+"overhang_cm2": 140.6,
+"hours": 8.2
+}
+}

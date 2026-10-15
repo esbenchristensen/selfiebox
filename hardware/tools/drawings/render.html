@@ -1,0 +1,145 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Halo drawings</title>
+<script src="three.min.js"></script>
+<script src="GLTFLoader.js"></script>
+<body style="margin:0;background:#fff">
+<script>
+// Renders technical drawing sheets (hidden lines removed) from docs/pack/pack.json.
+// Driven by render_drawings.js: window.sheet(spec) -> PNG data URL.
+const PX = 2.6;                 // pixels per mm
+const INK = "#16161a", DIM = "#2a5bd7", NOTE = "#b3361f";
+let PACK = null;
+window.ready = new Promise(res => new THREE.GLTFLoader().load("pack.json", g => { PACK = g.scene; res(true); }));
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: false });
+renderer.setClearColor(0xffffff, 1);
+
+// view: camera direction and the mapping from (OpenSCAD) part coords to sheet axes (h right, v up)
+// glTF: X = x, Y = z_scad, Z = -y_scad
+const VIEWS = {
+  front: { name: "Forfra",     pos: [0, 0, 1],  up: [0, 1, 0],  h: p => p.x,  v: p => p.y },
+  side:  { name: "Fra højre",  pos: [1, 0, 0],  up: [0, 1, 0],  h: p => -p.z, v: p => p.y },
+  top:   { name: "Oppefra",    pos: [0, 1, 0],  up: [0, 0, -1], h: p => p.x,  v: p => -p.z },
+  back:  { name: "Bagfra",     pos: [0, 0, -1], up: [0, 1, 0],  h: p => -p.x, v: p => p.y }
+};
+
+function partObject(name) {
+  const grp = new THREE.Group();
+  PACK.traverse(o => {
+    if (!o.isMesh) return;
+    const n = (o.name || o.parent.name || "").replace(/_\d+$/, "");
+    if (n !== name) return;
+    const geo = o.geometry.clone();
+    o.updateWorldMatrix(true, false); geo.applyMatrix4(o.matrixWorld);
+    grp.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })));
+    grp.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 28), new THREE.LineBasicMaterial({ color: 0x16161a })));
+  });
+  return grp;
+}
+
+function renderView(obj, key) {
+  const V = VIEWS[key], box = new THREE.Box3().setFromObject(obj);
+  const pts = [];
+  for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) pts.push({ x, y, z });
+  const hs = pts.map(V.h), vs = pts.map(V.v);
+  const h0 = Math.min(...hs), h1 = Math.max(...hs), v0 = Math.min(...vs), v1 = Math.max(...vs);
+  const w = Math.ceil((h1 - h0) * PX) + 4, ht = Math.ceil((v1 - v0) * PX) + 4;
+  const c = box.getCenter(new THREE.Vector3()), r = box.getSize(new THREE.Vector3()).length() + 100;
+  const cam = new THREE.OrthographicCamera(-w / 2 / PX, w / 2 / PX, ht / 2 / PX, -ht / 2 / PX, 0.1, r * 4);
+  cam.up.set(...V.up);
+  cam.position.set(c.x + V.pos[0] * r, c.y + V.pos[1] * r, c.z + V.pos[2] * r); cam.lookAt(c);
+  const scene = new THREE.Scene(); scene.add(obj);
+  renderer.setPixelRatio(1); renderer.setSize(w, ht);
+  renderer.render(scene, cam);
+  const img = document.createElement("canvas"); img.width = w; img.height = ht;
+  img.getContext("2d").drawImage(renderer.domElement, 0, 0);
+  scene.remove(obj);
+  // centre of the camera in sheet coordinates (h, v)
+  const ch = V.h(c), cv = V.v(c);
+  return { img, w, ht, h0: ch - w / 2 / PX, v1: cv + ht / 2 / PX, size: [h1 - h0, v1 - v0], name: V.name };
+}
+
+function fmt(x) { return (Math.round(x * 10) / 10).toString().replace(".", ","); }
+
+function arrow(g, x, y, ang) {
+  g.beginPath(); g.moveTo(x, y);
+  g.lineTo(x - 9 * Math.cos(ang - 0.3), y - 9 * Math.sin(ang - 0.3));
+  g.lineTo(x - 9 * Math.cos(ang + 0.3), y - 9 * Math.sin(ang + 0.3)); g.closePath(); g.fill();
+}
+// dimension between two sheet points (px), offset perpendicular
+function dim(g, a, b, off, label) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); if (L < 1) return;
+  const nx = -dy / L, ny = dx / L;
+  const A = [a[0] + nx * off, a[1] + ny * off], B = [b[0] + nx * off, b[1] + ny * off];
+  g.strokeStyle = DIM; g.fillStyle = DIM; g.lineWidth = 1;
+  g.setLineDash([]); g.beginPath();
+  g.moveTo(a[0] + nx * Math.sign(off) * 3, a[1] + ny * Math.sign(off) * 3); g.lineTo(A[0] + nx * Math.sign(off) * 6, A[1] + ny * Math.sign(off) * 6);
+  g.moveTo(b[0] + nx * Math.sign(off) * 3, b[1] + ny * Math.sign(off) * 3); g.lineTo(B[0] + nx * Math.sign(off) * 6, B[1] + ny * Math.sign(off) * 6);
+  if (off === 0) g.setLineDash([]);
+  g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke();
+  const ang = Math.atan2(B[1] - A[1], B[0] - A[0]);
+  arrow(g, B[0], B[1], ang); arrow(g, A[0], A[1], ang + Math.PI);
+  g.save(); g.translate((A[0] + B[0]) / 2, (A[1] + B[1]) / 2);
+  let r = ang; if (r > Math.PI / 2 || r < -Math.PI / 2) r += Math.PI; g.rotate(r);
+  g.font = "600 15px 'DejaVu Sans', Arial, sans-serif"; g.textAlign = "center";
+  const t = label || fmt(L / PX); const tw = g.measureText(t).width;
+  g.fillStyle = "rgba(255,255,255,0.92)"; g.fillRect(-tw / 2 - 3, -19, tw + 6, 17);
+  g.fillStyle = DIM; g.fillText(t, 0, -5); g.restore();
+}
+function note(g, p, text, sheetW, dx, dy) {
+  const right = dx !== undefined ? dx > 0 : p[0] < sheetW * 0.55;
+  const tx = p[0] + (dx !== undefined ? dx : (right ? 60 : -60)), ty = p[1] + (dy !== undefined ? dy : -34);
+  g.strokeStyle = NOTE; g.fillStyle = NOTE; g.lineWidth = 1.2;
+  g.beginPath(); g.arc(p[0], p[1], 3.5, 0, 7); g.fill();
+  g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(tx, ty); g.lineTo(tx + (right ? 8 : -8), ty); g.stroke();
+  g.font = "500 14px 'DejaVu Sans', Arial, sans-serif"; g.textAlign = right ? "left" : "right";
+  const tw = g.measureText(text).width, x0 = right ? tx + 11 : tx - 11 - tw;
+  g.fillStyle = "rgba(255,255,255,0.92)"; g.fillRect(x0 - 3, ty - 13, tw + 6, 18);
+  g.fillStyle = NOTE; g.fillText(text, right ? tx + 11 : tx - 11, ty + 1);
+}
+
+window.sheet = function (spec) {
+  const obj = partObject(spec.node);
+  if (!obj.children.length) throw new Error("no part " + spec.node);
+  const views = spec.views.map(k => ({ key: k, ...renderView(obj, k) }));
+  // layout: first view big on the left, the others stacked to the right, a gutter for dims
+  const G = 90, head = 70, foot = 92;
+  const main = views[0], rest = views.slice(1);
+  const colW = Math.max(0, ...rest.map(v => v.w));
+  const W = Math.max(1400, G + main.w + G + (rest.length ? colW + G : 0));
+  const restH = rest.reduce((s, v) => s + v.ht + G, 0);
+  const H = head + Math.max(main.ht + G, restH) + G + foot;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const g = cv.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
+  const place = [];
+  place.push({ v: main, x: G, y: head + G * 0.6 });
+  let y = head + G * 0.6; rest.forEach(v => { place.push({ v, x: G + main.w + G, y }); y += v.ht + G; });
+  place.forEach(({ v, x, y }) => {
+    g.drawImage(v.img, x, y);
+    g.font = "700 15px 'DejaVu Sans', Arial, sans-serif"; g.fillStyle = INK; g.textAlign = "left";
+    g.fillText(v.name.toUpperCase(), x, y - 14);
+    v.ox = x; v.oy = y;
+    // overall dims: width below, height left
+    const L = x + 2, R = x + v.w - 2, T = y + 2, B = y + v.ht - 2;
+    dim(g, [L, B], [R, B], -28, fmt(v.size[0]));
+    dim(g, [L, B], [L, T], -28, fmt(v.size[1]));
+  });
+  const toPx = (v, p) => [v.ox + 2 + (p[0] - v.h0) * PX, v.oy + 2 + (v.v1 - p[1]) * PX];
+  const byKey = k => place.find(q => q.v.key === k);
+  (spec.dims || []).forEach(([k, a, b, off, label]) => { const q = byKey(k); if (q) dim(g, toPx(q.v, a), toPx(q.v, b), off || 0, label); });
+  (spec.notes || []).forEach(([k, p, text, dx, dy]) => { const q = byKey(k); if (q) note(g, toPx(q.v, p), text, W, dx, dy); });
+  // title block
+  g.strokeStyle = INK; g.lineWidth = 2; g.strokeRect(10, 10, W - 20, H - 20);
+  const ty = H - foot - 10; g.lineWidth = 1.5; g.beginPath(); g.moveTo(10, ty); g.lineTo(W - 10, ty); g.stroke();
+  const cols = [[20, "DEL", spec.title], [W * 0.42, "MATERIALE", spec.material], [W * 0.66, "FIL", spec.file], [W * 0.86, "REV / MÅL", "G · mm"]];
+  cols.forEach(([x, k, val], i) => {
+    if (i) { g.beginPath(); g.moveTo(x - 10, ty); g.lineTo(x - 10, H - 10); g.stroke(); }
+    g.fillStyle = "#6a6a72"; g.font = "600 12px 'DejaVu Sans', Arial, sans-serif"; g.textAlign = "left"; g.fillText(k, x, ty + 22);
+    g.fillStyle = INK; g.font = (i ? "500 15px" : "700 20px") + " 'DejaVu Sans', Arial, sans-serif"; g.fillText(val, x, ty + 50);
+  });
+  g.fillStyle = "#6a6a72"; g.font = "500 12px 'DejaVu Sans', Arial, sans-serif";
+  g.fillText("Selfiebox Halo · tegnet fra CAD-modellen (hardware/cad/halo.scad) · alle mål i mm · tolerance ±0,2 medmindre andet er angivet", 20, H - 22);
+  g.font = "800 22px 'DejaVu Sans', Arial, sans-serif"; g.fillStyle = INK; g.fillText(spec.title, 20, 44);
+  return cv.toDataURL("image/png");
+};
+</script>

@@ -101,15 +101,18 @@ add(S, "JST-SM 3-pin stik (han/hun)", "Udskiftelige LED-forbindelser", 6, "par",
 add(S, "Krympeflex-sortiment", "", 0.1, "sæt", 69, 1, "Biltema / Jem & Fix", "Estimat", "", True)
 add(S, "Strips (kabelbindere) 100 mm", "", 10, "stk", 0.3, 100, "Biltema", "Estimat", "", True)
 add(S, "EVA-skum 1 mm selvklæbende, A4", "Pads på tværbjælker og ring om glasset", 0.25, "ark", 39, 2, "Panduro / Amazon.de", "Estimat", "", True)
-add(S, "Messing-gevindindsats M3 (ruthex 100 stk)", "4 front + 4 samlinger pr. boks", 8, "stk", 0.75, 100, "3DJake.dk", "Fundet", "3djake: 8,70 CHF / 100 stk", True)
-add(S, "Messing-gevindindsats M4 (ruthex 50 stk)", "4 VESA + 1 lås i vægbeslag", 5, "stk", 1.5, 50, "3DJake.dk", "Estimat", "", True)
+add(S, "Messing-gevindindsats M3 (Elextra H44350 / ruthex)", "Ø4,5 x 5,9 i hul Ø4,0 x 6,4. 4 i front-blokke + 2 i kabinettets bundsamling", 6, "stk", 0.75, 100, "Elextra.dk / 3DJake.dk", "Fundet", "3djake: ruthex 8,70 CHF / 100 stk", True)
+add(S, "Messing-gevindindsats M4", "Hul Ø5,6 x 8,2. 4 VESA i kabinet + 1 lås i vægbeslag", 5, "stk", 1.5, 50, "Elextra.dk / 3DJake.dk", "Estimat", "", True)
 add(S, "Gevindindsats 1/4\"-20", "Stativgevind i bunden", 1, "stk", 6, 10, "3DJake.dk / Amazon.de", "Estimat", "", True)
-add(S, "Skrue M3 x 10 Torx rustfri, sort", "Front (2 pr. side)", 4, "stk", 1, 100, "Skruer.dk / Jem & Fix", "Estimat", "", True)
-add(S, "Skrue M3 x 12 Torx rustfri, sort", "Samlinger top/bund", 4, "stk", 1, 100, "Skruer.dk", "Estimat", "", True)
+add(S, "Skrue M3 x 8 Torx linsehoved (ISO 7380), sort", "Kabinet til front, 2 pr. side", 4, "stk", 1, 100, "Skruer.dk / Jem & Fix", "Estimat", "", True)
 add(S, "Skrue M2 x 6 gevinddannende (plast)", "Kamera", 4, "stk", 0.8, 100, "Skruer.dk / AliExpress", "Estimat", "", True)
 add(S, "Skrue M2,5 x 6 gevinddannende (plast)", "LED-skinne", 4, "stk", 0.8, 100, "Skruer.dk / AliExpress", "Estimat", "", True)
 add(S, "Skrue M4 x 10 Torx", "Låseskrue vægbeslag", 1, "stk", 1, 50, "Skruer.dk", "Estimat", "", True)
-add(S, "Vægskrue 5 x 50 + dybel", "Vægbeslag til væg", 4, "stk", 1.5, 50, "Jem & Fix / Bauhaus", "Estimat", "", True)
+add(S, "Vægskrue 4,5 x 50 undersænket + dybel", "Vægbeslag til væg (4 huller Ø5, undersænket)", 4, "stk", 1.5, 50, "Jem & Fix / Bauhaus", "Estimat", "", True)
+add(S, "Styrestift Ø6 x 20 stål", "Til samlinger mellem moduler (2 pr. samling)", 0, "stk", 1.5, 20, "Skruer.dk / AliExpress", "Estimat", "Købes med det samme, så de er klar til tilbehør", True)
+add(S, "Skrue M3 x 16 Torx linsehoved", "Til samlinger mellem moduler (2 pr. samling)", 0, "stk", 1, 100, "Skruer.dk", "Estimat", "", True)
+add(S, "Sekundlim (CA) gel", "Sikrer diffuserringen i slidserne", 0.05, "tube", 39, 1, "Jem & Fix", "Estimat", "", True)
+add(S, "Varmeledende/isolerende kapton-tape", "Isolering under perfboard og ved lodninger", 0.05, "rulle", 59, 1, "Let Elektronik", "Estimat", "", True)
 add_fil(S, "Bezel + LED-skinne + kabinet + vægbeslag", "ASA sort",
         g("bezel") + g("led_rail") + g("shell_closed_top") * 0.86 + g("wall_cleat"), "Kabinet med lukket top.", True)
 add_fil(S, "Diffuserring + glødestribe i kabinet", "PETG translucent",
@@ -122,7 +125,10 @@ A = "Tilbehør: Strip-printer"
 add(A, "DFRobot DFR0503 termoprinter", "TTL seriel, 58 mm, 9-24 V", 1, "stk", round(44.94 * EUR), 1, "RobotShop EU", "Fundet", "eu.robotshop.com 44,94 EUR", False)
 add(A, "Termopapir 58 mm, rulle Ø 40 mm", "10 ruller", 1, "pakke", 79, 1, "Kontorland / Amazon.de", "Estimat", "", False)
 add(A, "JST-ledning til printer (data + 12 V)", "Medfølger delvist; ekstra 4-pin", 1, "stk", 15, 1, "Elektronik-lavpris.dk", "Estimat", "", False)
-add(A, "Skrue M3 x 12 Torx + M3-indsatser", "Samling til boks", 4, "stk", 1.75, 0, "(fra hovedenhedens pakker)", "Estimat", "", False)
+add(A, "Pololu D36V28F9", "12 V -> 9 V 2,6 A til printeren (holder i printerkabinettet)", 1, "stk", 150, 1, "Pololu-forhandler (Botland)", "Estimat", "ca. 18 USD", False)
+add(A, "SK6812 strip til glødestriber", "2 x ca. 25 mm i siderne", 0.05, "m", round(14.40 * GBP), 0, "(fra hovedenhedens rulle)", "Fundet", "", False)
+add(A, "Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20", "Samlestykke til boksen", 1, "sæt", 6, 0, "(fra pakker)", "Estimat", "", False)
+add(A, "Skrue M3 x 8 Torx + M3-indsatser", "Printer-front: 4 skruer, 4 indsatser. Printerkabinet: 2 indsatser i bund", 4, "stk", 1.75, 0, "(fra hovedenhedens pakker)", "Estimat", "", False)
 add_fil(A, "Printer-front + printerkabinet + samlestykke", "ASA sort",
         g("printer_front") + g("printer_shell") + g("joint_spacer"), "", False)
 
@@ -130,19 +136,22 @@ P = "Tilbehør: Fotoprinter-base"
 add(P, "Canon SELPHY CP1500", "10 x 15 cm farvefotos, USB-C/Wi-Fi", 1, "stk", 1199, 1, "Proshop.dk / Power.dk / Elgiganten.dk", "Estimat", "NO-pris 1.390-1.690 NOK", False)
 add(P, "Canon KP-108IN", "Farvebånd + papir til 108 fotos (ca. 3,20 kr/foto)", 1, "pakke", 349, 1, "Proshop.dk / Elgiganten.dk", "Estimat", "", False)
 add(P, "USB-C kabel 1 m", "Pi til SELPHY", 1, "stk", 49, 1, "Proshop.dk", "Estimat", "", False)
-add(P, "Skrue M3 x 12 Torx + M3-indsatser", "Samling til boks", 4, "stk", 1.75, 0, "(fra hovedenhedens pakker)", "Estimat", "", False)
+add(P, "Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20", "Samlestykke til boksen", 1, "sæt", 6, 0, "(fra pakker)", "Estimat", "", False)
 add_fil(P, "Fotobase + samlestykke", "ASA sort", g("photo_base") + g("joint_spacer"), "", False)
 
 K = "Tilbehør: Skilt (lys-skilt)"
 add(K, "SK6812 RGBW strip 5 V 60 LED/m", "Baglys til bogstaver, ca. 0,3 m", 0.3, "m", round(14.40 * GBP), 0, "(fra hovedenhedens rulle)", "Fundet", "thepihut.com 14,40 GBP pr. m", False)
 add(K, "JST-SM 3-pin stik", "Udskifteligt skilt", 1, "par", 5, 0, "(fra hovedenhedens pakke)", "Estimat", "", False)
+add(K, "Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20", "Samlestykke til boksen", 1, "sæt", 6, 0, "(fra pakker)", "Estimat", "", False)
+add(K, "Skrue M3 x 8 Torx + 6 M3-indsatser", "Skilt-front 4 skruer/indsatser + 2 i skiltkabinettets bund", 4, "stk", 1.75, 0, "(fra pakker)", "Estimat", "", False)
+add(K, "Sekundlim (CA)", "Bogstaver i fronten, en dråbe hver", 0.05, "tube", 39, 0, "Jem & Fix", "Estimat", "", False)
 add_fil(K, "Skilt-front + skiltkabinet + samlestykke", "ASA sort",
         g("sign_front") + g("sign_shell") * 0.86 + g("joint_spacer"), "Kabinettet printes med åben top i stedet for lukket.", False)
 add_fil(K, "Bogstaver + glødestribe", "PETG translucent",
         g("sign_letters", "PETG") + g("sign_shell", "PETG") * 0.14, "", False)
 
 T = "Tilbehør: Tag (festival)"
-add(T, "Skrue M3 x 12 Torx + M3-indsatser", "Samling", 4, "stk", 1.75, 0, "(fra hovedenhedens pakker)", "Estimat", "", False)
+add(T, "Samlesæt: 2 x M3 x 16 + 2 styrestifter + 2 M3-indsatser", "Samlestykke til boksen", 1, "sæt", 7.5, 0, "(fra pakker)", "Estimat", "", False)
 add_fil(T, "Tag + samlestykke", "ASA sort", g("roof") + g("joint_spacer"), "ASA tåler sol og regn.", False)
 
 F = "Tilbehør: Fod (bord)"
@@ -173,13 +182,15 @@ for theme, title, fil_col, colours in [("sommernat", "Sommernat", "PETG HF farve
     for c in colours:
         spool(S2, fil_col, 1, False)
         rows[-1]["item"] = f"Spole: {fil_col} - {c}"
-    add(S2, "Skrue M3 x 12 Torx", "Vinger 4 + topper 2", 6, "stk", 1, 0, "(fra hovedenhedens pakke)", "Estimat", "", False)
+    add(S2, "Skrue M3 x 12 Torx", "Vinger: erstatter de 4 M3 x 8 i siderne (vingens ribbe er 4 mm)", 4, "stk", 1, 0, "(fra pakke)", "Estimat", "", False)
+    add(S2, "Samlesæt topper: 2 x M3 x 16 + 2 styrestifter + 2 M3-indsatser + samlestykke", "Topper på øverste samling", 1, "sæt", 7.5, 0, "(fra pakker)", "Estimat", "", False)
 
 # ============================================================ VÆRKTØJ ===
 V = "Værktøj (engangskøb, hvis I ikke har det)"
 add(V, "Loddekolbe med indsats-spids til gevindindsatser", "Fx Pinecil + ruthex spids", 0, "stk", 449, 1, "3DJake.dk / Let Elektronik", "Estimat", "", False)
 add(V, "Loddetin + flux", "", 0, "sæt", 99, 1, "Let Elektronik", "Estimat", "", False)
 add(V, "Crimptang til JST", "", 0, "stk", 199, 1, "Amazon.de", "Estimat", "", False)
+add(V, "Multimeter (enkelt)", "Kontrol af 5 V/12 V før Pi tilsluttes", 0, "stk", 149, 1, "Biltema / Jem & Fix", "Estimat", "", False)
 add(V, "Torx T10/T20 + M2/M2.5 bits", "", 0, "sæt", 129, 1, "Jem & Fix", "Estimat", "", False)
 add(V, "Bambu Textured PEI-plade (ekstra)", "Glat matteret front", 0, "stk", 299, 1, "Bambu Lab EU-shop", "Estimat", "", False)
 
@@ -223,6 +234,10 @@ def write():
 
 
 if __name__ == "__main__":
-    for k, (a, b) in write().items():
+    sums = write()
+    import json
+    with OUT.open(encoding="utf-8-sig") as f:
+        (ROOT / "docs" / "pack" / "bom.json").write_text(json.dumps(list(csv.reader(f, delimiter=";")), ensure_ascii=False))
+    for k, (a, b) in sums.items():
         print(f"{k:45s} pr. boks {a:8.0f} kr   første indkøb {b:8.0f} kr")
     print("->", OUT.relative_to(REPO))

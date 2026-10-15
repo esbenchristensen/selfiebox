@@ -1,0 +1,1150 @@
+<title>Selfiebox Halo A–Z</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Familjen+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* The complete build pack for the Halo selfiebox: a workshop binder.
+   Dark-first (the box lives in clubs), neutral greys so the product's black and the
+   theme colours are the only colour; one warm amber accent for actions and steps. */
+:root {
+  --bg: #0d0d10; --surface: #16161a; --raised: #1d1d22; --sunk: #09090b; --line: #2a2a31;
+  --fg: #ecebef; --muted: #9a99a3; --accent: #f2b24b; --accent-ink: #1a1203;
+  --ok: #5fd39b; --warn: #f0a24a; --dim: #6ea0ff;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f4f1; --surface: #ffffff; --raised: #fbfaf8; --sunk: #ebeae6; --line: #dcdad4;
+    --fg: #17161a; --muted: #5d5c64; --accent: #9a5d00; --accent-ink: #ffffff;
+    --ok: #13804f; --warn: #a35a00; --dim: #2a5bd7; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f4f1; --surface: #ffffff; --raised: #fbfaf8; --sunk: #ebeae6; --line: #dcdad4;
+  --fg: #17161a; --muted: #5d5c64; --accent: #9a5d00; --accent-ink: #ffffff;
+  --ok: #13804f; --warn: #a35a00; --dim: #2a5bd7; color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 80px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+.col { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
+section { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 64px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.08; margin: 0; }
+h1 { font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800; letter-spacing: -0.035em; }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 800; letter-spacing: -0.02em; }
+h3 { font-size: 1.12rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--accent); }
+code, .mono { font-family: var(--f-mono); font-size: 0.85em; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.sec-head { display: flex; flex-direction: column; gap: 8px; }
+.sec-head .num { font-family: var(--f-mono); color: var(--accent); font-size: 0.8rem; letter-spacing: 0.1em; }
+
+/* ---------- nav ---------- */
+nav.toc { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+nav.toc ul { list-style: none; margin: 0 auto; padding: 10px 0; display: flex; gap: 4px; overflow-x: auto; max-width: 1240px; scrollbar-width: none; }
+nav.toc a { display: block; white-space: nowrap; text-decoration: none; color: var(--muted); font-size: 0.86rem; padding: 5px 10px; border-radius: 7px; }
+nav.toc a:hover, nav.toc a.on { color: var(--fg); background: var(--raised); }
+
+/* ---------- hero ---------- */
+header.hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; padding-top: 44px; align-items: end; }
+header.hero .lede { font-size: 1.15rem; color: var(--muted); max-width: 60ch; }
+header.hero .lede strong { color: var(--fg); font-weight: 600; }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.facts div { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.facts b { font-family: var(--f-display); font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+.facts span { font-size: 0.8rem; color: var(--muted); }
+
+/* ---------- stage ---------- */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 360px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--sunk); height: min(86vh, 860px); }
+#view { position: relative; min-height: 0; }
+#view canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; touch-action: none; }
+#view .hud { position: absolute; left: 12px; bottom: 10px; right: 12px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; font-family: var(--f-mono); font-size: 0.7rem; color: var(--muted); }
+#view .loading { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); color: var(--muted); font-size: 0.85rem; padding: 16px; text-align: center; }
+#view .viewbtns { position: absolute; top: 10px; left: 10px; display: flex; gap: 4px; flex-wrap: wrap; }
+#view .viewbtns button { font: inherit; font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 85%, transparent); color: var(--fg); cursor: pointer; }
+#tip { position: absolute; pointer-events: none; background: var(--raised); border: 1px solid var(--line); color: var(--fg); font-size: 0.78rem; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.panel { border-left: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.tabs { display: flex; border-bottom: 1px solid var(--line); }
+.tabs button { flex: 1; font: inherit; font-size: 0.88rem; font-weight: 600; padding: 11px 6px; background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.pane { padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; min-height: 0; flex: 1; }
+.ctl { display: flex; flex-direction: column; gap: 7px; }
+.lbl { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.seg { display: flex; flex-wrap: wrap; gap: 5px; }
+.seg button, .btn { font: inherit; font-size: 0.83rem; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--fg); padding: 5px 9px; border-radius: 7px; }
+.seg button[aria-pressed="true"], .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.seg button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.checks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.checks label { display: flex; gap: 6px; align-items: center; font-size: 0.88rem; cursor: pointer; }
+.checks input { accent-color: var(--accent); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.partlist { display: flex; flex-direction: column; gap: 2px; }
+.partlist .grp { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 8px 0 3px; }
+.partlist button { display: flex; justify-content: space-between; gap: 8px; text-align: left; font: inherit; font-size: 0.85rem; padding: 5px 8px; border-radius: 6px; border: 0; background: transparent; color: var(--fg); cursor: pointer; }
+.partlist button:hover { background: var(--raised); }
+.partlist button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.partlist button small { color: var(--muted); font-size: 0.74rem; }
+.card { border: 1px solid var(--line); background: var(--raised); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.card h3 { font-size: 1.05rem; }
+.card dl { margin: 0; display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 4px 10px; font-size: 0.86rem; }
+.card dt { color: var(--muted); }
+.card dd { margin: 0; }
+.kind { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.step-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.step-head b { font-family: var(--f-display); font-size: 2rem; font-weight: 800; color: var(--accent); }
+.step-nav { display: flex; gap: 6px; }
+.step-nav .btn { flex: 1; }
+.dots { display: flex; flex-wrap: wrap; gap: 4px; }
+.dots button { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 0.72rem; cursor: pointer; padding: 0; }
+.dots button[aria-current="step"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+ul.tight { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; font-size: 0.9rem; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px 2px 4px; }
+.chip i { width: 14px; height: 14px; border-radius: 50%; display: block; border: 1px solid rgba(127,127,127,0.4); }
+.pal { display: flex; flex-wrap: wrap; gap: 5px; }
+.phone { border-radius: 12px; overflow: hidden; border: 5px solid #050506; background: #050506; aspect-ratio: 5 / 8; max-width: 200px; }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- content blocks ---------- */
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.box { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.box p { color: var(--muted); font-size: 0.94rem; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 400; background: var(--raised); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.n { font-family: var(--f-mono); white-space: nowrap; text-align: right; }
+td.k { font-weight: 600; white-space: nowrap; }
+tr.sum td { background: var(--raised); font-weight: 600; }
+tr.total td { background: color-mix(in srgb, var(--accent) 16%, var(--surface)); font-weight: 700; }
+.tag { font-family: var(--f-mono); font-size: 0.7rem; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line); white-space: nowrap; }
+.tag.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 50%, transparent); }
+.tag.est { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
+.tag.yes { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.thumbs button { font: inherit; color: var(--fg); text-align: left; border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 0; overflow: hidden; cursor: zoom-in; display: flex; flex-direction: column; }
+.thumbs img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #fff; }
+.thumbs span { background: var(--surface); padding: 8px 10px; font-size: 0.85rem; border-top: 1px solid var(--line); }
+dialog#lb { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 94vh; }
+dialog#lb::backdrop { background: rgba(0,0,0,0.82); }
+dialog#lb img { display: block; max-width: 96vw; max-height: 88vh; background: #fff; border-radius: 8px; }
+dialog#lb .bar { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 2px; color: #fff; font-size: 0.9rem; }
+dialog#lb button { font: inherit; background: #fff; color: #111; border: 0; border-radius: 6px; padding: 5px 12px; cursor: pointer; }
+.steps-print { display: flex; flex-direction: column; gap: 12px; }
+.steps-print article { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--surface); }
+.steps-print .no { font-family: var(--f-display); font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
+.steps-print .body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.steps-print .meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.steps-print .meta div { font-size: 0.86rem; }
+.steps-print .btn { align-self: flex-start; }
+.diagram { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 12px; }
+.diagram svg { display: block; min-width: 940px; width: 100%; height: auto; }
+.callout { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-family: var(--f-mono); font-size: 0.78rem; line-height: 1.55; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.totals div { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--surface); display: flex; flex-direction: column; gap: 2px; }
+.totals div.main { border-color: var(--accent); }
+.totals b { font-family: var(--f-display); font-size: 1.6rem; font-weight: 800; }
+.totals span { font-size: 0.82rem; color: var(--muted); }
+.bomwrap { max-height: 640px; overflow: auto; }
+.screens { display: flex; gap: 14px; flex-wrap: wrap; }
+.screens figure { margin: 0; display: flex; flex-direction: column; gap: 6px; width: 170px; }
+.screens figcaption { font-size: 0.8rem; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--muted); }
+.legend i { display: inline-block; width: 22px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+
+@media (max-width: 980px) {
+  header.hero { grid-template-columns: minmax(0, 1fr); }
+  .stage { grid-template-columns: minmax(0, 1fr); height: auto; }
+  #view { height: 62vh; min-height: 380px; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); }
+  .pane { max-height: 70vh; }
+  .grid2, .grid3 { grid-template-columns: minmax(0, 1fr); }
+  .totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps-print .meta { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<nav class="toc" aria-label="Indhold"><ul id="toc">
+  <li><a href="#studio">3D-studie</a></li><li><a href="#samling">Samlevejledning</a></li><li><a href="#dele">Dele & fastgørelse</a></li>
+  <li><a href="#tegninger">Tegninger</a></li><li><a href="#el">Elektronik</a></li><li><a href="#lys">Lys</a></li><li><a href="#print">Print</a></li>
+  <li><a href="#temaer">Temaer</a></li><li><a href="#indkob">Indkøbsliste</a></li><li><a href="#kontrol">Kontrol</a></li><li><a href="#software">Software & filer</a></li>
+</ul></nav>
+
+<div class="wrap">
+<header class="hero">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="eyebrow">Selfiebox Halo · rev G · byggepakke A–Z</div>
+    <h1>Alt om Halo-boksen samlet ét sted</h1>
+    <p class="lede">Byggepakken indeholder <strong>alle dele i 3D</strong>, så I kan klikke på hver del og se mål, materiale og hvordan den sidder fast. Dertil kommer en <strong>samlevejledning trin for trin</strong>, målsatte tegninger, el-diagram, lys, printopsætning til H2C, temaer, indkøbsliste og kontrolresultater. Alt bygger på CAD-modellen i repoet.</p>
+  </div>
+  <div class="facts">
+    <div><b>234 × 306 × 66</b><span>mm, selve boksen</span></div>
+    <div><b>10" stående</b><span>Touch Display 2, 1200 × 1920</span></div>
+    <div><b id="f-price">–</b><span>hovedpris pr. boks (inkl. moms)</span></div>
+    <div><b id="f-first">–</b><span>første indkøb inkl. pakker og spoler</span></div>
+    <div><b>15 / 15</b><span>printdele passer på H2C-pladen</span></div>
+    <div><b>0 kollisioner</b><span>pasformskontrol, alle frigange OK</span></div>
+  </div>
+</header>
+
+<!-- ======================================================= 3D STUDIO -->
+<section id="studio" aria-labelledby="h-studio">
+  <div class="sec-head"><span class="num">01</span><h2 id="h-studio">3D-studie: alle dele i systemet</h2>
+    <p class="muted">Klik på en del i modellen eller i listen for at se den. Brug sprængskitse og gennemsigtigt kabinet til at se ind i boksen. Fanen <b>Samling</b> viser byggeriet trin for trin, og fanen <b>Opstilling</b> skifter tilbehør, tema og lys.</p></div>
+  <div class="stage">
+    <div id="view">
+      <div class="loading" id="loading">Indlæser 3D-model (8 MB) …</div>
+      <div class="viewbtns" id="viewbtns">
+        <button data-v="iso">Skråt</button><button data-v="front">Forfra</button><button data-v="back">Bagfra</button><button data-v="side">Siden</button><button data-v="fit">Tilpas</button>
+      </div>
+      <div class="hud"><span id="hud-l">Træk: drej · højreklik/to fingre: flyt · scroll: zoom</span><span id="hud-r"></span></div>
+      <div id="tip" hidden></div>
+    </div>
+    <div class="panel">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-explore" aria-selected="true" aria-controls="pane-explore">Dele</button>
+        <button role="tab" id="tab-steps" aria-selected="false" aria-controls="pane-steps">Samling</button>
+        <button role="tab" id="tab-setup" aria-selected="false" aria-controls="pane-setup">Opstilling</button>
+      </div>
+      <div class="pane" id="pane-explore" role="tabpanel">
+        <div class="card" id="info"><span class="kind">Vælg en del</span><h3>Klik på en del</h3><p class="muted" style="font-size:.9rem">Den valgte del bliver fremhævet, og her står mål, materiale, fastgørelse og datablad.</p></div>
+        <div class="ctl"><span class="lbl">Sprængskitse</span><input type="range" id="explode" min="0" max="1" step="0.01" value="0" aria-label="Sprængskitse"></div>
+        <div class="checks">
+          <label><input type="checkbox" id="t-xray"> Gennemsigtigt kabinet</label>
+          <label><input type="checkbox" id="t-iso"> Vis kun valgt del</label>
+        </div>
+        <div class="partlist" id="partlist"></div>
+      </div>
+      <div class="pane" id="pane-steps" role="tabpanel" hidden>
+        <div class="step-head"><span class="lbl" id="st-count">Trin</span><b id="st-no">1</b></div>
+        <h3 id="st-title"></h3>
+        <p id="st-text" style="font-size:.93rem"></p>
+        <div class="ctl"><span class="lbl">Dele i trinnet</span><ul class="tight" id="st-parts"></ul></div>
+        <div class="ctl"><span class="lbl">Skruer, værktøj og materialer</span><ul class="tight" id="st-tools"></ul></div>
+        <div class="ctl"><span class="lbl">Kontrol</span><p id="st-check" class="muted" style="font-size:.9rem"></p></div>
+        <div class="step-nav"><button class="btn" id="st-prev">← Forrige</button><button class="btn" id="st-replay">Afspil igen</button><button class="btn primary" id="st-next">Næste →</button></div>
+        <div class="dots" id="st-dots"></div>
+      </div>
+      <div class="pane" id="pane-setup" role="tabpanel" hidden>
+        <div class="ctl"><span class="lbl">Opstilling</span><div class="seg" id="seg-preset">
+          <button data-v="club" aria-pressed="true">Natklub, væg</button><button data-v="bar" aria-pressed="false">Bar med fotoprint</button><button data-v="fest" aria-pressed="false">Festival</button><button data-v="bare" aria-pressed="false">Kun boksen</button></div></div>
+        <div class="ctl"><span class="lbl">Ovenpå</span><div class="checks"><label><input type="checkbox" id="t-sign" checked> Skilt</label><label><input type="checkbox" id="t-roof"> Tag</label></div></div>
+        <div class="ctl"><span class="lbl">Under</span><div class="seg" id="seg-bottom">
+          <button data-v="none">Intet</button><button data-v="strip" aria-pressed="true">Strip-printer</button><button data-v="photo">Fotoprinter</button><button data-v="foot">Fod</button></div></div>
+        <div class="ctl"><span class="lbl">Placering</span><div class="seg" id="seg-place">
+          <button data-v="wall" aria-pressed="true" id="pl-wall">Væg</button><button data-v="tripod" id="pl-tripod">Stativ</button><button data-v="table">Bord</button></div></div>
+        <div class="ctl"><span class="lbl">Tema</span><div class="seg" id="seg-theme">
+          <button data-v="base" aria-pressed="true">Sort</button><button data-v="sommernat">Sommernat</button><button data-v="neon">Neon Club</button></div>
+          <div class="checks"><label><input type="checkbox" id="t-wings" checked> Vinger</label><label><input type="checkbox" id="t-topper" checked> Topper</label></div>
+          <div class="pal" id="pal"></div></div>
+        <div class="ctl"><span class="lbl">Lys</span><div class="seg" id="seg-mode">
+          <button data-v="idle" aria-pressed="true">Tiltræk</button><button data-v="photo">Foto</button><button data-v="off">Slukket, UV</button></div>
+          <p class="muted" id="mode-note" style="font-size:.86rem"></p></div>
+        <div class="ctl"><span class="lbl">Skærm</span><div class="phone"><img id="screen-img" src="screen_base.png" alt="Skærmbilledet for det valgte tema"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= ASSEMBLY -->
+<section id="samling" aria-labelledby="h-samling">
+  <div class="sec-head"><span class="num">02</span><h2 id="h-samling">Samlevejledning</h2>
+    <p class="muted">Alle trin står her til at læse og printe. Med <b>Vis i 3D</b> afspiller 3D-studiet trinnet, og de nye dele glider på plads.</p></div>
+  <div class="steps-print" id="steps-print"></div>
+</section>
+
+<!-- ======================================================= PARTS -->
+<section id="dele" aria-labelledby="h-dele">
+  <div class="sec-head"><span class="num">03</span><h2 id="h-dele">Dele og fastgørelse</h2>
+    <p class="muted">Alle printede og købte dele med mål, materiale, fastgørelse og kilde. Kildemærkerne: [A] officielle data, [B] CAD-bibliotek, [C] målt på officielt foto, [M] skal måles på den rigtige del.</p></div>
+  <h3>Printede dele</h3>
+  <div class="tbl"><table id="t-printed"><thead><tr><th>Del</th><th>Mål (mm)</th><th>Materiale</th><th>Fastgørelse</th><th>Tegning</th></tr></thead><tbody></tbody></table></div>
+  <h3>Købte dele og datablade</h3>
+  <div class="tbl"><table id="t-bought"><thead><tr><th>Del</th><th>Nøglemål</th><th>Sådan sidder den</th><th>Datablad / kilde</th></tr></thead><tbody></tbody></table></div>
+  <h3>Skruer og indsatser, samlet</h3>
+  <div class="tbl"><table id="t-fast"><thead><tr><th>Hvad</th><th>Hvor</th><th class="n">Antal</th><th>Hul / mål</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<!-- ======================================================= DRAWINGS -->
+<section id="tegninger" aria-labelledby="h-tegn">
+  <div class="sec-head"><span class="num">04</span><h2 id="h-tegn">Tekniske tegninger</h2>
+    <p class="muted">Tegningerne er genereret direkte fra CAD-modellen med skjulte linjer fjernet. Blå er mål og rød er noter om huller og fastgørelse. Klik for at se tegningen i fuld størrelse.</p></div>
+  <div class="thumbs" id="thumbs"></div>
+</section>
+
+<!-- ======================================================= ELECTRONICS -->
+<section id="el" aria-labelledby="h-el">
+  <div class="sec-head"><span class="num">05</span><h2 id="h-el">Elektronik og ledningsplan</h2>
+    <p class="muted">Boksen kører på 12 V fra én Mean Well-forsyning. To Pololu-moduler laver 5 V: ét til Pi og skærm og ét til LED. Fotolyset er 12 V COB, som Pi'en dæmper via en MOSFET. Tilbehør får 12 V, GND og data gennem kabelhullet Ø20 i samlingen.</p></div>
+  <div class="diagram" id="diagram"></div>
+  <div class="legend"><span><i style="background:#e5484d"></i>12 V</span><span><i style="background:#f2b24b"></i>5 V</span><span><i style="background:#8d8d96"></i>GND</span><span><i style="background:#6ea0ff"></i>Data/signal</span><span><i style="background:#c792ea"></i>Flad-/båndkabel</span></div>
+  <div class="grid2">
+    <div class="tbl"><table><thead><tr><th>Pi 5 pin</th><th>Funktion</th><th>Til</th></tr></thead><tbody>
+      <tr><td class="k">Pin 2 / 4 (5 V)</td><td>Strøm til skærmen</td><td>Touch Display 2, medfølgende 5 V-kabel</td></tr>
+      <tr><td class="k">Pin 6 / 9 (GND)</td><td>Fælles stel</td><td>Skærm, 74AHCT125, MOSFET, printer</td></tr>
+      <tr><td class="k">Pin 19 · GPIO10</td><td>SPI0 MOSI → LED-data</td><td>74AHCT125 ind → 330 Ω → SK6812 DIN</td></tr>
+      <tr><td class="k">Pin 33 · GPIO13</td><td>PWM1 → COB-dæmpning</td><td>100 Ω → MOSFET gate, 10 kΩ til GND</td></tr>
+      <tr><td class="k">Pin 8 · GPIO14</td><td>UART TX</td><td>DFR0503 RX (strip-printer)</td></tr>
+      <tr><td class="k">Pin 10 · GPIO15</td><td>UART RX (valgfri)</td><td>DFR0503 TX via 10k/20k deler</td></tr>
+      <tr><td class="k">CAM/DISP 0</td><td>Kamera</td><td>Camera Module 3 Wide, 22→15-pin kabel 300 mm</td></tr>
+      <tr><td class="k">CAM/DISP 1</td><td>Skærm (DSI)</td><td>Touch Display 2, medfølgende kabel</td></tr>
+      <tr><td class="k">USB-C</td><td>5 V 5 A ind</td><td>Pololu #1 via USB-C pigtail</td></tr>
+      <tr><td class="k">USB-A</td><td>Fotoprinter</td><td>Canon SELPHY CP1500 (USB-C kabel)</td></tr>
+    </tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>Strømbudget</th><th class="n">Maks.</th><th class="n">På 12 V</th></tr></thead><tbody>
+      <tr><td>Pi 5 + skærm + kamera (5 V, Pololu #1)</td><td class="n">3,5 A</td><td class="n">1,6 A</td></tr>
+      <tr><td>SK6812 ring + glød, 61 LED (5 V, Pololu #2, begrænset i software)</td><td class="n">4,0 A</td><td class="n">1,9 A</td></tr>
+      <tr><td>COB fotolys 0,71 m (12 V)</td><td class="n">0,6 A</td><td class="n">0,6 A</td></tr>
+      <tr><td>Strip-printer under print (9 V via D36V28F9)</td><td class="n">2,0 A</td><td class="n">1,6 A</td></tr>
+      <tr><td>Skilt, 18 LED</td><td class="n">1,0 A</td><td class="n">0,5 A</td></tr>
+      <tr class="total"><td>I alt, værste tilfælde</td><td></td><td class="n">6,2 A</td></tr>
+      <tr><td>Mean Well GST90A12</td><td></td><td class="n">6,67 A</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="callout"><b>Pi 5 og LED-strips:</b> Det klassiske <code>rpi_ws281x</code>-bibliotek virker ikke på Pi 5. Brug SPI på GPIO10 med fx <code>adafruit-circuitpython-neopixel-spi</code> eller <code>pi5neo</code>. Mål 5 V og 12 V med et multimeter, før Pi'en og strips forbindes. Sikringen på 5 A sidder lige efter DC-bøsningen.</div>
+</section>
+
+<!-- ======================================================= LIGHT -->
+<section id="lys" aria-labelledby="h-lys">
+  <div class="sec-head"><span class="num">06</span><h2 id="h-lys">Lys</h2>
+    <p class="muted">Ringen har fire lige løb. I hvert løb ligger en 12 V COB-strip med CRI 90+ til fotolys ved siden af en SK6812 RGBW-strip til farver og animation. Glødestriber på skinnens sider lyser kabinettets translucente stribe op hele vejen rundt.</p></div>
+  <div class="grid2">
+    <div class="tbl"><table><thead><tr><th>Løb</th><th class="n">Længde</th><th class="n">RGBW LED</th><th class="n">COB</th></tr></thead><tbody>
+      <tr><td>Venstre, lodret</td><td class="n">228,4 mm</td><td class="n">12</td><td class="n">228 mm</td></tr>
+      <tr><td>Højre, lodret</td><td class="n">228,4 mm</td><td class="n">12</td><td class="n">228 mm</td></tr>
+      <tr><td>Bund</td><td class="n">144,9 mm</td><td class="n">7</td><td class="n">145 mm</td></tr>
+      <tr><td>Top venstre og højre for kameraet</td><td class="n">2 × 53,5 mm</td><td class="n">2 + 2</td><td class="n">2 × 53 mm</td></tr>
+      <tr><td>Glødestriber i siderne</td><td class="n">2 × 220 mm</td><td class="n">13 + 13</td><td class="n">–</td></tr>
+      <tr class="total"><td>I alt pr. boks</td><td></td><td class="n">61 LED · 1,05 m</td><td class="n">0,71 m</td></tr>
+    </tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>Tilstand</th><th>Hvad sker der</th></tr></thead><tbody>
+      <tr><td class="k">Tiltræk</td><td>Ringen og glødestriberne kører temaets idle-animation (fx langsom bølge eller chase), og skærmen viser "Tryk for at tage et billede".</td></tr>
+      <tr><td class="k">Nedtælling</td><td>Ringen tæller ned i temaets nedtællingsfarve og pulserer for hvert sekund.</td></tr>
+      <tr><td class="k">Foto</td><td>COB går på 100 % neutral hvid (4000 K, CRI 90+), og RGBW kører hvidt med. Ansigterne bliver jævnt belyst uden farvestik.</td></tr>
+      <tr><td class="k">Slukket</td><td>Uden strøm. Med neon-temaet gløder de fluorescerende inlays under klubbens UV-lys.</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- ======================================================= PRINT -->
+<section id="print" aria-labelledby="h-print">
+  <div class="sec-head"><span class="num">07</span><h2 id="h-print">Print på Bambu Lab H2C</h2>
+    <p class="muted">Alle STL-filer i <code>hardware/stl/</code> ligger allerede i printretning. Fronterne printes med forsiden ned på den teksturerede PEI-plade, så de får en ens mat flade uden lagdelinger. Tid og vægt er estimater (vægge 1,6 mm, 15 % infill, +10 % spild).</p></div>
+  <div class="tbl"><table id="t-print"><thead><tr><th>Del</th><th>Retning</th><th>Materiale</th><th class="n">Vægt</th><th class="n">Tid ca.</th><th>Support</th><th>Bemærk</th></tr></thead><tbody></tbody></table></div>
+  <div class="grid3">
+    <div class="box"><h3>ASA (kabinet og fronter)</h3><p>Dyse 260 °C, plade 100 °C, kammer opvarmet til 60 °C, lav køling (10–20 %). 0,2 mm lag, 4 vægge, 5 top/bund, 15 % gyroid. Brug brim på 5 mm på kabinetter og tag.</p></div>
+    <div class="box"><h3>PETG (diffuser og temadele)</h3><p>PETG HF eller translucent: dyse 250 °C, plade 70 °C, kammer lukket uden varme. Diffuserringen bliver mest jævn med 0,16 mm lag og 2 vægge og 100 % infill i propperne.</p></div>
+    <div class="box"><h3>Farveskift (AMS)</h3><p>Den translucente glødestribe: Tilføj filamentskift i Bambu Studio ved lag <b>34,0 mm</b> (til translucent) og <b>44,0 mm</b> (tilbage til sort) på alle tre kabinetter. Temadelene har farverne som 0,8 mm inlays i de første lag. Brug den medfølgende 3MF.</p></div>
+  </div>
+</section>
+
+<!-- ======================================================= THEMES -->
+<section id="temaer" aria-labelledby="h-temaer">
+  <div class="sec-head"><span class="num">08</span><h2 id="h-temaer">Temaer: kasse, lys og skærm følger hinanden</h2>
+    <p class="muted">Én <code>themes/&lt;event&gt;/theme.json</code> styrer de printede temadele (vinger, topper og fronter), ringlyset, skærmens bølger og ticker og rammen på hvert foto. Selve kassen forbliver sort. Prøv temaerne i 3D-studiet under <b>Opstilling</b>.</p></div>
+  <div class="screens">
+    <figure><div class="phone"><img src="screen_base.png" alt="Skærm uden tema"></div><figcaption>Sort (uden tema)</figcaption></figure>
+    <figure><div class="phone"><img src="screen_sommernat.png" alt="Skærm med Sommernat-tema: bakker, stjerner og grøn ticker"></div><figcaption>Sommernat: bakker og stjernehimmel, 6 filamenter</figcaption></figure>
+    <figure><div class="phone"><img src="screen_neon.png" alt="Skærm med Neon Club-tema: pink ticker og neon-zigzag"></div><figcaption>Neon Club: UV-reaktive striber, 4 filamenter</figcaption></figure>
+  </div>
+  <div class="grid2">
+    <div class="box"><h3>Nyt tema på 5 trin</h3>
+<pre>cp -r themes/sommernat themes/roskilde-2027
+# ret palette, roller, stil og tekster i theme.json
+# (valgfrit) egne SVG'er: themes/&lt;id&gt;/art/&lt;del&gt;/1_farve.svg
+python3 hardware/tools/theme_builder.py themes/roskilde-2027
+SELFIEBOX_THEME=roskilde-2027 python3 app.py</pre>
+      <p>Builderen laver STL pr. farve og 3MF pr. del i <code>themes/&lt;id&gt;/build/</code>, og skærmfilerne i <code>static/themes/&lt;id&gt;/</code>. Stilarterne er <code>waves</code>, <code>neon</code> og <code>confetti</code>. Kanterne er <code>hills</code>, <code>clouds</code> og <code>spikes</code>.</p></div>
+    <div class="box"><h3>Ideer til festivaler som Smukfest</h3>
+      <ul class="tight" style="color:var(--muted)">
+        <li>Bakkerne på vingerne fortsætter i skærmens nederste kant, så det bliver ét landskab om ansigtet.</li>
+        <li>Toppen kan få skyline, skyer eller festivalens maskot som 3D-relief.</li>
+        <li>Tickeren øverst på skærmen spejler hjemmesiden og dagens program.</li>
+        <li>Fotoprintet får samme bølgeramme som kassen.</li>
+        <li>Ringlyset kan skifte efter tidspunkt eller scene.</li>
+        <li>Sponsor-fronter kan skiftes med 2 skruer hver.</li>
+      </ul>
+      <p><b>Rettigheder:</b> Festivalens egne figurer og logo må kun bruges med deres tilladelse. Sommernat-temaet er lavet med originalt artwork.</p></div>
+  </div>
+</section>
+
+<!-- ======================================================= BOM -->
+<section id="indkob" aria-labelledby="h-indkob">
+  <div class="sec-head"><span class="num">09</span><h2 id="h-indkob">Indkøbsliste</h2>
+    <p class="muted">Priserne er i DKK inkl. moms. Kun hovedenheden indgår i hovedprisen, og tilbehør, temaer og værktøj står for sig. "Fundet" betyder, at prisen er set hos en forhandler, og "Estimat" skal tjekkes ved bestilling. Listen ligger som CSV i <code>hardware/bom/indkobsliste.csv</code>.</p></div>
+  <div class="totals" id="totals"></div>
+  <div class="filters seg" id="bom-filter"></div>
+  <div class="tbl bomwrap"><table id="t-bom"><thead><tr><th>Vare</th><th>Specifikation / brug</th><th class="n">Pr. boks</th><th class="n">Pris pr. boks</th><th class="n">Første indkøb</th><th>Leverandør</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<!-- ======================================================= CHECKS -->
+<section id="kontrol" aria-labelledby="h-kontrol">
+  <div class="sec-head"><span class="num">10</span><h2 id="h-kontrol">Kontrol: pasform og printplade</h2>
+    <p class="muted"><code>tools/check_fit.py</code> eksporterer alle dele i samlet position, finder overlap og måler de kritiske frigange. <code>tools/check_bed.py</code> kontrollerer, at hver del ligger i H2C'ens sikre zone (285 × 306 × 305 mm, mindst 7 mm fra kanten).</p></div>
+  <div class="grid2">
+    <div class="tbl"><table id="t-fit"><thead><tr><th>Kritisk frigang</th><th class="n">Målt</th><th class="n">Krav</th><th></th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="t-bed"><thead><tr><th>Del på pladen</th><th class="n">Størrelse (mm)</th><th class="n">Kontaktflade</th><th></th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="callout"><b>Mål før første print:</b> Skærmens samlede dybde <code>TD10_D</code> (officielt 15,5 mm) bestemmer, hvor hårdt tværbjælkerne presser. Tjek også, at billedet er centreret på glasset, og Pi'ens højde på skærmens afstandsstykker (<code>PI_Y</code>). Kameraets linsecentrum har ±0,8 mm tolerance i hullet, så det er kun en kontrol.</div>
+</section>
+
+<!-- ======================================================= SOFTWARE & FILES -->
+<section id="software" aria-labelledby="h-sw">
+  <div class="sec-head"><span class="num">11</span><h2 id="h-sw">Software og filer</h2></div>
+  <div class="grid2">
+    <div class="box"><h3>Opsætning af Pi'en</h3>
+<pre># Raspberry Pi OS (64-bit) på microSD, derefter:
+sudo apt install -y python3-picamera2 python3-opencv
+pip install flask
+git clone https://github.com/esbenchristensen/selfiebox
+cd selfiebox
+SELFIEBOX_THEME=sommernat python3 app.py   # kiosk på port 3001</pre>
+      <p>Appen viser live-kamera i stående format, tæller ned, tager billedet, lægger temaets ramme på og kan sende det til printeren. <code>/theme.json</code> giver lys-driveren temaets farver og animation.</p></div>
+    <div class="box"><h3>Hvad ligger hvor i repoet</h3>
+<pre>hardware/cad/halo.scad          parametrisk CAD (alle dele)
+hardware/cad/components.scad    købte dele med mål og kilder
+hardware/stl/*.stl              printklare dele (printretning)
+hardware/bom/indkobsliste.csv   indkøbsliste med priser
+hardware/tools/check_fit.py     pasform og frigange
+hardware/tools/check_bed.py     printplade H2C
+hardware/tools/make_bom.py      genererer indkøbslisten
+hardware/tools/theme_builder.py temaer -> STL/3MF + skærm
+hardware/tools/drawings/        tegningsgenerator
+hardware/docs/pack/             denne side + 3D-model
+themes/&lt;id&gt;/theme.json         temaer (Sommernat, Neon)
+app.py, templates/, static/     selfie-appen</pre></div>
+  </div>
+</section>
+</div>
+
+<dialog id="lb"><div class="bar"><span id="lb-title"></span><button id="lb-close">Luk</button></div><img id="lb-img" alt=""></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// =====================================================================  PART DATA
+const DS = {
+  td2: ["Touch Display 2 (docs)", "https://www.raspberrypi.com/documentation/accessories/touch-display-2.html"],
+  pi5: ["Pi 5 product brief", "https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf"],
+  pi5m: ["Pi 5 mekanisk tegning", "https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-mechanical-drawing.pdf"],
+  cool: ["Active Cooler product brief", "https://datasheets.raspberrypi.com/cooling/raspberry-pi-active-cooler-product-brief.pdf"],
+  cam: ["Camera Module 3 product brief", "https://datasheets.raspberrypi.com/camera/camera-module-3-product-brief.pdf"],
+  camd: ["Kamera (docs)", "https://www.raspberrypi.com/documentation/accessories/camera.html"],
+  pol: ["Pololu D36V50Fx", "https://www.pololu.com/product/4091"],
+  pol9: ["Pololu D36V28Fx", "https://www.pololu.com/search?query=D36V28F9"],
+  mw: ["Mean Well GST90A datablad", "https://www.meanwell.com/Upload/PDF/GST90A/GST90A-SPEC.PDF"],
+  dfr: ["DFRobot DFR0503 wiki", "https://wiki.dfrobot.com/Embedded%20Thermal%20Printer%20-%20TTL%20Serial%20SKU:%20DFR0503-EN"],
+  sk: ["SK6812 RGBW datablad", "https://cdn-shop.adafruit.com/product-files/2757/p2757_SK6812RGBW_REV01.pdf"],
+  ahct: ["SN74AHCT125 datablad", "https://www.ti.com/lit/ds/symlink/sn74ahct125.pdf"],
+  selphy: ["Canon SELPHY CP1500", "https://www.canon.dk/printers/selphy-cp1500/"],
+  ins: ["Elextra (gevindindsatser)", "https://www.elextra.dk"],
+  h2c: ["Bambu Lab H2C", "https://bambulab.com"]
+};
+const link = k => `<a href="${DS[k][1]}" target="_blank" rel="noopener">${esc(DS[k][0])}</a>`;
+
+// key -> info. kind: printed | bought
+const PARTS = {
+  bezel: { name: "Bezel (front)", kind: "printed", mat: "ASA sort, forside ned på tekstureret PEI", dim: "234 × 306 × 19,7 mm", draw: "bezel",
+    fast: "Bærer alt. Diffuserringen presses i lysslidserne, kameraet skrues på 4 bosser, og LED-skinnen skrues i med 4 × M2,5 × 6. Bezelen holdes i kabinettet af 4 × M3 × 8 Torx i messingindsatser, 2 pr. side." },
+  diffuser_ring: { name: "Diffuserring", kind: "printed", mat: "PETG translucent (frostet)", dim: "206,9 × 290,4 × 4,8 mm", draw: "diffuser_ring",
+    fast: "4 propper presses i lysslidserne med 0,15 mm pres og en dråbe CA-gel pr. prop. Ringen står 1,6 mm frem fra fronten, og der er et gab på 38 mm til kameraet." },
+  led_rail: { name: "LED-skinne", kind: "printed", mat: "ASA sort", dim: "226,7 × 292,8 × 12,8 mm", draw: "led_rail",
+    fast: "Skrues i bezelen med 4 × M2,5 × 6 gevinddannende skruer i pilothuller Ø2,2. To tværbjælker presser skærmens metalbagside frem gennem 1 mm EVA-pads. Forsiden bærer COB- og RGBW-strips, og siderne bærer glødestriberne. Ledninger går gennem huller Ø5 i hver ende af løbene." },
+  shell: { name: "Kabinet", kind: "printed", mat: "ASA sort + translucent stribe (lag 34–44 mm)", dim: "234 × 306 × 60 mm", draw: "shell",
+    fast: "Glider over bezelens 5 mm tunge og skrues fast med 4 × M3 × 8 Torx gennem siderne. Indeni: holdere til 2 Pololu-moduler, skinner til perfboardet, DC-bøsning Ø8, 4 M4-indsatser til VESA 75, 1/4\"-indsats i bunden og spor til vægbeslaget. Toppen er en samling til skilt eller tag (eller lukket: shell_closed_top.stl)." },
+  wall_cleat: { name: "Vægbeslag", kind: "printed", mat: "ASA sort", dim: "124 × 256 × 22,5 mm", draw: "wall_cleat",
+    fast: "Skrues i væggen med 4 × 4,5 × 50 undersænkede skruer og dybler. Kabinettet hænger på den skrå kant. 1 × M4 × 10 gennem kabinettets bagvæg låser boksen og kan kun nås med fronten af (tyverisikring)." },
+  joint_spacer: { name: "Samlestykke", kind: "printed", mat: "ASA sort", dim: "182 × 56 × 6 mm", draw: "joint_spacer",
+    fast: "Sidder mellem to moduler. 2 × M3 × 16 sættes fra indersiden af det nederste modul op i indsatser i det øverste. 2 styrestifter Ø6 × 20 holder modulerne i flugt. Ledningerne går gennem kabelhullet Ø20." },
+  printer_front: { name: "Printer-front", kind: "printed", mat: "ASA sort", dim: "234 × 84 × 32,5 mm", draw: "printer_front",
+    fast: "DFR0503 klemmes ind forfra i udskæringen 77,4 × 53,4 med et 0,4 mm sæde for flangen. Fronten skrues i printerkabinettet med 4 × M3 × 8." },
+  printer_shell: { name: "Printerkabinet", kind: "printed", mat: "ASA sort + translucent stribe", dim: "234 × 84 × 60 mm", draw: "printer_shell",
+    fast: "Har en holder til Pololu D36V28F9 (12 → 9 V) og en 1/4\"-indsats til stativ. Samles med boksen via samlestykket." },
+  v_printer: { name: "DFRobot DFR0503 termoprinter", kind: "bought", dim: "Front 82 × 58, udskæring 77 × 53, dybde 42 mm [A]", ds: ["dfr"],
+    fast: "Klemmes i printer-fronten. Får 9 V fra D36V28F9 og TTL-data fra Pi GPIO14. Bruger 58 mm termopapir med rulle Ø40." },
+  sign_front: { name: "Skilt-front", kind: "printed", mat: "ASA sort", dim: "234 × 72 × 19,7 mm", draw: "sign_front",
+    fast: "Bogstaverne er skåret igennem, og de translucente bogstaver limes i forfra. Fronten skrues i skiltkabinettet med 4 × M3 × 8." },
+  sign_letters: { name: "Skiltbogstaver", kind: "printed", mat: "PETG translucent", dim: "101 × 12,3 × 3,2 mm",
+    fast: "Printes sammen med skilt-fronten (to farver i samme print) eller separat og limes i med CA. Baglyses af SK6812-strip." },
+  sign_shell: { name: "Skiltkabinet", kind: "printed", mat: "ASA sort + translucent stribe", dim: "234 × 72 × 60 mm", draw: "sign_shell",
+    fast: "Sidder på boksens øverste samling via samlestykket og har en samling i toppen til taget." },
+  roof: { name: "Tag (festival)", kind: "printed", mat: "ASA sort (UV-bestandig)", dim: "264 × 90 × 141 mm", draw: "roof",
+    fast: "Sidder på den øverste samling med samlestykke, 2 × M3 × 16 og 2 styrestifter. Har 75 mm udhæng fremad og 12 mm fald bagud. Printes med tree-support." },
+  photo_base: { name: "Fotobase", kind: "printed", mat: "ASA sort", dim: "228 × 206 × 66 mm", draw: "photo_base",
+    fast: "Står under boksen med samlestykket. SELPHY CP1500 skubbes ind forfra og printet kommer ud foran. Bagerst er der en åbning til strøm og USB." },
+  mock_selphy: { name: "Canon SELPHY CP1500", kind: "bought", dim: "182,2 × 133 × 57,6 mm [A]", ds: ["selphy"],
+    fast: "Står løst i fotobasens rum. Forbindes med USB-C til Pi'en og bruger sin egen strømforsyning. KP-108IN giver 108 fotos i 10 × 15 cm." },
+  foot: { name: "Fod (bord)", kind: "printed", mat: "ASA sort", dim: "220 × 170 × 26 mm", draw: "foot",
+    fast: "Erstatter printer eller fotobase på et bord. Skrues op i kabinettets bundindsatser med 2 × M3, og 4 gummifødder sættes under. Printes med tree-support." },
+  v_display: { name: "Raspberry Pi Touch Display 2 – 10\"", kind: "bought", dim: "Glas 166,9 × 248,1, dybde 15,5, synligt 136,4 × 217,6 mm, 1200 × 1920 [A]", ds: ["td2"],
+    fast: "Ligger med glasset på en 1 mm EVA-ring bag vinduet. Lysringens ribber centrerer den med 0,5 mm luft. LED-skinnens tværbjælker presser bagsiden frem via EVA-pads. Der er ingen skruer i skærmen." },
+  v_pi: { name: "Raspberry Pi 5 + Active Cooler", kind: "bought", dim: "85 × 56 mm, hulmønster 58 × 49, køler 63,5 × 42,5 × 13,7 [A]", ds: ["pi5", "pi5m", "cool"],
+    fast: "Skrues på skærmens egne M2,5-afstandsstykker med de skruer, der følger med skærmen. Køleren monteres først. Der er 13 mm luft til kabinettet." },
+  v_camera: { name: "Camera Module 3 Wide", kind: "bought", dim: "PCB 25 × 23,9, huller Ø2,2, linse Ø6,95, 120° [A/B]", ds: ["cam", "camd"],
+    fast: "Drejet 90°, så billederne bliver stående i fuld opløsning. Skrues fast med 4 × M2 × 6 gevinddannende skruer i bosser Ø4,6. Linsen sidder 1,2 mm bag fronten i ringens gab." },
+  v_leds: { name: "LED-strips", kind: "bought", dim: "SK6812 RGBW 60/m 10 mm + COB 12 V CRI 90+ 4000 K 8 mm", ds: ["sk"],
+    fast: "Selvklæbende på LED-skinnen. Ringen har RGBW inderst og COB yderst i 4 løb: 12 + 12 + 7 + 2 + 2 LED. Glødestriberne har 13 + 13 LED i siderne. Hver ende har et JST-stik." },
+  v_pads: { name: "EVA-pads", kind: "bought", dim: "4 × 30 × 10 × 1 mm (0,5 mm sammenpresset)",
+    fast: "Selvklæbende på tværbjælkerne. De tager tolerancen i skærmens dybde og presser jævnt." },
+  v_power: { name: "Strømmodul", kind: "bought", dim: "2 × Pololu D36V50F5 (25,4 × 25,4 × 9,5) + perfboard 70 × 50", ds: ["pol", "ahct", "mw"],
+    fast: "Pololu-modulerne klikkes i to holdere med snaplæber. Perfboardet skubbes ind i skinner 6 mm fra bagvæggen med komponenterne fremad. DC-bøsningen skrues i bagvæggen med møtrik." }
+};
+const THEME_INFO = {
+  wing_left: { name: "Temavinge venstre", draw: "sommernat_wing_right__base" }, wing_right: { name: "Temavinge højre", draw: "sommernat_wing_right__base" },
+  topper: { name: "Topper", draw: "sommernat_topper__base" }, sign_front: { name: "Tema-skiltfront" }, printer_front: { name: "Tema-printerfront" }
+};
+const THEME_FAST = {
+  wing_left: "2 × M3 × 12 gennem en 4 mm ribbe i kabinettets eksisterende sideskruer (erstatter M3 × 8). Farverne er 0,8 mm inlays i forsiden.",
+  wing_right: "2 × M3 × 12 gennem en 4 mm ribbe i kabinettets eksisterende sideskruer (erstatter M3 × 8). Farverne er 0,8 mm inlays i forsiden.",
+  topper: "Sidder på den øverste samling via samlestykket med 2 × M3 × 16 og 2 styrestifter. M3-indsatserne sidder i topperens bund.",
+  sign_front: "Erstatter den sorte skilt-front 1:1 med de samme 4 × M3 × 8.", printer_front: "Erstatter den sorte printer-front 1:1 med de samme 4 × M3 × 8."
+};
+
+const THEMES = {
+  base: { name: "Sort", pal: {}, idle: ["#fff1de"], period: 6, screen: "screen_base.png" },
+  sommernat: { name: "Sommernat", idle: ["#2e8b57", "#b48ac9", "#e8553d"], period: 8, screen: "screen_sommernat.png",
+    pal: { base: ["#0b0b0d", "sort"], forest: ["#0f5c3e", "mørkegrøn"], leaf: ["#2e8b57", "grøn"], lilac: ["#b48ac9", "lilla"], coral: ["#e8553d", "koral"], cream: ["#f3e3d3", "creme"] } },
+  neon: { name: "Neon Club", idle: ["#ff2fb4", "#22e6ff", "#c8ff3a"], period: 3, screen: "screen_neon.png",
+    pal: { base: ["#0b0b0d", "sort"], magenta: ["#ff2fb4", "fluo pink"], cyan: ["#22e6ff", "fluo blå"], lime: ["#c8ff3a", "fluo grøn"] } }
+};
+
+const LIST = [
+  ["Front og lys", ["bezel", "diffuser_ring", "led_rail", "v_leds", "v_pads"]],
+  ["Elektronik", ["v_display", "v_pi", "v_camera", "v_power"]],
+  ["Kabinet og ophæng", ["shell", "wall_cleat", "joint_spacer"]],
+  ["Tilbehør", ["printer_front", "printer_shell", "v_printer", "sign_front", "sign_letters", "sign_shell", "roof", "photo_base", "mock_selphy", "foot"]]
+];
+
+// =====================================================================  ASSEMBLY STEPS
+const UNIT = ["bezel", "diffuser_ring", "v_camera", "v_display", "v_pi", "led_rail", "v_leds", "v_pads", "shell", "v_power"];
+const BARE = { bottom: "none", sign: false, roof: false, theme: "base", place: "table" };
+const STEPS = [
+  { t: "Print og klargør delene", show: ["bezel", "diffuser_ring", "led_rail", "shell", "wall_cleat"], add: ["bezel", "diffuser_ring", "led_rail", "shell", "wall_cleat"], cfg: BARE, explode: 1, view: "iso",
+    text: "Print hoveddelene på H2C'en (se afsnit 07). Fjern brim og eventuel stringing i lysslidserne. Fronterne skal ligge helt plant på et bord.",
+    parts: ["Bezel (ASA)", "Diffuserring (PETG translucent)", "LED-skinne (ASA)", "Kabinet med translucent stribe (ASA + PETG)", "Vægbeslag (ASA)"],
+    tools: ["Bambu Lab H2C med AMS", "Afgrater / hobbykniv", "Fil eller sandpapir 240"], check: "Lysslidserne er 14,0 mm brede (skydelære), og diffuserringens propper går stramt i." },
+  { t: "Sæt gevindindsatser i", show: ["bezel", "shell", "wall_cleat"], add: ["bezel", "shell", "wall_cleat"], cfg: BARE, explode: 0.8, view: "back",
+    text: "Varm indsatserne ned med loddekolben (ca. 220 °C for ASA) og en indsats-spids. Tryk lige ned, til indsatsen flugter. Lad dem køle uden at røre.",
+    parts: ["Bezel: 4 × M3 i sideblokkene (2 pr. side)", "Kabinet: 2 × M3 i bunden, 1 × 1/4\"-20 til stativ, 4 × M4 til VESA bagpå", "Vægbeslag: 1 × M4 til låseskruen", "Kun ved tilbehør: 2 × M3 i bunden af skilt- og printerkabinet samt tag og topper"],
+    tools: ["Loddekolbe med indsats-spids", "6 × M3-indsats (Ø4,0 × 6,4)", "5 × M4-indsats (Ø5,6 × 8,2)", "1 × 1/4\"-20 indsats"], check: "Indsatserne står vinkelret og i flugt med overfladen. Prøv en skrue i hver." },
+  { t: "Tryk diffuserringen i bezelen", show: ["bezel", "diffuser_ring"], add: ["diffuser_ring"], cfg: BARE, explode: 0, view: "front",
+    text: "Læg en lille dråbe CA-gel på hver af de fire propper, og tryk ringen ind forfra, til den flugter jævnt. Kameragabet skal vende op mod kamerahullet.",
+    parts: ["Diffuserring"], tools: ["CA-gel (sekundlim)"], check: "Ringen står 1,6 mm frem hele vejen rundt, og der er ingen lim på den synlige flade." },
+  { t: "Montér kameraet", show: ["bezel", "diffuser_ring", "v_camera"], add: ["v_camera"], cfg: BARE, explode: 0, view: "back",
+    text: "Sæt først det 300 mm lange Pi 5-kamerakabel i kameraet. Drej kameraet 90° (flex-stikket mod højre set bagfra), og skru det på de fire bosser. Pil beskyttelsesfilmen af linsen.",
+    parts: ["Camera Module 3 Wide", "Kamerakabel 22→15-pin 300 mm"], tools: ["4 × M2 × 6 gevinddannende", "Skruetrækker PH0 eller T6"], check: "Linsen er centreret i hullet Ø8,6, og printet ligger plant. Spænd let, da det er gevind i plast." },
+  { t: "Læg skærmen i", show: ["bezel", "diffuser_ring", "v_camera", "v_display"], add: ["v_display"], cfg: BARE, explode: 0, view: "back",
+    text: "Klæb 1 mm EVA-strimler hele vejen rundt om vinduet på bezelens inderside. Læg skærmen med glasset ned mellem lysringens ribber, med flex-kablet mod kamerasiden.",
+    parts: ["Touch Display 2 10\"", "EVA-strimler 1 mm"], tools: ["Saks", "Mikrofiberklud"], check: "Der er ca. 0,5 mm luft til ribberne på alle sider, og glasset hviler på EVA'en uden pres." },
+  { t: "Montér Pi 5 på skærmen", show: ["bezel", "diffuser_ring", "v_camera", "v_display", "v_pi"], add: ["v_pi"], cfg: BARE, explode: 0, view: "back",
+    text: "Montér Active Cooler på Pi'en. Skru Pi'en på skærmens afstandsstykker. Sæt skærmens DSI-kabel i CAM/DISP 1 og kamerakablet i CAM/DISP 0. Skærmens 5 V-kabel går til pin 4 (5 V) og pin 6 (GND).",
+    parts: ["Raspberry Pi 5", "Active Cooler", "microSD med Raspberry Pi OS"], tools: ["4 × M2,5 (følger med skærmen)"], check: "Kablerne sidder lige i og er låst. Ingen kabler må ligge i klemme mellem Pi og skærm." },
+  { t: "LED-strips og skinne (spænder skærmen)", show: ["bezel", "diffuser_ring", "v_camera", "v_display", "v_pi", "led_rail", "v_leds", "v_pads"], add: ["led_rail", "v_leds", "v_pads"], cfg: BARE, explode: 0, view: "back",
+    text: "Klip strips til løbene: COB yderst og RGBW inderst på forsiden af skinnen, og glødestriberne på siderne. Lod JST-ledninger på, og før dem gennem hullerne Ø5. Sæt EVA-pads på tværbjælkerne. Læg skinnen over skærmen, og skru den i bezelen. Den spænder skærmen fast.",
+    parts: ["LED-skinne", "SK6812 RGBW: 12 + 12 + 7 + 2 + 2 LED + 2 × 13 glød", "COB: 228 + 228 + 145 + 53 + 53 mm", "4 EVA-pads 30 × 10"],
+    tools: ["4 × M2,5 × 6 gevinddannende", "Loddekolbe, tin, krympeflex", "JST-SM 3-pin stik"], check: "Skærmen sidder fast uden slør, og glasset må ikke bue. Test hver strip kort før lukning." },
+  { t: "Strømmodul i kabinettet", show: ["shell", "v_power"], add: ["v_power"], cfg: BARE, explode: 0, view: "front",
+    text: "Skru DC-bøsningen i bagvæggens hul Ø8. Klik de to Pololu D36V50F5 i holderne. Byg perfboardet efter el-diagrammet, og skub det ind i skinnerne med komponenterne fremad.",
+    parts: ["DC-bøsning 5,5/2,5", "2 × Pololu D36V50F5", "Perfboard med 74AHCT125, MOSFET, sikring 5 A, 1000 µF, terminaler"], tools: ["Loddekolbe", "Multimeter", "Kapton-tape"], check: "Mål med multimeter: 12 V ind, 5,0 V ud af begge Pololu, før noget andet tilsluttes." },
+  { t: "Træk ledningerne", show: UNIT, add: [], cfg: BARE, explode: 0.55, view: "back", xray: true,
+    text: "Forbind efter el-diagrammet (afsnit 05): USB-C-pigtail fra Pololu #1 til Pi'en, LED-5 V fra Pololu #2, LED-data og COB via perfboardet. Saml ledningerne med strips i de fire øjer i kabinettet.",
+    parts: ["Silikoneledning 18 AWG (strøm) og 22 AWG (signal)", "USB-C pigtail"], tools: ["Kabelbindere 100 mm", "JST-crimptang"], check: "Ingen ledninger ligger over Pi'ens køler, og 1000 µF sidder ved LED-strippens 5 V." },
+  { t: "Luk boksen", show: UNIT, add: ["shell"], cfg: BARE, explode: 0, view: "iso",
+    text: "Før kablerne på plads, og skub kabinettet over bezelens tunge. Skru 2 × M3 × 8 Torx i hver side.",
+    parts: ["Kabinet"], tools: ["4 × M3 × 8 Torx linsehoved", "Torx T10"], check: "Fugen er lige hele vejen rundt. Tænd: skærm og ring lyser, og kameraet viser billede." },
+  { t: "Vægbeslag og ophængning", show: [...UNIT, "wall_cleat"], add: ["wall_cleat"], cfg: { ...BARE, place: "wall" }, explode: 0, view: "side",
+    text: "Skru vægbeslaget i væggen i vater med 4 skruer og dybler. Hæng boksen på den skrå kant. Tyverisikring: tag fronten af, og sæt M4 × 10 gennem bagvæggen ind i beslagets indsats. Sæt fronten på igen.",
+    parts: ["Vægbeslag"], tools: ["4 × 4,5 × 50 undersænket + dybler", "1 × M4 × 10", "Vaterpas, bor 6 mm"], check: "Boksen kan ikke løftes af væggen, når låseskruen sidder." },
+  { t: "Strip-printer under boksen", show: [...UNIT, "printer_front", "printer_shell", "v_printer", "joint_spacer"], add: ["printer_front", "printer_shell", "v_printer", "joint_spacer"], cfg: { ...BARE, bottom: "strip" }, explode: 0, view: "iso",
+    text: "Klik D36V28F9 i holderen i printerkabinettet. Tryk DFR0503 ind forfra i printer-fronten, og skru fronten på kabinettet. Sæt samlestykket og 2 styrestifter mellem modulerne. Skru 2 × M3 × 16 fra printerkabinettets inderside op i boksens bundindsatser. Kablerne går gennem hullet Ø20.",
+    parts: ["Printer-front", "Printerkabinet", "DFR0503", "Pololu D36V28F9", "Samlestykke"], tools: ["4 × M3 × 8", "2 × M3 × 16", "2 styrestifter Ø6 × 20"], check: "Print en teststrip: papiret kommer lige ud og skærer ikke fast." },
+  { t: "Skilt ovenpå", show: [...UNIT, "printer_front", "printer_shell", "v_printer", "joint_spacer", "sign_front", "sign_letters", "sign_shell"], add: ["sign_front", "sign_letters", "sign_shell"], cfg: { ...BARE, bottom: "strip", sign: true }, explode: 0, view: "iso",
+    text: "Lim de translucente bogstaver i skilt-fronten. Klæb SK6812-strip bag bogstaverne, og forbind DIN til ringens DOUT gennem samlingen. Saml som printeren: samlestykke, stifter og 2 × M3 × 16 fra boksens inderside op i skiltets indsatser.",
+    parts: ["Skilt-front + bogstaver", "Skiltkabinet", "SK6812 ca. 0,3 m", "Samlestykke"], tools: ["CA-lim", "4 × M3 × 8, 2 × M3 × 16, 2 stifter"], check: "Bogstaverne lyser jævnt, uden lyspletter." },
+  { t: "Tag til festival", show: [...UNIT, "printer_front", "printer_shell", "v_printer", "joint_spacer", "sign_front", "sign_letters", "sign_shell", "roof"], add: ["roof"], cfg: { ...BARE, bottom: "strip", sign: true, roof: true, place: "tripod" }, explode: 0, view: "side",
+    text: "Taget sidder på den øverste samling med samlestykke, 2 stifter og 2 × M3 × 16 fra indersiden af skiltkabinettet. Til udendørs brug: Boksen står på et lysstativ med 1/4\"-gevind og en sandsæk.",
+    parts: ["Tag", "Samlestykke", "Lysstativ 2 m + sandsæk"], tools: ["2 × M3 × 16, 2 stifter"], check: "Taget dækker skærmen ved regn fra 45° forfra." },
+  { t: "Alternativ bund: fotobase eller fod", show: [...UNIT, "photo_base", "mock_selphy", "joint_spacer"], add: ["photo_base", "mock_selphy"], cfg: { ...BARE, bottom: "photo" }, explode: 0, view: "iso",
+    text: "I baren kan fotobasen med Canon SELPHY CP1500 erstatte strip-printeren. SELPHY skubbes ind forfra og forbindes med USB-C til Pi'en. På et bord uden printer bruges foden i stedet med 4 gummifødder.",
+    parts: ["Fotobase", "SELPHY CP1500 + KP-108IN", "eller: Fod + 4 gummifødder"], tools: ["Samlestykke, 2 stifter, 2 × M3 × 16"], check: "SELPHY kan skubbes ud og ind uden at fjerne boksen (papirskift)." },
+  { t: "Temadele (event)", show: [...UNIT, "wall_cleat", "sommernat--wing_left", "sommernat--wing_right", "sommernat--topper", "joint_spacer"], add: ["sommernat--wing_left", "sommernat--wing_right", "sommernat--topper"], cfg: { ...BARE, place: "wall", theme: "sommernat" }, explode: 0, view: "iso",
+    text: "Til et event skiftes de 4 sideskruer (M3 × 8) ud med M3 × 12 gennem vingernes ribbe. Toppen sidder på den øverste samling. Start appen med SELFIEBOX_THEME=<id>, så skærm, foto og lys følger kassen.",
+    parts: ["Vinger venstre og højre", "Topper", "eller tema-skilt og tema-printerfront"], tools: ["4 × M3 × 12", "Samlestykke, 2 stifter, 2 × M3 × 16"], check: "Vingerne sidder tæt til kabinettet uden spalte." },
+  { t: "Software og sluttest", show: null, add: [], cfg: { bottom: "strip", sign: true, roof: false, theme: "base", place: "wall" }, explode: 0, view: "iso",
+    text: "Flash Raspberry Pi OS, installér appen (afsnit 11), og slå kiosk-tilstand til. Test alle tre lystilstande, tag 10 testbilleder, og print en strip. Mærk boksen med serienummer.",
+    parts: ["Hele boksen"], tools: ["Laptop til SSH", "Multimeter"], check: "Lyset følger temaet, billedet er skarpt og stående, printet kommer ud, og alt kører 1 time uden fejl." }
+];
+
+// =====================================================================  3D
+const host = $("view");
+const state = { bottom: "strip", sign: true, roof: false, place: "wall", theme: "base", wings: true, topper: true, mode: "idle",
+  explode: 0, xray: false, isolate: false, selected: null, tab: "explore", step: 0 };
+const PRESETS = { club: { sign: true, roof: false, bottom: "strip", place: "wall" }, bar: { sign: true, roof: false, bottom: "photo", place: "table" },
+  fest: { sign: true, roof: true, bottom: "strip", place: "tripod" }, bare: { sign: false, roof: false, bottom: "none", place: "wall" } };
+const MODES = {
+  idle: "Ringen og glødestriberne kører temaets idle-animation, og skærmen viser opfordringen.",
+  photo: "COB på fuld styrke i 4000 K og CRI 90+. Ansigterne bliver jævnt belyst.",
+  off: "Ingen strøm. Under klubbens UV-lys gløder fluorescerende detaljer (neon-temaet)."
+};
+let ready = false;
+if (!window.THREE) { $("loading").textContent = "3D-viseren kunne ikke indlæses. Resten af siden virker."; }
+
+const C = h => new THREE.Color(h).convertSRGBToLinear();
+let renderer, scene, camera, controls, wall, wallGlowMat, wallGlow, floor, tripod, screen, screenTex = {}, fill;
+const groups = {}, nodes = {}, keyMeshes = {}, lightMats = [], spacers = [];
+const GROUP = { bezel: "unit", diffuser_ring: "unit", led_rail: "unit", wall_cleat: "unit", v_display: "unit", v_pi: "unit", v_camera: "unit", v_leds: "unit", v_power: "unit", v_pads: "unit", shell: "unit", shell_band: "unit",
+  printer_front: "strip", v_printer: "strip", printer_shell: "strip", printer_shell_band: "strip", photo_base: "photo", mock_selphy: "photo", foot: "foot",
+  sign_front: "sign", sign_letters: "sign", sign_shell: "sign", sign_shell_band: "sign", roof: "roof", joint_spacer: "spacer" };
+const ROLE = { bezel: "body", shell: "body", printer_front: "body", printer_shell: "body", photo_base: "body", sign_front: "body", sign_shell: "body", roof: "body", foot: "body", wall_cleat: "body", led_rail: "body",
+  shell_band: "band", printer_shell_band: "band", sign_shell_band: "band", diffuser_ring: "diff", v_leds: "led", sign_letters: "sign",
+  v_display: "glass", v_pi: "pcb", v_camera: "pcb", v_printer: "dark", mock_selphy: "selphy", v_pads: "pad", v_power: "power", joint_spacer: "inner" };
+const KEYOF = n => ({ shell_band: "shell", printer_shell_band: "printer_shell", sign_shell_band: "sign_shell" }[n] || n);
+const SHELLS = ["shell", "printer_shell", "sign_shell"];
+// explode direction per key (mm at explode = 1), in glTF axes (x, y up, z towards the viewer)
+const PUSH = { diffuser_ring: [0, 0, 40], v_display: [0, 0, -20], v_camera: [0, 30, -15], v_pads: [0, 0, -45], led_rail: [0, 0, -60], v_leds: [0, 0, -60], v_pi: [0, 0, -85],
+  shell: [0, 0, -150], v_power: [0, 0, -150], printer_shell: [0, 0, -90], sign_shell: [0, 0, -90], sign_letters: [0, 0, 25], wall_cleat: [0, 0, -230],
+  v_printer: [0, 0, 40], mock_selphy: [0, 0, 90], printer_front: [0, 0, 20], sign_front: [0, 0, 20], bezel: [0, 0, 0] };
+const pushOf = k => PUSH[k] || (k.includes("wing_left") ? [-60, 0, 0] : k.includes("wing_right") ? [60, 0, 0] : [0, 0, 0]);
+const UH = 306, SP = 6, BH = { none: 0, strip: 84, photo: 66, foot: 26 }, SIGN_H = 72, GC = 151.85;
+
+function M(o) { ["color", "emissive"].forEach(k => { if (o[k] !== undefined) o[k] = C(o[k]); }); return new THREE.MeshStandardMaterial(o); }
+const ROLEMAT = {
+  body: () => M({ color: 0x0b0b0d, roughness: 0.9 }), inner: () => M({ color: 0x1c1c20, roughness: 0.85 }),
+  band: () => M({ color: 0xf2f0f4, emissive: 0xffffff, roughness: 0.4 }), diff: () => M({ color: 0xffffff, emissive: 0xffffff, roughness: 0.35 }),
+  led: () => M({ color: 0xffffff, emissive: 0xffffff }), sign: () => M({ color: 0xffffff, emissive: 0xffffff, roughness: 0.4 }),
+  glass: () => M({ color: 0x07070a, roughness: 0.2, metalness: 0.2 }), pcb: () => M({ color: 0x1f7a44, roughness: 0.6 }), dark: () => M({ color: 0x2a2a2e, roughness: 0.6 }),
+  selphy: () => M({ color: 0xe8e8e4, roughness: 0.5 }), pad: () => M({ color: 0x4a4a50, roughness: 0.95 }), power: () => M({ color: 0x1b4f8a, roughness: 0.6 })
+};
+
+function init3d() {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  host.insertBefore(renderer.domElement, host.firstChild);
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(30, 1, 5, 9000);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.minDistance = 120; controls.maxDistance = 3600;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 0.35));
+  const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(450, 700, 800); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.2); rim.position.set(-500, 300, -600); scene.add(rim);
+  wall = new THREE.Mesh(new THREE.PlaneGeometry(2400, 2400), M({ color: 0x3a3a3c, roughness: 0.95 })); wall.position.z = -80.2; scene.add(wall);
+  floor = new THREE.Mesh(new THREE.BoxGeometry(900, 20, 640), M({ color: 0x444446, roughness: 0.7 })); scene.add(floor);
+  const gc = document.createElement("canvas"); gc.width = gc.height = 256;
+  (g => { const r = g.createRadialGradient(128, 128, 8, 128, 128, 128); r.addColorStop(0, "rgba(255,255,255,0.9)"); r.addColorStop(0.45, "rgba(255,255,255,0.25)"); r.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = r; g.fillRect(0, 0, 256, 256); })(gc.getContext("2d"));
+  wallGlowMat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(gc), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  wallGlow = new THREE.Mesh(new THREE.PlaneGeometry(560, 720), wallGlowMat); wallGlow.position.z = -79.8; scene.add(wallGlow);
+  tripod = new THREE.Group(); scene.add(tripod);
+  const metal = M({ color: 0x8c8f99, roughness: 0.4, metalness: 0.7 });
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(22, 26, 14, 32), metal); head.position.set(0, -7, -52); tripod.add(head);
+  const col = new THREE.Mesh(new THREE.CylinderGeometry(9, 9, 520, 24), metal); col.position.set(0, -274, -52); tripod.add(col);
+  for (let i = 0; i < 3; i++) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 760, 16), metal); const a = i * Math.PI * 2 / 3 + 0.5;
+    leg.position.set(Math.cos(a) * 150, -820, -52 + Math.sin(a) * 150); leg.rotation.z = Math.cos(a) * 0.38; leg.rotation.x = -Math.sin(a) * 0.38; tripod.add(leg); }
+  ["unit", "strip", "photo", "foot", "sign", "roof", "topper"].forEach(k => { groups[k] = new THREE.Group(); scene.add(groups[k]); });
+  for (let i = 0; i < 4; i++) { const g = new THREE.Group(); scene.add(g); spacers.push(g); }
+  const tl = new THREE.TextureLoader();
+  Object.entries(THEMES).forEach(([k, t]) => { screenTex[k] = tl.load(t.screen, tx => { tx.encoding = THREE.sRGBEncoding; }); });
+  screen = new THREE.Mesh(new THREE.PlaneGeometry(136.4, 217.6), new THREE.MeshBasicMaterial({ toneMapped: false }));
+  screen.position.set(0, GC, -3.6); groups.unit.add(screen);
+  fill = new THREE.PointLight(0xffffff, 0, 500, 2); fill.position.set(0, GC, 120); groups.unit.add(fill);
+  new ResizeObserver(resize).observe(host); resize();
+  new THREE.GLTFLoader().load("pack.json", onModel, undefined, () => { $("loading").textContent = "3D-modellen kunne ikke indlæses. Resten af siden virker."; });
+  pickSetup();
+  (function loop(ms) { animate((ms || 0) / 1000); controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+}
+function resize() { const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+
+function addMesh(key, grpName, mesh) {
+  const holder = new THREE.Group(); holder.add(mesh); holder.userData.key = key;
+  (nodes[key] = nodes[key] || []).push(holder);
+  (keyMeshes[key] = keyMeshes[key] || []).push(mesh);
+  mesh.userData.key = key;
+  groups[grpName].add(holder);
+}
+function onModel(gltf) {
+  const meshes = []; gltf.scene.traverse(o => { if (o.isMesh) meshes.push(o); });
+  meshes.forEach(o => {
+    const full = (o.name || (o.parent && o.parent.name) || "").replace(/_\d+$/, "");
+    o.geometry = o.geometry.toNonIndexed(); o.geometry.computeVertexNormals();
+    o.position.set(0, 0, 0); o.rotation.set(0, 0, 0); o.scale.set(1, 1, 1);
+    if (full.includes("--")) {                                // theme part
+      const [th, rest] = full.split("--"); const [part, colour] = rest.split("__");
+      const hex = (THEMES[th].pal[colour] || THEMES[th].pal.base)[0];
+      const glow = th === "neon" && colour !== "base";
+      o.material = M({ color: hex, roughness: colour === "base" ? 0.9 : 0.6, emissive: glow ? hex : 0x000000, emissiveIntensity: glow ? 0.35 : 0 });
+      o.userData.theme = th; o.userData.uv = glow;
+      const grp = part.startsWith("wing") ? "unit" : part === "topper" ? "topper" : part === "sign_front" ? "sign" : "strip";
+      addMesh(th + "--" + part, grp, o); return;
+    }
+    const grp = GROUP[full]; if (!grp) return;
+    const role = ROLE[full] || "inner";
+    o.material = ROLEMAT[role](); o.userData.role = role;
+    if (["band", "diff", "led", "sign"].includes(role)) lightMats.push(o.material);
+    if (grp === "spacer") {
+      spacers.forEach(s => { const c = o.clone(); c.material = o.material.clone(); const h = new THREE.Group(); h.add(c); h.userData.key = "joint_spacer"; c.userData.key = "joint_spacer";
+        (nodes.joint_spacer = nodes.joint_spacer || []).push(h); (keyMeshes.joint_spacer = keyMeshes.joint_spacer || []).push(c); s.add(h); });
+      return;
+    }
+    addMesh(KEYOF(full), grp, o);
+  });
+  ready = true; $("loading").hidden = true;
+  buildPartList(); applyAll(true);
+}
+
+// ---------------------------------------------------------------- layout & visibility
+function cfg() { return state.tab === "steps" ? { ...STEPS[state.step].cfg } : state; }
+function layout(c, gap) {
+  let z = BH[c.bottom], si = 0;
+  ["strip", "photo", "foot"].forEach(k => { groups[k].visible = c.bottom === k; groups[k].position.y = 0; });
+  spacers.forEach(s => s.visible = false);
+  const spacerAt = y => { const s = spacers[si++]; s.visible = true; s.position.y = y; };
+  if (c.bottom === "strip" || c.bottom === "photo") { spacerAt(z + gap * 0.5); z += SP + gap; } else if (c.bottom === "foot") z += gap;
+  groups.unit.position.y = z; z += UH;
+  groups.sign.visible = c.sign; groups.roof.visible = c.roof;
+  if (c.sign) { spacerAt(z + gap * 0.5); z += SP + gap; groups.sign.position.y = z; z += SIGN_H; }
+  const top = c.theme !== "base" && (state.tab === "steps" || state.topper);
+  groups.topper.visible = top;
+  if (top) { spacerAt(z + gap * 0.5); z += SP + gap; groups.topper.position.y = z; z += 103; }
+  if (c.roof) { spacerAt(z + gap * 0.5); z += SP + gap; groups.roof.position.y = z; z += 40; }
+  const wallMode = c.place === "wall";
+  wall.visible = wallMode; wallGlow.visible = wallMode; wallGlow.position.y = groups.unit.position.y + GC;
+  tripod.visible = c.place === "tripod"; floor.visible = !wallMode; floor.position.y = c.place === "tripod" ? -1200 : -10;
+  return z;
+}
+function visibleKey(k, c, stepShow) {
+  if (stepShow && !stepShow.includes(k) && !(k === "joint_spacer")) return false;
+  if (k.includes("--")) {
+    const [th, part] = k.split("--");
+    if (th !== c.theme) return false;
+    if (state.tab !== "steps") { if (part.startsWith("wing") && !state.wings) return false; if (part === "topper" && !state.topper) return false; }
+    return true;
+  }
+  if (k === "wall_cleat") return stepShow ? stepShow.includes(k) : c.place === "wall";
+  if ((k === "printer_front" || k === "sign_front") && c.theme !== "base" && nodes[c.theme + "--" + k]) return false;
+  return true;
+}
+let anim = null;  // {keys, t0}
+function applyAll(reframe) {
+  if (!ready) return;
+  const c = cfg(), stepMode = state.tab === "steps", st = stepMode ? STEPS[state.step] : null;
+  const e = stepMode ? st.explode : state.explode;
+  const top = layout(c, e * 80);
+  const show = st && st.show;
+  Object.entries(nodes).forEach(([k, hs]) => {
+    let vis = visibleKey(k, c, show);
+    if (!stepMode && state.isolate && state.selected) vis = k === state.selected || (KEYOF(k) === state.selected);
+    hs.forEach(h => { h.visible = vis; const p = pushOf(k); h.position.set(p[0] * e, p[1] * e, p[2] * e); });
+  });
+  if (show) spacers.forEach(s => { if (!show.includes("joint_spacer")) s.visible = false; });
+  screen.visible = !show || show.includes("v_display");
+  screen.position.z = -3.6 + pushOf("v_display")[2] * e;
+  screen.material.map = screenTex[c.theme] || screenTex.base; screen.material.needsUpdate = true;
+  const xr = stepMode ? !!st.xray : state.xray;
+  const sel = !stepMode && state.selected && !state.isolate ? state.selected : null;
+  Object.entries(keyMeshes).forEach(([k, ms]) => ms.forEach(m => {
+    const ghost = (xr && SHELLS.includes(k)) || (sel && k !== sel);
+    m.material.transparent = !!ghost; m.material.opacity = ghost ? (sel ? 0.16 : 0.14) : 1; m.material.depthWrite = !ghost;
+  }));
+  const fresh = stepMode && st.show && st.add.length < st.show.length ? st.add : [];
+  highlight(stepMode ? fresh : (state.selected ? [state.selected] : []));
+  if (stepMode && st.add.length) anim = { keys: st.add, t0: performance.now() };
+  if (reframe) setView(stepMode ? st.view : "iso", top);
+  renderSide();
+}
+function edgesFor(m) {
+  if (!m.userData.edges) {
+    const l = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry, 25), new THREE.LineBasicMaterial({ color: 0xf2b24b, transparent: true, opacity: 0.95 }));
+    l.raycast = () => {}; m.add(l); m.userData.edges = l;
+  }
+  return m.userData.edges;
+}
+// selected / new parts get an amber contour; their own colours stay true (black stays black)
+function highlight(keys) {
+  Object.entries(keyMeshes).forEach(([k, ms]) => ms.forEach(m => {
+    const on = keys.includes(k);
+    if (on) edgesFor(m).visible = true; else if (m.userData.edges) m.userData.edges.visible = false;
+  }));
+}
+function visibleBox() {
+  scene.updateMatrixWorld(true);
+  const box = new THREE.Box3();
+  Object.values(nodes).flat().forEach(h => { if (h.visible && h.parent && h.parent.visible) box.expandByObject(h); });
+  if (box.isEmpty()) box.setFromCenterAndSize(new THREE.Vector3(0, 200, 0), new THREE.Vector3(300, 400, 100));
+  return box;
+}
+const DIRS = { iso: [0.42, 0.16, 0.9], front: [0, 0.04, 1], back: [-0.42, 0.14, -0.9], side: [1, 0.12, 0.25] };
+let lastDir = DIRS.iso;
+function setView(kind, _top) {
+  if (kind !== "fit") lastDir = DIRS[kind] || DIRS.iso;
+  const box = visibleBox(), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+  const r = Math.max(s.x, s.y, s.z) * 0.62 + 40, d = r / Math.sin(15 * Math.PI / 180) * (camera.aspect < 1 ? 1.3 : 1);
+  const v = new THREE.Vector3(...lastDir).normalize();
+  controls.target.copy(c); camera.position.copy(c).addScaledVector(v, d); controls.update();
+}
+
+// ---------------------------------------------------------------- animation (light + step parts)
+const cA = new THREE.Color(), cB = new THREE.Color(), WARM = C("#fff1de"), UV = C("#7b3cff"), NEON = C("#c8ff5a");
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function animate(s) {
+  if (!ready) return;
+  const c = cfg(), th = THEMES[c.theme], mode = state.tab === "steps" ? "idle" : state.mode;
+  const cols = th.idle, n = cols.length, ph = reduce ? 0 : (s / th.period) * n, i = Math.floor(ph) % n, f = ph - Math.floor(ph);
+  cA.set(cols[i]).convertSRGBToLinear().lerp(cB.set(cols[(i + 1) % n]).convertSRGBToLinear(), f * f * (3 - 2 * f));
+  const k = reduce ? 0.8 : 0.65 + 0.35 * Math.sin(s * 1.3);
+  let col = cA, fi = 0.25 + 0.35 * k, ri = 0.2 + 0.35 * k, wi = 0.15 + 0.25 * k;
+  if (mode === "photo") { col = WARM; fi = 1.6; ri = 0.6; wi = 0.35; }
+  if (mode === "off") { col = NEON; fi = 0.12; ri = 0.12; wi = 0; }
+  lightMats.forEach(m => { m.emissive.copy(col); m.emissiveIntensity = m === undefined ? 0 : fi; });
+  Object.entries(keyMeshes).forEach(([key, ms]) => ms.forEach(m => { if (m.userData.role === "band") m.material.emissiveIntensity = ri; }));
+  wallGlowMat.color.copy(col); wallGlowMat.opacity = wi;
+  fill.color.copy(col); fill.intensity = mode === "photo" ? 0.8 : 0;
+  screen.material.color.setScalar(mode === "off" ? 0.03 : 1);
+  if (anim) {
+    const t = Math.min(1, (performance.now() - anim.t0) / 1100), ease = 1 - Math.pow(1 - t, 3);
+    const e = STEPS[state.step].explode;
+    anim.keys.forEach(kk => (nodes[kk] || []).forEach(h => { const p = pushOf(kk), extra = 1 - ease;
+      const base = p.map(v => v * e), off = p.some(v => v) ? p.map(v => v * 1.6 * extra) : [0, 90 * extra, 0];
+      h.position.set(base[0] + off[0], base[1] + off[1], base[2] + off[2]); }));
+    if (t >= 1) anim = null;
+  }
+}
+
+// ---------------------------------------------------------------- picking
+function pickSetup() {
+  const ray = new THREE.Raycaster(), v2 = new THREE.Vector2(); let down = null, lastHover = 0;
+  const hit = ev => {
+    const r = renderer.domElement.getBoundingClientRect();
+    v2.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(v2, camera);
+    const objs = Object.values(keyMeshes).flat().filter(m => { let o = m; while (o) { if (!o.visible) return false; o = o.parent; } return !m.material.transparent; });
+    const h = ray.intersectObjects(objs, false)[0];
+    return h ? h.object.userData.key : null;
+  };
+  renderer.domElement.addEventListener("pointerdown", ev => { down = [ev.clientX, ev.clientY]; });
+  renderer.domElement.addEventListener("pointerup", ev => {
+    if (!down || Math.hypot(ev.clientX - down[0], ev.clientY - down[1]) > 5) return;
+    const k = hit(ev);
+    if (!k && state.tab !== "explore") return;          // a click on empty space keeps the current step
+    if (state.tab !== "explore") switchTab("explore");
+    select(k);
+  });
+  renderer.domElement.addEventListener("pointermove", ev => {
+    const now = performance.now(); if (now - lastHover < 60 || ev.buttons) return; lastHover = now;
+    const k = hit(ev), tip = $("tip");
+    if (!k) { tip.hidden = true; renderer.domElement.style.cursor = ""; return; }
+    const r = host.getBoundingClientRect(); tip.textContent = nameOf(k); tip.hidden = false;
+    tip.style.left = (ev.clientX - r.left + 14) + "px"; tip.style.top = (ev.clientY - r.top + 10) + "px"; renderer.domElement.style.cursor = "pointer";
+  });
+  renderer.domElement.addEventListener("pointerleave", () => { $("tip").hidden = true; });
+}
+function nameOf(k) {
+  if (!k) return "";
+  if (k.includes("--")) { const [th, p] = k.split("--"); return (THEME_INFO[p] || { name: p }).name + " · " + THEMES[th].name; }
+  return (PARTS[k] || { name: k }).name;
+}
+function select(k) {
+  state.selected = k;
+  document.querySelectorAll("#partlist button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === k)));
+  applyAll(state.isolate);
+  showInfo(k);
+}
+function ensureVisible(k) {
+  const need = { printer_front: { bottom: "strip" }, printer_shell: { bottom: "strip" }, v_printer: { bottom: "strip" }, photo_base: { bottom: "photo" }, mock_selphy: { bottom: "photo" },
+    foot: { bottom: "foot" }, sign_front: { sign: true }, sign_letters: { sign: true }, sign_shell: { sign: true }, roof: { roof: true }, wall_cleat: { place: "wall" } }[k];
+  if (need) { Object.assign(state, need); syncSetup(); }
+  if (k.includes("--")) { state.theme = k.split("--")[0]; syncSetup(); }
+}
+function showInfo(k) {
+  const box = $("info");
+  if (!k) { box.innerHTML = '<span class="kind">Vælg en del</span><h3>Klik på en del</h3><p class="muted" style="font-size:.9rem">Den valgte del bliver fremhævet, og her står mål, materiale, fastgørelse og datablad.</p>'; return; }
+  let p, kind;
+  if (k.includes("--")) { const [th, part] = k.split("--"); p = { ...(THEME_INFO[part] || {}), name: nameOf(k), mat: "PETG HF sort + 0,8 mm farve-inlays", fast: THEME_FAST[part], dim: "" }; kind = "Printet temadel"; }
+  else { p = PARTS[k] || { name: k }; kind = p.kind === "bought" ? "Købt del" : "Printet del"; }
+  const pd = PRINTDATA[k];
+  const dl = [];
+  if (p.dim) dl.push(["Mål", esc(p.dim)]);
+  if (p.mat) dl.push(["Materiale", esc(p.mat)]);
+  if (pd && PD[pd.stl || k]) { const d = PD[pd.stl || k]; dl.push(["Print", `${d.g} g · ca. ${String(d.hours).replace(".", ",")} t · ${esc(pd.orient)}`]); }
+  if (p.fast) dl.push(["Fastgørelse", esc(p.fast)]);
+  if (p.ds) dl.push(["Datablad", p.ds.map(link).join("<br>")]);
+  box.innerHTML = `<span class="kind">${kind}</span><h3>${esc(p.name)}</h3><dl>${dl.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("")}</dl>` +
+    (p.draw ? `<button class="btn" data-draw="${p.draw}">Se tegning</button>` : "") +
+    `<div class="seg"><button class="btn" id="info-focus">Zoom ind på delen</button><button class="btn" id="info-clear">Ryd valg</button></div>`;
+  const db = box.querySelector("[data-draw]"); if (db) db.addEventListener("click", () => openDrawing(p.draw));
+  $("info-focus").addEventListener("click", () => focusKey(k));
+  $("info-clear").addEventListener("click", () => { select(null); setView("iso"); });
+}
+function focusKey(k) {
+  scene.updateMatrixWorld(true);
+  const box = new THREE.Box3(); (nodes[k] || []).forEach(h => box.expandByObject(h));
+  if (box.isEmpty()) return;
+  const c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()), r = Math.max(s.x, s.y, s.z) * 0.9 + 60;
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  controls.target.copy(c); camera.position.copy(c).addScaledVector(dir, r / Math.sin(15 * Math.PI / 180)); controls.update();
+}
+function buildPartList() {
+  const el = $("partlist"); let html = "";
+  LIST.forEach(([g, keys]) => { html += `<div class="grp">${g}</div>` + keys.map(k => `<button data-k="${k}" aria-pressed="false">${esc(PARTS[k].name)}<small>${PARTS[k].kind === "bought" ? "købt" : "printet"}</small></button>`).join(""); });
+  html += `<div class="grp">Temadele (vælg tema under Opstilling)</div>` + ["wing_left", "wing_right", "topper", "sign_front", "printer_front"].map(p => `<button data-k="sommernat--${p}" aria-pressed="false">${esc(THEME_INFO[p].name)}<small>tema</small></button>`).join("");
+  el.innerHTML = html;
+  el.addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; let k = b.dataset.k;
+    if (k.includes("--") && state.theme !== "base") k = state.theme + "--" + k.split("--")[1];
+    if (k.includes("--") && !nodes[k]) k = "sommernat--" + k.split("--")[1];
+    ensureVisible(k); select(k); focusKey(k); });
+}
+
+// ---------------------------------------------------------------- side panel / tabs
+function switchTab(t) {
+  state.tab = t;
+  ["explore", "steps", "setup"].forEach(x => { $("tab-" + x).setAttribute("aria-selected", String(x === t)); $("pane-" + x).hidden = x !== t; });
+  if (t === "steps") goStep(state.step, true); else { anim = null; applyAll(true); }
+}
+["explore", "steps", "setup"].forEach(x => $("tab-" + x).addEventListener("click", () => switchTab(x)));
+function goStep(i, reframe) {
+  state.step = Math.max(0, Math.min(STEPS.length - 1, i));
+  const st = STEPS[state.step];
+  $("st-count").textContent = `Trin ${state.step + 1} af ${STEPS.length}`; $("st-no").textContent = state.step + 1;
+  $("st-title").textContent = st.t; $("st-text").textContent = st.text;
+  $("st-parts").innerHTML = st.parts.map(x => `<li>${esc(x)}</li>`).join("");
+  $("st-tools").innerHTML = st.tools.map(x => `<li>${esc(x)}</li>`).join("");
+  $("st-check").textContent = st.check;
+  document.querySelectorAll("#st-dots button").forEach((b, j) => { if (j === state.step) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+  $("st-prev").disabled = state.step === 0; $("st-next").disabled = state.step === STEPS.length - 1;
+  applyAll(reframe !== false);
+}
+$("st-dots").innerHTML = STEPS.map((s, i) => `<button title="${esc(s.t)}" aria-label="Trin ${i + 1}: ${esc(s.t)}">${i + 1}</button>`).join("");
+$("st-dots").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; goStep([...b.parentNode.children].indexOf(b)); });
+$("st-prev").addEventListener("click", () => goStep(state.step - 1));
+$("st-next").addEventListener("click", () => goStep(state.step + 1));
+$("st-replay").addEventListener("click", () => goStep(state.step, false));
+$("viewbtns").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) setView(b.dataset.v); });
+$("explode").addEventListener("input", ev => { state.explode = +ev.target.value; applyAll(false); });
+$("t-xray").addEventListener("change", ev => { state.xray = ev.target.checked; applyAll(false); });
+$("t-iso").addEventListener("change", ev => { state.isolate = ev.target.checked; applyAll(true); });
+
+function press(box, v) { box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === v))); }
+function syncSetup() {
+  const tableOnly = state.bottom === "photo" || state.bottom === "foot";
+  if (tableOnly && state.place !== "table") state.place = "table";
+  $("pl-wall").disabled = tableOnly; $("pl-tripod").disabled = tableOnly;
+  press($("seg-bottom"), state.bottom); press($("seg-place"), state.place); press($("seg-theme"), state.theme); press($("seg-mode"), state.mode);
+  $("t-sign").checked = state.sign; $("t-roof").checked = state.roof; $("t-wings").checked = state.wings; $("t-topper").checked = state.topper;
+}
+function renderSide() {
+  const c = cfg(), t = THEMES[c.theme];
+  $("pal").innerHTML = Object.values(t.pal).map(([hex, n]) => `<span class="chip"><i style="background:${hex}"></i>${esc(n)}</span>`).join("");
+  $("screen-img").src = t.screen; $("mode-note").textContent = MODES[state.mode];
+  $("hud-r").textContent = state.tab === "steps" ? `Trin ${state.step + 1}: ${STEPS[state.step].t}` : (state.selected ? nameOf(state.selected) : "");
+}
+$("seg-preset").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; Object.assign(state, PRESETS[b.dataset.v]); press($("seg-preset"), b.dataset.v); syncSetup(); applyAll(true); });
+[["seg-bottom", "bottom"], ["seg-place", "place"], ["seg-theme", "theme"], ["seg-mode", "mode"]].forEach(([id, key]) =>
+  $(id).addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b || b.disabled) return; state[key] = b.dataset.v; if (key !== "mode" && key !== "theme") press($("seg-preset"), ""); syncSetup(); applyAll(key !== "mode"); }));
+["sign", "roof", "wings", "topper"].forEach(k => $("t-" + k).addEventListener("change", ev => { state[k] = ev.target.checked; applyAll(true); }));
+
+// =====================================================================  STATIC SECTIONS
+const PRINTDATA = {
+  bezel: { orient: "forside ned", mat: "ASA", sup: "Nej", note: "Tekstureret PEI giver mat front" },
+  diffuser_ring: { orient: "forside ned", mat: "PETG translucent", sup: "Nej", note: "0,16 mm lag, 2 vægge" },
+  led_rail: { orient: "forside ned", mat: "ASA", sup: "Nej", note: "" },
+  shell: { orient: "bagside ned", mat: "ASA + PETG transl.", sup: "Nej", note: "Broer ≤ 24 mm. Farveskift ved 34/44 mm. Brim 5 mm" },
+  wall_cleat: { orient: "plade ned", mat: "ASA", sup: "Nej", note: "" },
+  joint_spacer: { orient: "fladt", mat: "ASA", sup: "Nej", note: "1 pr. samling" },
+  printer_front: { orient: "forside ned", mat: "ASA", sup: "Nej", note: "" },
+  printer_shell: { orient: "bagside ned", mat: "ASA + PETG transl.", sup: "Nej", note: "Farveskift ved 34/44 mm" },
+  sign_front: { orient: "forside ned", mat: "ASA (+ PETG bogstaver)", sup: "Nej", note: "Bogstaver kan printes i samme job (AMS)" },
+  sign_shell: { orient: "bagside ned", mat: "ASA + PETG transl.", sup: "Nej", note: "Farveskift ved 34/44 mm" },
+  roof: { orient: "bagkant ned", mat: "ASA", sup: "Ja, tree (kun fra plade)", note: "61 cm² udhæng under taget" },
+  photo_base: { orient: "top ned", mat: "ASA", sup: "Nej", note: "" },
+  foot: { orient: "bund ned", mat: "ASA", sup: "Ja, tree", note: "Lommer i bunden og kabelkanal" }
+};
+let PD = {};
+const PRINT_NAMES = { bezel: "Bezel", diffuser_ring: "Diffuserring", led_rail: "LED-skinne", shell: "Kabinet (shell / shell_closed_top)", wall_cleat: "Vægbeslag", joint_spacer: "Samlestykke",
+  printer_front: "Printer-front", printer_shell: "Printerkabinet", sign_front: "Skilt-front", sign_shell: "Skiltkabinet", roof: "Tag", photo_base: "Fotobase", foot: "Fod" };
+const MAIN_PRINT = ["bezel", "diffuser_ring", "led_rail", "shell", "wall_cleat"];
+
+const DRAWINGS = [["bezel", "Bezel"], ["diffuser_ring", "Diffuserring"], ["led_rail", "LED-skinne"], ["shell", "Kabinet"], ["wall_cleat", "Vægbeslag"], ["joint_spacer", "Samlestykke"],
+  ["printer_front", "Printer-front"], ["printer_shell", "Printerkabinet"], ["sign_front", "Skilt-front"], ["sign_shell", "Skiltkabinet"], ["roof", "Tag"], ["photo_base", "Fotobase"], ["foot", "Fod"],
+  ["sommernat_wing_right__base", "Temavinge (Sommernat)"], ["sommernat_topper__base", "Topper (Sommernat)"]];
+function openDrawing(file) {
+  const d = DRAWINGS.find(x => x[0] === file) || [file, file];
+  $("lb-img").src = "drawings/" + d[0] + ".png"; $("lb-img").alt = "Teknisk tegning: " + d[1]; $("lb-title").textContent = d[1];
+  $("lb").showModal();
+}
+$("lb-close").addEventListener("click", () => $("lb").close());
+$("lb").addEventListener("click", ev => { if (ev.target === $("lb")) $("lb").close(); });
+$("thumbs").innerHTML = DRAWINGS.map(([f, n]) => `<button data-f="${f}"><img src="drawings/${f}.png" alt="Tegning: ${esc(n)}" loading="lazy"><span>${esc(n)}</span></button>`).join("");
+$("thumbs").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) openDrawing(b.dataset.f); });
+
+function renderPrinted() {
+  const rows = Object.keys(PRINTDATA).map(k => {
+    const p = PARTS[k], d = PD[k] || {};
+    return `<tr><td class="k">${esc(p.name)}${MAIN_PRINT.includes(k) ? ' <span class="tag yes">hoved</span>' : ""}</td><td class="n">${d.dims ? d.dims.map(v => String(v).replace(".", ",")).join(" × ") : esc(p.dim)}</td><td>${esc(p.mat)}</td><td>${esc(p.fast)}</td><td><button class="btn" data-draw="${p.draw}">Tegning</button></td></tr>`;
+  });
+  $("t-printed").querySelector("tbody").innerHTML = rows.join("");
+  $("t-print").querySelector("tbody").innerHTML = Object.entries(PRINTDATA).map(([k, v]) => { const d = PD[k] || {};
+    return `<tr><td class="k">${esc(PRINT_NAMES[k])}</td><td>${esc(v.orient)}</td><td>${esc(v.mat)}</td><td class="n">${d.g || "–"} g</td><td class="n">${d.hours ? String(d.hours).replace(".", ",") + " t" : "–"}</td><td>${v.sup.startsWith("Ja") ? `<span class="tag est">${esc(v.sup)}</span>` : '<span class="tag ok">Nej</span>'}</td><td>${esc(v.note)}</td></tr>`; }).join("") +
+    `<tr class="total"><td>Hovedenhed i alt</td><td></td><td></td><td class="n">${MAIN_PRINT.reduce((s, k) => s + ((PD[k] || {}).g || 0), 0)} g</td><td class="n">${String(Math.round(MAIN_PRINT.reduce((s, k) => s + ((PD[k] || {}).hours || 0), 0) * 10) / 10).replace(".", ",")} t</td><td></td><td>Kan fordeles på 4–5 plader</td></tr>`;
+  document.querySelectorAll("#t-printed [data-draw]").forEach(b => b.addEventListener("click", () => openDrawing(b.dataset.draw)));
+}
+const BOUGHT = ["v_display", "v_pi", "v_camera", "v_leds", "v_power", "v_pads", "v_printer", "mock_selphy"];
+$("t-bought").querySelector("tbody").innerHTML = BOUGHT.map(k => { const p = PARTS[k];
+  return `<tr><td class="k">${esc(p.name)}</td><td>${esc(p.dim)}</td><td>${esc(p.fast)}</td><td>${(p.ds || []).map(link).join("<br>") || "–"}</td></tr>`; }).join("") +
+  `<tr><td class="k">Mean Well GST90A12-P1M</td><td>12 V 6,67 A, stik 5,5/2,5 [A]</td><td>Ekstern bordforsyning. Stikket går i panelbøsningen bagpå.</td><td>${link("mw")}</td></tr>` +
+  `<tr><td class="k">Pololu D36V28F9</td><td>17,8 × 20,3 × 8,8 mm, 9 V 2,6 A [A]</td><td>I holder i printerkabinettet, forsyner DFR0503.</td><td>${link("pol9")}</td></tr>` +
+  `<tr><td class="k">Messing-gevindindsats M3 (Elextra H44350)</td><td>Ø4,5 × 5,9 i hul Ø4,0 × 6,4 [A]</td><td>Varmes ned med loddekolbe.</td><td>${link("ins")}</td></tr>`;
+const FAST = [
+  ["M3 × 8 Torx linsehoved", "Kabinet → bezel (2 pr. side), printer-/skiltfront → kabinet", "4 + 4 + 4", "Indsats M3 Ø4,0 × 6,4, frigang Ø3,4, forsænkning Ø6,4"],
+  ["M3 × 12 Torx", "Temavinger (erstatter M3 × 8)", "4", "Gennem 4 mm ribbe"],
+  ["M3 × 16 Torx", "Modul-samlinger, fra indersiden af nederste modul", "2 pr. samling", "Frigang Ø3,4, forsænkning Ø6,4 til 4 mm væg"],
+  ["Styrestift Ø6 × 20", "Modul-samlinger", "2 pr. samling", "Hul Ø6,2–6,3, 8 mm dybt"],
+  ["M2 × 6 gevinddannende", "Kamera → bosser i bezel", "4", "Pilot Ø1,7 i boss Ø4,6"],
+  ["M2,5 × 6 gevinddannende", "LED-skinne → bezel", "4", "Pilot Ø2,2, hul i skinne Ø2,9"],
+  ["M2,5 (følger med skærmen)", "Pi 5 → skærmens afstandsstykker", "4", "Pi-huller Ø2,7, mønster 58 × 49"],
+  ["M4 × 10", "Låseskrue kabinet → vægbeslag", "1", "Indsats M4 Ø5,6 × 8,2, frigang Ø4,5"],
+  ["M4 (VESA 75)", "Valgfri VESA-arm", "4", "Indsatser M4 i kabinettets bagside"],
+  ["1/4\"-20 indsats", "Stativ i bunden af kabinet og printerkabinet", "1 + 1", "Hul Ø7,9 × 12,5"],
+  ["4,5 × 50 undersænket + dybel", "Vægbeslag → væg", "4", "Hul Ø5 med forsænkning"],
+  ["EVA 1 mm", "Ring om vinduet + 4 pads på tværbjælker", "1 ark", "Sammenpresses til 0,5 mm"],
+  ["CA-gel", "Diffuserring (4 propper), skiltbogstaver", "–", "0,15 mm presning + lim"]
+];
+$("t-fast").querySelector("tbody").innerHTML = FAST.map(r => `<tr><td class="k">${esc(r[0])}</td><td>${esc(r[1])}</td><td class="n">${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join("");
+
+// assembly steps (readable list)
+$("steps-print").innerHTML = STEPS.map((s, i) => `<article><div class="no">${i + 1}</div><div class="body"><h3>${esc(s.t)}</h3><p>${esc(s.text)}</p>
+  <div class="meta"><div><span class="lbl">Dele</span><ul class="tight">${s.parts.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div><span class="lbl">Skruer og værktøj</span><ul class="tight">${s.tools.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div><span class="lbl">Kontrol</span><p class="muted" style="font-size:.88rem">${esc(s.check)}</p></div></div>
+  <button class="btn" data-step="${i}">Vis trin ${i + 1} i 3D</button></div></article>`).join("");
+$("steps-print").addEventListener("click", ev => { const b = ev.target.closest("[data-step]"); if (!b) return;
+  state.step = +b.dataset.step; $("studio").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); switchTab("steps"); });
+
+// wiring diagram
+(function diagram() {
+  const COL = { "12": "#e5484d", "5": "#f2b24b", g: "#8d8d96", d: "#6ea0ff", f: "#c792ea", "9": "#ff7a45" };
+  const B = [
+    [20, 40, 170, 70, "Mean Well GST90A12", "12 V · 6,67 A · 80 W (ekstern)"], [225, 40, 150, 70, "DC-bøsning + sikring", "5,5/2,5 mm panel · 5 A blade"],
+    [410, 30, 180, 330, "Perfboard 70 × 50", "12 V- og GND-skinne|74AHCT125 niveauskifter|MOSFET + 100 Ω / 10 kΩ|1000 µF på LED-5 V|330 Ω i LED-data|skrueterminaler"],
+    [630, 40, 170, 60, "Pololu D36V50F5 #1", "12 → 5 V · Pi + skærm"], [630, 130, 170, 60, "Pololu D36V50F5 #2", "12 → 5 V · LED"],
+    [850, 30, 170, 200, "Raspberry Pi 5", "+ Active Cooler|USB-C: 5 V ind|GPIO10 (pin 19) SPI → LED|GPIO13 (pin 33) PWM → COB|GPIO14 (pin 8) TX → printer|pin 4/6: 5 V/GND → skærm"],
+    [1060, 30, 160, 80, "Touch Display 2 10\"", "DSI på CAM/DISP 1|5 V + GND fra GPIO"], [1060, 130, 160, 70, "Camera Module 3 Wide", "CAM/DISP 0 · 300 mm kabel"],
+    [1060, 220, 160, 60, "SELPHY CP1500", "USB · egen strøm (fotobase)"], [1060, 330, 160, 60, "Skilt: SK6812", "DIN fra ringens DOUT"],
+    [630, 260, 190, 70, "SK6812 RGBW ring + glød", "61 LED · 5 V · data via 74AHCT125"], [630, 370, 190, 60, "COB 12 V CRI 90+", "0,71 m · minus via MOSFET"],
+    [410, 430, 180, 80, "Samling, kabelhul Ø20", "JST: 12 V · GND · LED-data · TX"], [630, 455, 190, 60, "Pololu D36V28F9", "12 → 9 V (printerkabinet)"],
+    [880, 455, 170, 60, "DFR0503 strip-printer", "9 V · TTL RX"]
+  ];
+  const W = [
+    ["12", [[190, 68], [225, 68]]], ["g", [[190, 88], [225, 88]]], ["12", [[375, 68], [410, 68]]], ["g", [[375, 88], [410, 88]]],
+    ["12", [[590, 60], [630, 60]]], ["g", [[590, 82], [630, 82]]], ["12", [[590, 150], [630, 150]]], ["g", [[590, 172], [630, 172]]],
+    ["5", [[800, 70], [850, 70]], "USB-C pigtail"], ["5", [[1020, 55], [1060, 55]]], ["f", [[1020, 85], [1060, 85]], "DSI"], ["f", [[1020, 165], [1060, 165]], "CSI"],
+    ["d", [[1000, 230], [1000, 250], [1060, 250]], "USB"], ["5", [[715, 190], [715, 260]], "5 V LED", [722, 252]],
+    ["d", [[850, 200], [610, 200], [610, 235], [590, 235]], "GPIO10 SPI", [790, 196]], ["d", [[850, 215], [620, 215], [620, 320], [590, 320]], "GPIO13 PWM", [790, 228]],
+    ["d", [[590, 285], [630, 285]], "DIN", [604, 279]], ["d", [[820, 295], [1040, 295], [1040, 360], [1060, 360]], "DOUT → skilt"],
+    ["12", [[560, 360], [560, 385], [630, 385]]], ["g", [[580, 360], [580, 410], [630, 410]], "COB −", [598, 424]],
+    ["12", [[470, 360], [470, 430]]], ["g", [[500, 360], [500, 430]]], ["d", [[530, 360], [530, 430]]],
+    ["12", [[590, 470], [630, 470]]], ["g", [[590, 492], [630, 492]]], ["9", [[820, 480], [880, 480]], "9 V"],
+    ["d", [[935, 230], [935, 455]], "TX"]
+  ];
+  const fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#ecebef";
+  let s = `<svg viewBox="0 0 1240 540" role="img" aria-label="El-diagram for Halo-boksen" xmlns="http://www.w3.org/2000/svg" font-family="Familjen Grotesk, Arial, sans-serif">`;
+  W.forEach(([c, pts, lab, at]) => {
+    s += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="${COL[c]}" stroke-width="${c === "f" ? 4 : 2.4}" stroke-linejoin="round"/>`;
+    if (lab && at) s += `<text x="${at[0]}" y="${at[1]}" font-size="11" fill="${COL[c]}" text-anchor="middle">${esc(lab)}</text>`;
+    else if (lab) { const a = pts[0], b = pts[1], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      s += `<text x="${mx + (a[0] === b[0] ? 6 : 0)}" y="${my - 5}" font-size="11" fill="${COL[c]}" text-anchor="${a[0] === b[0] ? "start" : "middle"}">${esc(lab)}</text>`; }
+  });
+  B.forEach(([x, y, w, h, t, sub]) => {
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="var(--raised)" stroke="var(--line)" stroke-width="1.5"/>`;
+    s += `<text x="${x + 10}" y="${y + 20}" font-size="13" font-weight="700" fill="currentColor">${esc(t)}</text>`;
+    sub.split("|").forEach((l, i) => { s += `<text x="${x + 10}" y="${y + 38 + i * 15}" font-size="11" fill="var(--muted)">${esc(l)}</text>`; });
+  });
+  s += `<text x="20" y="528" font-size="11" fill="var(--muted)">Alle GND samles på perfboardets GND-skinne. Kabelhullet Ø20 i hver samling fører 12 V, GND, LED-data og printer-TX videre til tilbehør.</text></svg>`;
+  $("diagram").innerHTML = s; $("diagram").style.color = fg;
+})();
+
+// BOM
+const fmtKr = x => (Math.round(x)).toLocaleString("da-DK") + " kr";
+const num = s => parseFloat(String(s || "0").replace(/\./g, "").replace(",", ".")) || 0;
+function renderBom(rows) {
+  const head = rows[0], data = rows.slice(1).filter(r => r.length > 1 && r[1]);
+  const tot = data.filter(r => r[0] === "TOTAL");
+  const get = s => tot.find(r => r[1].startsWith(s)) || [];
+  const mainBox = num(get("HOVEDPRIS: hovedenhed")[6]), mainFirst = num(get("HOVEDPRIS: første")[8]);
+  const acc = num(get("Alt tilbehør")[6]), tools = num((tot.find(r => r[1].startsWith("Værktøj")) || [])[8]);
+  $("f-price").textContent = fmtKr(mainBox); $("f-first").textContent = fmtKr(mainFirst);
+  $("totals").innerHTML = `<div class="main"><b>${fmtKr(mainBox)}</b><span>Hovedpris pr. boks (forbrug)</span></div><div class="main"><b>${fmtKr(mainFirst)}</b><span>Første indkøb, hovedenhed (hele pakker og spoler)</span></div>` +
+    `<div><b>${fmtKr(acc)}</b><span>Alt tilbehør pr. boks, ikke i hovedpris</span></div><div><b>${fmtKr(tools)}</b><span>Værktøj, hvis I ikke har det</span></div>`;
+  const secs = [...new Set(data.filter(r => r[0] !== "TOTAL").map(r => r[0]))];
+  let filter = "Hovedenhed";
+  $("bom-filter").innerHTML = [["Alle", "Alle"], ...secs.map(s => [s, s])].map(([v, n]) => `<button data-v="${esc(v)}" aria-pressed="${v === filter}">${esc(n)}</button>`).join("");
+  const draw = () => {
+    const tb = $("t-bom").querySelector("tbody");
+    tb.innerHTML = data.filter(r => r[0] !== "TOTAL" && (filter === "Alle" || r[0] === filter)).map(r => {
+      if (r[1].startsWith("SUM ")) return `<tr class="sum"><td>${esc(r[1].replace("SUM ", "Sum: "))}</td><td></td><td></td><td class="n">${fmtKr(num(r[6]))}</td><td class="n">${fmtKr(num(r[8]))}</td><td></td><td></td></tr>`;
+      const sec = filter === "Alle" ? `<div class="muted" style="font-size:.74rem">${esc(r[0])}</div>` : "";
+      return `<tr><td class="k" style="white-space:normal">${sec}${esc(r[1])}</td><td>${esc(r[2])}</td><td class="n">${esc(r[3])} ${esc(r[4])}</td><td class="n">${r[6] && num(r[6]) ? fmtKr(num(r[6])) : "–"}</td><td class="n">${r[8] ? fmtKr(num(r[8])) : "–"}</td><td>${esc(r[10])}</td><td><span class="tag ${r[11] === "Fundet" ? "ok" : "est"}">${esc(r[11])}</span></td></tr>`;
+    }).join("");
+  };
+  $("bom-filter").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; filter = b.dataset.v; press($("bom-filter"), filter); draw(); });
+  draw();
+}
+const FIT_DA = {
+  "glass edge to light-channel ribs and camera bosses": "Glaskant til lysringens ribber og kamerabosser",
+  "camera to top light run": "Kamera til øverste lysløb", "display frame / adapter board to rail": "Skærmens ramme/print til LED-skinnen",
+  "display to shell": "Skærm til kabinet", "camera to glass and display": "Kamera til glas og skærm",
+  "Pi underside to rail cross bars": "Pi'ens underside til tværbjælkerne", "Pi and cooler to shell (air + cables)": "Pi og køler til kabinet (luft + kabler)",
+  "Pi to power electronics": "Pi til strømelektronik", "camera to rail": "Kamera til LED-skinne", "camera to shell": "Kamera til kabinet",
+  "glow strip to translucent stripe (light spread)": "Glødestrip til translucent stribe (lysspredning)", "foam pads to Pi": "EVA-pads til Pi",
+  "camera seated on its bosses": "Kamera sidder på sine bosser", "power electronics to rail": "Strømelektronik til LED-skinne",
+  "printer body to its shell": "Printerens krop til printerkabinettet"
+};
+function renderChecks(txt) {
+  const bed = [], fit = [];
+  txt.split("\n").forEach(l => {
+    let m = l.match(/^(OK|--|FAIL)\s+(\S+)\s+([\d.]+) x\s+([\d.]+) x\s+([\d.]+) mm\s+(.*)$/);
+    if (m) bed.push(m);
+    m = l.match(/^\s+(OK|FAIL)\s+(\S+)\s+->\s+(\S+)\s+([\d.]+|inf) mm \(min ([\d.]+)\) (.*)$/);
+    if (m) fit.push(m);
+  });
+  const nm = k => (PARTS[k] || { name: k.replace("shell_closed_top", "Kabinet, lukket top") }).name;
+  $("t-fit").querySelector("tbody").innerHTML = fit.map(m => `<tr><td>${esc(FIT_DA[m[6].trim()] || m[6])}<div class="muted" style="font-size:.76rem">${esc(nm(m[2]))} → ${esc(nm(m[3]))}</div></td><td class="n">${m[4] === "inf" ? "fri" : m[4].replace(".", ",") + " mm"}</td><td class="n">${m[5].replace(".", ",")} mm</td><td><span class="tag ${m[1] === "OK" ? "ok" : "est"}">${m[1]}</span></td></tr>`).join("") +
+    `<tr class="total"><td>Overlap mellem dele</td><td class="n">0</td><td class="n">0</td><td><span class="tag ok">OK</span></td></tr>`;
+  $("t-bed").querySelector("tbody").innerHTML = bed.map(m => `<tr><td>${esc(nm(m[2]))}</td><td class="n">${[m[3], m[4], m[5]].map(v => v.replace(".", ",")).join(" × ")}</td><td class="n">${esc(m[6].replace("co-printed inside sign_front", "printes i skilt-fronten").replace("bed", "").replace("cm2", "cm²").replace(".", ","))}</td><td><span class="tag ${m[1] === "FAIL" ? "est" : "ok"}">${m[1] === "--" ? "i skilt" : m[1]}</span></td></tr>`).join("");
+}
+
+// TOC highlight
+const tocLinks = [...document.querySelectorAll("#toc a")];
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) tocLinks.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-40% 0px -55% 0px" });
+document.querySelectorAll("section[id]").forEach(s => io.observe(s));
+
+// load data files
+Promise.all([fetch("parts.json").then(r => r.json()).catch(() => ({})), fetch("bom.json").then(r => r.json()).catch(() => null), fetch("checks.txt").then(r => r.text()).catch(() => "")])
+  .then(([pd, bom, chk]) => { PD = pd; renderPrinted(); if (bom) renderBom(bom); renderChecks(chk); if (state.selected) showInfo(state.selected); });
+renderPrinted();
+syncSetup(); renderSide();
+if (window.THREE) init3d();
+})();
+</script>

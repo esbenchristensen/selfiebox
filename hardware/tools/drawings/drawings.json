@@ -1,0 +1,688 @@
+{
+ "_doc": "Drawing sheets for render_drawings.js. Coordinates are in the part's OpenSCAD frame (mm): front view (x, z), side view from the right (y = depth, z), top view (x, y), back view (-x, z). dims: [view, [h1, v1], [h2, v2], offset_px, label?]. notes: [view, [h, v], text].",
+ "parts": [
+  {
+   "node": "bezel",
+   "title": "Bezel (front med lysring-kanaler)",
+   "views": [
+    "front",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort",
+   "file": "stl/bezel.stl",
+   "dims": [
+    [
+     "front",
+     [
+      -68.7,
+      260.5
+     ],
+     [
+      68.7,
+      260.5
+     ],
+     0,
+     "Vindue 137,4"
+    ],
+    [
+     "front",
+     [
+      90,
+      42.55
+     ],
+     [
+      90,
+      261.15
+     ],
+     0,
+     "Vindue 218,6"
+    ],
+    [
+     "front",
+     [
+      -94.45,
+      16.8
+     ],
+     [
+      94.45,
+      16.8
+     ],
+     30,
+     "Ring c-c 188,9"
+    ],
+    [
+     "front",
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      289.2
+     ],
+     0,
+     "Kamera-linse 289,2"
+    ],
+    [
+     "side",
+     [
+      10,
+      0
+     ],
+     [
+      10,
+      66.8
+     ],
+     0
+    ],
+    [
+     "side",
+     [
+      10,
+      0
+     ],
+     [
+      10,
+      239.2
+     ],
+     26
+    ]
+   ],
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      289.2
+     ],
+     "Kamerahul Ø8,6, 4 x boss Ø4,6 (M2 gevinddannende)",
+     70,
+     -30
+    ],
+    [
+     "side",
+     [
+      10,
+      66.8
+     ],
+     "4 x M3 indsats Ø4,0 x 6,4 (2 pr. side)",
+     60,
+     40
+    ],
+    [
+     "front",
+     [
+      -94.45,
+      151.85
+     ],
+     "Lysslids 14 mm",
+     60,
+     -40
+    ],
+    [
+     "front",
+     [
+      109.85,
+      239.2
+     ],
+     "4 x pilot Ø2,2 til M2,5 (LED-skinne)",
+     -70,
+     -40
+    ]
+   ]
+  },
+  {
+   "node": "diffuser_ring",
+   "title": "Diffuserring (lysring)",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "PETG translucent",
+   "file": "stl/diffuser_ring.stl",
+   "dims": [
+    [
+     "front",
+     [
+      -19,
+      289.2
+     ],
+     [
+      19,
+      289.2
+     ],
+     0,
+     "Kameragab 38"
+    ]
+   ],
+   "notes": [
+    [
+     "front",
+     [
+      94.45,
+      151.85
+     ],
+     "4 propper presses i slidserne (0,15 mm pres + CA-lim)"
+    ],
+    [
+     "side",
+     [
+      -0.8,
+      151.85
+     ],
+     "Står 1,6 mm frem"
+    ]
+   ]
+  },
+  {
+   "node": "led_rail",
+   "title": "LED-skinne (holder skærmen og LED-strips)",
+   "views": [
+    "front",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort",
+   "file": "stl/led_rail.stl",
+   "dims": [
+    [
+     "front",
+     [
+      -70,
+      49.85
+     ],
+     [
+      -70,
+      253.85
+     ],
+     0,
+     "Tværbjælker c-c 204"
+    ]
+   ],
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      49.85
+     ],
+     "Tværbjælke 14 mm med 2 EVA-pads 30 x 10"
+    ],
+    [
+     "front",
+     [
+      109.85,
+      239.2
+     ],
+     "4 x hul Ø2,9 til M2,5 x 6"
+    ],
+    [
+     "front",
+     [
+      -94.45,
+      151.85
+     ],
+     "COB yderst, RGBW inderst"
+    ]
+   ]
+  },
+  {
+   "node": "shell",
+   "title": "Kabinet (bagdel)",
+   "views": [
+    "back",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort + translucent stribe (lag 34-44 mm)",
+   "file": "stl/shell.stl",
+   "dims": [
+    [
+     "back",
+     [
+      -37.5,
+      114.35
+     ],
+     [
+      37.5,
+      114.35
+     ],
+     26,
+     "VESA 75"
+    ],
+    [
+     "back",
+     [
+      80,
+      114.35
+     ],
+     [
+      80,
+      189.35
+     ],
+     0,
+     "VESA 75"
+    ],
+    [
+     "back",
+     [
+      -60,
+      274
+     ],
+     [
+      60,
+      274
+     ],
+     -26,
+     "Vægbeslag-spor 120"
+    ],
+    [
+     "top",
+     [
+      -55,
+      44
+     ],
+     [
+      55,
+      44
+     ],
+     0,
+     "Samleskruer 110"
+    ],
+    [
+     "top",
+     [
+      -30,
+      50
+     ],
+     [
+      30,
+      50
+     ],
+     22,
+     "Styrestifter 60"
+    ],
+    [
+     "back",
+     [
+      -90,
+      0
+     ],
+     [
+      -90,
+      234
+     ],
+     0,
+     "M4 lås 234"
+    ]
+   ],
+   "notes": [
+    [
+     "back",
+     [
+      52,
+      40
+     ],
+     "DC-bøsning Ø8,0",
+     60,
+     -30
+    ],
+    [
+     "back",
+     [
+      37.5,
+      189.35
+     ],
+     "4 x M4 indsats (VESA)",
+     60,
+     -40
+    ],
+    [
+     "back",
+     [
+      0,
+      234
+     ],
+     "M4 låseskrue til vægbeslag",
+     60,
+     -30
+    ],
+    [
+     "side",
+     [
+      10,
+      239.2
+     ],
+     "M3 x 8 ind i bezel",
+     60,
+     -30
+    ],
+    [
+     "top",
+     [
+      0,
+      30
+     ],
+     "Kabelhul Ø20",
+     -70,
+     40
+    ],
+    [
+     "top",
+     [
+      55,
+      44
+     ],
+     "M3 skrue ned i næste modul",
+     60,
+     40
+    ]
+   ]
+  },
+  {
+   "node": "wall_cleat",
+   "title": "Vægbeslag (fransk skinne)",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "ASA sort",
+   "file": "stl/wall_cleat.stl",
+   "dims": [
+    [
+     "front",
+     [
+      -48,
+      242
+     ],
+     [
+      48,
+      242
+     ],
+     26,
+     "96"
+    ],
+    [
+     "front",
+     [
+      -40,
+      70
+     ],
+     [
+      -40,
+      125
+     ],
+     0,
+     "55"
+    ]
+   ],
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      70
+     ],
+     "4 x Ø5 undersænket til 4,5 x 50 skruer"
+    ],
+    [
+     "front",
+     [
+      0,
+      234
+     ],
+     "M4 indsats til låseskrue"
+    ]
+   ]
+  },
+  {
+   "node": "joint_spacer",
+   "title": "Samlestykke (mellem moduler)",
+   "views": [
+    "top",
+    "side"
+   ],
+   "material": "ASA sort",
+   "file": "stl/joint_spacer.stl",
+   "dims": [
+    [
+     "top",
+     [
+      -55,
+      44
+     ],
+     [
+      55,
+      44
+     ],
+     0,
+     "M3 c-c 110"
+    ],
+    [
+     "top",
+     [
+      -30,
+      50
+     ],
+     [
+      30,
+      50
+     ],
+     -22,
+     "Stifter c-c 60"
+    ]
+   ],
+   "notes": [
+    [
+     "top",
+     [
+      0,
+      30
+     ],
+     "Kabelhul Ø20"
+    ],
+    [
+     "top",
+     [
+      -30,
+      50
+     ],
+     "Ø6,3 til styrestift"
+    ]
+   ]
+  },
+  {
+   "node": "printer_front",
+   "title": "Printer-front (DFR0503)",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "ASA sort",
+   "file": "stl/printer_front.stl",
+   "dims": [
+    [
+     "front",
+     [
+      -38.7,
+      64.7
+     ],
+     [
+      38.7,
+      64.7
+     ],
+     0,
+     "Udskæring 77,4"
+    ],
+    [
+     "front",
+     [
+      -50,
+      11.3
+     ],
+     [
+      -50,
+      64.7
+     ],
+     0,
+     "53,4"
+    ]
+   ],
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      38
+     ],
+     "Printeren klemmes i 0,4 mm sæde 82,6 x 58,6"
+    ]
+   ]
+  },
+  {
+   "node": "printer_shell",
+   "title": "Printerkabinet",
+   "views": [
+    "back",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort + translucent stribe",
+   "file": "stl/printer_shell.stl",
+   "notes": [
+    [
+     "top",
+     [
+      0,
+      30
+     ],
+     "Kabelhul Ø20"
+    ],
+    [
+     "back",
+     [
+      90,
+      60
+     ],
+     "Holder til Pololu D36V28F9"
+    ]
+   ]
+  },
+  {
+   "node": "sign_front",
+   "title": "Skilt-front",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "ASA sort",
+   "file": "stl/sign_front.stl",
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      36
+     ],
+     "Bogstaver skåret igennem, translucente bogstaver limes i"
+    ]
+   ]
+  },
+  {
+   "node": "sign_shell",
+   "title": "Skiltkabinet",
+   "views": [
+    "back",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort + translucent stribe",
+   "file": "stl/sign_shell.stl"
+  },
+  {
+   "node": "roof",
+   "title": "Tag (festival)",
+   "views": [
+    "front",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort",
+   "file": "stl/roof.stl",
+   "notes": [
+    [
+     "side",
+     [
+      -40,
+      30
+     ],
+     "75 mm udhæng, 12 mm fald bagud"
+    ]
+   ]
+  },
+  {
+   "node": "photo_base",
+   "title": "Fotobase (SELPHY CP1500)",
+   "views": [
+    "front",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort",
+   "file": "stl/photo_base.stl",
+   "notes": [
+    [
+     "top",
+     [
+      0,
+      -60
+     ],
+     "Rum til SELPHY 182,2 x 133 x 57,6"
+    ]
+   ]
+  },
+  {
+   "node": "foot",
+   "title": "Fod (bord)",
+   "views": [
+    "front",
+    "side",
+    "top"
+   ],
+   "material": "ASA sort",
+   "file": "stl/foot.stl"
+  },
+  {
+   "node": "sommernat--wing_right__base",
+   "title": "Temavinge højre (Sommernat)",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "PETG HF sort + farve-inlays",
+   "file": "themes/sommernat/build/wing_right.3mf",
+   "notes": [
+    [
+     "side",
+     [
+      10,
+      66.8
+     ],
+     "2 x M3 x 12 gennem 4 mm ribbe i kabinettets sideskruer"
+    ]
+   ]
+  },
+  {
+   "node": "sommernat--topper__base",
+   "title": "Topper (Sommernat)",
+   "views": [
+    "front",
+    "side",
+    "top"
+   ],
+   "material": "PETG HF sort + farve-inlays",
+   "file": "themes/sommernat/build/topper.3mf"
+  }
+ ]
+}

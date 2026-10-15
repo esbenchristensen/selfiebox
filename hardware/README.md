@@ -21,10 +21,14 @@ bolt on through a joint spacer.
 | `tools/check_bed.py` | Every STL fits the H2C plate (285 × 306 × 305 mm, ≥ 7 mm from the edges) |
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
-| `docs/` | Sources of the 3D presentation pages (Halo and event themes) |
+| `docs/pack/` | The complete A–Z build pack page: every part in 3D with fastening and datasheets, assembly steps, drawings, wiring, print settings, themes, shopping list and checks |
+| `docs/pack/drawings/` | Dimensioned drawing sheets for every printed part (`tools/drawings/render_drawings.js`) |
+| `docs/halo-page/`, `docs/themes-page/` | Earlier presentation pages |
 | `cad/archive/` | Earlier landscape design |
 
 ```sh
+# rebuild the pack: themes -> model -> drawings -> shopping list
+python3 tools/build_pack.py && node tools/drawings/render_drawings.js && python3 tools/make_bom.py
 openscad -D 'PART="bezel"' -D 'PRINT=true' -o stl/bezel.stl cad/halo.scad
 python3 tools/check_bed.py && python3 tools/check_fit.py   # needs trimesh, manifold3d, rtree
 ```
