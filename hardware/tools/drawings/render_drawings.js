@@ -13,6 +13,7 @@ const THREE_DIR = path.dirname(require.resolve("three/package.json"));
 const FILES = {
   "/render.html": path.join(HERE, "render.html"),
   "/pack.json": path.join(PACK, "pack.json"),
+  "/hardware.json": path.join(PACK, "hardware.json"),
   "/three.min.js": path.join(THREE_DIR, "build", "three.min.js"),
   "/GLTFLoader.js": path.join(THREE_DIR, "examples", "js", "loaders", "GLTFLoader.js")
 };
@@ -31,9 +32,12 @@ const FILES = {
   await page.evaluate(() => window.ready);
   fs.mkdirSync(OUT, { recursive: true });
   const { parts } = JSON.parse(fs.readFileSync(path.join(HERE, "drawings.json"), "utf8"));
+  const only = process.argv.slice(2);
+  fs.readdirSync(OUT).filter(f => f.endsWith(".png") && !only.length).forEach(f => fs.unlinkSync(path.join(OUT, f)));
   for (const spec of parts) {
+    if (only.length && !only.includes(spec.out || spec.node)) continue;
     const url = await page.evaluate(s => window.sheet(s), spec);
-    const file = path.join(OUT, spec.node.replace("--", "_") + ".png");
+    const file = path.join(OUT, (spec.out || spec.node.replace("--", "_")) + ".png");
     fs.writeFileSync(file, Buffer.from(url.split(",")[1], "base64"));
     console.log("drawing", path.basename(file));
   }

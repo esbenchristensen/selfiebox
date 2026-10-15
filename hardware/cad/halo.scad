@@ -279,10 +279,10 @@ module pololu_cradle(sz = POL50, hgt = 7) {
         cube([4, 1.6, 0.01]); translate([0, sy > 0 ? -0.6 : 0.6, 1.2]) cube([4, 1.6, 0.01]);
     }
 }
-module shell() {
+module shell(top = UNIT_TOP) {
     difference() {
         union() {
-            shell_base(H, BLOCK_Z, top = UNIT_TOP, bottom = "joint", tripod = true);
+            shell_base(H, BLOCK_Z, top = top, bottom = "joint", tripod = true);
             translate([-CLEAT_L/2 - 3, D - BACK_T - CLEAT_D, CLEAT_ZC - 27]) cube([CLEAT_L + 6, CLEAT_D + 0.01, 39]);
             for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
             // perfboard slide rails (board stands 6 mm off the back wall, components face forward)
@@ -306,6 +306,7 @@ module shell() {
     }
 }
 
+module shell_closed() { shell("closed"); }   // plain unit: nothing on the top joint
 // ============================================================ JOINT SPACER ==
 module joint_spacer() {
     difference() {
@@ -455,7 +456,8 @@ module placed_pi()       { translate([0, PI_Y, GC]) rpi5(); }
 module placed_camera()   { translate([0, CAM_PCB_Y, LENS_Z]) camera_module3_wide_rot(); }
 module placed_pads()     { color([0.2, 0.2, 0.2]) for (sx = [-1, 1], z = XBAR_Z) translate([sx*40 - 15, RIB_TOP - 0.5, z - 5]) cube([30, 0.5, 10]); }   // compressed EVA
 module placed_power() {
-    for (z = POL_Z) translate([POL_X, D - BACK_T - 1.2 - POL50[2], z]) pololu(POL50);
+    // board lies flat on the cradle floor against the back wall: 25.4 wide (x), 9.5 deep (y), 25.4 tall (z)
+    for (z = POL_Z) translate([POL_X, D - BACK_T - 1.2 - POL50[2], z]) pololu([POL50[0], POL50[2], POL50[1]]);
     color([0.15, 0.4, 0.2]) translate([-PB_RAIL[0]/2, PB_Y - PB_RAIL[2], PB_Z0]) cube([PB_RAIL[0], PB_RAIL[2], PB_RAIL[1]]);
     color([0.3, 0.3, 0.3]) translate([-PB_RAIL[0]/2 + 4, PB_Y - PB_RAIL[2] - 12, PB_Z0 + 4]) cube([PB_RAIL[0] - 8, 12, PB_RAIL[1] - 8]);
     color([0.2, 0.2, 0.2]) translate([DC_POS[0], D - BACK_T - DC_JACK_BODY[1], DC_POS[1]]) rotate([-90, 0, 0]) cylinder(d = DC_JACK_BODY[0], h = DC_JACK_BODY[1]);
@@ -510,6 +512,63 @@ module assembly(e = EXPLODE) {
     }
 }
 
+
+// ============================================================ HARDWARE =====
+// Every screw, insert and dowel: [group, owner part, type, position, direction, when].
+// group: frame it lives in ("unit" = main unit, "strip" = printer module, "roof"/"topper" = own frame).
+// position = head seat (screws) or entry point (inserts, dowels); direction = the way it goes in.
+// when: "base" always, "top" only with a roof/topper on the top joint, "wing" with theme wings.
+YB_CLEAT = D + GAP_WALL - PLATE_T;
+HW_LIST = concat(
+  [for (sx = [-1, 1], z = BLOCK_Z) ["unit", "bezel", "ins_m3", [sx*(HW - WALL), SIDE_Y, z], [-sx, 0, 0], "base"]],
+  [for (sx = [-1, 1], z = BLOCK_Z) ["unit", "shell", "m3x8", [sx*(HW - 1.8), SIDE_Y, z], [-sx, 0, 0], "base"]],
+  [for (sx = [-1, 1], z = BLOCK_Z) ["unit", "wing", "m3x12", [sx*(HW + 4.2), SIDE_Y, z], [-sx, 0, 0], "wing"]],
+  [for (h = CAM_HOLES_ROT) ["unit", "v_camera", "m2x6", [h[0], CAM_PCB_Y + CAM_PCB[2], LENS_Z + h[1]], [0, -1, 0], "base"]],
+  [for (sx = [-1, 1], z = BLOCK_Z) ["unit", "led_rail", "m25x6", [sx*RAIL_EAR_X, RIB_TOP + RAIL_T, z], [0, -1, 0], "base"]],
+  [for (p = IF_SCREW) ["unit", "shell", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]],
+  [["unit", "shell", "ins_q", [TRIPOD_P[0], TRIPOD_P[1], 0], [0, 0, 1], "base"]],
+  [for (sx = [-1, 1], sz = [-1, 1]) ["unit", "shell", "ins_m4", [sx*VESA/2, D, VESA_Z + sz*VESA/2], [0, -1, 0], "base"]],
+  [["unit", "shell", "m4x10", [0, D - BACK_T, LOCK_Z], [0, 1, 0], "base"]],
+  [["unit", "wall_cleat", "ins_m4", [0, D, LOCK_Z], [0, 1, 0], "base"]],
+  [for (p = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125]]) ["unit", "wall_cleat", "wood45x50", [p[0], YB_CLEAT, p[1]], [0, 1, 0], "base"]],
+  [for (p = IF_SCREW) ["unit", "shell", "m3x16", [p[0], p[1], H - 4], [0, 0, 1], "top"]],
+  [for (p = IF_DOWEL) ["unit", "shell", "dowel6x20", [p[0], p[1], H - 8], [0, 0, 1], "top"]],
+  [for (sx = [-1, 1], z = PRN_BLOCKS) ["strip", "printer_front", "ins_m3", [sx*(HW - WALL), SIDE_Y, z], [-sx, 0, 0], "base"]],
+  [for (sx = [-1, 1], z = PRN_BLOCKS) ["strip", "printer_shell", "m3x8", [sx*(HW - 1.8), SIDE_Y, z], [-sx, 0, 0], "base"]],
+  [for (p = IF_SCREW) ["strip", "printer_shell", "m3x16", [p[0], p[1], H_PRN - 4], [0, 0, 1], "base"]],
+  [for (p = IF_DOWEL) ["strip", "printer_shell", "dowel6x20", [p[0], p[1], H_PRN - 8], [0, 0, 1], "base"]],
+  [for (p = IF_SCREW) ["strip", "printer_shell", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]],
+  [["strip", "printer_shell", "ins_q", [TRIPOD_P[0], TRIPOD_P[1], 0], [0, 0, 1], "base"]],
+  [for (p = IF_SCREW) ["roof", "roof", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]],
+  [for (p = IF_SCREW) ["topper", "topper", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]]
+);
+// Holes that are not fasteners themselves (for the hole tables): [part, label, position, direction, diameter, depth]
+HOLE_LIST = concat(
+  [["bezel", "Kamerahul", [0, 0, LENS_Z], [0, 1, 0], CAM_HOLE, PT]],
+  [for (h = CAM_HOLES_ROT) ["bezel", "Pilot M2 (kamera)", [h[0], CAM_PCB_Y, LENS_Z + h[1]], [0, -1, 0], M2_PILOT, CAM_PCB_Y - PT - 0.6]],
+  [for (sx = [-1, 1], z = BLOCK_Z) ["bezel", "Pilot M2,5 (skinne)", [sx*RAIL_EAR_X, RIB_TOP, z], [0, -1, 0], M25_PILOT, 5.5]],
+  [for (sx = [-1, 1], z = BLOCK_Z) ["led_rail", "Hul M2,5", [sx*RAIL_EAR_X, RIB_TOP + RAIL_T, z], [0, -1, 0], 2.9, RAIL_T]],
+  [for (sx = [-1, 1], z = BLOCK_Z) ["shell", "Frigang M3 + forsænkning Ø6,4", [sx*HW, SIDE_Y, z], [-sx, 0, 0], M3_CLR, WALL]],
+  [for (p = IF_DOWEL) ["shell", "Styrestift bund", [p[0], p[1], 0], [0, 0, 1], 6.2, 8]],
+  [["shell", "Kabelhul bund", [IF_CABLE[0], IF_CABLE[1], 0], [0, 0, 1], IF_CABLE_D, WALL]],
+  [for (p = IF_SCREW) ["shell", "Frigang M3 top + forsænkning", [p[0], p[1], H], [0, 0, -1], M3_CLR, 5]],
+  [for (p = IF_DOWEL) ["shell", "Styrestift top", [p[0], p[1], H], [0, 0, -1], 6.2, 8]],
+  [["shell", "Kabelhul top", [IF_CABLE[0], IF_CABLE[1], H], [0, 0, -1], IF_CABLE_D, WALL]],
+  [["shell", "DC-bøsning", [DC_POS[0], D, DC_POS[1]], [0, -1, 0], DC_JACK_HOLE, BACK_T]],
+  [["shell", "Frigang M4 lås", [0, D, LOCK_Z], [0, -1, 0], M4_CLR, BACK_T]],
+  [["shell", "Gennemføring Ø5", [-(HW - 17.5), D, 17.5], [0, -1, 0], 5, BACK_T]],
+  [for (p = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125]]) ["wall_cleat", "Vægskrue, undersænket", [p[0], YB_CLEAT, p[1]], [0, 1, 0], 5, PLATE_T]],
+  [for (p = IF_SCREW) ["joint_spacer", "Frigang M3", [p[0], p[1], 0], [0, 0, 1], M3_CLR, SPACER_T]],
+  [for (p = IF_DOWEL) ["joint_spacer", "Styrestift", [p[0], p[1], 0], [0, 0, 1], 6.3, SPACER_T]],
+  [["joint_spacer", "Kabelhul", [IF_CABLE[0], IF_CABLE[1], 0], [0, 0, 1], IF_CABLE_D, SPACER_T]],
+  [for (p = IF_DOWEL) ["roof", "Styrestift", [p[0], p[1], 0], [0, 0, 1], 6.2, 8]],
+  [for (sx = [-1, 1], z = PRN_BLOCKS) ["printer_shell", "Frigang M3 + forsænkning Ø6,4", [sx*HW, SIDE_Y, z], [-sx, 0, 0], M3_CLR, WALL]],
+  [for (p = IF_SCREW) ["printer_shell", "Frigang M3 top + forsænkning", [p[0], p[1], H_PRN], [0, 0, -1], M3_CLR, 5]],
+  [for (p = IF_DOWEL) ["printer_shell", "Styrestift top", [p[0], p[1], H_PRN], [0, 0, -1], 6.2, 8]],
+  [for (p = IF_DOWEL) ["printer_shell", "Styrestift bund", [p[0], p[1], 0], [0, 0, 1], 6.2, 8]],
+  [["printer_front", "Udskæring printer", [0, 0, PRN_Z], [0, 1, 0], 0, PT]]
+);
+
 // ============================================================ OUTPUT =======
 module face_down() { rotate([90, 0, 0]) children(); }
 module back_down() { translate([0, 0, D]) rotate([-90, 0, 0]) children(); }
@@ -537,5 +596,8 @@ else if (PART == "v_power")        placed_power();
 else if (PART == "v_leds")         placed_leds();
 else if (PART == "v_diffusers")    diffuser_ring();
 else if (PART == "v_printer")      translate([0, 0, PRN_Z]) dfr0503();
+else if (PART == "v_pol9")         translate([-HW + WALL + 4, D - BACK_T - 1.2 - POL28[2], H_PRN - WALL - POL28[1] - 8]) pololu([POL28[0], POL28[2], POL28[1]]);
+else if (PART == "shell_closed")   shell_closed();
+else if (PART == "hardware") { echo(HW_LIST = HW_LIST); echo(HOLE_LIST = HOLE_LIST); echo(VARS = [W, H, D, H_PRN, SPACER_T, LOCK_Z, CLEAT_ZC, GC, LENS_Z]); }
 else if (PART == "geom") echo(GEOM = [W, H, D, R, SIDE_Y, BLOCK_Z[0], BLOCK_Z[1], H_SIGN, H_PRN, PRN_Z, SPACER_T, EDGE_CH, M3_CLR, INS_M3_D, INS_M3_L, PRN_FRONT[0], PRN_FRONT[1]]);
 else if (PART == "info") echo(W = W, H = H, GLASS_TOP = GLASS_TOP, GC = GC, LENS_Z = LENS_Z, CAM_PCB_Y = CAM_PCB_Y, PI_Y = PI_Y, RING = [RING_X, RING_Z0, RING_Z1], RUN_V = RUN_V, RUN_H = RUN_H, LEDS = [run_leds(RUN_V), run_leds(RUN_H), run_leds(RUN_T)], RUN_T = RUN_T, XBAR_Z = XBAR_Z, CAM_TOP = CAM_TOP);

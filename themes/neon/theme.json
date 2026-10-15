@@ -3,29 +3,80 @@
   "event": "Nightclub theme – fluorescent strokes that glow under UV",
   "seed": 3,
   "palette": {
-    "base":    {"hex": "#0b0b0d", "filament": "PETG HF black"},
-    "night":   {"hex": "#0b0b0d", "filament": "PETG HF black (same spool as base)"},
-    "magenta": {"hex": "#ff2fb4", "filament": "PETG fluorescent pink (UV reactive)"},
-    "cyan":    {"hex": "#22e6ff", "filament": "PETG fluorescent blue (UV reactive)"},
-    "lime":    {"hex": "#c8ff3a", "filament": "PETG fluorescent green (UV reactive)"}
+    "base": {
+      "hex": "#0b0b0d",
+      "filament": "PETG HF black"
+    },
+    "night": {
+      "hex": "#0b0b0d",
+      "filament": "PETG HF black (same spool as base)"
+    },
+    "magenta": {
+      "hex": "#ff2fb4",
+      "filament": "PETG fluorescent pink (UV reactive)"
+    },
+    "cyan": {
+      "hex": "#22e6ff",
+      "filament": "PETG fluorescent blue (UV reactive)"
+    },
+    "lime": {
+      "hex": "#c8ff3a",
+      "filament": "PETG fluorescent green (UV reactive)"
+    }
   },
   "casing": {
     "style": "neon",
-    "roles": {"sky": "night", "hills": ["magenta", "cyan", "lime"], "top": "night", "stars": "lime"},
+    "roles": {
+      "sky": "night",
+      "hills": [
+        "magenta",
+        "cyan",
+        "lime"
+      ],
+      "top": "night",
+      "stars": "lime"
+    },
     "sign_text": "CLUB NAME",
     "parts": {
-      "wings":   {"width": 40, "edge": "spikes"},
-      "topper":  {"height": 95, "edge": "spikes", "text": true},
-      "sign":    {}
+      "wings": {
+        "width": 40,
+        "edge": "spikes"
+      },
+      "topper": {
+        "height": 95,
+        "edge": "spikes",
+        "text": true
+      }
     },
     "style_options": {
-      "wing_right": {"lines": 7}, "wing_left": {"lines": 7}, "topper": {"lines": 5}, "sign_front": {"lines": 3}
+      "wing_right": {
+        "lines": 7
+      },
+      "wing_left": {
+        "lines": 7
+      },
+      "topper": {
+        "lines": 5
+      }
     }
   },
   "light": {
-    "idle":  {"animation": "chase", "colors": ["#ff2fb4", "#22e6ff", "#c8ff3a"], "period_s": 3},
-    "countdown": {"color": "#22e6ff"},
-    "photo": {"cob": 1.0, "rgbw": "#ffffff"},
+    "idle": {
+      "animation": "chase",
+      "colors": [
+        "#ff2fb4",
+        "#22e6ff",
+        "#c8ff3a"
+      ],
+      "period_s": 3
+    },
+    "countdown": {
+      "color": "#22e6ff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#ffffff"
+    },
     "glow": "#ff2fb4"
   },
   "screen": {

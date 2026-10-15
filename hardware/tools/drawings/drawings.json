@@ -1,26 +1,29 @@
 {
- "_doc": "Drawing sheets for render_drawings.js. Coordinates are in the part's OpenSCAD frame (mm): front view (x, z), side view from the right (y = depth, z), top view (x, y), back view (-x, z). dims: [view, [h1, v1], [h2, v2], offset_px, label?]. notes: [view, [h, v], text].",
+ "_doc": "Drawing sheets for render.html. Points are [x, y, z] in the part's OpenSCAD frame (x width, y depth from the front face, z height). part: dims [view, p1, p2, offset_px, label], notes [view, p, text, dx, dy]. Holes/inserts come from docs/pack/hardware.json automatically. assembly: items [pos, [nodes], qty, name, material]. detail: panels with view, nodes, box [[x,y,z],[x,y,z]], explode, pull (mm), labels [p, text, dx, dy].",
  "parts": [
   {
+   "out": "D01_bezel",
    "node": "bezel",
-   "title": "Bezel (front med lysring-kanaler)",
+   "title": "Bezel (front)",
    "views": [
     "front",
     "side",
     "top"
    ],
-   "material": "ASA sort",
+   "material": "ASA sort, forside ned",
    "file": "stl/bezel.stl",
    "dims": [
     [
      "front",
      [
       -68.7,
-      260.5
+      0,
+      262
      ],
      [
       68.7,
-      260.5
+      0,
+      262
      ],
      0,
      "Vindue 137,4"
@@ -29,10 +32,12 @@
      "front",
      [
       90,
+      0,
       42.55
      ],
      [
       90,
+      0,
       261.15
      ],
      0,
@@ -42,35 +47,41 @@
      "front",
      [
       -94.45,
+      0,
       16.8
      ],
      [
       94.45,
+      0,
       16.8
      ],
-     30,
+     34,
      "Ring c-c 188,9"
     ],
     [
      "front",
      [
-      0,
-      0
-     ],
-     [
+      -19,
       0,
       289.2
      ],
-     0,
-     "Kamera-linse 289,2"
+     [
+      19,
+      0,
+      289.2
+     ],
+     -30,
+     "Kameragab 38"
     ],
     [
      "side",
      [
       10,
+      10,
       0
      ],
      [
+      10,
       10,
       66.8
      ],
@@ -80,172 +91,193 @@
      "side",
      [
       10,
+      10,
       0
      ],
      [
       10,
+      10,
       239.2
      ],
-     26
+     30
+    ],
+    [
+     "side",
+     [
+      0,
+      0,
+      150
+     ],
+     [
+      10,
+      0,
+      150
+     ],
+     -40,
+     "10"
     ]
    ],
    "notes": [
     [
      "front",
      [
-      0,
-      289.2
-     ],
-     "Kamerahul Ø8,6, 4 x boss Ø4,6 (M2 gevinddannende)",
-     70,
-     -30
-    ],
-    [
-     "side",
-     [
-      10,
-      66.8
-     ],
-     "4 x M3 indsats Ø4,0 x 6,4 (2 pr. side)",
-     60,
-     40
-    ],
-    [
-     "front",
-     [
       -94.45,
+      0,
       151.85
      ],
-     "Lysslids 14 mm",
+     "Lysslids 14 mm (4 løb)",
      60,
      -40
     ],
     [
      "front",
      [
-      109.85,
-      239.2
+      0,
+      0,
+      151.85
      ],
-     "4 x pilot Ø2,2 til M2,5 (LED-skinne)",
-     -70,
-     -40
+     "Vindue med 1,6 mm fas",
+     60,
+     30
     ]
    ]
   },
   {
+   "out": "D02_diffuser_ring",
    "node": "diffuser_ring",
-   "title": "Diffuserring (lysring)",
+   "title": "Diffuserring",
    "views": [
     "front",
     "side"
    ],
    "material": "PETG translucent",
    "file": "stl/diffuser_ring.stl",
-   "dims": [
-    [
-     "front",
-     [
-      -19,
-      289.2
-     ],
-     [
-      19,
-      289.2
-     ],
-     0,
-     "Kameragab 38"
-    ]
-   ],
    "notes": [
     [
      "front",
      [
       94.45,
+      0,
       151.85
      ],
-     "4 propper presses i slidserne (0,15 mm pres + CA-lim)"
+     "4 propper presses i slidserne\n0,15 mm pres + CA-gel",
+     -70,
+     -40
     ],
     [
      "side",
      [
       -0.8,
+      -0.8,
       151.85
      ],
-     "Står 1,6 mm frem"
+     "Står 1,6 mm frem",
+     60,
+     -30
     ]
    ]
   },
   {
+   "out": "D03_led_rail",
    "node": "led_rail",
-   "title": "LED-skinne (holder skærmen og LED-strips)",
+   "title": "LED-skinne",
    "views": [
-    "front",
-    "side",
-    "top"
+    "back",
+    "side"
    ],
    "material": "ASA sort",
    "file": "stl/led_rail.stl",
    "dims": [
     [
-     "front",
+     "back",
      [
-      -70,
+      70,
+      25,
       49.85
      ],
      [
-      -70,
+      70,
+      25,
       253.85
      ],
      0,
      "Tværbjælker c-c 204"
+    ],
+    [
+     "back",
+     [
+      -109.85,
+      25,
+      30
+     ],
+     [
+      109.85,
+      25,
+      30
+     ],
+     0,
+     "Skruer c-c 219,7"
     ]
    ],
    "notes": [
     [
-     "front",
+     "back",
      [
       0,
+      25,
       49.85
      ],
-     "Tværbjælke 14 mm med 2 EVA-pads 30 x 10"
+     "Tværbjælke 14 mm, EVA-pad 30 × 10 × 1",
+     60,
+     -34
     ],
     [
-     "front",
-     [
-      109.85,
-      239.2
-     ],
-     "4 x hul Ø2,9 til M2,5 x 6"
-    ],
-    [
-     "front",
+     "back",
      [
       -94.45,
+      25,
       151.85
      ],
-     "COB yderst, RGBW inderst"
+     "COB yderst, RGBW inderst (forsiden)",
+     -60,
+     -30
+    ],
+    [
+     "back",
+     [
+      104.65,
+      25,
+      151.85
+     ],
+     "Glødestrip på siden",
+     -60,
+     40
     ]
    ]
   },
   {
-   "node": "shell",
-   "title": "Kabinet (bagdel)",
+   "out": "D04_shell_closed",
+   "node": "shell_closed",
+   "title": "Kabinet, standard (lukket top)",
    "views": [
     "back",
     "side",
-    "top"
+    "bottom"
    ],
-   "material": "ASA sort + translucent stribe (lag 34-44 mm)",
-   "file": "stl/shell.stl",
+   "material": "ASA sort + translucent stribe (lag 34–44 mm)",
+   "file": "stl/shell_closed_top.stl",
+   "skipTop": true,
    "dims": [
     [
      "back",
      [
       -37.5,
+      66,
       114.35
      ],
      [
       37.5,
+      66,
       114.35
      ],
      26,
@@ -254,135 +286,117 @@
     [
      "back",
      [
-      80,
-      114.35
-     ],
-     [
-      80,
-      189.35
-     ],
-     0,
-     "VESA 75"
-    ],
-    [
-     "back",
-     [
       -60,
+      66,
       274
      ],
      [
       60,
+      66,
       274
      ],
      -26,
      "Vægbeslag-spor 120"
     ],
     [
-     "top",
-     [
-      -55,
-      44
-     ],
-     [
-      55,
-      44
-     ],
-     0,
-     "Samleskruer 110"
-    ],
-    [
-     "top",
-     [
-      -30,
-      50
-     ],
-     [
-      30,
-      50
-     ],
-     22,
-     "Styrestifter 60"
-    ],
-    [
      "back",
      [
-      -90,
+      90,
+      66,
       0
      ],
      [
-      -90,
+      90,
+      66,
       234
      ],
      0,
-     "M4 lås 234"
+     "M4-lås 234"
+    ],
+    [
+     "side",
+     [
+      22,
+      0,
+      20
+     ],
+     [
+      32,
+      0,
+      20
+     ],
+     30,
+     "Stribe 10"
+    ],
+    [
+     "bottom",
+     [
+      -55,
+      44,
+      0
+     ],
+     [
+      55,
+      44,
+      0
+     ],
+     30,
+     "110"
     ]
    ],
    "notes": [
     [
      "back",
      [
-      52,
+      46,
+      66,
       40
      ],
-     "DC-bøsning Ø8,0",
-     60,
-     -30
-    ],
-    [
-     "back",
-     [
-      37.5,
-      189.35
-     ],
-     "4 x M4 indsats (VESA)",
-     60,
+     "Holdere til 2 × Pololu (indvendigt)",
+     -60,
      -40
     ],
     [
      "back",
      [
       0,
-      234
+      66,
+      40
      ],
-     "M4 låseskrue til vægbeslag",
-     60,
-     -30
-    ],
-    [
-     "side",
-     [
-      10,
-      239.2
-     ],
-     "M3 x 8 ind i bezel",
-     60,
-     -30
-    ],
-    [
-     "top",
-     [
-      0,
-      30
-     ],
-     "Kabelhul Ø20",
-     -70,
-     40
-    ],
-    [
-     "top",
-     [
-      55,
-      44
-     ],
-     "M3 skrue ned i næste modul",
-     60,
-     40
+     "Perfboard-skinner 70 × 50 (indvendigt)",
+     -60,
+     50
     ]
    ]
   },
   {
+   "out": "D05_shell_joint",
+   "node": "shell",
+   "title": "Kabinet med samling i top (til tag/topper)",
+   "views": [
+    "top",
+    "side"
+   ],
+   "material": "ASA sort + translucent stribe",
+   "file": "stl/shell.stl",
+   "notes": [
+    [
+     "top",
+     [
+      55,
+      44,
+      306
+     ],
+     "M3 × 16 sættes indefra op i næste modul",
+     60,
+     -30
+    ]
+   ]
+  },
+  {
+   "out": "D06_wall_cleat",
    "node": "wall_cleat",
-   "title": "Vægbeslag (fransk skinne)",
+   "title": "Vægbeslag",
    "views": [
     "front",
     "side"
@@ -394,10 +408,12 @@
      "front",
      [
       -48,
+      76,
       242
      ],
      [
       48,
+      76,
       242
      ],
      26,
@@ -406,15 +422,32 @@
     [
      "front",
      [
-      -40,
+      -30,
+      76,
       70
      ],
      [
-      -40,
+      -30,
+      76,
       125
      ],
      0,
      "55"
+    ],
+    [
+     "side",
+     [
+      66,
+      0,
+      290
+     ],
+     [
+      80,
+      0,
+      290
+     ],
+     -26,
+     "Vægafstand 14"
     ]
    ],
    "notes": [
@@ -422,21 +455,17 @@
      "front",
      [
       0,
-      70
+      76,
+      274
      ],
-     "4 x Ø5 undersænket til 4,5 x 50 skruer"
-    ],
-    [
-     "front",
-     [
-      0,
-      234
-     ],
-     "M4 indsats til låseskrue"
+     "Skrå kant: kabinettet hænger her",
+     60,
+     -30
     ]
    ]
   },
   {
+   "out": "D07_joint_spacer",
    "node": "joint_spacer",
    "title": "Samlestykke (mellem moduler)",
    "views": [
@@ -450,49 +479,36 @@
      "top",
      [
       -55,
-      44
+      44,
+      6
      ],
      [
       55,
-      44
+      44,
+      6
      ],
-     0,
+     30,
      "M3 c-c 110"
     ],
     [
      "top",
      [
       -30,
-      50
+      50,
+      6
      ],
      [
       30,
-      50
+      50,
+      6
      ],
-     -22,
+     -30,
      "Stifter c-c 60"
-    ]
-   ],
-   "notes": [
-    [
-     "top",
-     [
-      0,
-      30
-     ],
-     "Kabelhul Ø20"
-    ],
-    [
-     "top",
-     [
-      -30,
-      50
-     ],
-     "Ø6,3 til styrestift"
     ]
    ]
   },
   {
+   "out": "D08_printer_front",
    "node": "printer_front",
    "title": "Printer-front (DFR0503)",
    "views": [
@@ -506,10 +522,12 @@
      "front",
      [
       -38.7,
+      0,
       64.7
      ],
      [
       38.7,
+      0,
       64.7
      ],
      0,
@@ -519,10 +537,12 @@
      "front",
      [
       -50,
+      0,
       11.3
      ],
      [
       -50,
+      0,
       64.7
      ],
      0,
@@ -534,79 +554,49 @@
      "front",
      [
       0,
+      0,
       38
      ],
-     "Printeren klemmes i 0,4 mm sæde 82,6 x 58,6"
+     "0,4 mm sæde 82,6 × 58,6 til printerens flange",
+     70,
+     40
     ]
    ]
   },
   {
+   "out": "D09_printer_shell",
    "node": "printer_shell",
    "title": "Printerkabinet",
    "views": [
     "back",
     "side",
-    "top"
+    "top",
+    "bottom"
    ],
    "material": "ASA sort + translucent stribe",
    "file": "stl/printer_shell.stl",
    "notes": [
     [
-     "top",
-     [
-      0,
-      30
-     ],
-     "Kabelhul Ø20"
-    ],
-    [
      "back",
      [
-      90,
-      60
+      -101,
+      66,
+      62
      ],
-     "Holder til Pololu D36V28F9"
+     "Holder til Pololu D36V28F9 (indvendigt)",
+     70,
+     -20
     ]
    ]
   },
   {
-   "node": "sign_front",
-   "title": "Skilt-front",
-   "views": [
-    "front",
-    "side"
-   ],
-   "material": "ASA sort",
-   "file": "stl/sign_front.stl",
-   "notes": [
-    [
-     "front",
-     [
-      0,
-      36
-     ],
-     "Bogstaver skåret igennem, translucente bogstaver limes i"
-    ]
-   ]
-  },
-  {
-   "node": "sign_shell",
-   "title": "Skiltkabinet",
-   "views": [
-    "back",
-    "side",
-    "top"
-   ],
-   "material": "ASA sort + translucent stribe",
-   "file": "stl/sign_shell.stl"
-  },
-  {
+   "out": "D10_roof",
    "node": "roof",
-   "title": "Tag (festival)",
+   "title": "Tag (festival, valgfrit)",
    "views": [
     "front",
     "side",
-    "top"
+    "bottom"
    ],
    "material": "ASA sort",
    "file": "stl/roof.stl",
@@ -615,74 +605,1864 @@
      "side",
      [
       -40,
-      30
+      -40,
+      34
      ],
-     "75 mm udhæng, 12 mm fald bagud"
+     "75 mm udhæng, 12 mm fald bagud",
+     60,
+     -30
     ]
    ]
   },
   {
-   "node": "photo_base",
-   "title": "Fotobase (SELPHY CP1500)",
-   "views": [
-    "front",
-    "side",
-    "top"
-   ],
-   "material": "ASA sort",
-   "file": "stl/photo_base.stl",
-   "notes": [
-    [
-     "top",
-     [
-      0,
-      -60
-     ],
-     "Rum til SELPHY 182,2 x 133 x 57,6"
-    ]
-   ]
-  },
-  {
-   "node": "foot",
-   "title": "Fod (bord)",
-   "views": [
-    "front",
-    "side",
-    "top"
-   ],
-   "material": "ASA sort",
-   "file": "stl/foot.stl"
-  },
-  {
+   "out": "D11_wing_right",
    "node": "sommernat--wing_right__base",
    "title": "Temavinge højre (Sommernat)",
    "views": [
     "front",
     "side"
    ],
-   "material": "PETG HF sort + farve-inlays",
+   "material": "PETG HF + farve-inlays 0,8 mm",
    "file": "themes/sommernat/build/wing_right.3mf",
+   "holes": false,
    "notes": [
     [
      "side",
      [
       10,
+      10,
       66.8
      ],
-     "2 x M3 x 12 gennem 4 mm ribbe i kabinettets sideskruer"
+     "M3 × 12 gennem 4 mm ribbe (Ø3,4)",
+     60,
+     40
+    ],
+    [
+     "side",
+     [
+      10,
+      10,
+      239.2
+     ],
+     "M3 × 12 gennem 4 mm ribbe (Ø3,4)",
+     60,
+     -30
     ]
    ]
   },
   {
+   "out": "D12_wing_left",
+   "node": "sommernat--wing_left__base",
+   "title": "Temavinge venstre (Sommernat)",
+   "views": [
+    "front",
+    "left"
+   ],
+   "material": "PETG HF + farve-inlays 0,8 mm",
+   "file": "themes/sommernat/build/wing_left.3mf",
+   "holes": false
+  },
+  {
+   "out": "D13_topper",
    "node": "sommernat--topper__base",
    "title": "Topper (Sommernat)",
    "views": [
     "front",
     "side",
+    "bottom"
+   ],
+   "material": "PETG HF + farve-inlays 0,8 mm",
+   "file": "themes/sommernat/build/topper.3mf"
+  },
+  {
+   "out": "K01_display",
+   "node": "v_display",
+   "title": "Komponent: Touch Display 2 – 10\"",
+   "views": [
+    "front",
+    "side",
+    "back"
+   ],
+   "material": "Købt · Raspberry Pi",
+   "file": "components.scad: TD10",
+   "holes": false,
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      0,
+      151.85
+     ],
+     "Synligt felt 136,4 × 217,6\n1200 × 1920 stående",
+     60,
+     -30
+    ],
+    [
+     "side",
+     [
+      9,
+      9,
+      151.85
+     ],
+     "Dybde 15,5 (mål på jeres eksemplar)",
+     60,
+     40
+    ]
+   ]
+  },
+  {
+   "out": "K02_pi5",
+   "node": "v_pi",
+   "title": "Komponent: Raspberry Pi 5 + Active Cooler",
+   "views": [
+    "back",
+    "side"
+   ],
+   "material": "Købt · Raspberry Pi",
+   "file": "components.scad: rpi5",
+   "holes": false,
+   "notes": [
+    [
+     "back",
+     [
+      24.5,
+      26,
+      180.85
+     ],
+     "4 × Ø2,7, mønster 58 × 49 (M2,5)",
+     60,
+     -30
+    ]
+   ]
+  },
+  {
+   "out": "K03_camera",
+   "node": "v_camera",
+   "title": "Komponent: Camera Module 3 Wide (drejet 90°)",
+   "views": [
+    "front",
+    "back",
+    "side"
+   ],
+   "material": "Købt · Raspberry Pi",
+   "file": "components.scad: camera_module3_wide",
+   "holes": false
+  },
+  {
+   "out": "K04_printer",
+   "node": "v_printer",
+   "title": "Komponent: DFRobot DFR0503 termoprinter",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "Købt · DFRobot",
+   "file": "components.scad: dfr0503",
+   "holes": false,
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      -2,
+      38
+     ],
+     "Front 82 × 58, udskæring 77 × 53, dybde 42",
+     60,
+     -30
+    ]
+   ]
+  },
+  {
+   "out": "K05_power",
+   "node": "v_power",
+   "title": "Komponent: strømmodul (2 × Pololu D36V50F5 + perfboard + DC-bøsning)",
+   "views": [
+    "back",
+    "side"
+   ],
+   "material": "Købt + håndbygget",
+   "file": "components.scad: pololu",
+   "holes": false
+  },
+  {
+   "out": "K06_pololu9",
+   "node": "v_pol9",
+   "title": "Komponent: Pololu D36V28F9 (printer, 9 V)",
+   "views": [
+    "back",
+    "side"
+   ],
+   "material": "Købt · Pololu",
+   "file": "components.scad: POL28",
+   "holes": false
+  },
+  {
+   "out": "S01_unit_outline",
+   "nodes": [
+    "bezel",
+    "diffuser_ring",
+    "shell_closed",
+    "shell_closed_band",
+    "wall_cleat"
+   ],
+   "node": "unit",
+   "title": "Standardboks på væg – udvendige mål",
+   "views": [
+    "front",
+    "side",
     "top"
    ],
-   "material": "PETG HF sort + farve-inlays",
-   "file": "themes/sommernat/build/topper.3mf"
+   "material": "Samlet enhed",
+   "file": "cad/halo.scad",
+   "dims": [
+    [
+     "side",
+     [
+      0,
+      0,
+      280
+     ],
+     [
+      80,
+      0,
+      280
+     ],
+     -40,
+     "80 inkl. vægbeslag"
+    ],
+    [
+     "side",
+     [
+      66,
+      0,
+      150
+     ],
+     [
+      80,
+      0,
+      150
+     ],
+     26,
+     "14"
+    ],
+    [
+     "front",
+     [
+      -130,
+      0,
+      0
+     ],
+     [
+      -130,
+      0,
+      289.2
+     ],
+     0,
+     "Linse 289,2"
+    ]
+   ],
+   "notes": [
+    [
+     "side",
+     [
+      80,
+      76,
+      274
+     ],
+     "Vægbeslag: overkant 300 over bund",
+     60,
+     -30
+    ],
+    [
+     "front",
+     [
+      0,
+      0,
+      289.2
+     ],
+     "Kamera",
+     60,
+     -30
+    ]
+   ]
+  },
+  {
+   "out": "S02_unit_printer_outline",
+   "nodes": [
+    "bezel",
+    "diffuser_ring",
+    "shell_closed",
+    "shell_closed_band",
+    "wall_cleat",
+    "joint_spacer",
+    "printer_front",
+    "printer_shell",
+    "printer_shell_band",
+    "v_printer"
+   ],
+   "node": "unit+printer",
+   "title": "Standardboks med strip-printer – udvendige mål",
+   "views": [
+    "front",
+    "side"
+   ],
+   "material": "Samlet enhed",
+   "file": "cad/halo.scad",
+   "place": {
+    "unit": 90,
+    "spacer": 84
+   },
+   "dims": [
+    [
+     "front",
+     [
+      -140,
+      0,
+      0
+     ],
+     [
+      -140,
+      0,
+      84
+     ],
+     0,
+     "84"
+    ],
+    [
+     "front",
+     [
+      -140,
+      0,
+      90
+     ],
+     [
+      -140,
+      0,
+      396
+     ],
+     0,
+     "306"
+    ],
+    [
+     "front",
+     [
+      -160,
+      0,
+      0
+     ],
+     [
+      -160,
+      0,
+      396
+     ],
+     0,
+     "396 i alt"
+    ]
+   ],
+   "notes": [
+    [
+     "front",
+     [
+      0,
+      0,
+      38
+     ],
+     "Papiret kommer ud her",
+     70,
+     40
+    ]
+   ]
+  },
+  {
+   "kind": "assembly",
+   "out": "A01_exploded_front",
+   "title": "Samletegning – sprængt, forfra",
+   "view": "iso",
+   "viewName": "Isometri forfra, sprængt",
+   "style": "line",
+   "pull": 22,
+   "px": 1.9,
+   "explode": {
+    "diffuser_ring": [
+     0,
+     -70,
+     0
+    ],
+    "v_camera": [
+     0,
+     34,
+     0
+    ],
+    "v_display": [
+     0,
+     62,
+     0
+    ],
+    "v_pads": [
+     0,
+     105,
+     0
+    ],
+    "led_rail": [
+     0,
+     140,
+     0
+    ],
+    "v_leds": [
+     0,
+     140,
+     0
+    ],
+    "v_pi": [
+     0,
+     190,
+     0
+    ],
+    "v_power": [
+     0,
+     300,
+     0
+    ],
+    "shell_closed": [
+     0,
+     300,
+     0
+    ],
+    "shell_closed_band": [
+     0,
+     300,
+     0
+    ],
+    "shell": [
+     0,
+     300,
+     0
+    ],
+    "wall_cleat": [
+     0,
+     420,
+     0
+    ]
+   },
+   "items": [
+    [
+     1,
+     [
+      "diffuser_ring"
+     ],
+     1,
+     "Diffuserring",
+     "PETG translucent"
+    ],
+    [
+     2,
+     [
+      "bezel"
+     ],
+     1,
+     "Bezel",
+     "ASA sort"
+    ],
+    [
+     3,
+     [
+      "hw--unit--base--ins_m3--bezel--*"
+     ],
+     4,
+     "Messingindsats M3",
+     "Ø4,0 × 6,4 hul"
+    ],
+    [
+     4,
+     [
+      "v_camera"
+     ],
+     1,
+     "Camera Module 3 Wide",
+     "Købt"
+    ],
+    [
+     5,
+     [
+      "hw--unit--base--m2x6--*"
+     ],
+     4,
+     "Skrue M2 × 6",
+     "Gevinddannende"
+    ],
+    [
+     6,
+     [
+      "v_display"
+     ],
+     1,
+     "Touch Display 2 – 10\"",
+     "Købt"
+    ],
+    [
+     7,
+     [
+      "v_pads"
+     ],
+     4,
+     "EVA-pad 30 × 10 × 1",
+     "EVA"
+    ],
+    [
+     8,
+     [
+      "led_rail"
+     ],
+     1,
+     "LED-skinne",
+     "ASA sort"
+    ],
+    [
+     9,
+     [
+      "v_leds"
+     ],
+     1,
+     "LED-strips (COB + RGBW)",
+     "Købt"
+    ],
+    [
+     10,
+     [
+      "hw--unit--base--m25x6--*"
+     ],
+     4,
+     "Skrue M2,5 × 6",
+     "Gevinddannende"
+    ],
+    [
+     11,
+     [
+      "v_pi"
+     ],
+     1,
+     "Raspberry Pi 5 + køler",
+     "Købt"
+    ],
+    [
+     12,
+     [
+      "v_power"
+     ],
+     1,
+     "Strømmodul",
+     "Købt / bygget"
+    ],
+    [
+     13,
+     [
+      "shell_closed",
+      "shell_closed_band"
+     ],
+     1,
+     "Kabinet, lukket top",
+     "ASA + PETG transl."
+    ],
+    [
+     14,
+     [
+      "hw--unit--base--m3x8--*"
+     ],
+     4,
+     "Skrue M3 × 8 Torx",
+     "ISO 7380"
+    ],
+    [
+     15,
+     [
+      "hw--unit--base--ins_m4--shell--*"
+     ],
+     4,
+     "Messingindsats M4 (VESA)",
+     "Ø5,6 × 8,2 hul"
+    ],
+    [
+     16,
+     [
+      "hw--unit--base--ins_q--*"
+     ],
+     1,
+     "Indsats 1/4\"-20",
+     "Ø7,9 × 12,5 hul"
+    ],
+    [
+     17,
+     [
+      "hw--unit--base--ins_m3--shell--*"
+     ],
+     2,
+     "Messingindsats M3 (bund)",
+     "Ø4,0 × 6,4 hul"
+    ],
+    [
+     18,
+     [
+      "hw--unit--base--m4x10--*"
+     ],
+     1,
+     "Skrue M4 × 10 (lås)",
+     "Torx"
+    ],
+    [
+     19,
+     [
+      "wall_cleat"
+     ],
+     1,
+     "Vægbeslag",
+     "ASA sort"
+    ],
+    [
+     20,
+     [
+      "hw--unit--base--ins_m4--wall_cleat--*"
+     ],
+     1,
+     "Messingindsats M4",
+     "Ø5,6 × 8,2 hul"
+    ],
+    [
+     21,
+     [
+      "hw--unit--base--wood45x50--*"
+     ],
+     4,
+     "Vægskrue 4,5 × 50 + dybel",
+     "Undersænket"
+    ]
+   ]
+  },
+  {
+   "kind": "assembly",
+   "out": "A02_exploded_back",
+   "title": "Samletegning – sprængt, bagfra",
+   "view": "isoback",
+   "viewName": "Isometri bagfra, sprængt",
+   "style": "line",
+   "pull": 22,
+   "px": 1.9,
+   "explode": {
+    "diffuser_ring": [
+     0,
+     -70,
+     0
+    ],
+    "v_camera": [
+     0,
+     34,
+     0
+    ],
+    "v_display": [
+     0,
+     62,
+     0
+    ],
+    "v_pads": [
+     0,
+     105,
+     0
+    ],
+    "led_rail": [
+     0,
+     140,
+     0
+    ],
+    "v_leds": [
+     0,
+     140,
+     0
+    ],
+    "v_pi": [
+     0,
+     190,
+     0
+    ],
+    "v_power": [
+     0,
+     300,
+     0
+    ],
+    "shell_closed": [
+     0,
+     300,
+     0
+    ],
+    "shell_closed_band": [
+     0,
+     300,
+     0
+    ],
+    "shell": [
+     0,
+     300,
+     0
+    ],
+    "wall_cleat": [
+     0,
+     420,
+     0
+    ]
+   },
+   "items": [
+    [
+     2,
+     [
+      "bezel"
+     ],
+     1,
+     "Bezel",
+     "ASA sort"
+    ],
+    [
+     3,
+     [
+      "hw--unit--base--ins_m3--bezel--*"
+     ],
+     4,
+     "Messingindsats M3",
+     "Ø4,0 × 6,4 hul"
+    ],
+    [
+     4,
+     [
+      "v_camera"
+     ],
+     1,
+     "Camera Module 3 Wide",
+     "Købt"
+    ],
+    [
+     5,
+     [
+      "hw--unit--base--m2x6--*"
+     ],
+     4,
+     "Skrue M2 × 6",
+     "Gevinddannende"
+    ],
+    [
+     6,
+     [
+      "v_display"
+     ],
+     1,
+     "Touch Display 2 – 10\"",
+     "Købt"
+    ],
+    [
+     7,
+     [
+      "v_pads"
+     ],
+     4,
+     "EVA-pad",
+     "EVA"
+    ],
+    [
+     8,
+     [
+      "led_rail"
+     ],
+     1,
+     "LED-skinne",
+     "ASA sort"
+    ],
+    [
+     10,
+     [
+      "hw--unit--base--m25x6--*"
+     ],
+     4,
+     "Skrue M2,5 × 6",
+     "Gevinddannende"
+    ],
+    [
+     11,
+     [
+      "v_pi"
+     ],
+     1,
+     "Raspberry Pi 5 + køler",
+     "Købt"
+    ],
+    [
+     12,
+     [
+      "v_power"
+     ],
+     1,
+     "Strømmodul",
+     "Købt / bygget"
+    ],
+    [
+     13,
+     [
+      "shell_closed",
+      "shell_closed_band"
+     ],
+     1,
+     "Kabinet, lukket top",
+     "ASA + PETG transl."
+    ],
+    [
+     15,
+     [
+      "hw--unit--base--ins_m4--shell--*"
+     ],
+     4,
+     "Messingindsats M4 (VESA)",
+     "Ø5,6 × 8,2"
+    ],
+    [
+     18,
+     [
+      "hw--unit--base--m4x10--*"
+     ],
+     1,
+     "Skrue M4 × 10 (lås)",
+     "Torx"
+    ],
+    [
+     19,
+     [
+      "wall_cleat"
+     ],
+     1,
+     "Vægbeslag",
+     "ASA sort"
+    ],
+    [
+     21,
+     [
+      "hw--unit--base--wood45x50--*"
+     ],
+     4,
+     "Vægskrue 4,5 × 50",
+     "Undersænket"
+    ]
+   ]
+  },
+  {
+   "kind": "assembly",
+   "out": "A03_printer_joint",
+   "title": "Samletegning – strip-printer under boksen",
+   "view": "iso",
+   "viewName": "Isometri, sprængt lodret",
+   "style": "line",
+   "pull": 26,
+   "px": 2.0,
+   "scope": "Boks + strip-printer",
+   "place": {
+    "unit": 90,
+    "spacer": 84
+   },
+   "explode": {
+    "printer_front": [
+     0,
+     -40,
+     -110
+    ],
+    "v_printer": [
+     0,
+     -40,
+     -110
+    ],
+    "printer_shell": [
+     0,
+     0,
+     -110
+    ],
+    "printer_shell_band": [
+     0,
+     0,
+     -110
+    ],
+    "v_pol9": [
+     0,
+     0,
+     -110
+    ],
+    "joint_spacer": [
+     0,
+     0,
+     -50
+    ]
+   },
+   "items": [
+    [
+     13,
+     [
+      "shell_closed",
+      "shell_closed_band"
+     ],
+     1,
+     "Kabinet (boksen)",
+     "ASA"
+    ],
+    [
+     17,
+     [
+      "hw--unit--base--ins_m3--shell--*"
+     ],
+     2,
+     "Messingindsats M3 (bund)",
+     "Ø4,0 × 6,4"
+    ],
+    [
+     22,
+     [
+      "joint_spacer"
+     ],
+     1,
+     "Samlestykke",
+     "ASA sort"
+    ],
+    [
+     23,
+     [
+      "hw--strip--base--dowel6x20--*"
+     ],
+     2,
+     "Styrestift Ø6 × 20",
+     "Stål"
+    ],
+    [
+     24,
+     [
+      "hw--strip--base--m3x16--*"
+     ],
+     2,
+     "Skrue M3 × 16 Torx",
+     "Indefra og op"
+    ],
+    [
+     25,
+     [
+      "printer_shell",
+      "printer_shell_band"
+     ],
+     1,
+     "Printerkabinet",
+     "ASA + PETG transl."
+    ],
+    [
+     26,
+     [
+      "v_pol9"
+     ],
+     1,
+     "Pololu D36V28F9",
+     "Købt"
+    ],
+    [
+     27,
+     [
+      "printer_front"
+     ],
+     1,
+     "Printer-front",
+     "ASA sort"
+    ],
+    [
+     28,
+     [
+      "v_printer"
+     ],
+     1,
+     "DFR0503 termoprinter",
+     "Købt"
+    ],
+    [
+     29,
+     [
+      "hw--strip--base--ins_m3--printer_front--*"
+     ],
+     4,
+     "Messingindsats M3",
+     "Ø4,0 × 6,4"
+    ],
+    [
+     30,
+     [
+      "hw--strip--base--m3x8--*"
+     ],
+     4,
+     "Skrue M3 × 8 Torx",
+     "ISO 7380"
+    ]
+   ]
+  },
+  {
+   "kind": "assembly",
+   "out": "A04_theme",
+   "title": "Samletegning – temadele (vinger og topper)",
+   "view": "iso",
+   "viewName": "Isometri, sprængt",
+   "style": "line",
+   "pull": 24,
+   "px": 1.7,
+   "scope": "Boks + Sommernat",
+   "explode": {
+    "sommernat--wing_right*": [
+     60,
+     0,
+     0
+    ],
+    "sommernat--wing_left*": [
+     -60,
+     0,
+     0
+    ],
+    "sommernat--topper*": [
+     0,
+     0,
+     90
+    ],
+    "joint_spacer": [
+     0,
+     0,
+     40
+    ],
+    "hw--topper*": [
+     0,
+     0,
+     90
+    ]
+   },
+   "place": {
+    "topper": 312,
+    "spacer": 306
+   },
+   "items": [
+    [
+     13,
+     [
+      "shell",
+      "shell_band",
+      "bezel",
+      "diffuser_ring"
+     ],
+     1,
+     "Boksen (kabinet med samling i top)",
+     "–"
+    ],
+    [
+     31,
+     [
+      "sommernat--wing_right__*"
+     ],
+     1,
+     "Temavinge højre",
+     "PETG HF + inlays"
+    ],
+    [
+     32,
+     [
+      "sommernat--wing_left__*"
+     ],
+     1,
+     "Temavinge venstre",
+     "PETG HF + inlays"
+    ],
+    [
+     33,
+     [
+      "hw--unit--wing--m3x12--*"
+     ],
+     4,
+     "Skrue M3 × 12 Torx",
+     "Erstatter M3 × 8"
+    ],
+    [
+     22,
+     [
+      "joint_spacer"
+     ],
+     1,
+     "Samlestykke",
+     "ASA sort"
+    ],
+    [
+     34,
+     [
+      "hw--unit--top--dowel6x20--*"
+     ],
+     2,
+     "Styrestift Ø6 × 20",
+     "Stål"
+    ],
+    [
+     35,
+     [
+      "hw--unit--top--m3x16--*"
+     ],
+     2,
+     "Skrue M3 × 16 Torx",
+     "Indefra og op"
+    ],
+    [
+     36,
+     [
+      "sommernat--topper__*"
+     ],
+     1,
+     "Topper",
+     "PETG HF + inlays"
+    ],
+    [
+     37,
+     [
+      "hw--topper--base--ins_m3--*"
+     ],
+     2,
+     "Messingindsats M3",
+     "Ø4,0 × 6,4"
+    ]
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V01_camera",
+   "title": "Detalje: kamera på bosser",
+   "parts": "Bezel · Camera Module 3 Wide",
+   "fasteners": "4 × M2 × 6 gevinddannende",
+   "panels": [
+    {
+     "title": "Bagfra, skruer trukket ud",
+     "view": "back",
+     "nodes": [
+      "bezel",
+      "diffuser_ring",
+      "v_camera",
+      "hw--unit--base--m2x6--*"
+     ],
+     "pull": 14,
+     "hl": [
+      "v_camera"
+     ],
+     "box": [
+      [
+       -34,
+       0,
+       262
+      ],
+      [
+       34,
+       20,
+       306
+      ]
+     ],
+     "px": 9,
+     "labels": [
+      [
+       [
+        0,
+        10.6,
+        300
+       ],
+       "4 × M2 × 6 gennem kameraets huller Ø2,2",
+       70,
+       -40
+      ],
+      [
+       [
+        -12.4,
+        9.5,
+        279
+       ],
+       "Boss Ø4,6, pilot Ø1,7",
+       -70,
+       40
+      ],
+      [
+       [
+        10,
+        9.5,
+        289.2
+       ],
+       "Flex-stik mod højre (set bagfra)",
+       70,
+       50
+      ]
+     ]
+    },
+    {
+     "title": "Fra siden",
+     "view": "side",
+     "nodes": [
+      "bezel",
+      "diffuser_ring",
+      "v_camera",
+      "hw--unit--base--m2x6--*"
+     ],
+     "hl": [
+      "v_camera"
+     ],
+     "box": [
+      [
+       -20,
+       -3,
+       262
+      ],
+      [
+       20,
+       20,
+       306
+      ]
+     ],
+     "px": 9,
+     "labels": [
+      [
+       [
+        0,
+        0,
+        289.2
+       ],
+       "Linsen sidder 1,2 mm bag fronten\ni hul Ø8,6 med 62° fas",
+       -80,
+       -40
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Sæt det 300 mm Pi 5-kamerakabel i kameraet først.",
+    "Drej kameraet 90°, så flex-stikket vender mod højre set bagfra (stående billeder).",
+    "Skru 4 × M2 × 6 i bosserne – let, det er gevind i plast (ca. 0,2 Nm).",
+    "Pil filmen af linsen. Tjek at linsen er centreret i hullet."
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V02_side_screws",
+   "title": "Detalje: kabinet til bezel (sideskruer og indsatser)",
+   "parts": "Bezel · Kabinet",
+   "fasteners": "4 × M3 × 8 Torx i 4 × M3-indsatser",
+   "panels": [
+    {
+     "title": "Skråt fra højre, skruer og indsatser trukket ud",
+     "view": {
+      "name": "Skråt fra højre",
+      "dir": [
+       1,
+       0.45,
+       0.75
+      ],
+      "up": [
+       0,
+       1,
+       0
+      ]
+     },
+     "nodes": [
+      "bezel",
+      "shell_closed",
+      "shell_closed_band",
+      "hw--unit--base--ins_m3--bezel--*",
+      "hw--unit--base--m3x8--*"
+     ],
+     "pull": 24,
+     "hl": [
+      "bezel"
+     ],
+     "explode": {
+      "shell_closed": [
+       0,
+       30,
+       0
+      ],
+      "shell_closed_band": [
+       0,
+       30,
+       0
+      ],
+      "shell": [
+       0,
+       30,
+       0
+      ]
+     },
+     "box": [
+      [
+       80,
+       -5,
+       200
+      ],
+      [
+       150,
+       100,
+       280
+      ]
+     ],
+     "px": 6,
+     "labels": [
+      [
+       [
+        115,
+        10,
+        239.2
+       ],
+       "M3-indsats Ø4,0 × 6,4 i bezelens sideblok\n(varmes ned fra siden)",
+       -70,
+       -60
+      ],
+      [
+       [
+        140,
+        40,
+        239.2
+       ],
+       "M3 × 8 Torx gennem kabinettet\n(frigang Ø3,4, forsænkning Ø6,4)",
+       70,
+       -40
+      ]
+     ]
+    },
+    {
+     "title": "Fra højre side",
+     "view": "side",
+     "nodes": [
+      "bezel",
+      "shell_closed",
+      "shell_closed_band",
+      "hw--unit--base--m3x8--*"
+     ],
+     "box": [
+      [
+       100,
+       -2,
+       0
+      ],
+      [
+       120,
+       70,
+       306
+      ]
+     ],
+     "px": 2.4,
+     "labels": [
+      [
+       [
+        117,
+        10,
+        66.8
+       ],
+       "2 skruer pr. side: Z 66,8 og 239,2\n10 mm bag fronten",
+       70,
+       -40
+      ],
+      [
+       [
+        117,
+        27,
+        150
+       ],
+       "Translucent stribe Y 22–32",
+       70,
+       40
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Varm 2 × M3-indsatser ned i hver af bezelens sideblokke (loddekolbe ca. 220 °C).",
+    "Før kablerne på plads, og skub kabinettet over bezelens 5 mm tunge.",
+    "Skru 2 × M3 × 8 Torx i hver side. Spænd til hovedet ligger i forsænkningen."
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V03_display_clamp",
+   "title": "Detalje: skærm spændes af LED-skinnen",
+   "parts": "Bezel · Skærm · EVA · LED-skinne",
+   "fasteners": "4 × M2,5 × 6 gevinddannende",
+   "panels": [
+    {
+     "title": "Skråt bagfra, sprængt",
+     "view": "isoback",
+     "nodes": [
+      "bezel",
+      "v_display",
+      "v_pads",
+      "led_rail",
+      "v_leds",
+      "hw--unit--base--m25x6--*"
+     ],
+     "pull": 30,
+     "hl": [
+      "v_pads"
+     ],
+     "explode": {
+      "v_display": [
+       0,
+       30,
+       0
+      ],
+      "v_pads": [
+       0,
+       70,
+       0
+      ],
+      "led_rail": [
+       0,
+       105,
+       0
+      ],
+      "v_leds": [
+       0,
+       105,
+       0
+      ]
+     },
+     "px": 1.7,
+     "labels": [
+      [
+       [
+        0,
+        19.7,
+        151.85
+       ],
+       "Skærmen lægges med glasset ned\nmellem lysringens ribber (0,5 mm luft)",
+       90,
+       -40
+      ],
+      [
+       [
+        -40,
+        19.7,
+        49.85
+       ],
+       "4 × EVA-pad 30 × 10 × 1 på tværbjælkerne",
+       -90,
+       40
+      ],
+      [
+       [
+        109.85,
+        22.2,
+        239.2
+       ],
+       "4 × M2,5 × 6 i bezelens pilothuller Ø2,2",
+       90,
+       -40
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Klæb 1 mm EVA-strimler rundt om vinduet på bezelens inderside.",
+    "Læg skærmen med glasset ned. Flex-kablet mod kamerasiden.",
+    "Klæb 4 EVA-pads på skinnens tværbjælker.",
+    "Læg skinnen på, og skru 4 × M2,5 × 6 i. Skinnen presser skærmen jævnt frem – ingen skruer i skærmen."
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V04_wall",
+   "title": "Detalje: vægbeslag og tyverilås",
+   "parts": "Kabinet · Vægbeslag",
+   "fasteners": "4 × 4,5 × 50 + dybler, 1 × M4 × 10, 1 × M4-indsats",
+   "panels": [
+    {
+     "title": "Fra siden, boksen løftet fri af beslaget",
+     "view": "side",
+     "nodes": [
+      "bezel",
+      "diffuser_ring",
+      "shell_closed",
+      "shell_closed_band",
+      "wall_cleat",
+      "hw--unit--base--wood45x50--*",
+      "hw--unit--base--m4x10--*",
+      "hw--unit--base--ins_m4--wall_cleat--*"
+     ],
+     "explode": {
+      "wall_cleat": [
+       0,
+       0,
+       -20
+      ]
+     },
+     "pull": 0,
+     "hl": [
+      "wall_cleat"
+     ],
+     "box": [
+      [
+       -10,
+       -5,
+       170
+      ],
+      [
+       10,
+       135,
+       306
+      ]
+     ],
+     "px": 3.6,
+     "labels": [
+      [
+       [
+        0,
+        72,
+        290
+       ],
+       "Skrå kant 45°: kabinettets spor\nglider ned over beslaget",
+       70,
+       -40
+      ],
+      [
+       [
+        0,
+        63,
+        234
+       ],
+       "M4 × 10 indefra gennem bagvæggen\nind i beslagets M4-indsats (lås)",
+       -80,
+       40
+      ],
+      [
+       [
+        0,
+        100,
+        222
+       ],
+       "4 × 4,5 × 50 undersænket + dybel",
+       70,
+       40
+      ]
+     ]
+    },
+    {
+     "title": "Vægbeslag forfra",
+     "view": "front",
+     "nodes": [
+      "wall_cleat",
+      "hw--unit--base--wood45x50--*",
+      "hw--unit--base--ins_m4--wall_cleat--*"
+     ],
+     "px": 2.2,
+     "labels": [
+      [
+       [
+        0,
+        76,
+        70
+       ],
+       "Skruehuller Ø5 undersænket",
+       70,
+       30
+      ],
+      [
+       [
+        0,
+        76,
+        234
+       ],
+       "M4-indsats til lås",
+       70,
+       -30
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Hold beslaget i vater på væggen, og mærk de 4 huller. Bor 6 mm, sæt dybler i.",
+    "Skru beslaget fast med 4 × 4,5 × 50 undersænkede skruer.",
+    "Hæng boksen på: kabinettets spor glider ned over beslagets skrå kant.",
+    "Lås: tag fronten af (4 × M3 × 8), skru M4 × 10 gennem bagvæggen ind i beslaget, sæt fronten på igen."
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V05_power",
+   "title": "Detalje: strømmodul i kabinettet",
+   "parts": "Kabinet · Pololu · Perfboard · DC-bøsning",
+   "fasteners": "Snaplæber, skinner, møtrik på bøsning",
+   "panels": [
+    {
+     "title": "Forfra ind i kabinettet (fronten taget af)",
+     "view": "front",
+     "nodes": [
+      "shell_closed",
+      "shell_closed_band",
+      "v_power"
+     ],
+     "hl": [
+      "v_power"
+     ],
+     "box": [
+      [
+       -117,
+       0,
+       0
+      ],
+      [
+       117,
+       66,
+       120
+      ]
+     ],
+     "px": 4.2,
+     "labels": [
+      [
+       [
+        58,
+        52,
+        30
+       ],
+       "Pololu D36V50F5 #2 (LED) klikkes i holder",
+       60,
+       -50
+      ],
+      [
+       [
+        58,
+        52,
+        62
+       ],
+       "Pololu D36V50F5 #1 (Pi + skærm)",
+       60,
+       -40
+      ],
+      [
+       [
+        0,
+        57,
+        43
+       ],
+       "Perfboard 70 × 50 skubbes ind i skinner,\nkomponenter fremad",
+       -60,
+       -60
+      ],
+      [
+       [
+        -52,
+        55,
+        40
+       ],
+       "DC-bøsning Ø8 med møtrik",
+       -60,
+       40
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Skru DC-bøsningen i bagvæggens hul Ø8 med møtrikken indefra.",
+    "Klik de to Pololu-moduler i holderne (lod ledninger på først).",
+    "Byg perfboardet efter el-diagrammet, isolér bagsiden med kapton-tape.",
+    "Skub perfboardet ned i skinnerne. Mål 12 V og 5,0 V før Pi'en tilsluttes."
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V06_printer",
+   "title": "Detalje: strip-printer samles med boksen",
+   "parts": "Kabinet · Samlestykke · Printerkabinet · DFR0503",
+   "fasteners": "2 × M3 × 16, 2 styrestifter, 4 × M3 × 8",
+   "place": {
+    "unit": 90,
+    "spacer": 84
+   },
+   "panels": [
+    {
+     "title": "Skråt forfra, sprængt",
+     "view": "iso",
+     "nodes": [
+      "shell_closed",
+      "shell_closed_band",
+      "bezel",
+      "diffuser_ring",
+      "v_display",
+      "joint_spacer",
+      "printer_shell",
+      "printer_shell_band",
+      "printer_front",
+      "v_printer",
+      "v_pol9",
+      "hw--strip--base--*",
+      "hw--unit--base--ins_m3--shell--*"
+     ],
+     "explode": {
+      "printer_front": [
+       0,
+       -50,
+       -90
+      ],
+      "v_printer": [
+       0,
+       -50,
+       -90
+      ],
+      "printer_shell": [
+       0,
+       0,
+       -90
+      ],
+      "printer_shell_band": [
+       0,
+       0,
+       -90
+      ],
+      "v_pol9": [
+       0,
+       0,
+       -90
+      ],
+      "joint_spacer": [
+       0,
+       0,
+       -40
+      ]
+     },
+     "pull": 18,
+     "hl": [
+      "joint_spacer"
+     ],
+     "box": [
+      [
+       -150,
+       -60,
+       -100
+      ],
+      [
+       150,
+       80,
+       170
+      ]
+     ],
+     "px": 2.6,
+     "labels": [
+      [
+       [
+        55,
+        44,
+        68
+       ],
+       "2 × M3 × 16 indefra printerkabinettet\nop i boksens M3-indsatser",
+       80,
+       -40,
+       "strip"
+      ],
+      [
+       [
+        -30,
+        50,
+        70
+       ],
+       "2 styrestifter Ø6 × 20",
+       -80,
+       -30,
+       "strip"
+      ],
+      [
+       [
+        0,
+        30,
+        47
+       ],
+       "Samlestykke · kabelhul Ø20: 12 V, GND, data",
+       80,
+       30,
+       "strip"
+      ],
+      [
+       [
+        0,
+        -52,
+        -52
+       ],
+       "DFR0503 trykkes ind forfra",
+       -80,
+       40,
+       "strip"
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Klik D36V28F9 i holderen i printerkabinettet. Tryk DFR0503 ind forfra i printer-fronten.",
+    "Skru printer-fronten på printerkabinettet med 4 × M3 × 8.",
+    "Læg samlestykket på, sæt 2 styrestifter i, og før kablerne gennem hullet Ø20.",
+    "Skru 2 × M3 × 16 indefra printerkabinettet op i boksens bundindsatser."
+   ]
+  },
+  {
+   "kind": "detail",
+   "out": "V07_theme",
+   "title": "Detalje: temavinger monteres",
+   "parts": "Kabinet · Temavinger",
+   "fasteners": "4 × M3 × 12 (erstatter M3 × 8)",
+   "panels": [
+    {
+     "title": "Skråt forfra, vinge trukket ud",
+     "view": "iso",
+     "nodes": [
+      "bezel",
+      "diffuser_ring",
+      "shell",
+      "shell_band",
+      "sommernat--wing_right__*",
+      "hw--unit--wing--m3x12--*"
+     ],
+     "explode": {
+      "sommernat--wing_right*": [
+       50,
+       0,
+       0
+      ]
+     },
+     "pull": 30,
+     "box": [
+      [
+       60,
+       -10,
+       0
+      ],
+      [
+       220,
+       80,
+       306
+      ]
+     ],
+     "px": 2.4,
+     "labels": [
+      [
+       [
+        167,
+        10,
+        239.2
+       ],
+       "M3 × 12 gennem vingens 4 mm ribbe\nind i bezelens indsats",
+       70,
+       -40
+      ],
+      [
+       [
+        150,
+        0,
+        150
+       ],
+       "Farve-inlays 0,8 mm i forsiden",
+       70,
+       40
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    "Skru de to M3 × 8 ud af kabinettets side.",
+    "Hold vingen mod kabinettet, så ribbens huller flugter med skruehullerne.",
+    "Skru 2 × M3 × 12 gennem ribben. Gentag på den anden side."
+   ]
   }
  ]
 }

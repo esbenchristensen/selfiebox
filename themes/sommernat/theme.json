@@ -3,36 +3,98 @@
   "event": "Sommernat Festival – demo theme (original artwork)",
   "seed": 7,
   "palette": {
-    "base":   {"hex": "#0b0b0d", "filament": "PETG HF black"},
-    "night":  {"hex": "#0b0b0d", "filament": "PETG HF black (same spool as base)"},
-    "forest": {"hex": "#0f5c3e", "filament": "PETG HF dark green"},
-    "leaf":   {"hex": "#2e8b57", "filament": "PETG HF green"},
-    "lilac":  {"hex": "#b48ac9", "filament": "PETG HF lilac / purple"},
-    "coral":  {"hex": "#e8553d", "filament": "PETG HF red-orange"},
-    "cream":  {"hex": "#f3e3d3", "filament": "PETG HF cream / white"}
+    "base": {
+      "hex": "#0b0b0d",
+      "filament": "PETG HF black"
+    },
+    "night": {
+      "hex": "#0b0b0d",
+      "filament": "PETG HF black (same spool as base)"
+    },
+    "forest": {
+      "hex": "#0f5c3e",
+      "filament": "PETG HF dark green"
+    },
+    "leaf": {
+      "hex": "#2e8b57",
+      "filament": "PETG HF green"
+    },
+    "lilac": {
+      "hex": "#b48ac9",
+      "filament": "PETG HF lilac / purple"
+    },
+    "coral": {
+      "hex": "#e8553d",
+      "filament": "PETG HF red-orange"
+    },
+    "cream": {
+      "hex": "#f3e3d3",
+      "filament": "PETG HF cream / white"
+    }
   },
   "casing": {
     "style": "waves",
-    "roles": {"sky": "night", "hills": ["lilac", "leaf", "forest", "coral"], "top": "forest", "stars": "cream"},
+    "roles": {
+      "sky": "night",
+      "hills": [
+        "lilac",
+        "leaf",
+        "forest",
+        "coral"
+      ],
+      "top": "forest",
+      "stars": "cream"
+    },
     "sign_text": "SOMMERNAT",
     "parts": {
-      "wings":   {"width": 46, "edge": "hills"},
-      "topper":  {"height": 110, "edge": "clouds", "text": true},
-      "sign":    {},
+      "wings": {
+        "width": 46,
+        "edge": "hills"
+      },
+      "topper": {
+        "height": 110,
+        "edge": "clouds",
+        "text": true
+      },
       "printer": {}
     },
     "style_options": {
-      "wing_right": {"bands": 4, "cover": 0.42},
-      "wing_left":  {"bands": 4, "cover": 0.42},
-      "topper":     {"bands": 3, "cover": 0.3},
-      "sign_front": {"bands": 2, "cover": 0.3, "top": false},
-      "printer_front": {"bands": 3, "cover": 0.35, "top": false}
+      "wing_right": {
+        "bands": 4,
+        "cover": 0.42
+      },
+      "wing_left": {
+        "bands": 4,
+        "cover": 0.42
+      },
+      "topper": {
+        "bands": 3,
+        "cover": 0.3
+      },
+      "printer_front": {
+        "bands": 3,
+        "cover": 0.35,
+        "top": false
+      }
     }
   },
   "light": {
-    "idle":  {"animation": "slow-wave", "colors": ["#2e8b57", "#b48ac9", "#e8553d"], "period_s": 8},
-    "countdown": {"color": "#f3e3d3"},
-    "photo": {"cob": 1.0, "rgbw": "#fff1de"},
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#2e8b57",
+        "#b48ac9",
+        "#e8553d"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#f3e3d3"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
     "glow": "#b48ac9"
   },
   "screen": {

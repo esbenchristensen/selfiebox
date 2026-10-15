@@ -132,45 +132,19 @@ add(A, "Skrue M3 x 8 Torx + M3-indsatser", "Printer-front: 4 skruer, 4 indsatser
 add_fil(A, "Printer-front + printerkabinet + samlestykke", "ASA sort",
         g("printer_front") + g("printer_shell") + g("joint_spacer"), "", False)
 
-P = "Tilbehør: Fotoprinter-base"
-add(P, "Canon SELPHY CP1500", "10 x 15 cm farvefotos, USB-C/Wi-Fi", 1, "stk", 1199, 1, "Proshop.dk / Power.dk / Elgiganten.dk", "Estimat", "NO-pris 1.390-1.690 NOK", False)
-add(P, "Canon KP-108IN", "Farvebånd + papir til 108 fotos (ca. 3,20 kr/foto)", 1, "pakke", 349, 1, "Proshop.dk / Elgiganten.dk", "Estimat", "", False)
-add(P, "USB-C kabel 1 m", "Pi til SELPHY", 1, "stk", 49, 1, "Proshop.dk", "Estimat", "", False)
-add(P, "Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20", "Samlestykke til boksen", 1, "sæt", 6, 0, "(fra pakker)", "Estimat", "", False)
-add_fil(P, "Fotobase + samlestykke", "ASA sort", g("photo_base") + g("joint_spacer"), "", False)
-
-K = "Tilbehør: Skilt (lys-skilt)"
-add(K, "SK6812 RGBW strip 5 V 60 LED/m", "Baglys til bogstaver, ca. 0,3 m", 0.3, "m", round(14.40 * GBP), 0, "(fra hovedenhedens rulle)", "Fundet", "thepihut.com 14,40 GBP pr. m", False)
-add(K, "JST-SM 3-pin stik", "Udskifteligt skilt", 1, "par", 5, 0, "(fra hovedenhedens pakke)", "Estimat", "", False)
-add(K, "Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20", "Samlestykke til boksen", 1, "sæt", 6, 0, "(fra pakker)", "Estimat", "", False)
-add(K, "Skrue M3 x 8 Torx + 6 M3-indsatser", "Skilt-front 4 skruer/indsatser + 2 i skiltkabinettets bund", 4, "stk", 1.75, 0, "(fra pakker)", "Estimat", "", False)
-add(K, "Sekundlim (CA)", "Bogstaver i fronten, en dråbe hver", 0.05, "tube", 39, 0, "Jem & Fix", "Estimat", "", False)
-add_fil(K, "Skilt-front + skiltkabinet + samlestykke", "ASA sort",
-        g("sign_front") + g("sign_shell") * 0.86 + g("joint_spacer"), "Kabinettet printes med åben top i stedet for lukket.", False)
-add_fil(K, "Bogstaver + glødestribe", "PETG translucent",
-        g("sign_letters", "PETG") + g("sign_shell", "PETG") * 0.14, "", False)
-
 T = "Tilbehør: Tag (festival)"
 add(T, "Samlesæt: 2 x M3 x 16 + 2 styrestifter + 2 M3-indsatser", "Samlestykke til boksen", 1, "sæt", 7.5, 0, "(fra pakker)", "Estimat", "", False)
 add_fil(T, "Tag + samlestykke", "ASA sort", g("roof") + g("joint_spacer"), "ASA tåler sol og regn.", False)
 
-F = "Tilbehør: Fod (bord)"
-add(F, "Gummifødder selvklæbende 20 mm", "4 stk", 4, "stk", 2, 20, "Biltema", "Estimat", "", False)
-add_fil(F, "Fod", "ASA sort", g("foot"), "", False)
-
-G = "Tilbehør: Gulvstativ"
-add(G, "Lysstativ med 1/4\"-gevind, 2 m", "Fx Walimex/Neewer, bred fod", 1, "stk", 249, 1, "Fotoudstyr.dk / Amazon.de", "Estimat", "", False)
-add(G, "Sandsæk til stativ", "Sikkerhed på festival", 1, "stk", 99, 1, "Fotoudstyr.dk", "Estimat", "", False)
-
 X = "Tilbehør: Ekstra filament"
-spool(X, "ASA sort", 2, False)
-rows[-1]["spec"] = "Alt tilbehør bruger ca. 1,5 kg ASA ud over hovedenhedens spole"
+spool(X, "ASA sort", 1, False)
+rows[-1]["spec"] = "Strip-printer og tag bruger ca. 0,7 kg ASA ud over hovedenhedens spole"
 
 # ============================================================ TEMADELE ===
 for theme, title, fil_col, colours in [("sommernat", "Sommernat", "PETG HF farve", ["forest", "leaf", "lilac", "coral", "cream"]),
                                         ("neon", "Neon Club", "PETG fluorescerende", ["magenta", "cyan", "lime"])]:
     S2 = f"Tema: {title}"
-    parts = [p for p in ["wing_left", "wing_right", "topper", "sign_front", "printer_front"]
+    parts = [p for p in ["wing_left", "wing_right", "topper", "printer_front"]
              if (REPO / "themes" / theme / "build" / f"{p}__base.stl").exists()]
     base = sum(theme_g(theme, p, "base") for p in parts)
     inlay = sum(theme_g(theme, p, c) for p in parts for c in colours)

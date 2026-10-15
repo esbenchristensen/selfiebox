@@ -4,8 +4,9 @@ A portrait selfie box with a raised 14 mm light ring around a 10" Raspberry Pi T
 and the camera. The enclosure is all black, with no colour details. The ring runs a high-CRI
 12 V COB strip (photo light) next to an SK6812 RGBW strip (colour and animation). The unit is
 234 × 306 × 66 mm and prints on a **Bambu Lab H2C** (305 × 320 × 325 mm, heated chamber).
-Attachments (strip printer, SELPHY photo base, venue sign, festival roof, foot, wall cleat)
-bolt on through a joint spacer.
+It hangs on a wall cleat. Wall-mounted attachments (strip printer below, optional festival roof
+or theme topper above) bolt on through a joint spacer. The sign, SELPHY photo base and table foot
+were dropped; their modules stay in `cad/halo.scad` but are no longer built.
 
 | Unit | Nightclub wall | Bar with photo prints | Festival | Exploded |
 |---|---|---|---|---|
@@ -22,13 +23,16 @@ bolt on through a joint spacer.
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
 | `docs/pack/` | The complete A–Z build pack page: every part in 3D with fastening and datasheets, assembly steps, drawings, wiring, print settings, themes, shopping list and checks |
-| `docs/pack/drawings/` | Dimensioned drawing sheets for every printed part (`tools/drawings/render_drawings.js`) |
+| `docs/pack/drawings/` | 36 sheets: assembly drawings with balloons and parts list (A), sections (X), shaded fastening details (V), part drawings with hole tables (D), component outlines (K), outside dimensions (S) |
+| `docs/pack/renders/` | Photoreal Blender Cycles renders (`render/render.py`) |
+| `docs/pack/hardware.json` | Every screw, insert, dowel and hole with position and direction (`HW_LIST` / `HOLE_LIST` in `cad/halo.scad`) |
 | `docs/halo-page/`, `docs/themes-page/` | Earlier presentation pages |
 | `cad/archive/` | Earlier landscape design |
 
 ```sh
-# rebuild the pack: themes -> model -> drawings -> shopping list
-python3 tools/build_pack.py && node tools/drawings/render_drawings.js && python3 tools/make_bom.py
+# rebuild the pack: model + hardware -> drawings -> sections -> renders -> shopping list
+python3 tools/build_pack.py && node tools/drawings/render_drawings.js && python3 tools/drawings/sections.py
+blender -b -P render/render.py -- --samples 160 --size 1200x1500 && python3 tools/make_bom.py
 openscad -D 'PART="bezel"' -D 'PRINT=true' -o stl/bezel.stl cad/halo.scad
 python3 tools/check_bed.py && python3 tools/check_fit.py   # needs trimesh, manifold3d, rtree
 ```
