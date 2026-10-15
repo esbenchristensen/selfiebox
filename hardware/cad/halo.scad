@@ -68,6 +68,17 @@ RIB_T   = 1.6;
 RIB_TOP = PT + 16;    // LEDs sit ~15 mm behind the diffuser = smooth light
 RAIL_T  = 2.5;
 
+// ---------------------------------------------------------- edge glow band --
+// A 10 mm stripe of the back shell is printed in translucent filament (a plain
+// filament change at two layer heights – no purge per layer). A second strip on
+// the LED rail's back wall shines outward into it, so the whole unit carries a
+// glowing ring that is visible from the side and from across the room.
+BAND_Y0 = 22;
+BAND_Y1 = 32;
+EDGE_X  = 108.6;      // outer face of the edge-strip wall
+EDGE_Z  = 90.6;
+EDGE_R  = 12;         // strip wraps the corners – keep >= 10 mm
+
 // ---------------------------------------------------------- fasteners --
 INS_M3_D = 4.0;  INS_M3_L = 6.2;    // brass heat-set M3 (Ø4.5 x 5.9)
 INS_M4_D = 5.6;  INS_M4_L = 8.2;    // brass heat-set M4 (VESA)
@@ -235,10 +246,17 @@ module led_rail() {
                 translate([sx*30, -94.6]) circle(d = 7);
                 translate([sx*30 - 5, -92]) square([10, 1]);
             }
+            // wall carrying the outward-facing edge-glow strip
+            ext_y(RIB_TOP + RAIL_T - 0.01, BAND_Y1 + 0.5) difference() {
+                rrect(2*EDGE_X, 2*EDGE_Z, EDGE_R);
+                rrect(2*EDGE_X - 3.2, 2*EDGE_Z - 3.2, EDGE_R - 1.6);
+            }
         }
         for (p = [[60, 70], [-60, 70], [30, -94.6], [-30, -94.6]]) cyl_y(2.9, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, p[0], p[1]);
         // wire passes at the four corners
         for (sx = [-1, 1], sz = [-1, 1]) cyl_y(5, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, sx*(SLOT_S_X), sz*(SLOT_TB_Z));
+        // wire pass for the edge strip
+        translate([-EDGE_X - 1, RIB_TOP + RAIL_T + 2, -60]) cube([4, 4, 8]);
     }
 }
 
@@ -284,7 +302,7 @@ module shell() {
             // VESA 75 bosses
             for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, DEPTH - BACK_T - 8, DEPTH - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
             // tripod boss (bottom, under the centre of mass)
-            translate([-9, 26, -H/2 + 0.5]) cube([18, 18, 15]);
+            translate([-9, 34, -H/2 + 0.5]) cube([18, 18, 15]);   // kept behind the glow band
             // anti-theft lock boss
             translate([LOCK_X - 6, DEPTH - 12, -H/2 + 0.5]) cube([12, 11, 10]);
         }
@@ -298,13 +316,13 @@ module shell() {
         // VESA inserts
         for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, DEPTH - INS_M4_L, DEPTH + 1, sx*VESA/2, VESA_Z + sz*VESA/2);
         // tripod insert 1/4"-20
-        cyl_z(INS_Q_D, -H/2 - 1, -H/2 + INS_Q_L, 0, 35);
+        cyl_z(INS_Q_D, -H/2 - 1, -H/2 + INS_Q_L, 0, 43);
         // anti-theft lock insert
         cyl_z(INS_M3_D, -H/2 - 1, -H/2 + INS_M3_L, LOCK_X, LOCK_Y);
         // DC jack
-        cyl_z(DC_D, -H/2 - 1, -H/2 + WALL + 1, DC_X, 40);
+        cyl_z(DC_D, -H/2 - 1, -H/2 + WALL + 1, DC_X, 46);
         // bottom intake vents
-        for (sx = [-1, 1], i = [0 : 5]) translate([sx*(64 + i*8) - 1.5, 22, -H/2 - 1]) cube([3, 30, WALL + 2]);
+        for (sx = [-1, 1], i = [0 : 5]) translate([sx*(64 + i*8) - 1.5, 35, -H/2 - 1]) cube([3, 22, WALL + 2]);
         // rear exhaust vents (hidden against the wall – nothing can be spilled into them)
         for (sx = [-1, 1], i = [0 : 3]) ext_y(DEPTH - BACK_T - 1, DEPTH + 1) translate([sx*(66 + i*8), 10]) slot2d(3, 38) ;
         // rear "halo" LED channel (wall-wash glow) + wire entry
@@ -385,6 +403,10 @@ module mock_camera() {
     color([0.1, 0.1, 0.1]) translate([0, PT - 1.5, CAM_Z]) rotate([-90, 0, 0]) cylinder(d = 8.5, h = CAM_PCB_Y - PT + 1.5);
 }
 module mock_leds() {
+    color([1, 0.85, 0.6]) ext_y(BAND_Y0, BAND_Y1) difference() {
+        rrect(2*EDGE_X + 4, 2*EDGE_Z + 4, EDGE_R + 2);
+        rrect(2*EDGE_X, 2*EDGE_Z, EDGE_R);
+    }
     color([1, 0.85, 0.6]) for (s = [-1, 1]) {
         translate([-90, RIB_TOP - 2, s*SLOT_TB_Z - 5]) cube([180, 2, 10]);
         translate([s*SLOT_S_X - 5, RIB_TOP - 2, -67]) cube([10, 2, 134]);
@@ -409,7 +431,10 @@ module assembly(e = EXPLODE) {
     translate([0, e*45, 0]) color(C_INT) { display_clamp(1); display_clamp(-1); camera_clamp(); }
     translate([0, e*30, 0]) mock_camera();
     translate([0, e*75, 0]) mock_pi();
-    translate([0, e*130, 0]) color(C_BODY) shell();
+    translate([0, e*130, 0]) {
+        color(C_BODY) difference() { shell(); translate([-W, BAND_Y0, -H]) cube([2*W, BAND_Y1 - BAND_Y0, 2*H]); }
+        color(C_DIFF) intersection() { shell(); translate([-W, BAND_Y0, -H]) cube([2*W, BAND_Y1 - BAND_Y0, 2*H]); }
+    }
     translate([0, e*190, 0]) color([0.3, 0.3, 0.32]) wall_plate();
 }
 
