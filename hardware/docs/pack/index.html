@@ -1048,8 +1048,7 @@ const DRAWINGS = [
 ];
 const RENDERS_ALL = [["hero", "Standardboks i sort, skråt forfra"], ["front", "Forfra"], ["side", "Profil: 66 mm dyb + vægbeslag"], ["back", "Bagside med vægbeslag"], ["detail", "Kamera i lysringens gab"],
   ["exploded", "Sprængt: alle dele, skruer og indsatser"], ["inside", "Indvendigt bagfra (kabinet fjernet)"], ["wall", "På væggen med fotomodul (Instax)"], ["theme", "Med Sommernat-tema"]];
-const RENDERS_READY = ["hero", "front", "side"];   // the rest are still rendering
-const RENDERS = RENDERS_ALL.filter(r => RENDERS_READY.includes(r[0]));
+const RENDERS = RENDERS_ALL;
 const ALLDRAW = DRAWINGS.flatMap(g => g[1]);
 function openImage(src, title) { $("lb-img").src = src; $("lb-img").alt = title; $("lb-title").textContent = title; $("lb").showModal(); }
 function openDrawing(file) { const d = ALLDRAW.find(x => x[0] === file) || [file, file]; openImage("drawings/" + d[0] + ".png", "Tegning: " + d[1]); }
