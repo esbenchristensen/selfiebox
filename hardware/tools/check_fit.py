@@ -22,7 +22,7 @@ SCAD = ROOT / "cad" / "halo.scad"
 
 UNIT = ["bezel", "led_rail", "shell", "v_display", "v_pi", "v_camera", "v_pads",
         "v_power", "v_leds", "v_diffusers", "wall_cleat"]
-PRINTER = ["printer_front", "printer_shell", "v_printer"]
+PRINTER = ["instax_front", "instax_shell", "v_instax"]
 
 # pairs that are meant to touch or nest (contact, press fit, screwed together)
 TOUCHING = {
@@ -36,8 +36,8 @@ TOUCHING = {
         ("bezel", "shell"),            # tongue slides inside the shell
         ("shell", "v_power"),          # modules sit in cradles / rails
         ("shell", "wall_cleat"),       # cleat engages the groove
-        ("printer_front", "v_printer"),
-        ("printer_front", "printer_shell"),
+        ("instax_shell", "v_instax"),         # printer rests on the ledges
+        ("instax_front", "instax_shell"),
     ]
 }
 
@@ -57,7 +57,8 @@ CLEARANCES = [
     ("v_pads", "v_pi", 1.0, "foam pads to Pi"),
     ("v_camera", "bezel", 0.0, "camera seated on its bosses"),
     ("v_power", "led_rail", 3.0, "power electronics to rail"),
-    ("v_printer", "printer_shell", 1.0, "printer body to its shell"),
+    ("v_instax", "instax_shell", 0.0, "printer seated in its bay (ledges)"),
+    ("v_instax", "instax_front", 0.5, "printer to the front bumpers"),
 ]
 
 

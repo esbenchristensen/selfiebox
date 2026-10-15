@@ -55,8 +55,7 @@
         "height": 110,
         "edge": "clouds",
         "text": true
-      },
-      "printer": {}
+      }
     },
     "style_options": {
       "wing_right": {
@@ -70,11 +69,6 @@
       "topper": {
         "bands": 3,
         "cover": 0.3
-      },
-      "printer_front": {
-        "bands": 3,
-        "cover": 0.35,
-        "top": false
       }
     }
   },

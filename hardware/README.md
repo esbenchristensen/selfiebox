@@ -4,8 +4,11 @@ A portrait selfie box with a raised 14 mm light ring around a 10" Raspberry Pi T
 and the camera. The enclosure is all black, with no colour details. The ring runs a high-CRI
 12 V COB strip (photo light) next to an SK6812 RGBW strip (colour and animation). The unit is
 234 × 306 × 66 mm and prints on a **Bambu Lab H2C** (305 × 320 × 325 mm, heated chamber).
-It hangs on a wall cleat. Wall-mounted attachments (strip printer below, optional festival roof
-or theme topper above) bolt on through a joint spacer. The sign, SELPHY photo base and table foot
+It hangs on a wall cleat. Wall-mounted attachments (the photo module below, optional festival
+roof or theme topper above) bolt on through a joint spacer. The photo module (234 × 189 × 66 mm)
+holds a Fujifilm Instax Square Link upside down: colour instant photos (62 × 62 mm) drop onto a
+45° ramp into a pocket behind the front window. The Pi prints over Bluetooth (InstaxBLE) and
+keeps the printer charged over USB. The thermal strip printer was replaced (black and white only). The sign, SELPHY photo base and table foot
 were dropped; their modules stay in `cad/halo.scad` but are no longer built.
 
 | Unit | Nightclub wall | Bar with photo prints | Festival | Exploded |

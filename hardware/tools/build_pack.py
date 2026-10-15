@@ -26,8 +26,8 @@ SCAD_TO_GLTF = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]
 CACHE = ROOT / ".cache" / "assembly"
 # every part in its own assembly frame (unit parts in the unit frame, attachments in their own)
 PARTS = ["bezel", "diffuser_ring", "led_rail", "shell", "shell_closed", "wall_cleat", "v_display", "v_pi", "v_camera",
-         "v_leds", "v_power", "v_pads", "printer_front", "printer_shell", "v_printer", "v_pol9", "roof", "joint_spacer"]
-BANDED = {"shell", "shell_closed", "printer_shell"}      # translucent glow stripe between y = 22 and 32
+         "v_leds", "v_power", "v_pads", "instax_front", "instax_shell", "v_instax", "roof", "joint_spacer"]
+BANDED = {"shell", "shell_closed", "instax_shell"}      # translucent glow stripe between y = 22 and 32
 BAND_Y = (22.0, 32.0)
 
 # fastener geometry: (shank Ø, length, head Ø, head height)  — screws; inserts/dowels: (Ø, length)

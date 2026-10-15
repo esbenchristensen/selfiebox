@@ -29,7 +29,7 @@ CO_PRINTED = {"sign_letters": "sign_front"}
 
 # parts that use AMS swaps (translucent stripe, sign letters)
 
-MULTI_MATERIAL = {"shell", "shell_closed_top", "printer_shell", "sign_front", "sign_shell"}
+MULTI_MATERIAL = {"shell", "shell_closed_top", "instax_shell"}
 
 def check(path: Path) -> bool:
     m = trimesh.load(path)

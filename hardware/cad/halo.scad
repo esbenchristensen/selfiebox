@@ -34,8 +34,8 @@ PRINT   = false;
 EXPLODE = 0;
 FPC     = -1;          // side of the display's LCD flex: -1 left, +1 right (see components.scad)
 UNIT_TOP = "joint";    // "joint" or "closed"
-BOTTOM   = "strip";    // assembly: "strip" | "photo" | "foot" | "none"
-WITH_SIGN = true;
+BOTTOM   = "instax";   // assembly: "instax" | "none"  (strip printer, photo base and foot are retired)
+WITH_SIGN = false;
 WITH_ROOF = false;
 SIGN_TEXT = "CLUB NAME";
 PRN_LABEL = "PHOTO STRIPS";
@@ -347,6 +347,50 @@ module printer_shell() {
     }
 }
 
+
+// ============================================================ PHOTO MODULE (instax) ==
+// Fujifilm Instax Square Link hangs upside down (exit slot down) against the back wall.
+// The photo drops onto a 45° ramp and slides into a pocket behind the photo window.
+// The front comes off with 4 × M3 Torx for film changes: the printer's film door faces it.
+INX_Z = 50;                                    // printer exit edge (its top) above the module floor
+INX_Y = D - BACK_T - 1 - INSQ[1];              // printer front face (1 mm EVA on the back wall)
+H_INX = ceil(INX_Z + INSQ[2] + 11.5);          // printer stays clear of the joint bosses
+INX_BLOCKS = [30, H_INX - 30];
+INX_WIN = [84, 44];                            // photo window (w, h) at the bottom of the front
+module instax_front() {
+    difference() {
+        union() {
+            front_base(H_INX, INX_BLOCKS);
+            // two bumpers hold the printer against the back wall when the front is on
+            for (sx = [-1, 1], z = [INX_Z + 25, INX_Z + INSQ[2] - 25]) cyl_y(9, PT - 0.01, INX_Y - 0.6, sx*34, z);
+        }
+        // photo window with a finger notch
+        translate([-INX_WIN[0]/2, -1, WALL + 1]) cube([INX_WIN[0], PT + 2, INX_WIN[1]]);
+        cyl_y(30, -1, PT + 1, 0, WALL + 1 + INX_WIN[1]);
+        translate([0, -0.01, WALL + 1 + INX_WIN[1]/2]) rotate([-90, 0, 0]) linear_extrude(1.2, scale = [(INX_WIN[0] - 2.4)/(INX_WIN[0] + 2.4), (INX_WIN[1] - 2.4)/(INX_WIN[1] + 2.4)]) square([INX_WIN[0] + 2.4, INX_WIN[1] + 2.4], center = true);
+    }
+}
+module instax_shell() {
+    hw = INSQ[0]/2 + 0.6;
+    difference() {
+        union() {
+            shell_base(H_INX, INX_BLOCKS, top = "joint", bottom = "closed", tripod = false, vents = false);
+            // side guides for the printer
+            for (sx = [-1, 1]) translate([sx > 0 ? hw : -hw - 2.4, INX_Y - 2, INX_Z - 4]) cube([2.4, D - BACK_T - INX_Y + 2.01, INSQ[2] + 4]);
+            // ledges under the printer's exit edge, clear of the film path
+            for (sx = [-1, 1]) translate([sx > 0 ? INSQ_SLOT[0]/2 + 3 : -hw, INX_Y, INX_Z - 4]) cube([hw - INSQ_SLOT[0]/2 - 3, D - BACK_T - INX_Y + 0.01, 4.01]);
+            // shelf + 45° ramp that guide the photo into the pocket
+            ext_x(-INX_WIN[0]/2 + 2, INX_WIN[0]/2 - 2) polygon([[SKIRT + TONGUE_L + 1, WALL - 0.01], [D - BACK_T + 0.01, WALL - 0.01],
+                [D - BACK_T + 0.01, WALL + 1 + (D - BACK_T - 30)], [30, WALL + 1], [SKIRT + TONGUE_L + 1, WALL + 1]]);
+        }
+        // finger hole to the printer's power button [M]
+        cyl_x(10, HW - WALL - 1, HW + 1, INX_Y + INSQ[1]/2, INX_Z + 20);
+        // cable notch for the USB-C charge lead to the joint
+        translate([hw - 1, D - BACK_T - 6, INX_Z + INSQ[2] - 30]) cube([10, 6.01, 30]);
+    }
+}
+module placed_instax() { translate([0, INX_Y, INX_Z + INSQ[2]]) rotate([0, 180, 0]) instax_square_link(); }
+
 // ============================================================ SIGN =========
 SIGN_BLOCKS = [22, H_SIGN - 22];
 module sign_text(depth, y0) {
@@ -482,7 +526,7 @@ module band_split() {
     color(C_BODY) difference() { children(); translate([-500, BAND_Y0, -500]) cube([1000, BAND_Y1 - BAND_Y0, 1000]); }
     color(C_DIFF) intersection() { children(); translate([-500, BAND_Y0, -500]) cube([1000, BAND_Y1 - BAND_Y0, 1000]); }
 }
-B_H = BOTTOM == "strip" ? H_PRN : BOTTOM == "photo" ? PB_H : BOTTOM == "foot" ? 26 : 0;
+B_H = BOTTOM == "instax" ? H_INX : BOTTOM == "strip" ? H_PRN : BOTTOM == "photo" ? PB_H : BOTTOM == "foot" ? 26 : 0;
 Z_UNIT = B_H + (BOTTOM == "none" || BOTTOM == "foot" ? 0 : SPACER_T);
 Z_TOP1 = Z_UNIT + H + SPACER_T;
 module unit_assembly(e) {
@@ -500,7 +544,8 @@ module assembly(e = EXPLODE) {
     if (BOTTOM == "strip") translate([0, 0, -e*60]) { color(C_BODY) printer_front(); translate([0, 0, PRN_Z]) dfr0503(); translate([0, e*60, 0]) band_split() printer_shell(); }
     if (BOTTOM == "photo") translate([0, 0, -e*60]) { color(C_BODY) photo_base(); color([0.92, 0.92, 0.9]) translate([-SELPHY[0]/2, -PB_FRONT + 6, 0]) cube([SELPHY[0], SELPHY[1], SELPHY[2]]); }
     if (BOTTOM == "foot") translate([0, 0, -e*60]) color([0.3, 0.3, 0.32]) foot();
-    if (BOTTOM == "strip" || BOTTOM == "photo") translate([0, 0, B_H - e*30]) color(C_INT) joint_spacer();
+    if (BOTTOM == "instax") translate([0, 0, -e*60]) { color(C_BODY) instax_front(); placed_instax(); translate([0, e*60, 0]) band_split() instax_shell(); }
+    if (BOTTOM == "strip" || BOTTOM == "photo" || BOTTOM == "instax") translate([0, 0, B_H - e*30]) color(C_INT) joint_spacer();
     translate([0, 0, Z_UNIT]) unit_assembly(e);
     if (WITH_SIGN) translate([0, 0, Z_TOP1 + e*60]) {
         translate([0, 0, -SPACER_T - e*30]) color(C_INT) joint_spacer();
@@ -533,12 +578,10 @@ HW_LIST = concat(
   [for (p = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125]]) ["unit", "wall_cleat", "wood45x50", [p[0], YB_CLEAT, p[1]], [0, 1, 0], "base"]],
   [for (p = IF_SCREW) ["unit", "shell", "m3x16", [p[0], p[1], H - 4], [0, 0, 1], "top"]],
   [for (p = IF_DOWEL) ["unit", "shell", "dowel6x20", [p[0], p[1], H - 8], [0, 0, 1], "top"]],
-  [for (sx = [-1, 1], z = PRN_BLOCKS) ["strip", "printer_front", "ins_m3", [sx*(HW - WALL), SIDE_Y, z], [-sx, 0, 0], "base"]],
-  [for (sx = [-1, 1], z = PRN_BLOCKS) ["strip", "printer_shell", "m3x8", [sx*(HW - 1.8), SIDE_Y, z], [-sx, 0, 0], "base"]],
-  [for (p = IF_SCREW) ["strip", "printer_shell", "m3x16", [p[0], p[1], H_PRN - 4], [0, 0, 1], "base"]],
-  [for (p = IF_DOWEL) ["strip", "printer_shell", "dowel6x20", [p[0], p[1], H_PRN - 8], [0, 0, 1], "base"]],
-  [for (p = IF_SCREW) ["strip", "printer_shell", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]],
-  [["strip", "printer_shell", "ins_q", [TRIPOD_P[0], TRIPOD_P[1], 0], [0, 0, 1], "base"]],
+  [for (sx = [-1, 1], z = INX_BLOCKS) ["photo", "instax_front", "ins_m3", [sx*(HW - WALL), SIDE_Y, z], [-sx, 0, 0], "base"]],
+  [for (sx = [-1, 1], z = INX_BLOCKS) ["photo", "instax_shell", "m3x8", [sx*(HW - 1.8), SIDE_Y, z], [-sx, 0, 0], "base"]],
+  [for (p = IF_SCREW) ["photo", "instax_shell", "m3x16", [p[0], p[1], H_INX - 4], [0, 0, 1], "base"]],
+  [for (p = IF_DOWEL) ["photo", "instax_shell", "dowel6x20", [p[0], p[1], H_INX - 8], [0, 0, 1], "base"]],
   [for (p = IF_SCREW) ["roof", "roof", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]],
   [for (p = IF_SCREW) ["topper", "topper", "ins_m3", [p[0], p[1], 0], [0, 0, 1], "base"]]
 );
@@ -562,11 +605,13 @@ HOLE_LIST = concat(
   [for (p = IF_DOWEL) ["joint_spacer", "Styrestift", [p[0], p[1], 0], [0, 0, 1], 6.3, SPACER_T]],
   [["joint_spacer", "Kabelhul", [IF_CABLE[0], IF_CABLE[1], 0], [0, 0, 1], IF_CABLE_D, SPACER_T]],
   [for (p = IF_DOWEL) ["roof", "Styrestift", [p[0], p[1], 0], [0, 0, 1], 6.2, 8]],
-  [for (sx = [-1, 1], z = PRN_BLOCKS) ["printer_shell", "Frigang M3 + forsænkning Ø6,4", [sx*HW, SIDE_Y, z], [-sx, 0, 0], M3_CLR, WALL]],
-  [for (p = IF_SCREW) ["printer_shell", "Frigang M3 top + forsænkning", [p[0], p[1], H_PRN], [0, 0, -1], M3_CLR, 5]],
-  [for (p = IF_DOWEL) ["printer_shell", "Styrestift top", [p[0], p[1], H_PRN], [0, 0, -1], 6.2, 8]],
-  [for (p = IF_DOWEL) ["printer_shell", "Styrestift bund", [p[0], p[1], 0], [0, 0, 1], 6.2, 8]],
-  [["printer_front", "Udskæring printer", [0, 0, PRN_Z], [0, 1, 0], 0, PT]]
+  [for (sx = [-1, 1], z = INX_BLOCKS) ["instax_shell", "Frigang M3 + forsænkning Ø6,4", [sx*HW, SIDE_Y, z], [-sx, 0, 0], M3_CLR, WALL]],
+  [for (p = IF_SCREW) ["instax_shell", "Frigang M3 top + forsænkning", [p[0], p[1], H_INX], [0, 0, -1], M3_CLR, 5]],
+  [for (p = IF_DOWEL) ["instax_shell", "Styrestift top", [p[0], p[1], H_INX], [0, 0, -1], 6.2, 8]],
+  [["instax_shell", "Kabelhul top", [IF_CABLE[0], IF_CABLE[1], H_INX], [0, 0, -1], IF_CABLE_D, WALL]],
+  [["instax_shell", "Fingerhul til tænd/sluk [M]", [HW, INX_Y + INSQ[1]/2, INX_Z + 20], [-1, 0, 0], 10, WALL]],
+  [["instax_front", "Fotovindue 84 × 44 + fingergreb Ø30", [0, 0, WALL + 1 + INX_WIN[1]/2], [0, 1, 0], 0, PT]]
+
 );
 
 // ============================================================ OUTPUT =======
@@ -596,8 +641,11 @@ else if (PART == "v_power")        placed_power();
 else if (PART == "v_leds")         placed_leds();
 else if (PART == "v_diffusers")    diffuser_ring();
 else if (PART == "v_printer")      translate([0, 0, PRN_Z]) dfr0503();
+else if (PART == "instax_front")   { if (PRINT) face_down() instax_front(); else instax_front(); }
+else if (PART == "instax_shell")   { if (PRINT) back_down() instax_shell(); else instax_shell(); }
+else if (PART == "v_instax")       placed_instax();
 else if (PART == "v_pol9")         translate([-HW + WALL + 4, D - BACK_T - 1.2 - POL28[2], H_PRN - WALL - POL28[1] - 8]) pololu([POL28[0], POL28[2], POL28[1]]);
 else if (PART == "shell_closed")   shell_closed();
-else if (PART == "hardware") { echo(HW_LIST = HW_LIST); echo(HOLE_LIST = HOLE_LIST); echo(VARS = [W, H, D, H_PRN, SPACER_T, LOCK_Z, CLEAT_ZC, GC, LENS_Z]); }
+else if (PART == "hardware") { echo(HW_LIST = HW_LIST); echo(HOLE_LIST = HOLE_LIST); echo(VARS = [W, H, D, H_INX, SPACER_T, LOCK_Z, CLEAT_ZC, GC, LENS_Z, INX_Z, INX_Y]); }
 else if (PART == "geom") echo(GEOM = [W, H, D, R, SIDE_Y, BLOCK_Z[0], BLOCK_Z[1], H_SIGN, H_PRN, PRN_Z, SPACER_T, EDGE_CH, M3_CLR, INS_M3_D, INS_M3_L, PRN_FRONT[0], PRN_FRONT[1]]);
 else if (PART == "info") echo(W = W, H = H, GLASS_TOP = GLASS_TOP, GC = GC, LENS_Z = LENS_Z, CAM_PCB_Y = CAM_PCB_Y, PI_Y = PI_Y, RING = [RING_X, RING_Z0, RING_Z1], RUN_V = RUN_V, RUN_H = RUN_H, LEDS = [run_leds(RUN_V), run_leds(RUN_H), run_leds(RUN_T)], RUN_T = RUN_T, XBAR_Z = XBAR_Z, CAM_TOP = CAM_TOP);

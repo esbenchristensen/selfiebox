@@ -508,45 +508,60 @@
    ]
   },
   {
-   "out": "D08_printer_front",
-   "node": "printer_front",
-   "title": "Printer-front (DFR0503)",
+   "out": "D08_instax_front",
+   "node": "instax_front",
+   "title": "Fotomodul-front",
    "views": [
     "front",
     "side"
    ],
-   "material": "ASA sort",
-   "file": "stl/printer_front.stl",
+   "material": "ASA sort, forside ned",
+   "file": "stl/instax_front.stl",
    "dims": [
     [
      "front",
      [
-      -38.7,
+      -42,
       0,
-      64.7
+      4
      ],
      [
-      38.7,
+      42,
       0,
-      64.7
+      4
      ],
-     0,
-     "Udskæring 77,4"
+     30,
+     "Fotovindue 84"
     ],
     [
      "front",
      [
-      -50,
+      -60,
       0,
-      11.3
+      4
      ],
      [
-      -50,
+      -60,
       0,
-      64.7
+      48
      ],
      0,
-     "53,4"
+     "44"
+    ],
+    [
+     "side",
+     [
+      3.2,
+      0,
+      100
+     ],
+     [
+      23.9,
+      0,
+      100
+     ],
+     -30,
+     "Bumpere til 23,9"
     ]
    ],
    "notes": [
@@ -555,37 +570,101 @@
      [
       0,
       0,
-      38
+      48
      ],
-     "0,4 mm sæde 82,6 × 58,6 til printerens flange",
+     "Fingergreb Ø30",
      70,
-     40
+     -30
+    ],
+    [
+     "front",
+     [
+      34,
+      12,
+      75
+     ],
+     "2 × 2 bumpere Ø9 holder printeren",
+     70,
+     -40
     ]
    ]
   },
   {
-   "out": "D09_printer_shell",
-   "node": "printer_shell",
-   "title": "Printerkabinet",
+   "out": "D09_instax_shell",
+   "node": "instax_shell",
+   "title": "Fotomodul-kabinet (Instax Square Link)",
    "views": [
-    "back",
+    "front",
     "side",
-    "top",
-    "bottom"
+    "top"
    ],
    "material": "ASA sort + translucent stribe",
-   "file": "stl/printer_shell.stl",
+   "file": "stl/instax_shell.stl",
+   "dims": [
+    [
+     "front",
+     [
+      -53.1,
+      40,
+      150
+     ],
+     [
+      53.1,
+      40,
+      150
+     ],
+     0,
+     "Printerbås 106,2"
+    ],
+    [
+     "front",
+     [
+      -90,
+      40,
+      4
+     ],
+     [
+      -90,
+      40,
+      50
+     ],
+     0,
+     "Udgang 50"
+    ]
+   ],
    "notes": [
     [
-     "back",
+     "front",
      [
-      -101,
-      66,
-      62
+      45,
+      50,
+      48
      ],
-     "Holder til Pololu D36V28F9 (indvendigt)",
+     "Hylder uden om filmudgangen (78 mm)",
      70,
-     -20
+     -60
+    ],
+    [
+     "side",
+     [
+      30,
+      0,
+      15
+     ],
+     "Fotolomme + 45° rampe",
+     70,
+     40
+    ],
+    [
+     "front",
+     [
+      54.3,
+      40,
+      120
+     ],
+     "Sideskinner, 0,6 mm luft",
+     70,
+     -40
     ]
    ]
   },
@@ -750,26 +829,37 @@
    "holes": false
   },
   {
-   "out": "K04_printer",
-   "node": "v_printer",
-   "title": "Komponent: DFRobot DFR0503 termoprinter",
+   "out": "K04_instax",
+   "node": "v_instax",
+   "title": "Komponent: Fujifilm Instax Square Link (monteret på hovedet)",
    "views": [
     "front",
     "side"
    ],
-   "material": "Købt · DFRobot",
-   "file": "components.scad: dfr0503",
+   "material": "Købt · Fujifilm",
+   "file": "components.scad: INSQ",
    "holes": false,
    "notes": [
     [
      "front",
      [
       0,
-      -2,
-      38
+      24.5,
+      50
      ],
-     "Front 82 × 58, udskæring 77 × 53, dybde 42",
-     60,
+     "Filmudgang [M] (forudsat midt, 76 × 3)",
+     70,
+     40
+    ],
+    [
+     "side",
+     [
+      43,
+      43,
+      113
+     ],
+     "105 × 37,5 × 127,5 mm, 236 g",
+     70,
      -30
     ]
    ]
@@ -784,18 +874,6 @@
    ],
    "material": "Købt + håndbygget",
    "file": "components.scad: pololu",
-   "holes": false
-  },
-  {
-   "out": "K06_pololu9",
-   "node": "v_pol9",
-   "title": "Komponent: Pololu D36V28F9 (printer, 9 V)",
-   "views": [
-    "back",
-    "side"
-   ],
-   "material": "Købt · Pololu",
-   "file": "components.scad: POL28",
    "holes": false
   },
   {
@@ -889,7 +967,7 @@
    ]
   },
   {
-   "out": "S02_unit_printer_outline",
+   "out": "S02_unit_photo_outline",
    "nodes": [
     "bezel",
     "diffuser_ring",
@@ -897,13 +975,13 @@
     "shell_closed_band",
     "wall_cleat",
     "joint_spacer",
-    "printer_front",
-    "printer_shell",
-    "printer_shell_band",
-    "v_printer"
+    "instax_front",
+    "instax_shell",
+    "instax_shell_band",
+    "v_instax"
    ],
-   "node": "unit+printer",
-   "title": "Standardboks med strip-printer – udvendige mål",
+   "node": "unit+photo",
+   "title": "Standardboks med fotomodul – udvendige mål",
    "views": [
     "front",
     "side"
@@ -911,8 +989,8 @@
    "material": "Samlet enhed",
    "file": "cad/halo.scad",
    "place": {
-    "unit": 90,
-    "spacer": 84
+    "unit": 195,
+    "spacer": 189
    },
    "dims": [
     [
@@ -925,22 +1003,22 @@
      [
       -140,
       0,
-      84
+      189
      ],
      0,
-     "84"
+     "189"
     ],
     [
      "front",
      [
       -140,
       0,
-      90
+      195
      ],
      [
       -140,
       0,
-      396
+      501
      ],
      0,
      "306"
@@ -955,10 +1033,10 @@
      [
       -160,
       0,
-      396
+      501
      ],
      0,
-     "396 i alt"
+     "501 i alt"
     ]
    ],
    "notes": [
@@ -967,9 +1045,9 @@
      [
       0,
       0,
-      38
+      26
      ],
-     "Papiret kommer ud her",
+     "Fotoet ligger klar her",
      70,
      40
     ]
@@ -1451,48 +1529,43 @@
   },
   {
    "kind": "assembly",
-   "out": "A03_printer_joint",
-   "title": "Samletegning – strip-printer under boksen",
+   "out": "A03_photo_joint",
+   "title": "Samletegning – fotomodul under boksen",
    "view": "iso",
    "viewName": "Isometri, sprængt lodret",
    "style": "line",
    "pull": 26,
-   "px": 2.0,
-   "scope": "Boks + strip-printer",
+   "px": 1.6,
+   "scope": "Boks + fotomodul",
    "place": {
-    "unit": 90,
-    "spacer": 84
+    "unit": 195,
+    "spacer": 189
    },
    "explode": {
-    "printer_front": [
+    "instax_front": [
      0,
-     -40,
-     -110
+     -60,
+     -150
     ],
-    "v_printer": [
+    "v_instax": [
      0,
-     -40,
-     -110
+     -30,
+     -150
     ],
-    "printer_shell": [
+    "instax_shell": [
      0,
      0,
-     -110
+     -150
     ],
-    "printer_shell_band": [
+    "instax_shell_band": [
      0,
      0,
-     -110
-    ],
-    "v_pol9": [
-     0,
-     0,
-     -110
+     -150
     ],
     "joint_spacer": [
      0,
      0,
-     -50
+     -60
     ]
    },
    "items": [
@@ -1527,7 +1600,7 @@
     [
      23,
      [
-      "hw--strip--base--dowel6x20--*"
+      "hw--photo--base--dowel6x20--*"
      ],
      2,
      "Styrestift Ø6 × 20",
@@ -1536,7 +1609,7 @@
     [
      24,
      [
-      "hw--strip--base--m3x16--*"
+      "hw--photo--base--m3x16--*"
      ],
      2,
      "Skrue M3 × 16 Torx",
@@ -1545,44 +1618,35 @@
     [
      25,
      [
-      "printer_shell",
-      "printer_shell_band"
+      "instax_shell",
+      "instax_shell_band"
      ],
      1,
-     "Printerkabinet",
+     "Fotomodul-kabinet",
      "ASA + PETG transl."
     ],
     [
      26,
      [
-      "v_pol9"
+      "v_instax"
      ],
      1,
-     "Pololu D36V28F9",
+     "Fujifilm Instax Square Link",
      "Købt"
     ],
     [
      27,
      [
-      "printer_front"
+      "instax_front"
      ],
      1,
-     "Printer-front",
+     "Fotomodul-front",
      "ASA sort"
-    ],
-    [
-     28,
-     [
-      "v_printer"
-     ],
-     1,
-     "DFR0503 termoprinter",
-     "Købt"
     ],
     [
      29,
      [
-      "hw--strip--base--ins_m3--printer_front--*"
+      "hw--photo--base--ins_m3--instax_front--*"
      ],
      4,
      "Messingindsats M3",
@@ -1591,7 +1655,7 @@
     [
      30,
      [
-      "hw--strip--base--m3x8--*"
+      "hw--photo--base--m3x8--*"
      ],
      4,
      "Skrue M3 × 8 Torx",
@@ -2264,124 +2328,176 @@
   },
   {
    "kind": "detail",
-   "out": "V06_printer",
-   "title": "Detalje: strip-printer samles med boksen",
-   "parts": "Kabinet · Samlestykke · Printerkabinet · DFR0503",
-   "fasteners": "2 × M3 × 16, 2 styrestifter, 4 × M3 × 8",
+   "out": "V06_photo",
+   "title": "Detalje: fotomodul med Instax Square Link",
+   "parts": "Fotomodul-kabinet · Instax · Front",
+   "fasteners": "4 × M3 × 8, 2 × M3 × 16, 2 styrestifter",
    "place": {
-    "unit": 90,
-    "spacer": 84
+    "unit": 195,
+    "spacer": 189
    },
    "panels": [
     {
-     "title": "Skråt forfra, sprængt",
+     "title": "Fotomodulet uden front",
      "view": "iso",
      "nodes": [
+      "instax_shell",
+      "instax_shell_band",
+      "v_instax",
+      "joint_spacer",
       "shell_closed",
       "shell_closed_band",
       "bezel",
       "diffuser_ring",
-      "v_display",
-      "joint_spacer",
-      "printer_shell",
-      "printer_shell_band",
-      "printer_front",
-      "v_printer",
-      "v_pol9",
-      "hw--strip--base--*",
-      "hw--unit--base--ins_m3--shell--*"
+      "hw--photo--base--*"
      ],
      "explode": {
-      "printer_front": [
-       0,
-       -50,
-       -90
-      ],
-      "v_printer": [
-       0,
-       -50,
-       -90
-      ],
-      "printer_shell": [
-       0,
-       0,
-       -90
-      ],
-      "printer_shell_band": [
-       0,
-       0,
-       -90
-      ],
-      "v_pol9": [
-       0,
-       0,
-       -90
-      ],
       "joint_spacer": [
        0,
        0,
-       -40
+       25
+      ],
+      "shell_closed": [
+       0,
+       0,
+       50
+      ],
+      "shell_closed_band": [
+       0,
+       0,
+       50
+      ],
+      "bezel": [
+       0,
+       0,
+       50
+      ],
+      "diffuser_ring": [
+       0,
+       0,
+       50
+      ],
+      "shell": [
+       0,
+       0,
+       50
       ]
      },
      "pull": 18,
      "hl": [
-      "joint_spacer"
+      "v_instax"
      ],
      "box": [
       [
        -150,
-       -60,
-       -100
+       -10,
+       0
       ],
       [
        150,
        80,
-       170
+       240
       ]
      ],
-     "px": 2.6,
+     "boxGroup": "strip",
+     "px": 2.3,
      "labels": [
       [
        [
-        55,
-        44,
-        68
+        0,
+        24.5,
+        120
        ],
-       "2 × M3 × 16 indefra printerkabinettet\nop i boksens M3-indsatser",
-       80,
-       -40,
+       "Instax Square Link på hovedet,\nfilmlågen mod fronten",
+       90,
+       -50,
        "strip"
       ],
       [
        [
-        -30,
-        50,
-        70
+        53.6,
+        40,
+        150
        ],
-       "2 styrestifter Ø6 × 20",
-       -80,
+       "Sideskinner (0,6 mm luft)",
+       90,
        -30,
        "strip"
       ],
       [
        [
-        0,
+        47,
         30,
-        47
+        48
        ],
-       "Samlestykke · kabelhul Ø20: 12 V, GND, data",
-       80,
+       "Hylder uden om filmudgangen",
+       90,
        30,
        "strip"
       ],
       [
        [
         0,
-        -52,
-        -52
+        45,
+        20
        ],
-       "DFR0503 trykkes ind forfra",
-       -80,
+       "45° rampe → fotolomme",
+       -90,
+       40,
+       "strip"
+      ],
+      [
+       [
+        55,
+        44,
+        182
+       ],
+       "2 × M3 × 16 op i boksen",
+       90,
+       -40,
+       "strip"
+      ]
+     ]
+    },
+    {
+     "title": "Fronten set indefra",
+     "view": "back",
+     "nodes": [
+      "instax_front",
+      "hw--photo--base--ins_m3--instax_front--*"
+     ],
+     "px": 1.7,
+     "labels": [
+      [
+       [
+        34,
+        23,
+        75
+       ],
+       "4 bumpere Ø9 holder printeren mod bagvæggen",
+       70,
+       -40,
+       "strip"
+      ],
+      [
+       [
+        0,
+        3,
+        26
+       ],
+       "Fotovindue 84 × 44 + fingergreb Ø30",
+       70,
+       40,
+       "strip"
+      ],
+      [
+       [
+        114,
+        10,
+        30
+       ],
+       "M3-indsats (4 stk.)",
+       -70,
        40,
        "strip"
       ]
@@ -2389,10 +2505,10 @@
     }
    ],
    "steps": [
-    "Klik D36V28F9 i holderen i printerkabinettet. Tryk DFR0503 ind forfra i printer-fronten.",
-    "Skru printer-fronten på printerkabinettet med 4 × M3 × 8.",
-    "Læg samlestykket på, sæt 2 styrestifter i, og før kablerne gennem hullet Ø20.",
-    "Skru 2 × M3 × 16 indefra printerkabinettet op i boksens bundindsatser."
+    "Klæb 1 mm EVA på modulets bagvæg.",
+    "Sæt printeren på hovedet ned mellem sideskinnerne, filmlågen mod fronten, USB-C-kablet i kabelrillen.",
+    "Skru fronten på med 4 × M3 × 8 – fronten tages af ved filmskift (10 billeder pr. kassette).",
+    "Samlestykke + 2 styrestifter, og 2 × M3 × 16 indefra modulet op i boksen."
    ]
   },
   {

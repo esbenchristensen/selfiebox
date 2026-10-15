@@ -33,11 +33,12 @@ shots = shots or ALL
 W, H, D, H_PRN, SP = 234, 306, 66, 84, 6
 GC, LENS_Z, VIEW = 151.85, 289.2, (136.4, 217.6)
 GLASS_Y = 3.7
-Z_UNIT = H_PRN + SP           # unit sits on the strip printer + joint spacer
+H_INX = 189
+Z_UNIT = H_INX + SP           # unit sits on the photo module + joint spacer
 GROUP = {"bezel": "unit", "diffuser_ring": "unit", "led_rail": "unit", "wall_cleat": "unit", "v_display": "unit", "v_pi": "unit",
          "v_camera": "unit", "v_leds": "unit", "v_power": "unit", "v_pads": "unit", "shell": "unit", "shell_band": "unit",
-         "shell_closed": "unit", "shell_closed_band": "unit", "v_pol9": "strip",
-         "printer_front": "strip", "v_printer": "strip", "printer_shell": "strip", "printer_shell_band": "strip",
+         "shell_closed": "unit", "shell_closed_band": "unit",
+         "instax_front": "strip", "v_instax": "strip", "instax_shell": "strip", "instax_shell_band": "strip",
          "roof": "roof", "joint_spacer": "spacer"}
 # explode offsets along depth (+y = backwards), mm
 EXPLODE = {"diffuser_ring": -45, "bezel": 0, "v_camera": 25, "v_display": 40, "v_pads": 70, "led_rail": 95, "v_leds": 95,
@@ -112,7 +113,7 @@ def setup_materials():
     return M
 
 
-ROLE = {"bezel": "body", "shell": "body", "printer_front": "body", "printer_shell": "body", "roof": "body", "wall_cleat": "body",
+ROLE = {"bezel": "body", "shell": "body", "printer_front": "body", "printer_shell": "body", "roof": "body", "wall_cleat": "body", "instax_front": "body", "instax_shell": "body", "instax_shell_band": "band", "v_instax": "paper",
         "led_rail": "body", "joint_spacer": "body", "shell_closed": "body", "shell_closed_band": "band", "v_pol9": "power", "shell_band": "band", "printer_shell_band": "band", "diffuser_ring": "diff",
         "v_leds": "led", "v_display": "glass", "v_pi": "pcb", "v_camera": "lens", "v_printer": "dark", "v_pads": "pad", "v_power": "power"}
 HWMAT = {"ins": "insert", "dowel6x20": "dowel", "wood45x50": "zinc"}
@@ -161,12 +162,12 @@ def place(objs, with_printer=True, with_roof=False, theme=None, explode=0.0, on_
         if name.startswith("hw--"):
             _, grp, when, kind, part, _n = name.split("--")
             vis = (grp == "unit" and (when == "base" or (when == "top" and (with_roof or theme)) or (when == "wing" and theme))) \
-                or (grp == "strip" and with_printer) or (grp == "roof" and with_roof) or (grp == "topper" and theme)
+                or (grp == "photo" and with_printer) or (grp == "roof" and with_roof) or (grp == "topper" and theme)
             if kind == "wood45x50" and not on_wall:
                 vis = False          # wall screws only when it hangs on a wall
             if theme and when == "base" and kind == "m3x8" and part == "shell":
                 vis = False          # wings use longer screws
-            z = {"unit": dz_unit, "strip": 0, "roof": dz_unit + H + SP, "topper": dz_unit + H + SP}[grp]
+            z = {"unit": dz_unit, "photo": 0, "roof": dz_unit + H + SP, "topper": dz_unit + H + SP}[grp]
             dy = EXPLODE.get(part, 0) * explode
             if explode and kind.startswith("m") and grp == "unit":
                 d = o.matrix_world  # push screws out along their own axis a bit more
@@ -188,7 +189,7 @@ def place(objs, with_printer=True, with_roof=False, theme=None, explode=0.0, on_
             elif grp == "roof":
                 vis = with_roof; o.location = (0, 0, dz_unit + H + SP)
             elif grp == "spacer":
-                vis = with_printer; o.location = (0, 0, H_PRN)
+                vis = with_printer; o.location = (0, 0, H_INX)
             if theme and name == "printer_front":
                 vis = False
             top_used = with_roof or bool(theme)

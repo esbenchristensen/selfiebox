@@ -114,6 +114,17 @@ module dfr0503() {   // front face at y = 0, centred on x = 0, z = 0
     color([0.9, 0.9, 0.88]) translate([-29, -PRN_FRONT_T - 0.2, PRN_FRONT[1]/2 - 9]) cube([58, 0.2, 3]);
 }
 
+// ---------------------------------------------------- Fujifilm Instax Square Link (photo printer)
+// [A] body 105 x 37.5 x 127.5 mm (W x D x H, without projecting parts), 236 g (Fujifilm / retailers)
+// [A] instax SQUARE film 72 x 86 mm, image 62 x 62 mm; Bluetooth; ~100 prints per charge; USB-C charging
+// [M] film exit slot on the top edge (assumed centred, 76 x 3); film door on the back face;
+//     power button on one side ~20 mm below the top; USB-C position – measure on the real printer
+INSQ = [105, 37.5, 127.5];  INSQ_R = 9;  INSQ_SLOT = [76, 3];  FILM_SQ = [72, 86, 1.2];
+module instax_square_link() {   // standing, back (film door) towards -y, exit slot at the top, centred on x, bottom at z = 0
+    color([0.92, 0.92, 0.9]) hull() for (sx = [-1, 1], sz = [0, 1])
+        translate([sx*(INSQ[0]/2 - INSQ_R), 0, INSQ_R + sz*(INSQ[2] - 2*INSQ_R)]) rotate([-90, 0, 0]) cylinder(r = INSQ_R, h = INSQ[1], $fn = 32);
+    color([0.2, 0.2, 0.22]) translate([-INSQ_SLOT[0]/2, INSQ[1]/2 - INSQ_SLOT[1]/2, INSQ[2] - 0.01]) cube([INSQ_SLOT[0], INSQ_SLOT[1], 0.6]);
+}
 // ---------------------------------------------------- Canon SELPHY CP1500
 // [A] 182.2 x 133.0 x 57.6 (W x D x H), Canon product page
 SELPHY = [182.2, 133.0, 57.6];

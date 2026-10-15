@@ -29,7 +29,8 @@ HW = json.loads((ROOT / "docs" / "pack" / "hardware.json").read_text())
 NAMES = {"bezel": "Bezel", "diffuser_ring": "Diffuserring", "led_rail": "LED-skinne", "shell_closed": "Kabinet", "shell_closed_band": "Translucent stribe",
          "wall_cleat": "Vægbeslag", "v_display": "Touch Display 2", "v_pi": "Pi 5 + køler", "v_camera": "Kamera", "v_leds": "LED-strips (COB + RGBW)",
          "v_power": "Strømmodul", "v_pads": "EVA-pad", "printer_front": "Printer-front", "printer_shell": "Printerkabinet", "printer_shell_band": "Translucent stribe",
-         "v_printer": "DFR0503", "v_pol9": "Pololu 9 V", "joint_spacer": "Samlestykke"}
+         "v_printer": "DFR0503", "v_pol9": "Pololu 9 V", "joint_spacer": "Samlestykke",
+         "instax_front": "Fotomodul-front", "instax_shell": "Fotomodul-kabinet", "instax_shell_band": "Translucent stribe", "v_instax": "Instax Square Link"}
 HWN = {"ins_m3": "M3-indsats", "ins_m4": "M4-indsats", "ins_q": '1/4"-indsats', "m3x8": "M3 × 8", "m3x16": "M3 × 16", "m2x6": "M2 × 6", "m25x6": "M2,5 × 6",
        "m4x10": "M4 × 10", "wood45x50": "Vægskrue 4,5 × 50", "dowel6x20": "Styrestift Ø6"}
 STYLE = {  # fill, hatch colour
@@ -44,7 +45,7 @@ def style_of(name):
         return "brass" if k.startswith("ins") else "steel"
     if name.endswith("_band") or name == "diffuser_ring":
         return "petg"
-    return {"v_display": "glass", "v_pi": "pcb", "v_camera": "pcb", "v_power": "power", "v_pol9": "power", "v_pads": "pad", "v_leds": "led", "v_printer": "steel"}.get(name, "asa")
+    return {"v_display": "glass", "v_pi": "pcb", "v_camera": "pcb", "v_power": "power", "v_pol9": "power", "v_pads": "pad", "v_leds": "led", "v_printer": "steel", "v_instax": "pad"}.get(name, "asa")
 
 
 def meshes(unit_dz=0.0, printer=False):
@@ -53,13 +54,13 @@ def meshes(unit_dz=0.0, printer=False):
         m = trimesh.load(CACHE / f"{n}.stl")
         m.apply_translation([0, 0, unit_dz]); out[n] = m
     if printer:
-        for n in ["printer_front", "printer_shell", "v_printer", "v_pol9", "joint_spacer"]:
+        for n in ["instax_front", "instax_shell", "v_instax", "joint_spacer"]:
             m = trimesh.load(CACHE / f"{n}.stl")
             if n == "joint_spacer":
                 m.apply_translation([0, 0, unit_dz - 6])
             out[n] = m
     for i, (grp, part, kind, pos, d, when) in enumerate(HW["HW_LIST"]):
-        if when != "base" or grp not in ("unit", "strip") or (grp == "strip" and not printer):
+        if when != "base" or grp not in ("unit", "photo") or (grp == "photo" and not printer):
             continue
         g = build_pack.fastener(kind, pos, d)
         if grp == "unit":
@@ -187,10 +188,11 @@ def main():
     # C-C: vertical through the rail ear: M2.5 screw, M3 insert and side screw
     sheet("Snit C–C: lodret gennem skruesøjlen ved LED-skinnens øre (X = 109,85)", "Set fra højre · M2,5-skrue, M3-indsats og sideskrue", unit, [109.85, 0, 0], [1, 0, 0], [1, 2], False, 3.0, "right", "X03_section_CC")
     # D-D: with the printer below, through a joint screw
-    both = meshes(unit_dz=90, printer=True)
-    s2 = trimesh.load(CACHE / "shell_closed.stl"); s2.apply_translation([0, 0, 90])
+    both = meshes(unit_dz=195, printer=True)
+    s2 = trimesh.load(CACHE / "shell_closed.stl"); s2.apply_translation([0, 0, 195])
     both["shell_closed"] = s2
-    sheet("Snit D–D: samling boks / strip-printer (X = 55)", "Set fra højre · M3 × 16 og M3-indsats i samlingen", both, [55, 0, 0], [1, 0, 0], [1, 2], False, 2.6, "right", "X04_section_DD")
+    sheet("Snit D–D: lodret gennem fotomodulet (X = 0)", "Set fra højre · Instax på hovedet, rampe, fotolomme og samling", both, [0, 0, 0], [1, 0, 0], [1, 2], False, 1.9, "right", "X04_section_DD",
+          notes=[(0, -12, "FRONT"), (64, -12, "VÆG")])
 
 
 if __name__ == "__main__":

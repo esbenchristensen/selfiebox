@@ -121,16 +121,15 @@ spool(S, "ASA sort", 1, True)
 spool(S, "PETG translucent", 1, True)
 
 # ============================================================ TILBEHØR ===
-A = "Tilbehør: Strip-printer"
-add(A, "DFRobot DFR0503 termoprinter", "TTL seriel, 58 mm, 9-24 V", 1, "stk", round(44.94 * EUR), 1, "RobotShop EU", "Fundet", "eu.robotshop.com 44,94 EUR", False)
-add(A, "Termopapir 58 mm, rulle Ø 40 mm", "10 ruller", 1, "pakke", 79, 1, "Kontorland / Amazon.de", "Estimat", "", False)
-add(A, "JST-ledning til printer (data + 12 V)", "Medfølger delvist; ekstra 4-pin", 1, "stk", 15, 1, "Elektronik-lavpris.dk", "Estimat", "", False)
-add(A, "Pololu D36V28F9", "12 V -> 9 V 2,6 A til printeren (holder i printerkabinettet)", 1, "stk", 150, 1, "Pololu-forhandler (Botland)", "Estimat", "ca. 18 USD", False)
-add(A, "SK6812 strip til glødestriber", "2 x ca. 25 mm i siderne", 0.05, "m", round(14.40 * GBP), 0, "(fra hovedenhedens rulle)", "Fundet", "", False)
+A = "Tilbehør: Fotomodul (Instax Square Link)"
+add(A, "Fujifilm Instax Square Link", "Farvefotos på instax SQUARE-film 62 x 62 mm, Bluetooth, 105 x 37,5 x 127,5 mm", 1, "stk", 897, 1, "Proshop.dk / Elgiganten.dk", "Fundet", "PriceRunner DK 897 kr (Ash White)", False)
+add(A, "Instax SQUARE film, 20 billeder", "Forbrug: ca. 7,40 kr pr. foto", 1, "pakke", 148, 1, "Proshop.dk / Fotoudstyr.dk", "Fundet", "PriceRunner DK 148 kr / 20 stk", False)
+add(A, "USB-A til USB-C kabel 0,3 m", "Pi'en holder printeren opladet", 1, "stk", 39, 1, "Proshop.dk", "Estimat", "", False)
+add(A, "EVA 1 mm til printerbåsen", "Strimmel på bagvæggen", 0.05, "ark", 39, 0, "(fra hovedenhedens ark)", "Estimat", "", False)
 add(A, "Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20", "Samlestykke til boksen", 1, "sæt", 6, 0, "(fra pakker)", "Estimat", "", False)
-add(A, "Skrue M3 x 8 Torx + M3-indsatser", "Printer-front: 4 skruer, 4 indsatser. Printerkabinet: 2 indsatser i bund", 4, "stk", 1.75, 0, "(fra hovedenhedens pakker)", "Estimat", "", False)
-add_fil(A, "Printer-front + printerkabinet + samlestykke", "ASA sort",
-        g("printer_front") + g("printer_shell") + g("joint_spacer"), "", False)
+add(A, "Skrue M3 x 8 Torx + M3-indsatser", "Fotomodul-front: 4 skruer, 4 indsatser", 4, "stk", 1.75, 0, "(fra hovedenhedens pakker)", "Estimat", "", False)
+add_fil(A, "Fotomodul-front + fotomodul-kabinet + samlestykke", "ASA sort",
+        g("instax_front") + g("instax_shell") + g("joint_spacer"), "Kabinettet har translucent stribe som boksen.", False)
 
 T = "Tilbehør: Tag (festival)"
 add(T, "Samlesæt: 2 x M3 x 16 + 2 styrestifter + 2 M3-indsatser", "Samlestykke til boksen", 1, "sæt", 7.5, 0, "(fra pakker)", "Estimat", "", False)
@@ -138,7 +137,7 @@ add_fil(T, "Tag + samlestykke", "ASA sort", g("roof") + g("joint_spacer"), "ASA 
 
 X = "Tilbehør: Ekstra filament"
 spool(X, "ASA sort", 1, False)
-rows[-1]["spec"] = "Strip-printer og tag bruger ca. 0,7 kg ASA ud over hovedenhedens spole"
+rows[-1]["spec"] = "Fotomodul og tag bruger ca. 0,9 kg ASA ud over hovedenhedens spole"
 
 # ============================================================ TEMADELE ===
 for theme, title, fil_col, colours in [("sommernat", "Sommernat", "PETG HF farve", ["forest", "leaf", "lilac", "coral", "cream"]),

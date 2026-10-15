@@ -208,7 +208,7 @@ pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid va
     <div><b id="f-price">–</b><span>hovedpris pr. boks (inkl. moms)</span></div>
     <div><b id="f-first">–</b><span>første indkøb inkl. pakker og spoler</span></div>
     <div><b>10 / 10</b><span>printdele passer på H2C-pladen</span></div>
-    <div><b>0 kollisioner</b><span>pasformskontrol, alle frigange OK</span></div>
+    <div><b>Instax-fotos</b><span>62 × 62 mm farve, ca. 7,40 kr pr. foto</span></div>
   </div>
 </header>
 
@@ -260,10 +260,10 @@ pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid va
       </div>
       <div class="pane" id="pane-setup" role="tabpanel" hidden>
         <div class="ctl"><span class="lbl">Opstilling (alt hænger på væggen)</span><div class="seg" id="seg-preset">
-          <button data-v="club" aria-pressed="true">Klub: boks + strip-printer</button><button data-v="fest" aria-pressed="false">Festival: + tag</button><button data-v="bare" aria-pressed="false">Kun boksen</button></div></div>
+          <button data-v="club" aria-pressed="true">Klub: boks + fotomodul</button><button data-v="fest" aria-pressed="false">Festival: + tag</button><button data-v="bare" aria-pressed="false">Kun boksen</button></div></div>
         <div class="ctl"><span class="lbl">Ovenpå</span><div class="checks"><label><input type="checkbox" id="t-roof"> Tag (festival)</label></div></div>
         <div class="ctl"><span class="lbl">Under</span><div class="seg" id="seg-bottom">
-          <button data-v="none">Intet</button><button data-v="strip" aria-pressed="true">Strip-printer</button></div></div>
+          <button data-v="none">Intet</button><button data-v="strip" aria-pressed="true">Fotomodul (Instax)</button></div></div>
         <div class="ctl"><span class="lbl">Tema</span><div class="seg" id="seg-theme">
           <button data-v="base" aria-pressed="true">Sort</button><button data-v="sommernat">Sommernat</button><button data-v="neon">Neon Club</button></div>
           <div class="checks"><label><input type="checkbox" id="t-wings" checked> Vinger</label><label><input type="checkbox" id="t-topper" checked> Topper</label></div>
@@ -313,27 +313,27 @@ pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid va
 <!-- ======================================================= ELECTRONICS -->
 <section id="el" aria-labelledby="h-el">
   <div class="sec-head"><span class="num">05</span><h2 id="h-el">Elektronik og ledningsplan</h2>
-    <p class="muted">Boksen kører på 12 V fra én Mean Well-forsyning. To Pololu-moduler laver 5 V: ét til Pi og skærm og ét til LED. Fotolyset er 12 V COB, som Pi'en dæmper via en MOSFET. Tilbehør får 12 V, GND og data gennem kabelhullet Ø20 i samlingen.</p></div>
+    <p class="muted">Boksen kører på 12 V fra én Mean Well-forsyning. To Pololu-moduler laver 5 V: ét til Pi og skærm og ét til LED. Fotolyset er 12 V COB, som Pi'en dæmper via en MOSFET. Fotomodulets Instax-printer får billederne over Bluetooth og holdes opladet af et USB-kabel fra Pi'en gennem kabelhullet Ø20.</p></div>
   <div class="diagram" id="diagram"></div>
   <div class="legend"><span><i style="background:#e5484d"></i>12 V</span><span><i style="background:#f2b24b"></i>5 V</span><span><i style="background:#8d8d96"></i>GND</span><span><i style="background:#6ea0ff"></i>Data/signal</span><span><i style="background:#c792ea"></i>Flad-/båndkabel</span></div>
   <div class="grid2">
     <div class="tbl"><table><thead><tr><th>Pi 5 pin</th><th>Funktion</th><th>Til</th></tr></thead><tbody>
       <tr><td class="k">Pin 2 / 4 (5 V)</td><td>Strøm til skærmen</td><td>Touch Display 2, medfølgende 5 V-kabel</td></tr>
-      <tr><td class="k">Pin 6 / 9 (GND)</td><td>Fælles stel</td><td>Skærm, 74AHCT125, MOSFET, printer</td></tr>
+      <tr><td class="k">Pin 6 / 9 (GND)</td><td>Fælles stel</td><td>Skærm, 74AHCT125, MOSFET</td></tr>
       <tr><td class="k">Pin 19 · GPIO10</td><td>SPI0 MOSI → LED-data</td><td>74AHCT125 ind → 330 Ω → SK6812 DIN</td></tr>
       <tr><td class="k">Pin 33 · GPIO13</td><td>PWM1 → COB-dæmpning</td><td>100 Ω → MOSFET gate, 10 kΩ til GND</td></tr>
-      <tr><td class="k">Pin 8 · GPIO14</td><td>UART TX</td><td>DFR0503 RX (strip-printer)</td></tr>
-      <tr><td class="k">Pin 10 · GPIO15</td><td>UART RX (valgfri)</td><td>DFR0503 TX via 10k/20k deler</td></tr>
+      <tr><td class="k">Bluetooth (indbygget)</td><td>Print</td><td>Instax Square Link via InstaxBLE (BLE)</td></tr>
       <tr><td class="k">CAM/DISP 0</td><td>Kamera</td><td>Camera Module 3 Wide, 22→15-pin kabel 300 mm</td></tr>
       <tr><td class="k">CAM/DISP 1</td><td>Skærm (DSI)</td><td>Touch Display 2, medfølgende kabel</td></tr>
       <tr><td class="k">USB-C</td><td>5 V 5 A ind</td><td>Pololu #1 via USB-C pigtail</td></tr>
+      <tr><td class="k">USB-A</td><td>5 V opladning</td><td>Instax Square Link (USB-A → USB-C 0,3 m)</td></tr>
     </tbody></table></div>
     <div class="tbl"><table><thead><tr><th>Strømbudget</th><th class="n">Maks.</th><th class="n">På 12 V</th></tr></thead><tbody>
       <tr><td>Pi 5 + skærm + kamera (5 V, Pololu #1)</td><td class="n">3,5 A</td><td class="n">1,6 A</td></tr>
       <tr><td>SK6812 ring + glød, 61 LED (5 V, Pololu #2, begrænset i software)</td><td class="n">4,0 A</td><td class="n">1,9 A</td></tr>
       <tr><td>COB fotolys 0,71 m (12 V)</td><td class="n">0,6 A</td><td class="n">0,6 A</td></tr>
-      <tr><td>Strip-printer under print (9 V via D36V28F9)</td><td class="n">2,0 A</td><td class="n">1,6 A</td></tr>
-      <tr class="total"><td>I alt, værste tilfælde</td><td></td><td class="n">5,7 A</td></tr>
+      <tr><td>Instax opladning (5 V via Pi USB-A)</td><td class="n">1,0 A</td><td class="n">0,5 A</td></tr>
+      <tr class="total"><td>I alt, værste tilfælde</td><td></td><td class="n">4,6 A</td></tr>
       <tr><td>Mean Well GST90A12</td><td></td><td class="n">6,67 A</td></tr>
     </tbody></table></div>
   </div>
@@ -432,10 +432,11 @@ SELFIEBOX_THEME=roskilde-2027 python3 app.py</pre>
 <pre># Raspberry Pi OS (64-bit) på microSD, derefter:
 sudo apt install -y python3-picamera2 python3-opencv
 pip install flask
+pip install git+https://github.com/javl/InstaxBLE   # print til Instax over Bluetooth
 git clone https://github.com/esbenchristensen/selfiebox
 cd selfiebox
 SELFIEBOX_THEME=sommernat python3 app.py   # kiosk på port 3001</pre>
-      <p>Appen viser live-kamera i stående format, tæller ned, tager billedet, lægger temaets ramme på og kan sende det til printeren. <code>/theme.json</code> giver lys-driveren temaets farver og animation.</p></div>
+      <p>Appen viser live-kamera i stående format, tæller ned, tager billedet, lægger temaets ramme på og sender fotoet til Instax-printeren over Bluetooth (InstaxBLE). <code>/theme.json</code> giver lys-driveren temaets farver og animation.</p></div>
     <div class="box"><h3>Hvad ligger hvor i repoet</h3>
 <pre>hardware/cad/halo.scad          parametrisk CAD (alle dele)
 hardware/cad/components.scad    købte dele med mål og kilder
@@ -476,6 +477,8 @@ const DS = {
   pol9: ["Pololu D36V28Fx", "https://www.pololu.com/search?query=D36V28F9"],
   mw: ["Mean Well GST90A datablad", "https://www.meanwell.com/Upload/PDF/GST90A/GST90A-SPEC.PDF"],
   dfr: ["DFRobot DFR0503 wiki", "https://wiki.dfrobot.com/Embedded%20Thermal%20Printer%20-%20TTL%20Serial%20SKU:%20DFR0503-EN"],
+  instax: ["Instax Square Link (Proshop DK)", "https://www.proshop.dk/Printer/Fujifilm-INSTAX-Square-Link-Hvid/3149989"],
+  instaxble: ["InstaxBLE (Python, MIT)", "https://github.com/javl/InstaxBLE"],
   sk: ["SK6812 RGBW datablad", "https://cdn-shop.adafruit.com/product-files/2757/p2757_SK6812RGBW_REV01.pdf"],
   ahct: ["SN74AHCT125 datablad", "https://www.ti.com/lit/ds/symlink/sn74ahct125.pdf"],
   selphy: ["Canon SELPHY CP1500", "https://www.canon.dk/printers/selphy-cp1500/"],
@@ -498,14 +501,12 @@ const PARTS = {
     fast: "Skrues i væggen med 4 × 4,5 × 50 undersænkede skruer og dybler. Kabinettet hænger på den skrå kant. 1 × M4 × 10 gennem kabinettets bagvæg låser boksen og kan kun nås med fronten af (tyverisikring)." },
   joint_spacer: { name: "Samlestykke", kind: "printed", mat: "ASA sort", dim: "182 × 56 × 6 mm", draw: "D07_joint_spacer",
     fast: "Sidder mellem to moduler. 2 × M3 × 16 sættes fra indersiden af det nederste modul op i indsatser i det øverste. 2 styrestifter Ø6 × 20 holder modulerne i flugt. Ledningerne går gennem kabelhullet Ø20." },
-  printer_front: { name: "Printer-front", kind: "printed", mat: "ASA sort", dim: "234 × 84 × 32,5 mm", draw: "D08_printer_front",
-    fast: "DFR0503 klemmes ind forfra i udskæringen 77,4 × 53,4 med et 0,4 mm sæde for flangen. Fronten skrues i printerkabinettet med 4 × M3 × 8 i 4 M3-indsatser." },
-  printer_shell: { name: "Printerkabinet", kind: "printed", mat: "ASA sort + translucent stribe", dim: "234 × 84 × 60 mm", draw: "D09_printer_shell",
-    fast: "Har en holder til Pololu D36V28F9 (12 → 9 V). Samles op i boksen med samlestykke, 2 styrestifter og 2 × M3 × 16 indefra." },
-  v_printer: { name: "DFRobot DFR0503 termoprinter", kind: "bought", dim: "Front 82 × 58, udskæring 77 × 53, dybde 42 mm [A]", ds: ["dfr"], draw: "K04_printer",
-    fast: "Klemmes i printer-fronten. Får 9 V fra D36V28F9 og TTL-data fra Pi GPIO14. Bruger 58 mm termopapir med rulle Ø40." },
-  v_pol9: { name: "Pololu D36V28F9 (9 V)", kind: "bought", dim: "17,8 × 20,3 × 8,8 mm, 9 V 2,6 A [A]", ds: ["pol9"], draw: "K06_pololu9",
-    fast: "Klikkes i holderen i printerkabinettets bagvæg. Laver 9 V til termoprinteren af boksens 12 V." },
+  instax_front: { name: "Fotomodul-front", kind: "printed", mat: "ASA sort", dim: "234 × 189 × 23,9 mm", draw: "D08_instax_front",
+    fast: "Fotovindue 84 × 44 med fingergreb Ø30 forneden: her ligger fotoet klar. To bumpere holder printeren ind mod bagvæggen. Fronten skrues i modulkabinettet med 4 × M3 × 8 i 4 M3-indsatser og tages af ved filmskift." },
+  instax_shell: { name: "Fotomodul-kabinet", kind: "printed", mat: "ASA sort + translucent stribe", dim: "234 × 189 × 60 mm", draw: "D09_instax_shell",
+    fast: "Printeren står på hovedet mellem to sideskinner og hviler på to hylder uden om filmens udgang. Under den ligger en hylde med 45° rampe, der fører fotoet frem til vinduet. Fingerhul i siden til tænd/sluk [M]. Samles op i boksen med samlestykke, 2 styrestifter og 2 × M3 × 16 indefra." },
+  v_instax: { name: "Fujifilm Instax Square Link", kind: "bought", dim: "105 × 37,5 × 127,5 mm, 236 g, instax SQUARE-film 72 × 86 (billede 62 × 62) [A]", ds: ["instax", "instaxble"], draw: "K04_instax",
+    fast: "Står på hovedet med udgangen nedad og filmlågen mod fronten (filmskift: tag fronten af). 1 mm EVA på bagvæggen, 0,6 mm luft i siderne. Pi'en printer over Bluetooth med InstaxBLE og holder den opladet via USB-C." },
   roof: { name: "Tag (festival, valgfrit)", kind: "printed", mat: "ASA sort (UV-bestandig)", dim: "264 × 90 × 141 mm", draw: "D10_roof",
     fast: "Sidder på den øverste samling med samlestykke, 2 × M3 × 16 og 2 styrestifter. M3-indsatserne sidder i tagets bund. 75 mm udhæng fremad og 12 mm fald bagud. Printes med tree-support." },
   v_display: { name: "Raspberry Pi Touch Display 2 – 10\"", kind: "bought", dim: "Glas 166,9 × 248,1, dybde 15,5, synligt 136,4 × 217,6 mm, 1200 × 1920 [A]", ds: ["td2"], draw: "K01_display",
@@ -526,7 +527,7 @@ const HWINFO = {
   ins_m3: { name: "Messingindsats M3", dim: "Ø4,5 × 5,9 (Elextra H44350) i hul Ø4,0 × 6,4", fast: "Varmes ned med loddekolbe (ca. 220 °C for ASA) og indsats-spids. Tryk lige ned, til den flugter. Lad den køle uden at røre." },
   ins_m4: { name: "Messingindsats M4", dim: "Hul Ø5,6 × 8,2", fast: "Varmes ned som M3-indsatsen." },
   ins_q: { name: "Indsats 1/4\"-20 (stativgevind)", dim: "Hul Ø7,9 × 12,5", fast: "Varmes ned i bunden. Giver standard fotogevind til stativ eller arm." },
-  m3x8: { name: "Skrue M3 × 8 Torx linsehoved (ISO 7380)", dim: "Hoved Ø5,7 × 1,65, frigang Ø3,4, forsænkning Ø6,4", fast: "Sideskruer: kabinet → bezel og printerkabinet → printer-front. Torx T10." },
+  m3x8: { name: "Skrue M3 × 8 Torx linsehoved (ISO 7380)", dim: "Hoved Ø5,7 × 1,65, frigang Ø3,4, forsænkning Ø6,4", fast: "Sideskruer: kabinet → bezel og fotomodul-kabinet → fotomodul-front. Torx T10." },
   m3x12: { name: "Skrue M3 × 12 Torx", dim: "Gennem 4 mm ribbe", fast: "Erstatter M3 × 8 i siderne, når temavingerne monteres." },
   m3x16: { name: "Skrue M3 × 16 Torx", dim: "Frigang Ø3,4, forsænkning Ø6,4 fra indersiden", fast: "Samler to moduler: sættes indefra det nederste modul gennem samlestykket op i det øverstes M3-indsatser." },
   m2x6: { name: "Skrue M2 × 6 gevinddannende", dim: "Pilot Ø1,7 i boss Ø4,6", fast: "Kameraet på bezelens bosser. Spænd let (ca. 0,2 Nm)." },
@@ -535,16 +536,15 @@ const HWINFO = {
   wood45x50: { name: "Vægskrue 4,5 × 50 undersænket + dybel", dim: "Hul Ø5 med forsænkning, bor 6 mm i væggen", fast: "4 stk. holder vægbeslaget." },
   dowel6x20: { name: "Styrestift Ø6 × 20 (stål)", dim: "Hul Ø6,2–6,3, 8 mm dybt i hvert modul", fast: "2 pr. samling. Holder modulerne i flugt." }
 };
-const OWNER_NAME = { bezel: "bezel", shell: "kabinet", wall_cleat: "vægbeslag", v_camera: "kamera", led_rail: "LED-skinne", printer_front: "printer-front", printer_shell: "printerkabinet", roof: "tag", topper: "topper", wing: "temavinger" };
+const OWNER_NAME = { bezel: "bezel", shell: "kabinet", wall_cleat: "vægbeslag", v_camera: "kamera", led_rail: "LED-skinne", instax_front: "fotomodul-front", instax_shell: "fotomodul-kabinet", roof: "tag", topper: "topper", wing: "temavinger" };
 const THEME_INFO = {
   wing_left: { name: "Temavinge venstre", draw: "D12_wing_left" }, wing_right: { name: "Temavinge højre", draw: "D11_wing_right" },
-  topper: { name: "Topper", draw: "D13_topper" }, printer_front: { name: "Tema-printerfront" }
+  topper: { name: "Topper", draw: "D13_topper" }
 };
 const THEME_FAST = {
   wing_left: "2 × M3 × 12 gennem en 4 mm ribbe i kabinettets eksisterende sideskruer (erstatter M3 × 8). Farverne er 0,8 mm inlays i forsiden.",
   wing_right: "2 × M3 × 12 gennem en 4 mm ribbe i kabinettets eksisterende sideskruer (erstatter M3 × 8). Farverne er 0,8 mm inlays i forsiden.",
-  topper: "Sidder på den øverste samling via samlestykket med 2 × M3 × 16 og 2 styrestifter. M3-indsatserne sidder i topperens bund.",
-  printer_front: "Erstatter den sorte printer-front 1:1 med de samme 4 × M3 × 8."
+  topper: "Sidder på den øverste samling via samlestykket med 2 × M3 × 16 og 2 styrestifter. M3-indsatserne sidder i topperens bund."
 };
 
 const THEMES = {
@@ -559,14 +559,14 @@ const LIST = [
   ["Front og lys", ["bezel", "diffuser_ring", "led_rail", "v_leds", "v_pads"]],
   ["Elektronik", ["v_display", "v_pi", "v_camera", "v_power"]],
   ["Kabinet og ophæng", ["shell", "wall_cleat", "joint_spacer"]],
-  ["Tilbehør (væg)", ["printer_front", "printer_shell", "v_printer", "v_pol9", "roof"]]
+  ["Tilbehør (væg)", ["instax_front", "instax_shell", "v_instax", "roof"]]
 ];
 
 // =====================================================================  ASSEMBLY STEPS
 const INSERTS = ["hw:ins_m3:bezel", "hw:ins_m3:shell", "hw:ins_q:shell", "hw:ins_m4:shell"];
 const UNIT = ["bezel", "diffuser_ring", "v_camera", "v_display", "v_pi", "led_rail", "v_leds", "v_pads", "shell", "v_power", ...INSERTS, "hw:m2x6:v_camera", "hw:m25x6:led_rail", "hw:m3x8:shell"];
 const WALL = ["wall_cleat", "hw:ins_m4:wall_cleat", "hw:wood45x50:wall_cleat", "hw:m4x10:shell"];
-const PRINTER = ["printer_front", "printer_shell", "v_printer", "v_pol9", "joint_spacer", "hw:ins_m3:printer_front", "hw:m3x8:printer_shell", "hw:m3x16:printer_shell", "hw:dowel6x20:printer_shell", "hw:ins_m3:printer_shell", "hw:ins_q:printer_shell"];
+const PRINTER = ["instax_front", "instax_shell", "v_instax", "joint_spacer", "hw:ins_m3:instax_front", "hw:m3x8:instax_shell", "hw:m3x16:instax_shell", "hw:dowel6x20:instax_shell"];
 const BENCH = { bottom: "none", roof: false, theme: "base", place: "table" };
 const STEPS = [
   { t: "Print og klargør delene", show: ["bezel", "diffuser_ring", "led_rail", "shell", "wall_cleat"], add: ["bezel", "diffuser_ring", "led_rail", "shell", "wall_cleat"], cfg: BENCH, explode: 1, view: "iso",
@@ -605,18 +605,19 @@ const STEPS = [
   { t: "Vægbeslag og ophængning", show: [...UNIT, ...WALL], add: WALL, cfg: { ...BENCH, place: "wall" }, explode: 0, view: "side",
     text: "Skru vægbeslaget i væggen i vater med 4 skruer og dybler. Hæng boksen på den skrå kant. Tyverisikring: tag fronten af, og sæt M4 × 10 gennem bagvæggen ind i beslagets indsats. Sæt fronten på igen.",
     parts: ["Vægbeslag"], tools: ["4 × 4,5 × 50 undersænket + dybler", "1 × M4 × 10", "Vaterpas, bor 6 mm"], check: "Boksen kan ikke løftes af væggen, når låseskruen sidder.", draw: ["V04_wall", "X01_section_BB", "S01_unit_outline"] },
-  { t: "Strip-printer under boksen", show: [...UNIT, ...WALL, ...PRINTER], add: PRINTER, cfg: { ...BENCH, place: "wall", bottom: "strip" }, explode: 0, view: "iso",
-    text: "Klik D36V28F9 i holderen i printerkabinettet. Tryk DFR0503 ind forfra i printer-fronten, og skru fronten på kabinettet. Sæt samlestykket og 2 styrestifter mellem modulerne. Skru 2 × M3 × 16 fra printerkabinettets inderside op i boksens bundindsatser. Kablerne går gennem hullet Ø20.",
-    parts: ["Printer-front", "Printerkabinet", "DFR0503", "Pololu D36V28F9", "Samlestykke"], tools: ["4 × M3 × 8", "2 × M3 × 16", "2 styrestifter Ø6 × 20"], check: "Print en teststrip: papiret kommer lige ud og skærer ikke fast.", draw: ["V06_printer", "A03_printer_joint", "X04_section_DD", "S02_unit_printer_outline"] },
+  { t: "Fotomodul (Instax) under boksen", show: [...UNIT, ...WALL, ...PRINTER], add: PRINTER, cfg: { ...BENCH, place: "wall", bottom: "strip" }, explode: 0, view: "iso",
+    text: "Klæb 1 mm EVA på bagvæggen i fotomodulet. Sæt Instax Square Link på hovedet ned mellem sideskinnerne, så den hviler på hylderne, med filmlågen mod fronten og USB-C-kablet i kabelrillen. Skru fronten på med 4 × M3 × 8. Sæt samlestykket og 2 styrestifter i, før USB-kablet gennem hullet Ø20, og skru 2 × M3 × 16 fra modulets inderside op i boksens bundindsatser.",
+    parts: ["Fotomodul-front", "Fotomodul-kabinet", "Fujifilm Instax Square Link + film", "USB-A → USB-C kabel 0,3 m", "Samlestykke"], tools: ["4 × M3 × 8", "2 × M3 × 16", "2 styrestifter Ø6 × 20", "EVA 1 mm"],
+    check: "Par printeren med Pi'en (InstaxBLE), og print et testbillede: fotoet glider ned ad rampen og ligger klar bag vinduet.", draw: ["V06_photo", "A03_photo_joint", "X04_section_DD", "S02_unit_photo_outline"] },
   { t: "Tag til festival (valgfrit)", show: [...UNIT, ...WALL, ...PRINTER, "roof", "hw:m3x16:shell", "hw:dowel6x20:shell", "hw:ins_m3:roof"], add: ["roof", "hw:m3x16:shell", "hw:dowel6x20:shell", "hw:ins_m3:roof"], cfg: { ...BENCH, place: "wall", bottom: "strip", roof: true }, explode: 0, view: "side",
     text: "Kabinettet printes med samling i toppen (shell.stl). Taget sidder på samlingen med samlestykke, 2 styrestifter og 2 × M3 × 16 indefra kabinettet op i tagets indsatser.",
     parts: ["Tag", "Kabinet med samling i top", "Samlestykke"], tools: ["2 × M3 × 16, 2 stifter, 2 × M3-indsats i taget"], check: "Taget dækker skærmen ved regn fra 45° forfra.", draw: ["D10_roof", "D05_shell_joint"] },
   { t: "Temadele (event)", show: [...UNIT, ...WALL, "sommernat--wing_left", "sommernat--wing_right", "sommernat--topper", "joint_spacer", "hw:m3x12:wing", "hw:m3x16:shell", "hw:dowel6x20:shell", "hw:ins_m3:topper"],
     add: ["sommernat--wing_left", "sommernat--wing_right", "sommernat--topper", "hw:m3x12:wing", "hw:ins_m3:topper"], cfg: { ...BENCH, place: "wall", theme: "sommernat" }, explode: 0, view: "iso",
     text: "Til et event skiftes de 4 sideskruer (M3 × 8) ud med M3 × 12 gennem vingernes ribbe. Toppen sidder på den øverste samling. Start appen med SELFIEBOX_THEME=<id>, så skærm, foto og lys følger kassen.",
-    parts: ["Vinger venstre og højre", "Topper", "eller tema-printerfront"], tools: ["4 × M3 × 12", "Samlestykke, 2 stifter, 2 × M3 × 16"], check: "Vingerne sidder tæt til kabinettet uden spalte.", draw: ["V07_theme", "A04_theme", "D11_wing_right"] },
+    parts: ["Vinger venstre og højre", "Topper", "Kan også bruges uden fotomodul"], tools: ["4 × M3 × 12", "Samlestykke, 2 stifter, 2 × M3 × 16"], check: "Vingerne sidder tæt til kabinettet uden spalte.", draw: ["V07_theme", "A04_theme", "D11_wing_right"] },
   { t: "Software og sluttest", show: null, add: [], cfg: { bottom: "strip", roof: false, theme: "base", place: "wall" }, explode: 0, view: "iso",
-    text: "Flash Raspberry Pi OS, installér appen (afsnit Software), og slå kiosk-tilstand til. Test alle tre lystilstande, tag 10 testbilleder, og print en strip. Mærk boksen med serienummer.",
+    text: "Flash Raspberry Pi OS, installér appen (afsnit Software), og slå kiosk-tilstand til. Test alle tre lystilstande, tag 10 testbilleder, og print et testfoto. Mærk boksen med serienummer.",
     parts: ["Hele boksen"], tools: ["Laptop til SSH", "Multimeter"], check: "Lyset følger temaet, billedet er skarpt og stående, printet kommer ud, og alt kører 1 time uden fejl.", draw: ["A01_exploded_front", "A02_exploded_back"] }
 ];
 
@@ -638,16 +639,16 @@ let renderer, scene, camera, controls, wall, wallGlowMat, wallGlow, floor, scree
 const groups = {}, nodes = {}, keyMeshes = {}, lightMats = [], spacers = [];
 const GROUP = { bezel: "unit", diffuser_ring: "unit", led_rail: "unit", wall_cleat: "unit", v_display: "unit", v_pi: "unit", v_camera: "unit", v_leds: "unit", v_power: "unit", v_pads: "unit",
   shell: "unit", shell_band: "unit", shell_closed: "unit", shell_closed_band: "unit",
-  printer_front: "strip", v_printer: "strip", printer_shell: "strip", printer_shell_band: "strip", v_pol9: "strip", roof: "roof", joint_spacer: "spacer" };
-const ROLE = { bezel: "body", shell: "body", shell_closed: "body", printer_front: "body", printer_shell: "body", roof: "body", wall_cleat: "body", led_rail: "body",
-  shell_band: "band", shell_closed_band: "band", printer_shell_band: "band", diffuser_ring: "diff", v_leds: "led",
-  v_display: "glass", v_pi: "pcb", v_camera: "lens", v_printer: "dark", v_pads: "pad", v_power: "power", v_pol9: "power", joint_spacer: "inner" };
-const KEYOF = n => ({ shell_band: "shell", shell_closed: "shell", shell_closed_band: "shell", printer_shell_band: "printer_shell" }[n] || n);
-const SHELLS = ["shell", "printer_shell"];
+  instax_front: "strip", v_instax: "strip", instax_shell: "strip", instax_shell_band: "strip", roof: "roof", joint_spacer: "spacer" };
+const ROLE = { bezel: "body", shell: "body", shell_closed: "body", instax_front: "body", instax_shell: "body", roof: "body", wall_cleat: "body", led_rail: "body",
+  shell_band: "band", shell_closed_band: "band", instax_shell_band: "band", diffuser_ring: "diff", v_leds: "led",
+  v_display: "glass", v_pi: "pcb", v_camera: "lens", v_instax: "selphy", v_pads: "pad", v_power: "power", joint_spacer: "inner" };
+const KEYOF = n => ({ shell_band: "shell", shell_closed: "shell", shell_closed_band: "shell", instax_shell_band: "instax_shell" }[n] || n);
+const SHELLS = ["shell", "instax_shell"];
 // explode direction per key (mm at explode = 1), in glTF axes (x, y up, z towards the viewer)
 const PUSH = { diffuser_ring: [0, 0, 40], v_display: [0, 0, -20], v_camera: [0, 30, -15], v_pads: [0, 0, -45], led_rail: [0, 0, -60], v_leds: [0, 0, -60], v_pi: [0, 0, -85],
-  shell: [0, 0, -150], v_power: [0, 0, -150], printer_shell: [0, 0, -90], v_pol9: [0, 0, -90], wall_cleat: [0, 0, -230],
-  v_printer: [0, 0, 40], printer_front: [0, 0, 20], bezel: [0, 0, 0] };
+  shell: [0, 0, -150], v_power: [0, 0, -150], instax_shell: [0, 0, -90], wall_cleat: [0, 0, -230],
+  v_instax: [0, 0, -40], instax_front: [0, 0, 30], bezel: [0, 0, 0] };
 const HWPULL = 34;                                     // mm a screw backs out along its axis at explode = 1
 function pushOf(k) {
   if (k.startsWith("hw:")) return PUSH[k.split(":")[2]] || [0, 0, 0];
@@ -660,7 +661,7 @@ function offsetOf(k, h, e, extra) {     // position of one holder: part explode 
   else if (extra) { if (p.some(v => v)) o.add(new THREE.Vector3(p[0], p[1], p[2]).multiplyScalar(1.6 * extra)); else o.y += 90 * extra; }
   return o;
 }
-const UH = 306, SP = 6, BH = { none: 0, strip: 84 }, GC = 151.85;
+const UH = 306, SP = 6, BH = { none: 0, strip: 189 }, GC = 151.85;
 
 function M(o) { ["color", "emissive"].forEach(k => { if (o[k] !== undefined) o[k] = C(o[k]); }); return new THREE.MeshStandardMaterial(o); }
 const ROLEMAT = {
@@ -668,7 +669,7 @@ const ROLEMAT = {
   band: () => M({ color: 0xf2f0f4, emissive: 0xffffff, roughness: 0.4 }), diff: () => M({ color: 0xffffff, emissive: 0xffffff, roughness: 0.35 }),
   led: () => M({ color: 0xffffff, emissive: 0xffffff }), lens: () => M({ color: 0x0a0a0c, roughness: 0.2 }),
   glass: () => M({ color: 0x07070a, roughness: 0.2, metalness: 0.2 }), pcb: () => M({ color: 0x1f7a44, roughness: 0.6 }), dark: () => M({ color: 0x2a2a2e, roughness: 0.6 }),
-  pad: () => M({ color: 0x4a4a50, roughness: 0.95 }), power: () => M({ color: 0x1b4f8a, roughness: 0.6 }),
+  pad: () => M({ color: 0x4a4a50, roughness: 0.95 }), selphy: () => M({ color: 0xe9e8e4, roughness: 0.5 }), power: () => M({ color: 0x1b4f8a, roughness: 0.6 }),
   screw: () => M({ color: 0x2a2a2e, roughness: 0.35, metalness: 0.8 }), brass: () => M({ color: 0xc9973f, roughness: 0.3, metalness: 0.9 }),
   steel: () => M({ color: 0xb4b6be, roughness: 0.25, metalness: 0.9 })
 };
@@ -725,7 +726,7 @@ function onModel(gltf) {
       const [, grp, when, kind, owner, idx] = full.split("--");
       o.material = ROLEMAT[kind.startsWith("ins") ? "brass" : kind.startsWith("dowel") || kind.startsWith("wood") ? "steel" : "screw"]();
       const e = HWDATA && HWDATA.HW_LIST[+idx], d = e ? new THREE.Vector3(e[4][0], e[4][2], -e[4][1]) : null;
-      addMesh(`hw:${kind}:${owner}`, grp, o, { when, kind, owner, dir: d, insert: /^(ins|dowel)/.test(kind) });
+      addMesh(`hw:${kind}:${owner}`, grp === "photo" ? "strip" : grp, o, { when, kind, owner, dir: d, insert: /^(ins|dowel)/.test(kind) });
       return;
     }
     if (full.includes("--")) {                                // theme part
@@ -781,7 +782,6 @@ function visibleKey(k, c, stepShow) {
     return true;
   }
   if (k === "wall_cleat" || k.startsWith("hw:") && k.endsWith(":wall_cleat")) return stepShow ? stepShow.includes(k) : c.place === "wall";
-  if (k === "printer_front" && c.theme !== "base" && nodes[c.theme + "--" + k]) return false;
   return true;
 }
 // per-holder rules: which shell variant, and screws that only exist with a top module or theme wings
@@ -919,11 +919,11 @@ function select(k) {
   showInfo(k);
 }
 function ensureVisible(k) {
-  const need = { printer_front: { bottom: "strip" }, printer_shell: { bottom: "strip" }, v_printer: { bottom: "strip" }, v_pol9: { bottom: "strip" }, roof: { roof: true } }[k];
+  const need = { instax_front: { bottom: "strip" }, instax_shell: { bottom: "strip" }, v_instax: { bottom: "strip" }, roof: { roof: true } }[k];
   if (need) { Object.assign(state, need); syncSetup(); }
   if (k.startsWith("hw:")) {
     const owner = k.split(":")[2];
-    if (/printer/.test(owner)) { state.bottom = "strip"; syncSetup(); }
+    if (/instax/.test(owner)) { state.bottom = "strip"; syncSetup(); }
     if (owner === "roof") { state.roof = true; syncSetup(); }
     if (owner === "topper" || owner === "wing") { if (state.theme === "base") state.theme = "sommernat"; syncSetup(); }
     if (k === "hw:m3x16:shell" || k === "hw:dowel6x20:shell") { state.roof = true; syncSetup(); }
@@ -937,7 +937,7 @@ function showInfo(k) {
   let p, kind;
   if (k.startsWith("hw:")) {
     const [, hk, owner] = k.split(":"); const i = HWINFO[hk] || { name: hk };
-    p = { name: i.name, dim: i.dim, fast: i.fast, draw: { bezel: "D01_bezel", shell: "D04_shell_closed", wall_cleat: "D06_wall_cleat", v_camera: "V01_camera", led_rail: "V03_display_clamp", printer_front: "D08_printer_front", printer_shell: "D09_printer_shell", roof: "D10_roof", topper: "D13_topper", wing: "V07_theme" }[owner] };
+    p = { name: i.name, dim: i.dim, fast: i.fast, draw: { bezel: "D01_bezel", shell: "D04_shell_closed", wall_cleat: "D06_wall_cleat", v_camera: "V01_camera", led_rail: "V03_display_clamp", instax_front: "D08_instax_front", instax_shell: "D09_instax_shell", roof: "D10_roof", topper: "D13_topper", wing: "V07_theme" }[owner] };
     kind = `Skrue / indsats · ${hwCount(k)} stk. i ${OWNER_NAME[owner] || owner}`;
   } else if (k.includes("--")) { const [th, part] = k.split("--"); p = { ...(THEME_INFO[part] || {}), name: nameOf(k), mat: "PETG HF sort + 0,8 mm farve-inlays", fast: THEME_FAST[part], dim: "" }; kind = "Printet temadel"; }
   else { p = PARTS[k] || { name: k }; kind = p.kind === "bought" ? "Købt del" : "Printet del"; }
@@ -967,7 +967,7 @@ function buildPartList() {
   LIST.forEach(([g, keys]) => { html += `<div class="grp">${g}</div>` + keys.map(k => `<button data-k="${k}" aria-pressed="false">${esc(PARTS[k] ? PARTS[k].name : nameOf(k))}<small>${PARTS[k] && PARTS[k].kind === "bought" ? "købt" : "printet"}</small></button>`).join(""); });
   const hw = Object.keys(nodes).filter(k => k.startsWith("hw:")).sort();
   html += `<div class="grp">Skruer, indsatser og stifter</div>` + hw.map(k => `<button data-k="${k}" aria-pressed="false">${esc(nameOf(k))}<small>${nodes[k].length} stk.</small></button>`).join("");
-  html += `<div class="grp">Temadele (vælg tema under Opstilling)</div>` + ["wing_left", "wing_right", "topper", "printer_front"].map(p => `<button data-k="sommernat--${p}" aria-pressed="false">${esc(THEME_INFO[p].name)}<small>tema</small></button>`).join("");
+  html += `<div class="grp">Temadele (vælg tema under Opstilling)</div>` + ["wing_left", "wing_right", "topper"].map(p => `<button data-k="sommernat--${p}" aria-pressed="false">${esc(THEME_INFO[p].name)}<small>tema</small></button>`).join("");
   el.innerHTML = html;
   el.addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; let k = b.dataset.k;
     if (k.includes("--") && state.theme !== "base") k = state.theme + "--" + k.split("--")[1];
@@ -1029,25 +1029,25 @@ const PRINTDATA = {
   led_rail: { orient: "forside ned", mat: "ASA", sup: "Nej", note: "" },
   shell: { orient: "bagside ned", mat: "ASA + PETG transl.", sup: "Nej", note: "Lukket top som standard. Broer ≤ 24 mm. Farveskift ved 34/44 mm. Brim 5 mm", stl: "shell_closed_top" },
   wall_cleat: { orient: "plade ned", mat: "ASA", sup: "Nej", note: "" },
-  joint_spacer: { orient: "fladt", mat: "ASA", sup: "Nej", note: "1 pr. samling (printer, tag, topper)" },
-  printer_front: { orient: "forside ned", mat: "ASA", sup: "Nej", note: "" },
-  printer_shell: { orient: "bagside ned", mat: "ASA + PETG transl.", sup: "Nej", note: "Farveskift ved 34/44 mm" },
+  joint_spacer: { orient: "fladt", mat: "ASA", sup: "Nej", note: "1 pr. samling (fotomodul, tag, topper)" },
+  instax_front: { orient: "forside ned", mat: "ASA", sup: "Nej", note: "" },
+  instax_shell: { orient: "bagside ned", mat: "ASA + PETG transl.", sup: "Nej", note: "Farveskift ved 34/44 mm. Rampe og hylder printes med" },
   roof: { orient: "bagkant ned", mat: "ASA", sup: "Ja, tree (kun fra plade)", note: "Valgfrit. 61 cm² udhæng under taget" }
 };
 let PD = {};
 const PRINT_NAMES = { bezel: "Bezel", diffuser_ring: "Diffuserring", led_rail: "LED-skinne", shell: "Kabinet (shell_closed_top / shell)", wall_cleat: "Vægbeslag", joint_spacer: "Samlestykke",
-  printer_front: "Printer-front", printer_shell: "Printerkabinet", roof: "Tag" };
+  instax_front: "Fotomodul-front", instax_shell: "Fotomodul-kabinet", roof: "Tag" };
 const MAIN_PRINT = ["bezel", "diffuser_ring", "led_rail", "shell", "wall_cleat"];
 
 const DRAWINGS = [
-  ["Samletegninger med stykliste", [["A01_exploded_front", "Sprængt, forfra"], ["A02_exploded_back", "Sprængt, bagfra"], ["A03_printer_joint", "Strip-printer under boksen"], ["A04_theme", "Temadele"], ["S01_unit_outline", "Standardboks på væg – mål"], ["S02_unit_printer_outline", "Med strip-printer – mål"]]],
-  ["Snit gennem den samlede boks", [["X01_section_BB", "Snit B–B lodret, midte"], ["X02_section_AA", "Snit A–A vandret, sideskruer"], ["X03_section_CC", "Snit C–C skruesøjle"], ["X04_section_DD", "Snit D–D samling til printer"]]],
-  ["Detaljer: sådan sættes det sammen", [["V01_camera", "Kamera på bosser"], ["V02_side_screws", "Sideskruer og indsatser"], ["V03_display_clamp", "Skærm spændes af skinnen"], ["V04_wall", "Vægbeslag og lås"], ["V05_power", "Strømmodul"], ["V06_printer", "Strip-printer samles"], ["V07_theme", "Temavinger"]]],
-  ["Deltegninger med hultabel (printede dele)", [["D01_bezel", "Bezel"], ["D02_diffuser_ring", "Diffuserring"], ["D03_led_rail", "LED-skinne"], ["D04_shell_closed", "Kabinet, lukket top"], ["D05_shell_joint", "Kabinet, samling i top"], ["D06_wall_cleat", "Vægbeslag"], ["D07_joint_spacer", "Samlestykke"], ["D08_printer_front", "Printer-front"], ["D09_printer_shell", "Printerkabinet"], ["D10_roof", "Tag"], ["D11_wing_right", "Temavinge højre"], ["D12_wing_left", "Temavinge venstre"], ["D13_topper", "Topper"]]],
-  ["Komponenter (outline)", [["K01_display", "Touch Display 2 – 10\""], ["K02_pi5", "Raspberry Pi 5"], ["K03_camera", "Camera Module 3 Wide"], ["K04_printer", "DFR0503"], ["K05_power", "Strømmodul"], ["K06_pololu9", "Pololu D36V28F9"]]]
+  ["Samletegninger med stykliste", [["A01_exploded_front", "Sprængt, forfra"], ["A02_exploded_back", "Sprængt, bagfra"], ["A03_photo_joint", "Fotomodul under boksen"], ["A04_theme", "Temadele"], ["S01_unit_outline", "Standardboks på væg – mål"], ["S02_unit_photo_outline", "Med fotomodul – mål"]]],
+  ["Snit gennem den samlede boks", [["X01_section_BB", "Snit B–B lodret, midte"], ["X02_section_AA", "Snit A–A vandret, sideskruer"], ["X03_section_CC", "Snit C–C skruesøjle"], ["X04_section_DD", "Snit D–D gennem fotomodulet"]]],
+  ["Detaljer: sådan sættes det sammen", [["V01_camera", "Kamera på bosser"], ["V02_side_screws", "Sideskruer og indsatser"], ["V03_display_clamp", "Skærm spændes af skinnen"], ["V04_wall", "Vægbeslag og lås"], ["V05_power", "Strømmodul"], ["V06_photo", "Fotomodul samles"], ["V07_theme", "Temavinger"]]],
+  ["Deltegninger med hultabel (printede dele)", [["D01_bezel", "Bezel"], ["D02_diffuser_ring", "Diffuserring"], ["D03_led_rail", "LED-skinne"], ["D04_shell_closed", "Kabinet, lukket top"], ["D05_shell_joint", "Kabinet, samling i top"], ["D06_wall_cleat", "Vægbeslag"], ["D07_joint_spacer", "Samlestykke"], ["D08_instax_front", "Fotomodul-front"], ["D09_instax_shell", "Fotomodul-kabinet"], ["D10_roof", "Tag"], ["D11_wing_right", "Temavinge højre"], ["D12_wing_left", "Temavinge venstre"], ["D13_topper", "Topper"]]],
+  ["Komponenter (outline)", [["K01_display", "Touch Display 2 – 10\""], ["K02_pi5", "Raspberry Pi 5"], ["K03_camera", "Camera Module 3 Wide"], ["K04_instax", "Instax Square Link"], ["K05_power", "Strømmodul"]]]
 ];
 const RENDERS = [["hero", "Standardboks i sort, skråt forfra"], ["front", "Forfra"], ["side", "Profil: 66 mm dyb + vægbeslag"], ["back", "Bagside med vægbeslag"], ["detail", "Kamera i lysringens gab"],
-  ["exploded", "Sprængt: alle dele, skruer og indsatser"], ["inside", "Indvendigt bagfra (kabinet fjernet)"], ["wall", "På væggen med strip-printer"], ["theme", "Med Sommernat-tema"]];
+  ["exploded", "Sprængt: alle dele, skruer og indsatser"], ["inside", "Indvendigt bagfra (kabinet fjernet)"], ["wall", "På væggen med fotomodul (Instax)"], ["theme", "Med Sommernat-tema"]];
 const ALLDRAW = DRAWINGS.flatMap(g => g[1]);
 function openImage(src, title) { $("lb-img").src = src; $("lb-img").alt = title; $("lb-title").textContent = title; $("lb").showModal(); }
 function openDrawing(file) { const d = ALLDRAW.find(x => x[0] === file) || [file, file]; openImage("drawings/" + d[0] + ".png", "Tegning: " + d[1]); }
@@ -1069,14 +1069,14 @@ function renderPrinted() {
     `<tr class="total"><td>Hovedenhed i alt</td><td></td><td></td><td class="n">${MAIN_PRINT.reduce((s, k) => s + ((PD[(PRINTDATA[k] || {}).stl || k] || {}).g || 0), 0)} g</td><td class="n">${String(Math.round(MAIN_PRINT.reduce((s, k) => s + ((PD[(PRINTDATA[k] || {}).stl || k] || {}).hours || 0), 0) * 10) / 10).replace(".", ",")} t</td><td></td><td>Kan fordeles på 4–5 plader</td></tr>`;
   document.querySelectorAll("#t-printed [data-draw]").forEach(b => b.addEventListener("click", () => openDrawing(b.dataset.draw)));
 }
-const BOUGHT = ["v_display", "v_pi", "v_camera", "v_leds", "v_power", "v_pads", "v_printer", "v_pol9"];
+const BOUGHT = ["v_display", "v_pi", "v_camera", "v_leds", "v_power", "v_pads", "v_instax"];
 $("t-bought").querySelector("tbody").innerHTML = BOUGHT.map(k => { const p = PARTS[k];
   return `<tr><td class="k">${esc(p.name)}</td><td>${esc(p.dim)}</td><td>${esc(p.fast)}</td><td>${(p.ds || []).map(link).join("<br>") || "–"}${p.draw ? `<br><button class="btn" data-draw="${p.draw}">Tegning</button>` : ""}</td></tr>`; }).join("") +
   `<tr><td class="k">Mean Well GST90A12-P1M</td><td>12 V 6,67 A, stik 5,5/2,5 [A]</td><td>Ekstern bordforsyning. Stikket går i panelbøsningen bagpå.</td><td>${link("mw")}</td></tr>` +
   `<tr><td class="k">Messing-gevindindsats M3 (Elextra H44350)</td><td>Ø4,5 × 5,9 i hul Ø4,0 × 6,4 [A]</td><td>Varmes ned med loddekolbe.</td><td>${link("ins")}</td></tr>`;
 document.querySelectorAll("#t-bought [data-draw]").forEach(b => b.addEventListener("click", () => openDrawing(b.dataset.draw)));
 const FAST = [
-  ["M3 × 8 Torx linsehoved", "Kabinet → bezel (2 pr. side), printerkabinet → printer-front (2 pr. side)", "4 + 4", "Indsats M3 Ø4,0 × 6,4, frigang Ø3,4, forsænkning Ø6,4"],
+  ["M3 × 8 Torx linsehoved", "Kabinet → bezel (2 pr. side), fotomodul-kabinet → fotomodul-front (2 pr. side)", "4 + 4", "Indsats M3 Ø4,0 × 6,4, frigang Ø3,4, forsænkning Ø6,4"],
   ["M3 × 12 Torx", "Temavinger (erstatter de 4 M3 × 8 i boksens sider)", "4", "Gennem 4 mm ribbe"],
   ["M3 × 16 Torx", "Modul-samlinger, indefra det nederste modul", "2 pr. samling", "Frigang Ø3,4, forsænkning Ø6,4"],
   ["Styrestift Ø6 × 20", "Modul-samlinger", "2 pr. samling", "Hul Ø6,2–6,3, 8 mm dybt"],
@@ -1085,7 +1085,7 @@ const FAST = [
   ["M2,5 (følger med skærmen)", "Pi 5 → skærmens afstandsstykker", "4", "Pi-huller Ø2,7, mønster 58 × 49"],
   ["M4 × 10", "Låseskrue kabinet → vægbeslag", "1", "Indsats M4 Ø5,6 × 8,2, frigang Ø4,5"],
   ["M4 (VESA 75)", "Valgfri VESA-arm", "4", "Indsatser M4 i kabinettets bagside"],
-  ["1/4\"-20 indsats", "Bunden af kabinet og printerkabinet (stativ/arm)", "1 + 1", "Hul Ø7,9 × 12,5"],
+  ["1/4\"-20 indsats", "Bunden af kabinettet (stativ/arm)", "1", "Hul Ø7,9 × 12,5"],
   ["4,5 × 50 undersænket + dybel", "Vægbeslag → væg", "4", "Hul Ø5 med forsænkning"],
   ["EVA 1 mm", "Ring om vinduet + 4 pads på tværbjælker", "1 ark", "Sammenpresses til 0,5 mm"],
   ["CA-gel", "Diffuserring (4 propper)", "–", "0,15 mm presning + lim"]
@@ -1095,8 +1095,8 @@ $("t-fast").querySelector("tbody").innerHTML = FAST.map(r => `<tr><td class="k">
 // thread / insert map from hardware.json (positions in each part's own frame)
 function renderThreads(hw) {
   if (!hw) return;
-  const PNAME = { bezel: "Bezel", shell: "Kabinet", wall_cleat: "Vægbeslag", led_rail: "LED-skinne", joint_spacer: "Samlestykke", printer_front: "Printer-front", printer_shell: "Printerkabinet", roof: "Tag", topper: "Topper", v_camera: "Kamera", wing: "Temavinger" };
-  const DRAW = { bezel: "D01_bezel", shell: "D04_shell_closed", wall_cleat: "D06_wall_cleat", led_rail: "D03_led_rail", joint_spacer: "D07_joint_spacer", printer_front: "D08_printer_front", printer_shell: "D09_printer_shell", roof: "D10_roof", topper: "D13_topper" };
+  const PNAME = { bezel: "Bezel", shell: "Kabinet", wall_cleat: "Vægbeslag", led_rail: "LED-skinne", joint_spacer: "Samlestykke", instax_front: "Fotomodul-front", instax_shell: "Fotomodul-kabinet", roof: "Tag", topper: "Topper", v_camera: "Kamera", wing: "Temavinger" };
+  const DRAW = { bezel: "D01_bezel", shell: "D04_shell_closed", wall_cleat: "D06_wall_cleat", led_rail: "D03_led_rail", joint_spacer: "D07_joint_spacer", instax_front: "D08_instax_front", instax_shell: "D09_instax_shell", roof: "D10_roof", topper: "D13_topper" };
   const INS = { ins_m3: ["M3 messingindsats", "Ø4,0 × 6,4"], ins_m4: ["M4 messingindsats", "Ø5,6 × 8,2"], ins_q: ['1/4"-20 indsats', "Ø7,9 × 12,5"] };
   const side = d => Math.abs(d[0]) > 0.5 ? (d[0] > 0 ? "fra venstre" : "fra højre") : Math.abs(d[1]) > 0.5 ? (d[1] > 0 ? "forfra" : "bagfra") : (d[2] > 0 ? "nedefra" : "oppefra");
   const f = v => String(Math.round(v * 10) / 10).replace(".", ",");
@@ -1127,11 +1127,10 @@ $("steps-print").addEventListener("click", ev => { const dr = ev.target.closest(
     [20, 40, 170, 70, "Mean Well GST90A12", "12 V · 6,67 A · 80 W (ekstern)"], [225, 40, 150, 70, "DC-bøsning + sikring", "5,5/2,5 mm panel · 5 A blade"],
     [410, 30, 180, 330, "Perfboard 70 × 50", "12 V- og GND-skinne|74AHCT125 niveauskifter|MOSFET + 100 Ω / 10 kΩ|1000 µF på LED-5 V|330 Ω i LED-data|skrueterminaler"],
     [630, 40, 170, 60, "Pololu D36V50F5 #1", "12 → 5 V · Pi + skærm"], [630, 130, 170, 60, "Pololu D36V50F5 #2", "12 → 5 V · LED"],
-    [850, 30, 170, 200, "Raspberry Pi 5", "+ Active Cooler|USB-C: 5 V ind|GPIO10 (pin 19) SPI → LED|GPIO13 (pin 33) PWM → COB|GPIO14 (pin 8) TX → printer|pin 4/6: 5 V/GND → skærm"],
+    [850, 30, 170, 200, "Raspberry Pi 5", "+ Active Cooler|USB-C: 5 V ind|GPIO10 (pin 19) SPI → LED|GPIO13 (pin 33) PWM → COB|Bluetooth → Instax|USB-A → Instax opladning|pin 4/6: 5 V/GND → skærm"],
     [1060, 30, 160, 80, "Touch Display 2 10\"", "DSI på CAM/DISP 1|5 V + GND fra GPIO"], [1060, 130, 160, 70, "Camera Module 3 Wide", "CAM/DISP 0 · 300 mm kabel"],
     [630, 260, 190, 70, "SK6812 RGBW ring + glød", "61 LED · 5 V · data via 74AHCT125"], [630, 370, 190, 60, "COB 12 V CRI 90+", "0,71 m · minus via MOSFET"],
-    [410, 430, 180, 80, "Samling, kabelhul Ø20", "JST: 12 V · GND · LED-data · TX"], [630, 455, 190, 60, "Pololu D36V28F9", "12 → 9 V (printerkabinet)"],
-    [880, 455, 170, 60, "DFR0503 strip-printer", "9 V · TTL RX"]
+    [410, 430, 180, 80, "Samling, kabelhul Ø20", "USB-C opladning til fotomodulet"], [880, 440, 200, 70, "Fujifilm Instax Square Link", "Bluetooth (InstaxBLE) · USB-C 5 V"]
   ];
   const W = [
     ["12", [[190, 68], [225, 68]]], ["g", [[190, 88], [225, 88]]], ["12", [[375, 68], [410, 68]]], ["g", [[375, 88], [410, 88]]],
@@ -1141,9 +1140,9 @@ $("steps-print").addEventListener("click", ev => { const dr = ev.target.closest(
     ["d", [[850, 200], [610, 200], [610, 235], [590, 235]], "GPIO10 SPI", [790, 196]], ["d", [[850, 215], [620, 215], [620, 320], [590, 320]], "GPIO13 PWM", [790, 228]],
     ["d", [[590, 285], [630, 285]], "DIN", [604, 279]], 
     ["12", [[560, 360], [560, 385], [630, 385]]], ["g", [[580, 360], [580, 410], [630, 410]], "COB −", [598, 424]],
-    ["12", [[470, 360], [470, 430]]], ["g", [[500, 360], [500, 430]]], ["d", [[530, 360], [530, 430]]],
-    ["12", [[590, 470], [630, 470]]], ["g", [[590, 492], [630, 492]]], ["9", [[820, 480], [880, 480]], "9 V"],
-    ["d", [[935, 230], [935, 455]], "TX"]
+
+    ["5", [[1000, 230], [1000, 330], [960, 330], [960, 440]], "USB 5 V"],
+    ["d", [[1040, 230], [1040, 440]], "Bluetooth", [1080, 380]]
   ];
   const fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#ecebef";
   let s = `<svg viewBox="0 0 1240 540" role="img" aria-label="El-diagram for Halo-boksen" xmlns="http://www.w3.org/2000/svg" font-family="Familjen Grotesk, Arial, sans-serif">`;
@@ -1158,7 +1157,7 @@ $("steps-print").addEventListener("click", ev => { const dr = ev.target.closest(
     s += `<text x="${x + 10}" y="${y + 20}" font-size="13" font-weight="700" fill="currentColor">${esc(t)}</text>`;
     sub.split("|").forEach((l, i) => { s += `<text x="${x + 10}" y="${y + 38 + i * 15}" font-size="11" fill="var(--muted)">${esc(l)}</text>`; });
   });
-  s += `<text x="20" y="528" font-size="11" fill="var(--muted)">Alle GND samles på perfboardets GND-skinne. Kabelhullet Ø20 i hver samling fører 12 V, GND, LED-data og printer-TX videre til tilbehør.</text></svg>`;
+  s += `<text x="20" y="528" font-size="11" fill="var(--muted)">Alle GND samles på perfboardets GND-skinne. Fotomodulet får kun et USB-C-ladekabel gennem kabelhullet Ø20; printdata går over Bluetooth.</text></svg>`;
   $("diagram").innerHTML = s; $("diagram").style.color = fg;
 })();
 
@@ -1196,7 +1195,8 @@ const FIT_DA = {
   "Pi to power electronics": "Pi til strømelektronik", "camera to rail": "Kamera til LED-skinne", "camera to shell": "Kamera til kabinet",
   "glow strip to translucent stripe (light spread)": "Glødestrip til translucent stribe (lysspredning)", "foam pads to Pi": "EVA-pads til Pi",
   "camera seated on its bosses": "Kamera sidder på sine bosser", "power electronics to rail": "Strømelektronik til LED-skinne",
-  "printer body to its shell": "Printerens krop til printerkabinettet"
+  "printer body to its shell": "Printeren til fotomodul-kabinettet",
+  "printer seated in its bay (ledges)": "Instax sidder på hylderne i båsen", "printer to the front bumpers": "Instax til frontens bumpere"
 };
 function renderChecks(txt) {
   const bed = [], fit = [];

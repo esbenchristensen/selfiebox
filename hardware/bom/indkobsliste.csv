@@ -42,25 +42,24 @@ Hovedenhed;Spole: ASA sort 1 kg;Indkøb af hele spoler (forbrug står ovenfor);0
 Hovedenhed;Spole: PETG translucent 1 kg;Indkøb af hele spoler (forbrug står ovenfor);0;spole;199,00;0,00;1;199,00;Ja;Bambu Lab EU-shop;Estimat;Bambu PETG Translucent
 Hovedenhed;SUM Hovedenhed;;;;;3656,10;;5306,00;;;;
 
-Tilbehør: Strip-printer;DFRobot DFR0503 termoprinter;TTL seriel, 58 mm, 9-24 V;1;stk;335,00;335,00;1;335,00;Nej;RobotShop EU;Fundet;eu.robotshop.com 44,94 EUR
-Tilbehør: Strip-printer;Termopapir 58 mm, rulle Ø 40 mm;10 ruller;1;pakke;79,00;79,00;1;79,00;Nej;Kontorland / Amazon.de;Estimat;
-Tilbehør: Strip-printer;JST-ledning til printer (data + 12 V);"Medfølger delvist; ekstra 4-pin";1;stk;15,00;15,00;1;15,00;Nej;Elektronik-lavpris.dk;Estimat;
-Tilbehør: Strip-printer;Pololu D36V28F9;12 V -> 9 V 2,6 A til printeren (holder i printerkabinettet);1;stk;150,00;150,00;1;150,00;Nej;Pololu-forhandler (Botland);Estimat;ca. 18 USD
-Tilbehør: Strip-printer;SK6812 strip til glødestriber;2 x ca. 25 mm i siderne;0,05;m;124,00;6,20;;;Nej;(fra hovedenhedens rulle);Fundet;
-Tilbehør: Strip-printer;Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20;Samlestykke til boksen;1;sæt;6,00;6,00;;;Nej;(fra pakker);Estimat;
-Tilbehør: Strip-printer;Skrue M3 x 8 Torx + M3-indsatser;Printer-front: 4 skruer, 4 indsatser. Printerkabinet: 2 indsatser i bund;4;stk;1,75;7,00;;;Nej;(fra hovedenhedens pakker);Estimat;
-Tilbehør: Strip-printer;Filament: ASA sort;Printer-front + printerkabinet + samlestykke - ca. 314 g. ;0,314;kg;300,00;94,26;;;Nej;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
-Tilbehør: Strip-printer;SUM Tilbehør: Strip-printer;;;;;692,46;;579,00;;;;
+Tilbehør: Fotomodul (Instax Square Link);Fujifilm Instax Square Link;Farvefotos på instax SQUARE-film 62 x 62 mm, Bluetooth, 105 x 37,5 x 127,5 mm;1;stk;897,00;897,00;1;897,00;Nej;Proshop.dk / Elgiganten.dk;Fundet;PriceRunner DK 897 kr (Ash White)
+Tilbehør: Fotomodul (Instax Square Link);Instax SQUARE film, 20 billeder;Forbrug: ca. 7,40 kr pr. foto;1;pakke;148,00;148,00;1;148,00;Nej;Proshop.dk / Fotoudstyr.dk;Fundet;PriceRunner DK 148 kr / 20 stk
+Tilbehør: Fotomodul (Instax Square Link);USB-A til USB-C kabel 0,3 m;Pi'en holder printeren opladet;1;stk;39,00;39,00;1;39,00;Nej;Proshop.dk;Estimat;
+Tilbehør: Fotomodul (Instax Square Link);EVA 1 mm til printerbåsen;Strimmel på bagvæggen;0,05;ark;39,00;1,95;;;Nej;(fra hovedenhedens ark);Estimat;
+Tilbehør: Fotomodul (Instax Square Link);Samlesæt: 2 x M3 x 16 + 2 styrestifter Ø6 x 20;Samlestykke til boksen;1;sæt;6,00;6,00;;;Nej;(fra pakker);Estimat;
+Tilbehør: Fotomodul (Instax Square Link);Skrue M3 x 8 Torx + M3-indsatser;Fotomodul-front: 4 skruer, 4 indsatser;4;stk;1,75;7,00;;;Nej;(fra hovedenhedens pakker);Estimat;
+Tilbehør: Fotomodul (Instax Square Link);Filament: ASA sort;Fotomodul-front + fotomodul-kabinet + samlestykke - ca. 612 g. Kabinettet har translucent stribe som boksen.;0,612;kg;300,00;183,49;;;Nej;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
+Tilbehør: Fotomodul (Instax Square Link);SUM Tilbehør: Fotomodul (Instax Square Link);;;;;1282,44;;1084,00;;;;
 
 Tilbehør: Tag (festival);Samlesæt: 2 x M3 x 16 + 2 styrestifter + 2 M3-indsatser;Samlestykke til boksen;1;sæt;7,50;7,50;;;Nej;(fra pakker);Estimat;
 Tilbehør: Tag (festival);Filament: ASA sort;Tag + samlestykke - ca. 369 g. ASA tåler sol og regn.;0,369;kg;300,00;110,80;;;Nej;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
 Tilbehør: Tag (festival);SUM Tilbehør: Tag (festival);;;;;118,30;;0,00;;;;
 
-Tilbehør: Ekstra filament;Spole: ASA sort 1 kg;Strip-printer og tag bruger ca. 0,7 kg ASA ud over hovedenhedens spole;0;spole;300,00;0,00;1;300,00;Nej;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
+Tilbehør: Ekstra filament;Spole: ASA sort 1 kg;Fotomodul og tag bruger ca. 0,9 kg ASA ud over hovedenhedens spole;0;spole;300,00;0,00;1;300,00;Nej;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
 Tilbehør: Ekstra filament;SUM Tilbehør: Ekstra filament;;;;;0,00;;300,00;;;;
 
-Tema: Sommernat;Filament: PETG HF sort;Vinger, topper og fronter, sort del - ca. 370 g. Dele: wing_left, wing_right, topper, printer_front.;0,37;kg;199,00;73,56;;;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
-Tema: Sommernat;Filament: PETG HF farve;Farve-inlays (forest, leaf, lilac, coral, cream) - ca. 121 g. Inkl. ca. 100 g skylning ved farveskift.;0,121;kg;199,00;24,15;;;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
+Tema: Sommernat;Filament: PETG HF sort;Vinger, topper og fronter, sort del - ca. 284 g. Dele: wing_left, wing_right, topper.;0,284;kg;199,00;56,48;;;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
+Tema: Sommernat;Filament: PETG HF farve;Farve-inlays (forest, leaf, lilac, coral, cream) - ca. 92 g. Inkl. ca. 75 g skylning ved farveskift.;0,092;kg;199,00;18,21;;;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
 Tema: Sommernat;Spole: PETG HF sort 1 kg;Temadele printes helt i PETG (ASA og PETG binder dårligt sammen);0;spole;199,00;0,00;1;199,00;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
 Tema: Sommernat;Spole: PETG HF farve - forest;Indkøb af hele spoler (forbrug står ovenfor);0;spole;199,00;0,00;1;199,00;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
 Tema: Sommernat;Spole: PETG HF farve - leaf;Indkøb af hele spoler (forbrug står ovenfor);0;spole;199,00;0,00;1;199,00;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
@@ -69,7 +68,7 @@ Tema: Sommernat;Spole: PETG HF farve - coral;Indkøb af hele spoler (forbrug st�
 Tema: Sommernat;Spole: PETG HF farve - cream;Indkøb af hele spoler (forbrug står ovenfor);0;spole;199,00;0,00;1;199,00;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
 Tema: Sommernat;Skrue M3 x 12 Torx;Vinger: erstatter de 4 M3 x 8 i siderne (vingens ribbe er 4 mm);4;stk;1,00;4,00;;;Nej;(fra pakke);Estimat;
 Tema: Sommernat;Samlesæt topper: 2 x M3 x 16 + 2 styrestifter + 2 M3-indsatser + samlestykke;Topper på øverste samling;1;sæt;7,50;7,50;;;Nej;(fra pakker);Estimat;
-Tema: Sommernat;SUM Tema: Sommernat;;;;;109,21;;1194,00;;;;
+Tema: Sommernat;SUM Tema: Sommernat;;;;;86,19;;1194,00;;;;
 
 Tema: Neon Club;Filament: PETG HF sort;Vinger, topper og fronter, sort del - ca. 276 g. Dele: wing_left, wing_right, topper.;0,276;kg;199,00;54,85;;;Nej;Bambu Lab EU-shop;Estimat;makerpoint.nl: PETG HF 23,38 EUR = 174 kr + fragt
 Tema: Neon Club;Filament: PETG fluorescerende;Farve-inlays (magenta, cyan, lime) - ca. 80 g. Inkl. ca. 75 g skylning ved farveskift.;0,08;kg;229,00;18,42;;;Nej;3DJake.dk;Estimat;UV-reaktiv PETG (fx Extrudr/Geeetech)
@@ -91,7 +90,7 @@ Værktøj (engangskøb, hvis I ikke har det);SUM Værktøj (engangskøb, hvis I 
 
 TOTAL;HOVEDPRIS: hovedenhed pr. boks (forbrug);;;;;3656,10;;;Ja;;;
 TOTAL;HOVEDPRIS: første indkøb (hele pakker og spoler);;;;;;;5306,00;Ja;;;
-TOTAL;Alt tilbehør pr. boks (ikke i hovedpris);;;;;810,75;;879,00;Nej;;;
-TOTAL;Tema: Sommernat (ikke i hovedpris);;;;;109,21;;1194,00;Nej;;;
+TOTAL;Alt tilbehør pr. boks (ikke i hovedpris);;;;;1400,74;;1384,00;Nej;;;
+TOTAL;Tema: Sommernat (ikke i hovedpris);;;;;86,19;;1194,00;Nej;;;
 TOTAL;Tema: Neon Club (ikke i hovedpris);;;;;84,77;;886,00;Nej;;;
 TOTAL;Værktøj (engangskøb, hvis I ikke har det) (ikke i hovedpris);;;;;0,00;;1324,00;Nej;;;

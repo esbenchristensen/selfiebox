@@ -33,9 +33,9 @@ const VIEWS = {
 };
 // group frames: attachments are stored in their own frame; stack them like the real build
 const GROUP = n => {
-  if (n.startsWith("hw--")) return n.split("--")[1];
+  if (n.startsWith("hw--")) { const g = n.split("--")[1]; return g === "photo" ? "strip" : g; }
   if (n.includes("--")) { const p = n.split("--")[1].split("__")[0]; return p.startsWith("wing") ? "unit" : p === "topper" ? "topper" : "strip"; }
-  if (/^(printer_|v_printer|v_pol9)/.test(n)) return "strip";
+  if (/^(instax_|v_instax)/.test(n)) return "strip";
   if (n === "roof") return "roof"; if (n === "joint_spacer") return "spacer";
   return "unit";
 };
@@ -46,7 +46,7 @@ function colourOf(n) {
   if (n.startsWith("hw--")) { const k = n.split("--")[3]; return k.startsWith("ins") ? 0xc9973f : k.startsWith("dowel") ? 0xb8bac2 : k.startsWith("wood") ? 0xc8c8cc : 0x34343a; }
   if (n.includes("--")) { const c = n.split("__")[1]; return { base: 0x4a4a52, forest: 0x0f5c3e, leaf: 0x2e8b57, lilac: 0xb48ac9, coral: 0xe8553d, cream: 0xf3e3d3, magenta: 0xff2fb4, cyan: 0x22e6ff, lime: 0xc8ff3a }[c] || 0x4a4a52; }
   if (/_band$/.test(n) || n === "diffuser_ring") return 0xeee8dc;
-  return { v_display: 0x23252c, v_pi: 0x2f8a55, v_camera: 0x2f8a55, v_power: 0x2c62b0, v_pol9: 0x2c62b0, v_pads: 0x9a9aa0, v_leds: 0xfff0c0, v_printer: 0x3a3a40 }[n] || 0x5a5a62;
+  return { v_display: 0x23252c, v_pi: 0x2f8a55, v_camera: 0x2f8a55, v_power: 0x2c62b0, v_pol9: 0x2c62b0, v_pads: 0x9a9aa0, v_leds: 0xfff0c0, v_printer: 0x3a3a40, v_instax: 0xe9e8e4 }[n] || 0x5a5a62;
 }
 
 function nodeMeshes(name) {
@@ -308,7 +308,7 @@ function detailSheet(spec) {
     const names = expandNames(pn.nodes);
     const obj = build(names, { style: "shaded", place: pn.place || spec.place, explode: pn.explode, pull: pn.pull, hl: pn.hl, hlhw: true });
     let box = null;
-    if (pn.box) { box = new THREE.Box3(); [S2G(pn.box[0]), S2G(pn.box[1])].forEach(p => box.expandByPoint(p.add(new THREE.Vector3(0, ((pn.place || spec.place) || {}).unit || 0, 0)))); }
+    if (pn.box) { box = new THREE.Box3(); [S2G(pn.box[0]), S2G(pn.box[1])].forEach(p => box.expandByPoint(p.add(new THREE.Vector3(0, ((pn.place || spec.place) || {})[pn.boxGroup || "unit"] || 0, 0)))); }
     const fitPx = pn.px || 3.2;
     const r = renderView(obj, pn.view, fitPx, box);
     return { pn, r, obj };
