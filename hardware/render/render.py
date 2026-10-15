@@ -26,7 +26,7 @@ while i < len(argv):
     if argv[i] == "--samples": SAMPLES = int(argv[i + 1]); i += 2
     elif argv[i] == "--size": SIZE = tuple(int(v) for v in argv[i + 1].split("x")); i += 2
     else: shots.append(argv[i]); i += 1
-ALL = ["hero", "front", "side", "back", "detail", "wall", "exploded", "inside", "theme"]
+ALL = ["hero", "front", "side", "back", "detail", "wall", "exploded", "inside", "theme", "room", "room_close"]
 shots = shots or ALL
 
 # ------------------------------------------------------------------ geometry facts (mm, = OpenSCAD frame)
@@ -202,7 +202,7 @@ def place(objs, with_printer=True, with_roof=False, theme=None, explode=0.0, on_
     return dz_unit
 
 
-def screen_plane(M, dz, explode=0.0):
+def screen_plane(M, dz, explode=0.0):  # returns the plane
     bpy.ops.mesh.primitive_plane_add(size=1)
     p = bpy.context.active_object; p.name = "Screen"
     p.scale = (VIEW[0], VIEW[1], 1)
@@ -310,6 +310,113 @@ def wall(dz):
     return w
 
 
+
+# ------------------------------------------------------------------ room scene (scale reference)
+ROOM_Z0 = 1110          # photo module bottom above the floor -> camera lens at ~160 cm
+
+
+def box_obj(name, x0, y0, z0, x1, y1, z1, m, bevel=0.0):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
+    o = bpy.context.active_object; o.name = name; o.scale = (x1 - x0, y1 - y0, z1 - z0)
+    bpy.ops.object.transform_apply(scale=True)
+    if bevel:
+        mod = o.modifiers.new("b", "BEVEL"); mod.width = bevel; mod.segments = 3
+    o.data.materials.append(m)
+    return o
+
+
+def cyl_obj(name, x, y, z0, z1, r, m, verts=48):
+    bpy.ops.mesh.primitive_cylinder_add(radius=r, depth=z1 - z0, vertices=verts, location=(x, y, (z0 + z1) / 2))
+    o = bpy.context.active_object; o.name = name; o.data.materials.append(m)
+    bpy.ops.object.shade_smooth()
+    return o
+
+
+def sphere_obj(name, x, y, z, r, m, scale=(1, 1, 1)):
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=r, location=(x, y, z), segments=40, ring_count=20)
+    o = bpy.context.active_object; o.name = name; o.scale = scale; o.data.materials.append(m)
+    bpy.ops.object.shade_smooth()
+    return o
+
+
+def capsule(name, a, b, r, m):
+    a, b = Vector(a), Vector(b); d = b - a
+    bpy.ops.mesh.primitive_cylinder_add(radius=r, depth=d.length, vertices=32, location=(a + b) / 2)
+    o = bpy.context.active_object; o.name = name
+    o.rotation_euler = d.to_track_quat("Z", "Y").to_euler(); o.data.materials.append(m)
+    bpy.ops.object.shade_smooth()
+    for pnt in (a, b):
+        sphere_obj(name + "_end", pnt.x, pnt.y, pnt.z, r, m)
+    return o
+
+
+def build_room():
+    wall_y = D + 14
+    floor_m = mat("Oak floor", srgb("#6e5038"), rough=0.45)
+    nt = floor_m.node_tree; bsdf = nt.nodes["Principled BSDF"]
+    brick = nt.nodes.new("ShaderNodeTexBrick"); brick.inputs["Scale"].default_value = 0.0035
+    brick.inputs["Color1"].default_value = srgb("#7a5a3e"); brick.inputs["Color2"].default_value = srgb("#5f4430")
+    brick.inputs["Mortar"].default_value = srgb("#3a2a1e"); brick.inputs["Mortar Size"].default_value = 0.004
+    brick.inputs["Brick Width"].default_value = 6.0; brick.inputs["Row Height"].default_value = 0.9
+    nt.links.new(brick.outputs["Color"], bsdf.inputs["Base Color"])
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(0, -2000, 0)); f = bpy.context.active_object; f.scale = (9000, 9000, 1); f.data.materials.append(floor_m)
+    wall_m = mat("Wall paint", srgb("#4d5059"), rough=0.9)
+    box_obj("Back wall", -4500, wall_y, 0, 4500, wall_y + 100, 3200, wall_m)
+    box_obj("Side wall", 2700, -5000, 0, 2800, wall_y + 100, 3200, mat("Side wall", srgb("#3a3d45"), rough=0.9))
+    box_obj("Skirting", -4500, wall_y - 14, 0, 2700, wall_y, 90, mat("Skirting", srgb("#1b1c20"), rough=0.6))
+    # door with frame and handle
+    trim = mat("Door trim", srgb("#b9b5ad"), rough=0.5)
+    box_obj("Door frame", -2280, wall_y - 18, 0, -1220, wall_y, 2160, trim)
+    box_obj("Door", -2230, wall_y - 24, 0, -1270, wall_y - 18, 2110, mat("Door", srgb("#8f8a82"), rough=0.55), bevel=2)
+    cyl_obj("Door handle", -1350, wall_y - 50, 1040, 1060, 9, mat("Brushed steel", srgb("#b8bac0"), rough=0.3, metal=1.0))
+    box_obj("Handle bar", -1360, wall_y - 60, 1045, -1240, wall_y - 45, 1057, mat("Brushed steel", srgb("#b8bac0"), rough=0.3, metal=1.0))
+    # light switch at 105 cm
+    box_obj("Switch", -800, wall_y - 10, 1010, -720, wall_y, 1090, mat("Switch", srgb("#f2f2f0"), rough=0.4), bevel=2)
+    # two posters 50 x 70 cm
+    frame_m = mat("Frame", srgb("#111113"), rough=0.4)
+    for i, (x0, col) in enumerate([(700, "#b48ac9"), (1320, "#e8553d")]):
+        box_obj(f"Poster frame {i}", x0, wall_y - 22, 1150, x0 + 500, wall_y, 1850, frame_m)
+        pm = mat(f"Poster {i}", srgb(col), rough=0.7)
+        box_obj(f"Poster {i}", x0 + 25, wall_y - 23, 1175, x0 + 475, wall_y - 21, 1825, pm)
+        box_obj(f"Poster band {i}", x0 + 25, wall_y - 24, 1175, x0 + 475, wall_y - 22, 1400, mat(f"Poster band {i}", srgb("#0f5c3e"), rough=0.7))
+    # high table (110 cm) and two bar stools (seat 76 cm)
+    black = mat("Black metal", srgb("#18181b"), rough=0.35, metal=0.6)
+    wood = mat("Table top", srgb("#8a6a4c"), rough=0.4)
+    cyl_obj("Table base", 1150, -1050, 0, 18, 240, black); cyl_obj("Table pole", 1150, -1050, 18, 1080, 32, black)
+    cyl_obj("Table top", 1150, -1050, 1080, 1105, 320, wood)
+    for j, (sx, sy) in enumerate([(780, -1250), (1520, -1250)]):
+        cyl_obj(f"Stool base {j}", sx, sy, 0, 14, 200, black); cyl_obj(f"Stool pole {j}", sx, sy, 14, 740, 26, black)
+        cyl_obj(f"Stool seat {j}", sx, sy, 740, 790, 180, mat("Stool seat", srgb("#2b2b30"), rough=0.6))
+        bpy.ops.mesh.primitive_torus_add(major_radius=170, minor_radius=9, location=(sx, sy, 320)); t = bpy.context.active_object; t.data.materials.append(black)
+    # a glass and a phone on the table for scale
+    cyl_obj("Glass", 1060, -1000, 1105, 1250, 38, mat("Glass", srgb("#ffffff"), rough=0.05, trans=1.0))
+    box_obj("Phone", 1220, -1120, 1105, 1295, -965, 1113, mat("Phone", srgb("#0b0b0d"), rough=0.2), bevel=3)
+    # potted plant
+    cyl_obj("Pot", 2250, -500, 0, 480, 190, mat("Pot", srgb("#1f1f22"), rough=0.7))
+    leaf = mat("Leaves", srgb("#2f6b3a"), rough=0.6)
+    for k, (dx, dy, dz, r) in enumerate([(0, 0, 820, 260), (-120, 60, 1050, 200), (130, -40, 1000, 190), (40, 90, 1250, 150), (-60, -80, 700, 220)]):
+        sphere_obj(f"Leaf {k}", 2250 + dx, -500 + dy, dz, r, leaf, scale=(1, 0.8, 1.15))
+    # a 175 cm person (stylised mannequin) standing in front of the box
+    skin = mat("Mannequin", srgb("#c9c4bc"), rough=0.7)
+    px, py = -560, -420
+    sphere_obj("Head", px, py, 1650, 100, skin, scale=(0.82, 0.92, 1.0))
+    capsule("Neck", (px, py, 1480), (px, py, 1560), 45, skin)
+    capsule("Torso", (px, py, 1030), (px, py, 1380), 135, skin)
+    for sx in (-1, 1):
+        capsule(f"Leg {sx}", (px + sx * 85, py, 90), (px + sx * 85, py, 900), 68, skin)
+        capsule(f"Arm {sx}", (px + sx * 200, py, 1400), (px + sx * 235, py + 40, 860), 44, skin)
+        box_obj(f"Shoe {sx}", px + sx * 85 - 50, py - 150, 0, px + sx * 85 + 50, py + 60, 70, mat("Shoe", srgb("#2a2a2e"), rough=0.6), bevel=15)
+    # lights: warm ceiling downlights + soft fill; the box's ring adds its own glow
+    for (lx, ly) in [(-1500, -1200), (0, -1500), (1300, -1200)]:
+        l = bpy.data.lights.new("Downlight", "SPOT"); l.energy = 1.4e8; l.spot_size = math.radians(70); l.spot_blend = 0.6
+        l.color = (1.0, 0.82, 0.62); l.shadow_soft_size = 120
+        o = bpy.data.objects.new("Downlight", l); bpy.context.scene.collection.objects.link(o); o.location = (lx, ly, 3000)
+    area("Room fill", (0, -4500, 1800), (0, 0, 1200), 3000, 6e7, color=(0.85, 0.88, 1.0))
+    area("Wall wash", (400, -800, 3000), (400, wall_y, 1400), 1200, 4e7, color=(1.0, 0.85, 0.7))
+    w = bpy.context.scene.world or bpy.data.worlds.new("World"); bpy.context.scene.world = w; w.use_nodes = True
+    w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.01, 0.01, 0.012, 1)
+
+
 def shoot(name):
     clear()
     M = setup_materials()
@@ -318,14 +425,36 @@ def shoot(name):
     if name in ("wall",): printer = True
     if name == "exploded": ex = 1.0
     if name == "theme": theme = "sommernat"; printer = True
-    dz = place(objs, with_printer=printer, with_roof=roof, theme=theme, explode=ex, on_wall=name in ("wall", "theme"))
+    if name.startswith("room"): printer = True
+    dz = place(objs, with_printer=printer, with_roof=roof, theme=theme, explode=ex, on_wall=name in ("wall", "theme") or name.startswith("room"))
     if name == "inside":
         for n in ("shell", "shell_band", "shell_closed", "shell_closed_band", "wall_cleat"):
             objs[n].hide_render = True
         for n, o in objs.items():
             if n.startswith("hw--") and ("--shell--" in n or "--wall_cleat--" in n):
                 o.hide_render = True
-    screen_plane(M, dz, ex)
+    scr = screen_plane(M, dz, ex)
+    if name.startswith("room"):
+        for o in list(objs.values()) + [scr]:
+            o.location.z += ROOM_Z0
+        build_room()
+        size = (2200, 1375) if SIZE[0] >= 1000 else (440, 275)
+        if name == "room":
+            camera((350, -4300, 1450), (100, 0, 1200), 30)
+        else:
+            camera((150, -2900, 1350), (-300, 0, 1000), 35)
+        render_settings(os.path.join(OUT, name + ".jpg"), size)
+        bpy.ops.render.render(write_still=True)
+        # pixel positions for the scale labels (box top/bottom, lens, person head/feet)
+        from bpy_extras.object_utils import world_to_camera_view
+        sc, cam = bpy.context.scene, bpy.context.scene.camera
+        pts = {"box_top": (0, 0, ROOM_Z0 + Z_UNIT + H), "box_bottom": (0, 0, ROOM_Z0), "lens": (0, 0, ROOM_Z0 + Z_UNIT + LENS_Z),
+               "box_right": (W / 2, 0, ROOM_Z0 + Z_UNIT + H / 2), "head": (-560, -420, 1750), "feet": (-560, -420, 0), "floor_at_wall": (0, D + 14, 0)}
+        px = {k: [world_to_camera_view(sc, cam, Vector(v)).x * size[0], (1 - world_to_camera_view(sc, cam, Vector(v)).y) * size[1]] for k, v in pts.items()}
+        import json
+        open(os.path.join(OUT, name + ".json"), "w").write(json.dumps({"size": size, "px": px}))
+        print("RENDERED", name)
+        return
     top = dz + H
     cz = (top + (0 if printer else dz)) / 2
     aspect = SIZE[0] / SIZE[1]
