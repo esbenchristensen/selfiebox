@@ -5,9 +5,16 @@
   <title>Selfie App</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  {% if theme %}<link rel="stylesheet" href="{{ url_for('static', filename='themes/' ~ theme_id ~ '/theme.css') }}">{% endif %}
 </head>
-<body>
+<body{% if theme %} class="themed"{% endif %}>
   <div id="container">
+    {% if theme %}
+    <!-- Event theme: the same wave bands and colours as the printed casing -->
+    <img id="theme-bands" src="{{ url_for('static', filename='themes/' ~ theme_id ~ '/bands.svg') }}" alt="">
+    <div id="theme-ticker" aria-hidden="true"><span>{{ (theme.ticker ~ '   ') * 6 }}</span></div>
+    <div id="theme-cta">{{ theme.cta }}</div>
+    {% endif %}
     <!-- Live video feed element -->
     <img id="video" src="/video_feed" alt="Live Stream">
     

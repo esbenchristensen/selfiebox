@@ -1,0 +1,29 @@
+{
+  "name": "Sommernat",
+  "ticker": "Sommernat 2027  ✦  Tryk på skærmen  ✦  Print dit billede  ✦",
+  "cta": "Tryk for at tage et billede",
+  "countdown": [
+    3,
+    2,
+    1
+  ],
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#2e8b57",
+        "#b48ac9",
+        "#e8553d"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#f3e3d3"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#b48ac9"
+  }
+}

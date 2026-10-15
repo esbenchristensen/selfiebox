@@ -55,3 +55,21 @@ glow strip to translucent stripe 5.8 mm.
 - Shell and front: matte black ASA, or PC for hard-use rental units.
 - Diffuser ring: frosted PC or translucent PETG.
 - Shell glow stripe: change to translucent at 34.0 mm and back at 44.0 mm.
+
+## Event themes
+
+One `themes/<id>/theme.json` controls the printed theme parts (side wings, topper, sign and
+printer fronts with 0.8 mm multicolour inlays), the ring-light colours, the screen UI (bands,
+ticker, colours) and the frame added to each photo. The enclosure itself stays black and unchanged.
+The wings use the existing side screws (M3 × 12). The topper sits on the top joint spacer.
+
+```sh
+cp -r themes/sommernat themes/<id>          # edit palette, roles, style, texts
+python3 hardware/tools/theme_builder.py themes/<id>
+SELFIEBOX_THEME=<id> python3 app.py
+```
+
+The builder writes an STL per colour, a 3MF per part and previews to `themes/<id>/build/`, and the
+screen files to `static/themes/<id>/`. Styles: `waves`, `neon`, `confetti`. Edges: `hills`, `clouds`,
+`spikes`. For your own artwork, put one SVG per colour in `themes/<id>/art/<part>/<order>_<colour>.svg`.
+Use an event's own artwork only with its permission.

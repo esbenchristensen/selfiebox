@@ -1,0 +1,29 @@
+{
+  "name": "Neon Club",
+  "ticker": "CLUB NAME  ⚡  Smil til kameraet  ⚡  Fredag & lørdag  ⚡",
+  "cta": "Tryk for at tage et billede",
+  "countdown": [
+    3,
+    2,
+    1
+  ],
+  "light": {
+    "idle": {
+      "animation": "chase",
+      "colors": [
+        "#ff2fb4",
+        "#22e6ff",
+        "#c8ff3a"
+      ],
+      "period_s": 3
+    },
+    "countdown": {
+      "color": "#22e6ff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#ffffff"
+    },
+    "glow": "#ff2fb4"
+  }
+}

@@ -537,4 +537,5 @@ else if (PART == "v_power")        placed_power();
 else if (PART == "v_leds")         placed_leds();
 else if (PART == "v_diffusers")    diffuser_ring();
 else if (PART == "v_printer")      translate([0, 0, PRN_Z]) dfr0503();
+else if (PART == "geom") echo(GEOM = [W, H, D, R, SIDE_Y, BLOCK_Z[0], BLOCK_Z[1], H_SIGN, H_PRN, PRN_Z, SPACER_T, EDGE_CH, M3_CLR, INS_M3_D, INS_M3_L, PRN_FRONT[0], PRN_FRONT[1]]);
 else if (PART == "info") echo(W = W, H = H, GLASS_TOP = GLASS_TOP, GC = GC, LENS_Z = LENS_Z, CAM_PCB_Y = CAM_PCB_Y, PI_Y = PI_Y, RING = [RING_X, RING_Z0, RING_Z1], RUN_V = RUN_V, RUN_H = RUN_H, LEDS = [run_leds(RUN_V), run_leds(RUN_H), run_leds(RUN_T)], RUN_T = RUN_T, XBAR_Z = XBAR_Z, CAM_TOP = CAM_TOP);
