@@ -4,8 +4,9 @@ import { useState } from "react";
 
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "error"; message: string };
 
-export function Contact() {
-  const [type, setType] = useState<"erhverv" | "privat">("erhverv");
+// The page decides the audience. Private hosts mostly book in the calendar, so their
+// form is for questions; venues have no calendar, so this form is how they buy.
+export function Contact({ type }: { type: "erhverv" | "privat" }) {
   const [state, setState] = useState<State>({ kind: "idle" });
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -31,10 +32,25 @@ export function Contact() {
       <div className="wrap contact">
         <div className="sec-head" style={{ marginBottom: 0 }}>
           <span className="label">Kontakt</span>
-          <h2 id="contact-title" className="h-l">
-            Fortæl os om jeres sted eller fest.
-          </h2>
-          <p className="lede">Skriv et par linjer, så vender vi tilbage med pris og plan. Holder I privat fest, kan I også se ledige datoer og priser direkte i <a href="#book">bookingkalenderen</a>.</p>
+          {type === "erhverv" ? (
+            <>
+              <h2 id="contact-title" className="h-l">
+                Fortæl os om jeres sted.
+              </h2>
+              <p className="lede">
+                Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om, hvor boksen skal hænge, og hvad den skal gøre for jer. Skal I kun bruge en boks til én fest, kan I <a href="/#book">leje den her</a>.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 id="contact-title" className="h-l">
+                Spørgsmål før I booker?
+              </h2>
+              <p className="lede">
+                Skriv et par linjer, så svarer vi på mail. Ledige datoer og priser kan I se direkte i <a href="#book">bookingkalenderen</a>.
+              </p>
+            </>
+          )}
         </div>
 
         {state.kind === "sent" ? (
@@ -46,16 +62,6 @@ export function Contact() {
           </div>
         ) : (
           <form className="form" onSubmit={onSubmit} noValidate={false}>
-            <div className="full">
-              <div className="seg" role="group" aria-label="Hvem er I">
-                <button type="button" aria-pressed={type === "erhverv"} onClick={() => setType("erhverv")}>
-                  Et sted eller firma
-                </button>
-                <button type="button" aria-pressed={type === "privat"} onClick={() => setType("privat")}>
-                  En privat fest
-                </button>
-              </div>
-            </div>
             <div className="field">
               <label htmlFor="f-name">Navn</label>
               <input className="input" id="f-name" name="name" autoComplete="name" required />
@@ -77,8 +83,10 @@ export function Contact() {
               </div>
             ) : (
               <div className="field full">
-                <label htmlFor="f-date">Dato for festen</label>
-                <input className="input" id="f-date" name="date" type="date" required />
+                <label htmlFor="f-date">
+                  Dato for festen <small>(valgfri)</small>
+                </label>
+                <input className="input" id="f-date" name="date" type="date" />
               </div>
             )}
             <div className="field full">

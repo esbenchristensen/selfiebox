@@ -16,10 +16,12 @@ npm run lint       # typecheck
 
 | Fil | Indhold |
 |---|---|
-| `content.ts` | Al tekst der ændres ofte: priser, pakker, aktiviteter, specifikationer, FAQ |
+| `content.ts` | Priser, pakker, aktiviteter, specifikationer og FAQ for hver målgruppe |
 | `app/globals.css` | Tokens (farver, afstande, radier) og al styling |
-| `app/page.tsx` | Sektionernes rækkefølge |
-| `components/` | Én fil pr. sektion |
+| `app/page.tsx` | Forsiden: leje til private fester. Tekster, billeder og rækkefølge |
+| `app/erhverv/page.tsx` | Barer, klubber og hoteller. Tekster, billeder og rækkefølge |
+| `components/` | Én fil pr. sektion. Sektionerne tager deres tekst fra siden |
+| `SIDESTRUKTUR.md` | Hvorfor privat og erhverv har hver sin side |
 | `app/api/kontakt/route.ts` | Kontaktformularen |
 | `public/renders/` | Produktrenderinger fra CAD-modellen (Blender) |
 

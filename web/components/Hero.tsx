@@ -1,60 +1,36 @@
-"use client";
-
 import Image from "next/image";
-import { useState } from "react";
 
-const copy = {
-  privat: {
-    title: "Lej en fotoboks, der får alle med på billedet.",
-    lede: "Til bryllup, fødselsdag og firmafest fra 495 kr. Gæsterne tager så mange billeder, de vil, i ægte studielys, og alle fotos samles på jeres egen eventside bagefter.",
-    primary: { label: "Se ledige datoer", href: "#book" },
-  },
-  erhverv: {
-    title: "Fotoboksen, der får gæsterne til at komme igen.",
-    lede: "Selfi Boks hænger på væggen i jeres bar, klub eller hotel. Gæsterne deler billederne med jeres navn i rammen, og I får en gæsteliste, I kan invitere tilbage. 995 kr. om måneden.",
-    primary: { label: "Se, hvad den gør for jer", href: "#erhverv" },
-  },
-} as const;
+type Link = { label: string; href: string };
 
-export function Hero() {
-  const [mode, setMode] = useState<keyof typeof copy>("privat");
-  const c = copy[mode];
-
+// Server-rendered, one audience per page, so the H1 search engines see is the H1 visitors see.
+export function Hero({ label, title, lede, primary, secondary, image }: { label: string; title: string; lede: string; primary: Link; secondary: Link; image: { src: string; alt: string; pos?: string } }) {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <div className="seg" role="group" aria-label="Vis for">
-            <button aria-pressed={mode === "privat"} onClick={() => setMode("privat")}>
-              Privat
-            </button>
-            <button aria-pressed={mode === "erhverv"} onClick={() => setMode("erhverv")}>
-              Erhverv
-            </button>
-          </div>
+          <span className="label">{label}</span>
           <h1 id="hero-title" className="h-xl">
-            {c.title}
+            {title}
           </h1>
-          <p className="lede" aria-live="polite">
-            {c.lede}
-          </p>
+          <p className="lede">{lede}</p>
           <div className="btn-row">
-            <a className="btn btn-primary" href={c.primary.href}>
-              {c.primary.label}
+            <a className="btn btn-primary" href={primary.href}>
+              {primary.label}
             </a>
-            <a className="btn btn-secondary" href="#saadan">
-              Sådan virker den
+            <a className="btn btn-secondary" href={secondary.href}>
+              {secondary.label}
             </a>
           </div>
         </div>
         <div className="hero-media">
           <Image
-            src="/renders/hero.jpg"
-            alt="Selfi Boks med tændt lysring rundt om skærmen"
+            src={image.src}
+            alt={image.alt}
             width={1200}
             height={1500}
             priority
             sizes="(max-width: 900px) 90vw, 45vw"
+            style={{ aspectRatio: "4 / 5", objectFit: "cover", objectPosition: image.pos ?? "50% 50%" }}
           />
         </div>
       </div>

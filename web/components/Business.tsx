@@ -26,10 +26,10 @@ export function Business() {
   const profit = gross - cost - business.monthlyPricePerBox;
 
   return (
-    <section id="erhverv" className="section" aria-labelledby="biz-title">
+    <section id="gevinst" className="section" aria-labelledby="biz-title">
       <div className="wrap">
         <div className="sec-head">
-          <span className="label">Til barer, klubber, hoteller og festivaler</span>
+          <span className="label">Hvad I får</span>
           <h2 id="biz-title" className="h-l">
             Gæsterne får det sjovt. I får omtalen og gæstelisten.
           </h2>
@@ -55,7 +55,7 @@ export function Business() {
           ))}
         </div>
 
-        <div className="biz">
+        <div className="biz" id="pris">
           <div>
             <span className="label">Leje pr. boks</span>
             <div className="price-big" style={{ marginTop: 12 }}>

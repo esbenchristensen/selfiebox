@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { activities, faq, specs } from "@/content";
+import { activities, specs, type ActivityId, type Faq as FaqItem } from "@/content";
 
 export function Inside() {
   return (
@@ -72,19 +72,20 @@ const ICONS: Record<string, string> = {
   guldtid: "M10 26 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0 M24 18 V26 L29 29 M20 7 H28",
 };
 
-export function Activities() {
+export function Activities({ only, title, lede }: { only?: ActivityId[]; title: string; lede: string }) {
+  const shown = only ? activities.filter((a) => only.includes(a.id)) : activities;
   return (
     <section id="aktiviteter" className="section" aria-labelledby="act-title">
       <div className="wrap">
         <div className="sec-head">
           <span className="label">Aktiviteter</span>
           <h2 id="act-title" className="h-l">
-            Gør aftenen til et spil.
+            {title}
           </h2>
-          <p className="lede">Boksen kan mere end at tage billeder. Slå konkurrencer og små opgaver til, når I vil have liv i lokalet, og fra igen, når festen kører af sig selv.</p>
+          <p className="lede">{lede}</p>
         </div>
         <div className="acts">
-          {activities.map((a) => (
+          {shown.map((a) => (
             <div className="act" key={a.id}>
               <svg viewBox="0 0 48 48" aria-hidden="true">
                 <path d={ICONS[a.id]} />
@@ -101,16 +102,9 @@ export function Activities() {
   );
 }
 
-const PRINTS = [
-  ["print-bar", "Fredag · Bodegaen"],
-  ["print-wedding", "Anna & Jonas · 12.6"],
-  ["print-club", "Lørdag · Klubben"],
-  ["print-office", "Julefrokost"],
-  ["print-birthday", "Birthe 60 år"],
-];
-
-export function PhotoStrip() {
-  const all = [...PRINTS, ...PRINTS, ...PRINTS.slice(0, 2)];
+// Each pair is [photo in /photos, caption in the frame].
+export function PhotoStrip({ prints }: { prints: [string, string][] }) {
+  const all = [...prints, ...prints, ...prints, ...prints].slice(0, 12);
   const loop = [...all, ...all];
   return (
     <section className="strip" aria-label="Fotos fra Selfi Bokse">
@@ -133,18 +127,18 @@ export function PhotoStrip() {
   );
 }
 
-export function Faq() {
+export function Faq({ title, items }: { title: string; items: FaqItem[] }) {
   return (
-    <section className="section" aria-labelledby="faq-title">
+    <section id="faq" className="section" aria-labelledby="faq-title">
       <div className="wrap">
         <div className="sec-head">
           <span className="label">Spørgsmål og svar</span>
           <h2 id="faq-title" className="h-l">
-            Spørgsmål om at leje en fotoboks.
+            {title}
           </h2>
         </div>
         <div className="faq">
-          {faq.map((f, i) => (
+          {items.map((f, i) => (
             <details key={f.q} open={i === 0}>
               <summary>{f.q}</summary>
               <p>{f.a}</p>

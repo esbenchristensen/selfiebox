@@ -122,6 +122,10 @@ p { margin: 0; }
 .nav-links a { text-decoration: none; color: var(--ink-muted); transition: color 200ms var(--ease); }
 .nav-links a:hover { color: var(--ink); }
 .nav .btn { padding: 9px 18px; font-size: 14px; }
+.nav-end { display: flex; align-items: center; gap: var(--space-4); }
+.nav-other { font-size: 14px; color: var(--ink-muted); text-decoration: none; white-space: nowrap; transition: color 200ms var(--ease); }
+.nav-other:hover { color: var(--ink); }
+.nav-other .short { display: none; }
 
 /* Logo */
 .logo { display: inline-flex; align-items: center; gap: 0.32em; font-size: var(--logo-size, 26px); line-height: 1; color: var(--ink); text-decoration: none; }
@@ -187,6 +191,9 @@ p { margin: 0; }
 .themes { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; }
 .theme-media { position: relative; border-radius: var(--radius-box); overflow: hidden; aspect-ratio: 4 / 5; background: var(--surface-sunk); }
 .theme-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 600ms var(--ease); }
+.theme-media--prints { background: radial-gradient(closest-side, var(--glow), transparent), var(--surface-sunk); }
+.theme-print { left: 50%; top: 50%; width: 66%; padding: 4% 4% 14%; transform: translate(-50%, -50%) rotate(-3deg); transition: opacity 600ms var(--ease); }
+.theme-print .print-cap { left: 4%; right: 4%; bottom: 4.5%; font-size: clamp(11px, 1.3vw, 15px); }
 .layers { display: flex; flex-direction: column; margin-top: var(--space-6); }
 .layers div { padding: 14px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: var(--space-4); }
 .layers b { font-weight: 500; }
@@ -270,6 +277,9 @@ p { margin: 0; }
 /* Footer */
 .footer { border-top: 1px solid var(--line); padding-block: var(--space-7); }
 .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: var(--space-5); flex-wrap: wrap; color: var(--ink-muted); font-size: 14px; }
+.footer-links { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-links a { color: var(--ink-muted); }
+.footer-links a:hover { color: var(--ink); }
 
 @media (max-width: 900px) {
   .section { padding-block: var(--space-8); }
@@ -284,6 +294,8 @@ p { margin: 0; }
   .prints { height: 360px; }
 }
 @media (max-width: 520px) {
+  .nav-other .long { display: none; }
+  .nav-other .short { display: inline; }
   .pkgs, .form { grid-template-columns: minmax(0, 1fr); }
   .layers div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }

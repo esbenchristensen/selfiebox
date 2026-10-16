@@ -2,14 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const steps = [
-  { n: "01", title: "Lysringen trækker folk til", text: "Når ingen bruger boksen, pulserer ringen langsomt. Den kan ses fra den anden ende af lokalet." },
-  { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Der er tid til at få alle med på billedet." },
-  { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, så alle ansigter står skarpt, også i en mørk bar. Ingen blitz i øjnene og ingen grønne skygger fra diskolyset." },
-  { n: "04", title: "Billedet med hjem", text: "Instax-fotoet glider ud og fremkalder i hånden. Den digitale udgave ligger klar på telefonen via QR-kode eller SMS." },
-];
+export type Step = { n: string; title: string; text: string };
 
-export function Story() {
+export function Story({ steps }: { steps: Step[] }) {
   const [active, setActive] = useState(0);
   const [count, setCount] = useState(3);
   const refs = useRef<(HTMLDivElement | null)[]>([]);

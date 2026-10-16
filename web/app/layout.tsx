@@ -7,21 +7,11 @@ const display = Instrument_Sans({ subsets: ["latin", "latin-ext"], weight: ["500
 const body = Geist({ subsets: ["latin", "latin-ext"], variable: "--font-body" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
+// Site-wide defaults only. Each page sets its own title, description, canonical and share image,
+// because the private page and the venue page target different searches and different people.
 export const metadata: Metadata = {
   metadataBase: new URL("https://selfi.dk"),
-  title: "Lej fotoboks fra 495 kr. | Selfi Boks til fest, bar og hotel",
-  description:
-    "Lej en fotoboks til bryllup, fødselsdag eller firmafest fra 495 kr. Ubegrænsede billeder, studielys og eventside. Til barer og hoteller fra 995 kr./md.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Lej fotoboks fra 495 kr. | Selfi Boks",
-    description: "Fotoboksen, der får alle med på billedet. Til bryllup, fødselsdag, firmafest og jeres bar.",
-    url: "https://selfi.dk",
-    siteName: "Selfi",
-    locale: "da_DK",
-    type: "website",
-    images: [{ url: "/renders/hero.jpg", width: 1200, height: 1500, alt: "Selfi Boks fotoboks med tændt lysring" }],
-  },
+  openGraph: { siteName: "Selfi", locale: "da_DK", type: "website" },
 };
 
 export const viewport: Viewport = {

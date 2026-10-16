@@ -61,19 +61,19 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 
 | Side/sektion | Primært | Sekundært |
 |---|---|---|
-| Title + H1 (privat) | lej fotoboks | fotoboks til bryllup, fødselsdag, firmafest, photo booth leje |
-| Privat-sektion H2 | fotoboks til bryllup / fødselsdag / firmafest | pris |
-| Erhverv-sektion | fotoboks til bar | photo booth til natklub, hotel, festival |
-| FAQ | "hvad koster det at leje en fotoboks" | spørgsmål, folk søger på |
+| `/` title + H1 | lej fotoboks | fotoboks til bryllup, fødselsdag, firmafest, photo booth leje |
+| `/` H2 og FAQ | fotoboks til bryllup / fødselsdag / firmafest, "hvad koster det at leje en fotoboks" | pris |
+| `/erhverv` title + H1 | fotoboks til bar | photo booth til natklub, hotel, festival |
+| `/erhverv` FAQ | "hvad koster en fotoboks til en bar" | gæsteliste, SMS, betaling pr. foto |
 
 **Gjort i koden:**
 - `<title>` med søgeord og pris (under 60 tegn), meta description under 155 tegn.
 - H1 indeholder "fotoboks". H2'erne bruger søgeordene naturligt.
-- FAQ som `FAQPage`-strukturdata (`app/page.tsx`), så Google kan vise svarene i søgeresultaterne.
+- `FAQPage`- og `Service`-strukturdata pr. side med sidens egne spørgsmål og priser. (Google viser i dag kun FAQ-udvidelser for få sider, men dataene hjælper stadig med at forstå siden.)
 - Canonical URL og alt-tekster, der beskriver billedet og nævner "fotoboks".
 
 **Næste skridt (største SEO-gevinst):**
-1. **Del siden op.** Én side kan ikke ranke både på "lej fotoboks" og "fotoboks til bar". Lav `/lej-fotoboks` (privat), `/fotoboks-til-bar` (erhverv) og evt. `/fotoboks-til-bryllup`. Forsiden bliver en kort vejviser.
+1. ~~**Del siden op.**~~ Gjort: `/` er privat leje, `/erhverv` er barer, klubber og hoteller. Se `SIDESTRUKTUR.md` for begrundelsen og de næste sider.
 2. **Anmeldelser.** Bed hver lejer om en anmeldelse på Trustpilot eller Google. Myselfies stærkeste våben er 4,9 med tusindvis af anmeldelser.
 3. **Google Business Profile** med fotos og anmeldelser.
 4. **Guides,** der svarer på det, folk søger efter: "Hvad koster en fotoboks?", "Fotoboks eller fotograf til brylluppet?", "10 ideer til billeder i fotoboksen".
