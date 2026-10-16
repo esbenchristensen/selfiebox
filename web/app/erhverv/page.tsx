@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Business } from "@/components/Business";
 import { Care } from "@/components/Care";
 import { Contact } from "@/components/Contact";
+import { Explainer } from "@/components/Explainer";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { JsonLd } from "@/components/JsonLd";
@@ -79,6 +80,13 @@ export default function Erhverv() {
           primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
           secondary={{ label: "Se, hvad den gør for jer", href: "#gevinst" }}
           visual={<HeroBox />}
+        />
+        <Explainer
+          film="erhverv"
+          label="Se filmen"
+          title="Jeres fotoboks, i jeres stil. Vi sørger for resten."
+          lede="Boksen får jeres farver, navn og logo. Gæsterne tager billeder med jeres navn i rammen, I får en gæsteliste, I må bruge, og vi monterer, passer og bytter boksen."
+          alt="Film: Sådan får jeres bar eller hotel en Selfi Boks i jeres eget design, med gæsteliste og fuld service"
         />
         <Business />
         <Care />

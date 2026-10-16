@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// The explainer film: Danish on-screen text, no voice yet. 16:9 on desktop, 4:5 on phones.
-// Made from video/explainer.html (see video/README.md). It plays muted when it scrolls into view.
-const SRC = "/video/selfi-explainer";
-
-export function Explainer({ label, title, lede }: { label: string; title: string; lede: string }) {
+// A Selfi film: Danish on-screen text, no voice yet. 16:9 on desktop, 4:5 on phones.
+// Made from video/<film>.html (see video/README.md). It plays muted when it scrolls into view.
+export function Explainer({ film = "explainer", label, title, lede, alt }: { film?: "explainer" | "erhverv"; label: string; title: string; lede: string; alt: string }) {
+  const SRC = `/video/selfi-${film}`;
   const ref = useRef<HTMLVideoElement>(null);
   const [tall, setTall] = useState(false);
 
@@ -55,7 +54,7 @@ export function Explainer({ label, title, lede }: { label: string; title: string
             loop
             controls
             preload="metadata"
-            aria-label="Film: Sådan lejer I en fotoboks hos Selfi, fra kalenderen til billedet på telefonen"
+            aria-label={alt}
           >
             <source src={`${SRC}-${fmt}.mp4`} type={`video/mp4; codecs="avc1.640032"`} />
             <source src={`${SRC}-${fmt}.webm`} type={`video/webm; codecs="vp9"`} />

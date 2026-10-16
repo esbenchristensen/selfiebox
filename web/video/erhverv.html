@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Selfi erhverv</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* The venue film for /erhverv. The venues are made up on purpose: they show what a theme can be
+   without suggesting that a real bar, hotel or festival is a customer. */
+
+/* A box in a venue's design: wings on the sides, a sign on top, its own casing, ring and screen */
+.vbox { position: relative; isolation: isolate; width: var(--bw); flex: none; margin-top: calc(var(--bw) * 0.3); container-type: inline-size; }
+.vbox .shell { fill: var(--casing, #0a0a0a); }
+.vbox .notch { fill: var(--casing, #0a0a0a); }
+.wing { position: absolute; top: 9%; height: 82%; width: 27%; z-index: -1; border-radius: 10cqw; background: linear-gradient(180deg, var(--w1), var(--w2)); box-shadow: inset 0 0 0 1.3cqw var(--acc), 0 30px 60px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 8cqw 0; }
+.wing.l { right: 84%; padding-right: 4cqw; }
+.wing.r { left: 84%; padding-left: 4cqw; }
+.wing i { display: block; }
+.bulbs .wing i, .bulbs .topper i { width: 3.6cqw; height: 3.6cqw; border-radius: 50%; background: #ffe7a8; box-shadow: 0 0 2.4cqw #ffcf6a; }
+.waves .wing i { width: 10cqw; height: 4cqw; border-top: 1.1cqw solid var(--acc); border-radius: 50% 50% 0 0; opacity: 0.85; }
+.leaves .wing i { width: 7cqw; height: 11cqw; border-radius: 0 100% 0 100%; background: var(--acc); transform: rotate(-20deg); opacity: 0.9; }
+.leaves .wing i:nth-child(even) { transform: rotate(70deg); background: #7fd05a; }
+.topper { position: absolute; left: -12%; width: 124%; bottom: 95%; height: 30cqw; z-index: -1; border-radius: 9cqw 9cqw 4cqw 4cqw; background: linear-gradient(180deg, var(--w2), var(--w1)); box-shadow: inset 0 0 0 1.3cqw var(--acc), 0 30px 60px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.6cqw; padding-bottom: 3cqw; }
+.topper b { font: 600 11cqw/1 var(--display); letter-spacing: 0.02em; color: var(--acc); }
+.topper small { font: 500 4.2cqw/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink2); }
+.topper .row { position: absolute; left: 7cqw; right: 7cqw; display: flex; justify-content: space-between; }
+.topper .row.t { top: 3cqw; }
+.topper .row.b { bottom: 3cqw; }
+.leaves .topper::before, .leaves .topper::after { content: ""; position: absolute; top: -7cqw; width: 22cqw; height: 14cqw; border-radius: 50%; background: #2c6b47; z-index: -1; }
+.leaves .topper::before { left: 6cqw; } .leaves .topper::after { right: 6cqw; background: #3f8f3a; }
+.vscreen { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3.5cqw; padding: 6cqw; text-align: center; }
+.vscreen .sg { font: 600 5cqw/1 var(--mono); letter-spacing: 0.18em; }
+.vscreen b { font: 600 8cqw/1.1 var(--display); letter-spacing: -0.01em; }
+.vscreen small { font-size: 4.6cqw; opacity: 0.8; }
+.vscreen .shutter { margin-top: 2cqw; }
+
+.vprint .cap { font-weight: 600; letter-spacing: 0.04em; }
+
+/* 02 variety */
+.carousel { position: relative; display: grid; place-items: center; }
+.carousel > .slot { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+.carousel .name { font: 600 30px/1 var(--display); }
+.carousel .name span { font: 500 20px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin-left: 14px; }
+.fine-note { position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font: 500 18px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+
+/* 03 guests */
+.guests { display: flex; align-items: flex-end; gap: 56px; }
+.tall .guests { gap: 30px; }
+.post { width: 100%; }
+.post .who { display: flex; gap: 10px; align-items: center; font-size: 15px; }
+.post .who i { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #e9c39a, #7a4a3a); }
+.post .who b { display: block; font-weight: 600; }
+.post .who small { color: #6b7069; font-size: 13px; }
+.post .print { position: relative; margin: 6px auto 0; transform: rotate(-2deg); }
+.post p { font-size: 17px; line-height: 1.35; margin-top: 14px; }
+.post .likes { font-size: 15px; color: #5c615b; margin-top: 8px; font-variant-numeric: tabular-nums; }
+
+/* 04 guest list */
+.list { display: flex; align-items: center; gap: 44px; }
+.tall .list { gap: 26px; }
+.form h3 { margin-top: 4px; }
+.form .print { position: relative; align-self: center; transform: rotate(-2deg); flex: none; }
+.field { border: 2px solid #d9dcd6; border-radius: 14px; padding: 14px 16px; font: 500 22px/1 var(--mono); letter-spacing: 0.04em; color: #121412; background: #fff; }
+.field span { color: #b0b4ad; }
+.consent { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.35; color: #3c403b; }
+.box2 { width: 28px; height: 28px; border-radius: 8px; border: 2px solid #8a8f88; flex: none; display: grid; place-items: center; }
+.box2.on { background: var(--green); border-color: var(--green); }
+.box2.on::after { content: ""; width: 11px; height: 6px; border-left: 3px solid var(--on-green); border-bottom: 3px solid var(--on-green); transform: translateY(-2px) rotate(-45deg); }
+.form .send { margin-top: 4px; text-align: center; padding: 16px; border-radius: 999px; font: 600 19px/1 var(--body); color: #f6e7c8; background: #5a1726; }
+.stack { display: flex; flex-direction: column; gap: 20px; width: 400px; }
+.tall .stack { width: 400px; }
+.list > * { flex: none; }
+.panel { border-radius: 26px; background: var(--surface-raised); border: 1px solid var(--line); padding: 30px 32px; display: flex; flex-direction: column; gap: 10px; }
+.panel .k { font: 500 17px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+.panel .big { font: 600 76px/1 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.panel .sub { font-size: 21px; color: var(--ink-muted); }
+.panel .row { display: flex; align-items: center; gap: 12px; font-size: 20px; }
+.bubble { align-self: flex-start; max-width: 92%; padding: 16px 20px; border-radius: 20px 20px 20px 6px; background: #2a2d2a; font-size: 20px; line-height: 1.4; color: var(--ink); }
+
+/* 05 service */
+.care { display: flex; flex-direction: column; gap: 22px; width: 720px; }
+.tall .care { width: 100%; }
+.care .panel { gap: 22px; padding: 36px 38px; }
+.care .ours { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
+.care .ours div { display: flex; align-items: center; gap: 14px; font-size: 25px; }
+.care .ours .check { width: 32px; height: 32px; }
+.care .theirs { font: 600 48px/1.1 var(--display); letter-spacing: -0.02em; }
+
+/* 06 price */
+.pricecard { width: 620px; border-radius: 32px; background: var(--surface-raised); border: 1px solid var(--line); padding: 44px 48px; display: flex; flex-direction: column; gap: 26px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7); }
+.tall .pricecard { width: 760px; }
+.pricecard .p { font: 600 120px/0.9 var(--display); letter-spacing: -0.04em; }
+.pricecard .p span { font-size: 36px; letter-spacing: 0; color: var(--ink-muted); font-weight: 500; margin-left: 12px; }
+.pricecard .u { font-size: 24px; color: var(--ink-muted); }
+.pricecard hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
+.pricecard .ticks { font-size: 26px; gap: 16px; }
+.pricecard .ticks .check { width: 34px; height: 34px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="chrome l" id="c-logo"></div>
+  <div class="chrome r" id="c-step"></div>
+  <div id="scenes"></div>
+  <div id="flash"></div>
+</div>
+<script src="shared.js"></script>
+<script>
+// ---------- the venues (made up) ----------
+const V = {
+  kaelder: { name: "Kælderbaren", kind: "Bar", sign: "KÆLDERBAREN", sub: "Siden 1962", style: "bulbs",
+    casing: "#2a0a12", w1: "#4a1220", w2: "#7a2233", acc: "#e3b04b", ink2: "#f6e7c8", ring: "#ffc65c",
+    screen: "#2a0b12", screenInk: "#f6e7c8", frame: "#4a1220", caption: "Kælderbaren · Fredag", photo: "print-bar" },
+  fjord: { name: "Hotel Fjord", kind: "Hotelbar", sign: "HOTEL FJORD", sub: "Bar og lounge", style: "waves",
+    casing: "#0d2236", w1: "#14304a", w2: "#2b5a80", acc: "#e9dcc3", ink2: "#bcd6ea", ring: "#9fd4ff",
+    screen: "#0d2236", screenInk: "#e9dcc3", frame: "#e9dcc3", frameInk: "#14304a", caption: "Hotel Fjord · Juni", photo: "print-wedding" },
+  skov: { name: "Skovfest", kind: "Festival", sign: "SKOVFEST", sub: "Lørdag 2027", style: "leaves",
+    casing: "#0f2e20", w1: "#123d2a", w2: "#1f5a3c", acc: "#c6f24e", ink2: "#e9f7d0", ring: "#c6f24e",
+    screen: "#0f2e20", screenInk: "#e9f7d0", frame: "#123d2a", caption: "Skovfest · Lørdag", photo: "print-club" },
+};
+
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, k) => { const A = hex(a), B = hex(b); return `rgb(${A.map((x, i) => Math.round(x + (B[i] - x) * k)).join(",")})`; };
+
+const vscreen = (v) => `<div class="vscreen" style="background:${v.screen};color:${v.screenInk}"><span class="sg" style="color:${v.acc}">${v.sign}</span><b>Velkommen til ${v.name}</b><small>Tryk for at tage et billede</small><div class="shutter" style="border-color:${v.screenInk}"><i style="background:${v.acc}"></i></div></div>`;
+const motifs = (v, n) => `<i></i>`.repeat(n);
+const vbox = (bw, v, screen, attrs = "") => `
+  <div class="vbox ${v.style}" style="--bw:${bw}px;--w1:${v.w1};--w2:${v.w2};--acc:${v.acc};--ink2:${v.ink2};--casing:${v.casing}" ${attrs}>
+    <div class="wing l">${motifs(v, 5)}</div><div class="wing r">${motifs(v, 5)}</div>
+    <div class="topper">${v.style === "bulbs" ? `<span class="row t">${"<i></i>".repeat(9)}</span><span class="row b">${"<i></i>".repeat(9)}</span>` : ""}<b>${v.sign}</b><small>${v.sub}</small></div>
+    ${box(bw, screen)}
+  </div>`;
+const vprint = (w, v, attrs = "") => `<div class="print vprint" style="width:${w}px;--pw:${w}px;background:${v.frame}" ${attrs}><div class="ph" style="background-image:url(${PH}${v.photo}.jpg)"></div><span class="cap" style="color:${v.frameInk || v.acc}">${v.caption}</span></div>`;
+function ringColor(b, color, glow) {
+  const r = b.querySelector(".ring");
+  r.style.stroke = color;
+  r.style.filter = `drop-shadow(0 0 ${glow}px ${color})`;
+}
+function breatheIn(b, t, color) {
+  const k = 0.5 - 0.5 * Math.cos((t / 3.2) * Math.PI * 2);
+  b.querySelector(".ring").style.strokeDasharray = "100 0";
+  ringColor(b, color, 8 + 14 * k);
+}
+
+// ---------- scenes ----------
+const K = V.kaelder;
+const BW = TALL
+  ? { intro: 400, morph: 290, car: 320, guest: 220, phone: 270 }
+  : { intro: 470, morph: 320, car: 330, guest: 280, phone: 320 };
+
+const SCENES = [
+  {
+    id: "intro", dur: 5.6,
+    html: `
+      <div class="copy">
+        <div data-in="0.3">${logo(TALL ? 60 : 64)}</div>
+        <span class="label" data-in="0.9">Til barer, klubber og hoteller</span>
+        <h1 data-in="1.2">En fotoboks, der får gæsterne til at komme igen.</h1>
+      </div>
+      <div class="visual">${box(BW.intro, idle, 'data-in="0.1"')}</div>`,
+    update(t, el) { breathe(el.querySelector(".box"), t); },
+  },
+  {
+    id: "morph", dur: 10, step: 1,
+    html: `
+      <div class="copy">
+        ${label("01", "Jeres stil")}
+        <h2 data-in="0.4">Boksen bliver jeres.</h2>
+        <div class="ticks">
+          ${tick("Lysringen i jeres farve", 1.4)}
+          ${tick("Sider og top med jeres navn", 2.9)}
+          ${tick("Skærmen byder velkommen", 4.4)}
+          ${tick("Jeres navn på hvert foto", 5.9)}
+        </div>
+      </div>
+      <div class="visual">
+        <div style="position:relative;padding-bottom:${Math.round(BW.morph * 0.55)}px" data-in="0.1">
+          ${vprint(Math.round(BW.morph * 0.6), K, 'id="m-print"')}
+          ${vbox(BW.morph, K, `${idle}<div class="v">${vscreen(K)}</div>`)}
+        </div>
+      </div>`,
+    update(t, el) {
+      const vb = el.querySelector(".vbox"), b = vb.querySelector(".box");
+      // the ring takes the venue's colour
+      const rk = E.inOut(prog(t, 1.4, 0.9));
+      const glowK = 0.5 - 0.5 * Math.cos((t / 3.2) * Math.PI * 2);
+      b.querySelector(".ring").style.strokeDasharray = "100 0";
+      ringColor(b, mix("#fff3e3", K.ring, rk), 8 + 14 * glowK);
+      // wings slide out, the sign drops in, the casing changes
+      const wk = E.out(prog(t, 2.9, 0.9));
+      vb.querySelector(".wing.l").style.transform = `translateX(${(1 - wk) * 70}%)`;
+      vb.querySelector(".wing.r").style.transform = `translateX(${-(1 - wk) * 70}%)`;
+      vb.querySelectorAll(".wing").forEach((w) => (w.style.opacity = wk));
+      const tk = E.out(prog(t, 3.3, 0.8));
+      const top = vb.querySelector(".topper");
+      top.style.opacity = tk; top.style.transform = `translateY(${(1 - tk) * 40}%)`;
+      vb.style.setProperty("--casing", mix("#0a0a0a", K.casing, wk));
+      // the screen
+      const sk = prog(t, 4.4, 0.6);
+      b.querySelector(".idle").style.opacity = 1 - sk;
+      b.querySelector(".v").style.opacity = sk;
+      b.querySelector(".v").style.width = b.querySelector(".v").style.height = "100%";
+      // the framed print
+      const pr = el.querySelector("#m-print"), pk = E.inOut(prog(t, 5.9, 1.3));
+      pr.style.left = `calc(50% - ${pr.offsetWidth / 2}px)`;
+      pr.style.top = `${vb.offsetTop + b.offsetHeight - pr.offsetHeight - 30}px`;
+      pr.style.transform = `translateY(${pk * pr.offsetHeight * 0.9}px) rotate(${-3 * pk}deg)`;
+      pr.style.opacity = pk > 0 ? 1 : 0;
+    },
+  },
+  {
+    id: "variety", dur: 7.8,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.2">Til ethvert sted</span>
+        <h2 data-in="0.4">Fra bodegaen til festivalen.</h2>
+        <p class="lede" data-in="0.8">Vi designer temaet sammen med jer og <b>printer delene selv</b>, så boksen ligner stedet og ikke en fotoboks fra et katalog.</p>
+      </div>
+      <div class="visual">
+        <div class="carousel" data-in="0.2">
+          ${["kaelder", "fjord", "skov"].map((id) => `<div class="slot">${vbox(BW.car, V[id], vscreen(V[id]))}<span class="name">${V[id].name}<span>${V[id].kind}</span></span></div>`).join("")}
+        </div>
+        <span class="fine-note" data-in="1.2">Eksempler på designs</span>
+      </div>`,
+    update(t, el) {
+      const SW = [2.5, 5.0];
+      const i = t < SW[0] ? 0 : t < SW[1] ? 1 : 2;
+      let sx = 1;
+      for (const s of SW) { const d = Math.abs(t - s); if (d < 0.3) sx = d / 0.3; }
+      el.querySelectorAll(".slot").forEach((slot, n) => {
+        slot.style.opacity = n === i ? 1 : 0;
+        const vb = slot.querySelector(".vbox");
+        vb.style.transform = `scaleX(${Math.max(0.02, E.out(sx))})`;
+        breatheIn(vb.querySelector(".box"), t, Object.values(V)[n].ring);
+      });
+    },
+  },
+  {
+    id: "guests", dur: 8.6, step: 2,
+    html: `
+      <div class="copy">
+        ${label("02", "Gæsterne")}
+        <h2 data-in="0.4">Hvert billede bærer jeres navn.</h2>
+        <p class="lede" data-in="0.8">Gæsterne klarer det selv, uden hjælp fra personalet. Det printede foto og det digitale har <b>jeres navn i rammen</b>, så hver deling er omtale.</p>
+      </div>
+      <div class="visual">
+        <div class="guests">
+          <div style="position:relative;padding-bottom:${Math.round(BW.guest * 0.6)}px" data-in="0.1">
+            ${vprint(Math.round(BW.guest * 0.6), K, 'id="g-print"')}
+            ${vbox(BW.guest, K, `<div class="v">${vscreen(K)}</div><span class="count"></span><img class="shot" src="${PH}${K.photo}.jpg" alt="">`)}
+          </div>
+          <div class="phone" style="--phw:${BW.phone}px">
+            <div class="post">
+              <div class="who"><i></i><span><b>maja.k</b><small>Kælderbaren</small></span></div>
+              ${vprint(BW.phone - 70, K)}
+              <p>Bedste fredag i lang tid</p>
+              <div class="likes"><span class="n">0</span> synes godt om</div>
+            </div>
+          </div>
+        </div>
+      </div>`,
+    update(t, el) {
+      const b = el.querySelector(".vbox .box"), ring = b.querySelector(".ring"), base = b.querySelector(".ring-base");
+      const count = b.querySelector(".count"), shot = b.querySelector(".shot"), v = b.querySelector(".v");
+      const T0 = 1.0, STEP = 0.7, SNAP = T0 + 3 * STEP;
+      v.style.width = v.style.height = "100%";
+      v.style.opacity = t < T0 ? 1 : 0;
+      if (t < T0) { breatheIn(b, t, K.ring); base.style.opacity = 0; count.style.opacity = 0; }
+      else if (t < SNAP) {
+        const c = (t - T0) / STEP;
+        count.textContent = 3 - Math.floor(c); count.style.opacity = 1;
+        base.style.opacity = 1;
+        ring.style.strokeDasharray = `${(1 - c / 3) * 100} 100`;
+        ringColor(b, K.ring, 8);
+      } else {
+        count.style.opacity = 0; base.style.opacity = 0;
+        ring.style.strokeDasharray = "100 0";
+        const L = prog(t, SNAP, 0.2) * (1 - prog(t, SNAP + 1.6, 0.6));
+        ringColor(b, mix(K.ring, "#ffffff", L), 8 + 30 * L);
+      }
+      shot.style.opacity = prog(t, SNAP + 0.3, 0.4);
+      flashAt(t, SNAP);
+      const pr = el.querySelector("#g-print"), pk = E.inOut(prog(t, SNAP + 0.8, 1.2));
+      const vb = el.querySelector(".vbox");
+      pr.style.left = `calc(50% - ${pr.offsetWidth / 2}px)`;
+      pr.style.top = `${vb.offsetTop + b.offsetHeight - pr.offsetHeight - 24}px`;
+      pr.style.transform = `translateY(${pk * pr.offsetHeight * 0.9}px) rotate(${-3 * pk}deg)`;
+      pr.style.opacity = pk > 0 ? 1 : 0;
+      const ph = el.querySelector(".phone"), phk = E.out(prog(t, 4.6, 0.8));
+      ph.style.opacity = phk;
+      ph.style.transform = `translate(${(1 - phk) * 80}px, 0) rotate(${3 - 2 * phk}deg)`;
+      el.querySelector(".likes .n").textContent = Math.round(87 * E.out(prog(t, 5.4, 2.4)));
+    },
+  },
+  {
+    id: "list", dur: 8.6, step: 3,
+    html: `
+      <div class="copy">
+        ${label("03", "Gæstelisten")}
+        <h2 data-in="0.4">En gæsteliste, I må bruge.</h2>
+        <p class="lede" data-in="0.8">Gæsten skriver sit nummer for at få billedet på SMS og <b>siger selv ja til tilbud</b> fra jer. Så kan I invitere fredagens gæster igen, inden for reglerne.</p>
+      </div>
+      <div class="visual">
+        <div class="list">
+          <div class="phone form" style="--phw:${TALL ? 310 : 320}px" data-in="0.3">
+            ${vprint(TALL ? 170 : 220, K)}
+            <h3>Få billedet på SMS</h3>
+            <div class="field"></div>
+            <div class="consent"><span class="box2"></span><span>Ja tak til tilbud fra ${K.name}. Kan altid afmeldes.</span></div>
+            <div class="send">Send billedet</div>
+          </div>
+          <div class="stack">
+            <div class="panel" data-in="3.4"><span class="k">Gæsteliste</span><span class="big">0</span><span class="sub">har sagt ja til tilbud</span></div>
+            <div class="panel" data-in="4.6"><span class="k">SMS til gæstelisten</span><div class="bubble">Fredag er der quiz kl. 20, og første omgang er på os. Vi ses i Kælderbaren.</div></div>
+          </div>
+        </div>
+      </div>`,
+    update(t, el) {
+      const digits = "+45 22 41 87 30", typed = Math.floor(clamp((t - 1.0) / 1.3) * digits.length);
+      el.querySelector(".field").innerHTML = `${digits.slice(0, typed)}<span>${typed < digits.length ? "|" : ""}</span>`;
+      el.querySelector(".box2").classList.toggle("on", t > 2.6);
+      el.querySelector(".send").style.opacity = t > 2.6 ? 1 : 0.45;
+      el.querySelector(".big").textContent = Math.round(1284 * E.out(prog(t, 3.5, 2.6))).toLocaleString("da-DK");
+    },
+  },
+  {
+    id: "care", dur: 8.6, step: 4,
+    html: `
+      <div class="copy">
+        ${label("04", "Fuld service")}
+        <h2 data-in="0.4">Vi sørger for alt.</h2>
+        <p class="lede" data-in="0.8">Boksen melder sig til os hele tiden. Driller den, får vi en alarm og går i gang, <b>ofte før I selv har set det</b>.</p>
+      </div>
+      <div class="visual">
+        <div class="care">
+          <div class="panel" data-in="0.6">
+            <span class="k">Det klarer vi</span>
+            <div class="ours">
+              ${[["Designer jeres tema", 1.2], ["Monterer og tester", 1.5], ["Overvåger boksen", 1.8], ["Opdaterer den", 2.1], ["Ny boks ved fejl", 2.4], ["Support døgnet rundt", 2.7]].map(([x, a]) => tick(x, a)).join("")}
+            </div>
+          </div>
+          <div class="panel" data-in="3.8">
+            <span class="k">Det klarer I</span>
+            <span class="theirs">Holder åbent, som I plejer.</span>
+          </div>
+        </div>
+      </div>`,
+  },
+  {
+    id: "price", dur: 6.4,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.2">Pris</span>
+        <h2 data-in="0.4">Én fast pris om måneden.</h2>
+        <p class="lede" data-in="0.8">Ingen regninger ud over den. Service, opdateringer, support og en ny boks, hvis noget går galt, er med.</p>
+      </div>
+      <div class="visual">
+        <div class="pricecard" data-in="0.5">
+          <span class="p">995<span>kr./md.</span></span>
+          <span class="u">pr. boks, ekskl. moms</span>
+          <hr>
+          <div class="ticks">
+            ${tick("Boks og fotomodul", 1.1)}
+            ${tick("Kontrolpanel på nettet", 1.35)}
+            ${tick("Montering og fuld service", 1.6)}
+            ${tick("Gæsteliste med samtykke", 1.85)}
+          </div>
+        </div>
+      </div>`,
+  },
+  {
+    id: "cta", dur: 6.4, center: true, last: true,
+    html: `
+      <div data-in="0.3">${logo(TALL ? 96 : 110)}</div>
+      <h2 data-in="0.8" style="margin-top:56px">Book en snak på selfi.dk/erhverv</h2>
+      <span class="btn" data-in="1.3" style="margin-top:56px">Book en uforpligtende snak</span>
+      <p class="fine" data-in="1.7" style="margin-top:32px">995 kr./md. ekskl. moms · I jeres design · Vi sørger for alt</p>`,
+  },
+];
+
+mountFilm(SCENES, { steps: 4, stepLabel: "Sådan virker det" });
+</script>
+</body>
+</html>
