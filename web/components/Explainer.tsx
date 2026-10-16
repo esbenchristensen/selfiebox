@@ -49,7 +49,6 @@ export function Explainer({ label, title, lede }: { label: string; title: string
           <video
             key={fmt}
             ref={ref}
-            src={`${SRC}-${fmt}.mp4`}
             poster={`${SRC}-${fmt}.jpg`}
             muted
             playsInline
@@ -57,7 +56,10 @@ export function Explainer({ label, title, lede }: { label: string; title: string
             controls
             preload="metadata"
             aria-label="Film: Sådan lejer I en fotoboks hos Selfi, fra kalenderen til billedet på telefonen"
-          />
+          >
+            <source src={`${SRC}-${fmt}.mp4`} type={`video/mp4; codecs="avc1.640032"`} />
+            <source src={`${SRC}-${fmt}.webm`} type={`video/webm; codecs="vp9"`} />
+          </video>
         </div>
       </div>
     </section>

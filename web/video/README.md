@@ -4,6 +4,7 @@ Filmen på forsiden (`components/Explainer.tsx`, sektionen "Se filmen"). Den har
 
 - `public/video/selfi-explainer-wide.mp4` er 16:9, 1920 × 1080, til desktop
 - `public/video/selfi-explainer-tall.mp4` er 4:5, 1080 × 1350, til mobil (og fint til Instagram og Facebook)
+- `.webm` med samme navn er en reserve til browsere uden H.264
 - `.jpg` med samme navn er plakatbilledet, før filmen starter
 
 Længde: 63,5 sekunder, 30 fps, uden lyd.
@@ -34,6 +35,12 @@ Render (kræver Playwright med Chromium og ffmpeg):
 cd web/video
 NODE_PATH=$(npm root -g) node render.cjs          # begge formater
 NODE_PATH=$(npm root -g) node render.cjs tall     # kun ét
+```
+
+WebM-reserven laves bagefter fra mp4-filen:
+
+```sh
+ffmpeg -i selfi-explainer-wide.mp4 -c:v libvpx-vp9 -b:v 0 -crf 36 -row-mt 1 -an selfi-explainer-wide.webm
 ```
 
 Speak lægges på bagefter, fx med ffmpeg:
