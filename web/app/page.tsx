@@ -16,13 +16,13 @@ export default function Home() {
       <main>
         <Hero />
         <Story />
+        <Private />
         <Inside />
         <Instax />
         <Themes />
         <Activities />
         <PhotoStrip />
         <Business />
-        <Private />
         <Faq />
         <Contact />
       </main>

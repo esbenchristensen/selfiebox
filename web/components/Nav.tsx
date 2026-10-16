@@ -19,13 +19,14 @@ export function Nav() {
         <Logo />
         <nav className="nav-links" aria-label="Sektioner">
           <a href="#saadan">Sådan virker den</a>
+          <a href="#privat">Privat</a>
           <a href="#temaer">Temaer</a>
           <a href="#aktiviteter">Aktiviteter</a>
           <a href="#erhverv">Erhverv</a>
-          <a href="#privat">Privat</a>
+          <a href="#kontakt">Kontakt</a>
         </nav>
-        <a className="btn btn-primary" href="#kontakt">
-          Kontakt os
+        <a className="btn btn-primary" href="#book">
+          Book en boks
         </a>
       </div>
     </header>

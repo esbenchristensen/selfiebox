@@ -1,5 +1,6 @@
 // All copy, prices and business rules for the landing page live here.
-// Fill in the real B2C prices when they are decided: a `null` price shows "Få en pris".
+// Private prices are not decided yet: a `null` price shows "Pris bekræftes", and the booking
+// is sent as a request that Selfi confirms. Fill in the numbers to show prices and a total.
 
 export const business = {
   monthlyPricePerBox: 995, // kr. pr. boks pr. måned, ekskl. moms
@@ -7,19 +8,45 @@ export const business = {
   costPerPhoto: 25, // papir og film 15 kr. + Selfi 10 kr.
 };
 
+export type PackageId = "dag" | "weekend" | "uge";
+
 export type Package = {
-  id: string;
+  id: PackageId;
   name: string;
   period: string;
+  includes: string;
+  days: number; // how many calendar days a booking covers
   price: number | null; // kr. inkl. moms
   popular?: boolean;
 };
 
 export const packages: Package[] = [
-  { id: "dag", name: "Dag", period: "Én dag og aften", price: null },
-  { id: "weekend", name: "Weekend", period: "Fredag til søndag", price: null, popular: true },
-  { id: "uge", name: "Uge", period: "Syv dage", price: null },
+  { id: "dag", name: "Dag", period: "Én dag og aften", includes: "Boks, stander og fotomodul", days: 1, price: null },
+  { id: "weekend", name: "Weekend", period: "Fredag til søndag", includes: "Boks, stander og fotomodul", days: 3, price: null, popular: true },
+  { id: "uge", name: "Uge", period: "Syv dage i træk", includes: "Boks, stander og fotomodul", days: 7, price: null },
 ];
+
+export type Addon = { id: string; name: string; text: string; price: number | null };
+
+export const addons: Addon[] = [
+  { id: "film", name: "Ekstra film", text: "Flere fotos, så ingen går hjem uden", price: null },
+  { id: "tema", name: "Eget tema", text: "Jeres navne og dato på skærmen og fotorammen", price: null },
+];
+
+export type DeliveryId = "afhent" | "levering" | "opsaetning";
+
+export const deliveries: { id: DeliveryId; name: string; text: string; price: number | null; needsAddress: boolean }[] = [
+  { id: "afhent", name: "Afhent selv", text: "Vi viser jer, hvordan den virker, når I henter den.", price: 0, needsAddress: false },
+  { id: "levering", name: "Levering", text: "Vi bringer boksen dagen før og henter den dagen efter.", price: null, needsAddress: true },
+  { id: "opsaetning", name: "Levering og opsætning", text: "Vi stiller op, tester og pakker ned igen.", price: null, needsAddress: true },
+];
+
+export const occasions = ["Bryllup", "Fødselsdag", "Firmafest", "Konfirmation", "Andet"];
+
+export const booking = {
+  leadDays: 3, // earliest start is this many days from today
+  monthsAhead: 18, // how far ahead the calendar goes
+};
 
 export const activities = [
   { id: "titler", name: "Titler", text: "Boksen kårer aftenens største smil og største gruppe." },
@@ -62,6 +89,6 @@ export const faq = [
   },
   {
     q: "Kan vi leje en boks til et bryllup eller en fest?",
-    a: "Ja. I lejer for en dag, en weekend eller en uge. Skriv jeres dato, så vender vi tilbage med en pris.",
+    a: "Ja. I lejer for en dag, en weekend eller en uge og booker direkte i kalenderen her på siden. Vi bekræfter datoer og pris på mail.",
   },
 ] as const;

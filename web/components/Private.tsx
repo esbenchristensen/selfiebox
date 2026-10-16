@@ -1,7 +1,5 @@
 import Image from "next/image";
-import { packages } from "@/content";
-
-const kr = (n: number) => n.toLocaleString("da-DK");
+import { Booking } from "./booking/Booking";
 
 export function Private() {
   return (
@@ -10,9 +8,9 @@ export function Private() {
         <div className="sec-head">
           <span className="label">Privat</span>
           <h2 id="private-title" className="h-l">
-            Til brylluppet, festen og firmafesten.
+            Book en Selfi Boks til jeres fest.
           </h2>
-          <p className="lede">Vi leverer boksen på en stander, så den kan stå hvor som helst. Gæsterne klarer resten.</p>
+          <p className="lede">Vælg pakke og dato, så holder vi boksen til jer. Den kommer på en stander, så den kan stå hvor som helst.</p>
         </div>
         <div className="private-media">
           {/* Placeholder until real photos from events exist */}
@@ -28,26 +26,8 @@ export function Private() {
             />
           </div>
         </div>
-        <div className="pkgs">
-          {packages.map((p) => (
-            <div className="pkg" key={p.id}>
-              {p.popular && <span className="tag">Mest valgt</span>}
-              <h3>{p.name}</h3>
-              <p className="muted">{p.period}</p>
-              <span className="price">{p.price ? `${kr(p.price)} kr.` : "Pris efter dato"}</span>
-              <a className="btn btn-secondary" href={`#kontakt`} data-pakke={p.id}>
-                Få en pris
-              </a>
-            </div>
-          ))}
-          <div className="pkg">
-            <h3>Noget andet</h3>
-            <p className="muted">Festival, flere bokse eller jeres egne datoer</p>
-            <span className="price">Vi giver et tilbud</span>
-            <a className="btn btn-secondary" href="#kontakt">
-              Skriv til os
-            </a>
-          </div>
+        <div id="book">
+          <Booking />
         </div>
       </div>
     </section>

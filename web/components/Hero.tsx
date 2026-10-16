@@ -6,7 +6,7 @@ import { useState } from "react";
 const copy = {
   privat: {
     lede: "Lej en fotoboks med lysring til brylluppet, festen eller firmafesten. Gæsterne får et ægte foto i hånden.",
-    primary: { label: "Få en pris", href: "#privat" },
+    primary: { label: "Book datoer", href: "#book" },
   },
   erhverv: {
     lede: "Fotoboksen der hænger på væggen, lyser gæsterne op og tjener penge for jer på hvert billede.",
@@ -15,7 +15,7 @@ const copy = {
 } as const;
 
 export function Hero() {
-  const [mode, setMode] = useState<keyof typeof copy>("erhverv");
+  const [mode, setMode] = useState<keyof typeof copy>("privat");
   const c = copy[mode];
 
   return (
@@ -23,11 +23,11 @@ export function Hero() {
       <div className="wrap hero-grid">
         <div className="hero-copy">
           <div className="seg" role="group" aria-label="Vis for">
-            <button aria-pressed={mode === "erhverv"} onClick={() => setMode("erhverv")}>
-              Erhverv
-            </button>
             <button aria-pressed={mode === "privat"} onClick={() => setMode("privat")}>
               Privat
+            </button>
+            <button aria-pressed={mode === "erhverv"} onClick={() => setMode("erhverv")}>
+              Erhverv
             </button>
           </div>
           <h1 id="hero-title" className="h-xl">
