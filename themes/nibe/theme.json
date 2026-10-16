@@ -1,0 +1,55 @@
+{
+  "name": "Nibe Festival",
+  "event": "Nibe Festival – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#050505",
+      "filament": "PETG HF black"
+    },
+    "neon": {
+      "hex": "#e5ff50",
+      "filament": "PETG fluorescent yellow"
+    },
+    "purple": {
+      "hex": "#995dff",
+      "filament": "PETG HF purple"
+    },
+    "plum": {
+      "hex": "#3b1f7a",
+      "filament": "PETG HF dark purple"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "PETG HF white"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#050505",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#e5ff50",
+        "#995dff"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#e5ff50"
+  },
+  "screen": {
+    "ticker": "Nibe Festival  •  Skalskoven  •  Hænderne op  •",
+    "cta": "Hænderne op!",
+    "background": "base",
+    "accent": "neon"
+  }
+}

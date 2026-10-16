@@ -69,5 +69,23 @@ html, body {
 
 /* Utility class to hide elements */
 .hidden {
-  display: none;
+  display: none !important;
 }
+
+/* ---------------- Event theme (static/themes/<id>/theme.css sets the variables) ---------------- */
+.themed { background: var(--theme-bg); font-family: var(--theme-font); }
+#theme-bands { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+#theme-ticker {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 3; overflow: hidden; white-space: nowrap;
+  background: var(--theme-ticker-bg); color: var(--theme-ticker-fg); font-weight: 700; font-size: 2.2vh; padding: 0.8vh 0;
+}
+#theme-ticker span { display: inline-block; padding-left: 100%; animation: theme-ticker 30s linear infinite; }
+@keyframes theme-ticker { to { transform: translateX(-100%); } }
+#theme-cta {
+  position: absolute; left: 0; right: 0; bottom: 23vh; z-index: 3; text-align: center; pointer-events: none;
+  color: var(--theme-fg); font-weight: 800; font-size: 4.5vh; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+.themed #overlay { z-index: 4; padding-bottom: 7vh; box-sizing: border-box; }
+.themed:has(#take-picture-btn.hidden) #theme-cta { display: none; }
+.themed #countdown { color: var(--theme-accent); font-weight: 800; }
+.themed #take-picture-btn, .themed #new-picture-btn { background: var(--theme-accent); color: var(--theme-fg); width: 12vh; height: 12vh; font-size: 5vh; }

@@ -1,0 +1,63 @@
+{
+  "name": "Aalborg Zoo",
+  "event": "Aalborg Zoo – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#1f4d2b",
+      "filament": "PETG HF dark green"
+    },
+    "sand": {
+      "hex": "#e8c27a",
+      "filament": "PETG HF sand"
+    },
+    "grass": {
+      "hex": "#7aa83a",
+      "filament": "PETG HF light green"
+    },
+    "giraffe": {
+      "hex": "#d08a3a",
+      "filament": "PETG HF ochre"
+    },
+    "spot": {
+      "hex": "#6b3a1a",
+      "filament": "PETG HF brown"
+    },
+    "cream": {
+      "hex": "#fff3dc",
+      "filament": "PETG HF cream"
+    },
+    "night": {
+      "hex": "#141414",
+      "filament": "PETG HF black"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#e8c27a",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffcf7a",
+        "#7aa83a"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ffcf7a"
+  },
+  "screen": {
+    "ticker": "Aalborg Zoo  •  Savannen  •  Sig zebra  •",
+    "cta": "Sig «Zebra!»",
+    "background": "base",
+    "accent": "giraffe"
+  }
+}

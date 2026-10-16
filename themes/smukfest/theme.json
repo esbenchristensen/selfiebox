@@ -1,0 +1,64 @@
+{
+  "name": "Smukfest",
+  "event": "Smukfest – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#0f3d24",
+      "filament": "PETG HF dark green"
+    },
+    "forest": {
+      "hex": "#1c5a33",
+      "filament": "PETG HF forest green"
+    },
+    "leaf": {
+      "hex": "#3f8f3a",
+      "filament": "PETG HF green"
+    },
+    "lime": {
+      "hex": "#9cc94a",
+      "filament": "PETG HF lime"
+    },
+    "red": {
+      "hex": "#e2001a",
+      "filament": "PETG HF red"
+    },
+    "cream": {
+      "hex": "#f6eedc",
+      "filament": "PETG HF cream"
+    },
+    "bark": {
+      "hex": "#5a3b22",
+      "filament": "PETG HF brown"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#0f3d24",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#9cc94a",
+        "#e2001a",
+        "#f6eedc"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#9cc94a"
+  },
+  "screen": {
+    "ticker": "Danmarks smukkeste festival  •  Bøgeskoven  •  Skanderborg  •",
+    "cta": "Sig «Smukt!»",
+    "background": "base",
+    "accent": "red"
+  }
+}

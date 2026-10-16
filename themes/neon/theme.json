@@ -1,0 +1,90 @@
+{
+  "name": "Neon Club",
+  "event": "Nightclub theme – fluorescent strokes that glow under UV",
+  "seed": 3,
+  "palette": {
+    "base": {
+      "hex": "#0b0b0d",
+      "filament": "PETG HF black"
+    },
+    "night": {
+      "hex": "#0b0b0d",
+      "filament": "PETG HF black (same spool as base)"
+    },
+    "magenta": {
+      "hex": "#ff2fb4",
+      "filament": "PETG fluorescent pink (UV reactive)"
+    },
+    "cyan": {
+      "hex": "#22e6ff",
+      "filament": "PETG fluorescent blue (UV reactive)"
+    },
+    "lime": {
+      "hex": "#c8ff3a",
+      "filament": "PETG fluorescent green (UV reactive)"
+    }
+  },
+  "casing": {
+    "style": "neon",
+    "roles": {
+      "sky": "night",
+      "hills": [
+        "magenta",
+        "cyan",
+        "lime"
+      ],
+      "top": "night",
+      "stars": "lime"
+    },
+    "sign_text": "CLUB NAME",
+    "parts": {
+      "wings": {
+        "width": 40,
+        "edge": "spikes"
+      },
+      "topper": {
+        "height": 95,
+        "edge": "spikes",
+        "text": true
+      }
+    },
+    "style_options": {
+      "wing_right": {
+        "lines": 7
+      },
+      "wing_left": {
+        "lines": 7
+      },
+      "topper": {
+        "lines": 5
+      }
+    }
+  },
+  "light": {
+    "idle": {
+      "animation": "chase",
+      "colors": [
+        "#ff2fb4",
+        "#22e6ff",
+        "#c8ff3a"
+      ],
+      "period_s": 3
+    },
+    "countdown": {
+      "color": "#22e6ff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#ffffff"
+    },
+    "glow": "#ff2fb4"
+  },
+  "screen": {
+    "ticker": "CLUB NAME  ⚡  Smil til kameraet  ⚡  Fredag & lørdag  ⚡",
+    "cta": "Tryk for at tage et billede",
+    "background": "night",
+    "accent": "magenta",
+    "ticker_bg": "magenta",
+    "font": "system-ui, sans-serif"
+  }
+}

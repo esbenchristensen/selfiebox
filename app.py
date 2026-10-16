@@ -1,10 +1,12 @@
+import json
+import os
 import sys
 import subprocess
 import threading
 import time
 import cv2
 import numpy as np
-from flask import Flask, render_template, Response, request
+from flask import Flask, jsonify, render_template, Response, request
 # If you're on a Raspberry Pi, picamera2 will work – on macOS, we bypass it.
 try:
     from picamera2 import Picamera2
@@ -13,6 +15,36 @@ except ImportError:
     picam2 = None
 
 app = Flask(__name__)
+
+# ------------------- Event theme -------------------
+# Set SELFIEBOX_THEME=<id> to use static/themes/<id>/ (built by hardware/tools/theme_builder.py
+# from themes/<id>/theme.json). The same theme drives the printed casing parts, so the
+# screen, the photo frame and the casing always match.
+THEME_ID = os.environ.get("SELFIEBOX_THEME", "")
+THEME_DIR = os.path.join(app.static_folder, "themes", THEME_ID) if THEME_ID else ""
+
+
+def load_theme():
+    if not THEME_DIR or not os.path.isfile(os.path.join(THEME_DIR, "theme.json")):
+        return None
+    with open(os.path.join(THEME_DIR, "theme.json"), encoding="utf-8") as f:
+        return json.load(f)
+
+
+THEME = load_theme()
+OVERLAY = None
+if THEME and os.path.isfile(os.path.join(THEME_DIR, "overlay.png")):
+    OVERLAY = cv2.imread(os.path.join(THEME_DIR, "overlay.png"), cv2.IMREAD_UNCHANGED)
+
+
+def apply_overlay(frame):
+    """Blend the theme's wave bands onto a captured BGR frame."""
+    if OVERLAY is None or OVERLAY.shape[2] != 4:
+        return frame
+    h, w = frame.shape[:2]
+    ov = cv2.resize(OVERLAY, (w, h), interpolation=cv2.INTER_AREA)
+    alpha = ov[:, :, 3:4].astype(np.float32) / 255.0
+    return (frame.astype(np.float32) * (1 - alpha) + ov[:, :, :3].astype(np.float32) * alpha).astype(np.uint8)
 
 # ------------------- Camera Setup -------------------
 
@@ -51,7 +83,13 @@ def gen_frames():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', theme=THEME, theme_id=THEME_ID)
+
+
+@app.route('/theme.json')
+def theme_json():
+    """Active theme (ticker, texts, ring-light palette) for the UI and the LED driver."""
+    return jsonify(THEME or {})
 
 
 @app.route('/video_feed')
@@ -80,6 +118,7 @@ def capture():
         cv2.putText(frame, "Dummy Capture", (50, 240), cv2.FONT_HERSHEY_SIMPLEX,
                     2, (255, 255, 255), 3, cv2.LINE_AA)
 
+    frame = apply_overlay(frame)
     ret, buffer = cv2.imencode('.jpg', frame)
     if not ret:
         return "Error capturing image", 500
