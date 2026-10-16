@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { addDays, fromKey, monthGrid, MONTHS, type DayKey, type Range, WEEKDAYS_SHORT } from "@/lib/dates";
+import { useEffect, useMemo, useState } from "react";
+import { rangeFree } from "@/lib/booking";
+import { fromKey, monthGrid, MONTHS, type DayKey, type Range, WEEKDAYS_SHORT } from "@/lib/dates";
 
 type Props = {
   selected: Range | null;
-  rangeFor: (day: DayKey) => Range; // the period a click on this day would book
   isBlocked: (day: DayKey) => boolean; // booked by someone else
   minDay: DayKey;
   maxDay: DayKey;
@@ -13,10 +13,22 @@ type Props = {
   single?: boolean; // one month at a time, for narrow places like the hero
 };
 
-export function Calendar({ selected, rangeFor, isBlocked, minDay, maxDay, onPick, single }: Props) {
+// Free date picking: the first tap picks a day, a tap on a later day stretches it into a range.
+// Any tap after a finished range starts over.
+export function Calendar({ selected, isBlocked, minDay, maxDay, onPick, single }: Props) {
   const start = fromKey(selected?.from ?? minDay);
   const [cursor, setCursor] = useState({ y: start.getFullYear(), m: start.getMonth() });
   const [hover, setHover] = useState<Range | null>(null);
+
+  // Follow a selection made outside the calendar (a preset) to its month.
+  useEffect(() => {
+    if (!selected) return;
+    const d = fromKey(selected.from);
+    setCursor((c) => {
+      const diff = (d.getFullYear() - c.y) * 12 + d.getMonth() - c.m;
+      return diff < 0 || diff > (single ? 0 : 1) ? { y: d.getFullYear(), m: d.getMonth() } : c;
+    });
+  }, [selected, single]);
 
   const months = useMemo(() => {
     const next = cursor.m === 11 ? { y: cursor.y + 1, m: 0 } : { y: cursor.y, m: cursor.m + 1 };
@@ -34,10 +46,13 @@ export function Calendar({ selected, rangeFor, isBlocked, minDay, maxDay, onPick
       return { y: c.y + Math.floor(m / 12), m: ((m % 12) + 12) % 12 };
     });
 
-  const rangeOk = (r: Range) => {
-    if (r.from < minDay || r.to > maxDay) return false;
-    for (let k = r.from; k <= r.to; k = addDays(k, 1)) if (isBlocked(k)) return false;
-    return true;
+  // The range a tap on this day gives: stretch a single picked day forward, otherwise start over.
+  const rangeFor = (k: DayKey): Range => {
+    if (selected && selected.from === selected.to && k > selected.from) {
+      const r = { from: selected.from, to: k };
+      if (rangeFree(r, isBlocked, minDay, maxDay)) return r;
+    }
+    return { from: k, to: k };
   };
 
   const shown = hover ?? selected;
@@ -71,8 +86,8 @@ export function Calendar({ selected, rangeFor, isBlocked, minDay, maxDay, onPick
                   if (!k) return <span key={`e${i}`} />;
                   const past = k < minDay || k > maxDay;
                   const booked = !past && isBlocked(k);
+                  const ok = !past && !booked;
                   const r = rangeFor(k);
-                  const ok = !past && !booked && rangeOk(r);
                   const on = inShown(k);
                   const cls = [
                     "cal-day",

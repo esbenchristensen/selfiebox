@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { addons, deliveries, packages } from "@/content";
+import { addons, deliveries, priceForDays, pricing } from "@/content";
+import { nights } from "@/lib/dates";
 
 // Receives a private booking request and forwards it to BOOKING_WEBHOOK_URL
 // (falls back to CONTACT_WEBHOOK_URL). Selfi confirms dates and price by mail.
@@ -22,7 +23,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Bookingen kunne ikke læses. Prøv igen." }, { status: 400 });
   }
 
-  const pkg = packages.find((p) => p.id === body.package);
   const delivery = deliveries.find((d) => d.id === body.delivery);
   const range = body.range as { from?: unknown; to?: unknown } | null;
   const contact = (body.contact ?? {}) as Record<string, unknown>;
@@ -33,8 +33,12 @@ export async function POST(req: Request) {
   const to = str(range?.to, 10);
   const email = str(contact.email, 200);
 
-  if (!pkg || !delivery || !DAY.test(from) || !DAY.test(to) || from > to) {
-    return NextResponse.json({ error: "Vælg pakke, datoer og levering igen." }, { status: 400 });
+  if (!delivery || !DAY.test(from) || !DAY.test(to) || from > to) {
+    return NextResponse.json({ error: "Vælg datoer og levering igen." }, { status: 400 });
+  }
+  const days = nights({ from, to });
+  if (days > pricing.maxDays) {
+    return NextResponse.json({ error: `Vi kan booke op til ${pricing.maxDays} dage her. Skriv til os for længere lejeperioder.` }, { status: 400 });
   }
   if (!str(contact.name) || !/^\S+@\S+\.\S+$/.test(email) || str(contact.phone, 40).length < 8) {
     return NextResponse.json({ error: "Skriv navn, telefon og en gyldig e-mail." }, { status: 400 });
@@ -52,7 +56,8 @@ export async function POST(req: Request) {
   const payload = {
     source: "selfi.dk/booking",
     ref,
-    package: pkg.name,
+    days,
+    price: priceForDays(days), // kr. inkl. moms, before add-ons and delivery
     from,
     to,
     addons: chosen.map((a) => a.name),
