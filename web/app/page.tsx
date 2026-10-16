@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Contact } from "@/components/Contact";
+import { Explainer } from "@/components/Explainer";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { HeroBooking } from "@/components/booking/HeroBooking";
@@ -65,6 +66,11 @@ export default function Home() {
           lede="Til bryllup, fødselsdag og firmafest fra 495 kr. Gæsterne tager så mange billeder, de vil, i ægte studielys, og alle fotos samles på jeres egen eventside bagefter."
           secondary={{ label: "Sådan virker den", href: "#saadan" }}
           aside={<HeroBooking />}
+        />
+        <Explainer
+          label="Se filmen"
+          title="Sådan lejer I en fotoboks, på et minut."
+          lede="Fra kalenderen til billedet på telefonen: Vælg dage, få boksen ud til festen, tryk og smil, og find alle fotos på jeres eventside."
         />
         <Moments
           label="Hvorfor en fotoboks"

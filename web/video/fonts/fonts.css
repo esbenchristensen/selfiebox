@@ -1,0 +1,4 @@
+/* Selfi brand fonts (variable, latin subset), the same families the site loads through next/font. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400 700; src: url(InstrumentSans.woff2) format("woff2"); }
+@font-face { font-family: "Geist"; font-weight: 100 900; src: url(Geist.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-weight: 100 900; src: url(GeistMono.woff2) format("woff2"); }
