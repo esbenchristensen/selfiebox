@@ -189,7 +189,7 @@ export function Booking() {
                 ))}
               </div>
               <p className="fine">
-                Alle pakker har boks, stander og fotomodul med. Skal I bruge flere bokse eller andre datoer? <a href="#kontakt">Skriv til os</a>.
+                Alle pakker har boks, stander, ubegrænsede billeder og jeres egen eventside med. Skal I bruge flere bokse eller andre datoer? <a href="#kontakt">Skriv til os</a>.
               </p>
             </fieldset>
           )}
@@ -220,11 +220,19 @@ export function Booking() {
               <legend className="h-m">Tilvalg</legend>
               <ul className="bk-incl">
                 <li>
-                  <span>Boks med lysring og fotomodul</span>
+                  <span>Boks med lysring</span>
                   <span>Med</span>
                 </li>
                 <li>
                   <span>Gulvstander, så den kan stå hvor som helst</span>
+                  <span>Med</span>
+                </li>
+                <li>
+                  <span>Jeres egen eventside med alle aftenens fotos</span>
+                  <span>Med</span>
+                </li>
+                <li>
+                  <span>Ubegrænset antal billeder</span>
                   <span>Med</span>
                 </li>
               </ul>

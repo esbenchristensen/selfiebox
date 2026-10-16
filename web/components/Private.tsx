@@ -10,7 +10,7 @@ export function Private() {
           <h2 id="private-title" className="h-l">
             Book en Selfi Boks til jeres fest.
           </h2>
-          <p className="lede">Vælg pakke og dato, så holder vi boksen til jer. Den kommer på en stander, så den kan stå hvor som helst.</p>
+          <p className="lede">Fra 495 kr. for en dag og 750 kr. for en weekend, inkl. moms. Ubegrænsede billeder og jeres egen eventside med alle fotos. Boksen kommer på en stander, så den kan stå hvor som helst.</p>
         </div>
         <div className="private-media">
           <div>

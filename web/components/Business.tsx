@@ -9,7 +9,7 @@ const kr = (n: number) => Math.round(n).toLocaleString("da-DK");
 const gains = [
   { title: "Glade gæster, der bliver længere", text: "Boksen giver gæsterne noget at gøre sammen. Køen ved boksen er en del af festen." },
   { title: "Omtale på sociale medier", text: "Hvert foto bærer jeres navn i rammen. Når gæsterne deler, ser deres venner, hvor de var." },
-  { title: "Indhold til jeres egne kanaler", text: "Aftenens bedste fotos, delt med gæsternes tilladelse, kan bruges på jeres side og vises på en fotovæg i lokalet." },
+  { title: "En side til hvert event", text: "Hver aften får sin egen side med fotos, som gæsterne deler. Med deres tilladelse kan I bruge de bedste på jeres egne kanaler og en fotovæg i lokalet." },
   { title: "Jeres stil, hele vejen", text: "Et tema i jeres farver på boksen, lysringen, skærmen og fotorammen." },
   { title: "Aftener med noget at fortælle", text: "Titler, missioner, skattejagt og guld tid, som I slår til, når det passer." },
   { title: "Kører af sig selv", text: "Ingen personale ved boksen. I styrer tema, tekster og aktiviteter fra et kontrolpanel." },

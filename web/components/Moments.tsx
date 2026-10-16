@@ -65,7 +65,7 @@ export function Moments() {
             </div>
             <figcaption>
               <h3>Delt, før de er hjemme</h3>
-              <p>Gæsterne deler fotoet med det samme. Fordi jeres navn står i rammen, peger hvert opslag tilbage på jer.</p>
+              <p>Hvert event får sin egen side med alle fotos, så gæsterne kan dele med det samme. Jeres navn står i rammen, så hvert opslag peger tilbage på jer.</p>
             </figcaption>
           </figure>
         </div>

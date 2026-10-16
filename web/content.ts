@@ -1,6 +1,7 @@
 // All copy, prices and business rules for the landing page live here.
-// Private prices are not decided yet: a `null` price shows "Pris bekræftes", and the booking
-// is sent as a request that Selfi confirms. Fill in the numbers to show prices and a total.
+// Private prices are set at half of Myselfie's (weekend ≈ 1.500 kr., base package 995 kr.).
+// The week price has no Myselfie counterpart and is our own estimate. A `null` price shows
+// "Pris bekræftes"; the booking is still a request that Selfi confirms.
 
 export const business = {
   monthlyPricePerBox: 995, // kr. pr. boks pr. måned, ekskl. moms
@@ -21,9 +22,9 @@ export type Package = {
 };
 
 export const packages: Package[] = [
-  { id: "dag", name: "Dag", period: "Én dag og aften", includes: "Boks, stander og fotomodul", days: 1, price: null },
-  { id: "weekend", name: "Weekend", period: "Fredag til søndag", includes: "Boks, stander og fotomodul", days: 3, price: null, popular: true },
-  { id: "uge", name: "Uge", period: "Syv dage i træk", includes: "Boks, stander og fotomodul", days: 7, price: null },
+  { id: "dag", name: "Dag", period: "Én dag og aften", includes: "Boks, stander og eventside", days: 1, price: 495 },
+  { id: "weekend", name: "Weekend", period: "Fredag til søndag", includes: "Boks, stander og eventside", days: 3, price: 750, popular: true },
+  { id: "uge", name: "Uge", period: "Syv dage i træk", includes: "Boks, stander og eventside", days: 7, price: 1250 },
 ];
 
 export type Addon = { id: string; name: string; text: string; price: number | null };
@@ -76,6 +77,10 @@ export const faq = [
     a: "995 kr. om måneden pr. boks, ekskl. moms. Vil I, kan gæsterne betale pr. foto som tilvalg, så boksen tjener sig selv hjem.",
   },
   {
+    q: "Hvordan får gæsterne fotoene?",
+    a: "Hvert event får sin egen side med alle aftenens fotos, så gæsterne kan finde og dele deres billeder bagefter. Med fotomodulet får de også et ægte Instax-foto i hånden.",
+  },
+  {
     q: "Skal personalet hjælpe gæsterne?",
     a: "Nej. Gæsterne trykker, betaler og får fotoet selv. I styrer pris, tema og aktiviteter fra et kontrolpanel.",
   },
@@ -89,6 +94,6 @@ export const faq = [
   },
   {
     q: "Kan vi leje en boks til et bryllup eller en fest?",
-    a: "Ja. I lejer for en dag, en weekend eller en uge og booker direkte i kalenderen her på siden. Vi bekræfter datoer og pris på mail.",
+    a: "Ja. En dag koster 495 kr., en weekend 750 kr. og en uge 1.250 kr., inkl. moms. I booker direkte i kalenderen her på siden, og vi bekræfter datoerne på mail.",
   },
 ] as const;
