@@ -1,0 +1,64 @@
+{
+  "name": "Fårup Sommerland",
+  "event": "Fårup Sommerland – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#003817",
+      "filament": "PETG HF dark green"
+    },
+    "green": {
+      "hex": "#007531",
+      "filament": "PETG HF green"
+    },
+    "gold": {
+      "hex": "#ffda81",
+      "filament": "PETG HF sand gold"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "PETG HF white"
+    },
+    "sea": {
+      "hex": "#3aa6d8",
+      "filament": "PETG HF sky blue"
+    },
+    "sand": {
+      "hex": "#ecdcae",
+      "filament": "PETG HF beige"
+    },
+    "pine": {
+      "hex": "#0b5a2c",
+      "filament": "PETG HF pine green"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#007531",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffda81",
+        "#3aa6d8",
+        "#ffffff"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ffda81"
+  },
+  "screen": {
+    "ticker": "Fårup Sommerland  •  Blokhus  •  Sommer ved Vesterhavet  •",
+    "cta": "Hold fast og smil!",
+    "background": "base",
+    "accent": "gold"
+  }
+}

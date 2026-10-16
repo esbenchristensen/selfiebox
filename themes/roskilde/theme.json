@@ -1,0 +1,55 @@
+{
+  "name": "Roskilde Festival",
+  "event": "Roskilde Festival – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#121212",
+      "filament": "PETG HF black"
+    },
+    "orange": {
+      "hex": "#ff8200",
+      "filament": "PETG HF orange (Pantone 151 C)"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "PETG HF white"
+    },
+    "grey": {
+      "hex": "#3b3b3b",
+      "filament": "PETG HF dark grey"
+    },
+    "ember": {
+      "hex": "#c85a00",
+      "filament": "PETG HF burnt orange"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#ff8200",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ff8200",
+        "#ffffff"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ff8200"
+  },
+  "screen": {
+    "ticker": "Roskilde Festival  •  Fællesskab og non-profit  •  Orange Scene  •",
+    "cta": "Orange feeling!",
+    "background": "base",
+    "accent": "orange"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "name": "LEGOLAND",
+  "event": "LEGOLAND – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#facd22",
+      "filament": "PETG HF yellow"
+    },
+    "red": {
+      "hex": "#e3000b",
+      "filament": "PETG HF red"
+    },
+    "black": {
+      "hex": "#111111",
+      "filament": "PETG HF black"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "PETG HF white"
+    },
+    "blue": {
+      "hex": "#006db7",
+      "filament": "PETG HF blue"
+    },
+    "green": {
+      "hex": "#009d2e",
+      "filament": "PETG HF green"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#e3000b",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#facd22",
+        "#e3000b",
+        "#006db7",
+        "#009d2e"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#facd22"
+  },
+  "screen": {
+    "ticker": "LEGOLAND Billund  •  Byg dit bedste smil  •",
+    "cta": "Byg dit bedste smil",
+    "background": "red",
+    "accent": "base"
+  }
+}

@@ -86,3 +86,23 @@ The builder writes an STL per colour, a 3MF per part and previews to `themes/<id
 screen files to `static/themes/<id>/`. Styles: `waves`, `neon`, `confetti`. Edges: `hills`, `clouds`,
 `spikes`. For your own artwork, put one SVG per colour in `themes/<id>/art/<part>/<order>_<colour>.svg`.
 Use an event's own artwork only with its permission.
+
+## Venue themes
+
+`tools/venue_themes.py` builds hand-designed themes for one venue each: Smukfest, Roskilde Festival,
+Nibe Festival, Fårup Sommerland, LEGOLAND Billund and Aalborg Zoo. Every part has its own silhouette
+(a beech canopy, the Orange Scene canopy, pine forest, a roller-coaster loop, a stack of bricks with
+studs, a giraffe) with the venue's logo inlaid, and the casing colour, ring light, idle screen and
+photo frame follow the same palette. The mounting geometry is theme_builder's: 4 mm wing rib on the side
+screws (M3 × 12), topper on the joint spacer (2 × M3 × 16, two dowels), 0.8 mm inlays printed face down.
+Every part is checked against the H2C plate.
+
+```sh
+python3 hardware/tools/venue_themes.py            # all six, or name one: ... venue_themes.py legoland
+```
+
+Output per theme in `themes/<id>/build/`: a 3MF per part (all colours), previews, and (not committed,
+regenerated) one STL per colour plus `web/` assets for selfi.dk. The LEGOLAND logo is traced from the
+park's own brand package (`tools/logos/`); the other marks are drawn after each venue's design rules.
+These are concept designs for internal use: swap in the official artwork (`tools/logos/<id>.geo.json`,
+one geometry per colour) and get the venue's permission before any of it leaves the house.
