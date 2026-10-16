@@ -23,7 +23,8 @@ npm run lint       # typecheck
 | `components/` | Én fil pr. sektion. Sektionerne tager deres tekst fra siden |
 | `SIDESTRUKTUR.md` | Hvorfor privat og erhverv har hver sin side |
 | `app/api/kontakt/route.ts` | Kontaktformularen |
-| `components/three/` | 3D-boksen (React Three Fiber) og temaerne i `themes.ts`. Alt tegnes i kode, ingen billedfiler |
+| `components/three/` | 3D-boksen (React Three Fiber): den rigtige Halo-kasse og stedernes printede dele. `venues.json` er stederne, `themes.ts` er privattemaerne |
+| `public/models/` | 3D-modeller, skærme, fotorammer og logoer. Bygges fra hardware-branchen, se nedenfor |
 | `components/Outline.tsx` | Stregtegninger af boksen: sort streg med grønne detaljer |
 
 ## Før lancering
@@ -37,3 +38,14 @@ npm run lint       # typecheck
 ## Hosting på Vercel
 
 Importér repoet i Vercel og sæt **Root Directory** til `web`. Framework genkendes som Next.js. Tilføj domænet `selfi.dk` under Domains.
+
+## 3D-modellerne
+
+Kassen og stedernes temadele (vinger og topper) er de samme filer, som printes. De ligger på branchen
+`claude/halo-enclosure`. Byg temaerne dér, og kopiér dem ind på siden:
+
+```bash
+git worktree add ../halo origin/claude/halo-enclosure
+python3 ../halo/hardware/tools/venue_themes.py     # printfiler + web-filer for alle seks steder
+node scripts/build-models.mjs ../halo               # -> public/models/ og components/three/venues.json
+```

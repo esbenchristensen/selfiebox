@@ -2,19 +2,21 @@
 
 import { ContactShadows, Environment, Lightformer, PresentationControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { SelfiBox } from "./SelfiBox";
+import { HaloBox, type Venue } from "./HaloBox";
 import { radialTexture } from "./textures";
 import type { BoxTheme } from "./themes";
 
 export type StageProps = {
-  theme: BoxTheme;
-  // "venue": topper, photo module and the print sliding out underneath.
-  // "private": the plain box with the print floating beside it.
+  // A venue design (topper, wings, casing, photo module) or a private party theme (plain box, print beside it).
+  design: { venue: Venue } | { theme: BoxTheme };
   variant: "venue" | "private";
   onReady?: () => void;
 };
+
+type Design = StageProps["design"];
+const idOf = (d: Design) => ("venue" in d ? d.venue.id : d.theme.id);
 
 const SPIN = 1.1; // seconds for a full turn when the design changes
 
@@ -36,7 +38,7 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
     // Fit the whole design: height for tall frames, width for wide ones.
-    const [hgt, wid, cx, cy] = variant === "venue" ? [6.5, 3.4, 0, -0.05] : [3.9, 4.4, 0.35, 0];
+    const [hgt, wid, cx, cy] = variant === "venue" ? [7.5, 4.2, 0, -0.22] : [3.6, 4.4, 0.35, 0];
     const fov = (cam.fov * Math.PI) / 180;
     const byH = hgt / 2 / Math.tan(fov / 2);
     const byW = wid / 2 / Math.tan(fov / 2) / aspect;
@@ -47,20 +49,21 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
   return null;
 }
 
-function Spinner({ theme, variant, motion, onSwap }: { theme: BoxTheme; variant: StageProps["variant"]; motion: boolean; onSwap?: () => void }) {
+function Spinner({ design, variant, motion }: { design: Design; variant: StageProps["variant"]; motion: boolean }) {
   const group = useRef<THREE.Group>(null);
-  const [shown, setShown] = useState(theme);
+  const [shown, setShown] = useState(design);
+  const [bornAt, setBornAt] = useState(0);
   const spin = useRef<{ start: number; swapped: boolean } | null>(null);
   const clock = useThree((s) => s.clock);
 
   useEffect(() => {
-    if (theme.id === shown.id) return;
+    if (idOf(design) === idOf(shown)) return;
     if (!motion) {
-      setShown(theme);
+      setShown(design);
       return;
     }
     spin.current = { start: clock.elapsedTime, swapped: false };
-  }, [theme, shown.id, motion, clock]);
+  }, [design, shown, motion, clock]);
 
   useFrame((state) => {
     const g = group.current;
@@ -76,8 +79,8 @@ function Spinner({ theme, variant, motion, onSwap }: { theme: BoxTheme; variant:
       // Swap while the back of the box faces the camera, so the change is never seen.
       if (p > 0.5 && !s.swapped) {
         s.swapped = true;
-        setShown(theme);
-        onSwap?.();
+        setShown(design);
+        setBornAt(t);
       }
       if (p >= 1) spin.current = null;
     }
@@ -87,7 +90,11 @@ function Spinner({ theme, variant, motion, onSwap }: { theme: BoxTheme; variant:
 
   return (
     <group ref={group}>
-      <SelfiBox theme={shown} showModule={variant === "venue" && !!shown.module} floatPrint={variant === "private"} motion={motion} />
+      {"venue" in shown ? (
+        <HaloBox venue={shown.venue} module={variant === "venue"} motion={motion} bornAt={bornAt} />
+      ) : (
+        <HaloBox theme={shown.theme} module={false} motion={motion} bornAt={bornAt} />
+      )}
     </group>
   );
 }
@@ -117,7 +124,8 @@ function Ready({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
-export default function Stage({ theme, variant, onReady }: StageProps) {
+export default function Stage({ design, variant, onReady }: StageProps) {
+  const glowColor = "venue" in design ? design.venue.ring.glow : "#fff3e3";
   const reduced = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
@@ -145,19 +153,21 @@ export default function Stage({ theme, variant, onReady }: StageProps) {
         <ambientLight intensity={0.35} />
         <directionalLight position={[-4, 6, 8]} intensity={1.7} castShadow shadow-mapSize={[1024, 1024]} />
         <directionalLight position={[5, 2, -4]} intensity={1.2} color="#cfe8ff" />
-        <pointLight position={[3, -2, 4]} intensity={8} distance={12} color={theme.colors.ring} />
+        <pointLight position={[3, -2, 4]} intensity={6} distance={12} color={glowColor} />
         <Environment resolution={256} frames={1}>
           <Lightformer form="rect" intensity={2.4} position={[0, 5, 6]} scale={[10, 2, 1]} />
           <Lightformer form="rect" intensity={1.6} position={[-6, 1, 3]} rotation-y={Math.PI / 2.4} scale={[6, 4, 1]} />
           <Lightformer form="rect" intensity={1.2} position={[6, 0, 2]} rotation-y={-Math.PI / 2.4} scale={[6, 4, 1]} color="#dfefff" />
-          <Lightformer form="ring" intensity={1.5} position={[0, 0, -6]} scale={6} color={theme.colors.ring} />
+          <Lightformer form="ring" intensity={1.5} position={[0, 0, -6]} scale={6} color={glowColor} />
         </Environment>
-        <WallGlow color={theme.colors.ring} />
-        <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
-          <Spinner theme={theme} variant={variant} motion={!reduced} />
-        </PresentationControls>
-        <ContactShadows position={[0, variant === "venue" ? -3.05 : -1.9, 0]} opacity={0.45} scale={8} blur={2.8} far={4} resolution={512} frames={reduced ? 1 : Infinity} />
-        <Ready onReady={onReady} />
+        <WallGlow color={glowColor} />
+        <Suspense fallback={null}>
+          <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
+            <Spinner design={design} variant={variant} motion={!reduced} />
+          </PresentationControls>
+          <ContactShadows position={[0, variant === "venue" ? -3.75 : -1.75, 0]} opacity={0.4} scale={8} blur={2.8} far={4} resolution={512} frames={reduced ? 1 : Infinity} />
+          <Ready onReady={onReady} />
+        </Suspense>
       </Canvas>
     </div>
   );

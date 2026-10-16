@@ -8,7 +8,7 @@ import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
 import { Activities, Faq, Inside, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
-import { HeroBox, ThemeStudio } from "@/components/ThemeStudio";
+import { HeroBox, Showroom } from "@/components/ThemeStudio";
 import { Venues } from "@/components/Venues";
 import { business, faqBusiness } from "@/content";
 
@@ -134,15 +134,9 @@ export default function Erhverv() {
           title="Giv gæsterne en grund til at blive."
           lede="Slå konkurrencer og små opgaver til på de aftener, hvor I vil have liv i lokalet, og fra igen, når stedet kører af sig selv. Alt styres fra kontrolpanelet."
         />
-        <ThemeStudio
-          title="Jeres boks. Jeres farver. Jeres sted."
-          lede="Vi designer boksen til jeres sted, festival eller park. Ét tema ændrer fire ting på én gang, så boksen ligner en del af stedet og ikke en lejet maskine. Vælg et design, og se boksen dreje rundt i det."
-          layers={[
-            ["Boksen", "Top og sider printet i jeres farver, motiver og form."],
-            ["Lysringen", "Jeres farver og animationer, når ingen tager billeder."],
-            ["Skærmen", "Baggrund, velkomsttekst og en rulletekst med jeres budskab."],
-            ["Fotoet", "Jeres navn eller logo i rammen på hvert billede."],
-          ]}
+        <Showroom
+          title="Bygget til jeres sted."
+          lede="Top, sider, kabinet, lys og skærm i jeres farver og med jeres logo. Vi printer delene selv, så formen kan være lige det, stedet er."
         />
         <PhotoStrip
           prints={[

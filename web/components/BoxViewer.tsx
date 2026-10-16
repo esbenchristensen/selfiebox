@@ -3,12 +3,12 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { OutlinePoster } from "./Outline";
-import type { BoxTheme } from "./three/themes";
+import type { StageProps } from "./three/Stage";
 
 // three.js is only fetched when the viewer gets close to the screen.
 const Stage = dynamic(() => import("./three/Stage"), { ssr: false, loading: () => null });
 
-export function BoxViewer({ theme, variant, label }: { theme: BoxTheme; variant: "venue" | "private"; label: string }) {
+export function BoxViewer({ design, variant, label }: { design: StageProps["design"]; variant: StageProps["variant"]; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
   const [ready, setReady] = useState(false);
@@ -41,7 +41,7 @@ export function BoxViewer({ theme, variant, label }: { theme: BoxTheme; variant:
       <div className="viewer-poster" aria-hidden="true">
         <OutlinePoster />
       </div>
-      {near && webgl && <Stage theme={theme} variant={variant} onReady={() => setReady(true)} />}
+      {near && webgl && <Stage design={design} variant={variant} onReady={() => setReady(true)} />}
     </div>
   );
 }

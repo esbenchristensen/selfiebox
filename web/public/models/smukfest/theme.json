@@ -1,0 +1,34 @@
+{
+  "id": "smukfest",
+  "name": "Smukfest",
+  "place": "Skanderborg",
+  "palette": {
+    "base": "#0f3d24",
+    "forest": "#1c5a33",
+    "leaf": "#3f8f3a",
+    "lime": "#9cc94a",
+    "red": "#e2001a",
+    "cream": "#f6eedc",
+    "bark": "#5a3b22"
+  },
+  "casing": "#0f3d24",
+  "ring": {
+    "idle": [
+      "#9cc94a",
+      "#e2001a",
+      "#f6eedc"
+    ],
+    "glow": "#9cc94a"
+  },
+  "frame": {
+    "bg": "cream",
+    "ink": "red",
+    "caption": "Smukfest · Bøgeskoven"
+  },
+  "photo": "print-club",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ]
+}
