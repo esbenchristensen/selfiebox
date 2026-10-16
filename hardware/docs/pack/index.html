@@ -125,6 +125,16 @@ ul.tight { margin: 0; padding-left: 18px; display: flex; flex-direction: column;
 .renders button.big { grid-column: span 2; grid-row: span 2; }
 .renders img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 .renders span { background: var(--surface); padding: 8px 10px; font-size: 0.85rem; border-top: 1px solid var(--line); }
+.refgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.refgrid button { font: inherit; color: var(--fg); text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 0; overflow: hidden; cursor: zoom-in; display: flex; flex-direction: column; background: var(--surface); }
+.refgrid img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: contain; background: repeating-conic-gradient(#c9c9cc 0 25%, #e9e9ec 0 50%) 0 0 / 18px 18px; }
+.refgrid span { padding: 6px 10px; font-size: 0.8rem; border-top: 1px solid var(--line); }
+.refcfg { margin-top: 14px; }
+.prompts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.prompt { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.prompt p { margin: 0; font-size: 0.85rem; line-height: 1.45; }
+.prompt .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+@media (max-width: 980px) { .refgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .prompts { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 980px) { .renders { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* ---------- content blocks ---------- */
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -190,7 +200,7 @@ pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid va
 </style>
 
 <nav class="toc" aria-label="Indhold"><ul id="toc">
-  <li><a href="#renderinger">Renderinger</a></li><li><a href="#studio">3D-studie</a></li><li><a href="#samling">Samlevejledning</a></li><li><a href="#dele">Dele & fastgørelse</a></li><li><a href="#gevind">Gevindkort</a></li>
+  <li><a href="#renderinger">Renderinger</a></li><li><a href="#reference">Referencepakke</a></li><li><a href="#studio">3D-studie</a></li><li><a href="#samling">Samlevejledning</a></li><li><a href="#dele">Dele & fastgørelse</a></li><li><a href="#gevind">Gevindkort</a></li>
   <li><a href="#tegninger">Tegninger</a></li><li><a href="#el">Elektronik</a></li><li><a href="#lys">Lys</a></li><li><a href="#print">Print</a></li>
   <li><a href="#temaer">Temaer</a></li><li><a href="#indkob">Indkøbsliste</a></li><li><a href="#kontrol">Kontrol</a></li><li><a href="#software">Software & filer</a></li>
 </ul></nav>
@@ -217,6 +227,18 @@ pre { margin: 0; overflow-x: auto; background: var(--sunk); border: 1px solid va
   <div class="sec-head"><span class="num">00</span><h2 id="h-render">HD-renderinger af standardboksen</h2>
     <p class="muted">Fotorealistiske renderinger (Blender Cycles) direkte fra CAD-modellen: mat sort ASA med pladetekstur, frostet PETG-ring og alle skruer og indsatser på deres rigtige plads. Klik for fuld størrelse.</p></div>
   <div class="renders" id="renders"></div>
+</section>
+
+<!-- ======================================================= REFERENCE PACK -->
+<section id="reference" aria-labelledby="h-ref">
+  <div class="sec-head"><span class="num">00b</span><h2 id="h-ref">Referencepakke til AI-billeder</h2>
+    <p class="muted">16 renderinger med gennemsigtig baggrund: standardboksen med og uden fotomodul og de to temaer, hver set fra fire vinkler. Giv en eller to af dem til AI-værktøjet som billedreference sammen med en prompt herunder. Hele pakken med PNG'er og prompts ligger som <code>hardware/docs/pack/reference/selfiebox_reference.zip</code> i repoet.</p></div>
+  <div id="refsets"></div>
+  <h3 style="margin-top:22px">Fast produktbeskrivelse</h3>
+  <div class="prompt"><p id="ref-desc"></p><div class="row"><span class="muted" style="font-size:.8rem">Indsættes automatisk i alle prompts nedenfor</span><button class="btn" data-copy="desc">Kopiér</button></div></div>
+  <h3 style="margin-top:22px">Prompts pr. setting</h3>
+  <div class="prompts" id="ref-prompts"></div>
+  <div class="callout" style="margin-top:16px"><b>Sådan bliver det bedst:</b> Lav helst rummet først med en tom væg i øjenhøjde. Sæt derefter PNG'en ind og lad AI'en harmonisere lys og kanter, så boksen beholder sin præcise form. Boksen er lille (23 cm bred), så skriv "small, about the size of a tablet", hvis den bliver for stor, og brug <code>room_maal.jpg</code> som ekstra reference. Skriv "no logos" for standardboksen, og "screen shows a simple black start screen", så AI'en ikke finder på tekst.</div>
 </section>
 
 <!-- ======================================================= 3D STUDIO -->
@@ -1058,6 +1080,32 @@ $("thumbs").innerHTML = DRAWINGS.map(([g, list]) => `<h3 style="margin-top:8px">
 $("thumbs").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) openDrawing(b.dataset.f); });
 $("renders").innerHTML = RENDERS.map(([f, n], i) => `<button data-f="${f}" class="${i === 0 ? "big" : ""}"><img src="renders/${f}.jpg" alt="Rendering: ${esc(n)}" loading="lazy"><span>${esc(n)}</span></button>`).join("");
 $("renders").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; const r = RENDERS.find(x => x[0] === b.dataset.f); openImage("renders/" + r[0] + ".jpg", "Rendering: " + r[1]); });
+
+const REF_SETS = [["std", "Standard med fotomodul"], ["unit", "Kun boksen, uden fotomodul"], ["sommernat", "Tema Sommernat (festival)"], ["neon", "Tema Neon (klub med UV)"]];
+const REF_ANG = [["front", "Forfra"], ["left", "Skråt fra venstre"], ["right", "Skråt fra højre"], ["side", "Profil"]];
+const REF_DESC = "a sleek matte-black wall-mounted selfie photo booth, a portrait 10-inch touchscreen framed by a glowing frosted white rounded-rectangle light ring, a tiny camera lens in a notch at the top centre of the ring, a thin glowing stripe around the sides, below it a matching matte-black photo printer module with a small window at the bottom where square instant photos appear, about 23 cm wide and 50 cm tall, only 7 cm deep, mounted at eye level, minimalist premium product design";
+const REF_PROMPTS = [
+  ["Natklub", "std", "on a dark concrete wall in a busy nightclub, purple and blue stage lights, light haze, a group of friends in their twenties laughing and posing in front of the booth, the ring light softly lighting their faces, shallow depth of field, editorial nightlife photography, 35mm"],
+  ["Bryllup", "std", "on a white panelled wall at an elegant Scandinavian wedding reception, warm candlelight, eucalyptus and white flowers, guests in suits and dresses, a bride holding a square instant photo, a guestbook table below with instant photos pinned on a string, soft golden hour light, documentary wedding photography"],
+  ["Brunt værtshus (bodega)", "std", "on dark wood panelling in a traditional Danish brown pub, dim warm lamps with fabric shades, beer taps and old framed posters, a dart board nearby, two locals in their sixties and a young couple taking a photo together, cosy and a little smoky atmosphere, authentic, 35mm film look"],
+  ["Festival", "sommernat", "with colourful hill-shaped side panels and a cloud-shaped top sign reading \"SOMMERNAT\", mounted on the wooden wall of a festival bar tent at dusk, string lights, summer evening, happy festival guests with glitter and wristbands, warm natural light, lifestyle photography"],
+  ["Klub med UV", "neon", "with fluorescent pink, cyan and lime zig-zag side panels glowing under UV black light, in a dark techno club, laser beams, people dancing in the background, a couple taking a selfie, high contrast, neon atmosphere"],
+  ["Firmafest / julefrokost", "std", "on a wall at a Danish office Christmas party, fairy lights, a Christmas tree in the background, colleagues in festive sweaters laughing, holding square instant photos, warm cosy light, candid photography"],
+  ["Cocktailbar", "std", "on a dark green wall next to a marble bar with brass details, moody cocktail bar lighting, a bartender in the background, two women posing with cocktails, luxurious and intimate, editorial interior photography"],
+  ["Studenterfest", "std", "on a school gym wall decorated for a Danish graduation party, students in white graduation caps, confetti, colourful party lights, energetic and joyful, flash photography"],
+  ["Messe / konference", "std", "on the back wall of a clean exhibition stand at a trade fair, bright even lighting, branded wall graphics, visitors in business casual taking a photo, professional event photography"]];
+$("refsets").innerHTML = REF_SETS.map(([c, n]) => `<div class="refcfg"><h3>${esc(n)}</h3><div class="refgrid">${REF_ANG.map(([a, an]) => `<button data-f="ref_${c}_${a}" data-t="${esc(n + " · " + an)}"><img src="reference/ref_${c}_${a}.png" alt="Reference: ${esc(n)}, ${esc(an)}" loading="lazy"><span class="mono">ref_${c}_${a}.png</span></button>`).join("")}</div></div>`).join("");
+$("refsets").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) openImage("reference/" + b.dataset.f + ".png", "Reference: " + b.dataset.t); });
+$("ref-desc").textContent = REF_DESC;
+const refFull = i => REF_DESC + " " + REF_PROMPTS[i][2];
+$("ref-prompts").innerHTML = REF_PROMPTS.map(([n, c, t], i) => `<div class="prompt"><div class="row"><b>${esc(n)}</b><button class="btn" data-copy="${i}">Kopiér</button></div><p>${esc(refFull(i))}</p><span class="muted mono" style="font-size:.75rem">Reference: ref_${c}_*.png</span></div>`).join("");
+document.getElementById("reference").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-copy]"); if (!b) return;
+  const txt = b.dataset.copy === "desc" ? REF_DESC : refFull(+b.dataset.copy);
+  const done = () => { const o = b.textContent; b.textContent = "Kopieret"; setTimeout(() => b.textContent = o, 1400); };
+  const sel = () => { const pEl = b.closest(".prompt").querySelector("p"); const r = document.createRange(); r.selectNodeContents(pEl); const ss = getSelection(); ss.removeAllRanges(); ss.addRange(r); b.textContent = "Markeret – tryk kopiér"; };
+  try { navigator.clipboard.writeText(txt).then(done, sel); } catch (e) { sel(); }
+});
 
 function renderPrinted() {
   const rows = Object.keys(PRINTDATA).map(k => {

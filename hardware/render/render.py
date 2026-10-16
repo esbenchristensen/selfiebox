@@ -82,11 +82,11 @@ def textured_black(name):
     return m
 
 
-def setup_materials():
+def setup_materials(screen=SCREEN, ring="#fff1de", glow="#ffe9d0"):
     M = {
         "body": textured_black("Body ASA"),
-        "diff": mat("Diffuser PETG", srgb("#fff6ea"), rough=0.45, trans=0.6, emit=srgb("#fff1de"), strength=5.5),
-        "band": mat("Glow stripe", srgb("#f4efe8"), rough=0.5, trans=0.5, emit=srgb("#ffe9d0"), strength=2.2),
+        "diff": mat("Diffuser PETG", srgb("#fff6ea"), rough=0.45, trans=0.6, emit=srgb(ring), strength=5.5),
+        "band": mat("Glow stripe", srgb("#f4efe8"), rough=0.5, trans=0.5, emit=srgb(glow), strength=2.2),
         "led": mat("LED", srgb("#ffffff"), emit=srgb("#fff1de"), strength=6.0),
         "glass": mat("Display glass", srgb("#050507"), rough=0.04, coat=1.0),
         "pcb": mat("PCB", srgb("#0f5a32"), rough=0.4),
@@ -104,7 +104,7 @@ def setup_materials():
     sm = bpy.data.materials.new("Screen"); sm.use_nodes = True; nt = sm.node_tree
     for n in list(nt.nodes): nt.nodes.remove(n)
     out = nt.nodes.new("ShaderNodeOutputMaterial"); em = nt.nodes.new("ShaderNodeEmission"); im = nt.nodes.new("ShaderNodeTexImage")
-    im.image = bpy.data.images.load(SCREEN); em.inputs["Strength"].default_value = 1.6
+    im.image = bpy.data.images.load(screen); em.inputs["Strength"].default_value = 1.6
     gl = nt.nodes.new("ShaderNodeBsdfGlossy"); gl.inputs["Roughness"].default_value = 0.03; gl.inputs["Color"].default_value = (0.04, 0.04, 0.04, 1)
     add = nt.nodes.new("ShaderNodeAddShader")
     nt.links.new(im.outputs["Color"], em.inputs["Color"]); nt.links.new(em.outputs[0], add.inputs[0]); nt.links.new(gl.outputs[0], add.inputs[1])
@@ -416,6 +416,40 @@ def build_room():
     w = bpy.context.scene.world or bpy.data.worlds.new("World"); bpy.context.scene.world = w; w.use_nodes = True
     w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.01, 0.01, 0.012, 1)
 
+# ------------------------------------------------------------------ reference pack (transparent PNGs for AI image tools)
+REF_CFG = {   # printer, theme, screen, ring colour, glow-stripe colour
+    "std": (True, None, SCREEN, "#fff1de", "#ffe9d0"),
+    "unit": (False, None, SCREEN, "#fff1de", "#ffe9d0"),
+    "sommernat": (True, "sommernat", os.path.join(HERE, "screen_idle_sommernat.png"), "#e6d2f0", "#b48ac9"),
+    "neon": (True, "neon", os.path.join(HERE, "screen_idle_neon.png"), "#ff7ad2", "#ff2fb4"),
+}
+REF_ANGLE = {"front": ((0, -1, 0.03), 85), "left": ((-0.62, -1, 0.1), 70), "right": ((0.62, -1, 0.1), 70), "side": ((1, -0.06, 0.05), 85)}
+
+
+def shoot_ref(name):
+    _, cfg, angle = name.split("_")
+    printer, theme, screen, ring, glow = REF_CFG[cfg]
+    clear()
+    M = setup_materials(screen, ring, glow)
+    objs = import_pack(); assign(objs, M)
+    dz = place(objs, with_printer=printer, theme=theme)
+    screen_plane(M, dz)
+    bottom = 0 if printer else dz
+    top = dz + H + (SP + 103 if theme else 0)
+    cz = (top + bottom) / 2
+    lights(cz)
+    w = bpy.data.worlds.new("World"); bpy.context.scene.world = w; w.use_nodes = True
+    w.node_tree.nodes["Background"].inputs["Color"].default_value = (0.02, 0.02, 0.022, 1)
+    d, lens = REF_ANGLE[angle]
+    frame_cam((0, 30, cz), d, lens, (top - bottom) * 1.12, SIZE[0] / SIZE[1])
+    path = os.path.join(OUT, "..", "reference", name + ".png")
+    render_settings(path, SIZE)
+    s = bpy.context.scene
+    s.render.film_transparent = True
+    s.render.image_settings.file_format = "PNG"; s.render.image_settings.color_mode = "RGBA"; s.render.image_settings.compression = 90
+    bpy.ops.render.render(write_still=True)
+    print("RENDERED", name)
+
 
 def shoot(name):
     clear()
@@ -489,4 +523,4 @@ def shoot(name):
 
 
 for s in shots:
-    shoot(s)
+    shoot_ref(s) if s.startswith("ref_") else shoot(s)
