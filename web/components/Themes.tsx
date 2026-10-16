@@ -2,18 +2,19 @@
 
 import { useState } from "react";
 import { BoxViewer } from "./BoxViewer";
-import { privateThemes } from "./three/themes";
+import { OCCASIONS } from "./three/HaloBox";
 
-// Private parties: names and date on the screen and in the frame of every photo, shown on the box in 3D.
+// Private parties: the box gets wings and a topper for the occasion, and the names and date on the screen
+// and in the frame of every photo. Same 3D as the venues on /erhverv, with three designs made for a party.
 export function Themes({ title, lede, layers }: { title: string; lede: string; layers: [string, string][] }) {
-  const [active, setActive] = useState(privateThemes[0].id);
-  const theme = privateThemes.find((t) => t.id === active) ?? privateThemes[0];
+  const [active, setActive] = useState(OCCASIONS[0].id);
+  const occasion = OCCASIONS.find((o) => o.id === active) ?? OCCASIONS[0];
 
   return (
     <section id="temaer" className="section" aria-labelledby="themes-title">
       <div className="wrap themes">
         <div className="theme-media">
-          <BoxViewer design={{ theme }} variant="private" label={`Selfi Boks i 3D med temaet ${theme.name}: ${theme.welcome} på skærmen og på fotoet`} />
+          <BoxViewer design={{ venue: occasion }} variant="venue" preload={OCCASIONS} label={`Selfi Boks i 3D med temaet ${occasion.name}: ${occasion.frame.caption}`} />
         </div>
         <div>
           <span className="label">Temaer</span>
@@ -24,12 +25,15 @@ export function Themes({ title, lede, layers }: { title: string; lede: string; l
             {lede}
           </p>
           <div className="seg" role="group" aria-label="Vælg tema" style={{ marginTop: 28 }}>
-            {privateThemes.map((t) => (
-              <button key={t.id} aria-pressed={active === t.id} onClick={() => setActive(t.id)}>
-                {t.name}
+            {OCCASIONS.map((o) => (
+              <button key={o.id} aria-pressed={active === o.id} onClick={() => setActive(o.id)}>
+                {o.name}
               </button>
             ))}
           </div>
+          <p className="fine" style={{ marginTop: 12 }}>
+            Eksempel med navne og dato. Jeres egne kommer på.
+          </p>
           <div className="layers">
             {layers.map(([k, v]) => (
               <div key={k}>

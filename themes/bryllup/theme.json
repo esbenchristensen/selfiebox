@@ -1,0 +1,64 @@
+{
+  "name": "Bryllup",
+  "event": "Bryllup – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#f1e6d6",
+      "filament": "PETG HF ivory"
+    },
+    "sage": {
+      "hex": "#9db596",
+      "filament": "PETG HF sage green"
+    },
+    "leaf": {
+      "hex": "#5f8466",
+      "filament": "PETG HF green"
+    },
+    "blush": {
+      "hex": "#e7b4aa",
+      "filament": "PETG HF blush pink"
+    },
+    "gold": {
+      "hex": "#b08a5a",
+      "filament": "PETG HF sand gold"
+    },
+    "ink": {
+      "hex": "#4a3b34",
+      "filament": "PETG HF brown"
+    },
+    "white": {
+      "hex": "#fffaf2",
+      "filament": "PETG HF white"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#efe3d0",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#fff0d6",
+        "#f0c99a",
+        "#ffffff"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ffd9a8"
+  },
+  "screen": {
+    "ticker": "Anna & Jonas  •  12. juni 2026  •  Tak fordi I kom  •",
+    "cta": "Sig «Skål!»",
+    "background": "base",
+    "accent": "gold"
+  }
+}

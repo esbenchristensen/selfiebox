@@ -1,0 +1,33 @@
+{
+  "id": "julefrokost",
+  "name": "Julefrokost",
+  "place": "Logo og tekst",
+  "palette": {
+    "base": "#0f3d2e",
+    "pine": "#1d6a4c",
+    "red": "#c8202f",
+    "gold": "#f2c14e",
+    "snow": "#f7f9fb",
+    "bark": "#6a4a2f"
+  },
+  "casing": "#c8202f",
+  "ring": {
+    "idle": [
+      "#f2c14e",
+      "#ffffff",
+      "#e0443a"
+    ],
+    "glow": "#f2c14e"
+  },
+  "frame": {
+    "bg": "red",
+    "ink": "snow",
+    "caption": "Julefrokost 2026 · Nordlys A/S"
+  },
+  "photo": "print-office",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "Fødselsdag",
+  "event": "Fødselsdag – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#16244d",
+      "filament": "PETG HF navy"
+    },
+    "gold": {
+      "hex": "#f2c14e",
+      "filament": "PETG HF sand gold"
+    },
+    "coral": {
+      "hex": "#ee6b5b",
+      "filament": "PETG HF coral"
+    },
+    "teal": {
+      "hex": "#3bb8b0",
+      "filament": "PETG HF teal"
+    },
+    "pink": {
+      "hex": "#f49ac1",
+      "filament": "PETG HF pink"
+    },
+    "cream": {
+      "hex": "#fff6e0",
+      "filament": "PETG HF cream"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#16244d",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#f2c14e",
+        "#ee6b5b",
+        "#3bb8b0",
+        "#f49ac1"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#f2c14e"
+  },
+  "screen": {
+    "ticker": "Tillykke Birthe  •  60 år  •  Hurra  •",
+    "cta": "Sig «Hurra!»",
+    "background": "base",
+    "accent": "gold"
+  }
+}

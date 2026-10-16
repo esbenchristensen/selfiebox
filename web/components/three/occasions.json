@@ -1,0 +1,103 @@
+[
+  {
+    "id": "bryllup",
+    "name": "Bryllup",
+    "place": "Navne og dato",
+    "palette": {
+      "base": "#f1e6d6",
+      "sage": "#9db596",
+      "leaf": "#5f8466",
+      "blush": "#e7b4aa",
+      "gold": "#b08a5a",
+      "ink": "#4a3b34",
+      "white": "#fffaf2"
+    },
+    "casing": "#efe3d0",
+    "ring": {
+      "idle": [
+        "#fff0d6",
+        "#f0c99a",
+        "#ffffff"
+      ],
+      "glow": "#ffd9a8"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "gold",
+      "caption": "Anna & Jonas · 12.6.2026"
+    },
+    "photo": "print-wedding",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "fodselsdag",
+    "name": "Fødselsdag",
+    "place": "Navn og alder",
+    "palette": {
+      "base": "#16244d",
+      "gold": "#f2c14e",
+      "coral": "#ee6b5b",
+      "teal": "#3bb8b0",
+      "pink": "#f49ac1",
+      "cream": "#fff6e0"
+    },
+    "casing": "#16244d",
+    "ring": {
+      "idle": [
+        "#f2c14e",
+        "#ee6b5b",
+        "#3bb8b0",
+        "#f49ac1"
+      ],
+      "glow": "#f2c14e"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "gold",
+      "caption": "Birthe 60 år"
+    },
+    "photo": "print-birthday",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "julefrokost",
+    "name": "Julefrokost",
+    "place": "Logo og tekst",
+    "palette": {
+      "base": "#0f3d2e",
+      "pine": "#1d6a4c",
+      "red": "#c8202f",
+      "gold": "#f2c14e",
+      "snow": "#f7f9fb",
+      "bark": "#6a4a2f"
+    },
+    "casing": "#c8202f",
+    "ring": {
+      "idle": [
+        "#f2c14e",
+        "#ffffff",
+        "#e0443a"
+      ],
+      "glow": "#f2c14e"
+    },
+    "frame": {
+      "bg": "red",
+      "ink": "snow",
+      "caption": "Julefrokost 2026 · Nordlys A/S"
+    },
+    "photo": "print-office",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  }
+]

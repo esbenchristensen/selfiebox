@@ -1,0 +1,34 @@
+{
+  "id": "fodselsdag",
+  "name": "Fødselsdag",
+  "place": "Navn og alder",
+  "palette": {
+    "base": "#16244d",
+    "gold": "#f2c14e",
+    "coral": "#ee6b5b",
+    "teal": "#3bb8b0",
+    "pink": "#f49ac1",
+    "cream": "#fff6e0"
+  },
+  "casing": "#16244d",
+  "ring": {
+    "idle": [
+      "#f2c14e",
+      "#ee6b5b",
+      "#3bb8b0",
+      "#f49ac1"
+    ],
+    "glow": "#f2c14e"
+  },
+  "frame": {
+    "bg": "base",
+    "ink": "gold",
+    "caption": "Birthe 60 år"
+  },
+  "photo": "print-birthday",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ]
+}
