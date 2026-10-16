@@ -10,22 +10,23 @@ type Props = {
   minDay: DayKey;
   maxDay: DayKey;
   onPick: (range: Range) => void;
+  single?: boolean; // one month at a time, for narrow places like the hero
 };
 
-export function Calendar({ selected, rangeFor, isBlocked, minDay, maxDay, onPick }: Props) {
+export function Calendar({ selected, rangeFor, isBlocked, minDay, maxDay, onPick, single }: Props) {
   const start = fromKey(selected?.from ?? minDay);
   const [cursor, setCursor] = useState({ y: start.getFullYear(), m: start.getMonth() });
   const [hover, setHover] = useState<Range | null>(null);
 
   const months = useMemo(() => {
     const next = cursor.m === 11 ? { y: cursor.y + 1, m: 0 } : { y: cursor.y, m: cursor.m + 1 };
-    return [cursor, next];
-  }, [cursor]);
+    return single ? [cursor] : [cursor, next];
+  }, [cursor, single]);
 
   const minDate = fromKey(minDay);
   const maxDate = fromKey(maxDay);
   const canPrev = cursor.y > minDate.getFullYear() || (cursor.y === minDate.getFullYear() && cursor.m > minDate.getMonth());
-  const canNext = cursor.y < maxDate.getFullYear() || (cursor.y === maxDate.getFullYear() && cursor.m < maxDate.getMonth() - 1);
+  const canNext = cursor.y < maxDate.getFullYear() || (cursor.y === maxDate.getFullYear() && cursor.m < maxDate.getMonth() - (single ? 0 : 1));
 
   const step = (d: number) =>
     setCursor((c) => {
@@ -43,7 +44,7 @@ export function Calendar({ selected, rangeFor, isBlocked, minDay, maxDay, onPick
   const inShown = (k: DayKey) => !!shown && k >= shown.from && k <= shown.to;
 
   return (
-    <div className="cal" onMouseLeave={() => setHover(null)}>
+    <div className={`cal${single ? " cal--single" : ""}`} onMouseLeave={() => setHover(null)}>
       <div className="cal-nav">
         <button type="button" className="cal-arrow" onClick={() => step(-1)} disabled={!canPrev} aria-label="Forrige måned">
           ‹

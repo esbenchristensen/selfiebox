@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { addons, booking, deliveries, occasions, packages, type DeliveryId, type PackageId } from "@/content";
-import { addDays, formatRange, today, toKey, weekday, type DayKey, type Range } from "@/lib/dates";
+import { useEffect, useState } from "react";
+import { addons, deliveries, occasions, packages, type DeliveryId, type PackageId } from "@/content";
+import { rangeForPackage, START_BOOKING, useBookedDays, useBookingWindow, type StartBooking } from "@/lib/booking";
+import { formatRange, type DayKey, type Range } from "@/lib/dates";
 import { Calendar } from "./Calendar";
 
 const STEPS = ["Pakke", "Datoer", "Tilvalg", "Levering", "Kontakt", "Bekræft"] as const;
@@ -22,20 +23,23 @@ export function Booking() {
   const [address, setAddress] = useState({ street: "", zip: "", city: "" });
   const [contact, setContact] = useState({ name: "", email: "", phone: "", occasion: "", message: "" });
   const [accepted, setAccepted] = useState(false);
-  const [booked, setBooked] = useState<Set<DayKey>>(new Set());
+  const booked = useBookedDays();
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
-  // Known bookings, so taken days show as unavailable.
+  // Package and dates picked in the hero calendar: skip straight to the add-ons.
   useEffect(() => {
-    fetch("/api/ledighed")
-      .then((r) => (r.ok ? r.json() : { booked: [] }))
-      .then((d: { booked: Range[] }) => {
-        const s = new Set<DayKey>();
-        for (const r of d.booked ?? []) for (let k = r.from; k <= r.to; k = addDays(k, 1)) s.add(k);
-        setBooked(s);
-      })
-      .catch(() => {});
+    const onStart = (e: Event) => {
+      const { pkg, range } = (e as CustomEvent<StartBooking>).detail;
+      setPkg(pkg);
+      setRange(range);
+      setStep(2);
+      setDone((d) => Math.max(d, 2));
+      setTouched(false);
+      document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.addEventListener(START_BOOKING, onStart);
+    return () => window.removeEventListener(START_BOOKING, onStart);
   }, []);
 
   // Let the package cards elsewhere on the page preselect a package via #book-weekend etc.
@@ -57,20 +61,8 @@ export function Booking() {
 
   const P = packages.find((p) => p.id === pkg)!;
   const D = deliveries.find((d) => d.id === delivery)!;
-  const minDay = addDays(today(), booking.leadDays);
-  const maxDay = useMemo(() => {
-    const d = new Date();
-    d.setMonth(d.getMonth() + booking.monthsAhead);
-    return toKey(d);
-  }, []);
-
-  const rangeFor = (day: DayKey): Range => {
-    if (pkg === "weekend") {
-      const fri = addDays(day, 4 - weekday(day)); // the weekend this day belongs to (Mon–Thu: the coming one)
-      return { from: fri, to: addDays(fri, 2) };
-    }
-    return { from: day, to: addDays(day, P.days - 1) };
-  };
+  const { minDay, maxDay } = useBookingWindow();
+  const rangeFor = (day: DayKey): Range => rangeForPackage(pkg, day);
 
   const lines = [
     { label: `${P.name}`, value: P.price },

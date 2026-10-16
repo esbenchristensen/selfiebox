@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
+import { HeroBooking } from "@/components/booking/HeroBooking";
 import { JsonLd } from "@/components/JsonLd";
 import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
@@ -57,16 +58,15 @@ export default function Home() {
           { label: "Spørgsmål", href: "#faq" },
         ]}
         other={{ label: "Til barer og hoteller", short: "Erhverv", href: "/erhverv" }}
-        cta={{ label: "Se ledige datoer", href: "#book" }}
+        cta={{ label: "Se ledige datoer", href: "#datoer" }}
       />
       <main>
         <Hero
           label="Fotoboks til leje"
           title="Lej en fotoboks, der får alle med på billedet."
           lede="Til bryllup, fødselsdag og firmafest fra 495 kr. Gæsterne tager så mange billeder, de vil, i ægte studielys, og alle fotos samles på jeres egen eventside bagefter."
-          primary={{ label: "Se ledige datoer", href: "#book" }}
           secondary={{ label: "Sådan virker den", href: "#saadan" }}
-          image={{ src: "/renders/hero.jpg", alt: "Selfi Boks fotoboks med tændt lysring rundt om skærmen" }}
+          aside={<HeroBooking />}
         />
         <Moments
           label="Hvorfor en fotoboks"
