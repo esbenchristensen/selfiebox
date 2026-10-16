@@ -16,7 +16,7 @@ export function Themes({ title, lede, layers }: { title: string; lede: string; l
         <div className="theme-media">
           <BoxViewer design={{ venue: occasion }} variant="venue" preload={OCCASIONS} label={`Selfi Boks i 3D med temaet ${occasion.name}: ${occasion.frame.caption}`} />
         </div>
-        <div>
+        <div className="themes-head">
           <span className="label">Temaer</span>
           <h2 id="themes-title" className="h-l" style={{ marginTop: 16 }}>
             {title}
@@ -24,7 +24,10 @@ export function Themes({ title, lede, layers }: { title: string; lede: string; l
           <p className="lede" style={{ marginTop: 20 }}>
             {lede}
           </p>
-          <div className="seg" role="group" aria-label="Vælg tema" style={{ marginTop: 28 }}>
+        </div>
+        {/* Its own grid cell, so on a phone it sits right under the box it changes. */}
+        <div className="themes-pick">
+          <div className="seg" role="group" aria-label="Vælg tema">
             {OCCASIONS.map((o) => (
               <button key={o.id} aria-pressed={active === o.id} onClick={() => setActive(o.id)}>
                 {o.name}
@@ -34,6 +37,8 @@ export function Themes({ title, lede, layers }: { title: string; lede: string; l
           <p className="fine" style={{ marginTop: 12 }}>
             Temaerne er faste designs, klar til jeres fest.
           </p>
+        </div>
+        <div className="themes-layers">
           <div className="layers">
             {layers.map(([k, v]) => (
               <div key={k}>
