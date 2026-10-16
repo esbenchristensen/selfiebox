@@ -8,7 +8,8 @@ const { chromium } = require("playwright");
 
 const FPS = 30;
 const SIZES = { wide: { width: 1920, height: 1080 }, tall: { width: 1080, height: 1350 } };
-const POSTER_T = 4.2; // the intro with the headline and the glowing ring
+// Poster frame: the intro with the glowing ring, or for venues the box in Kælderbaren's design.
+const POSTER_T = { explainer: 4.2, erhverv: 14.6 };
 const OUT = path.join(__dirname, "..", "public", "video");
 
 async function render(film, format) {
@@ -37,7 +38,7 @@ async function render(film, format) {
   ff.stdin.end();
   await done;
 
-  await page.evaluate((t) => window.seek(t), POSTER_T);
+  await page.evaluate((t) => window.seek(t), POSTER_T[film] ?? 4.2);
   await page.screenshot({ path: `${name}.jpg`, type: "jpeg", quality: 82 });
   await browser.close();
 
