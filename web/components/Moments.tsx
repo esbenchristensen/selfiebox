@@ -18,10 +18,10 @@ export function Moments() {
             <div className="moment-media">
               <Image
                 src="/photos/klub.jpg"
-                alt="Tre venner griner med deres Instax-foto ved Selfi Boks i en natklub"
+                alt="Selfi Boks på en betonsøjle i en natklub, venner på skærmen og dansegulvet bagved"
                 fill
                 sizes="(max-width: 900px) 90vw, 30vw"
-                style={{ objectFit: "cover", objectPosition: "50% 40%" }}
+                style={{ objectFit: "cover", objectPosition: "45% 45%" }}
               />
             </div>
             <figcaption>

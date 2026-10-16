@@ -25,10 +25,10 @@ export function Private() {
           <div>
             <Image
               src="/photos/reception.jpg"
-              alt="Gæster til en reception tager et billede ved Selfi Boks"
+              alt="Kolleger til en reception trykker på Selfi Boks på væggen"
               fill
               sizes="(max-width: 900px) 90vw, 35vw"
-              style={{ objectFit: "cover", objectPosition: "38% 50%" }}
+              style={{ objectFit: "cover", objectPosition: "75% 50%" }}
             />
           </div>
         </div>
