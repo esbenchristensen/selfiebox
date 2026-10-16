@@ -75,30 +75,63 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
   );
 }
 
-// The hero on /erhverv: one box that turns through the venue designs by itself.
+// The hero on /erhverv: one box that turns through the venue designs by itself. Swipe, the arrows or
+// the dots move it by hand; after that it stays where it was put.
 export function HeroBox() {
   const [i, setI] = useState(0);
   const paused = useRef(false);
+  const touched = useRef(false);
+  const swipe = useRef<{ x: number; y: number; t: number } | null>(null);
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => {
-      if (!paused.current && document.visibilityState === "visible") setI((n) => (n + 1) % venues.length);
+      if (!paused.current && !touched.current && document.visibilityState === "visible") setI((n) => (n + 1) % venues.length);
     }, 4600);
     return () => clearInterval(id);
   }, []);
+  const go = (n: number) => {
+    touched.current = true;
+    setI((n + venues.length) % venues.length);
+  };
   const venue = venues[i];
   return (
-    <div className="hero-box" onPointerEnter={() => (paused.current = true)} onPointerLeave={() => (paused.current = false)}>
+    <div
+      className="hero-box"
+      onPointerEnter={(e) => e.pointerType === "mouse" && (paused.current = true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && (paused.current = false)}
+      onPointerDownCapture={(e) => (swipe.current = { x: e.clientX, y: e.clientY, t: e.timeStamp })}
+      onPointerUpCapture={(e) => {
+        const s = swipe.current;
+        swipe.current = null;
+        if (!s) return;
+        const dx = e.clientX - s.x;
+        const dy = e.clientY - s.y;
+        // A quick, clearly sideways flick changes design; a slow drag only turns the box.
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && e.timeStamp - s.t < 800) go(i + (dx < 0 ? 1 : -1));
+      }}
+    >
       <BoxViewer design={{ venue }} variant="venue" label={`Selfi Boks i 3D, her med et design til ${venue.name}`} />
-      <a className="hero-box-cap" href="#temaer" style={{ "--bg": venue.palette.base } as React.CSSProperties}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/models/${venue.id}/logo.svg`} alt={venue.name} />
-        <span className="dots" aria-hidden="true">
-          {venues.map((t, k) => (
-            <i key={t.id} data-on={k === i} />
-          ))}
-        </span>
-      </a>
+      <div className="hero-box-cap" style={{ "--bg": venue.palette.base } as React.CSSProperties}>
+        <a href="#temaer" className="hero-box-logo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/models/${venue.id}/logo.svg`} alt={venue.name} />
+        </a>
+        <div className="hero-box-nav">
+          <button type="button" className="hero-box-arrow" onClick={() => go(i - 1)} aria-label="Forrige design">
+            ‹
+          </button>
+          <span className="dots" role="tablist" aria-label="Designs">
+            {venues.map((t, k) => (
+              <button key={t.id} type="button" role="tab" aria-selected={k === i} aria-label={t.name} data-on={k === i} onClick={() => go(k)}>
+                <i />
+              </button>
+            ))}
+          </span>
+          <button type="button" className="hero-box-arrow" onClick={() => go(i + 1)} aria-label="Næste design">
+            ›
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
