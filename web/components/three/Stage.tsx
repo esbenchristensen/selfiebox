@@ -2,14 +2,14 @@
 
 import { ContactShadows, Environment, Lightformer, PresentationControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { startTransition, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { HaloBox, type Venue } from "./HaloBox";
+import { HaloBox, preloadVenue, VENUES, type Venue } from "./HaloBox";
 import { radialTexture } from "./textures";
 import type { BoxTheme } from "./themes";
 
 export type StageProps = {
-  // A venue design (topper, wings, casing, photo module) or a private party theme (plain box, print beside it).
+  // A venue design (topper, wings, casing) or a private party theme (plain box, print beside it).
   design: { venue: Venue } | { theme: BoxTheme };
   variant: "venue" | "private";
   onReady?: () => void;
@@ -38,7 +38,7 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
     // Fit the whole design: height for tall frames, width for wide ones.
-    const [hgt, wid, cx, cy] = variant === "venue" ? [7.5, 4.2, 0, -0.22] : [3.6, 4.4, 0.35, 0];
+    const [hgt, wid, cx, cy] = variant === "venue" ? [6.3, 4.5, 0, 0.42] : [3.6, 4.4, 0.35, 0];
     const fov = (cam.fov * Math.PI) / 180;
     const byH = hgt / 2 / Math.tan(fov / 2);
     const byW = wid / 2 / Math.tan(fov / 2) / aspect;
@@ -79,8 +79,11 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
       // Swap while the back of the box faces the camera, so the change is never seen.
       if (p > 0.5 && !s.swapped) {
         s.swapped = true;
-        setShown(design);
-        setBornAt(t);
+        // A transition keeps the current box on screen while the next design's files load.
+        startTransition(() => {
+          setShown(design);
+          setBornAt(t);
+        });
       }
       if (p >= 1) spin.current = null;
     }
@@ -91,7 +94,7 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
   return (
     <group ref={group}>
       {"venue" in shown ? (
-        <HaloBox venue={shown.venue} module={variant === "venue"} motion={motion} bornAt={bornAt} />
+        <HaloBox venue={shown.venue} module={false} motion={motion} bornAt={bornAt} />
       ) : (
         <HaloBox theme={shown.theme} module={false} motion={motion} bornAt={bornAt} />
       )}
@@ -125,6 +128,9 @@ function Ready({ onReady }: { onReady?: () => void }) {
 }
 
 export default function Stage({ design, variant, onReady }: StageProps) {
+  useEffect(() => {
+    if (variant === "venue") VENUES.forEach((v) => preloadVenue(v));
+  }, [variant]);
   const glowColor = "venue" in design ? design.venue.ring.glow : "#fff3e3";
   const reduced = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
@@ -165,7 +171,7 @@ export default function Stage({ design, variant, onReady }: StageProps) {
           <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
             <Spinner design={design} variant={variant} motion={!reduced} />
           </PresentationControls>
-          <ContactShadows position={[0, variant === "venue" ? -3.75 : -1.75, 0]} opacity={0.4} scale={8} blur={2.8} far={4} resolution={512} frames={reduced ? 1 : Infinity} />
+          <ContactShadows position={[0, -1.75, 0]} opacity={0.4} scale={8} blur={2.8} far={4} resolution={512} frames={reduced ? 1 : Infinity} />
           <Ready onReady={onReady} />
         </Suspense>
       </Canvas>

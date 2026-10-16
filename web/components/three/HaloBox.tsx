@@ -226,7 +226,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
         </>
       )}
 
-      <group ref={print}>
+      <group ref={print} visible={module || !venue}>
         <mesh>
           <planeGeometry args={[PRINT.w, PRINT.h]} />
           <meshStandardMaterial map={printMap} roughness={0.55} />
@@ -236,7 +236,9 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   );
 }
 
-export function preloadVenue(id: string) {
-  useGLTF.preload(`/models/${id}/parts.glb`, false, true);
-  useTexture.preload(`/models/${id}/screen.png`);
+export function preloadVenue(v: Venue) {
+  useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
+  useTexture.preload(`/models/${v.id}/screen.png`);
+  useTexture.preload(`/models/${v.id}/print.png`);
+  useTexture.preload(`/photos/${v.photo}.jpg`);
 }
