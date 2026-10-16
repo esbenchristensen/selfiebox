@@ -145,15 +145,15 @@ export function OutlineExploded({ className }: { className?: string }) {
   const at = (i: number): P => [base[0] + step[0] * (4 - i), base[1] + step[1] * (4 - i)];
   const s = w / 234;
   const labels: [number, string][] = [
-    [0, "Bagkappe"],
-    [1, "Raspberry Pi 5"],
-    [2, "10\" touchskærm"],
-    [3, "Lysring"],
-    [4, "Front og kamera"],
+    [0, "Robust og tyverisikret"],
+    [1, "Hurtig og altid opdateret"],
+    [2, "Stor, skarp touchskærm"],
+    [3, "Professionelt studielys"],
+    [4, "Billeder i høj kvalitet"],
   ];
   const [x0, y0] = at(0), [x1, y1] = at(1), [x2, y2] = at(2), [x3, y3] = at(3), [x4, y4] = at(4);
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 560 520" role="img" aria-label="Selfi Boks skilt ad i fem lag: bagkappe, Raspberry Pi, skærm, lysring og front med kamera">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 560 520" role="img" aria-label="Selfi Boks skilt ad: robust og tyverisikret, hurtig, stor touchskærm, professionelt studielys og billeder i høj kvalitet">
       {/* Back cover with keyholes and the power socket */}
       <Slab x={x0} y={y0} w={w} h={h} r={28} d={t} />
       <path d={`M${x0 + w / 2 - 40} ${y0 + 40} v14 M${x0 + w / 2 + 40} ${y0 + 40} v14`} />
@@ -187,7 +187,7 @@ export function OutlineExploded({ className }: { className?: string }) {
       })}
       {labels.map(([i, text]) => (
         <g key={text}>
-          <text x={392} y={404 + i * 22} className="o-label">
+          <text x={350} y={404 + i * 22} className="o-label">
             <tspan className="o-label-n">{i + 1}</tspan> {text}
           </text>
         </g>

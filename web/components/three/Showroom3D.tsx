@@ -29,11 +29,11 @@ function Rig({ focus, motion }: { focus: number; motion: boolean }) {
     const aspect = size.width / size.height;
     const fov = (cam.fov * Math.PI) / 180;
     // Frame the chosen box with room for its neighbours on wide screens.
-    const dist = Math.max(8.3 / 2 / Math.tan(fov / 2), 4.6 / 2 / Math.tan(fov / 2) / aspect);
+    const dist = Math.max(6.2 / 2 / Math.tan(fov / 2), 4.7 / 2 / Math.tan(fov / 2) / aspect);
     const target = focus * GAP;
     x.current = motion ? THREE.MathUtils.damp(x.current, target, 3.2, dt) : target;
-    cam.position.set(x.current, 0.1, dist * 1.02);
-    cam.lookAt(x.current, -0.2, 0);
+    cam.position.set(x.current, 0.9, dist * 1.02);
+    cam.lookAt(x.current, 0.72, 0);
   });
   return null;
 }
@@ -85,7 +85,7 @@ function Slot({ i, focus, motion, onPick }: { i: number; focus: number; motion: 
       onPointerOut={() => (document.body.style.cursor = "")}
     >
       <Suspense fallback={null}>
-        <HaloBox venue={VENUES[i]} module motion={motion} bornAt={bornAt} />
+        <HaloBox venue={VENUES[i]} module={false} motion={motion} bornAt={bornAt} />
       </Suspense>
     </group>
   );
@@ -138,7 +138,7 @@ export default function Showroom3D({ focus, onPick, onReady }: { focus: number; 
           <Slot key={i} i={i} focus={focus} motion={!reduced} onPick={onPick} />
         ))}
         <Suspense fallback={null}>
-          <ContactShadows position={[(VENUES.length - 1) * GAP * 0.5, -3.85, 0]} opacity={0.35} scale={[VENUES.length * GAP + 6, 6]} blur={2.4} far={4} resolution={1024} frames={1} />
+          <ContactShadows position={[(VENUES.length - 1) * GAP * 0.5, -1.8, 0]} opacity={0.35} scale={[VENUES.length * GAP + 6, 6]} blur={2.4} far={4} resolution={1024} frames={1} />
           <Ready onReady={onReady} />
         </Suspense>
       </Canvas>
