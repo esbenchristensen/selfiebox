@@ -1,136 +1,197 @@
-﻿#;Name;Category;City;Region;Season / Duration;Visitors per year (approx.);Units - low;Units - realistic;Units - high;Unit price DKK;Value low DKK;Value realistic DKK;Value high DKK;Why they would buy / use case;Website
-1;Tivoli Gardens;Theme park;Copenhagen;Hovedstaden;Seasonal + Halloween + Christmas;4500000;15;20;30;25000;375000;500000;750000;Iconic brand, 3 seasons (summer/Halloween/Christmas) - themed frames per season;tivoli.dk
-2;Dyrehavsbakken (Bakken);Theme park;Klampenborg;Hovedstaden;Seasonal;2000000;8;12;18;25000;200000;300000;450000;World's oldest amusement park - nostalgic branding, many ride zones;bakken.dk
-3;LEGOLAND Billund;Theme park;Billund;Syddanmark;Seasonal + Halloween + Christmas;2300000;10;15;22;25000;250000;375000;550000;Strong brand, families share photos - one booth per themed area;legoland.dk
-4;Lalandia Billund;Water park / resort;Billund;Syddanmark;All year;1200000;6;10;14;25000;150000;250000;350000;Year-round indoor resort - aquadome, ski, play areas;lalandia.dk
-5;Lalandia Rødby;Water park / resort;Rødby;Sjælland;All year;900000;5;8;12;25000;125000;200000;300000;Year-round indoor resort, same owner as Billund - chain deal;lalandia.dk
-6;Fårup Sommerland;Theme park;Blokhus;Nordjylland;Seasonal;700000;6;8;12;25000;150000;200000;300000;Large park + water park, Halloween season;faarupsommerland.dk
-7;Djurs Sommerland;Theme park;Nimtofte;Midtjylland;Seasonal;900000;6;9;13;25000;150000;225000;325000;Denmark's largest summerland - many themed areas;djurssommerland.dk
-8;Tivoli Friheden;Theme park;Aarhus;Midtjylland;Seasonal + Christmas;500000;5;7;10;25000;125000;175000;250000;City amusement park with concerts (Fredagsrock);friheden.dk
-9;BonBon-Land;Theme park;Holme-Olstrup;Sjælland;Seasonal;450000;5;6;9;25000;125000;150000;225000;Humorous candy brand - perfect for fun frames;bonbonland.dk
-10;Sommerland Sjælland;Theme park;Nr. Asmindrup;Sjælland;Seasonal;250000;5;5;7;25000;125000;125000;175000;Family park, kids' birthday traffic;sommerlandsjaelland.dk
-11;Jesperhus Feriepark;Theme park / resort;Nykøbing Mors;Nordjylland;Seasonal;400000;5;6;9;25000;125000;150000;225000;Holiday park + flower park + water park;jesperhus.dk
-12;Joboland;Theme park;Svaneke, Bornholm;Hovedstaden;Seasonal;120000;5;5;6;25000;125000;125000;150000;Tourist hotspot on Bornholm;joboland.dk
-13;Brændesgårdshaven;Theme park;Rønne, Bornholm;Hovedstaden;Seasonal;150000;5;5;6;25000;125000;125000;150000;Family park on Bornholm;braendesgaardshaven.dk
-14;Legoland Christmas / Halloween (season add-on);Theme park season;Billund;Syddanmark;Oct-Dec;300000;0;5;8;25000;0;125000;200000;Extra seasonal units / rentals on top of base install;legoland.dk
-15;Smaller regional summerlands & family parks (group);Theme park group;Various;Various;Seasonal;300000;5;6;10;25000;125000;150000;250000;Smaller family parks bought as a group deal;-
-16;Copenhagen Zoo;Zoo;Frederiksberg;Hovedstaden;All year;1300000;8;12;16;25000;200000;300000;400000;Panda house, elephants - huge social sharing;zoo.dk
-17;Den Blå Planet;Aquarium;Kastrup;Hovedstaden;All year;900000;6;8;12;25000;150000;200000;300000;Northern Europe's largest aquarium - stunning backdrops;denblaaplanet.dk
-18;Givskud Zoo - Zootopia;Zoo / safari;Givskud;Syddanmark;Seasonal;450000;5;7;10;25000;125000;175000;250000;Safari park, lion photos;givskudzoo.dk
-19;Odense Zoo;Zoo;Odense;Syddanmark;All year;500000;5;7;10;25000;125000;175000;250000;Oceanium, voted best in Europe several years;odensezoo.dk
-20;Aalborg Zoo;Zoo;Aalborg;Nordjylland;All year;450000;5;6;9;25000;125000;150000;225000;Popular city zoo, events (Zoo i lys);aalborgzoo.dk
-21;Randers Regnskov;Zoo / rainforest;Randers;Midtjylland;All year;300000;5;5;8;25000;125000;125000;200000;Tropical domes - colourful backdrops;regnskoven.dk
-22;Knuthenborg Safaripark;Zoo / safari;Maribo;Sjælland;Seasonal + Winter lights;350000;5;6;9;25000;125000;150000;225000;Safari + 'Knuthenborg Winter Wonderland' light event;knuthenborg.dk
-23;Ree Park Safari;Zoo / safari;Ebeltoft;Midtjylland;Seasonal;200000;5;5;7;25000;125000;125000;175000;Safari theme, family audience;reepark.dk
-24;Skandinavisk Dyrepark;Zoo;Kolind;Midtjylland;Seasonal;250000;5;5;7;25000;125000;125000;175000;Polar bears, Nordic animals;skandinaviskdyrepark.dk
-25;Jyllands Park Zoo;Zoo;Videbæk;Midtjylland;Seasonal;120000;5;5;6;25000;125000;125000;150000;Family zoo, West Jutland;jyllandsparkzoo.dk
-26;Nordsøen Oceanarium;Aquarium;Hirtshals;Nordjylland;All year;250000;5;5;7;25000;125000;125000;175000;North Sea aquarium, tourists;nordsoenoceanarium.dk
-27;Kattegatcentret;Aquarium;Grenaa;Midtjylland;All year;200000;5;5;7;25000;125000;125000;175000;Shark tank backdrop;kattegatcentret.dk
-28;Fjord&Bælt;Aquarium;Kerteminde;Syddanmark;All year;120000;5;5;6;25000;125000;125000;150000;Porpoises/seals;fjord-baelt.dk
-29;Krokodille Zoo;Zoo;Eskilstrup;Sjælland;All year;80000;5;5;6;25000;125000;125000;150000;"Crocodiles - unique photo spot; group with smaller zoos";krokodillezoo.dk
-30;Small zoos & animal parks (group, e.g. Skærup Zoo);Zoo group;Vejle area;Syddanmark;Seasonal;100000;5;5;6;25000;125000;125000;150000;Small zoos bought jointly via DAZA network;-
-31;DAZA - Danish Association of Zoos & Aquaria (framework deal);Association;National;National;All year;5000000;10;20;40;25000;250000;500000;1000000;Framework agreement covering ~20 member zoos;daza.dk
-32;Den Gamle By;Museum / attraction;Aarhus;Midtjylland;All year + Christmas;500000;5;7;10;25000;125000;175000;250000;Historic town, huge Christmas season;dengamleby.dk
-33;Experimentarium;Science centre;Hellerup;Hovedstaden;All year;450000;5;6;9;25000;125000;150000;225000;School classes & families;experimentarium.dk
-34;Universe Science Park;Science park;Nordborg;Syddanmark;Seasonal;200000;5;5;7;25000;125000;125000;175000;Interactive park;universe.dk
-35;LEGO House;Attraction;Billund;Syddanmark;All year;400000;5;6;8;25000;125000;150000;200000;Global LEGO fans - shareable content;legohouse.com
-36;Ripley's / H.C. Andersen Eventyrhus (Rådhuspladsen attractions);Attraction;Copenhagen;Hovedstaden;All year;300000;5;5;7;25000;125000;125000;175000;Tourist attractions on Rådhuspladsen;ripleys.com/copenhagen
-37;Sagnlandet Lejre (Land of Legends);Attraction;Lejre;Sjælland;Seasonal;100000;5;5;6;25000;125000;125000;150000;Viking/iron-age role play;sagnlandet.dk
-38;Middelaldercentret;Attraction;Nykøbing F.;Sjælland;Seasonal;100000;5;5;6;25000;125000;125000;150000;Medieval events, costumes;middelaldercentret.dk
-39;Frilandsmuseet;Museum;Kgs. Lyngby;Hovedstaden;Seasonal + Christmas;300000;5;5;7;25000;125000;125000;175000;Open-air museum, Christmas market;natmus.dk
-40;Egeskov Slot;Castle / attraction;Kværndrup;Syddanmark;Seasonal + Christmas;250000;5;5;8;25000;125000;125000;200000;Castle backdrop, festivals & Christmas market;egeskov.dk
-41;Hjerl Hede;Open-air museum;Vinderup;Midtjylland;Seasonal + Christmas;120000;5;5;6;25000;125000;125000;150000;Historic village, Christmas market;hjerlhede.dk
-42;Kronborg Slot;Castle;Helsingør;Hovedstaden;All year;400000;5;5;7;25000;125000;125000;175000;Hamlet castle, tourists + Christmas market;kronborg.dk
-43;Danish Castles group (Slots- og Kulturstyrelsen);Castle group;National;National;All year;1500000;5;8;15;25000;125000;200000;375000;Royal castles bundle: Rosenborg, Frederiksborg, Koldinghus etc.;slks.dk
-44;Rundetaarn / Copenhagen tourist sights (group);Attraction group;Copenhagen;Hovedstaden;All year;600000;5;5;8;25000;125000;125000;200000;Tourist photo spots incl. Visit Copenhagen;visitcopenhagen.dk
-45;Skagen Odde / Råbjerg Mile (Visit Skagen);Destination;Skagen;Nordjylland;Seasonal;1500000;5;6;10;25000;125000;150000;250000;Destination marketing - branded 'I was in Skagen' frames;visitskagen.dk
-46;Roskilde Festival;Music festival;Roskilde;Sjælland;8 days, late June/July;130000;10;15;25;25000;250000;375000;625000;Northern Europe's biggest festival - huge Instagram reach, sponsor activations;roskilde-festival.dk
-47;Smukfest;Music festival;Skanderborg;Midtjylland;5 days, August;65000;8;12;18;25000;200000;300000;450000;'Denmark's most beautiful festival' - photo culture already strong;smukfest.dk
-48;Northside;Music festival;Aarhus;Midtjylland;3 days, June;40000;5;7;10;25000;125000;175000;250000;Urban festival, sponsors;northside.dk
-49;Tinderbox;Music festival;Odense;Syddanmark;3 days, June;50000;5;7;10;25000;125000;175000;250000;Big festival in Tusindårsskoven;tinderbox.dk
-50;Copenhell;Music festival;Copenhagen (Refshaleøen);Hovedstaden;4 days, June;45000;5;6;9;25000;125000;150000;225000;Metal festival with strong visual identity;copenhell.dk
-51;Heartland Festival;Music / culture festival;Kværndrup (Egeskov);Syddanmark;3 days, June;15000;5;5;7;25000;125000;125000;175000;Premium festival, brand partners;heartlandfestival.dk
-52;Jelling Musikfestival;Music festival;Jelling;Syddanmark;4 days, May;45000;5;6;9;25000;125000;150000;225000;Large family-friendly festival;jellingmusikfestival.dk
-53;Grøn Koncert;Touring concert;8 cities;National;July tour;200000;5;8;12;25000;125000;200000;300000;Touring - same units travel to 8 cities;groenkoncert.dk
-54;Skive Beach Party;Music festival;Skive;Midtjylland;3 days, June;25000;5;5;6;25000;125000;125000;150000;Youth audience - selfie-heavy;skivebeachparty.dk
-55;Nibe Festival;Music festival;Nibe;Nordjylland;4 days, July;20000;5;5;6;25000;125000;125000;150000;Cosy, loyal audience;nibefestival.dk
-56;Langelandsfestival;Music festival;Rudkøbing;Syddanmark;6 days, July;25000;5;5;7;25000;125000;125000;175000;Family festival;langelandsfestival.dk
-57;Tønder Festival;Music festival;Tønder;Syddanmark;5 days, August;30000;5;5;6;25000;125000;125000;150000;Folk festival, international audience;tf.dk
-58;Regional festivals 5-15k guests (group);Music festival group;Various;Various;Summer;60000;5;6;10;25000;125000;150000;250000;"Many 5-15k regional festivals; sell via festival network ('Dansk Live')";dansklive.dk
-59;Dansk Live (festival & venue association);Association;National;National;All year;3000000;10;20;40;25000;250000;500000;1000000;Framework deal for member festivals and venues;dansklive.dk
-60;Distortion;Street festival;Copenhagen;Hovedstaden;5 days, June;100000;5;8;12;25000;125000;200000;300000;Street parties, young audience;cphdistortion.dk
-61;Copenhagen Jazz Festival;Music festival;Copenhagen;Hovedstaden;10 days, July;250000;5;6;10;25000;125000;150000;250000;100+ venues, city-wide;jazz.dk
-62;Aarhus Festuge;Culture festival;Aarhus;Midtjylland;10 days, Aug/Sep;500000;5;7;10;25000;125000;175000;250000;City-wide culture festival;aarhusfestuge.dk
-63;Copenhagen Pride;Festival / parade;Copenhagen;Hovedstaden;1 week, August;300000;5;8;12;25000;125000;200000;300000;Colourful, very shareable - sponsors;copenhagenpride.dk
-64;Folkemødet;Political festival;Allinge, Bornholm;Hovedstaden;3 days, June;100000;5;8;12;25000;125000;200000;300000;Organisations & companies want visibility - each could rent a branded booth;folkemodet.dk
-65;Kulturnatten Copenhagen;Culture night;Copenhagen;Hovedstaden;1 night, October;100000;5;5;8;25000;125000;125000;200000;Hundreds of participating venues;kulturnatten.dk
-66;Skagen Festival;Music festival;Skagen;Nordjylland;4 days, July;20000;5;5;6;25000;125000;125000;150000;Tourist audience;skagenfestival.dk
-67;Ringsted Festival;Festival;Ringsted;Sjælland;Summer;20000;5;5;6;25000;125000;125000;150000;Regional festival;-
-68;Vig Festival;Music festival;Vig;Sjælland;3 days, July;15000;5;5;6;25000;125000;125000;150000;Regional festival;vigfestival.dk
-69;Rock Under Broen;Music festival;Middelfart;Syddanmark;1 day, June;15000;5;5;6;25000;125000;125000;150000;Under the Little Belt bridge - iconic photo;rockunderbroen.dk
-70;Wonderfestiwall;Music festival;Roskilde area;Sjælland;3 days, summer;15000;5;5;6;25000;125000;125000;150000;Young audience;wonderfestiwall.dk
-71;Kapsejlads (Aarhus University);Student event;Aarhus;Midtjylland;1 day, May;25000;5;5;6;25000;125000;125000;150000;Massive student party - very shareable;kapsejlads.dk
-72;Danish student events group (Kapsejlads, KU, DTU, AAU parties);Student events;Various;National;All year;100000;5;8;12;25000;125000;200000;300000;Universities' bars and annual parties;-
-73;Aalborg Karneval;Carnival;Aalborg;Nordjylland;Late May;100000;5;8;12;25000;125000;200000;300000;Scandinavia's largest carnival - costumes = selfies;aalborgkarneval.dk
-74;Copenhagen Carnival (Pinsekarneval);Carnival;Copenhagen;Hovedstaden;Whitsun;80000;5;6;8;25000;125000;150000;200000;Street carnival;copenhagencarnival.dk
-75;Aalborg Jomfru Ane Gade / Visit Aalborg events;City events;Aalborg;Nordjylland;All year;500000;5;5;8;25000;125000;125000;200000;Nightlife street & city events;visitaalborg.com
-76;Royal Run;Sports event;5 cities;National;June;100000;5;8;12;25000;125000;200000;300000;Run with the King/Crown Prince - finish-line photos;royalrun.dk
-77;Copenhagen Marathon / Half Marathon;Sports event;Copenhagen;Hovedstaden;May / Sep;50000;5;6;8;25000;125000;150000;200000;Finisher photos with medals;copenhagenmarathon.dk
-78;IRONMAN Copenhagen;Sports event;Copenhagen;Hovedstaden;August;30000;5;5;6;25000;125000;125000;150000;Athletes & spectators;ironman.com
-79;Eremitageløbet / DGI running events (group);Sports event;Various;National;All year;150000;5;6;10;25000;125000;150000;250000;DGI runs many events - finish-line booths;dgi.dk
-80;Tour de France / Postnord Danmark Rundt;Cycling event;Various;National;Summer;300000;5;6;10;25000;125000;150000;250000;Travelling cycling event with sponsors;danmarkrundt.dk
-81;Sankt Hans / Vejle Byfest (city festivals group);City festival group;Various;National;Summer;300000;5;8;12;25000;125000;200000;300000;100+ byfester - sell via municipalities;-
-82;Hjallerup Marked;Market / fair;Hjallerup;Nordjylland;4 days, June;150000;5;7;10;25000;125000;175000;250000;One of the largest horse & kræmmer markets;hjallerupmarked.dk
-83;Sindal Marked;Market / fair;Sindal;Nordjylland;4 days, June;100000;5;6;8;25000;125000;150000;200000;Big kræmmermarked + tivoli;sindalmarked.dk
-84;Vorbasse Marked;Market / fair;Vorbasse;Syddanmark;3 days, July;200000;5;7;10;25000;125000;175000;250000;Northern Europe's largest horse market;vorbassemarked.dk
-85;Roskilde Dyrskue;Agricultural show;Roskilde;Sjælland;3 days, June;80000;5;5;7;25000;125000;125000;175000;Zealand's biggest animal show;roskildedyrskue.dk
-86;Fynsk Dyrskue / Fyens Dyrskue;Agricultural show;Odense;Syddanmark;3 days, June;50000;5;5;6;25000;125000;125000;150000;Funen agricultural show;fyensdyrskue.dk
-87;Regional dyrskuer / agricultural shows (group);Agricultural show group;Various;National;Summer;200000;5;6;10;25000;125000;150000;250000;Many regional shows via Landbrug & Fødevarer;-
-88;Danish kræmmermarkeder (group: Tarm, Skive, Bjerringbro etc.);Market group;Various;National;Summer;300000;5;8;15;25000;125000;200000;375000;Dozens of markets organised by same tent/tivoli operators;-
-89;Tivoli operators / travelling fairs (Dansk Forlystelsesforening);Travelling fair;Various;National;Summer;1000000;5;10;20;25000;125000;250000;500000;Travelling tivolis visit 100+ markets - reuse units all season;-
-90;Tivoli Jul;Christmas market;Copenhagen;Hovedstaden;Nov-Dec;1500000;0;5;10;25000;0;125000;250000;Christmas season extra units/frames (on top of Tivoli base);tivoli.dk
-91;Nyhavn Julemarked;Christmas market;Copenhagen;Hovedstaden;Nov-Dec;500000;5;5;7;25000;125000;125000;175000;Picture-postcard Christmas market;visitcopenhagen.dk
-92;Kongens Nytorv / Højbro Plads Julemarked;Christmas market;Copenhagen;Hovedstaden;Nov-Dec;400000;5;5;7;25000;125000;125000;175000;Central Copenhagen markets;-
-93;Bakkens Jul (Jul på Bakken);Christmas market;Klampenborg;Hovedstaden;Nov-Dec;300000;0;5;6;25000;0;125000;150000;Christmas season at Bakken;bakken.dk
-94;Den Gamle By Jul;Christmas market;Aarhus;Midtjylland;Nov-Dec;250000;0;5;6;25000;0;125000;150000;Historic Christmas;dengamleby.dk
-95;H.C. Andersen Julemarked;Christmas market;Odense;Syddanmark;December;150000;5;5;6;25000;125000;125000;150000;Fairy-tale themed frames;visitodense.dk
-96;Aalborg Julemarked (Gammeltorv & C.W. Obels Plads);Christmas market;Aalborg;Nordjylland;Nov-Dec;150000;5;5;6;25000;125000;125000;150000;City Christmas market;visitaalborg.com
-97;Ribe Julemarked;Christmas market;Ribe;Syddanmark;December;80000;5;5;6;25000;125000;125000;150000;Denmark's oldest town;visitribe.dk
-98;Gl. Estrup Julemarked;Christmas market;Auning;Midtjylland;Nov-Dec;60000;5;5;6;25000;125000;125000;150000;Manor house Christmas fair;gammelestrup.dk
-99;Egeskov Jul;Christmas market;Kværndrup;Syddanmark;Nov-Dec;60000;0;5;6;25000;0;125000;150000;Castle Christmas;egeskov.dk
-100;Koldinghus / Kolding Julemarked;Christmas market;Kolding;Syddanmark;Nov-Dec;60000;5;5;6;25000;125000;125000;150000;Castle + town market;koldinghus.dk
-101;Knuthenborg Winter Wonderland;Christmas / light event;Maribo;Sjælland;Nov-Jan;150000;0;5;7;25000;0;125000;175000;Huge light trail - perfect selfie event;knuthenborg.dk
-102;Christmas light trails (Lumagica-type events, group);Christmas / light event;Various;National;Nov-Jan;200000;5;6;10;25000;125000;150000;250000;Light trails at estates/zoos;-
-103;Field's;Shopping centre;Copenhagen;Hovedstaden;All year;9000000;5;6;10;25000;125000;150000;250000;Denmark's largest mall - campaign & Christmas activations;fields.dk
-104;Klépierre / Steen & Strøm Danmark (Field's, Bruun's, Kolding Storcenter...);Shopping centre group;National;National;All year;30000000;8;15;25;25000;200000;375000;625000;One owner, multiple centres - chain deal;klepierre.dk
-105;Rødovre Centrum;Shopping centre;Rødovre;Hovedstaden;All year;8000000;5;5;8;25000;125000;125000;200000;Large mall;rodovrecentrum.dk
-106;Aarhus Storcenter / Bruuns Galleri;Shopping centre;Aarhus;Midtjylland;All year;8000000;5;6;8;25000;125000;150000;200000;Big Aarhus malls;storcenter.dk
-107;Friis Aalborg / City Syd;Shopping centre;Aalborg;Nordjylland;All year;6000000;5;5;7;25000;125000;125000;175000;Aalborg malls;friis.dk
-108;Rosengårdcentret;Shopping centre;Odense;Syddanmark;All year;7000000;5;5;7;25000;125000;125000;175000;Denmark's largest mall outside Copenhagen area;rosengaardcentret.dk
-109;DADES / Danica Ejendomme / Salling Group centres (group);Shopping centre group;National;National;All year;40000000;8;15;25;25000;200000;375000;625000;Mall owners with 10-30 centres each;-
-110;Parken / Parken Sport & Entertainment;Stadium;Copenhagen;Hovedstaden;All year;1500000;5;8;12;25000;125000;200000;300000;Football, concerts, FCK fans;parken.dk
-111;Royal Arena;Arena;Copenhagen;Hovedstaden;All year;800000;5;6;8;25000;125000;150000;200000;Concerts & shows;royalarena.dk
-112;MCH Herning (Messecenter, Boxen, MCH Arena);Arena / exhibitions;Herning;Midtjylland;All year;1500000;5;8;12;25000;125000;200000;300000;Fairs + concerts + FCM football;mch.dk
-113;Bella Center Copenhagen;Exhibition centre;Copenhagen;Hovedstaden;All year;1500000;5;8;12;25000;125000;200000;300000;Fairs, CPH Fashion, exhibitor rental;bellacentercopenhagen.dk
-114;Odense Congress Center / Arena Fyn;Venue;Odense;Syddanmark;All year;500000;5;5;7;25000;125000;125000;175000;Fairs and concerts;occ.dk
-115;Superliga clubs (Brøndby, AGF, AaB, OB, FCM etc. - group);Football clubs;National;National;Season;2500000;8;12;24;25000;200000;300000;600000;Fan-zone booths at 12 stadiums;superliga.dk
-116;Danish Handball / Ice hockey league clubs (group);Sports clubs;National;National;Season;1000000;5;8;15;25000;125000;200000;375000;Arena fan zones;-
-117;BLAST / esports events;Esports;Copenhagen;Hovedstaden;Events;100000;5;5;7;25000;125000;125000;175000;Gamer audience, sponsors;blast.tv
-118;Musikhuset Aarhus / Tivoli Koncertsal / concert venues (group);Concert venues;National;National;All year;2000000;5;8;15;25000;125000;200000;375000;Foyer booths at concerts and shows;-
-119;Live Nation Danmark / Fullsteam / Smash! (promoters);Concert promoter;National;National;All year;2000000;5;10;20;25000;125000;250000;500000;Promoters run hundreds of concerts - travelling branded units;livenation.dk
-120;Nordisk Film Biografer;Cinema chain;National;National;All year;6000000;8;15;25;25000;200000;375000;625000;Movie-themed frames per premiere;nfbio.dk
-121;Kinopalæet / CinemaxX / Biografer (independents group);Cinema group;National;National;All year;3000000;5;8;15;25000;125000;200000;375000;Cinema lobbies;-
-122;Leos Legeland;Indoor playground chain;National;National;All year;1500000;5;10;15;25000;125000;250000;375000;Kids' birthdays - parents share;leoslegeland.dk
-123;Bowl'n'Fun / Rush Trampoline / Jump parks (group);Leisure chain;National;National;All year;2000000;5;10;20;25000;125000;250000;500000;Party & birthday centres;-
-124;Lalandia / Danland / Landal / Feriepartner holiday parks (group);Holiday parks;National;National;All year;2000000;5;10;20;25000;125000;250000;500000;Holiday resorts - guest activity;-
-125;Danish campsites (DK-Camp / Danish Camping Board);Camping;National;National;Summer;10000000;5;10;25;25000;125000;250000;625000;Big family campsites (e.g. Hvidbjerg Strand, Feldberg);dk-camp.dk
-126;DFDS (Copenhagen-Oslo ferry);Ferry / cruise;Copenhagen;National;All year;1000000;5;6;10;25000;125000;150000;250000;Mini-cruise party guests;dfds.com
-127;Molslinjen / Scandlines / Færgen (ferries);Ferries;National;National;All year;10000000;5;10;20;25000;125000;250000;500000;Travellers have idle time on board;molslinjen.dk
-128;Copenhagen Airport;Airport;Kastrup;Hovedstaden;All year;30000000;5;6;10;25000;125000;150000;250000;'Welcome to Copenhagen' branded frames;cph.dk
-129;Wedding & party venues (Danish 'selskabslokaler' & hotel chains: Scandic, Comwell, Zleep);Hotels / venues;National;National;All year;5000000;8;20;40;25000;200000;500000;1000000;Weddings, confirmations, company parties;-
-130;Event rental companies (Partyudlejning, event agencies);Reseller;National;National;All year;0;10;25;50;25000;250000;625000;1250000;Buy units to rent out - reseller channel;-
-131;Municipalities (98 kommuner - libraries, culture houses, city events);Public sector;National;National;All year;0;10;20;40;25000;250000;500000;1000000;Culture & library events, youth clubs;kl.dk
-132;VisitDenmark / Destination companies (group);Tourism;National;National;All year;0;5;10;20;25000;125000;250000;500000;Branded 'I was here' frames at tourist spots;visitdenmark.dk
-133;Corporate brand activations (Carlsberg, Coca-Cola, Tuborg, Red Bull etc.);Brand sponsors;National;National;All year;0;10;20;40;25000;250000;500000;1000000;Sponsors bring branded booths to festivals - collects leads/phone numbers;-
+﻿Rank;Name;Category;City;Region;Season / Duration;Visitors per year (approx.);Units - low;Units - realistic;Units - high;Fit score (1-10);Yes likelihood (1-10);Priority score (1-10);Unit price DKK;Value low DKK;Value realistic DKK;Value high DKK;Theme & placement idea;Why they would say yes / risk;Website
+1;Aalborg Zoo;Zoo;Aalborg;Nordjylland;All year;450000;5;6;9;9;8;8.4;25000;125000;150000;225000;"Zoo animals in Aalborg Zoo branding; entrance, polar bears, giraffes, café + 'Zoo i lys'";Mid-size, local decision, wants social reach & sponsor income;aalborgzoo.dk
+2;AaB;Football club;Aalborg;Nordjylland;Season Jul-May (~17-20 home games + events);130000;5;5;8;9;8;8.4;25000;125000;125000;200000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Local Aalborg partner - easy to visit, strong regional pride;aabsport.dk
+3;Aalborg Håndbold (Gigantium);Handball club;Aalborg;Nordjylland;Season Sep-May (~15-25 home games);110000;3;5;7;9;8;8.4;25000;75000;125000;175000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Top club, Champions League nights, local - strong yes chance;aalborghaandbold.dk
+4;GOG;Handball club;Gudme;Syddanmark;Season Sep-May (~15-25 home games);70000;3;4;6;9;8;8.4;25000;75000;100000;150000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Family-style club with strong community;gog.dk
+5;Team Esbjerg (women);Handball club;Esbjerg;Syddanmark;Season Sep-May (~15-25 home games);50000;3;4;5;9;8;8.4;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Top women's club, strong family audience;teamesbjerg.dk
+6;Odense Håndbold (women);Handball club;Odense;Syddanmark;Season Sep-May (~15-25 home games);50000;3;4;5;9;8;8.4;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Top women's club;odensehaandbold.dk
+7;Aalborg Pirates;Ice hockey club;Aalborg;Nordjylland;Season Sep-Apr (~25 home games);80000;3;4;5;9;8;8.4;25000;75000;100000;125000;"Team colours/mascot frames; rink entrance, bar, kids' area";Pirate theme = perfect photo frames, local;aalborgpirates.dk
+8;Skjern Håndbold;Handball club;Skjern;Midtjylland;Season Sep-May (~15-25 home games);60000;3;4;5;8;8;8.0;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Extremely loyal local crowd;skjern-haandbold.dk
+9;Mors-Thy Håndbold;Handball club;Nykøbing Mors;Nordjylland;Season Sep-May (~15-25 home games);40000;2;4;5;8;8;8.0;25000;50000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Small-town pride, quick decision;morsthy.dk
+10;Frederikshavn White Hawks;Ice hockey club;Frederikshavn;Nordjylland;Season Sep-Apr (~25 home games);60000;2;4;5;8;8;8.0;25000;50000;100000;125000;"Team colours/mascot frames; rink entrance, bar, kids' area";North Jutland local;whitehawks.dk
+11;Event rental companies & agencies (reseller channel);Reseller;National;National;All year;0;10;25;50;9;7;7.8;25000;250000;625000;1250000;They buy units and rent them out under any theme;They profit directly - easiest B2B sale;-
+12;Aalborg Karneval;Carnival;Aalborg;Nordjylland;Late May;100000;5;8;12;9;7;7.8;25000;125000;200000;300000;"Costume/carnival frames; along parade + Kildeparken";Costumes = everyone wants a photo;aalborgkarneval.dk
+13;Odense Zoo;Zoo;Odense;Syddanmark;All year;500000;5;7;10;9;7;7.8;25000;125000;175000;250000;"Oceanium/penguin frames; entrance + Oceanium";Award-winning, marketing-driven;odensezoo.dk
+14;Givskud Zoo - Zootopia;Zoo / safari;Givskud;Syddanmark;Summer;450000;5;7;10;9;7;7.8;25000;125000;175000;250000;"Lions/safari frames; entrance + 'Zootopia' viewpoints";Rebranded to Zootopia - wants shareable content;givskudzoo.dk
+15;Brøndby IF;Football club;Brøndby;Hovedstaden;Season Jul-May (~17-20 home games + events);350000;5;7;10;9;7;7.8;25000;125000;175000;250000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";"Very loyal, photo-loving fan culture; new owners invest in fan experience";brondby.com
+16;BonBon-Land;Theme park;Holme-Olstrup;Sjælland;Summer + Halloween;450000;5;6;9;9;7;7.8;25000;125000;150000;225000;Funny candy-character frames - brand is made for silly photos;"Humour brand = perfect fit; owned by Parques Reunidos";bonbonland.dk
+17;Knuthenborg Safaripark;Zoo / safari;Maribo;Sjælland;Summer + Winter Wonderland;350000;5;6;9;9;7;7.8;25000;125000;150000;225000;Safari frames in summer, light-show frames in winter;Two seasons of use from same units;knuthenborg.dk
+18;Copenhell;Music festival;Copenhagen;Hovedstaden;4 days, June;45000;5;6;9;9;7;7.8;25000;125000;150000;225000;Metal/horns frames - very strong identity;Fans love merch-style photos;copenhell.dk
+19;AGF;Football club;Aarhus;Midtjylland;Season Jul-May (~17-20 home games + events);250000;5;6;9;9;7;7.8;25000;125000;150000;225000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Big city club, new stadium plans;agf.dk
+20;Randers Regnskov;Zoo / rainforest;Randers;Midtjylland;All year;300000;5;5;8;9;7;7.8;25000;125000;125000;200000;Rainforest dome frames, sloths, snakes;Indoor = year-round use, colourful;regnskoven.dk
+21;Camp Adventure (Forest Tower);Attraction;Rønnede;Sjælland;All year;350000;5;5;7;9;7;7.8;25000;125000;125000;175000;Tower/forest frames at tower top & exit;Built for Instagram - visitors already come for the photo;campadventure.dk
+22;Knuthenborg Winter Wonderland (season add-on);Christmas / light event;Maribo;Sjælland;Nov-Jan;150000;0;5;7;9;7;7.8;25000;0;125000;175000;Light-show frames;Add-on to Knuthenborg;knuthenborg.dk
+23;Escape rooms, VR & activity centres (group);Activity centres;National;National;All year;1000000;5;10;20;8;7;7.4;25000;125000;250000;500000;'We escaped!' frames per room;Groups & birthdays - selfie after the game is natural;-
+24;Djurs Sommerland;Theme park;Nimtofte;Midtjylland;Summer + Halloween;900000;6;9;13;8;7;7.4;25000;150000;225000;325000;"Area-themed frames (Piratland, Juratopia); ride exits";Biggest Danish summerland, decides locally;djurssommerland.dk
+25;Fårup Sommerland;Theme park;Blokhus;Nordjylland;Summer + Halloween;700000;6;8;12;8;7;7.4;25000;150000;200000;300000;"Rollercoaster/water park frames; entrance, Lynet/Fønix exit";Danish family-owned, invests in new experiences each year;faarupsommerland.dk
+26;Bakken Bears + basketball Ligaen (group);Basketball clubs;Aarhus + National;National;Season Sep-May;150000;5;8;12;8;7;7.4;25000;125000;200000;300000;"Team colours/dunk frames; court-side, entrance";US-style fan experience culture;basketligaen.dk
+27;Tivoli Friheden;Theme park;Aarhus;Midtjylland;Summer + Christmas;500000;5;7;10;8;7;7.4;25000;125000;175000;250000;"Concert-night frames for Fredagsrock; entrance + stage";Concerts + Christmas = 2 seasons of use;friheden.dk
+28;Jesperhus Feriepark;Theme park / resort;Nykøbing Mors;Nordjylland;Summer;400000;5;6;9;8;7;7.4;25000;125000;150000;225000;"Flower park/jungle frames; resort reception + water park";Resort guests stay several days;jesperhus.dk
+29;Jelling Musikfestival;Music festival;Jelling;Syddanmark;4 days, May;45000;5;6;9;8;7;7.4;25000;125000;150000;225000;Festival logo frames;Volunteer-driven, family audience;jellingmusikfestival.dk
+30;FC Midtjylland;Football club;Herning;Midtjylland;Season Jul-May (~17-20 home games + events);180000;5;6;9;8;7;7.4;25000;125000;150000;225000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Data/innovation-minded club - likes new tech;fcm.dk
+31;Ree Park Safari;Zoo / safari;Ebeltoft;Midtjylland;Summer;200000;5;5;7;8;7;7.4;25000;125000;125000;175000;Safari continent frames;Privately owned, quick decision;reepark.dk
+32;Skandinavisk Dyrepark;Zoo;Kolind;Midtjylland;Summer;250000;5;5;7;8;7;7.4;25000;125000;125000;175000;Polar bear / Nordic animals frames;Privately owned;skandinaviskdyrepark.dk
+33;Jyllands Park Zoo;Zoo;Videbæk;Midtjylland;Summer;120000;5;5;6;8;7;7.4;25000;125000;125000;150000;Family zoo frames;Small owner, quick decision;jyllandsparkzoo.dk
+34;Nordsøen Oceanarium;Aquarium;Hirtshals;Nordjylland;All year;250000;5;5;7;8;7;7.4;25000;125000;125000;175000;North Sea / seal frames;Tourist audience;nordsoenoceanarium.dk
+35;Kattegatcentret;Aquarium;Grenaa;Midtjylland;All year;200000;5;5;7;8;7;7.4;25000;125000;125000;175000;Shark frames;Tourist audience;kattegatcentret.dk
+36;Krokodille Zoo;Zoo;Eskilstrup;Sjælland;All year;80000;3;5;6;8;7;7.4;25000;75000;125000;150000;Crocodile 'jaws' frames;Unique photo spot, private owner;krokodillezoo.dk
+37;Egeskov Slot;Castle / attraction;Kværndrup;Syddanmark;Summer + Christmas;250000;5;5;8;8;7;7.4;25000;125000;125000;200000;"Castle frames; also Heartland & Christmas";Private castle, very commercial and event-driven;egeskov.dk
+38;Skive Beach Party;Music festival;Skive;Midtjylland;3 days, June;25000;5;5;6;8;7;7.4;25000;125000;125000;150000;Beach-party frames;Young audience, local organisers;skivebeachparty.dk
+39;Rock Under Broen;Music festival;Middelfart;Syddanmark;1 day, June;15000;3;5;6;8;7;7.4;25000;75000;125000;150000;Under-the-bridge frames;Iconic location;rockunderbroen.dk
+40;Wonderfestiwall;Music festival;Roskilde area;Sjælland;3 days, summer;15000;3;5;6;8;7;7.4;25000;75000;125000;150000;Youth festival frames;Young audience;wonderfestiwall.dk
+41;Kapsejlads (Aarhus University);Student event;Aarhus;Midtjylland;1 day, May;25000;3;5;6;8;7;7.4;25000;75000;125000;150000;Student boat-race frames;Students = selfie heavy;kapsejlads.dk
+42;Egeskov Jul (season add-on);Christmas market;Kværndrup;Syddanmark;Nov-Dec;60000;0;5;6;8;7;7.4;25000;0;125000;150000;Castle Christmas frames;Add-on to Egeskov;egeskov.dk
+43;OB (Odense Boldklub);Football club;Odense;Syddanmark;Season Jul-May (~17-20 home games + events);150000;5;5;8;8;7;7.4;25000;125000;125000;200000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Big Funen fan base;ob.dk
+44;Randers FC;Football club;Randers;Midtjylland;Season Jul-May (~17-20 home games + events);120000;5;5;7;8;7;7.4;25000;125000;125000;175000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Family-focused club;randersfc.dk
+45;Viborg FF;Football club;Viborg;Midtjylland;Season Jul-May (~17-20 home games + events);100000;3;5;6;8;7;7.4;25000;75000;125000;150000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Community club;viborgff.dk
+46;Silkeborg IF;Football club;Silkeborg;Midtjylland;Season Jul-May (~17-20 home games + events);100000;3;5;6;8;7;7.4;25000;75000;125000;150000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Community club;silkeborgif.com
+47;Vejle Boldklub;Football club;Vejle;Syddanmark;Season Jul-May (~17-20 home games + events);100000;3;5;6;8;7;7.4;25000;75000;125000;150000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Traditional club;vejle-boldklub.dk
+48;SønderjyskE Fodbold;Football club;Haderslev;Syddanmark;Season Jul-May (~17-20 home games + events);90000;3;5;6;8;7;7.4;25000;75000;125000;150000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Same org as SønderjyskE handball & hockey - 3-sport deal;soenderjyske.dk
+49;FC Nordsjælland;Football club;Farum;Hovedstaden;Season Jul-May (~17-20 home games + events);100000;3;5;6;8;7;7.4;25000;75000;125000;150000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Youth/academy brand, family audience;fcn.dk
+50;Gigantium Aalborg;Arena;Aalborg;Nordjylland;All year;500000;3;5;7;8;7;7.4;25000;75000;125000;175000;"Event-specific frames; foyer (handball, concerts, fairs)";Multi-event arena - same units for many events;gigantium.dk
+51;Bjerringbro-Silkeborg;Handball club;Silkeborg;Midtjylland;Season Sep-May (~15-25 home games);60000;3;4;5;8;7;7.4;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Top club;bshaandbold.dk
+52;KIF Kolding;Handball club;Kolding;Syddanmark;Season Sep-May (~15-25 home games);50000;3;4;5;8;7;7.4;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Historic club;kif-kolding.dk
+53;TTH Holstebro;Handball club;Holstebro;Midtjylland;Season Sep-May (~15-25 home games);50000;3;4;5;8;7;7.4;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Men's + women's teams = double use;tth.dk
+54;Fredericia Håndbold;Handball club;Fredericia;Syddanmark;Season Sep-May (~15-25 home games);50000;3;4;5;8;7;7.4;25000;75000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Rising club;fhk.dk
+55;Ikast Håndbold (women);Handball club;Ikast;Midtjylland;Season Sep-May (~15-25 home games);40000;2;4;5;8;7;7.4;25000;50000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Top women's club;ikasthaandbold.dk
+56;Herning Blue Fox;Ice hockey club;Herning;Midtjylland;Season Sep-Apr (~25 home games);70000;3;4;5;8;7;7.4;25000;75000;100000;125000;"Team colours/mascot frames; rink entrance, bar, kids' area";Many titles, strong fans;bluefox.dk
+57;Viborg HK (women);Handball club;Viborg;Midtjylland;Season Sep-May (~15-25 home games);35000;2;3;5;8;7;7.4;25000;50000;75000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Historic women's club;viborghk.dk
+58;Nykøbing F. Håndbold (women);Handball club;Nykøbing F.;Sjælland;Season Sep-May (~15-25 home games);30000;2;3;5;8;7;7.4;25000;50000;75000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Regional pride;nfh.dk
+59;Odense Bulldogs;Ice hockey club;Odense;Syddanmark;Season Sep-Apr (~25 home games);50000;2;3;5;8;7;7.4;25000;50000;75000;125000;"Team colours/mascot frames; rink entrance, bar, kids' area";Bulldog mascot frames;odensebulldogs.dk
+60;Copenhagen Zoo;Zoo;Frederiksberg;Hovedstaden;All year;1300000;8;12;16;9;6;7.2;25000;200000;300000;400000;"Panda/elephant frames; entrance, Panda house, Arctic ring";"Big reach; larger organisation, longer process";zoo.dk
+61;Smukfest;Music festival;Skanderborg;Midtjylland;5 days, August;65000;8;12;18;9;6;7.2;25000;200000;300000;450000;"Beech-forest/Smukfest-logo frames; entrance, Bøgescenen, camp areas, sponsor zones";"Strong photo culture; sponsors can pay for frames";smukfest.dk
+62;F.C. København (Parken);Football club;Copenhagen;Hovedstaden;Season Jul-May (~17-20 home games + events);550000;6;10;15;9;6;7.2;25000;150000;250000;375000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";"Biggest fan base + Europe games; sponsor can own the frame";fck.dk
+63;Den Blå Planet;Aquarium;Kastrup;Hovedstaden;All year;900000;6;8;12;9;6;7.2;25000;150000;200000;300000;Shark tunnel / ocean frames;"Stunning backdrop; national aquarium = longer process";denblaaplanet.dk
+64;Copenhagen Pride;Festival / parade;Copenhagen;Hovedstaden;1 week, August;300000;5;8;12;9;6;7.2;25000;125000;200000;300000;Rainbow frames - extremely shareable;Sponsors fund activations;copenhagenpride.dk
+65;Christmas light trails (group);Christmas / light event;Various;National;Nov-Jan;200000;5;6;10;9;6;7.2;25000;125000;150000;250000;Light frames;Organisers rotate venues;-
+66;Other Liga clubs (group: men's + women's);Handball club;Various;National;Season Sep-May (~15-25 home games);200000;5;10;15;7;7;7.0;25000;125000;250000;375000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Group deal for remaining Liga clubs;-
+67;Hvidovre IF / B.93 / HB Køge / Kolding IF / Hobro (1st division group);Football club;Various;National;Season Jul-May (~17-20 home games + events);250000;5;8;12;7;7;7.0;25000;125000;200000;300000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Group of 1st-division clubs, 1-2 units each;-
+68;Other Metal Ligaen clubs (group: Rødovre, Herlev, Gentofte, SønderjyskE);Ice hockey club;Various;National;Season Sep-Apr (~25 home games);150000;4;8;12;7;7;7.0;25000;100000;200000;300000;"Team colours/mascot frames; rink entrance, bar, kids' area";Group deal;-
+69;Hjallerup Marked;Market / fair;Hjallerup;Nordjylland;4 days, June;150000;5;7;10;7;7;7.0;25000;125000;175000;250000;"Horse-market frames; entrance + beer tents";Local organisers;hjallerupmarked.dk
+70;Vorbasse Marked;Market / fair;Vorbasse;Syddanmark;3 days, July;200000;5;7;10;7;7;7.0;25000;125000;175000;250000;Horse-market frames;Local organisers;vorbassemarked.dk
+71;Regional festivals 5-15k guests (group);Music festival group;Various;National;Summer;60000;5;6;10;7;7;7.0;25000;125000;150000;250000;Shared festival template, logo swap;Many small festivals - sell via network;-
+72;Sindal Marked;Market / fair;Sindal;Nordjylland;4 days, June;100000;5;6;8;7;7;7.0;25000;125000;150000;200000;"Market/tivoli frames; entrance + beer tent";Local organisers, quick yes;sindalmarked.dk
+73;Danish Speedway league clubs (group: Esbjerg, Holsted, Region Varde, Fjelsted...);Speedway;Various;National;Season Apr-Sep;100000;4;6;10;7;7;7.0;25000;100000;150000;250000;Bike/rider frames in pit area & entrance;Small clubs, love fan engagement;-
+74;Sommerland Sjælland;Theme park;Nr. Asmindrup;Sjælland;Summer;250000;5;5;7;7;7;7.0;25000;125000;125000;175000;"Family frames; entrance + birthday area";Small owner, quick decision;sommerlandsjaelland.dk
+75;Joboland;Theme park;Svaneke, Bornholm;Hovedstaden;Summer;120000;5;5;6;7;7;7.0;25000;125000;125000;150000;Bornholm holiday frames;Small, local owner;joboland.dk
+76;Brændesgårdshaven;Theme park;Rønne, Bornholm;Hovedstaden;Summer;150000;5;5;6;7;7;7.0;25000;125000;125000;150000;Bornholm family frames;Small, local owner;braendesgaardshaven.dk
+77;Nibe Festival;Music festival;Nibe;Nordjylland;4 days, July;20000;5;5;6;7;7;7.0;25000;125000;125000;150000;Festival frames;Local organisers;nibefestival.dk
+78;Langelandsfestival;Music festival;Rudkøbing;Syddanmark;6 days, July;25000;5;5;7;7;7;7.0;25000;125000;125000;175000;Family festival frames;Local organisers;langelandsfestival.dk
+79;Vig Festival;Music festival;Vig;Sjælland;3 days, July;15000;3;5;6;7;7;7.0;25000;75000;125000;150000;Festival frames;Local;vigfestival.dk
+80;Ringsted Festival;Festival;Ringsted;Sjælland;Summer;20000;3;5;6;7;7;7.0;25000;75000;125000;150000;Festival frames;Local;-
+81;Lyngby Boldklub;Football club;Lyngby;Hovedstaden;Season Jul-May (~17-20 home games + events);85000;3;5;6;7;7;7.0;25000;75000;125000;150000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Mid-size club;lyngby-boldklub.dk
+82;FC Fredericia;Football club;Fredericia;Syddanmark;Season Jul-May (~17-20 home games + events);50000;3;4;5;7;7;7.0;25000;75000;100000;125000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Smaller club, quick decision;fcfredericia.dk
+83;AC Horsens;Football club;Horsens;Midtjylland;Season Jul-May (~17-20 home games + events);70000;3;4;5;7;7;7.0;25000;75000;100000;125000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Mid-size club;achorsens.dk
+84;Esbjerg fB;Football club;Esbjerg;Syddanmark;Season Jul-May (~17-20 home games + events);85000;3;4;5;7;7;7.0;25000;75000;100000;125000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Big regional fan base;efb.dk
+85;Ribe-Esbjerg HH;Handball club;Esbjerg;Syddanmark;Season Sep-May (~15-25 home games);40000;2;4;5;7;7;7.0;25000;50000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Regional club;reh.dk
+86;Skanderborg AGF Håndbold;Handball club;Skanderborg;Midtjylland;Season Sep-May (~15-25 home games);40000;2;4;5;7;7;7.0;25000;50000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Regional club;sah.dk
+87;SønderjyskE Håndbold;Handball club;Sønderborg;Syddanmark;Season Sep-May (~15-25 home games);40000;2;4;5;7;7;7.0;25000;50000;100000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Bundle with SønderjyskE football/hockey;soenderjyske.dk
+88;Nordsjælland Håndbold;Handball club;Hillerød;Hovedstaden;Season Sep-May (~15-25 home games);35000;2;3;5;7;7;7.0;25000;50000;75000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Regional club;nordsjaellandhaandbold.dk
+89;København Håndbold (women);Handball club;Copenhagen;Hovedstaden;Season Sep-May (~15-25 home games);30000;2;3;5;7;7;7.0;25000;50000;75000;125000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Capital club;kbhhaandbold.dk
+90;Rungsted Seier Capital;Ice hockey club;Hørsholm;Hovedstaden;Season Sep-Apr (~25 home games);50000;2;3;5;7;7;7.0;25000;50000;75000;125000;"Team colours/mascot frames; rink entrance, bar, kids' area";Capital-area club;rungstedhockey.dk
+91;Esbjerg Energy;Ice hockey club;Esbjerg;Syddanmark;Season Sep-Apr (~25 home games);50000;2;3;5;7;7;7.0;25000;50000;75000;125000;"Team colours/mascot frames; rink entrance, bar, kids' area";Regional club;esbjergenergy.dk
+92;Hotels & wedding venues (Scandic, Comwell, Zleep, selskabslokaler);Hotels / venues;National;National;All year;5000000;8;20;40;8;6;6.8;25000;200000;500000;1000000;Wedding/party frames, logo swap per event;Weddings & company parties;-
+93;Dyrehavsbakken (Bakken);Theme park;Klampenborg;Hovedstaden;Summer + Christmas;2000000;8;12;18;8;6;6.8;25000;200000;300000;450000;"Pjerrot/retro tivoli frames; entrance, ride exits, beer halls";Free entry park - booths give them branded content and lead data;bakken.dk
+94;Lalandia Billund;Water park / resort;Billund;Syddanmark;All year;1200000;6;10;14;8;6;6.8;25000;150000;250000;350000;"Tropical/aquadome frames; lobby, Aquadome, Monky Tonky";"Year-round guests with time to spare; Danish-owned";lalandia.dk
+95;Nightclub & bar chains (Heidi's Bier Bar, Kongebar etc. - group);Nightlife chain;National;National;All year;2000000;5;10;20;8;6;6.8;25000;125000;250000;500000;Bar brand frames, permanent per venue;Chains with 5-10 venues;-
+96;Leos Legeland;Indoor playground chain;National;National;All year;1500000;5;10;15;8;6;6.8;25000;125000;250000;375000;Kids' birthday frames at every site;Chain = one deal, many units;leoslegeland.dk
+97;Bowling, trampoline & party centres (group);Leisure chain;National;National;All year;2000000;5;10;20;8;6;6.8;25000;125000;250000;500000;Birthday/party frames;Parties = photos;-
+98;Lalandia Rødby;Water park / resort;Rødby;Sjælland;All year;900000;5;8;12;8;6;6.8;25000;125000;200000;300000;Same as Billund - chain deal with Billund;One decision for two sites;lalandia.dk
+99;Grøn Koncert;Touring concert;8 cities;National;July tour;200000;5;8;12;8;6;6.8;25000;125000;200000;300000;Grøn/charity frames, same units travel to 8 cities;Muskelsvindfonden - charity sponsor angle;groenkoncert.dk
+100;Distortion;Street festival;Copenhagen;Hovedstaden;5 days, June;100000;5;8;12;8;6;6.8;25000;125000;200000;300000;Street-party frames;Young audience;cphdistortion.dk
+101;Student bars & university parties (group);Student events;Various;National;All year;100000;5;8;12;8;6;6.8;25000;125000;200000;300000;Uni/study-line frames, permanent in Friday bars;Permanent install in student bars;-
+102;Royal Run;Sports event;5 cities;National;June;100000;5;8;12;8;6;6.8;25000;125000;200000;300000;Finish-line medal frames;Finish-line photos;royalrun.dk
+103;MCH Herning (Messecenter, Boxen, MCH Arena);Arena / exhibitions;Herning;Midtjylland;All year;1500000;5;8;12;8;6;6.8;25000;125000;200000;300000;Fair/concert frames;Fairs + concerts;mch.dk
+104;Den Gamle By;Museum / attraction;Aarhus;Midtjylland;All year + Christmas;500000;5;7;10;8;6;6.8;25000;125000;175000;250000;Historic 1800s/1970s frames, big Christmas season;Museum = slower, but big Christmas traffic;dengamleby.dk
+105;Northside;Music festival;Aarhus;Midtjylland;3 days, June;40000;5;7;10;8;6;6.8;25000;125000;175000;250000;Sustainable/urban frames;Promoter-run (FKP Scorpio), sponsor-heavy;northside.dk
+106;Tinderbox;Music festival;Odense;Syddanmark;3 days, June;50000;5;7;10;8;6;6.8;25000;125000;175000;250000;Forest-festival frames;Promoter-run, sponsor-heavy;tinderbox.dk
+107;Experimentarium;Science centre;Hellerup;Hovedstaden;All year;450000;5;6;9;8;6;6.8;25000;125000;150000;225000;Science/experiment frames;Families & school classes;experimentarium.dk
+108;Copenhagen Carnival (Pinsekarneval);Carnival;Copenhagen;Hovedstaden;Whitsun;80000;5;6;8;8;6;6.8;25000;125000;150000;200000;Carnival frames;Street carnival;copenhagencarnival.dk
+109;DBU Pokalfinalen / Kvindeliga & grassroots tournaments (Dana Cup);Football club;Hjørring + National;National;Season Jul-May (~17-20 home games + events);100000;5;6;10;8;6;6.8;25000;125000;150000;250000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Dana Cup Hjørring: 20,000+ youth players every July - kids love photos;danacup.com
+110;Motorsport tracks (Jyllandsringen, Padborg Park, Copenhagen Historic GP);Motorsport;Various;National;Season;250000;5;6;10;8;6;6.8;25000;125000;150000;250000;"Race car/pit lane frames; paddock";Car fans love photos with cars;jyllandsringen.dk
+111;Copenhagen Marathon / Half Marathon;Sports event;Copenhagen;Hovedstaden;May / Sep;50000;5;6;8;8;6;6.8;25000;125000;150000;200000;Medal/finisher frames;Finisher photos;copenhagenmarathon.dk
+112;Fjord&Bælt;Aquarium;Kerteminde;Syddanmark;All year;120000;5;5;6;8;6;6.8;25000;125000;125000;150000;Porpoise/seal frames;Small, foundation-run;fjord-baelt.dk
+113;Universe Science Park;Science park;Nordborg;Syddanmark;Summer;200000;5;5;7;8;6;6.8;25000;125000;125000;175000;Science adventure frames;Interactive park;universe.dk
+114;Ripley's / H.C. Andersen Eventyrhus (Rådhuspladsen);Attraction;Copenhagen;Hovedstaden;All year;300000;5;5;7;8;6;6.8;25000;125000;125000;175000;Wacky / fairy-tale frames;Commercial tourist attractions;ripleys.com/copenhagen
+115;Heartland Festival;Music / culture festival;Kværndrup;Syddanmark;3 days, June;15000;5;5;7;8;6;6.8;25000;125000;125000;175000;Premium castle-festival frames;Premium brand partners;heartlandfestival.dk
+116;Aalborg nightlife / Jomfru Ane Gade venues (group);Nightlife;Aalborg;Nordjylland;All year;500000;5;5;8;8;6;6.8;25000;125000;125000;200000;Bar/club logo frames, permanent;Night out photos are natural;-
+117;Nyhavn Julemarked;Christmas market;Copenhagen;Hovedstaden;Nov-Dec;500000;5;5;7;8;6;6.8;25000;125000;125000;175000;Nyhavn Christmas frames;Postcard location;visitcopenhagen.dk
+118;Bakkens Jul (season add-on);Christmas market;Klampenborg;Hovedstaden;Nov-Dec;300000;0;5;6;8;6;6.8;25000;0;125000;150000;Christmas frames on Bakken units;Add-on;bakken.dk
+119;Den Gamle By Jul (season add-on);Christmas market;Aarhus;Midtjylland;Nov-Dec;250000;0;5;6;8;6;6.8;25000;0;125000;150000;Old-time Christmas frames;Add-on;dengamleby.dk
+120;H.C. Andersen Julemarked;Christmas market;Odense;Syddanmark;December;150000;5;5;6;8;6;6.8;25000;125000;125000;150000;Fairy-tale Christmas frames;City market;visitodense.dk
+121;BLAST / esports events;Esports;Copenhagen;Hovedstaden;Events;100000;5;5;7;8;6;6.8;25000;125000;125000;175000;Team/game frames;Gamer audience;blast.tv
+122;Brand sponsors (Carlsberg, Tuborg, Coca-Cola, Red Bull, banks - group);Brand sponsors;National;National;All year;0;10;20;40;9;5;6.6;25000;250000;500000;1000000;Sponsor frames at festivals/stadiums - collects leads & phone numbers;They pay for activations everywhere;-
+123;DHF - Danish Handball Federation (national teams, Final4);Federation / national team;Various;National;Season Sep-May (~15-25 home games);200000;5;6;10;9;5;6.6;25000;125000;150000;250000;"Team colours, player faces, 'I was there' match frames; arena entrance, fan bar, VIP lounge, kids' corner";Handball is Denmark's national sport - fan zones at national games;dhf.dk
+124;Travelling tivolis / fairs (group);Travelling fair;Various;National;Summer;1000000;5;10;20;7;6;6.4;25000;125000;250000;500000;Tivoli frames, travel to 100+ markets;Reuse units all season;-
+125;Padel & sports centres (group);Padel / sports centres;National;National;All year;2000000;5;10;20;7;6;6.4;25000;125000;250000;500000;Club logo frames by courts & café;Fast-growing, social sport;-
+126;Regional arenas (Arena Nord, Sydbank Arena, Struer Energi Park etc. - group);Arena group;Various;National;All year;1500000;5;10;15;7;6;6.4;25000;125000;250000;375000;Event frames, often municipality-owned;Group deal;-
+127;Campsites (DK-Camp members, e.g. Hvidbjerg Strand);Camping;National;National;Summer;10000000;5;10;25;7;6;6.4;25000;125000;250000;625000;Holiday frames at kiosk/playground;Top campsites invest in activities;dk-camp.dk
+128;Folkemødet;Political festival;Allinge, Bornholm;Hovedstaden;3 days, June;100000;5;8;12;7;6;6.4;25000;125000;200000;300000;Each organisation's own branded frame;Companies/NGOs rent booths for visibility;folkemodet.dk
+129;Horse racing tracks (Klampenborg Galop, Jydsk Væddeløbsbane, Charlottenlund, Aalborg, Skive - group);Horse racing;Various;National;All year race days;400000;5;8;12;7;6;6.4;25000;125000;200000;300000;"Race-day / hat-and-dress frames, Derby day frames; grandstand & bar";Derby and race days are dress-up social events;-
+130;Concert venues (Musikhuset, Vega, Train, Tobakken etc. - group);Concert venues;National;National;All year;2000000;5;8;15;7;6;6.4;25000;125000;200000;375000;Concert-night frames in foyer;Foyer booths at concerts;-
+131;Independent cinemas & Kinopalæet group;Cinema group;National;National;All year;3000000;5;8;15;7;6;6.4;25000;125000;200000;375000;Movie frames;Local cinemas;-
+132;Regional family parks & summerlands (group);Theme park group;Various;National;Summer;300000;5;6;10;7;6;6.4;25000;125000;150000;250000;Generic family-park frames with each park's logo;Group deal for smaller parks;-
+133;DGI running & sports events (group);Sports event;Various;National;All year;150000;5;6;10;7;6;6.4;25000;125000;150000;250000;Finish-line frames;Many events;dgi.dk
+134;Small zoos & animal parks (group, e.g. Skærup Zoo);Zoo group;Various;National;Summer;100000;5;5;6;7;6;6.4;25000;125000;125000;150000;Generic zoo frames with each logo;Group deal;-
+135;Tycho Brahe Planetarium;Science centre;Copenhagen;Hovedstaden;All year;200000;5;5;6;7;6;6.4;25000;125000;125000;150000;Space/astronaut frames;Space theme is very photo friendly;planetariet.dk
+136;Aalborg Tårnet / Aalborg city attractions;Attraction;Aalborg;Nordjylland;Summer;100000;3;5;6;7;6;6.4;25000;75000;125000;150000;Viewpoint frames;Tourist photo point;-
+137;Sagnlandet Lejre (Land of Legends);Attraction;Lejre;Sjælland;Summer;100000;5;5;6;7;6;6.4;25000;125000;125000;150000;Viking frames;Role-play visitors in costume;sagnlandet.dk
+138;Middelaldercentret;Attraction;Nykøbing F.;Sjælland;Summer;100000;5;5;6;7;6;6.4;25000;125000;125000;150000;Medieval knight frames;Costume events;middelaldercentret.dk
+139;Tønder Festival;Music festival;Tønder;Syddanmark;5 days, August;30000;5;5;6;7;6;6.4;25000;125000;125000;150000;Folk festival frames;Volunteer-run;tf.dk
+140;Skagen Festival;Music festival;Skagen;Nordjylland;4 days, July;20000;5;5;6;7;6;6.4;25000;125000;125000;150000;Skagen festival frames;Tourist audience;skagenfestival.dk
+141;Roskilde Dyrskue;Agricultural show;Roskilde;Sjælland;3 days, June;80000;5;5;7;7;6;6.4;25000;125000;125000;175000;Farm animal frames;Families;roskildedyrskue.dk
+142;Fyens Dyrskue;Agricultural show;Odense;Syddanmark;3 days, June;50000;3;5;6;7;6;6.4;25000;75000;125000;150000;Farm animal frames;Families;fyensdyrskue.dk
+143;Kongens Nytorv / Højbro Plads Julemarked;Christmas market;Copenhagen;Hovedstaden;Nov-Dec;400000;5;5;7;7;6;6.4;25000;125000;125000;175000;Christmas frames;Market operators;-
+144;Aalborg Julemarked;Christmas market;Aalborg;Nordjylland;Nov-Dec;150000;5;5;6;7;6;6.4;25000;125000;125000;150000;City Christmas frames;City market;visitaalborg.com
+145;Ribe Julemarked;Christmas market;Ribe;Syddanmark;December;80000;3;5;6;7;6;6.4;25000;75000;125000;150000;Oldest-town Christmas frames;Local;visitribe.dk
+146;Gl. Estrup Julemarked;Christmas market;Auning;Midtjylland;Nov-Dec;60000;3;5;6;7;6;6.4;25000;75000;125000;150000;Manor Christmas frames;Local;gammelestrup.dk
+147;Koldinghus / Kolding Julemarked;Christmas market;Kolding;Syddanmark;Nov-Dec;60000;3;5;6;7;6;6.4;25000;75000;125000;150000;Castle Christmas frames;Local;koldinghus.dk
+148;Made in Denmark / DP World Tour golf (Himmerland);Golf event;Farsø;Nordjylland;1 week + resort all year;100000;5;5;7;7;6;6.4;25000;125000;125000;175000;"Golf/trophy frames; Himmerland resort lobby all year";Resort + tour event;himmerland.dk
+149;Odense Congress Center / Arena Fyn;Venue;Odense;Syddanmark;All year;500000;5;5;7;7;6;6.4;25000;125000;125000;175000;Event frames;Fairs and concerts;occ.dk
+150;Rødovre Centrum;Shopping centre;Rødovre;Hovedstaden;All year;8000000;5;5;8;7;6;6.4;25000;125000;125000;200000;Seasonal frames;Danish-owned mall;rodovrecentrum.dk
+151;Friis Aalborg / City Syd;Shopping centre;Aalborg;Nordjylland;All year;6000000;5;5;7;7;6;6.4;25000;125000;125000;175000;Seasonal frames;Local Aalborg;friis.dk
+152;Rosengårdcentret;Shopping centre;Odense;Syddanmark;All year;7000000;5;5;7;7;6;6.4;25000;125000;125000;175000;Seasonal frames;Large mall;rosengaardcentret.dk
+153;Roskilde Festival;Music festival;Roskilde;Sjælland;8 days, June/July;130000;10;15;25;8;5;6.2;25000;250000;375000;625000;"Orange Scene frames; camping, food areas, sponsor tents";Non-profit, strict on commercial look - via sponsors more likely;roskilde-festival.dk
+154;Nordisk Film Biografer;Cinema chain;National;National;All year;6000000;8;15;25;8;5;6.2;25000;200000;375000;625000;Premiere/movie frames - film studios pay;Film studios could sponsor;nfbio.dk
+155;Concert promoters (Live Nation, Smash!Bang!Pow!, Fullsteam);Concert promoter;National;National;All year;2000000;5;10;20;8;5;6.2;25000;125000;250000;500000;Artist/tour frames travel with tours;Promoters run hundreds of shows;livenation.dk
+156;Parken Sport & Entertainment (stadium + events);Stadium;Copenhagen;Hovedstaden;All year;1500000;5;8;12;8;5;6.2;25000;125000;200000;300000;Concert/match frames;Big organisation;parken.dk
+157;Royal Arena;Arena;Copenhagen;Hovedstaden;All year;800000;5;6;8;8;5;6.2;25000;125000;150000;200000;Concert/show frames in foyer;Concert audiences love selfies;royalarena.dk
+158;IRONMAN Copenhagen;Sports event;Copenhagen;Hovedstaden;August;30000;3;5;6;8;5;6.2;25000;75000;125000;150000;'I am an IRONMAN' frames;International organiser;ironman.com
+159;Tivoli Gardens;Theme park;Copenhagen;Hovedstaden;Summer + Halloween + Christmas;4500000;15;20;30;9;4;6.0;25000;375000;500000;750000;"Tivoli guard/peacock frames, new frame each season; at main gate, Plænen, Nimb";Huge reach, but big corporate with strict brand control and existing photo partners;tivoli.dk
+160;Danish kræmmermarkeder (group);Market group;Various;National;Summer;300000;5;8;15;6;6;6.0;25000;125000;200000;375000;Market frames;Many markets share operators;-
+161;Regional dyrskuer / agricultural shows (group);Agricultural show group;Various;National;Summer;200000;5;6;10;6;6;6.0;25000;125000;150000;250000;Farm frames;Group deal;-
+162;DBU - Danish national team (Parken, Fan Zone);Football club;Copenhagen;National;Season Jul-May (~17-20 home games + events);300000;5;6;10;9;4;6.0;25000;125000;150000;250000;"Club colours/crest frames, player cut-outs, 'Matchday' date stamp; entrance, fan zone, family stand, club shop, VIP lounge";Huge reach, but DBU has big sponsors and slow processes;dbu.dk
+163;Hjerl Hede;Open-air museum;Vinderup;Midtjylland;Summer + Christmas;120000;5;5;6;6;6;6.0;25000;125000;125000;150000;Historic village & Christmas frames;Christmas market;hjerlhede.dk
+164;Tivoli Jul (season add-on);Christmas market;Copenhagen;Hovedstaden;Nov-Dec;1500000;0;5;10;9;4;6.0;25000;0;125000;250000;Christmas frames on Tivoli units;Add-on to Tivoli deal;tivoli.dk
+165;Holiday parks (Danland, Landal, Feriepartner - group);Holiday parks;National;National;All year;2000000;5;10;20;7;5;5.8;25000;125000;250000;500000;Holiday frames at reception;Guests with spare time;-
+166;City festivals / byfester (group);City festival group;Various;National;Summer;300000;5;8;12;7;5;5.8;25000;125000;200000;300000;Town logo frames;Via municipalities / town associations;-
+167;Bella Center Copenhagen;Exhibition centre;Copenhagen;Hovedstaden;All year;1500000;5;8;12;7;5;5.8;25000;125000;200000;300000;Exhibitor frames - rent to exhibitors;Exhibitor rental model;bellacentercopenhagen.dk
+168;Aarhus Festuge;Culture festival;Aarhus;Midtjylland;10 days, Aug/Sep;500000;5;7;10;7;5;5.8;25000;125000;175000;250000;Festival theme of the year;Municipality-backed;aarhusfestuge.dk
+169;Visit Skagen / Grenen;Destination;Skagen;Nordjylland;Summer;1500000;5;6;10;7;5;5.8;25000;125000;150000;250000;'Where two seas meet' frames;Destination marketing org;visitskagen.dk
+170;PostNord Danmark Rundt (cycling);Cycling event;Various;National;Summer;300000;5;6;10;7;5;5.8;25000;125000;150000;250000;Yellow jersey frames, travel with race;Travelling event;danmarkrundt.dk
+171;Field's;Shopping centre;Copenhagen;Hovedstaden;All year;9000000;5;6;10;7;5;5.8;25000;125000;150000;250000;Campaign & Christmas frames;Mall activations;fields.dk
+172;Aarhus Storcenter / Bruuns Galleri;Shopping centre;Aarhus;Midtjylland;All year;8000000;5;6;8;7;5;5.8;25000;125000;150000;200000;Seasonal frames;Big malls;storcenter.dk
+173;Copenhagen tourist sights (Rundetaarn, Nyhavn etc. - group);Attraction group;Copenhagen;Hovedstaden;All year;600000;5;5;8;7;5;5.8;25000;125000;125000;200000;'I was in Copenhagen' frames;With Wonderful Copenhagen;visitcopenhagen.dk
+174;DAZA - Danish Association of Zoos & Aquaria (framework deal);Association;National;National;All year;5000000;10;20;40;8;4;5.6;25000;250000;500000;1000000;Zoo-theme template customised per member;One deal, ~20 members - but associations move slowly;daza.dk
+175;Water parks & swimming halls (group: Aqua Billund, Vandkulturhuset, Aquadomen etc.);Water park group;Various;National;All year;2000000;5;8;15;6;5;5.4;25000;125000;200000;375000;Splash/summer frames in lobby/café (dry area);Humidity limits placement - lobby only;-
+176;Copenhagen Jazz Festival;Music festival;Copenhagen;Hovedstaden;10 days, July;250000;5;6;10;6;5;5.4;25000;125000;150000;250000;Jazz frames at main venues;City-wide;jazz.dk
+177;Frilandsmuseet;Museum;Kgs. Lyngby;Hovedstaden;Summer + Christmas;300000;5;5;7;6;5;5.4;25000;125000;125000;175000;Old-farm & Christmas frames;National Museum - public process;natmus.dk
+178;Kulturnatten Copenhagen;Culture night;Copenhagen;Hovedstaden;1 night, October;100000;5;5;8;6;5;5.4;25000;125000;125000;200000;Culture night frames;One night only - rental fits better;kulturnatten.dk
+179;Dansk Live (festival & venue association);Association;National;National;All year;3000000;10;20;40;7;4;5.2;25000;250000;500000;1000000;Member template;Framework deal - slow;dansklive.dk
+180;Klépierre Danmark (Field's, Bruun's, Kolding Storcenter...);Shopping centre group;National;National;All year;30000000;8;15;25;7;4;5.2;25000;200000;375000;625000;Seasonal campaign frames;International owner;klepierre.dk
+181;Other mall owners (DADES, Danica, Salling Group centres - group);Shopping centre group;National;National;All year;40000000;8;15;25;7;4;5.2;25000;200000;375000;625000;Seasonal frames;Large owners;-
+182;VisitDenmark / destination companies (group);Tourism;National;National;All year;0;5;10;20;7;4;5.2;25000;125000;250000;500000;'I was here' frames;Public-funded;visitdenmark.dk
+183;ARoS Aarhus Kunstmuseum;Art museum;Aarhus;Midtjylland;All year;900000;5;5;7;7;4;5.2;25000;125000;125000;175000;Rainbow Panorama frames;Art museums are careful with commercial look;aros.dk
+184;LEGOLAND Billund;Theme park;Billund;Syddanmark;Summer + Halloween + Christmas;2300000;10;15;22;8;3;5.0;25000;250000;375000;550000;LEGO-brick frames per themed land;Owned by Merlin (UK) - central procurement, slow yes;legoland.dk
+185;LEGO House;Attraction;Billund;Syddanmark;All year;400000;5;6;8;8;3;5.0;25000;125000;150000;200000;LEGO frames;LEGO corporate - slow yes;legohouse.com
+186;Fitness chains (Fitness World/PureGym, SATS, Fitnessdk - group);Fitness chain;National;National;All year;20000000;10;20;40;6;4;4.8;25000;250000;500000;1000000;'Day 1 / Day 100' progress frames at entrance;Large chains, central decisions;-
+187;DFDS (Copenhagen-Oslo ferry);Ferry / cruise;Copenhagen;National;All year;1000000;5;6;10;6;4;4.8;25000;125000;150000;250000;Mini-cruise party frames;Corporate;dfds.com
+188;Danish Castles group (Slots- og Kulturstyrelsen);Castle group;National;National;All year;1500000;5;8;15;7;3;4.6;25000;125000;200000;375000;Royal castle frames;State - slow, tender rules;slks.dk
+189;Kronborg Slot;Castle;Helsingør;Hovedstaden;All year;400000;5;5;7;7;3;4.6;25000;125000;125000;175000;Hamlet frames;State-owned - public procurement;kronborg.dk
+190;Municipalities (98 kommuner - libraries, culture houses, city events);Public sector;National;National;All year;0;10;20;40;5;4;4.4;25000;250000;500000;1000000;Town / culture frames;Public procurement;kl.dk
+191;Molslinjen / Scandlines ferries;Ferries;National;National;All year;10000000;5;10;20;5;4;4.4;25000;125000;250000;500000;Travel frames on board;Corporate;molslinjen.dk
+192;Louisiana Museum of Modern Art;Art museum;Humlebæk;Hovedstaden;All year;700000;5;5;6;6;3;4.2;25000;125000;125000;150000;Exhibition frames;Very design-conscious - hard yes;louisiana.dk
+193;Copenhagen Airport;Airport;Kastrup;Hovedstaden;All year;30000000;5;6;10;5;3;3.8;25000;125000;150000;250000;'Welcome to Copenhagen' frames;Strict, tender processes;cph.dk
 
-;TOTAL;;;;;;708;1001;1586;;17700000;25025000;39650000;;
+;TOTAL (all rows);;;;;;909;1327;2068;;;;;22725000;33175000;51700000;;;
+;Priority score = 40% fit + 60% yes-likelihood. Unit price is an assumption - edit UNIT_PRICE.;;;;;;;;;;;;;;;;;;
