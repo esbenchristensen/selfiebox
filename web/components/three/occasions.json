@@ -2,7 +2,7 @@
   {
     "id": "bryllup",
     "name": "Bryllup",
-    "place": "Navne og dato",
+    "place": "Blomster og guld",
     "palette": {
       "base": "#f1e6d6",
       "sage": "#9db596",
@@ -24,7 +24,7 @@
     "frame": {
       "bg": "base",
       "ink": "gold",
-      "caption": "Anna & Jonas · 12.6.2026"
+      "caption": "Skål for brudeparret"
     },
     "photo": "print-wedding",
     "parts": [
@@ -36,7 +36,7 @@
   {
     "id": "fodselsdag",
     "name": "Fødselsdag",
-    "place": "Navn og alder",
+    "place": "Balloner og konfetti",
     "palette": {
       "base": "#16244d",
       "gold": "#f2c14e",
@@ -58,7 +58,7 @@
     "frame": {
       "bg": "base",
       "ink": "gold",
-      "caption": "Birthe 60 år"
+      "caption": "Tillykke med fødselsdagen"
     },
     "photo": "print-birthday",
     "parts": [
@@ -70,7 +70,7 @@
   {
     "id": "julefrokost",
     "name": "Julefrokost",
-    "place": "Logo og tekst",
+    "place": "Grantræer og sne",
     "palette": {
       "base": "#0f3d2e",
       "pine": "#1d6a4c",
@@ -91,7 +91,7 @@
     "frame": {
       "bg": "red",
       "ink": "snow",
-      "caption": "Julefrokost 2026 · Nordlys A/S"
+      "caption": "Glædelig jul"
     },
     "photo": "print-office",
     "parts": [

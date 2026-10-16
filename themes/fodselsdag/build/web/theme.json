@@ -1,7 +1,7 @@
 {
   "id": "fodselsdag",
   "name": "Fødselsdag",
-  "place": "Navn og alder",
+  "place": "Balloner og konfetti",
   "palette": {
     "base": "#16244d",
     "gold": "#f2c14e",
@@ -23,7 +23,7 @@
   "frame": {
     "bg": "base",
     "ink": "gold",
-    "caption": "Birthe 60 år"
+    "caption": "Tillykke med fødselsdagen"
   },
   "photo": "print-birthday",
   "parts": [

@@ -37,8 +37,11 @@ export type Addon = { id: string; name: string; text: string; price: number | nu
 
 export const addons: Addon[] = [
   { id: "film", name: "Ekstra Instax-film", text: "Flere printede fotos, så alle får et med hjem", price: null },
-  { id: "tema", name: "Eget tema", text: "Jeres navne og dato på skærmen og i rammen på hvert foto", price: null },
+  { id: "tema", name: "Tema", text: "Bryllup, fødselsdag eller julefrokost på boksen, skærmen og fotorammen", price: null },
 ];
+
+// The party themes, the same three as the 3D viewer. They are fixed designs, not made per party.
+export const partyThemes = ["Bryllup", "Fødselsdag", "Julefrokost"] as const;
 
 export type DeliveryId = "afhent" | "levering" | "opsaetning";
 
@@ -95,8 +98,8 @@ export const faqPrivate: Faq[] = [
     a: "I kan hente den selv, få den leveret dagen før og hentet dagen efter, eller få os til at stille den op og pakke den ned. Boksen står på en stander og skal kun bruge en almindelig stikkontakt.",
   },
   {
-    q: "Kan vi få vores navne på billederne?",
-    a: "Ja. Med et eget tema kommer jeres navne og dato, eller firmaets logo, på skærmen og i rammen på hvert foto.",
+    q: "Kan boksen passe til vores fest?",
+    a: "Ja. Vælg et tema til bryllup, fødselsdag eller julefrokost. Boksen får vinger og topper i temaets farver, og skærmen og rammen på hvert foto følger med. Temaerne er faste designs, så de er ens fra fest til fest.",
   },
   {
     q: "Skal nogen passe boksen under festen?",
