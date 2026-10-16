@@ -10,7 +10,7 @@ export function Private() {
           <h2 id="private-title" className="h-l">
             Lej en fotoboks til bryllup, fødselsdag eller firmafest.
           </h2>
-          <p className="lede">En dag koster 495 kr., en weekend 750 kr. og en uge 1.250 kr., inkl. moms. Ubegrænsede billeder, en stander og jeres egen eventside med alle fotos er med i prisen. Vælg datoer i kalenderen herunder, så bekræfter vi på mail.</p>
+          <p className="lede">I vælger selv dagene, og prisen følger antal dage: 495 kr. for en dag, 750 kr. for en weekend og 1.250 kr. for en uge, inkl. moms. Ubegrænsede billeder, en stander og jeres egen eventside med alle fotos er med i prisen. Vælg datoer i kalenderen herunder, så bekræfter vi på mail.</p>
         </div>
         <div className="private-media">
           <div>

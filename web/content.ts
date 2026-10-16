@@ -9,22 +9,28 @@ export const business = {
   costPerPhoto: 25, // papir og film 15 kr. + Selfi 10 kr.
 };
 
-export type PackageId = "dag" | "weekend" | "uge";
-
-export type Package = {
-  id: PackageId;
-  name: string;
-  period: string;
-  includes: string;
-  days: number; // how many calendar days a booking covers
-  price: number | null; // kr. inkl. moms
-  popular?: boolean;
+// Price by number of days. The first day carries pickup, setup and the event page, so every
+// extra day costs less: two days 625, three days (a weekend) 750, a week 1.250. From day 8 each
+// day adds 100 kr. Longer than maxDays goes through the contact form.
+export const pricing = {
+  byDays: [495, 625, 750, 875, 995, 1125, 1250], // 1–7 dage, kr. inkl. moms
+  perExtraDay: 100, // dag 8 og frem
+  maxDays: 21,
 };
 
-export const packages: Package[] = [
-  { id: "dag", name: "Dag", period: "Én dag og aften", includes: "Boks, stander og eventside", days: 1, price: 495 },
-  { id: "weekend", name: "Weekend", period: "Fredag til søndag", includes: "Boks, stander og eventside", days: 3, price: 750, popular: true },
-  { id: "uge", name: "Uge", period: "Syv dage i træk", includes: "Boks, stander og eventside", days: 7, price: 1250 },
+export function priceForDays(days: number): number {
+  const { byDays, perExtraDay } = pricing;
+  if (days <= byDays.length) return byDays[Math.max(1, days) - 1];
+  return byDays[byDays.length - 1] + (days - byDays.length) * perExtraDay;
+}
+
+// Shortcuts shown above the calendar. Customers can still pick any number of days.
+export type Preset = { id: "dag" | "weekend" | "uge"; name: string; period: string; days: number; price: number };
+
+export const presets: Preset[] = [
+  { id: "dag", name: "Dag", period: "Én dag og aften", days: 1, price: priceForDays(1) },
+  { id: "weekend", name: "Weekend", period: "Fredag til søndag", days: 3, price: priceForDays(3) },
+  { id: "uge", name: "Uge", period: "Syv dage i træk", days: 7, price: priceForDays(7) },
 ];
 
 export type Addon = { id: string; name: string; text: string; price: number | null };
@@ -78,7 +84,7 @@ export type Faq = { q: string; a: string };
 export const faqPrivate: Faq[] = [
   {
     q: "Hvad koster det at leje en fotoboks?",
-    a: "En dag koster 495 kr., en weekend 750 kr. og en uge 1.250 kr., inkl. moms. Ubegrænsede billeder, stander og jeres egen eventside med alle fotos er med i prisen.",
+    a: "I vælger selv datoerne. En dag koster 495 kr., to dage 625 kr., en weekend 750 kr. og en uge 1.250 kr., inkl. moms. Jo flere dage, jo billigere pr. dag. Ubegrænsede billeder, stander og jeres egen eventside med alle fotos er med i prisen.",
   },
   {
     q: "Hvordan får gæsterne billederne?",
