@@ -75,6 +75,9 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Safety net against sideways scrolling on phones. clip, not hidden: hidden would make body a scroll
+   container and break the sticky nav. */
+html, body { overflow-x: clip; }
 body {
   margin: 0;
   background: var(--surface);
@@ -270,7 +273,8 @@ p { margin: 0; }
 .ph[data-label]::after { content: attr(data-label); position: absolute; left: 14px; bottom: 14px; font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 243, 227, 0.7); }
 
 /* Photo strip */
-.strip { overflow: hidden; padding-block: var(--space-8); }
+/* The track is thousands of px wide and animated; iOS Safari only clips it reliably with its own paint box. */
+.strip { position: relative; overflow: hidden; overflow: clip; contain: paint; padding-block: var(--space-8); }
 .strip-track { display: flex; gap: var(--space-5); width: max-content; }
 .strip .print-card { position: relative; width: 170px; flex: none; }
 @media (prefers-reduced-motion: no-preference) {
