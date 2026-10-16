@@ -18,7 +18,7 @@ export type Venue = {
   id: string;
   name: string;
   place: string;
-  palette: Record<string, string>;
+  palette: Record<string, string | undefined>;
   casing: string;
   ring: { idle: string[]; glow: string };
   frame: { bg: string; ink: string; caption: string };
@@ -90,7 +90,7 @@ function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject
     const byPart: Record<string, THREE.Mesh[]> = { wing_left: [], wing_right: [], topper: [] };
     for (const [name, geometry] of Object.entries(baked(scene))) {
       const [part, key] = name.split("__");
-      const hex = venue.palette[key] ?? venue.palette.base;
+      const hex = venue.palette[key] ?? venue.palette.base ?? "#000000";
       const mesh = new THREE.Mesh(
         geometry,
         new THREE.MeshStandardMaterial({
