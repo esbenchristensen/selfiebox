@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://selfi.dk"),
   title: "Selfi Boks – fotoboksen med lysringen",
   description:
-    "Selfi Boks hænger på væggen, lyser gæsterne op og printer ægte Instax-fotos. Til barer, hoteller og festivaler, og til leje til bryllupper og fester.",
+    "Selfi Boks skaber stemning, samler gæsterne og giver dem et ægte foto med hjem. Lej den til brylluppet eller festen, eller få den på væggen i jeres bar, hotel eller festival.",
   openGraph: {
     title: "Selfi Boks – fotoboksen med lysringen",
-    description: "Fotoboksen der hænger på væggen og tjener penge på hvert smil.",
+    description: "Fotoboksen med lysringen. Glade gæster og et ægte foto i hånden.",
     url: "https://selfi.dk",
     siteName: "Selfi",
     locale: "da_DK",

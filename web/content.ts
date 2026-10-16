@@ -68,12 +68,12 @@ export const specs = [
 
 export const faq = [
   {
-    q: "Hvad koster en Selfi Boks til vores bar?",
-    a: "995 kr. om måneden pr. boks, ekskl. moms. Gæsterne betaler selv for fotoene, og I vælger prisen.",
+    q: "Hvad gør boksen for vores sted?",
+    a: "Den giver gæsterne noget at samles om, et foto med hjem og en grund til at dele aftenen. Jeres navn står i rammen på hvert foto.",
   },
   {
-    q: "Hvordan tjener vi penge på den?",
-    a: "Gæsten betaler pr. foto, mindst 25 kr. De 25 kr. dækker papir og drift. Alt over er jeres.",
+    q: "Hvad koster en Selfi Boks til vores bar?",
+    a: "995 kr. om måneden pr. boks, ekskl. moms. Vil I, kan gæsterne betale pr. foto som tilvalg, så boksen tjener sig selv hjem.",
   },
   {
     q: "Skal personalet hjælpe gæsterne?",

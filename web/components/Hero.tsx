@@ -5,12 +5,12 @@ import { useState } from "react";
 
 const copy = {
   privat: {
-    lede: "Lej en fotoboks med lysring til brylluppet, festen eller firmafesten. Gæsterne får et ægte foto i hånden.",
+    lede: "Lej en fotoboks med lysring til brylluppet, festen eller firmafesten. Gæsterne griner i køen og går hjem med et ægte foto i hånden.",
     primary: { label: "Book datoer", href: "#book" },
   },
   erhverv: {
-    lede: "Fotoboksen der hænger på væggen, lyser gæsterne op og tjener penge for jer på hvert billede.",
-    primary: { label: "Beregn jeres indtjening", href: "#erhverv" },
+    lede: "Fotoboksen der skaber stemning, samler gæsterne og sender jeres navn ud på sociale medier med hvert foto.",
+    primary: { label: "Se hvad den gør for jer", href: "#erhverv" },
   },
 } as const;
 

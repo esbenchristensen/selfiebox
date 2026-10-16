@@ -426,3 +426,45 @@ p { margin: 0; }
   .bk-review div { grid-template-columns: minmax(0, 1fr) auto; }
   .bk-review dt { grid-column: 1 / -1; }
 }
+
+/* ---------- Moments: what guests remember ---------- */
+.moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+.moment { margin: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.moment-media { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-box); overflow: hidden; background: var(--surface-raised); border: 1px solid var(--line); }
+.moment-media > .ph { position: absolute; inset: 0; }
+.moment-media--prints .print-card { width: 52%; }
+.print-cap { position: absolute; left: 12px; right: 12px; bottom: 9px; font: 400 9px/1 var(--font-mono), monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #3a3a3a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.moment-media--phone { display: grid; place-items: center; }
+.phone { width: 64%; aspect-ratio: 9 / 17; border-radius: 30px; background: #fbfaf6; border: 7px solid #111; color: #121412; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35); }
+.phone-head { display: flex; gap: 8px; align-items: center; font-size: 12px; }
+.phone-head i { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #e9c39a, #7a4a3a); flex: none; }
+.phone-head b { display: block; font-weight: 600; line-height: 1.2; }
+.phone-head small { color: #6b7069; font-size: 10px; }
+.phone-print { position: relative; background: #fff; padding: 8px 8px 26px; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18); transform: rotate(-2deg); }
+.phone-print .ph { aspect-ratio: 1; }
+.moment .phone-text { font-size: 12px; line-height: 1.35; color: #121412; }
+.moment figcaption { display: flex; flex-direction: column; gap: 6px; }
+.moment h3 { font-size: 22px; letter-spacing: -0.02em; }
+.moment p { color: var(--ink-muted); font-size: 16px; }
+
+/* ---------- Business: guests first, earnings as an add-on ---------- */
+.gains { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--space-7); margin-bottom: var(--space-8); }
+.gain { padding: var(--space-5) 0; border-top: 1px solid var(--line); }
+.gain h3 { font-size: 19px; letter-spacing: -0.01em; margin-bottom: 6px; }
+.gain p { color: var(--ink-muted); font-size: 16px; }
+.addon-earn { border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--surface-raised); }
+.addon-earn summary { list-style: none; cursor: pointer; padding: var(--space-5) var(--space-6); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-4); align-items: center; }
+.addon-earn summary::-webkit-details-marker { display: none; }
+.addon-earn summary > span { display: flex; flex-direction: column; gap: 4px; }
+.addon-earn summary b { font: 600 20px/1.2 var(--font-display), sans-serif; letter-spacing: -0.01em; }
+.addon-earn summary .muted { font-size: 15px; }
+.addon-earn summary::after { content: "+"; font: 300 28px/1 var(--font-body), sans-serif; color: var(--ink-muted); transition: transform 250ms var(--ease); }
+.addon-earn[open] summary::after { transform: rotate(45deg); }
+.addon-earn .calc { border: 0; border-top: 1px solid var(--line); border-radius: 0 0 var(--radius-l) var(--radius-l); background: transparent; }
+
+@media (max-width: 900px) {
+  .moments, .gains { grid-template-columns: minmax(0, 1fr); }
+  .moment-media { aspect-ratio: 4 / 3; }
+  .moment-media--phone { aspect-ratio: 4 / 5; }
+  .addon-earn summary { padding: var(--space-5); }
+}
