@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Sans } from "next/font/google";
+import { themeScript } from "@/lib/theme";
 import "./globals.css";
 
 const display = Instrument_Sans({ subsets: ["latin", "latin-ext"], weight: ["500", "600"], variable: "--font-display" });
@@ -23,13 +24,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0e0f0e",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0e0f0e" },
+    { media: "(prefers-color-scheme: light)", color: "#f3f4f1" },
+  ],
   viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="da" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="da" className={`${display.variable} ${body.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>{children}</body>
     </html>
   );
