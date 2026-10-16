@@ -13,16 +13,22 @@ export function Private() {
           <p className="lede">Vælg pakke og dato, så holder vi boksen til jer. Den kommer på en stander, så den kan stå hvor som helst.</p>
         </div>
         <div className="private-media">
-          {/* Placeholder until real photos from events exist */}
-          <div className="ph p2" data-label="Foto fra et bryllup kommer her" role="img" aria-label="Pladsholder for foto fra et bryllup" />
           <div>
             <Image
-              src="/renders/detail.jpg"
-              alt="Nærbillede af kameraet i lysringens gab"
-              width={1200}
-              height={1500}
+              src="/photos/reception.jpg"
+              alt="Gæster til en reception tager et billede ved Selfi Boks"
+              fill
+              sizes="(max-width: 900px) 90vw, 55vw"
+              style={{ objectFit: "cover", objectPosition: "60% 50%" }}
+            />
+          </div>
+          <div>
+            <Image
+              src="/renders/wall.jpg"
+              alt="Selfi Boks med fotomodul på en mørk væg"
+              fill
               sizes="(max-width: 900px) 90vw, 35vw"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{ objectFit: "cover", objectPosition: "50% 45%" }}
             />
           </div>
         </div>

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // What the box does for a night: the queue, the photo in hand, the share the next morning.
 
 export function Moments() {
@@ -14,8 +16,13 @@ export function Moments() {
         <div className="moments">
           <figure className="moment">
             <div className="moment-media">
-              {/* Placeholder until real photos from events exist */}
-              <div className="ph p1" data-label="Foto: gæster ved boksen" role="img" aria-label="Pladsholder for foto af gæster ved boksen" />
+              <Image
+                src="/photos/klub.jpg"
+                alt="Tre venner griner med deres Instax-foto ved Selfi Boks i en natklub"
+                fill
+                sizes="(max-width: 900px) 90vw, 30vw"
+                style={{ objectFit: "cover", objectPosition: "50% 40%" }}
+              />
             </div>
             <figcaption>
               <h3>Stemning, der samler</h3>

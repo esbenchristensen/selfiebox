@@ -226,7 +226,7 @@ p { margin: 0; }
 .pkg a { margin-top: var(--space-3); }
 .private-media { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--space-3); margin-bottom: var(--space-7); }
 .private-media > * { border-radius: var(--radius-box); overflow: hidden; aspect-ratio: 4 / 3; position: relative; }
-.private-media > *:last-child { aspect-ratio: auto; }
+.private-media > *:last-child { aspect-ratio: auto; min-height: 280px; }
 
 /* Placeholder photo: an honest, calm stand-in until real photos exist */
 .ph { position: relative; background: radial-gradient(70% 60% at 35% 40%, #c07a55, #3b2f4f 60%, #141016); }
@@ -468,3 +468,7 @@ p { margin: 0; }
   .moment-media--phone { aspect-ratio: 4 / 5; }
   .addon-earn summary { padding: var(--space-5); }
 }
+
+/* Photos from venues */
+.biz-photo { position: relative; margin: 0 0 var(--space-7); aspect-ratio: 16 / 8; border-radius: var(--radius-box); overflow: hidden; background: var(--surface-raised); }
+@media (max-width: 900px) { .biz-photo { aspect-ratio: 4 / 3; } }

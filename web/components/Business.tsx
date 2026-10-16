@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { business } from "@/content";
 
@@ -34,6 +35,16 @@ export function Business() {
           </h2>
           <p className="lede">Selfi Boks hænger på væggen og gør en almindelig aften til én, folk deler. Det er den bedste reklame, der findes: gæster, der viser deres venner, hvor godt de har det hos jer.</p>
         </div>
+
+        <figure className="biz-photo">
+          <Image
+            src="/photos/bodega.jpg"
+            alt="Gæster på et værtshus ser på deres Instax-foto fra Selfi Boks på væggen"
+            fill
+            sizes="(max-width: 1200px) 95vw, 1160px"
+            style={{ objectFit: "cover", objectPosition: "50% 55%" }}
+          />
+        </figure>
 
         <div className="gains">
           {gains.map((g) => (
