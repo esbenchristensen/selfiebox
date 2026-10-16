@@ -32,9 +32,9 @@ export function Contact() {
         <div className="sec-head" style={{ marginBottom: 0 }}>
           <span className="label">Kontakt</span>
           <h2 id="contact-title" className="h-l">
-            Lad os tale om jeres aften.
+            Fortæl os om jeres sted eller fest.
           </h2>
-          <p className="lede">Skriv lidt om stedet eller festen, så vender vi tilbage med en pris og en plan.</p>
+          <p className="lede">Skriv et par linjer, så vender vi tilbage med pris og plan. Holder I privat fest, kan I også se ledige datoer og priser direkte i <a href="#book">bookingkalenderen</a>.</p>
         </div>
 
         {state.kind === "sent" ? (

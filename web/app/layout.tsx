@@ -9,17 +9,18 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://selfi.dk"),
-  title: "Selfi Boks – fotoboksen med lysringen",
+  title: "Lej fotoboks fra 495 kr. | Selfi Boks til fest, bar og hotel",
   description:
-    "Selfi Boks skaber stemning, samler gæsterne og giver dem et ægte foto med hjem. Lej den til brylluppet eller festen, eller få den på væggen i jeres bar, hotel eller festival.",
+    "Lej en fotoboks til bryllup, fødselsdag eller firmafest fra 495 kr. Ubegrænsede billeder, studielys og eventside. Til barer og hoteller fra 995 kr./md.",
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Selfi Boks – fotoboksen med lysringen",
-    description: "Fotoboksen med lysringen. Glade gæster og et ægte foto i hånden.",
+    title: "Lej fotoboks fra 495 kr. | Selfi Boks",
+    description: "Fotoboksen, der får alle med på billedet. Til bryllup, fødselsdag, firmafest og jeres bar.",
     url: "https://selfi.dk",
     siteName: "Selfi",
     locale: "da_DK",
     type: "website",
-    images: [{ url: "/renders/hero.jpg", width: 1200, height: 1500, alt: "Selfi Boks med tændt lysring" }],
+    images: [{ url: "/renders/hero.jpg", width: 1200, height: 1500, alt: "Selfi Boks fotoboks med tændt lysring" }],
   },
 };
 

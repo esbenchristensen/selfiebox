@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 
 const steps = [
-  { n: "01", title: "Lysringen kalder", text: "Når ingen bruger boksen, ånder ringen langsomt. Den ses fra den anden ende af lokalet." },
-  { n: "02", title: "3, 2, 1", text: "Et tryk på skærmen, og ringen tæller ned. Gæsterne når at finde hinanden." },
-  { n: "03", title: "Studielys", text: "Ringen giver neutralt hvidt lys på alle ansigter. Ingen blitz i øjnene, ingen grønne diskoskygger." },
-  { n: "04", title: "Et ægte foto", text: "Et Instax-foto glider ud på få sekunder og fremkalder i hånden. Det er det, folk tager med hjem." },
+  { n: "01", title: "Lysringen trækker folk til", text: "Når ingen bruger boksen, pulserer ringen langsomt. Den kan ses fra den anden ende af lokalet." },
+  { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Der er tid til at få alle med på billedet." },
+  { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, så alle ansigter står skarpt, også i en mørk bar. Ingen blitz i øjnene og ingen grønne skygger fra diskolyset." },
+  { n: "04", title: "Billedet med hjem", text: "Instax-fotoet glider ud og fremkalder i hånden. Den digitale udgave ligger klar på telefonen via QR-kode eller SMS." },
 ];
 
 export function Story() {
@@ -40,7 +40,7 @@ export function Story() {
         <div className="sec-head">
           <span className="label">Sådan virker den</span>
           <h2 id="story-title" className="h-l">
-            Fra tryk til foto på under et minut.
+            Fra tryk til billede på under et minut.
           </h2>
         </div>
         <div className="story">

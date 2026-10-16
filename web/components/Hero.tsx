@@ -5,12 +5,14 @@ import { useState } from "react";
 
 const copy = {
   privat: {
-    lede: "Lej en fotoboks med lysring til brylluppet, festen eller firmafesten. Gæsterne griner i køen og går hjem med et ægte foto i hånden.",
-    primary: { label: "Book datoer", href: "#book" },
+    title: "Lej en fotoboks, der får alle med på billedet.",
+    lede: "Til bryllup, fødselsdag og firmafest fra 495 kr. Gæsterne tager så mange billeder, de vil, i ægte studielys, og alle fotos samles på jeres egen eventside bagefter.",
+    primary: { label: "Se ledige datoer", href: "#book" },
   },
   erhverv: {
-    lede: "Fotoboksen der skaber stemning, samler gæsterne og sender jeres navn ud på sociale medier med hvert foto.",
-    primary: { label: "Se hvad den gør for jer", href: "#erhverv" },
+    title: "Fotoboksen, der får gæsterne til at komme igen.",
+    lede: "Selfi Boks hænger på væggen i jeres bar, klub eller hotel. Gæsterne deler billederne med jeres navn i rammen, og I får en gæsteliste, I kan invitere tilbage. 995 kr. om måneden.",
+    primary: { label: "Se, hvad den gør for jer", href: "#erhverv" },
   },
 } as const;
 
@@ -31,7 +33,7 @@ export function Hero() {
             </button>
           </div>
           <h1 id="hero-title" className="h-xl">
-            Lyset klarer resten.
+            {c.title}
           </h1>
           <p className="lede" aria-live="polite">
             {c.lede}
@@ -41,7 +43,7 @@ export function Hero() {
               {c.primary.label}
             </a>
             <a className="btn btn-secondary" href="#saadan">
-              Se hvordan den virker
+              Sådan virker den
             </a>
           </div>
         </div>

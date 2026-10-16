@@ -10,10 +10,19 @@ import { Activities, Faq, Inside, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { Themes } from "@/components/Themes";
+import { faq } from "@/content";
+
+// FAQ as structured data, so search engines can show the answers in results.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
 
 export default function Home() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Nav />
       <main>
         <Hero />

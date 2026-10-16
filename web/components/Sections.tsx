@@ -13,12 +13,12 @@ export function Inside() {
           sizes="(max-width: 900px) 90vw, 50vw"
         />
         <div>
-          <span className="label">Indeni</span>
+          <span className="label">Specifikationer</span>
           <h2 className="h-l" style={{ marginTop: 16 }}>
             Lille nok til væggen. Lys nok til hele baren.
           </h2>
           <p className="lede" style={{ marginTop: 20 }}>
-            Kamera, skærm, lysring og printer i én boks på 66 mm. Den hænger på væggen med tyverilås og kører uden personale.
+            Kamera, skærm, lysring og printer i én boks, der kun er 6,6 cm dyb. Den hænger på væggen med tyverilås eller står på en stander og kører uden personale.
           </p>
           <div className="specs">
             {specs.map(([k, v]) => (
@@ -81,7 +81,7 @@ export function Activities() {
           <h2 id="act-title" className="h-l">
             Gør aftenen til et spil.
           </h2>
-          <p className="lede">I vælger, hvad der kører, og hvornår. Alt kan slås til og fra i kontrolpanelet.</p>
+          <p className="lede">Boksen kan mere end at tage billeder. Slå konkurrencer og små opgaver til, når I vil have liv i lokalet, og fra igen, når festen kører af sig selv.</p>
         </div>
         <div className="acts">
           {activities.map((a) => (
@@ -138,9 +138,9 @@ export function Faq() {
     <section className="section" aria-labelledby="faq-title">
       <div className="wrap">
         <div className="sec-head">
-          <span className="label">Spørgsmål</span>
+          <span className="label">Spørgsmål og svar</span>
           <h2 id="faq-title" className="h-l">
-            Det bliver vi ofte spurgt om.
+            Spørgsmål om at leje en fotoboks.
           </h2>
         </div>
         <div className="faq">

@@ -137,6 +137,7 @@ p { margin: 0; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: var(--space-7); align-items: center; }
 .hero-copy { display: flex; flex-direction: column; gap: var(--space-5); align-items: flex-start; }
 .hero-copy .lede { min-height: 3em; }
+.hero .h-xl { font-size: clamp(42px, 5.6vw, 80px); line-height: 1; }
 .hero-media { position: relative; }
 .hero-media::before { content: ""; position: absolute; inset: 10% 5%; background: radial-gradient(closest-side, var(--glow), transparent); filter: blur(30px); }
 .hero-media img { position: relative; border-radius: var(--radius-box); animation: rise 1200ms var(--ease) both; }

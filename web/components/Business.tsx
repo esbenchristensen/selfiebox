@@ -7,12 +7,12 @@ import { business } from "@/content";
 const kr = (n: number) => Math.round(n).toLocaleString("da-DK");
 
 const gains = [
-  { title: "Glade gæster, der bliver længere", text: "Boksen giver gæsterne noget at gøre sammen. Køen ved boksen er en del af festen." },
-  { title: "Omtale på sociale medier", text: "Hvert foto bærer jeres navn i rammen. Når gæsterne deler, ser deres venner, hvor de var." },
-  { title: "En side til hvert event", text: "Hver aften får sin egen side med fotos, som gæsterne deler. Med deres tilladelse kan I bruge de bedste på jeres egne kanaler og en fotovæg i lokalet." },
+  { title: "En gæsteliste, I må bruge", text: "Gæsterne skriver deres nummer for at få billedet på SMS og kan samtidig sige ja til at høre fra jer. Så kan I sende fredagens gæster et tilbud til næste weekend." },
+  { title: "Omtale, I ikke betaler for", text: "Jeres navn står i rammen på hvert billede. Når gæsterne deler, ser deres venner, hvor de var." },
+  { title: "Gæster, der bliver en omgang mere", text: "Guldtid, konkurrencer og missioner giver folk en grund til at blive. Præmien kan være en øl, I alligevel ville have solgt." },
+  { title: "Billeder til jeres egne kanaler", text: "Hver aften får sin egen side med alle fotos. Siger gæsten ja, kan I bruge billedet på jeres sociale medier og på en fotovæg i lokalet." },
   { title: "Jeres stil, hele vejen", text: "Et tema i jeres farver på boksen, lysringen, skærmen og fotorammen." },
-  { title: "Aftener med noget at fortælle", text: "Titler, missioner, skattejagt og guld tid, som I slår til, når det passer." },
-  { title: "Kører af sig selv", text: "Ingen personale ved boksen. I styrer tema, tekster og aktiviteter fra et kontrolpanel." },
+  { title: "Kører af sig selv", text: "Intet personale ved boksen. Tema, tekster, priser og aktiviteter styrer I fra et kontrolpanel på nettet." },
 ];
 
 export function Business() {
@@ -29,11 +29,11 @@ export function Business() {
     <section id="erhverv" className="section" aria-labelledby="biz-title">
       <div className="wrap">
         <div className="sec-head">
-          <span className="label">Til barer, hoteller og festivaler</span>
+          <span className="label">Til barer, klubber, hoteller og festivaler</span>
           <h2 id="biz-title" className="h-l">
-            Glade gæster. Jeres navn i deres feed.
+            Gæsterne får det sjovt. I får omtalen og gæstelisten.
           </h2>
-          <p className="lede">Selfi Boks hænger på væggen og gør en almindelig aften til én, folk deler. Det er den bedste reklame, der findes: gæster, der viser deres venner, hvor godt de har det hos jer.</p>
+          <p className="lede">Selfi Boks hænger på væggen og kører uden personale. Hvert billede bærer jeres navn, hver deling viser jeres sted til nye mennesker, og hvert telefonnummer kan blive en gæst, der kommer igen.</p>
         </div>
 
         <figure className="biz-photo">
@@ -65,7 +65,7 @@ export function Business() {
             <p className="fine">Ekskl. moms. Boks, lysring, skærm, fotomodul og kontrolpanel.</p>
             <div className="btn-row" style={{ marginTop: 24 }}>
               <a className="btn btn-primary" href="#kontakt">
-                Tal med os om jeres sted
+                Book en uforpligtende snak
               </a>
             </div>
           </div>
@@ -75,7 +75,7 @@ export function Business() {
               <span>
                 <span className="label">Tilvalg</span>
                 <b>Lad gæsterne betale pr. foto</b>
-                <span className="muted">Vil I, kan boksen tage betaling. I bestemmer prisen, og alt over {business.costPerPhoto} kr. er jeres.</span>
+                <span className="muted">Vil I, kan boksen tage betaling for printede fotos. I sætter prisen, og alt over {business.costPerPhoto} kr. pr. foto går til jer.</span>
               </span>
             </summary>
             <div className="calc">

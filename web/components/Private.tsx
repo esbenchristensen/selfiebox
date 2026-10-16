@@ -6,11 +6,11 @@ export function Private() {
     <section id="privat" className="section" aria-labelledby="private-title">
       <div className="wrap">
         <div className="sec-head">
-          <span className="label">Privat</span>
+          <span className="label">Lej til festen</span>
           <h2 id="private-title" className="h-l">
-            Book en Selfi Boks til jeres fest.
+            Lej en fotoboks til bryllup, fødselsdag eller firmafest.
           </h2>
-          <p className="lede">Fra 495 kr. for en dag og 750 kr. for en weekend, inkl. moms. Ubegrænsede billeder og jeres egen eventside med alle fotos. Boksen kommer på en stander, så den kan stå hvor som helst.</p>
+          <p className="lede">En dag koster 495 kr., en weekend 750 kr. og en uge 1.250 kr., inkl. moms. Ubegrænsede billeder, en stander og jeres egen eventside med alle fotos er med i prisen. Vælg datoer i kalenderen herunder, så bekræfter vi på mail.</p>
         </div>
         <div className="private-media">
           <div>

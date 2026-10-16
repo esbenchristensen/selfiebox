@@ -180,7 +180,7 @@ export function Booking() {
                     <span className="bk-card-body">
                       <span className="bk-card-top">
                         <b>{p.name}</b>
-                        {p.popular && <span className="tag">Mest valgt</span>}
+                        {p.popular && <span className="tag">Anbefalet</span>}
                       </span>
                       <span className="muted">{p.period}</span>
                       <span className="bk-card-price">{price(p.price)}</span>

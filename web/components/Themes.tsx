@@ -9,10 +9,10 @@ const themes = [
 ];
 
 const layers = [
-  ["Kassen", "Sider og topper printet i jeres farver og motiver."],
-  ["Lysringen", "Farver og animation, når ingen tager billeder."],
-  ["Skærmen", "Baggrund, tekster og en rulletekst med jeres budskab."],
-  ["Fotoet", "Rammen på hvert foto bærer temaet."],
+  ["Boksen", "Sider og top printet i jeres farver og motiver."],
+  ["Lysringen", "Jeres farver og animationer, når ingen tager billeder."],
+  ["Skærmen", "Baggrund, velkomsttekst og en rulletekst med jeres budskab."],
+  ["Fotoet", "Navne, logo eller dato i rammen på hvert billede."],
 ];
 
 export function Themes() {
@@ -39,7 +39,7 @@ export function Themes() {
             Jeres boks. Jeres farver.
           </h2>
           <p className="lede" style={{ marginTop: 20 }}>
-            Ét tema skifter fire ting på én gang, så boksen føles som en del af stedet eller festen.
+            Ét tema ændrer fire ting på én gang, så boksen ligner en del af festen eller stedet og ikke en lejet maskine.
           </p>
           <div className="seg" role="group" aria-label="Vælg tema" style={{ marginTop: 28 }}>
             {themes.map((t) => (

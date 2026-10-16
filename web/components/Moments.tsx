@@ -7,11 +7,11 @@ export function Moments() {
     <section className="section" aria-labelledby="moments-title">
       <div className="wrap">
         <div className="sec-head">
-          <span className="label">Det, gæsterne husker</span>
+          <span className="label">Hvorfor en fotoboks</span>
           <h2 id="moments-title" className="h-l">
-            Grin i køen. Fotoet i hånden. Opslaget næste morgen.
+            Det bedste billede fra aftenen er det, hvor alle er med.
           </h2>
-          <p className="lede">Boksen samler folk, giver dem et minde med hjem og sørger for, at aftenen lever videre der, hvor deres venner kigger med.</p>
+          <p className="lede">Mobilerne tager hundrede billeder af aftenen. Selfi Boks tager dem, folk faktisk gemmer: alle samlet foran kameraet, i godt lys, med et foto med hjem.</p>
         </div>
         <div className="moments">
           <figure className="moment">
@@ -25,8 +25,8 @@ export function Moments() {
               />
             </div>
             <figcaption>
-              <h3>Stemning, der samler</h3>
-              <p>Lysringen trækker folk til, og missioner og titler får dem til at blive. Fremmede ender på samme billede.</p>
+              <h3>Den samler folk</h3>
+              <p>Lysringen kan ses fra den anden ende af lokalet. Folk stiller sig i kø, griner af hinanden og ender på billede med nogen, de lige har mødt.</p>
             </figcaption>
           </figure>
           <figure className="moment">
@@ -40,8 +40,8 @@ export function Moments() {
               />
             </div>
             <figcaption>
-              <h3>Et ægte foto i hånden</h3>
-              <p>Instax-fotoet fremkalder, mens de står og venter, og ender på køleskabet. Med jeres navn i rammen.</p>
+              <h3>Et foto i hånden</h3>
+              <p>Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens man står og venter. Det er det billede, der hænger på køleskabet en måned senere.</p>
             </figcaption>
           </figure>
           <figure className="moment">
@@ -64,8 +64,8 @@ export function Moments() {
               </div>
             </div>
             <figcaption>
-              <h3>Delt, før de er hjemme</h3>
-              <p>Hvert event får sin egen side med alle fotos, så gæsterne kan dele med det samme. Jeres navn står i rammen, så hvert opslag peger tilbage på jer.</p>
+              <h3>På telefonen med det samme</h3>
+              <p>Gæsterne scanner en QR-kode eller får billedet på SMS. Alle aftenens fotos samles på én side, og navnet i rammen følger med, når de deler.</p>
             </figcaption>
           </figure>
         </div>
