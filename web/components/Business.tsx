@@ -38,11 +38,11 @@ export function Business() {
 
         <figure className="biz-photo">
           <Image
-            src="/photos/bodega.jpg"
-            alt="Gæster på et værtshus ser på deres Instax-foto fra Selfi Boks på væggen"
+            src="/photos/sted-vaertshus.jpg"
+            alt="Venner på et travlt værtshus griner foran Selfi Boks på murstensvæggen"
             fill
             sizes="(max-width: 1200px) 95vw, 1160px"
-            style={{ objectFit: "cover", objectPosition: "50% 55%" }}
+            style={{ objectFit: "cover", objectPosition: "50% 45%" }}
           />
         </figure>
 

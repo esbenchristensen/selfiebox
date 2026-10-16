@@ -30,15 +30,14 @@ export function Moments() {
             </figcaption>
           </figure>
           <figure className="moment">
-            <div className="moment-media moment-media--prints" aria-hidden="true">
-              <div className="print-card" style={{ "--r": "-5deg", left: "12%", top: "16%" } as React.CSSProperties}>
-                <div className="ph p2" />
-                <span className="print-cap">Fredag · Kælderbaren</span>
-              </div>
-              <div className="print-card" style={{ "--r": "4deg", left: "40%", top: "8%" } as React.CSSProperties}>
-                <div className="ph p3" />
-                <span className="print-cap">Anna &amp; Jonas · 12.6</span>
-              </div>
+            <div className="moment-media">
+              <Image
+                src="/photos/instax-haand.jpg"
+                alt="Hænder holder et frisk Instax-foto af tre venner på en bar"
+                fill
+                sizes="(max-width: 900px) 90vw, 30vw"
+                style={{ objectFit: "cover" }}
+              />
             </div>
             <figcaption>
               <h3>Et ægte foto i hånden</h3>
@@ -56,7 +55,9 @@ export function Moments() {
                   </span>
                 </div>
                 <div className="phone-print">
-                  <div className="ph p4" />
+                  <div className="phone-photo">
+                    <Image src="/photos/print-club.jpg" alt="" fill sizes="200px" style={{ objectFit: "cover" }} />
+                  </div>
                   <span className="print-cap">Fredag · Kælderbaren</span>
                 </div>
                 <p className="phone-text">Bedste fredag i lang tid</p>

@@ -3,6 +3,7 @@ import { Contact } from "@/components/Contact";
 import { Hero } from "@/components/Hero";
 import { Logo } from "@/components/Logo";
 import { Moments } from "@/components/Moments";
+import { Venues } from "@/components/Venues";
 import { Nav } from "@/components/Nav";
 import { Private } from "@/components/Private";
 import { Activities, Faq, Inside, PhotoStrip } from "@/components/Sections";
@@ -17,6 +18,7 @@ export default function Home() {
       <main>
         <Hero />
         <Moments />
+        <Venues />
         <Story />
         <Private />
         <Themes />

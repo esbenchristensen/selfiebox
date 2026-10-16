@@ -15,20 +15,20 @@ export function Private() {
         <div className="private-media">
           <div>
             <Image
-              src="/photos/reception.jpg"
-              alt="Gæster til en reception tager et billede ved Selfi Boks"
+              src="/photos/sted-bryllup.jpg"
+              alt="Brudepar og venner griner foran Selfi Boks på en stander til et bryllup i en lade"
               fill
               sizes="(max-width: 900px) 90vw, 55vw"
-              style={{ objectFit: "cover", objectPosition: "60% 50%" }}
+              style={{ objectFit: "cover", objectPosition: "50% 50%" }}
             />
           </div>
           <div>
             <Image
-              src="/renders/wall.jpg"
-              alt="Selfi Boks med fotomodul på en mørk væg"
+              src="/photos/reception.jpg"
+              alt="Gæster til en reception tager et billede ved Selfi Boks"
               fill
               sizes="(max-width: 900px) 90vw, 35vw"
-              style={{ objectFit: "cover", objectPosition: "50% 45%" }}
+              style={{ objectFit: "cover", objectPosition: "38% 50%" }}
             />
           </div>
         </div>

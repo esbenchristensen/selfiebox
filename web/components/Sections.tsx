@@ -101,20 +101,31 @@ export function Activities() {
   );
 }
 
+const PRINTS = [
+  ["print-bar", "Fredag · Bodegaen"],
+  ["print-wedding", "Anna & Jonas · 12.6"],
+  ["print-club", "Lørdag · Klubben"],
+  ["print-office", "Julefrokost"],
+  ["print-birthday", "Birthe 60 år"],
+];
+
 export function PhotoStrip() {
-  const tones = ["p1", "p2", "p3", "p4", "p2", "p1", "p3", "p4"];
-  const all = [...tones, ...tones];
+  const all = [...PRINTS, ...PRINTS, ...PRINTS.slice(0, 2)];
+  const loop = [...all, ...all];
   return (
     <section className="strip" aria-label="Fotos fra Selfi Bokse">
       <div className="strip-track">
-        {all.map((t, i) => (
+        {loop.map(([src, cap], i) => (
           <div
             key={i}
             className="print-card"
             style={{ "--r": `${(i % 2 ? 1 : -1) * (1 + (i % 3))}deg` } as React.CSSProperties}
             aria-hidden="true"
           >
-            <div className={`ph ${t}`} />
+            <div className="print-photo">
+              <Image src={`/photos/${src}.jpg`} alt="" fill sizes="170px" style={{ objectFit: "cover" }} />
+            </div>
+            <span className="print-cap">{cap}</span>
           </div>
         ))}
       </div>

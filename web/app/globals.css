@@ -162,7 +162,7 @@ p { margin: 0; }
 .box .shutter { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--halo); display: grid; place-items: center; margin: 18px auto 0; }
 .box .shutter i { width: 38px; height: 38px; border-radius: 50%; background: var(--green); }
 .box .print { position: absolute; left: 50%; bottom: -10px; width: 110px; margin-left: -55px; background: #fbfaf6; padding: 8px 8px 22px; box-shadow: 0 16px 30px rgba(0, 0, 0, 0.5); transform: translateY(0); opacity: 0; transition: transform 900ms var(--ease), opacity 400ms var(--ease); z-index: 0; }
-.box .print i { display: block; aspect-ratio: 1; background: radial-gradient(70% 60% at 40% 40%, #e9b07c, #8a4a3a 55%, #2a1b1a); }
+.box .print i { display: block; aspect-ratio: 1; background: #222 url(/photos/print-wedding.jpg) center / cover; }
 .box[data-step="0"]::before { animation: breathe 3.2s ease-in-out infinite; }
 .box[data-step="2"] .flash { animation: flash 900ms var(--ease) both; }
 .box[data-step="3"] .print { transform: translateY(150px) rotate(-3deg); opacity: 1; }
@@ -472,3 +472,23 @@ p { margin: 0; }
 /* Photos from venues */
 .biz-photo { position: relative; margin: 0 0 var(--space-7); aspect-ratio: 16 / 8; border-radius: var(--radius-box); overflow: hidden; background: var(--surface-raised); }
 @media (max-width: 900px) { .biz-photo { aspect-ratio: 4 / 3; } }
+
+.print-photo, .phone-photo { position: relative; aspect-ratio: 1; overflow: hidden; background: #222; }
+
+/* ---------- Venues ---------- */
+.venues { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.venue { margin: 0; display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.venue--big { grid-column: span 2; grid-row: span 2; }
+.venue-media { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-l); overflow: hidden; background: var(--surface-raised); }
+.venue--big .venue-media { aspect-ratio: auto; flex: 1; min-height: 320px; }
+.venue:last-child { grid-column: span 2; }
+.venue:last-child .venue-media { aspect-ratio: 8 / 3; }
+.venue figcaption { display: flex; flex-direction: column; gap: 2px; }
+.venue figcaption b { font: 600 18px/1.25 var(--font-display), sans-serif; letter-spacing: -0.01em; }
+.venue figcaption span { color: var(--ink-muted); font-size: 15px; }
+@media (max-width: 900px) {
+  .venues { grid-template-columns: minmax(0, 1fr); }
+  .venue--big, .venue:last-child { grid-column: auto; grid-row: auto; }
+  .venue:last-child .venue-media { aspect-ratio: 4 / 3; }
+  .venue--big .venue-media { aspect-ratio: 4 / 3; flex: none; min-height: 0; }
+}
