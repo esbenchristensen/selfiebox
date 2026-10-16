@@ -11,7 +11,7 @@ import { Activities, Faq, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
 import { Themes } from "@/components/Themes";
 import { Venues } from "@/components/Venues";
-import { faqPrivate, packages, privateActivities } from "@/content";
+import { faqPrivate, presets, privateActivities } from "@/content";
 
 // selfi.dk: renting a box for one party. Venues have their own page at /erhverv.
 
@@ -35,9 +35,7 @@ const jsonLd = [
     name: "Leje af fotoboks",
     serviceType: "Udlejning af fotoboks til fester",
     provider: { "@type": "Organization", name: "Selfi", url: "https://selfi.dk" },
-    offers: packages
-      .filter((p) => p.price)
-      .map((p) => ({ "@type": "Offer", name: `${p.name}: ${p.period}`, price: p.price, priceCurrency: "DKK" })),
+    offers: presets.map((p) => ({ "@type": "Offer", name: `${p.name}: ${p.period}`, price: p.price, priceCurrency: "DKK" })),
   },
   {
     "@context": "https://schema.org",

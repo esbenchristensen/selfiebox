@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { addons, deliveries, occasions, packages, partyThemes, type DeliveryId, type PackageId } from "@/content";
-import { rangeForPackage, START_BOOKING, useBookedDays, useBookingWindow, type StartBooking } from "@/lib/booking";
-import { formatRange, type DayKey, type Range } from "@/lib/dates";
+import { addons, deliveries, occasions, partyThemes, priceForDays, pricing, type DeliveryId } from "@/content";
+import { kr, periodLabel, quote, START_BOOKING, useBookedDays, useBookingWindow, type StartBooking } from "@/lib/booking";
+import { formatRange, type Range } from "@/lib/dates";
 import { Calendar } from "./Calendar";
 
-const STEPS = ["Pakke", "Datoer", "Tilvalg", "Levering", "Kontakt", "Bekræft"] as const;
-const kr = (n: number) => `${n.toLocaleString("da-DK")} kr.`;
+const STEPS = ["Datoer", "Tilvalg", "Levering", "Kontakt", "Bekræft"] as const;
 const price = (n: number | null) => (n === null ? "Pris bekræftes" : n === 0 ? "Gratis" : kr(n));
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; ref: string } | { kind: "error"; message: string };
@@ -15,7 +14,6 @@ type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; ref: stri
 export function Booking() {
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(0); // highest step reached
-  const [pkg, setPkg] = useState<PackageId>("weekend");
   const [range, setRange] = useState<Range | null>(null);
   const [extras, setExtras] = useState<Record<string, boolean>>({});
   const [themeText, setThemeText] = useState("");
@@ -27,14 +25,13 @@ export function Booking() {
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
-  // Package and dates picked in the hero calendar: skip straight to the add-ons.
+  // Dates picked in the hero calendar: skip straight to the add-ons.
   useEffect(() => {
     const onStart = (e: Event) => {
-      const { pkg, range } = (e as CustomEvent<StartBooking>).detail;
-      setPkg(pkg);
+      const { range } = (e as CustomEvent<StartBooking>).detail;
       setRange(range);
-      setStep(2);
-      setDone((d) => Math.max(d, 2));
+      setStep(1);
+      setDone((d) => Math.max(d, 1));
       setTouched(false);
       document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
@@ -42,15 +39,12 @@ export function Booking() {
     return () => window.removeEventListener(START_BOOKING, onStart);
   }, []);
 
-  // Let the package cards elsewhere on the page preselect a package via #book-weekend etc.
+  // Links elsewhere on the page open the date step via #book-weekend etc.
   useEffect(() => {
     const pick = () => {
       const m = location.hash.match(/^#book-(dag|weekend|uge)$/);
       if (m) {
-        setPkg(m[1] as PackageId);
-        setRange(null);
-        setStep(1);
-        setDone((d) => Math.max(d, 1));
+        setStep(0);
         document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
@@ -59,13 +53,11 @@ export function Booking() {
     return () => window.removeEventListener("hashchange", pick);
   }, []);
 
-  const P = packages.find((p) => p.id === pkg)!;
   const D = deliveries.find((d) => d.id === delivery)!;
   const { minDay, maxDay } = useBookingWindow();
-  const rangeFor = (day: DayKey): Range => rangeForPackage(pkg, day);
 
   const lines = [
-    { label: `${P.name}`, value: P.price },
+    { label: range ? `Selfi Boks · ${periodLabel(range)}` : "Selfi Boks", value: range ? quote(range).price : null },
     ...addons.filter((a) => extras[a.id]).map((a) => ({ label: a.name, value: a.price })),
     { label: D.name, value: D.price },
   ];
@@ -74,7 +66,6 @@ export function Booking() {
   const emailOk = /^\S+@\S+\.\S+$/.test(contact.email);
   const addressOk = !D.needsAddress || (address.street.trim() && /^\d{4}$/.test(address.zip.trim()) && address.city.trim());
   const valid = [
-    true,
     !!range,
     true,
     !!addressOk,
@@ -105,7 +96,6 @@ export function Booking() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          package: pkg,
           range,
           addons: addons.filter((a) => extras[a.id]).map((a) => a.id),
           themeText: extras.tema ? themeText : "",
@@ -123,7 +113,7 @@ export function Booking() {
     }
   }
 
-  const nextLabel = ["Vælg datoer", "Fortsæt til tilvalg", "Fortsæt til levering", "Fortsæt til kontakt", "Gennemse booking", "Send booking"][step];
+  const nextLabel = ["Fortsæt til tilvalg", "Fortsæt til levering", "Fortsæt til kontakt", "Gennemse booking", "Send booking"][step];
   const err = (show: boolean, text: string) => touched && show ? <p className="err" role="alert">{text}</p> : null;
 
   if (status.kind === "sent") {
@@ -134,7 +124,7 @@ export function Booking() {
         <p className="lede">
           Vi holder {formatRange(range!)} til jer og bekræfter datoer og pris på {contact.email}.
         </p>
-        <Summary lines={lines} total={total} range={range} pkgName={P.name} deliveryName={D.name} />
+        <Summary lines={lines} total={total} range={range} period={range ? periodLabel(range) : "Vælg datoer"} deliveryName={D.name} />
       </div>
     );
   }
@@ -156,58 +146,30 @@ export function Booking() {
         <div className="bk-main">
           {step === 0 && (
             <fieldset className="bk-fs">
-              <legend className="h-m">Hvor længe skal boksen være hos jer?</legend>
-              <div className="bk-cards">
-                {packages.map((p) => (
-                  <label key={p.id} className="bk-card">
-                    <input
-                      type="radio"
-                      name="pkg"
-                      checked={pkg === p.id}
-                      onChange={() => {
-                        setPkg(p.id);
-                        setRange(null);
-                      }}
-                    />
-                    <span className="bk-card-body">
-                      <span className="bk-card-top">
-                        <b>{p.name}</b>
-                        {p.popular && <span className="tag">Anbefalet</span>}
-                      </span>
-                      <span className="muted">{p.period}</span>
-                      <span className="bk-card-price">{price(p.price)}</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
+              <legend className="h-m">Hvornår skal boksen være hos jer?</legend>
+              <p className="muted">
+                Tryk på første dag og derefter på sidste dag. I betaler for antal dage, og jo flere dage, jo billigere pr. dag:{" "}
+                {`1 dag ${kr(priceForDays(1))}, 2 dage ${kr(priceForDays(2))}, 3 dage ${kr(priceForDays(3))} og en uge ${kr(priceForDays(7))}`}
+              </p>
+              <Calendar selected={range} isBlocked={(k) => booked.has(k)} minDay={minDay} maxDay={maxDay} onPick={setRange} />
+              {range && (
+                <p className="bk-chosen">
+                  <span className="label">Jeres valg · {periodLabel(range)}</span>
+                  <b>{formatRange(range)}</b>
+                  <span className="muted">
+                    {kr(quote(range).price)}
+                    {quote(range).days > 1 ? ` · ${kr(quote(range).perDay)} pr. dag` : ""}
+                  </span>
+                </p>
+              )}
+              {err(!range, "Vælg datoer i kalenderen.")}
               <p className="fine">
-                Alle pakker har boks, stander, ubegrænsede billeder og jeres egen eventside med. Skal I bruge flere bokse eller andre datoer? <a href="#kontakt">Skriv til os</a>.
+                Skal I bruge boksen i mere end {pricing.maxDays} dage eller flere bokse? <a href="#kontakt">Skriv til os</a>.
               </p>
             </fieldset>
           )}
 
           {step === 1 && (
-            <fieldset className="bk-fs">
-              <legend className="h-m">Vælg {pkg === "weekend" ? "weekend" : pkg === "uge" ? "første dag" : "dag"}</legend>
-              <p className="muted">
-                {pkg === "weekend"
-                  ? "Tryk på en dag, så vælger vi hele weekenden fra fredag til søndag."
-                  : pkg === "uge"
-                    ? "Tryk på den første dag. Ugen løber syv dage frem."
-                    : "Tryk på dagen for festen."}
-              </p>
-              <Calendar selected={range} rangeFor={rangeFor} isBlocked={(k) => booked.has(k)} minDay={minDay} maxDay={maxDay} onPick={setRange} />
-              {range && (
-                <p className="bk-chosen">
-                  <span className="label">Jeres valg</span>
-                  <b>{formatRange(range)}</b>
-                </p>
-              )}
-              {err(!range, "Vælg datoer i kalenderen.")}
-            </fieldset>
-          )}
-
-          {step === 2 && (
             <fieldset className="bk-fs">
               <legend className="h-m">Tilvalg</legend>
               <ul className="bk-incl">
@@ -262,7 +224,7 @@ export function Booking() {
             </fieldset>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <fieldset className="bk-fs">
               <legend className="h-m">Hvordan får I boksen?</legend>
               <div className="bk-options">
@@ -297,7 +259,7 @@ export function Booking() {
             </fieldset>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <fieldset className="bk-fs">
               <legend className="h-m">Hvem booker?</legend>
               <div className="form">
@@ -334,24 +296,19 @@ export function Booking() {
             </fieldset>
           )}
 
-          {step === 5 && (
+          {step === 4 && (
             <fieldset className="bk-fs">
               <legend className="h-m">Ser det rigtigt ud?</legend>
               <dl className="bk-review">
                 <div>
-                  <dt>Pakke</dt>
-                  <dd>{P.name}</dd>
-                  <button type="button" onClick={() => go(0)}>Ret</button>
-                </div>
-                <div>
                   <dt>Datoer</dt>
-                  <dd>{range && formatRange(range)}</dd>
-                  <button type="button" onClick={() => go(1)}>Ret</button>
+                  <dd>{range && `${formatRange(range)} (${periodLabel(range)})`}</dd>
+                  <button type="button" onClick={() => go(0)}>Ret</button>
                 </div>
                 <div>
                   <dt>Tilvalg</dt>
                   <dd>{addons.filter((a) => extras[a.id]).map((a) => a.name).join(", ") || "Ingen"}{extras.tema && themeText ? ` (${themeText})` : ""}</dd>
-                  <button type="button" onClick={() => go(2)}>Ret</button>
+                  <button type="button" onClick={() => go(1)}>Ret</button>
                 </div>
                 <div>
                   <dt>Levering</dt>
@@ -359,14 +316,14 @@ export function Booking() {
                     {D.name}
                     {D.needsAddress && `, ${address.street}, ${address.zip} ${address.city}`}
                   </dd>
-                  <button type="button" onClick={() => go(3)}>Ret</button>
+                  <button type="button" onClick={() => go(2)}>Ret</button>
                 </div>
                 <div>
                   <dt>Kontakt</dt>
                   <dd>
                     {contact.name}, {contact.email}, {contact.phone} · {contact.occasion}
                   </dd>
-                  <button type="button" onClick={() => go(4)}>Ret</button>
+                  <button type="button" onClick={() => go(3)}>Ret</button>
                 </div>
               </dl>
               <label className="check">
@@ -395,13 +352,13 @@ export function Booking() {
         </div>
 
         <aside className="bk-aside" aria-label="Jeres booking">
-          <Summary lines={lines} total={total} range={range} pkgName={P.name} deliveryName={D.name} />
+          <Summary lines={lines} total={total} range={range} period={range ? periodLabel(range) : "Vælg datoer"} deliveryName={D.name} />
         </aside>
       </div>
 
       <div className="bk-bar">
         <div>
-          <b>{range ? formatRange(range, "short") : P.name}</b>
+          <b>{range ? formatRange(range, "short") : "Vælg datoer"}</b>
           <span className="muted">{total === null ? "Pris bekræftes" : kr(total)}</span>
         </div>
         <button type="button" className="btn btn-primary" onClick={next} disabled={status.kind === "sending"}>
@@ -416,13 +373,13 @@ function Summary({
   lines,
   total,
   range,
-  pkgName,
+  period,
   deliveryName,
 }: {
   lines: { label: string; value: number | null }[];
   total: number | null;
   range: Range | null;
-  pkgName: string;
+  period: string;
   deliveryName: string;
 }) {
   return (
@@ -431,7 +388,7 @@ function Summary({
       <div className="bk-sum-what">
         <span className="bk-thumb" aria-hidden="true" />
         <div>
-          <b>Selfi Boks · {pkgName}</b>
+          <b>Selfi Boks · {period}</b>
           <span className="muted">{range ? formatRange(range) : "Vælg datoer"}</span>
         </div>
       </div>
