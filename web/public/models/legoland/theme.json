@@ -1,0 +1,34 @@
+{
+  "id": "legoland",
+  "name": "LEGOLAND",
+  "place": "Billund",
+  "palette": {
+    "base": "#facd22",
+    "red": "#e3000b",
+    "black": "#111111",
+    "white": "#ffffff",
+    "blue": "#006db7",
+    "green": "#009d2e"
+  },
+  "casing": "#e3000b",
+  "ring": {
+    "idle": [
+      "#facd22",
+      "#e3000b",
+      "#006db7",
+      "#009d2e"
+    ],
+    "glow": "#facd22"
+  },
+  "frame": {
+    "bg": "base",
+    "ink": "black",
+    "caption": "LEGOLAND · Billund"
+  },
+  "photo": "print-birthday",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ]
+}

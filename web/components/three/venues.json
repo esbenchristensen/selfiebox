@@ -1,0 +1,199 @@
+[
+  {
+    "id": "smukfest",
+    "name": "Smukfest",
+    "place": "Skanderborg",
+    "palette": {
+      "base": "#0f3d24",
+      "forest": "#1c5a33",
+      "leaf": "#3f8f3a",
+      "lime": "#9cc94a",
+      "red": "#e2001a",
+      "cream": "#f6eedc",
+      "bark": "#5a3b22"
+    },
+    "casing": "#0f3d24",
+    "ring": {
+      "idle": [
+        "#9cc94a",
+        "#e2001a",
+        "#f6eedc"
+      ],
+      "glow": "#9cc94a"
+    },
+    "frame": {
+      "bg": "cream",
+      "ink": "red",
+      "caption": "Smukfest · Bøgeskoven"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "roskilde",
+    "name": "Roskilde Festival",
+    "place": "Roskilde",
+    "palette": {
+      "base": "#121212",
+      "orange": "#ff8200",
+      "white": "#ffffff",
+      "grey": "#3b3b3b",
+      "ember": "#c85a00"
+    },
+    "casing": "#ff8200",
+    "ring": {
+      "idle": [
+        "#ff8200",
+        "#ffffff"
+      ],
+      "glow": "#ff8200"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "orange",
+      "caption": "Roskilde Festival · Orange Scene"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "nibe",
+    "name": "Nibe Festival",
+    "place": "Skalskoven",
+    "palette": {
+      "base": "#050505",
+      "neon": "#e5ff50",
+      "purple": "#995dff",
+      "plum": "#3b1f7a",
+      "white": "#ffffff"
+    },
+    "casing": "#050505",
+    "ring": {
+      "idle": [
+        "#e5ff50",
+        "#995dff"
+      ],
+      "glow": "#e5ff50"
+    },
+    "frame": {
+      "bg": "white",
+      "ink": "base",
+      "caption": "Nibe Festival · Skalskoven"
+    },
+    "photo": "print-bar",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "faarup",
+    "name": "Fårup Sommerland",
+    "place": "Blokhus",
+    "palette": {
+      "base": "#003817",
+      "green": "#007531",
+      "gold": "#ffda81",
+      "white": "#ffffff",
+      "sea": "#3aa6d8",
+      "sand": "#ecdcae",
+      "pine": "#0b5a2c"
+    },
+    "casing": "#007531",
+    "ring": {
+      "idle": [
+        "#ffda81",
+        "#3aa6d8",
+        "#ffffff"
+      ],
+      "glow": "#ffda81"
+    },
+    "frame": {
+      "bg": "green",
+      "ink": "white",
+      "caption": "Fårup Sommerland · Sommer"
+    },
+    "photo": "print-birthday",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "legoland",
+    "name": "LEGOLAND",
+    "place": "Billund",
+    "palette": {
+      "base": "#facd22",
+      "red": "#e3000b",
+      "black": "#111111",
+      "white": "#ffffff",
+      "blue": "#006db7",
+      "green": "#009d2e"
+    },
+    "casing": "#e3000b",
+    "ring": {
+      "idle": [
+        "#facd22",
+        "#e3000b",
+        "#006db7",
+        "#009d2e"
+      ],
+      "glow": "#facd22"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "black",
+      "caption": "LEGOLAND · Billund"
+    },
+    "photo": "print-birthday",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  },
+  {
+    "id": "zoo",
+    "name": "Aalborg Zoo",
+    "place": "Aalborg",
+    "palette": {
+      "base": "#1f4d2b",
+      "sand": "#e8c27a",
+      "grass": "#7aa83a",
+      "giraffe": "#d08a3a",
+      "spot": "#6b3a1a",
+      "cream": "#fff3dc",
+      "night": "#141414"
+    },
+    "casing": "#e8c27a",
+    "ring": {
+      "idle": [
+        "#ffcf7a",
+        "#7aa83a"
+      ],
+      "glow": "#ffcf7a"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "cream",
+      "caption": "Aalborg Zoo · Savannen"
+    },
+    "photo": "print-bar",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  }
+]

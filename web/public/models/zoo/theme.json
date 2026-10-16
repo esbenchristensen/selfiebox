@@ -1,0 +1,33 @@
+{
+  "id": "zoo",
+  "name": "Aalborg Zoo",
+  "place": "Aalborg",
+  "palette": {
+    "base": "#1f4d2b",
+    "sand": "#e8c27a",
+    "grass": "#7aa83a",
+    "giraffe": "#d08a3a",
+    "spot": "#6b3a1a",
+    "cream": "#fff3dc",
+    "night": "#141414"
+  },
+  "casing": "#e8c27a",
+  "ring": {
+    "idle": [
+      "#ffcf7a",
+      "#7aa83a"
+    ],
+    "glow": "#ffcf7a"
+  },
+  "frame": {
+    "bg": "base",
+    "ink": "cream",
+    "caption": "Aalborg Zoo · Savannen"
+  },
+  "photo": "print-bar",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ]
+}
