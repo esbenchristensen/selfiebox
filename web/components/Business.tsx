@@ -12,7 +12,7 @@ const gains = [
   { title: "Gæster, der bliver en omgang mere", text: "Guldtid, konkurrencer og missioner giver folk en grund til at blive. Præmien kan være en øl, I alligevel ville have solgt." },
   { title: "Billeder til jeres egne kanaler", text: "Hver aften får sin egen side med alle fotos. Siger gæsten ja, kan I bruge billedet på jeres sociale medier og på en fotovæg i lokalet." },
   { title: "Jeres stil, hele vejen", text: "Et tema i jeres farver på boksen, lysringen, skærmen og fotorammen." },
-  { title: "Kører af sig selv", text: "Intet personale ved boksen. Tema, tekster, priser og aktiviteter styrer I fra et kontrolpanel på nettet." },
+  { title: "Intet at passe", text: "Intet personale ved boksen. Vi monterer, overvåger og opdaterer den. Tema, tekster og aktiviteter kan I selv styre fra et kontrolpanel på nettet." },
 ];
 
 export function Business() {
@@ -62,7 +62,7 @@ export function Business() {
               {kr(business.monthlyPricePerBox)}
               <sup>kr./md.</sup>
             </div>
-            <p className="fine">Ekskl. moms. Boks, lysring, skærm, fotomodul og kontrolpanel.</p>
+            <p className="fine">Ekskl. moms. Boks, fotomodul og kontrolpanel, plus montering, overvågning, support døgnet rundt og en ny boks, hvis noget går galt. <a href="#service">Se alt, der er med</a>.</p>
             <div className="btn-row" style={{ marginTop: 24 }}>
               <a className="btn btn-primary" href="#kontakt">
                 Book en uforpligtende snak

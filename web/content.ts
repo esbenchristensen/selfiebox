@@ -106,7 +106,7 @@ export const faqPrivate: Faq[] = [
 export const faqBusiness: Faq[] = [
   {
     q: "Hvad koster en fotoboks til en bar eller et hotel?",
-    a: "995 kr. om måneden pr. boks, ekskl. moms. Boks, lysring, skærm, fotomodul og kontrolpanel er med i prisen.",
+    a: "995 kr. om måneden pr. boks, ekskl. moms. Boks, fotomodul og kontrolpanel er med, og det samme er montering, overvågning, opdateringer, support døgnet rundt og en ny boks, hvis noget går galt.",
   },
   {
     q: "Hvad gør boksen for vores bar eller hotel?",
@@ -129,7 +129,15 @@ export const faqBusiness: Faq[] = [
     a: "Ja. Med et tema laver vi boksens sider og lysringen i jeres farver, og jeres logo kommer på skærmen og i rammen på hvert foto.",
   },
   {
+    q: "Hvad sker der, hvis boksen går i stykker?",
+    a: "Så sender vi en ny med det samme. I betaler ikke for reparation eller ny boks, og I skal ikke selv finde fejlen. Boksen melder sig til os hele tiden, så vi opdager det ofte, før I gør.",
+  },
+  {
+    q: "Skal vi selv sætte boksen op og passe den?",
+    a: "Nej. Vi monterer boksen, tester den og holder øje med den. Opdateringer kommer af sig selv, og I kan ringe til os døgnet rundt.",
+  },
+  {
     q: "Hvordan sidder boksen fast?",
-    a: "Den hænger på væggen med tyverilås eller står på en stander. Den er kun 6,6 cm dyb og skal bruge en almindelig stikkontakt.",
+    a: "Vi hænger den op på væggen med tyverilås, eller den står på en stander. Den er kun 6,6 cm dyb og skal bruge en almindelig stikkontakt.",
   },
 ];

@@ -65,6 +65,6 @@ Langt de fleste søgninger er private ("lej fotoboks", "fotoboks til bryllup"), 
 
 ## Skal afklares (står ikke på siderne, før det er besluttet)
 
-- **Erhverv:** binding og opsigelse, installation (hvem borer i væggen), internet (wifi eller 4G), service hvis boksen går i stykker, prøveperiode. Det er de spørgsmål, en barejer stiller, før de siger ja.
+- **Erhverv:** binding og opsigelse, internet (wifi eller 4G), prøveperiode, og om en ny boks også gælder ved tyveri og skader fra gæster. Installation og service er besluttet: Vi monterer, overvåger, opdaterer, har døgnsupport og sender en ny boks ved fejl (se sektionen Fuld service).
 - **Privat:** hvad ombooking og afbestilling koster, leveringsområde og -pris, om Instax-film er med eller tilvalg, depositum.
 - **Anmeldelser:** begge sider mangler social proof. Saml anmeldelser fra de første private lejere og citater fra de første steder.
