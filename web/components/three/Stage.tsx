@@ -12,6 +12,8 @@ export type StageProps = {
   // A venue design (topper, wings, casing) or a private party theme (plain box, print beside it).
   design: { venue: Venue } | { theme: BoxTheme };
   variant: "venue" | "private";
+  // Designs to fetch ahead of time so a switch does not wait for the network. Defaults to the venues.
+  preload?: Venue[];
   onReady?: () => void;
 };
 
@@ -127,10 +129,10 @@ function Ready({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
-export default function Stage({ design, variant, onReady }: StageProps) {
+export default function Stage({ design, variant, onReady, preload = VENUES }: StageProps) {
   useEffect(() => {
-    if (variant === "venue") VENUES.forEach((v) => preloadVenue(v));
-  }, [variant]);
+    if (variant === "venue") preload.forEach((v) => preloadVenue(v));
+  }, [variant, preload]);
   const glowColor = "venue" in design ? design.venue.ring.glow : "#fff3e3";
   const reduced = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);

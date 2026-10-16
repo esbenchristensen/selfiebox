@@ -609,6 +609,248 @@ def zoo():
                 wing=wing, topper=topper, screen_art=screen, logo=lambda: [("cream", text("AALBORG ZOO", "lilita-one", 0, 10, 24))])
 
 
+# ------------------------------------------------------- occasions (private) --
+# For people who rent a box for one party. Same mounting parts as the venues, but the design is made for
+# the occasion: a wedding, a birthday, a Christmas lunch. Names and dates are placeholders the customer replaces.
+
+def leaf(cx, cz, ln, w, rot=0):
+    """Pointed leaf with its base at (cx, cz), pointing up at rot = 0 and turning counter-clockwise."""
+    ts = np.linspace(0, 1, 24)
+    half = [(w / 2 * math.sin(math.pi * t) ** 0.9, t * ln) for t in ts]
+    pts = [(cx + x, cz + z) for x, z in half] + [(cx - x, cz + z) for x, z in reversed(half)]
+    return affinity.rotate(Polygon(pts), rot, origin=(cx, cz))
+
+
+def blossom(cx, cz, r, rot=0):
+    """Five round petals. Returns (petals, centre)."""
+    petals = U(*[Point(cx + r * 0.56 * math.sin(math.radians(rot + i * 72)), cz + r * 0.56 * math.cos(math.radians(rot + i * 72))).buffer(r * 0.5, 24) for i in range(5)])
+    return petals, Point(cx, cz).buffer(r * 0.26, 20)
+
+
+def sprig(p0, p1, n, ln, w, rng):
+    """A branch from p0 to p1 with leaves on both sides. Returns (stem, leaves)."""
+    (x0, z0), (x1, z1) = p0, p1
+    ang = math.degrees(math.atan2(x1 - x0, z1 - z0))
+    leaves = []
+    for i in range(n):
+        t = (i + 0.5) / n
+        cx, cz = x0 + (x1 - x0) * t, z0 + (z1 - z0) * t
+        for s in (-1, 1):
+            leaves.append(leaf(cx, cz, ln * rng.uniform(0.8, 1.1), w * rng.uniform(0.85, 1.1), -ang + s * rng.uniform(38, 55)))
+    return line([p0, p1], max(2.4, w * 0.18)), leaves
+
+
+def balloon(cx, cz, r, string_to=None):
+    """Balloon body, knot and string. The string curls down to `string_to` (x, z) when given."""
+    body = ell(cx, cz, r, r * 1.22)
+    knot = Polygon([(cx, cz - r * 1.2), (cx - r * 0.2, cz - r * 1.5), (cx + r * 0.2, cz - r * 1.5)])
+    shine = ell(cx - r * 0.38, cz + r * 0.42, r * 0.17, r * 0.34, 25)
+    string = None
+    if string_to:
+        sx, sz = string_to
+        string = line([(cx, cz - r * 1.5), (cx + (sx - cx) * 0.3 + 5, cz - r * 1.5 + (sz - cz + r * 1.5) * 0.35), (cx + (sx - cx) * 0.8 - 4, cz - r * 1.5 + (sz - cz + r * 1.5) * 0.7), (sx, sz)], 1.6)
+    return body, knot, shine, string
+
+
+def snowflake(cx, cz, r):
+    arms = [line([(cx + r * math.sin(a), cz + r * math.cos(a)), (cx - r * math.sin(a), cz - r * math.cos(a))], 1.7) for a in (0, math.pi / 3, 2 * math.pi / 3)]
+    return U(*arms, Point(cx, cz).buffer(r * 0.18, 16))
+
+
+@theme
+def bryllup():
+    pal = {"base": "#f1e6d6", "sage": "#9db596", "leaf": "#5f8466", "blush": "#e7b4aa", "gold": "#b08a5a", "ink": "#4a3b34", "white": "#fffaf2"}
+
+    def wing(side_seed):
+        rng = random.Random(side_seed)
+        ph = side_seed * 0.9
+        sx = lambda z: X0 + 15 + 9 * math.sin(z / 38.0 + ph)
+        stem = line([(sx(z), z) for z in np.arange(24, 287, 6)], 3.2)
+        leaves = []
+        for i, z in enumerate(np.arange(34, 282, 15)):
+            right = i % 2 == 0
+            leaves.append(leaf(sx(z), z, rng.uniform(26, 34), rng.uniform(10, 13), -rng.uniform(55, 85) if right else rng.uniform(25, 55)))
+        pet, cen = [], []
+        for z in (62, 118, 176, 232, 270):
+            p, c = blossom(X0 + 28 + rng.uniform(-3, 8), z + rng.uniform(-6, 6), rng.uniform(8.5, 10.5), rng.uniform(0, 72))
+            pet.append(p)
+            cen.append(c)
+        outline = U(wing_strip(24, 22, 284), U(*leaves), stem.buffer(2), U(*pet).buffer(1.5))
+        buds = U(*[Point(X0 + rng.uniform(6, 50), rng.uniform(40, 270)).buffer(rng.uniform(2.2, 3.2), 16) for _ in range(12)])
+        L = [("base", outline), ("sage", U(*leaves[::2])), ("leaf", U(*leaves[1::2], stem)), ("white", buds),
+             ("blush", U(*pet)), ("gold", U(*cen)), ("gold", U(*[star4(X0 + rng.uniform(8, 48), rng.uniform(45, 275), 3.4) for _ in range(5)]))]
+        return outline, L
+
+    def topper():
+        rng = random.Random(11)
+        a, b, cz = HW - 8, 108, 36
+        outline = U(box(-HW, 0, HW, cz), ell(0, cz, a, b).intersection(box(-HW, cz, HW, cz + b + 2))).intersection(box(-HW - 6, 0, HW + 6, 150))
+        band = ell(0, cz, a - 12, b - 12).difference(ell(0, cz, a - 19, b - 19)).intersection(box(-HW, cz, HW, 200))
+        L = [("base", outline), ("gold", band)]
+        sage, dark, pet, cen = [], [], [], []
+        for k, th in enumerate(np.linspace(8, 172, 19)):
+            t = math.radians(th)
+            px, pz = (a - 9.5) * math.cos(t), cz + (b - 9.5) * math.sin(t)
+            tang = -math.degrees(math.atan2(-a * math.sin(t), b * math.cos(t)))
+            for s, col in ((1, sage), (-1, dark)):
+                col.append(leaf(px, pz, 23 * rng.uniform(0.85, 1.1), 9.5, tang + s * 42))
+        for th in (28, 90, 152):
+            t = math.radians(th)
+            p, c = blossom((a - 9.5) * math.cos(t), cz + (b - 9.5) * math.sin(t), 10.5, th)
+            pet.append(p)
+            cen.append(c)
+        L += [("sage", U(*sage)), ("leaf", U(*dark)), ("blush", U(*pet)), ("gold", U(*cen))]
+        L += [("sage", hills_poly(-HW - 5, HW + 5, 18, 4, 3.2, rng).intersection(box(-HW - 6, 0, HW + 6, cz))), ("leaf", hills_poly(-HW - 5, HW + 5, 8, 3, 4.5, rng).intersection(box(-HW - 6, 0, HW + 6, cz)))]
+        L += [("ink", text("ANNA & JONAS", "outfit", 0, 78, 15, 124)), ("gold", text("12. JUNI 2026", "outfit", 0, 56, 8, 108))]
+        ring = lambda cx: Point(cx, 104).buffer(12, 48).difference(Point(cx, 104).buffer(8.6, 48))
+        L += [("gold", U(ring(-8), ring(8)))]
+        return outline, L
+
+    def screen(w, h):
+        rng = random.Random(21)
+        L = [("base", box(0, 0, w, h))]
+        sage, dark, stems, pet, cen = [], [], [], [], []
+        for p0, p1 in (((-20, h + 10), (190, h - 250)), ((w + 20, h + 10), (w - 190, h - 250)), ((-20, 70), (120, 250)), ((w + 20, 70), (w - 120, 250))):
+            st, lv = sprig(p0, p1, 8, 84, 32, rng)
+            stems.append(st)
+            sage += lv[::2]
+            dark += lv[1::2]
+        for x, z, r in ((150, h - 150, 34), (w - 150, h - 150, 34), (60, h - 300, 26), (w - 60, h - 300, 26), (80, 120, 24), (w - 80, 120, 24)):
+            p, c = blossom(x, z, r, rng.uniform(0, 72))
+            pet.append(p)
+            cen.append(c)
+        L += [("sage", U(*sage)), ("leaf", U(*dark, *stems)), ("blush", U(*pet)), ("gold", U(*cen))]
+        L += [("ink", text("Anna & Jonas", "outfit", w / 2, h * 0.56, 64, w * 0.8)), ("gold", text("12. JUNI 2026", "outfit", w / 2, h * 0.47, 24, w * 0.5))]
+        L += [("blush", heart(w / 2, h * 0.405, 40))]
+        return L
+
+    return dict(name="Bryllup", place="Navne og dato", font="outfit", pal=pal,
+                filament={"base": "PETG HF ivory", "sage": "PETG HF sage green", "leaf": "PETG HF green", "blush": "PETG HF blush pink", "gold": "PETG HF sand gold", "ink": "PETG HF brown", "white": "PETG HF white"},
+                casing="#efe3d0", ring={"idle": ["#fff0d6", "#f0c99a", "#ffffff"], "glow": "#ffd9a8"},
+                screen=dict(bg="base", ink="ink", accent="gold", cta="Sig «Skål!»", ticker="Anna & Jonas  •  12. juni 2026  •  Tak fordi I kom  •"),
+                frame=dict(bg="base", ink="gold", caption="Anna & Jonas · 12.6.2026"), photo="print-wedding",
+                wing=wing, topper=topper, screen_art=screen,
+                logo=lambda: [("gold", U(*[Point(cx, 14).buffer(12, 48).difference(Point(cx, 14).buffer(8.6, 48)) for cx in (-8, 8)])), ("ink", text("ANNA & JONAS", "outfit", 0, -12, 9))])
+
+
+@theme
+def fodselsdag():
+    pal = {"base": "#16244d", "gold": "#f2c14e", "coral": "#ee6b5b", "teal": "#3bb8b0", "pink": "#f49ac1", "cream": "#fff6e0"}
+    cols = ["gold", "coral", "teal", "pink"]
+
+    def wing(side_seed):
+        rng = random.Random(side_seed)
+        balloons = []
+        for i, z in enumerate(np.arange(92, 276, 40)):
+            balloons.append((X0 + [30, 16, 38, 22, 34][i % 5], z + rng.uniform(-6, 6), rng.uniform(15.5, 19.5), cols[(i + side_seed) % 4]))
+        parts = [balloon(x, z, r, (X0 + 14 + 4 * math.sin(z), 34)) for x, z, r, _ in balloons]
+        outline = U(wing_strip(24, 22, 284), *[p[0].buffer(1) for p in parts], *[p[1].buffer(1) for p in parts])
+        L = [("base", outline)]
+        L += [("cream", U(*[p[3] for p in parts if p[3] is not None]))]
+        for k in cols:
+            L += [(k, U(*[p[0] for p, b in zip(parts, balloons) if b[3] == k], *[p[1] for p, b in zip(parts, balloons) if b[3] == k]))]
+        L += [("cream", U(*[p[2] for p in parts]))]
+        conf = []
+        for _ in range(26):
+            x, z = X0 + rng.uniform(4, 56), rng.uniform(30, 280)
+            conf.append(Point(x, z).buffer(rng.uniform(2.0, 3.0), 12) if rng.random() < 0.6 else star4(x, z, rng.uniform(3, 4.4)))
+        L += [("gold", U(*conf[:9])), ("teal", U(*conf[9:17])), ("pink", U(*conf[17:]))]
+        return outline, L
+
+    def topper():
+        rng = random.Random(4)
+        main = U(box(-HW, 0, HW, 112), *[Point(x, 112).buffer(11, 32) for x in np.linspace(-HW + 11, HW - 11, 11)])
+        bal = [(-98, 112, 22, "coral"), (98, 112, 22, "teal"), (-72, 124, 19, "gold"), (72, 124, 19, "pink")]
+        parts = [balloon(x, z, r) for x, z, r, _ in bal]
+        outline = U(main, *[p[0].buffer(1) for p in parts]).intersection(box(-HW - 14, 0, HW + 14, 150))
+        L = [("base", outline)]
+        for k in cols:
+            L += [(k, U(*[p[0] for p, b in zip(parts, bal) if b[3] == k]))]
+        L += [("cream", U(*[p[2] for p in parts]))]
+        rope = [(x, 108 - 9 * math.sin(math.pi * (x + 90) / 180)) for x in np.linspace(-90, 90, 40)]
+        L += [("cream", line(rope, 1.8))]
+        flags = []
+        for i, x in enumerate(np.linspace(-84, 84, 11)):
+            zt = 108 - 9 * math.sin(math.pi * (x + 90) / 180)
+            flags.append((cols[i % 4], Polygon([(x - 8, zt), (x + 8, zt), (x, zt - 16)])))
+        for k in cols:
+            L += [(k, U(*[g for c, g in flags if c == k]))]
+        L += [("gold", text("TILLYKKE", "lilita-one", 0, 68, 28, 200)), ("cream", text("Birthe 60 år", "lilita-one", 0, 38, 17, 170))]
+        L += [("pink", U(*[star4(x, 38, 6) for x in (-100, 100)])), ("teal", U(*[star4(x, 62, 4.5) for x in (-104, 104)]))]
+        L += [("coral", hills_poly(-HW - 5, HW + 5, 12, 3, 5, rng).intersection(box(-HW - 6, 0, HW + 6, 20)))]
+        return outline, L
+
+    def screen(w, h):
+        rng = random.Random(8)
+        L = [("base", box(0, 0, w, h))]
+        bal = [(110, h - 190, 62, "coral"), (240, h - 130, 56, "gold"), (360, h - 205, 60, "teal"), (480, h - 135, 56, "pink"), (60, h - 330, 44, "gold"), (545, h - 330, 44, "coral")]
+        parts = [balloon(x, z, r, (w / 2 + rng.uniform(-60, 60), h - 330)) for x, z, r, _ in bal]
+        L += [("cream", U(*[p[3] for p in parts if p[3] is not None]))]
+        for k in cols:
+            L += [(k, U(*[p[0] for p, b in zip(parts, bal) if b[3] == k], *[p[1] for p, b in zip(parts, bal) if b[3] == k]))]
+        L += [("cream", U(*[p[2] for p in parts]))]
+        conf = [Point(rng.uniform(10, w - 10), rng.uniform(330, h - 360)).buffer(rng.uniform(5, 9), 12) if rng.random() < 0.6 else star4(rng.uniform(20, w - 20), rng.uniform(330, h - 360), rng.uniform(9, 14)) for _ in range(40)]
+        L += [("gold", U(*conf[:14])), ("teal", U(*conf[14:27])), ("pink", U(*conf[27:]))]
+        L += [("gold", text("TILLYKKE", "lilita-one", w / 2, h * 0.6, 50, w * 0.7)), ("cream", text("Birthe", "lilita-one", w / 2, h * 0.51, 92, w * 0.78)), ("coral", text("60 år", "lilita-one", w / 2, h * 0.41, 58, w * 0.5))]
+        return L
+
+    return dict(name="Fødselsdag", place="Navn og alder", font="lilita-one", pal=pal,
+                filament={"base": "PETG HF navy", "gold": "PETG HF sand gold", "coral": "PETG HF coral", "teal": "PETG HF teal", "pink": "PETG HF pink", "cream": "PETG HF cream"},
+                casing="#16244d", ring={"idle": ["#f2c14e", "#ee6b5b", "#3bb8b0", "#f49ac1"], "glow": "#f2c14e"},
+                screen=dict(bg="base", ink="cream", accent="gold", cta="Sig «Hurra!»", ticker="Tillykke Birthe  •  60 år  •  Hurra  •"),
+                frame=dict(bg="base", ink="gold", caption="Birthe 60 år"), photo="print-birthday",
+                wing=wing, topper=topper, screen_art=screen,
+                logo=lambda: [("gold", text("60", "lilita-one", 0, 20, 34)), ("coral", text("TILLYKKE", "lilita-one", 0, -2, 9))])
+
+
+@theme
+def julefrokost():
+    pal = {"base": "#0f3d2e", "pine": "#1d6a4c", "red": "#c8202f", "gold": "#f2c14e", "snow": "#f7f9fb", "bark": "#6a4a2f"}
+
+    def wing(side_seed):
+        rng = random.Random(side_seed)
+        trees = [(X0 + rng.uniform(24, 32), z, rng.uniform(44, 54), rng.uniform(60, 74)) for z in (30, 104, 178)]
+        outline = U(wing_strip(24, 22, 284), *[pine(x, z, w, h, 3) for x, z, w, h in trees]).intersection(box(X0, 22, X0 + 58, 286))
+        L = [("base", outline), ("pine", U(*[pine(x + 3, z + 10, w * 0.7, h * 0.72, 3) for x, z, w, h in trees]))]
+        L += [("snow", U(*[snowflake(X0 + rng.uniform(8, 50), rng.uniform(36, 276), rng.uniform(4, 6)) for _ in range(9)]))]
+        L += [("red", U(*[Point(x + rng.uniform(-w * 0.25, w * 0.25), z + h * rng.uniform(0.2, 0.55)).buffer(3.6, 20) for x, z, w, h in trees for _ in range(4)])),
+              ("gold", U(*[Point(x + rng.uniform(-w * 0.25, w * 0.25), z + h * rng.uniform(0.2, 0.55)).buffer(3.0, 20) for x, z, w, h in trees for _ in range(3)])),
+              ("gold", U(*[star4(x, z + h + 1, 8) for x, z, w, h in trees]))]
+        return outline, L
+
+    def topper():
+        rng = random.Random(6)
+        xs = [-92, -46, 0, 46, 92]
+        hs = [78, 96, 112, 90, 74]
+        trees = [pine(x, 44, 50 + (h - 74) * 0.2, h, 3) for x, h in zip(xs, hs)]
+        outline = U(box(-HW, 0, HW, 60), *trees).intersection(box(-HW - 6, 0, HW + 6, 152))
+        L = [("base", outline), ("pine", U(*[pine(x + 2, 50, 36, h * 0.7, 3) for x, h in zip(xs, hs)]))]
+        L += [("snow", hills_poly(-HW - 5, HW + 5, 54, 3, 4, rng, z_floor=44).buffer(0)), ("snow", U(*[snowflake(rng.uniform(-HW + 10, HW - 10), rng.uniform(78, 130), rng.uniform(4, 5.5)) for _ in range(8)]))]
+        L += [("red", U(*[Point(x + rng.uniform(-10, 10), 44 + h * rng.uniform(0.25, 0.5)).buffer(3.6, 20) for x, h in zip(xs, hs) for _ in range(2)])),
+              ("gold", U(*[star4(x, 44 + h + 1, 8.5) for x, h in zip(xs, hs)]))]
+        L += [("red", box(-HW, 0, HW, 6))]
+        L += [("snow", text("JULEFROKOST", "lilita-one", 0, 30, 22, 196)), ("gold", text("NORDLYS A/S · 2026", "poppins", 0, 14, 7, 150))]
+        return outline, L
+
+    def screen(w, h):
+        rng = random.Random(12)
+        L = [("base", box(0, 0, w, h))]
+        L += [("pine", U(*[pine(x, 120, rng.uniform(70, 96), rng.uniform(150, 210)) for x in np.linspace(0, w, 7)]))]
+        L += [("snow", hills_poly(0, w, 120, 14, 1.4, rng)), ("snow", U(*[snowflake(rng.uniform(20, w - 20), rng.uniform(330, h - 40), rng.uniform(9, 17)) for _ in range(22)]))]
+        L += [("red", U(*[Point(rng.uniform(40, w - 40), rng.uniform(150, 290)).buffer(rng.uniform(8, 12), 20) for _ in range(8)])), ("gold", U(*[Point(rng.uniform(40, w - 40), rng.uniform(150, 290)).buffer(rng.uniform(6, 9), 20) for _ in range(6)]))]
+        L += [("gold", star4(w / 2, h - 130, 52))]
+        L += [("snow", text("Julefrokost", "lilita-one", w / 2, h * 0.58, 78, w * 0.84)), ("gold", text("2026", "lilita-one", w / 2, h * 0.48, 44, w * 0.4)), ("gold", text("NORDLYS A/S", "poppins", w / 2, h * 0.42, 20, w * 0.5))]
+        return L
+
+    return dict(name="Julefrokost", place="Logo og tekst", font="lilita-one", pal=pal,
+                filament={"base": "PETG HF dark green", "pine": "PETG HF pine green", "red": "PETG HF red", "gold": "PETG HF sand gold", "snow": "PETG HF white", "bark": "PETG HF brown"},
+                casing="#c8202f", ring={"idle": ["#f2c14e", "#ffffff", "#e0443a"], "glow": "#f2c14e"},
+                screen=dict(bg="base", ink="snow", accent="gold", cta="Sig «Skål!»", ticker="Nordlys A/S  •  Julefrokost 2026  •  Glædelig jul  •"),
+                frame=dict(bg="red", ink="snow", caption="Julefrokost 2026 · Nordlys A/S"), photo="print-office",
+                wing=wing, topper=topper, screen_art=screen,
+                logo=lambda: [("snow", text("Julefrokost", "lilita-one", 0, 16, 26)), ("gold", star4(0, -8, 9))])
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 

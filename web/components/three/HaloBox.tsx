@@ -6,14 +6,27 @@ import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { printTexture, ringGlowTexture, screenTexture } from "./textures";
 import type { BoxTheme } from "./themes";
+import occasions from "./occasions.json";
 import venues from "./venues.json";
 
 // Selfi Boks as it is printed: the Halo enclosure from the CAD export, and for venues the wings and
 // topper built by hardware/tools/venue_themes.py. Millimetres, scaled so 100 mm = 1 unit.
 // Unit coordinates: x across, y up from the bottom of the unit, z out of the front (front at 0).
 
-export type Venue = (typeof venues)[number];
+// A venue (business) or an occasion (private party): same parts, same file layout under /models/<id>/.
+export type Venue = {
+  id: string;
+  name: string;
+  place: string;
+  palette: Record<string, string>;
+  casing: string;
+  ring: { idle: string[]; glow: string };
+  frame: { bg: string; ink: string; caption: string };
+  photo: string;
+  parts: string[];
+};
 export const VENUES = venues as Venue[];
+export const OCCASIONS = occasions as Venue[];
 
 const MM = 0.01;
 const UNIT_H = 306;
@@ -77,7 +90,7 @@ function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject
     const byPart: Record<string, THREE.Mesh[]> = { wing_left: [], wing_right: [], topper: [] };
     for (const [name, geometry] of Object.entries(baked(scene))) {
       const [part, key] = name.split("__");
-      const hex = (venue.palette as Record<string, string | undefined>)[key] ?? venue.palette.base;
+      const hex = venue.palette[key] ?? venue.palette.base;
       const mesh = new THREE.Mesh(
         geometry,
         new THREE.MeshStandardMaterial({

@@ -8,7 +8,7 @@ import type { StageProps } from "./three/Stage";
 // three.js is only fetched when the viewer gets close to the screen.
 const Stage = dynamic(() => import("./three/Stage"), { ssr: false, loading: () => null });
 
-export function BoxViewer({ design, variant, label }: { design: StageProps["design"]; variant: StageProps["variant"]; label: string }) {
+export function BoxViewer({ design, variant, label, preload }: { design: StageProps["design"]; variant: StageProps["variant"]; label: string; preload?: StageProps["preload"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
   const [ready, setReady] = useState(false);
@@ -41,7 +41,7 @@ export function BoxViewer({ design, variant, label }: { design: StageProps["desi
       <div className="viewer-poster" aria-hidden="true">
         <OutlinePoster />
       </div>
-      {near && webgl && <Stage design={design} variant={variant} onReady={() => setReady(true)} />}
+      {near && webgl && <Stage design={design} variant={variant} preload={preload} onReady={() => setReady(true)} />}
     </div>
   );
 }

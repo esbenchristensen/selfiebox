@@ -121,9 +121,10 @@ export default function Home() {
         />
         <Private />
         <Themes
-          title="Jeres navne på hvert billede."
-          lede="Med et eget tema står jeres navne og dato, eller firmaets logo, på skærmen og i rammen på hvert foto. Så ved alle, hvilken fest billedet er fra, også om ti år."
+          title="En boks, der ser ud som jeres fest."
+          lede="Vælg et tema til bryllup, fødselsdag eller julefrokost. Boksen får vinger og topper i festens farver, og jeres navne og dato står på skærmen og i rammen på hvert foto. Så ved alle, hvilken fest billedet er fra, også om ti år."
           layers={[
+            ["Boksen", "Vinger og topper i festens farver, printet til jer."],
             ["Skærmen", "Jeres navne og en velkomsttekst, når gæsterne kommer hen til boksen."],
             ["Fotoet", "Navne, dato eller logo i rammen på hvert billede."],
           ]}
