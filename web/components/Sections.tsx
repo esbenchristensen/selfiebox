@@ -1,17 +1,14 @@
 import Image from "next/image";
+import { OutlineExploded } from "./Outline";
 import { activities, specs, type ActivityId, type Faq as FaqItem } from "@/content";
 
 export function Inside() {
   return (
     <section className="section" aria-labelledby="inside-title">
       <div className="wrap inside">
-        <Image
-          src="/renders/exploded.jpg"
-          alt="Selfi Boks skilt ad: kabinet, LED-skinne, skærm, front og lysring"
-          width={1200}
-          height={1500}
-          sizes="(max-width: 900px) 90vw, 50vw"
-        />
+        <div className="inside-art">
+          <OutlineExploded />
+        </div>
         <div>
           <span className="label">Specifikationer</span>
           <h2 className="h-l" style={{ marginTop: 16 }}>

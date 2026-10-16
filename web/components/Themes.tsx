@@ -1,32 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { BoxViewer } from "./BoxViewer";
+import { privateThemes } from "./three/themes";
 
-// A theme with a `caption` is shown as a printed photo with that text in the frame
-// (what a party gets). Without one it is a render of the whole box (what a venue gets).
-export type Theme = { id: string; name: string; src: string; alt: string; caption?: string };
-
-export function Themes({ title, lede, themes, layers }: { title: string; lede: string; themes: Theme[]; layers: [string, string][] }) {
-  const [active, setActive] = useState(themes[0].id);
-  const prints = themes.some((t) => t.caption);
+// Private parties: names and date on the screen and in the frame of every photo, shown on the box in 3D.
+export function Themes({ title, lede, layers }: { title: string; lede: string; layers: [string, string][] }) {
+  const [active, setActive] = useState(privateThemes[0].id);
+  const theme = privateThemes.find((t) => t.id === active) ?? privateThemes[0];
 
   return (
     <section id="temaer" className="section" aria-labelledby="themes-title">
       <div className="wrap themes">
-        <div className={`theme-media${prints ? " theme-media--prints" : ""}`}>
-          {themes.map((t) =>
-            t.caption ? (
-              <div key={t.id} className="print-card theme-print" style={{ opacity: active === t.id ? 1 : 0 }} aria-hidden={active !== t.id}>
-                <div className="print-photo">
-                  <Image src={t.src} alt={t.alt} fill sizes="(max-width: 900px) 60vw, 30vw" style={{ objectFit: "cover" }} />
-                </div>
-                <span className="print-cap">{t.caption}</span>
-              </div>
-            ) : (
-              <Image key={t.id} src={t.src} alt={t.alt} fill sizes="(max-width: 900px) 90vw, 45vw" style={{ opacity: active === t.id ? 1 : 0 }} />
-            ),
-          )}
+        <div className="theme-media">
+          <BoxViewer theme={theme} variant="private" label={`Selfi Boks i 3D med temaet ${theme.name}: ${theme.welcome} på skærmen og på fotoet`} />
         </div>
         <div>
           <span className="label">Temaer</span>
@@ -37,7 +24,7 @@ export function Themes({ title, lede, themes, layers }: { title: string; lede: s
             {lede}
           </p>
           <div className="seg" role="group" aria-label="Vælg tema" style={{ marginTop: 28 }}>
-            {themes.map((t) => (
+            {privateThemes.map((t) => (
               <button key={t.id} aria-pressed={active === t.id} onClick={() => setActive(t.id)}>
                 {t.name}
               </button>

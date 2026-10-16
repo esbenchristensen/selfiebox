@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { OutlineStand, OutlineWall } from "./Outline";
 
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "error"; message: string };
 
@@ -51,6 +52,7 @@ export function Contact({ type }: { type: "erhverv" | "privat" }) {
               </p>
             </>
           )}
+          <div className="contact-art">{type === "erhverv" ? <OutlineWall /> : <OutlineStand />}</div>
         </div>
 
         {state.kind === "sent" ? (

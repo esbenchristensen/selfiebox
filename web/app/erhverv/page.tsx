@@ -8,7 +8,7 @@ import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
 import { Activities, Faq, Inside, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
-import { Themes } from "@/components/Themes";
+import { HeroBox, ThemeStudio } from "@/components/ThemeStudio";
 import { Venues } from "@/components/Venues";
 import { business, faqBusiness } from "@/content";
 
@@ -76,7 +76,7 @@ export default function Erhverv() {
           lede="Selfi Boks hænger på væggen og kører uden personale. Gæsterne deler billederne med jeres navn i rammen, og I får en gæsteliste, I må invitere tilbage. 995 kr. om måneden, ekskl. moms."
           primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
           secondary={{ label: "Se, hvad den gør for jer", href: "#gevinst" }}
-          image={{ src: "/photos/sted-vaertshus.jpg", alt: "Gæster på et værtshus tager et billede med Selfi Boks fotoboks på murstensvæggen", pos: "88% 50%" }}
+          visual={<HeroBox />}
         />
         <Business />
         <Venues
@@ -134,15 +134,11 @@ export default function Erhverv() {
           title="Giv gæsterne en grund til at blive."
           lede="Slå konkurrencer og små opgaver til på de aftener, hvor I vil have liv i lokalet, og fra igen, når stedet kører af sig selv. Alt styres fra kontrolpanelet."
         />
-        <Themes
-          title="Jeres boks. Jeres farver."
-          lede="Ét tema ændrer fire ting på én gang, så boksen ligner en del af stedet og ikke en lejet maskine."
-          themes={[
-            { id: "sort", name: "Sort", src: "/renders/wall.jpg", alt: "Selfi Boks i sort med fotomodul på væggen" },
-            { id: "sommernat", name: "Sommernat", src: "/renders/theme.jpg", alt: "Selfi Boks i Sommernat-temaet med bakker på sider og topper" },
-          ]}
+        <ThemeStudio
+          title="Jeres boks. Jeres farver. Jeres sted."
+          lede="Vi designer boksen til jeres sted, festival eller park. Ét tema ændrer fire ting på én gang, så boksen ligner en del af stedet og ikke en lejet maskine. Vælg et design, og se boksen dreje rundt i det."
           layers={[
-            ["Boksen", "Sider og top printet i jeres farver og motiver."],
+            ["Boksen", "Top og sider printet i jeres farver, motiver og form."],
             ["Lysringen", "Jeres farver og animationer, når ingen tager billeder."],
             ["Skærmen", "Baggrund, velkomsttekst og en rulletekst med jeres budskab."],
             ["Fotoet", "Jeres navn eller logo i rammen på hvert billede."],

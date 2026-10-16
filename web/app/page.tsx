@@ -123,11 +123,6 @@ export default function Home() {
         <Themes
           title="Jeres navne på hvert billede."
           lede="Med et eget tema står jeres navne og dato, eller firmaets logo, på skærmen og i rammen på hvert foto. Så ved alle, hvilken fest billedet er fra, også om ti år."
-          themes={[
-            { id: "bryllup", name: "Bryllup", src: "/photos/print-wedding.jpg", alt: "Foto fra et bryllup med brudeparrets navne og dato i rammen", caption: "Anna & Jonas · 12.6" },
-            { id: "fodselsdag", name: "Fødselsdag", src: "/photos/print-birthday.jpg", alt: "Foto fra en 60-års fødselsdag med fødselarens navn i rammen", caption: "Birthe 60 år" },
-            { id: "firmafest", name: "Firmafest", src: "/photos/print-office.jpg", alt: "Foto fra en julefrokost med firmaets navn i rammen", caption: "Julefrokost 2026" },
-          ]}
           layers={[
             ["Skærmen", "Jeres navne og en velkomsttekst, når gæsterne kommer hen til boksen."],
             ["Fotoet", "Navne, dato eller logo i rammen på hvert billede."],

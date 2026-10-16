@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 type Link = { label: string; href: string };
 
 // Server-rendered, one audience per page, so the H1 search engines see is the H1 visitors see.
-// The right column is either a photo or something to act on (`aside`, e.g. the booking calendar).
+// The right column is a photo, a visual such as the 3D box, or something to act on (`aside`, e.g. the booking calendar).
 export function Hero({
   label,
   title,
@@ -12,6 +12,7 @@ export function Hero({
   primary,
   secondary,
   image,
+  visual,
   aside,
 }: {
   label: string;
@@ -20,6 +21,7 @@ export function Hero({
   primary?: Link;
   secondary: Link;
   image?: { src: string; alt: string; pos?: string };
+  visual?: ReactNode;
   aside?: ReactNode;
 }) {
   return (
@@ -44,6 +46,8 @@ export function Hero({
         </div>
         {aside ? (
           <div className="hero-aside">{aside}</div>
+        ) : visual ? (
+          <div className="hero-visual">{visual}</div>
         ) : image ? (
           <div className="hero-media">
             <Image
