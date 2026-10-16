@@ -1,7 +1,7 @@
 {
   "id": "bryllup",
   "name": "Bryllup",
-  "place": "Navne og dato",
+  "place": "Blomster og guld",
   "palette": {
     "base": "#f1e6d6",
     "sage": "#9db596",
@@ -23,7 +23,7 @@
   "frame": {
     "bg": "base",
     "ink": "gold",
-    "caption": "Anna & Jonas · 12.6.2026"
+    "caption": "Skål for brudeparret"
   },
   "photo": "print-wedding",
   "parts": [

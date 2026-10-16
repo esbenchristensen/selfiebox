@@ -4,8 +4,8 @@ import { useState } from "react";
 import { BoxViewer } from "./BoxViewer";
 import { OCCASIONS } from "./three/HaloBox";
 
-// Private parties: the box gets wings and a topper for the occasion, and the names and date on the screen
-// and in the frame of every photo. Same 3D as the venues on /erhverv, with three designs made for a party.
+// Private parties: the box gets wings and a topper for the occasion, and a matching screen and photo
+// frame. The themes are fixed designs, not made per party. Same 3D as the venues on /erhverv, with three designs made for a party.
 export function Themes({ title, lede, layers }: { title: string; lede: string; layers: [string, string][] }) {
   const [active, setActive] = useState(OCCASIONS[0].id);
   const occasion = OCCASIONS.find((o) => o.id === active) ?? OCCASIONS[0];
@@ -32,7 +32,7 @@ export function Themes({ title, lede, layers }: { title: string; lede: string; l
             ))}
           </div>
           <p className="fine" style={{ marginTop: 12 }}>
-            Eksempel med navne og dato. Jeres egne kommer på.
+            Temaerne er faste designs, klar til jeres fest.
           </p>
           <div className="layers">
             {layers.map(([k, v]) => (

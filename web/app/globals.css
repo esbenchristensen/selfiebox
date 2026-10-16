@@ -110,7 +110,7 @@ p { margin: 0; }
 .btn-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
 /* Segmented toggle */
-.seg { display: inline-flex; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-raised); border: 1px solid var(--line-strong); }
+.seg { display: inline-flex; max-width: 100%; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-raised); border: 1px solid var(--line-strong); }
 .seg button { font: 500 15px/1.2 var(--font-body), sans-serif; color: var(--ink-muted); background: transparent; border: 0; border-radius: var(--radius-pill); padding: 10px 22px; cursor: pointer; transition: background 250ms var(--ease), color 250ms var(--ease); }
 .seg button[aria-pressed="true"] { background: var(--seg-on); color: var(--seg-on-ink); }
 
@@ -323,6 +323,7 @@ p { margin: 0; }
   .nav-other .short { display: inline; }
   .pkgs, .form { grid-template-columns: minmax(0, 1fr); }
   .layers div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .seg button { padding: 10px 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

@@ -91,7 +91,7 @@ export default function Home() {
             {
               kind: "phone",
               src: "/photos/print-wedding.jpg",
-              caption: "Anna & Jonas · 12.6",
+              caption: "Skål for brudeparret",
               user: "sofie.l",
               post: "Sikke en dag",
               title: "Alle billeder samlet ét sted",
@@ -122,11 +122,11 @@ export default function Home() {
         <Private />
         <Themes
           title="En boks, der ser ud som jeres fest."
-          lede="Vælg et tema til bryllup, fødselsdag eller julefrokost. Boksen får vinger og topper i festens farver, og jeres navne og dato står på skærmen og i rammen på hvert foto. Så ved alle, hvilken fest billedet er fra, også om ti år."
+          lede="Vælg et tema til bryllup, fødselsdag eller julefrokost. Boksen får vinger og topper i festens farver, og skærmen og rammen på hvert foto følger med. Så ved alle, hvilken fest billedet er fra, også om ti år."
           layers={[
-            ["Boksen", "Vinger og topper i festens farver, printet til jer."],
-            ["Skærmen", "Jeres navne og en velkomsttekst, når gæsterne kommer hen til boksen."],
-            ["Fotoet", "Navne, dato eller logo i rammen på hvert billede."],
+            ["Boksen", "Vinger og topper i festens farver."],
+            ["Skærmen", "En velkomst i samme stil, når gæsterne kommer hen til boksen."],
+            ["Fotoet", "En ramme med temaets farver og hilsen på hvert billede."],
           ]}
         />
         <Activities
@@ -136,8 +136,8 @@ export default function Home() {
         />
         <PhotoStrip
           prints={[
-            ["print-wedding", "Anna & Jonas · 12.6"],
-            ["print-birthday", "Birthe 60 år"],
+            ["print-wedding", "Bryllup"],
+            ["print-birthday", "Fødselsdag"],
             ["print-office", "Julefrokost"],
           ]}
         />

@@ -701,7 +701,7 @@ def bryllup():
             cen.append(c)
         L += [("sage", U(*sage)), ("leaf", U(*dark)), ("blush", U(*pet)), ("gold", U(*cen))]
         L += [("sage", hills_poly(-HW - 5, HW + 5, 18, 4, 3.2, rng).intersection(box(-HW - 6, 0, HW + 6, cz))), ("leaf", hills_poly(-HW - 5, HW + 5, 8, 3, 4.5, rng).intersection(box(-HW - 6, 0, HW + 6, cz)))]
-        L += [("ink", text("ANNA & JONAS", "outfit", 0, 78, 15, 124)), ("gold", text("12. JUNI 2026", "outfit", 0, 56, 8, 108))]
+        L += [("ink", text("BRYLLUP", "outfit", 0, 78, 17, 124)), ("gold", text("TAK FORDI I KOM", "outfit", 0, 56, 8, 108))]
         ring = lambda cx: Point(cx, 104).buffer(12, 48).difference(Point(cx, 104).buffer(8.6, 48))
         L += [("gold", U(ring(-8), ring(8)))]
         return outline, L
@@ -720,17 +720,17 @@ def bryllup():
             pet.append(p)
             cen.append(c)
         L += [("sage", U(*sage)), ("leaf", U(*dark, *stems)), ("blush", U(*pet)), ("gold", U(*cen))]
-        L += [("ink", text("Anna & Jonas", "outfit", w / 2, h * 0.56, 64, w * 0.8)), ("gold", text("12. JUNI 2026", "outfit", w / 2, h * 0.47, 24, w * 0.5))]
+        L += [("ink", text("Skål for", "outfit", w / 2, h * 0.6, 56, w * 0.7)), ("ink", text("brudeparret", "outfit", w / 2, h * 0.53, 56, w * 0.8)), ("gold", text("TAK FORDI I KOM", "outfit", w / 2, h * 0.47, 22, w * 0.5))]
         L += [("blush", heart(w / 2, h * 0.405, 40))]
         return L
 
-    return dict(name="Bryllup", place="Navne og dato", font="outfit", pal=pal,
+    return dict(name="Bryllup", place="Blomster og guld", font="outfit", pal=pal,
                 filament={"base": "PETG HF ivory", "sage": "PETG HF sage green", "leaf": "PETG HF green", "blush": "PETG HF blush pink", "gold": "PETG HF sand gold", "ink": "PETG HF brown", "white": "PETG HF white"},
                 casing="#efe3d0", ring={"idle": ["#fff0d6", "#f0c99a", "#ffffff"], "glow": "#ffd9a8"},
-                screen=dict(bg="base", ink="ink", accent="gold", cta="Sig «Skål!»", ticker="Anna & Jonas  •  12. juni 2026  •  Tak fordi I kom  •"),
-                frame=dict(bg="base", ink="gold", caption="Anna & Jonas · 12.6.2026"), photo="print-wedding",
+                screen=dict(bg="base", ink="ink", accent="gold", cta="Sig «Skål!»", ticker="Skål for brudeparret  •  Tak fordi I kom  •  Smil til kameraet  •"),
+                frame=dict(bg="base", ink="gold", caption="Skål for brudeparret"), photo="print-wedding",
                 wing=wing, topper=topper, screen_art=screen,
-                logo=lambda: [("gold", U(*[Point(cx, 14).buffer(12, 48).difference(Point(cx, 14).buffer(8.6, 48)) for cx in (-8, 8)])), ("ink", text("ANNA & JONAS", "outfit", 0, -12, 9))])
+                logo=lambda: [("gold", U(*[Point(cx, 14).buffer(12, 48).difference(Point(cx, 14).buffer(8.6, 48)) for cx in (-8, 8)])), ("ink", text("BRYLLUP", "outfit", 0, -12, 9))])
 
 
 @theme
@@ -775,7 +775,7 @@ def fodselsdag():
             flags.append((cols[i % 4], Polygon([(x - 8, zt), (x + 8, zt), (x, zt - 16)])))
         for k in cols:
             L += [(k, U(*[g for c, g in flags if c == k]))]
-        L += [("gold", text("TILLYKKE", "lilita-one", 0, 68, 28, 200)), ("cream", text("Birthe 60 år", "lilita-one", 0, 38, 17, 170))]
+        L += [("gold", text("TILLYKKE", "lilita-one", 0, 68, 28, 200)), ("cream", text("MED FØDSELSDAGEN", "lilita-one", 0, 38, 14, 170))]
         L += [("pink", U(*[star4(x, 38, 6) for x in (-100, 100)])), ("teal", U(*[star4(x, 62, 4.5) for x in (-104, 104)]))]
         L += [("coral", hills_poly(-HW - 5, HW + 5, 12, 3, 5, rng).intersection(box(-HW - 6, 0, HW + 6, 20)))]
         return outline, L
@@ -791,16 +791,16 @@ def fodselsdag():
         L += [("cream", U(*[p[2] for p in parts]))]
         conf = [Point(rng.uniform(10, w - 10), rng.uniform(330, h - 360)).buffer(rng.uniform(5, 9), 12) if rng.random() < 0.6 else star4(rng.uniform(20, w - 20), rng.uniform(330, h - 360), rng.uniform(9, 14)) for _ in range(40)]
         L += [("gold", U(*conf[:14])), ("teal", U(*conf[14:27])), ("pink", U(*conf[27:]))]
-        L += [("gold", text("TILLYKKE", "lilita-one", w / 2, h * 0.6, 50, w * 0.7)), ("cream", text("Birthe", "lilita-one", w / 2, h * 0.51, 92, w * 0.78)), ("coral", text("60 år", "lilita-one", w / 2, h * 0.41, 58, w * 0.5))]
+        L += [("gold", text("TILLYKKE", "lilita-one", w / 2, h * 0.6, 50, w * 0.7)), ("cream", text("med", "lilita-one", w / 2, h * 0.52, 50, w * 0.4)), ("coral", text("fødselsdagen", "lilita-one", w / 2, h * 0.44, 66, w * 0.84))]
         return L
 
-    return dict(name="Fødselsdag", place="Navn og alder", font="lilita-one", pal=pal,
+    return dict(name="Fødselsdag", place="Balloner og konfetti", font="lilita-one", pal=pal,
                 filament={"base": "PETG HF navy", "gold": "PETG HF sand gold", "coral": "PETG HF coral", "teal": "PETG HF teal", "pink": "PETG HF pink", "cream": "PETG HF cream"},
                 casing="#16244d", ring={"idle": ["#f2c14e", "#ee6b5b", "#3bb8b0", "#f49ac1"], "glow": "#f2c14e"},
-                screen=dict(bg="base", ink="cream", accent="gold", cta="Sig «Hurra!»", ticker="Tillykke Birthe  •  60 år  •  Hurra  •"),
-                frame=dict(bg="base", ink="gold", caption="Birthe 60 år"), photo="print-birthday",
+                screen=dict(bg="base", ink="cream", accent="gold", cta="Sig «Hurra!»", ticker="Tillykke med fødselsdagen  •  Hurra  •  Smil til kameraet  •"),
+                frame=dict(bg="base", ink="gold", caption="Tillykke med fødselsdagen"), photo="print-birthday",
                 wing=wing, topper=topper, screen_art=screen,
-                logo=lambda: [("gold", text("60", "lilita-one", 0, 20, 34)), ("coral", text("TILLYKKE", "lilita-one", 0, -2, 9))])
+                logo=lambda: [("gold", star4(0, 20, 16)), ("coral", text("TILLYKKE", "lilita-one", 0, -8, 9))])
 
 
 @theme
@@ -829,7 +829,7 @@ def julefrokost():
         L += [("red", U(*[Point(x + rng.uniform(-10, 10), 44 + h * rng.uniform(0.25, 0.5)).buffer(3.6, 20) for x, h in zip(xs, hs) for _ in range(2)])),
               ("gold", U(*[star4(x, 44 + h + 1, 8.5) for x, h in zip(xs, hs)]))]
         L += [("red", box(-HW, 0, HW, 6))]
-        L += [("snow", text("JULEFROKOST", "lilita-one", 0, 30, 22, 196)), ("gold", text("NORDLYS A/S · 2026", "poppins", 0, 14, 7, 150))]
+        L += [("snow", text("JULEFROKOST", "lilita-one", 0, 30, 22, 196)), ("gold", text("GLÆDELIG JUL", "poppins", 0, 14, 7, 150))]
         return outline, L
 
     def screen(w, h):
@@ -839,14 +839,14 @@ def julefrokost():
         L += [("snow", hills_poly(0, w, 120, 14, 1.4, rng)), ("snow", U(*[snowflake(rng.uniform(20, w - 20), rng.uniform(330, h - 40), rng.uniform(9, 17)) for _ in range(22)]))]
         L += [("red", U(*[Point(rng.uniform(40, w - 40), rng.uniform(150, 290)).buffer(rng.uniform(8, 12), 20) for _ in range(8)])), ("gold", U(*[Point(rng.uniform(40, w - 40), rng.uniform(150, 290)).buffer(rng.uniform(6, 9), 20) for _ in range(6)]))]
         L += [("gold", star4(w / 2, h - 130, 52))]
-        L += [("snow", text("Julefrokost", "lilita-one", w / 2, h * 0.58, 78, w * 0.84)), ("gold", text("2026", "lilita-one", w / 2, h * 0.48, 44, w * 0.4)), ("gold", text("NORDLYS A/S", "poppins", w / 2, h * 0.42, 20, w * 0.5))]
+        L += [("snow", text("Julefrokost", "lilita-one", w / 2, h * 0.58, 78, w * 0.84)), ("gold", text("Glædelig jul", "lilita-one", w / 2, h * 0.49, 44, w * 0.6))]
         return L
 
-    return dict(name="Julefrokost", place="Logo og tekst", font="lilita-one", pal=pal,
+    return dict(name="Julefrokost", place="Grantræer og sne", font="lilita-one", pal=pal,
                 filament={"base": "PETG HF dark green", "pine": "PETG HF pine green", "red": "PETG HF red", "gold": "PETG HF sand gold", "snow": "PETG HF white", "bark": "PETG HF brown"},
                 casing="#c8202f", ring={"idle": ["#f2c14e", "#ffffff", "#e0443a"], "glow": "#f2c14e"},
-                screen=dict(bg="base", ink="snow", accent="gold", cta="Sig «Skål!»", ticker="Nordlys A/S  •  Julefrokost 2026  •  Glædelig jul  •"),
-                frame=dict(bg="red", ink="snow", caption="Julefrokost 2026 · Nordlys A/S"), photo="print-office",
+                screen=dict(bg="base", ink="snow", accent="gold", cta="Sig «Skål!»", ticker="Glædelig jul  •  Skål  •  Smil til kameraet  •"),
+                frame=dict(bg="red", ink="snow", caption="Glædelig jul"), photo="print-office",
                 wing=wing, topper=topper, screen_art=screen,
                 logo=lambda: [("snow", text("Julefrokost", "lilita-one", 0, 16, 26)), ("gold", star4(0, -8, 9))])
 

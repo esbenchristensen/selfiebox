@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { addons, deliveries, occasions, packages, type DeliveryId, type PackageId } from "@/content";
+import { addons, deliveries, occasions, packages, partyThemes, type DeliveryId, type PackageId } from "@/content";
 import { rangeForPackage, START_BOOKING, useBookedDays, useBookingWindow, type StartBooking } from "@/lib/booking";
 import { formatRange, type DayKey, type Range } from "@/lib/dates";
 import { Calendar } from "./Calendar";
@@ -249,10 +249,14 @@ export function Booking() {
               </div>
               {extras.tema && (
                 <div className="field">
-                  <label htmlFor="bk-theme">
-                    Tekst til tema <small>(valgfri)</small>
-                  </label>
-                  <input className="input" id="bk-theme" value={themeText} placeholder="Fx Anna & Jonas · 12.6.2027" onChange={(e) => setThemeText(e.target.value)} maxLength={60} />
+                  <span className="field-label">Vælg tema</span>
+                  <div className="seg" role="group" aria-label="Vælg tema">
+                    {partyThemes.map((t) => (
+                      <button key={t} type="button" aria-pressed={themeText === t} onClick={() => setThemeText(t)}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </fieldset>

@@ -1,7 +1,7 @@
 {
   "id": "julefrokost",
   "name": "Julefrokost",
-  "place": "Logo og tekst",
+  "place": "Grantræer og sne",
   "palette": {
     "base": "#0f3d2e",
     "pine": "#1d6a4c",
@@ -22,7 +22,7 @@
   "frame": {
     "bg": "red",
     "ink": "snow",
-    "caption": "Julefrokost 2026 · Nordlys A/S"
+    "caption": "Glædelig jul"
   },
   "photo": "print-office",
   "parts": [
