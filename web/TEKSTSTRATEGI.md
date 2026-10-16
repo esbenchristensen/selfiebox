@@ -23,6 +23,7 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 | Kører uden personale | Kontrolpanel på nettet: tema, tekster, priser, aktiviteter |
 | Billig | Privat fra 495 kr./dag, 750 kr./weekend. Erhverv 995 kr./md. ekskl. moms |
 | Gæsteliste | Gæsten skriver nummer for at få billedet på SMS og kan sige ja til tilbud |
+| Fuld service (erhverv) | Vi monterer, overvåger (boksen melder sig til fleet, alarmer i admin), opdaterer (signerede releases, trinvis udrulning), døgnsupport, ny boks ved fejl uden regning. Besluttet oktober 2026 |
 
 ### Ét budskab pr. målgruppe
 
@@ -55,7 +56,19 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 - **Lov aldrig mere, end boksen kan.** Se tabellen over beviser.
 - **Undgå:** "skaber stemning", "uforglemmelig", "oplevelse", "løsning", ordspil, der skal forklares.
 
-## 5. SEO
+## 5. Tryghed: hvorfor erhverv sælges som fuld service
+
+En barejer køber ikke en fotoboks. De køber, at den ikke bliver et problem. Sektionen "I betaler én fast pris. Vi tager os af resten." (`components/Care.tsx`) står lige efter prisen på `/erhverv` og er skrevet efter disse regler:
+
+- **Byrden er den egentlige pris.** Ud over de 995 kr. regner ejeren med tid, besvær og risiko: Hvem monterer? Hvem ringer jeg til? Hvad hvis den går ned fredag kl. 23? Hvis siden ikke svarer, gætter ejeren selv, og gættet er altid værre end virkeligheden (tabsaversion). Derfor står svarene lige efter prisen.
+- **Vis det, påstå det ikke.** To kort: "Det klarer vi" er en lang liste, og "Det klarer I" har én linje: "Holder åbent, som I plejer." Den tomme plads er budskabet.
+- **Navngiv frygten, og svar på den.** "Det, I måske tænker på" stiller de spørgsmål, ejeren ikke vil stille i en salgssamtale, og svarer konkret. En frygt, der er sagt højt og besvaret, fylder mindre end én, der ikke er nævnt.
+- **Konkrete løfter frem for store ord.** Forskning i servicegarantier (Hart 1988; McDougall m.fl. 1998) viser, at specifikke løfter om hvad der sker, og hvordan, mindsker oplevet risiko mere end vage. Skriv "Går en boks i stykker, sender vi en ny", ikke "100 % sikkerhed" eller "fuld tryghed". Absolutte løfter vækker mistillid hos en erfaren ejer.
+- **Beslutningssikkerhed.** Gartner finder, at købere med høj tillid til egen beslutning oftere køber og sjældnere fortryder. Hjælp ejeren med at kunne forklare valget: "fast pris, intet at passe, og hvis noget går galt, er det leverandørens problem".
+- **Ét fast tal, ingen bagdøre.** "Kommer der regninger ud over den faste pris?" besvares direkte med nej. Forudsigelighed er tryghed.
+- **Lov kun det, vi kan holde.** Sæt ikke svartider, timer for ombytning eller oppetid på siden, før driften kan levere dem hver gang.
+
+## 6. SEO
 
 **Søgeord** (de ord, kunderne selv bruger):
 
@@ -78,7 +91,7 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 3. **Google Business Profile** med fotos og anmeldelser.
 4. **Guides,** der svarer på det, folk søger efter: "Hvad koster en fotoboks?", "Fotoboks eller fotograf til brylluppet?", "10 ideer til billeder i fotoboksen".
 
-## 6. Skal afklares før lancering
+## 7. Skal afklares før lancering
 
 - **Samtykke til SMS-markedsføring.** Kiosken gemmer i dag nummeret for at sende billedet. Teksterne lover, at gæsten "kan sige ja til at høre fra jer". Det kræver et særskilt, aktivt ja på SMS-skærmen (ikke forhåndsafkrydset), og at kun de numre kan bruges til udsendelser fra kontrolpanelet. Ellers skal teksten om gæstelisten fjernes.
 - **Instax til private.** Er der film med i privatpakkerne, eller kun som tilvalg? Teksterne siger nu "ubegrænsede billeder" (digitalt) og nævner Instax under fotomodulet. Skriv det præcist, når det er besluttet.

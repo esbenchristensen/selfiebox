@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Business } from "@/components/Business";
+import { Care } from "@/components/Care";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
@@ -64,6 +65,7 @@ export default function Erhverv() {
           { label: "Sådan virker den", href: "#saadan" },
           { label: "Aktiviteter", href: "#aktiviteter" },
           { label: "Pris", href: "#pris" },
+          { label: "Service", href: "#service" },
           { label: "Spørgsmål", href: "#faq" },
         ]}
         other={{ label: "Privat fest", short: "Privat", href: "/" }}
@@ -73,12 +75,13 @@ export default function Erhverv() {
         <Hero
           label="Til barer, klubber og hoteller"
           title="En fotoboks til jeres bar, der får gæsterne til at komme igen."
-          lede="Selfi Boks hænger på væggen og kører uden personale. Gæsterne deler billederne med jeres navn i rammen, og I får en gæsteliste, I må invitere tilbage. 995 kr. om måneden, ekskl. moms."
+          lede="Selfi Boks hænger på væggen og kører uden personale. Gæsterne deler billederne med jeres navn i rammen, og I får en gæsteliste, I må invitere tilbage. 995 kr. om måneden, ekskl. moms. Vi monterer den, passer den og bytter den, hvis noget går galt."
           primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
           secondary={{ label: "Se, hvad den gør for jer", href: "#gevinst" }}
           visual={<HeroBox />}
         />
         <Business />
+        <Care />
         <Venues
           label="Hvor den hænger"
           title="Fra bodegaen til hotelbaren."
