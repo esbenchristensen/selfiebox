@@ -31,17 +31,18 @@ function measure(file) {
 async function soundTrack(film, scenes, { speed, lead }, duration, out) {
   const dir = path.join(__dirname, "voice", film);
   const music = path.join(__dirname, "music", `${film}.mp3`);
-  const lines = scenes.filter((s) => fs.existsSync(path.join(dir, `${s.id}.mp3`)));
+  const clip = (id) => [".opus", ".mp3"].map((e) => path.join(dir, id + e)).find((f) => fs.existsSync(f));
+  const lines = scenes.filter((s) => clip(s.id));
   const hasMusic = fs.existsSync(music);
   if (!lines.length && !hasMusic) return false;
   const D = duration.toFixed(3);
-  const inputs = lines.flatMap((s) => ["-i", path.join(dir, `${s.id}.mp3`)]);
+  const inputs = lines.flatMap((s) => ["-i", clip(s.id)]);
   const graph = lines.map((s, i) => `[${i}:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay=${Math.round((s.start / speed + lead) * 1000)}:all=1[a${i}]`);
   if (lines.length) graph.push(`${lines.map((_, i) => `[a${i}]`).join("")}amix=inputs=${lines.length}:normalize=0,apad,atrim=0:${D}[voice]`);
   if (hasMusic) {
     inputs.push("-i", music);
     const m = lines.length;
-    graph.push(`[${m}:a]aformat=sample_rates=48000:channel_layouts=stereo,apad,atrim=0:${D},loudnorm=I=-31:TP=-8,afade=t=in:d=0.8,afade=t=out:st=${(duration - 2.5).toFixed(3)}:d=2.5[bed]`);
+    graph.push(`[${m}:a]aformat=sample_rates=48000:channel_layouts=stereo,apad,atrim=0:${D},loudnorm=I=-30:TP=-8,afade=t=in:d=0.15,afade=t=out:st=${(duration - 0.3).toFixed(3)}:d=0.3[bed]`);
     if (lines.length) {
       graph.push("[voice]asplit[v1][v2]");
       graph.push("[bed][v2]sidechaincompress=threshold=0.01:ratio=8:attack=15:release=500[duck]");
