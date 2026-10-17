@@ -2,9 +2,35 @@
 <html lang="da">
 <head>
 <meta charset="utf-8">
-<title>Selfi explainer</title>
+<title>Selfi privat</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<style>
+/* The film for renting a box for one party (selfi.dk). Written as an ad:
+   a problem in the first seconds, the brand right after, one peak (3-2-1, flash, laughter),
+   the payoff, the one worry answered, the price made small, and one thing to do. */
+
+/* Hook: a phone full of party photos where nobody is all in */
+.gallery { width: var(--phw); aspect-ratio: 9 / 18; border-radius: 46px; border: 10px solid #111; background: #0b0b0b; overflow: hidden; position: relative; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6); }
+.gallery .roll { position: absolute; left: 6px; right: 6px; top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.gallery .roll i { aspect-ratio: 1; background: #222 center / 280% no-repeat; }
+.gallery .bar { position: absolute; top: 0; left: 0; right: 0; height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; font: 600 15px/1 var(--body); color: #fff; background: #0b0b0b; z-index: 2; }
+.gallery .bar span { color: var(--ink-muted); font-weight: 500; }
+.nope { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; white-space: nowrap; }
+
+/* Peak: the box counts down, then the photo */
+.peak-shot { position: absolute; inset: 0; opacity: 0; }
+.click { position: absolute; left: var(--pad); bottom: 110px; z-index: 3; font: 600 calc(var(--h) * 1.3)/1 var(--display); letter-spacing: -0.04em; color: #fff; text-shadow: 0 6px 40px rgba(0, 0, 0, 0.5); }
+.tall .click { bottom: 130px; }
+
+/* Price: the weekend price, then what it is per guest */
+.big-price { font: 600 calc(var(--h) * 2.1)/0.9 var(--display); letter-spacing: -0.05em; }
+.big-price span { font-size: 0.32em; letter-spacing: 0; color: var(--ink-muted); margin-left: 0.2em; }
+.math { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; font: 500 calc(var(--lede) * 1.05)/1.2 var(--body); color: var(--ink-muted); }
+.math b { color: var(--ink); font-weight: 600; }
+.math .eq { padding: 12px 22px; border-radius: 999px; background: var(--green); color: var(--on-green); font-weight: 600; }
+.pricebox { display: flex; flex-direction: column; gap: 30px; align-items: flex-start; }
+</style>
 </head>
 <body>
 <div id="stage">
@@ -16,286 +42,159 @@
 <script src="voice/explainer/timing.js"></script>
 <script src="shared.js"></script>
 <script>
-// June 2027: the 1st is a Tuesday. The weekend picked is Fri 11 – Sun 13.
-function calendar() {
-  const dows = ["man", "tir", "ons", "tor", "fre", "lør", "søn"].map((d) => `<span class="dow">${d}</span>`).join("");
-  let days = "<span></span>";
-  for (let d = 1; d <= 30; d++) {
-    const cls = [5, 19, 20, 26].includes(d) ? "booked" : d < 3 ? "past" : "";
-    days += `<div class="day ${cls}" data-d="${d}"><i class="bg"></i><span>${d}</span></div>`;
-  }
-  return `<div class="cal">${dows}${days}</div>`;
-}
+const BW = TALL ? { peak: 470, home: 290, theme: 262, phone: 390 } : { peak: 500, home: 340, theme: 270, phone: 360 };
 
-// ---------- scenes ----------
-const BW = TALL
-  ? { intro: 400, s3: 370, s4: 300, s2: 250, theme: 262 }
-  : { intro: 470, s3: 440, s4: 360, s2: 300, theme: 270 };
+// Close crops of real party photos: half faces, a shoulder, a blurred arm. Nobody is all in.
+const CROPS = [
+  ["print-wedding", "10% 20%"], ["sted-gymnasie", "85% 30%"], ["print-office", "95% 10%"], ["print-birthday", "0% 60%"],
+  ["sted-julefrokost", "70% 20%", 1], ["print-club", "100% 40%"], ["sted-bryllup", "20% 60%"], ["print-bar", "90% 30%", 1],
+  ["reception", "80% 40%"], ["print-wedding", "100% 80%"], ["sted-gymnasie", "10% 70%", 1], ["print-office", "0% 30%"],
+  ["print-birthday", "100% 20%"], ["sted-bodega", "60% 60%", 1], ["print-club", "0% 90%"], ["sted-vaertshus", "30% 40%"],
+  ["print-bar", "0% 70%"], ["sted-julefrokost", "10% 50%"], ["print-wedding", "50% 0%", 1], ["sted-festival", "70% 60%"],
+  ["print-birthday", "50% 100%"], ["print-office", "60% 90%"], ["sted-gymnasie", "50% 10%"], ["print-club", "60% 0%", 1],
+];
 
 const SCENES = [
   {
-    id: "intro", dur: 5.5,
+    id: "hook", dur: 4.4,
     html: `
       <div class="copy">
-        <div data-in="0.3">${logo(TALL ? 60 : 64)}</div>
-        <span class="label" data-in="0.9">Fotoboks til leje</span>
-        <h1 data-in="1.2">Lej en fotoboks, der får alle med på billedet.</h1>
-      </div>
-      <div class="visual">${box(BW.intro, idle, 'data-in="0.1" id="intro-box"')}</div>`,
-    update(t, el) { breathe(el.querySelector(".box"), t); },
-  },
-  {
-    id: "why", dur: 6.2,
-    html: `
-      <div class="copy">
-        <span class="label" data-in="0.2">Til bryllup, fødselsdag og firmafest</span>
-        <h2 data-in="0.4">Det bedste billede fra festen er det, hvor alle er med.</h2>
-      </div>
-      <div class="visual" id="why-v">
-        ${print(TALL ? 300 : 360, "print-wedding", "Skål for brudeparret", 'data-drop="0.5" data-r="-7" data-x="-0.36" data-y="0.02"')}
-        ${print(TALL ? 300 : 360, "print-birthday", "Tillykke, mor", 'data-drop="1.1" data-r="4" data-x="0.02" data-y="-0.05"')}
-        ${print(TALL ? 300 : 360, "print-office", "Julefrokost 2026", 'data-drop="1.7" data-r="-2" data-x="0.36" data-y="0.06"')}
-      </div>`,
-    update(t, el) {
-      const v = el.querySelector(".visual"), W = v.clientWidth, H = v.clientHeight;
-      el.querySelectorAll(".print").forEach((p) => {
-        const k = E.out(prog(t, +p.dataset.drop, 0.9));
-        const x = +p.dataset.x * W * (TALL ? 0.95 : 0.92), y = +p.dataset.y * H, r = +p.dataset.r;
-        const drift = Math.sin(t * 0.6 + r) * 4;
-        p.style.left = `calc(50% - ${p.offsetWidth / 2}px)`; p.style.top = `calc(50% - ${p.offsetHeight / 2}px)`;
-        p.style.opacity = k;
-        p.style.transform = `translate(${x}px, ${y + (1 - k) * -140 + drift}px) rotate(${r + (1 - k) * 14}deg) scale(${1.15 - 0.15 * k})`;
-      });
-    },
-  },
-  {
-    id: "s1", dur: 7.6, step: 1,
-    html: `
-      <div class="copy">
-        ${label("01", "Vælg jeres dage")}
-        <h2 data-in="0.4">Vælg dagene i kalenderen.</h2>
-        <p class="lede" data-in="0.8"><b>En dag 495 kr., en weekend 750 kr. og en uge 1.250 kr.</b> Altid inkl. moms. Vi bekræfter på mail.</p>
+        <h1 data-in="0.15">100 billeder fra festen.</h1>
+        <p class="lede" data-in="1.6"><b>Og ikke ét, hvor alle er med.</b></p>
       </div>
       <div class="visual">
-        <div class="card" data-in="0.3">
-          <div class="pkgs">
-            <div class="pkg" data-p="dag"><b>Dag</b><span>495 kr.</span></div>
-            <div class="pkg" data-p="weekend"><b>Weekend</b><span>750 kr.</span></div>
-            <div class="pkg" data-p="uge"><b>Uge</b><span>1.250 kr.</span></div>
-          </div>
-          <span class="cal-title">Juni 2027</span>
-          ${calendar()}
-          <div class="foot">
-            <div class="sum"><span class="a">Vælg første dag</span><span class="b"><b>Fre 11. – søn 13. juni</b>750 kr. inkl. moms</span></div>
-            <span class="btn">Send forespørgsel</span>
-          </div>
-          <div class="toast"><span class="check"></span>Sendt. Vi bekræfter på mail.</div>
-          <div class="tap"></div>
+        <div class="gallery" style="--phw:${BW.phone}px" data-in="0">
+          <div class="bar">Seneste<span>100 billeder</span></div>
+          <div class="roll">${CROPS.map(([p, pos, blur]) => `<i style="background-image:url(${PH}${p}.jpg);background-position:${pos}${blur ? ";filter:blur(3px)" : ""}"></i>`).join("")}</div>
+          <span class="pill nope" style="opacity:0">Ingen med alle</span>
         </div>
       </div>`,
     update(t, el) {
-      const card = el.querySelector(".card");
-      const wk = el.querySelector('[data-p="weekend"]');
-      wk.classList.toggle("on", t > 1.75);
-      const range = [11, 12, 13];
-      range.forEach((d, i) => {
-        const day = el.querySelector(`[data-d="${d}"]`), on = prog(t, 2.75 + i * 0.16, 0.25);
-        day.querySelector(".bg").style.opacity = on;
-        day.querySelector(".bg").style.borderRadius = i === 0 ? "27px 0 0 27px" : i === 2 ? "0 27px 27px 0" : "0";
-        const s = day.querySelector("span"), end = i !== 1;
-        s.style.background = end && on > 0.5 ? "var(--ink)" : "transparent";
-        s.style.color = end && on > 0.5 ? "#121412" : "";
-      });
-      const sw = prog(t, 3.3, 0.4);
-      el.querySelector(".sum .a").style.opacity = 1 - sw;
-      el.querySelector(".sum .b").style.opacity = sw;
-      el.querySelector(".foot .btn").style.opacity = 0.4 + 0.6 * sw;
-      const toast = el.querySelector(".toast"), tk = E.out(prog(t, 5.35, 0.5));
-      toast.style.opacity = tk; toast.style.transform = `translate(-50%, ${(1 - tk) * 20}px)`;
-      tapAt(el.querySelector(".tap"), card, t, [[1.55, wk], [2.55, el.querySelector('[data-d="11"] span')], [5.0, el.querySelector(".foot .btn")]]);
+      el.querySelector(".roll").style.transform = `translateY(${-E.out(prog(t, 0, 2.2)) * BW.phone * 0.9}px)`;
+      const n = el.querySelector(".nope"), k = E.out(prog(t, 2.3, 0.4));
+      n.style.opacity = k; n.style.transform = `translate(-50%, -50%) scale(${1.25 - 0.25 * k}) rotate(-4deg)`;
     },
   },
   {
-    id: "s2", dur: 6.6, step: 2,
+    id: "solve", dur: 3.6, full: true,
+    sfx: [[0.25, "chime", 0.7]],
     html: `
+      ${bleed("sted-gymnasie", "40% 45%")}
       <div class="copy">
-        ${label("02", "Få boksen ud til festen")}
-        <h2 data-in="0.4">Hent den, eller få den leveret.</h2>
-        <p class="lede" data-in="0.8">Boksen står på en stander og skal kun bruge <b>en almindelig stikkontakt</b>.</p>
-      </div>
-      <div class="visual">
-        <div class="deliver">
-          <div class="standbox" data-in="0.3" style="--pole:${TALL ? 210 : 300}px">
-            ${box(BW.s2, idle)}
-            <div class="pole"></div><div class="base"></div>
-            <svg class="cable" width="150" height="60"><path d="M0 0 C 30 50, 90 50, 120 20" pathLength="100"/></svg>
-            <div class="socket" style="left:calc(50% + 116px); bottom:20px"><i style="left:16px"></i><i style="right:16px"></i></div>
-          </div>
-          <div class="opts">
-            <div class="opt" data-in="1.4"><span class="k">A</span><div><b>Afhent selv</b><span>Vi viser jer, hvordan den virker. Det tager fem minutter.</span></div></div>
-            <div class="opt" data-in="2.0"><span class="k">B</span><div><b>Levering</b><span>Vi bringer boksen dagen før og henter den dagen efter.</span></div></div>
-            <div class="opt" data-in="2.6"><span class="k">C</span><div><b>Levering og opsætning</b><span>Vi stiller op, tester og pakker ned igen.</span></div></div>
-          </div>
-        </div>
+        <div data-in="0.1">${logo(TALL ? 64 : 72)}</div>
+        <h2 data-in="0.35">Samler alle foran kameraet.</h2>
       </div>`,
-    update(t, el) {
-      const p = el.querySelector(".cable path"), k = prog(t, 0.8, 0.9);
-      p.style.strokeDasharray = `${k * 100} 100`;
-      el.querySelector(".socket").style.opacity = prog(t, 0.6, 0.4);
-      breathe(el.querySelector(".box"), t);
-    },
   },
   {
-    id: "s3", dur: 9.6, step: 3,
+    id: "peak", dur: 4.2, center: true, hold: 1.3,
+    // The numbers land on the words: Jonas says "tre", "to", "én" about 0.6, 1.4 and 2.2 s into the scene.
+    sfx: [[0.55, "beep", 0.55], [1.4, "beep", 0.55], [2.2, "beep", 0.55], [2.95, "shutter", 1], [3.1, "cheer", 0.6]],
     html: `
-      <div class="copy">
-        ${label("03", "Tryk og smil")}
-        <h2 data-in="0.4">Et tryk, og ringen tæller ned fra 3.</h2>
-        <p class="lede" data-in="0.8">Der er tid til at få alle med på billedet.</p>
-        <p class="lede" data-in="5.4">Så skifter ringen til <b>hvidt studielys</b>, så alle ansigter står skarpt. Ingen blitz i øjnene.</p>
-      </div>
-      <div class="visual">
-        <div class="bloom"></div>
-        ${box(BW.s3, `${idle}<span class="count"></span><img class="shot" src="${PH}print-wedding.jpg" alt=""><span class="smile">Sikke et billede</span>`, 'data-in="0.1"')}
-        <div class="tap"></div>
-      </div>`,
+      <div class="bloom" style="opacity:.6"></div>
+      ${box(BW.peak, `<span class="count"></span>`, "", "shadow")}
+      <div class="peak-shot">${bleed("print-birthday", "50% 35%")}<span class="click">Klik.</span></div>`,
     update(t, el) {
-      const b = el.querySelector(".box"), ring = b.querySelector(".ring"), base = b.querySelector(".ring-base");
-      const count = b.querySelector(".count"), idleEl = b.querySelector(".idle"), shot = b.querySelector(".shot"), smile = b.querySelector(".smile");
-      const T0 = 2.3, STEP = 0.95, SNAP = T0 + 3 * STEP;
-      idleEl.style.opacity = t < T0 ? 1 : 0;
-      if (t < T0) { breathe(b, t); base.style.opacity = 0; }
+      const b = el.querySelector(".box"), ring = b.querySelector(".ring"), base = b.querySelector(".ring-base"), count = b.querySelector(".count");
+      const MARKS = [0.55, 1.4, 2.2], SNAP = 2.95, T0 = MARKS[0];
+      if (t < T0) { breathe(b, t); base.style.opacity = 0; count.style.opacity = 0; }
       else if (t < SNAP) {
-        const c = (t - T0) / STEP, n = 3 - Math.floor(c);
-        count.textContent = n; count.style.opacity = 1;
-        count.style.transform = `scale(${1.25 - 0.25 * E.out(Math.min(1, (c % 1) * 3))})`;
-        base.style.opacity = 1;
-        ring.style.strokeDasharray = `${(1 - c / 3) * 100} 100`;
-        ring.style.filter = "drop-shadow(0 0 8px rgba(255,243,227,.6))";
+        const i = MARKS.filter((m) => t >= m).length - 1;
+        count.textContent = 3 - i; count.style.opacity = 1;
+        count.style.transform = `scale(${1.3 - 0.3 * E.out(prog(t, MARKS[i], 0.25))})`;
+        base.style.opacity = 1; ring.style.strokeDasharray = `${(1 - (t - T0) / (SNAP - T0)) * 100} 100`;
+        ring.style.filter = "drop-shadow(0 0 10px rgba(255,243,227,.7))";
+      } else {
+        count.style.opacity = 0; base.style.opacity = 0; ring.style.strokeDasharray = "100 0";
+        ring.style.stroke = "#fff"; ring.style.filter = "drop-shadow(0 0 50px rgba(255,255,255,.95))";
       }
-      if (t >= SNAP) {
-        count.style.opacity = 0; base.style.opacity = 0;
-        const L = prog(t, SNAP, 0.25) * (1 - prog(t, SNAP + 2.8, 0.8));
-        ring.style.strokeDasharray = "100 0";
-        ring.style.stroke = L > 0.02 ? `rgb(255,${243 + 12 * L},${227 + 28 * L})` : "";
-        ring.style.filter = `drop-shadow(0 0 ${8 + 34 * L}px rgba(255,255,255,${0.55 + 0.4 * L}))`;
-        el.querySelector(".bloom").style.opacity = L;
-        const sh = prog(t, SNAP + 0.35, 0.5);
-        shot.style.opacity = sh; smile.style.opacity = prog(t, SNAP + 1.2, 0.5);
-        shot.style.transform = `scale(${1.08 - 0.08 * E.out(sh)})`;
-      } else { shot.style.opacity = 0; smile.style.opacity = 0; el.querySelector(".bloom").style.opacity = 0; }
       flashAt(t, SNAP);
-      const sh = b.querySelector(".shutter");
-      tapAt(el.querySelector(".tap"), el.querySelector(".visual"), t, [[T0 - 0.35, sh]]);
+      const shot = el.querySelector(".peak-shot"), k = prog(t, SNAP + 0.05, 0.2);
+      shot.style.opacity = k;
+      shot.querySelector("img").style.transform = `scale(${1.15 - 0.1 * E.out(prog(t, SNAP, 1.5))})`;
+      const c2 = shot.querySelector(".click"), ck = E.out(prog(t, SNAP + 0.3, 0.4));
+      c2.style.opacity = ck; c2.style.transform = `translateY(${(1 - ck) * 30}px)`;
     },
   },
   {
-    id: "s4", dur: 8.2, step: 4,
+    id: "home", dur: 4.6,
+    sfx: [[1.0, "pop", 0.5]],
     html: `
       <div class="copy">
-        ${label("04", "Billedet med hjem")}
-        <h2 data-in="0.4">Billedet ligger på telefonen med det samme.</h2>
-        <p class="lede" data-in="0.8">Via QR-kode eller SMS. Alle festens fotos samles på <b>jeres egen eventside</b>, og med fotomodulet får gæsterne også et Instax-print.</p>
+        <h2 data-in="0.15">På telefonen med det samme.</h2>
+        <p class="lede" data-in="1.6">Og dagen efter har I <b>alle billeder</b> på jeres egen eventside.</p>
       </div>
       <div class="visual">
-        <div class="home">
-          <div style="position:relative" data-in="0.2">
-            ${print(Math.round(BW.s4 * 0.56), "print-wedding", "Skål for brudeparret", 'id="s4-print"')}
-            ${box(BW.s4, `<img class="shot" src="${PH}print-wedding.jpg" alt=""><div class="qr"><b>Scan og få billedet</b>${qr()}<small>eller få det på SMS</small></div>`, "", "shadow")}
-          </div>
-          <div class="phone" style="--phw:${TALL ? 290 : 330}px">
-            <span class="k">Jeres eventside</span>
-            <div><h3>Sofie og Mads</h3><div class="meta">12. juni 2027 · <span class="n">0</span> billeder</div></div>
-            <div class="grid">
-              <i style="background-image:url(${PH}print-wedding.jpg)"></i>
-              <i style="background-image:url(${PH}print-birthday.jpg)"></i>
-              <i style="background-image:url(${PH}print-bar.jpg)"></i>
-              <i style="background-image:url(${PH}print-office.jpg)"></i>
-              <i style="background-image:url(${PH}print-club.jpg)"></i>
-              <i style="background-image:url(${PH}sted-bryllup.jpg)"></i>
-            </div>
+        <div class="phone" style="--phw:${BW.phone}px" data-in="0">
+          <span class="k">Jeres eventside</span>
+          <div><h3>Sofie og Mads</h3><div class="meta">12. juni 2027 · <span class="n">0</span> billeder</div></div>
+          <div class="grid">
+            ${["print-birthday", "print-wedding", "sted-gymnasie", "print-office", "sted-bryllup", "print-club"].map((p) => `<i style="background-image:url(${PH}${p}.jpg)"></i>`).join("")}
           </div>
         </div>
       </div>`,
     update(t, el) {
-      const b = el.querySelector(".box");
-      const q = prog(t, 0.9, 0.4);
-      b.querySelector(".shot").style.opacity = 1 - q;
-      b.querySelector(".qr").style.opacity = q;
-      const pr = el.querySelector("#s4-print"), k = E.inOut(prog(t, 1.5, 1.3));
-      const bh = b.offsetHeight;
-      pr.style.left = `calc(50% - ${pr.offsetWidth / 2}px)`;
-      pr.style.top = `${bh - pr.offsetHeight - 30}px`;
-      pr.style.transform = `translateY(${k * (pr.offsetHeight * 0.92)}px) rotate(${-3 * k}deg)`;
-      pr.style.opacity = k > 0 ? 1 : 0;
-      const ph = el.querySelector(".phone"), pk = E.out(prog(t, 2.2, 0.8));
-      ph.style.opacity = pk;
-      ph.style.transform = `translate(${(1 - pk) * 80}px, ${TALL ? 40 : 70}px) rotate(${4 - 2 * pk}deg)`;
-      ph.style.marginLeft = TALL ? "-36px" : "-40px";
       el.querySelectorAll(".grid i").forEach((g, i) => {
-        const gk = E.out(prog(t, 3.0 + i * 0.28, 0.4));
-        g.style.opacity = gk; g.style.transform = `scale(${0.85 + 0.15 * gk})`;
+        const gk = E.out(prog(t, (i === 0 ? 0.9 : 1.8 + i * 0.25), 0.35));
+        g.style.opacity = gk; g.style.transform = `scale(${0.8 + 0.2 * gk})`;
       });
-      el.querySelector(".meta .n").textContent = Math.round(148 * E.out(prog(t, 3.0, 2.6)));
+      el.querySelector(".meta .n").textContent = Math.round(148 * E.out(prog(t, 1.8, 2.4)));
     },
   },
   {
-    id: "themes", dur: 7.2,
+    id: "easy", dur: 3.2, full: true,
+    html: `
+      ${bleed("sted-bryllup", "60% 45%")}
+      <div class="copy">
+        <span class="pill" data-in="0.1">Ingen skal stå ved den</span>
+        <h2 data-in="0.3">Den står på en stander og passer sig selv.</h2>
+      </div>`,
+  },
+  {
+    id: "themes", dur: 3.6,
     html: `
       <div class="copy">
-        <span class="label" data-in="0.2">Temaer</span>
-        <h2 data-in="0.4">En boks, der ser ud som jeres fest.</h2>
-        <p class="lede" data-in="0.8">Vælg bryllup, fødselsdag eller julefrokost. <b>Skærmen og rammen på hvert foto</b> følger temaet.</p>
+        <span class="label" data-in="0.1">Temaer</span>
+        <h2 data-in="0.2">Bryllup, fødselsdag eller julefrokost.</h2>
       </div>
       <div class="visual">
         <div class="themes">
           ${[["bryllup", "Bryllup"], ["fodselsdag", "Fødselsdag"], ["julefrokost", "Julefrokost"]].map(([id, name], i) => `
-            <div class="theme" data-in="${1.0 + i * 0.45}">
+            <div class="theme" data-in="${0.3 + i * 0.35}">
               ${box(BW.theme, `<img src="${MD}${id}/screen.png" alt="">`, "", "shadow")}
               <span class="label">${name}</span>
             </div>`).join("")}
         </div>
       </div>`,
     update(t, el) {
-      el.querySelectorAll(".theme").forEach((th, i) => {
-        th.querySelector(".box").style.transform = `translateY(${(i === 1 ? -40 : 0) + Math.sin(t * 1.2 + i * 1.7) * 6}px)`;
-      });
+      el.querySelectorAll(".theme").forEach((th, i) => (th.querySelector(".box").style.transform = `translateY(${(i === 1 ? -40 : 0) + Math.sin(t * 1.4 + i * 1.7) * 6}px)`));
     },
   },
   {
-    id: "price", dur: 6.2,
+    id: "price", dur: 6.0,
     html: `
       <div class="copy">
-        <span class="label" data-in="0.2">Med i prisen</span>
-        <h2 data-in="0.4">Fra 495 kr. inkl. moms.</h2>
-        <div class="ticks">
-          ${tick("Ubegrænsede billeder", 1.0)}
-          ${tick("Studielys i lysringen", 1.3)}
-          ${tick("Stander til boksen", 1.6)}
-          ${tick("Eventside med alle fotos", 1.9)}
-        </div>
+        <span class="label" data-in="0.1">En hel weekend</span>
+        <div class="big-price" data-in="0.2">750<span>kr.</span></div>
+        <span class="muted" data-in="0.5" style="font-size:calc(var(--lede)*.8)">Inkl. moms · ubegrænsede billeder · eventside</span>
       </div>
       <div class="visual">
-        <div class="tiles">
-          <div class="tile" data-in="0.6"><div><b>Dag</b><small>Én dag og aften</small></div><span class="p">495<span>kr.</span></span></div>
-          <div class="tile" data-in="0.85" data-k="w"><div><b>Weekend</b><small>Fredag til søndag</small></div><span class="p">750<span>kr.</span></span></div>
-          <div class="tile" data-in="1.1"><div><b>Uge</b><small>Syv dage i træk</small></div><span class="p">1.250<span>kr.</span></span></div>
+        <div class="pricebox">
+          <div class="math" data-in="2.6"><span><b>750 kr.</b></span><span>÷</span><span><b>75 gæster</b></span><span>=</span><span class="eq">10 kr. pr. gæst</span></div>
         </div>
       </div>`,
-    update(t, el) { el.querySelector('[data-k="w"]').classList.toggle("on", t > 2.4); },
   },
   {
-    id: "cta", dur: 6.4, center: true, last: true,
+    id: "cta", dur: 4.0, center: true, last: true, hold: 1.2,
+    sfx: [[0.15, "shutter", 0.8], [0.3, "chime", 0.8]],
     html: `
-      <div data-in="0.3">${logo(TALL ? 96 : 110)}</div>
-      <h2 data-in="0.8" style="margin-top:56px">Se ledige datoer på selfi.dk</h2>
-      <span class="btn" data-in="1.3" style="margin-top:56px">Se ledige datoer</span>
-      <p class="fine" data-in="1.7" style="margin-top:32px">Fra 495 kr. inkl. moms · Ubegrænsede billeder · Eventside med alle fotos</p>`,
+      <div data-in="0.05">${logo(TALL ? 96 : 110)}</div>
+      <h2 data-in="0.3" style="margin-top:48px">Tjek jeres dato på selfi.dk</h2>
+      <span class="btn" data-in="0.6" style="margin-top:48px">Se ledige datoer</span>
+      <p class="fine" data-in="0.9" style="margin-top:28px">Fra 495 kr. inkl. moms · Ubegrænsede billeder · Eventside med alle fotos</p>`,
   },
 ];
 
-
-mountFilm(SCENES);
+mountFilm(SCENES, { steps: 0, plain: ["cta", "solve"] });
 </script>
 </body>
 </html>

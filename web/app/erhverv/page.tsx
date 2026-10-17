@@ -84,9 +84,9 @@ export default function Erhverv() {
         <Explainer
           film="erhverv"
           label="Se filmen"
-          title="Jeres fotoboks, i jeres stil. Vi sørger for resten."
-          lede="Boksen får jeres farver, navn og logo. Gæsterne tager billeder med jeres navn i rammen, I får en gæsteliste, I må bruge, og vi monterer, passer og bytter boksen."
-          alt="Film: Sådan får jeres bar eller hotel en Selfi Boks i jeres eget design, med gæsteliste og fuld service"
+          title="Sådan tjener boksen penge til jeres bar."
+          lede="Missioner, titler og konkurrencer får gæsterne i gang. Det giver jer telefonnumre med samtykke, salg i baren og solgte prints, og vi passer boksen."
+          alt="Film: Selfi Boks i en bar eller natklub, med missioner, titler, konkurrence, gæsteliste, print og fuld service"
         />
         <Business />
         <Care />

@@ -6,8 +6,10 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
 <style>
-/* The venue film for /erhverv. The venues are made up on purpose: they show what a theme can be
-   without suggesting that a real bar, hotel or festival is a customer. */
+/* The film for bars, pubs and nightclubs (selfi.dk/erhverv). Written as an ad: the loss first
+   (a full Friday, and on Monday nobody knows who was there), then how the box gets guests going and
+   turns that into a phone number, sales at the bar and paid prints, then the service, the price and
+   one thing to do. The venues are made up on purpose, so no real bar looks like a customer. */
 
 /* A box in a venue's design: wings on the sides, a sign on top, its own casing, ring and screen */
 .vbox { position: relative; isolation: isolate; width: var(--bw); flex: none; margin-top: calc(var(--bw) * 0.3); container-type: inline-size; }
@@ -96,6 +98,46 @@
 .pricecard hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
 .pricecard .ticks { font-size: 26px; gap: 16px; }
 .pricecard .ticks .check { width: 34px; height: 34px; }
+
+/* More venue styles: a cocktail bar with brass lines, a club with neon tubes */
+.deco .wing i { width: 13cqw; height: 1.3cqw; border-radius: 1cqw; background: var(--acc); opacity: 0.9; }
+.neon .wing i { width: 3.2cqw; height: 11cqw; border-radius: 2cqw; background: var(--acc); box-shadow: 0 0 3cqw var(--acc), 0 0 1cqw #fff inset; }
+.neon .wing i:nth-child(even) { background: #3ce8ff; box-shadow: 0 0 3cqw #3ce8ff, 0 0 1cqw #fff inset; }
+.neon .topper b { text-shadow: 0 0 3cqw var(--acc); }
+
+/* Hook */
+.hook-q { position: absolute; z-index: 2; font: 600 calc(var(--h) * 1.6)/1 var(--display); color: rgba(255, 243, 227, 0.85); opacity: 0; }
+
+/* Mission */
+.mission { display: flex; flex-direction: column; align-items: center; gap: 4cqw; padding: 7cqw; text-align: center; }
+.mission .k { font: 600 5cqw/1 var(--mono); letter-spacing: 0.2em; color: var(--acc2, #ff4fd8); }
+.mission b { font: 600 8.6cqw/1.12 var(--display); }
+.stamp { position: absolute; z-index: 4; padding: 0.5em 0.9em; border: 0.18em solid currentColor; border-radius: 0.4em; font: 700 var(--fs, 30px)/1 var(--display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--green); background: rgba(10, 10, 10, 0.55); opacity: 0; white-space: nowrap; }
+
+/* Title */
+.titled { position: relative; }
+.titled .print { position: relative; }
+
+/* Contest */
+.vote { display: flex; flex-direction: column; gap: 12px; }
+.vote .row { display: grid; grid-template-columns: 74px 1fr 44px; gap: 12px; align-items: center; }
+.vote .row i { aspect-ratio: 1; border-radius: 10px; background: #222 center / cover; position: relative; }
+.vote .bar { height: 14px; border-radius: 8px; background: #e6e8e3; overflow: hidden; }
+.vote .bar b { display: block; height: 100%; width: 0; background: #c9ccc5; border-radius: 8px; }
+.vote .row.win .bar b { background: var(--green); }
+.vote .n { font: 600 18px/1 var(--body); text-align: right; font-variant-numeric: tabular-nums; }
+.crown { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font: 700 13px/1 var(--mono); background: var(--green); color: var(--on-green); padding: 5px 8px; border-radius: 999px; opacity: 0; white-space: nowrap; }
+.toast2 { margin-top: 10px; padding: 14px 16px; border-radius: 16px; background: #121412; color: #fff3e3; font: 600 17px/1.3 var(--body); opacity: 0; }
+
+/* Money */
+.ledger { width: 640px; border-radius: 32px; background: var(--surface-raised); border: 1px solid var(--line); padding: 40px 44px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7); }
+.tall .ledger { width: 760px; }
+.ledger .l { display: flex; justify-content: space-between; align-items: baseline; font-size: 28px; color: var(--ink-muted); }
+.ledger .l b { font: 600 34px/1 var(--display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.ledger .l.you b { color: var(--green); font-size: 44px; }
+.ledger hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+.ledger .paid { margin-top: 8px; padding: 22px 26px; border-radius: 20px; background: var(--green); color: var(--on-green); font: 600 30px/1.2 var(--display); }
+.ledger small { font: 500 16px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
 </style>
 </head>
 <body>
@@ -110,125 +152,217 @@
 <script>
 // ---------- the venues (made up) ----------
 const V = {
-  kaelder: { name: "Kælderbaren", kind: "Bar", sign: "KÆLDERBAREN", sub: "Siden 1962", style: "bulbs",
+  kaelder: { name: "Kælderbaren", kind: "Værtshus", sign: "KÆLDERBAREN", sub: "Siden 1962", style: "bulbs",
     casing: "#2a0a12", w1: "#4a1220", w2: "#7a2233", acc: "#e3b04b", ink2: "#f6e7c8", ring: "#ffc65c",
     screen: "#2a0b12", screenInk: "#f6e7c8", frame: "#4a1220", caption: "Kælderbaren · Fredag", photo: "print-bar" },
-  fjord: { name: "Hotel Fjord", kind: "Hotelbar", sign: "HOTEL FJORD", sub: "Bar og lounge", style: "waves",
-    casing: "#0d2236", w1: "#14304a", w2: "#2b5a80", acc: "#e9dcc3", ink2: "#bcd6ea", ring: "#9fd4ff",
-    screen: "#0d2236", screenInk: "#e9dcc3", frame: "#e9dcc3", frameInk: "#14304a", caption: "Hotel Fjord · Juni", photo: "print-wedding" },
-  skov: { name: "Skovfest", kind: "Festival", sign: "SKOVFEST", sub: "Lørdag 2027", style: "leaves",
-    casing: "#0f2e20", w1: "#123d2a", w2: "#1f5a3c", acc: "#c6f24e", ink2: "#e9f7d0", ring: "#c6f24e",
-    screen: "#0f2e20", screenInk: "#e9f7d0", frame: "#123d2a", caption: "Skovfest · Lørdag", photo: "print-club" },
+  nord: { name: "Bar Nord", kind: "Cocktailbar", sign: "BAR NORD", sub: "Cocktails", style: "deco",
+    casing: "#0c2a2a", w1: "#103a3a", w2: "#1d5a56", acc: "#d8b46a", ink2: "#e9e1cc", ring: "#7fe3d2",
+    screen: "#0c2a2a", screenInk: "#e9e1cc", frame: "#103a3a", caption: "Bar Nord · Lørdag", photo: "print-wedding" },
+  neon: { name: "Klub Neon", kind: "Natklub", sign: "KLUB NEON", sub: "Fre · Lør", style: "neon",
+    casing: "#0b0614", w1: "#170b2a", w2: "#2a1250", acc: "#ff4fd8", ink2: "#f3e6ff", ring: "#ff6be0",
+    screen: "#0b0614", screenInk: "#f3e6ff", frame: "#170b2a", caption: "Klub Neon · Lørdag", photo: "print-club" },
 };
-
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const mix = (a, b, k) => { const A = hex(a), B = hex(b); return `rgb(${A.map((x, i) => Math.round(x + (B[i] - x) * k)).join(",")})`; };
-
 const vscreen = (v) => `<div class="vscreen" style="background:${v.screen};color:${v.screenInk}"><span class="sg" style="color:${v.acc}">${v.sign}</span><b>Velkommen til ${v.name}</b><small>Tryk for at tage et billede</small><div class="shutter" style="border-color:${v.screenInk}"><i style="background:${v.acc}"></i></div></div>`;
-const motifs = (v, n) => `<i></i>`.repeat(n);
 const vbox = (bw, v, screen, attrs = "") => `
   <div class="vbox ${v.style}" style="--bw:${bw}px;--w1:${v.w1};--w2:${v.w2};--acc:${v.acc};--ink2:${v.ink2};--casing:${v.casing}" ${attrs}>
-    <div class="wing l">${motifs(v, 5)}</div><div class="wing r">${motifs(v, 5)}</div>
+    <div class="wing l">${"<i></i>".repeat(5)}</div><div class="wing r">${"<i></i>".repeat(5)}</div>
     <div class="topper">${v.style === "bulbs" ? `<span class="row t">${"<i></i>".repeat(9)}</span><span class="row b">${"<i></i>".repeat(9)}</span>` : ""}<b>${v.sign}</b><small>${v.sub}</small></div>
     ${box(bw, screen)}
   </div>`;
 const vprint = (w, v, attrs = "") => `<div class="print vprint" style="width:${w}px;--pw:${w}px;background:${v.frame}" ${attrs}><div class="ph" style="background-image:url(${PH}${v.photo}.jpg)"></div><span class="cap" style="color:${v.frameInk || v.acc}">${v.caption}</span></div>`;
-function ringColor(b, color, glow) {
-  const r = b.querySelector(".ring");
-  r.style.stroke = color;
-  r.style.filter = `drop-shadow(0 0 ${glow}px ${color})`;
-}
-function breatheIn(b, t, color) {
-  const k = 0.5 - 0.5 * Math.cos((t / 3.2) * Math.PI * 2);
-  b.querySelector(".ring").style.strokeDasharray = "100 0";
-  ringColor(b, color, 8 + 14 * k);
-}
+function ringColor(b, color, glow) { const r = b.querySelector(".ring"); r.style.stroke = color; r.style.filter = `drop-shadow(0 0 ${glow}px ${color})`; }
+function breatheIn(b, t, color) { const k = 0.5 - 0.5 * Math.cos((t / 3.2) * Math.PI * 2); b.querySelector(".ring").style.strokeDasharray = "100 0"; ringColor(b, color, 8 + 14 * k); }
 
-// ---------- scenes ----------
-const K = V.kaelder;
-const BW = TALL
-  ? { intro: 400, morph: 290, car: 320, guest: 220, phone: 270 }
-  : { intro: 470, morph: 320, car: 330, guest: 280, phone: 320 };
+const K = V.kaelder, N = V.neon;
+const BW = TALL ? { mission: 320, title: 420, car: 300, phone: 360 } : { mission: 330, title: 430, car: 330, phone: 340 };
 
 const SCENES = [
   {
-    id: "intro", dur: 5.6,
+    id: "hook", dur: 4.6, full: true,
     html: `
+      ${bleed("sted-vaertshus", "55% 45%")}
       <div class="copy">
-        <div data-in="0.3">${logo(TALL ? 60 : 64)}</div>
-        <span class="label" data-in="0.9">Til barer, klubber og hoteller</span>
-        <h1 data-in="1.2">En fotoboks, der får gæsterne til at komme igen.</h1>
-      </div>
-      <div class="visual">${box(BW.intro, idle, 'data-in="0.1"')}</div>`,
-    update(t, el) { breathe(el.querySelector(".box"), t); },
-  },
-  {
-    id: "morph", dur: 10, step: 1,
-    html: `
-      <div class="copy">
-        ${label("01", "Jeres stil")}
-        <h2 data-in="0.4">Boksen bliver jeres.</h2>
-        <div class="ticks">
-          ${tick("Lysringen i jeres farve", 1.4)}
-          ${tick("Sider og top med jeres navn", 2.9)}
-          ${tick("Skærmen byder velkommen", 4.4)}
-          ${tick("Jeres navn på hvert foto", 5.9)}
-        </div>
-      </div>
-      <div class="visual">
-        <div style="position:relative;padding-bottom:${Math.round(BW.morph * 0.55)}px" data-in="0.1">
-          ${vprint(Math.round(BW.morph * 0.6), K, 'id="m-print"')}
-          ${vbox(BW.morph, K, `${idle}<div class="v">${vscreen(K)}</div>`)}
-        </div>
+        <span class="pill" data-in="0.05" id="day">Fredag</span>
+        <h1 data-in="0.2">Fuld bar.</h1>
+        <p class="lede" data-in="2.2"><b>Men på mandag ved I ikke, hvem der var der.</b></p>
       </div>`,
     update(t, el) {
-      const vb = el.querySelector(".vbox"), b = vb.querySelector(".box");
-      // the ring takes the venue's colour
-      const rk = E.inOut(prog(t, 1.4, 0.9));
-      const glowK = 0.5 - 0.5 * Math.cos((t / 3.2) * Math.PI * 2);
-      b.querySelector(".ring").style.strokeDasharray = "100 0";
-      ringColor(b, mix("#fff3e3", K.ring, rk), 8 + 14 * glowK);
-      // wings slide out, the sign drops in, the casing changes
-      const wk = E.out(prog(t, 2.9, 0.9));
-      vb.querySelector(".wing.l").style.transform = `translateX(${(1 - wk) * 70}%)`;
-      vb.querySelector(".wing.r").style.transform = `translateX(${-(1 - wk) * 70}%)`;
-      vb.querySelectorAll(".wing").forEach((w) => (w.style.opacity = wk));
-      const tk = E.out(prog(t, 3.3, 0.8));
-      const top = vb.querySelector(".topper");
-      top.style.opacity = tk; top.style.transform = `translateY(${(1 - tk) * 40}%)`;
-      vb.style.setProperty("--casing", mix("#0a0a0a", K.casing, wk));
-      // the screen
-      const sk = prog(t, 4.4, 0.6);
-      b.querySelector(".idle").style.opacity = 1 - sk;
-      b.querySelector(".v").style.opacity = sk;
-      b.querySelector(".v").style.width = b.querySelector(".v").style.height = "100%";
-      // the framed print
-      const pr = el.querySelector("#m-print"), pk = E.inOut(prog(t, 5.9, 1.3));
-      pr.style.left = `calc(50% - ${pr.offsetWidth / 2}px)`;
-      pr.style.top = `${vb.offsetTop + b.offsetHeight - pr.offsetHeight - 30}px`;
-      pr.style.transform = `translateY(${pk * pr.offsetHeight * 0.9}px) rotate(${-3 * pk}deg)`;
-      pr.style.opacity = pk > 0 ? 1 : 0;
+      const k = E.inOut(prog(t, 1.9, 0.6));
+      el.querySelector(".bleed img").style.filter = `grayscale(${k}) brightness(${1 - 0.6 * k}) blur(${k * 2}px)`;
+      el.querySelector("#day").textContent = t < 2.1 ? "Fredag" : "Mandag";
+      el.querySelector("h1").textContent = t < 2.1 ? "Fuld bar." : "Hvem var her?";
     },
   },
   {
-    id: "variety", dur: 7.8,
+    id: "queue", dur: 5.0, full: true,
+    sfx: [[0.25, "chime", 0.7]],
+    html: `
+      ${bleed("klub", "50% 40%")}
+      <div class="copy">
+        <div data-in="0.1">${logo(TALL ? 60 : 68)}</div>
+        <h2 data-in="0.35">Lysringen kan ses over hele dansegulvet.</h2>
+        <p class="lede" data-in="2.4"><b>Folk stiller sig i kø af sig selv.</b></p>
+      </div>`,
+  },
+  {
+    id: "mission", dur: 4.4,
+    sfx: [[3.0, "pop", 0.6]],
     html: `
       <div class="copy">
-        <span class="label" data-in="0.2">Til ethvert sted</span>
-        <h2 data-in="0.4">Fra bodegaen til festivalen.</h2>
-        <p class="lede" data-in="0.8">Vi designer temaet sammen med jer og <b>printer delene selv</b>, så boksen ligner stedet og ikke en fotoboks fra et katalog.</p>
+        <span class="label" data-in="0.1"><span class="n">01</span>Mission</span>
+        <h2 data-in="0.2">Tag et billede med en, du ikke kender.</h2>
+        <p class="lede" data-in="1.2">Skærmen giver gæsterne små opgaver, og kameraet tjekker, om de klarede dem.</p>
       </div>
       <div class="visual">
-        <div class="carousel" data-in="0.2">
-          ${["kaelder", "fjord", "skov"].map((id) => `<div class="slot">${vbox(BW.car, V[id], vscreen(V[id]))}<span class="name">${V[id].name}<span>${V[id].kind}</span></span></div>`).join("")}
+        <div style="position:relative" data-in="0">
+          ${vbox(BW.mission, N, `<div class="mission" style="background:${N.screen};color:${N.screenInk};width:100%;height:100%;justify-content:center"><span class="k">Mission</span><b>Tag et billede med en, du ikke kender</b></div><img class="shot" src="${PH}sted-gymnasie.jpg" alt="" style="object-position:40% 50%">`)}
+          <span class="stamp" style="--fs:${TALL ? 26 : 30}px;left:50%;top:58%">Klaret</span>
         </div>
-        <span class="fine-note" data-in="1.2">Eksempler på designs</span>
       </div>`,
     update(t, el) {
-      const SW = [2.5, 5.0];
+      const b = el.querySelector(".box");
+      breatheIn(b, t, N.ring);
+      b.querySelector(".shot").style.opacity = prog(t, 2.2, 0.4);
+      const st = el.querySelector(".stamp"), k = E.out(prog(t, 3.0, 0.35));
+      st.style.opacity = k; st.style.transform = `translate(-50%, -50%) rotate(-8deg) scale(${1.6 - 0.6 * k})`;
+    },
+  },
+  {
+    id: "title", dur: 4.2,
+    sfx: [[1.0, "pop", 0.6]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">02</span>Titler</span>
+        <h2 data-in="0.2">Aftenens største smil.</h2>
+        <p class="lede" data-in="1.6"><b>Det billede vil man have med hjem.</b> Og printet sælger I.</p>
+      </div>
+      <div class="visual">
+        <div class="titled" data-in="0">
+          <div style="transform:rotate(-3deg)">${vprint(BW.title, K)}</div>
+          <span class="stamp" style="--fs:${TALL ? 24 : 28}px;left:50%;top:42%;color:#ffd166">Aftenens største smil</span>
+        </div>
+      </div>`,
+    update(t, el) {
+      const st = el.querySelector(".stamp"), k = E.out(prog(t, 1.0, 0.35));
+      st.style.opacity = k; st.style.transform = `translate(-50%, -50%) rotate(-6deg) scale(${1.7 - 0.7 * k})`;
+    },
+  },
+  {
+    id: "number", dur: 5.2,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">03</span>Nummeret</span>
+        <h2 data-in="0.2">Billedet på SMS. Nummeret til jer.</h2>
+        <p class="lede" data-in="1.4">Gæsten kan sige ja til tilbud fra jer. <b>Samtykket er bygget ind.</b></p>
+      </div>
+      <div class="visual">
+        <div class="list">
+          <div class="phone form" style="--phw:${BW.phone}px" data-in="0.1">
+            ${vprint(TALL ? 170 : 200, K)}
+            <h3>Få billedet på SMS</h3>
+            <div class="field"></div>
+            <div class="consent"><span class="box2"></span><span>Ja tak til tilbud fra ${K.name}. Kan altid afmeldes.</span></div>
+            <div class="send">Send billedet</div>
+          </div>
+          <div class="stack">
+            <div class="panel" data-in="2.6"><span class="k">Gæsteliste</span><span class="big">0</span><span class="sub">har sagt ja til tilbud</span></div>
+          </div>
+        </div>
+      </div>`,
+    update(t, el) {
+      const digits = "+45 22 41 87 30", typed = Math.floor(clamp((t - 0.6) / 1.2) * digits.length);
+      el.querySelector(".field").innerHTML = `${digits.slice(0, typed)}<span>${typed < digits.length ? "|" : ""}</span>`;
+      el.querySelector(".box2").classList.toggle("on", t > 2.0);
+      el.querySelector(".send").style.opacity = t > 2.0 ? 1 : 0.45;
+      el.querySelector(".big").textContent = Math.round(1284 * E.out(prog(t, 2.7, 2.2))).toLocaleString("da-DK");
+    },
+  },
+  {
+    id: "contest", dur: 4.8,
+    sfx: [[2.6, "cheer", 0.45]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">04</span>Konkurrence</span>
+        <h2 data-in="0.2">Gæsterne stemmer på aftenens bedste billede.</h2>
+        <p class="lede" data-in="2.2"><b>Vinderen henter præmien i baren.</b></p>
+      </div>
+      <div class="visual">
+        <div class="phone" style="--phw:${BW.phone}px" data-in="0">
+          <span class="k">${K.name} · I aften</span>
+          <h3>Aftenens bedste billede</h3>
+          <div class="vote">
+            ${[["print-club", 31], ["print-bar", 58], ["print-office", 22]].map(([p, n], i) => `<div class="row${i === 1 ? " win" : ""}" data-n="${n}"><i style="background-image:url(${PH}${p}.jpg)">${i === 1 ? '<span class="crown">Vinder</span>' : ""}</i><span class="bar"><b></b></span><span class="n">0</span></div>`).join("")}
+          </div>
+          <div class="toast2">Præmien venter i baren.</div>
+        </div>
+      </div>`,
+    update(t, el) {
+      const k = E.out(prog(t, 0.5, 1.8));
+      el.querySelectorAll(".vote .row").forEach((r) => {
+        const n = +r.dataset.n;
+        r.querySelector(".bar b").style.width = `${(n / 60) * 100 * k}%`;
+        r.querySelector(".n").textContent = Math.round(n * k);
+      });
+      const c = el.querySelector(".crown"), ck = E.out(prog(t, 2.5, 0.3));
+      c.style.opacity = ck; c.style.transform = `translateX(-50%) scale(${1.4 - 0.4 * ck})`;
+      const to = el.querySelector(".toast2"), tk = E.out(prog(t, 2.9, 0.4));
+      to.style.opacity = tk; to.style.transform = `translateY(${(1 - tk) * 14}px)`;
+    },
+  },
+  {
+    id: "money", dur: 5.0,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">05</span>Printet</span>
+        <h2 data-in="0.2">Printet tjener penge.</h2>
+        <p class="lede" data-in="1.0">I sætter selv prisen. <b>Alt over 25 kr. er jeres.</b></p>
+      </div>
+      <div class="visual">
+        <div class="ledger" data-in="0.2">
+          <small>Eksempel</small>
+          <div class="l" data-in="0.6"><span>Gæsten betaler</span><b>40 kr.</b></div>
+          <div class="l" data-in="1.1"><span>Film og Selfi</span><b>−25 kr.</b></div>
+          <hr>
+          <div class="l you" data-in="1.6"><span>Til jer</span><b>15 kr.</b></div>
+          <div class="paid" data-in="2.6">67 prints om måneden, og boksen har betalt sig selv.</div>
+        </div>
+      </div>`,
+  },
+  {
+    id: "list", dur: 4.6,
+    sfx: [[1.6, "pop", 0.55]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">06</span>Gæstelisten</span>
+        <h2 data-in="0.2">På mandag ved I, hvem der var her.</h2>
+        <p class="lede" data-in="1.2"><b>Og kan invitere dem til næste fest.</b></p>
+      </div>
+      <div class="visual">
+        <div class="stack">
+          <div class="panel" data-in="0.2"><span class="k">Gæsteliste · ${K.name}</span><span class="big">1.284</span><span class="sub">har sagt ja til tilbud</span></div>
+          <div class="panel" data-in="1.4"><span class="k">SMS til gæstelisten</span><div class="bubble">Fredag spiller DJ Mads fra kl. 23. Vis denne SMS i baren, og første omgang er på os. Vi ses i Kælderbaren.</div></div>
+        </div>
+      </div>`,
+  },
+  {
+    id: "design", dur: 3.6,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1">Jeres udtryk</span>
+        <h2 data-in="0.2">Jeres farver. Jeres logo.</h2>
+      </div>
+      <div class="visual">
+        <div class="carousel" data-in="0.1">
+          ${["kaelder", "nord", "neon"].map((id) => `<div class="slot">${vbox(BW.car, V[id], vscreen(V[id]))}<span class="name">${V[id].name}<span>${V[id].kind}</span></span></div>`).join("")}
+        </div>
+      </div>`,
+    update(t, el) {
+      const SW = [1.2, 2.4];
       const i = t < SW[0] ? 0 : t < SW[1] ? 1 : 2;
       let sx = 1;
-      for (const s of SW) { const d = Math.abs(t - s); if (d < 0.3) sx = d / 0.3; }
+      for (const s of SW) { const d = Math.abs(t - s); if (d < 0.22) sx = d / 0.22; }
       el.querySelectorAll(".slot").forEach((slot, n) => {
         slot.style.opacity = n === i ? 1 : 0;
         const vb = slot.querySelector(".vbox");
@@ -238,110 +372,21 @@ const SCENES = [
     },
   },
   {
-    id: "guests", dur: 8.6, step: 2,
+    id: "care", dur: 5.0,
     html: `
       <div class="copy">
-        ${label("02", "Gæsterne")}
-        <h2 data-in="0.4">Hvert billede bærer jeres navn.</h2>
-        <p class="lede" data-in="0.8">Gæsterne klarer det selv, uden hjælp fra personalet. Det printede foto og det digitale har <b>jeres navn i rammen</b>, så hver deling er omtale.</p>
-      </div>
-      <div class="visual">
-        <div class="guests">
-          <div style="position:relative;padding-bottom:${Math.round(BW.guest * 0.6)}px" data-in="0.1">
-            ${vprint(Math.round(BW.guest * 0.6), K, 'id="g-print"')}
-            ${vbox(BW.guest, K, `<div class="v">${vscreen(K)}</div><span class="count"></span><img class="shot" src="${PH}${K.photo}.jpg" alt="">`)}
-          </div>
-          <div class="phone" style="--phw:${BW.phone}px">
-            <div class="post">
-              <div class="who"><i></i><span><b>maja.k</b><small>Kælderbaren</small></span></div>
-              ${vprint(BW.phone - 70, K)}
-              <p>Bedste fredag i lang tid</p>
-              <div class="likes"><span class="n">0</span> synes godt om</div>
-            </div>
-          </div>
-        </div>
-      </div>`,
-    update(t, el) {
-      const b = el.querySelector(".vbox .box"), ring = b.querySelector(".ring"), base = b.querySelector(".ring-base");
-      const count = b.querySelector(".count"), shot = b.querySelector(".shot"), v = b.querySelector(".v");
-      const T0 = 1.0, STEP = 0.7, SNAP = T0 + 3 * STEP;
-      v.style.width = v.style.height = "100%";
-      v.style.opacity = t < T0 ? 1 : 0;
-      if (t < T0) { breatheIn(b, t, K.ring); base.style.opacity = 0; count.style.opacity = 0; }
-      else if (t < SNAP) {
-        const c = (t - T0) / STEP;
-        count.textContent = 3 - Math.floor(c); count.style.opacity = 1;
-        base.style.opacity = 1;
-        ring.style.strokeDasharray = `${(1 - c / 3) * 100} 100`;
-        ringColor(b, K.ring, 8);
-      } else {
-        count.style.opacity = 0; base.style.opacity = 0;
-        ring.style.strokeDasharray = "100 0";
-        const L = prog(t, SNAP, 0.2) * (1 - prog(t, SNAP + 1.6, 0.6));
-        ringColor(b, mix(K.ring, "#ffffff", L), 8 + 30 * L);
-      }
-      shot.style.opacity = prog(t, SNAP + 0.3, 0.4);
-      flashAt(t, SNAP);
-      const pr = el.querySelector("#g-print"), pk = E.inOut(prog(t, SNAP + 0.8, 1.2));
-      const vb = el.querySelector(".vbox");
-      pr.style.left = `calc(50% - ${pr.offsetWidth / 2}px)`;
-      pr.style.top = `${vb.offsetTop + b.offsetHeight - pr.offsetHeight - 24}px`;
-      pr.style.transform = `translateY(${pk * pr.offsetHeight * 0.9}px) rotate(${-3 * pk}deg)`;
-      pr.style.opacity = pk > 0 ? 1 : 0;
-      const ph = el.querySelector(".phone"), phk = E.out(prog(t, 4.6, 0.8));
-      ph.style.opacity = phk;
-      ph.style.transform = `translate(${(1 - phk) * 80}px, 0) rotate(${3 - 2 * phk}deg)`;
-      el.querySelector(".likes .n").textContent = Math.round(87 * E.out(prog(t, 5.4, 2.4)));
-    },
-  },
-  {
-    id: "list", dur: 8.6, step: 3,
-    html: `
-      <div class="copy">
-        ${label("03", "Gæstelisten")}
-        <h2 data-in="0.4">En gæsteliste, I må bruge.</h2>
-        <p class="lede" data-in="0.8">Gæsten skriver sit nummer for at få billedet på SMS og <b>siger selv ja til tilbud</b> fra jer. Så kan I invitere fredagens gæster igen, inden for reglerne.</p>
-      </div>
-      <div class="visual">
-        <div class="list">
-          <div class="phone form" style="--phw:${TALL ? 310 : 320}px" data-in="0.3">
-            ${vprint(TALL ? 170 : 220, K)}
-            <h3>Få billedet på SMS</h3>
-            <div class="field"></div>
-            <div class="consent"><span class="box2"></span><span>Ja tak til tilbud fra ${K.name}. Kan altid afmeldes.</span></div>
-            <div class="send">Send billedet</div>
-          </div>
-          <div class="stack">
-            <div class="panel" data-in="3.4"><span class="k">Gæsteliste</span><span class="big">0</span><span class="sub">har sagt ja til tilbud</span></div>
-            <div class="panel" data-in="4.6"><span class="k">SMS til gæstelisten</span><div class="bubble">Fredag er der quiz kl. 20, og første omgang er på os. Vi ses i Kælderbaren.</div></div>
-          </div>
-        </div>
-      </div>`,
-    update(t, el) {
-      const digits = "+45 22 41 87 30", typed = Math.floor(clamp((t - 1.0) / 1.3) * digits.length);
-      el.querySelector(".field").innerHTML = `${digits.slice(0, typed)}<span>${typed < digits.length ? "|" : ""}</span>`;
-      el.querySelector(".box2").classList.toggle("on", t > 2.6);
-      el.querySelector(".send").style.opacity = t > 2.6 ? 1 : 0.45;
-      el.querySelector(".big").textContent = Math.round(1284 * E.out(prog(t, 3.5, 2.6))).toLocaleString("da-DK");
-    },
-  },
-  {
-    id: "care", dur: 8.6, step: 4,
-    html: `
-      <div class="copy">
-        ${label("04", "Fuld service")}
-        <h2 data-in="0.4">Vi sørger for alt.</h2>
-        <p class="lede" data-in="0.8">Boksen melder sig til os hele tiden. Driller den, får vi en alarm og går i gang, <b>ofte før I selv har set det</b>.</p>
+        <span class="label" data-in="0.1">Fuld service</span>
+        <h2 data-in="0.2">Vi sørger for resten.</h2>
       </div>
       <div class="visual">
         <div class="care">
-          <div class="panel" data-in="0.6">
+          <div class="panel" data-in="0.3">
             <span class="k">Det klarer vi</span>
             <div class="ours">
-              ${[["Designer jeres tema", 1.2], ["Monterer og tester", 1.5], ["Overvåger boksen", 1.8], ["Opdaterer den", 2.1], ["Ny boks ved fejl", 2.4], ["Support døgnet rundt", 2.7]].map(([x, a]) => tick(x, a)).join("")}
+              ${[["Monterer og tester", 0.6], ["Holder øje med boksen", 0.9], ["Opdaterer den", 1.2], ["Ny boks ved fejl", 1.5]].map(([x, a]) => tick(x, a)).join("")}
             </div>
           </div>
-          <div class="panel" data-in="3.8">
+          <div class="panel" data-in="2.8">
             <span class="k">Det klarer I</span>
             <span class="theirs">Holder åbent, som I plejer.</span>
           </div>
@@ -349,38 +394,38 @@ const SCENES = [
       </div>`,
   },
   {
-    id: "price", dur: 6.4,
+    id: "price", dur: 3.4,
     html: `
       <div class="copy">
-        <span class="label" data-in="0.2">Pris</span>
-        <h2 data-in="0.4">Én fast pris om måneden.</h2>
-        <p class="lede" data-in="0.8">Ingen regninger ud over den. Service, opdateringer, support og en ny boks, hvis noget går galt, er med.</p>
+        <span class="label" data-in="0.1">Pris</span>
+        <h2 data-in="0.2">Én fast pris.</h2>
+        <p class="lede" data-in="0.8">Ingen regninger ud over den.</p>
       </div>
       <div class="visual">
-        <div class="pricecard" data-in="0.5">
+        <div class="pricecard" data-in="0.2">
           <span class="p">995<span>kr./md.</span></span>
           <span class="u">pr. boks, ekskl. moms</span>
           <hr>
           <div class="ticks">
-            ${tick("Boks og fotomodul", 1.1)}
-            ${tick("Kontrolpanel på nettet", 1.35)}
-            ${tick("Montering og fuld service", 1.6)}
-            ${tick("Gæsteliste med samtykke", 1.85)}
+            ${tick("Boks og fotomodul", 0.6)}
+            ${tick("Montering og service", 0.8)}
+            ${tick("Gæsteliste med samtykke", 1.0)}
           </div>
         </div>
       </div>`,
   },
   {
-    id: "cta", dur: 6.4, center: true, last: true,
+    id: "cta", dur: 4.0, center: true, last: true, hold: 1.2,
+    sfx: [[0.15, "shutter", 0.8], [0.3, "chime", 0.8]],
     html: `
-      <div data-in="0.3">${logo(TALL ? 96 : 110)}</div>
-      <h2 data-in="0.8" style="margin-top:56px">Book en snak på selfi.dk/erhverv</h2>
-      <span class="btn" data-in="1.3" style="margin-top:56px">Book en uforpligtende snak</span>
-      <p class="fine" data-in="1.7" style="margin-top:32px">995 kr./md. ekskl. moms · I jeres design · Vi sørger for alt</p>`,
+      <div data-in="0.05">${logo(TALL ? 96 : 110)}</div>
+      <h2 data-in="0.3" style="margin-top:48px">Book en snak på selfi.dk/erhverv</h2>
+      <span class="btn" data-in="0.6" style="margin-top:48px">Book en uforpligtende snak</span>
+      <p class="fine" data-in="0.9" style="margin-top:28px">995 kr./md. ekskl. moms · I jeres design · Vi sørger for alt</p>`,
   },
 ];
 
-mountFilm(SCENES, { steps: 4, stepLabel: "Sådan virker det" });
+mountFilm(SCENES, { steps: 0, plain: ["cta", "queue"] });
 </script>
 </body>
 </html>

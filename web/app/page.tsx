@@ -69,9 +69,9 @@ export default function Home() {
         />
         <Explainer
           label="Se filmen"
-          title="Sådan lejer I en fotoboks."
-          lede="Fra kalenderen til billedet på telefonen: Vælg dage, få boksen ud til festen, tryk og smil, og find alle fotos på jeres eventside."
-          alt="Film: Sådan lejer I en fotoboks hos Selfi, fra kalenderen til billedet på telefonen"
+          title="Alle med på billedet."
+          lede="Nedtællingen, billedet på telefonen, eventsiden dagen efter og hvad en hel weekend koster."
+          alt="Film: Selfi Boks til festen, fra nedtællingen til billedet på telefonen, og prisen for en weekend"
         />
         <Moments
           label="Hvorfor en fotoboks"

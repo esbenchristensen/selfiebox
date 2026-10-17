@@ -12,6 +12,8 @@ const logo = (size) => `<span class="logo" style="--ls:${size}px"><svg viewBox="
 const box = (bw, screen, attrs = "", cls = "") => `<div class="box ${cls}" style="--bw:${bw}px" ${attrs}><svg viewBox="0 0 234 306"><rect class="shell" width="234" height="306" rx="36"/><path class="ring-base" d="${RING}"/><path class="ring" d="${RING}" pathLength="100"/><rect class="notch" x="92" y="8" width="50" height="26" rx="10"/><circle class="cam" cx="117" cy="20" r="5"/></svg><div class="screen">${screen}</div></div>`;
 const idle = `<div class="idle"><b>Tryk for at tage et billede</b><div class="shutter"><i></i></div></div>`;
 const print = (w, img, cap, attrs = "") => `<div class="print" style="width:${w}px;--pw:${w}px" ${attrs}><div class="ph" style="background-image:url(${PH}${img}.jpg)"></div><span class="cap">${cap}</span></div>`;
+// A full-screen photo behind the copy, with a dark gradient so white text stays readable.
+const bleed = (img, pos = "50% 50%", attrs = "") => `<div class="bleed" ${attrs}><img src="${PH}${img}.jpg" alt="" style="object-position:${pos}"></div>`;
 const tick = (t, at) => `<div data-in="${at}"><span class="check"></span>${t}</div>`;
 const label = (n, t) => `<span class="label" data-in="0.2">${n ? `<span class="n">${n}</span>` : ""}${t}</span>`;
 
@@ -33,7 +35,7 @@ function qr() {
 const E = { out: (x) => 1 - Math.pow(1 - x, 3), inOut: (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2) };
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const prog = (t, a, d) => clamp((t - a) / d);
-const FADE = 0.45;
+const FADE = 0.3;
 
 function breathe(b, t) {
   const r = b.querySelector(".ring"), k = 0.5 - 0.5 * Math.cos((t / 3.2) * Math.PI * 2);
@@ -58,25 +60,31 @@ function tapAt(tap, frame, t, taps) {
 let flashT = null;
 function flashAt(t, at) { flashT = t >= at && t < at + 0.45 ? 1 - (t - at) / 0.45 : 0; }
 
-// The line starts this long into its scene, once the headline is in, and leaves a pause after it.
-// Seconds of real time. The film itself plays FILM_SPEED times faster than it is written, so it has some pace.
-const VOICE_LEAD = 0.4, VOICE_TAIL = 0.45;
-const FILM_SPEED = 1.2;
+// The voice-over sets the pace: a scene lasts as long as its line, plus a short lead-in and a short pause,
+// and the scene's animation is stretched or squeezed to fit (warp), so there is never dead air.
+const VOICE_LEAD = 0.3, VOICE_TAIL = 0.3;
+const FILM_SPEED = 1;
 
 function mountFilm(SCENES, { steps = 4, stepLabel = "Sådan virker den", plain = ["intro", "cta"] } = {}) {
   document.getElementById("c-step").innerHTML = `<span>${stepLabel}</span><span class="dots">${"<i></i>".repeat(steps)}</span>`;
   // With a voice-over (voice/<film>/timing.js), a scene is held until its line has been said.
   const VOICE = window.VOICE_TIMING || {};
-  for (const s of SCENES) if (VOICE[s.id]) s.dur = Math.max(s.dur, (VOICE_LEAD + VOICE[s.id] + VOICE_TAIL) * FILM_SPEED);
+  for (const s of SCENES) {
+    s.design = s.dur;
+    if (VOICE[s.id]) s.dur = VOICE_LEAD + VOICE[s.id] + VOICE_TAIL + (s.hold || 0);
+    s.warp = s.design / s.dur; // design seconds per real second
+  }
   let start = 0;
   for (const s of SCENES) { s.start = start; start += s.dur; }
   window.SCENE_TIMES = SCENES.map(({ id, start, dur }) => ({ id, start, dur }));
+  // Sound effects, given per scene in design time as [at, name, gain], in real seconds for render.cjs.
+  window.SFX_TIMES = SCENES.flatMap((s) => (s.sfx || []).map(([at, name, gain = 1]) => ({ t: s.start + at / s.warp, name, gain })));
   const DURATION = start;
 
   const root = document.getElementById("scenes");
   for (const s of SCENES) {
     const el = document.createElement("section");
-    el.className = `scene${s.center ? " center" : ""}`;
+    el.className = `scene${s.center ? " center" : ""}${s.full ? " full" : ""}`;
     el.innerHTML = s.html;
     root.appendChild(el);
     s.el = el;
@@ -95,12 +103,15 @@ function mountFilm(SCENES, { steps = 4, stepLabel = "Sådan virker den", plain =
       const fin = prog(lt, 0, FADE), fout = s.last ? 0 : prog(lt, s.dur - FADE, FADE);
       s.el.style.opacity = fin * (1 - fout);
       s.el.style.transform = `translateY(${-14 * E.inOut(fout)}px)`;
+      const a = lt * s.warp; // the scene's own clock, in design seconds
       s.el.querySelectorAll("[data-in]").forEach((n) => {
-        const k = E.out(prog(lt, +n.dataset.in, 0.7));
+        const k = E.out(prog(a, +n.dataset.in, 0.6));
         n.style.opacity = k;
         n.style.translate = `0 ${(1 - k) * 28}px`;
       });
-      if (s.update) s.update(lt, s.el);
+      // Full-screen photos drift slowly, so a still never looks frozen.
+      s.el.querySelectorAll(".bleed img").forEach((img) => (img.style.transform = `scale(${1.04 + 0.08 * (a / s.design)})`));
+      if (s.update) s.update(a, s.el);
       if (s.step) { step = s.step; stepVis = s.el.style.opacity; }
       if (!plain.includes(s.id)) chromeLogo = s.el.style.opacity;
     }
