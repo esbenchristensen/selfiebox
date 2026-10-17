@@ -1,5 +1,5 @@
 {
-  "_note": "Speak til filmene, én replik pr. scene (samme id som i explainer.html og erhverv.html). Tal og domæner er skrevet, som de skal udtales. voice.cjs laver lyden, og hver scene varer lige så længe som sin replik.",
+  "_note": "Speak til filmene, én replik pr. scene (samme id som i explainer.html, erhverv.html og events.html). Tal og domæner er skrevet, som de skal udtales. voice.cjs laver lyden, og hver scene varer lige så længe som sin replik.",
   "explainer": {
     "hook": "Hundrede billeder fra festen. Og ikke ét, hvor alle er med.",
     "solve": "Selfi Boks samler gæsterne foran kameraet.",
@@ -23,5 +23,18 @@
     "care": "Vi monterer den, holder øje med den og bytter den, hvis noget går galt. I holder bare åbent.",
     "price": "Ni hundrede og femoghalvfems kroner om måneden.",
     "cta": "Book en uforpligtende snak på selfi punktum d k skråstreg erhverv."
+  },
+  "events": {
+    "hook": "Hver dag tager jeres gæster tusindvis af billeder. Og de fleste viser kun et ansigt, ikke hvor de var.",
+    "theme": "Selfi Boks bliver en del af jeres univers. Jeres figurer og farver på boksen, en velkomst på skærmen og jeres navn på hvert eneste foto.",
+    "variety": "Forlystelsespark, festival eller zoo. Vi designer temaet sammen med jer og printer delene selv.",
+    "reach": "Når gæsterne deler billedet, ser alle deres venner, hvor de var. Hver deling viser jer frem.",
+    "hunt": "Med flere bokse bliver området til en skattejagt. Gæsterne følger spor fra boks til boks, forbi de steder, I gerne vil vise frem.",
+    "trail": "Eller en rundtur: et stempel ved hver boks, og en præmie til dem, der når hele vejen rundt.",
+    "sponsor": "Titler og konkurrencer holder gang i dagen, og rammen har plads til en sponsor.",
+    "list": "Gæsterne kan sige ja til nyheder fra jer, så I kan invitere dem igen næste sæson.",
+    "seasons": "Til Halloween og jul skifter I skærm og ramme i kontrolpanelet.",
+    "care": "Vi designer, monterer og overvåger boksene og bytter dem, hvis noget går galt.",
+    "cta": "Book en snak på selfi punktum d k, så viser vi boksen i jeres tema."
   }
 }

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 // A Selfi film with Danish on-screen text and a Danish voice-over. 16:9 on desktop, 4:5 on phones.
 // Made from video/<film>.html (see video/README.md). Browsers only autoplay muted video, so it starts
 // muted and on a loop when it scrolls into view. "Slå lyd til" plays it from the start with sound.
-export function Explainer({ film = "explainer", label, title, lede, alt }: { film?: "explainer" | "erhverv"; label: string; title: string; lede: string; alt: string }) {
+export function Explainer({ film = "explainer", label, title, lede, alt }: { film?: "explainer" | "erhverv" | "events"; label: string; title: string; lede: string; alt: string }) {
   const SRC = `/video/selfi-${film}`;
   const ref = useRef<HTMLVideoElement>(null);
   const [tall, setTall] = useState(false);

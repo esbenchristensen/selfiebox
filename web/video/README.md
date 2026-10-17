@@ -6,8 +6,9 @@ To reklamefilm med dansk tekst på skærmen, dansk speak (Jonas, Eleven v4), mus
 |---|---|---|---|
 | Privat leje | `/` | `explainer.html` | `selfi-explainer-*` |
 | Erhverv | `/erhverv` | `erhverv.html` | `selfi-erhverv-*` |
+| Store events | (ikke på siden endnu) | `events.html` | `selfi-events-*` |
 
-Begge bruger `shared.css` og `shared.js` (farver, fonte, boksen, tidslinjen).
+Alle bruger `shared.css` og `shared.js` (farver, fonte, boksen, tidslinjen). Erhverv og events bruger desuden `venue.css` og `venue.js` (bokse i stedets eget design).
 
 ## Hvordan filmene er skrevet
 
@@ -52,6 +53,24 @@ Filmen er kun til barer, værtshuse og natklubber. Store steder som forlystelses
 | Service | "Vi monterer den, holder øje med den og bytter den, hvis noget går galt. I holder bare åbent." | Det klarer vi over for Det klarer I |
 | Pris | "Ni hundrede og femoghalvfems kroner om måneden." | 995 kr./md. ekskl. moms |
 | Handling | "Book en uforpligtende snak på selfi punktum d k skråstreg erhverv." | Logo, knap og Selfi-lyden |
+
+## Store events: festivaler, forlystelsesparker og zoo (71 sekunder)
+
+Til store steder, hvor værdien er branding, omtale og aktiviteter på tværs af området. Stederne (Eventyrparken, Skovfest og Zoo Nord) er opdigtede med vilje.
+
+| Scene | Speak | Billede |
+|---|---|---|
+| Hook (tab) | "Hver dag tager jeres gæster tusindvis af billeder. Og de fleste viser kun et ansigt, ikke hvor de var." | Rigtigt festivalfoto |
+| Tema | "Selfi Boks bliver en del af jeres univers. Jeres figurer og farver på boksen, en velkomst på skærmen og jeres navn på hvert eneste foto." | Boksen skifter til Eventyrparkens design, og printet kommer ud |
+| Design | "Forlystelsespark, festival eller zoo. Vi designer temaet sammen med jer og printer delene selv." | Tre designs |
+| Omtale | "Når gæsterne deler billedet, ser alle deres venner, hvor de var. Hver deling viser jer frem." | Opslag med rammen, likes og delinger |
+| Skattejagt | "Med flere bokse bliver området til en skattejagt. Gæsterne følger spor fra boks til boks, forbi de steder, I gerne vil vise frem." | Kort med ruten, der tegnes boks for boks, og "Skatten fundet" |
+| Rundtur | "Eller en rundtur: et stempel ved hver boks, og en præmie til dem, der når hele vejen rundt." | Stempelkort, der fyldes, og præmien i butikken |
+| Sponsor | "Titler og konkurrencer holder gang i dagen, og rammen har plads til en sponsor." | Print med "Dagens bedste billede" og sponsoren i rammen |
+| Gæsteliste | "Gæsterne kan sige ja til nyheder fra jer, så I kan invitere dem igen næste sæson." | Liste og nyhedsbrev |
+| Sæsoner | "Til Halloween og jul skifter I skærm og ramme i kontrolpanelet." | Sommer, Halloween og jul på samme boks |
+| Service | "Vi designer, monterer og overvåger boksene og bytter dem, hvis noget går galt." | Det klarer vi over for "Tager imod gæsterne" |
+| Handling | "Book en snak på selfi punktum d k, så viser vi boksen i jeres tema." | Logo, knap og Selfi-lyden |
 
 ## Ændre filmen
 
@@ -98,7 +117,7 @@ export NODE_USE_ENV_PROXY=1 NODE_PATH=$(npm root -g) ELEVENLABS_API_KEY=...
 node voice.cjs     # efter en rettelse i voiceover.json
 node music.cjs     # derefter, så musikken passer til de nye scenetider
 node sfx.cjs       # kun hvis en lydeffekt ændres
-node render.cjs && node render.cjs erhverv
+node render.cjs && node render.cjs erhverv && node render.cjs events
 ```
 
 På siden starter filmen uden lyd, fordi browsere kun selv afspiller video uden lyd. Knappen "Slå lyd til" afspiller den forfra med lyd.

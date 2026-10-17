@@ -43,6 +43,16 @@ const PLANS = {
       { from: "cta", name: "Ending", styles: ["final phrase", "ends on one clean final hit", "short natural tail, no fade"] },
     ],
   },
+  events: {
+    global: ["instrumental", "uplifting cinematic pop", "118 BPM", "in D major", "bright pianos and plucked strings", "big but tasteful drums", "warm synth pads", "sense of wonder and adventure", "premium brand film mix"],
+    sections: [
+      { from: "hook", name: "Intro", styles: ["airy and curious", "soft piano motif and shimmering pads", "no drums yet"] },
+      { from: "theme", name: "Reveal", styles: ["drums and bass enter", "a feeling of something opening up", "confident, leaves room for a voice-over"] },
+      { from: "hunt", name: "Adventure", styles: ["playful and adventurous", "light percussion and pizzicato", "forward motion", "leaves room for a voice-over"] },
+      { from: "list", name: "Lift", styles: ["full and uplifting", "wide chords", "strongest part", "leaves room for a voice-over"] },
+      { from: "cta", name: "Ending", styles: ["final phrase", "ends on one clean final hit", "short natural tail, no fade"] },
+    ],
+  },
 };
 
 async function sceneTimes(page, film) {
