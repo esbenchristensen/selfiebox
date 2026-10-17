@@ -1,0 +1,24 @@
+{
+  "_note": "Speak til filmene, én replik pr. scene (samme id som i explainer.html og erhverv.html). Tal og domæner er skrevet, som de skal udtales. voice.cjs laver lyden, og scenerne bliver forlænget, hvis en replik er længere end scenen.",
+  "explainer": {
+    "intro": "Skal I holde fest? Så lej en fotoboks, der får alle med på billedet.",
+    "why": "For det bedste billede fra festen er det, hvor alle er med. Til bryllup, fødselsdag og firmafest.",
+    "s1": "Vælg jeres dage i kalenderen. En dag koster fire hundrede og femoghalvfems kroner, en weekend syv hundrede og halvtreds. Vi bekræfter på mail.",
+    "s2": "Hent boksen selv, eller få den leveret. Den står på en stander og skal kun bruge en almindelig stikkontakt.",
+    "s3": "Gæsterne trykker på skærmen, og ringen tæller ned fra tre. Så skifter den til hvidt studielys, så alle står skarpt. Ingen blitz i øjnene.",
+    "s4": "Billedet ligger på telefonen med det samme, via QR-kode eller SMS. Og alle festens fotos samles på jeres egen eventside.",
+    "themes": "Vælg et tema til bryllup, fødselsdag eller julefrokost, så boksen ser ud som jeres fest.",
+    "price": "Ubegrænsede billeder, studielys, stander og eventside. Fra fire hundrede og femoghalvfems kroner, inklusive moms.",
+    "cta": "Se ledige datoer på selfi punktum d k."
+  },
+  "erhverv": {
+    "intro": "En fotoboks til jeres bar, klub eller hotel, der får gæsterne til at komme igen.",
+    "morph": "Og boksen bliver jeres. Lysringen får jeres farve, siderne og toppen jeres navn, skærmen byder velkommen, og jeres navn står på hvert eneste foto.",
+    "variety": "Fra bodegaen til festivalen. Vi designer temaet sammen med jer og printer delene selv, så boksen ligner stedet.",
+    "guests": "Gæsterne klarer det helt selv. Og fordi jeres navn står i rammen, bliver hver deling til omtale.",
+    "list": "Gæsten skriver sit nummer for at få billedet på SMS og kan selv sige ja til tilbud fra jer. Så får I en gæsteliste, I må bruge.",
+    "care": "Og vi sørger for alt. Vi monterer, overvåger, opdaterer og bytter boksen, hvis noget går galt. I holder bare åbent, som I plejer.",
+    "price": "Alt sammen for ni hundrede og femoghalvfems kroner om måneden pr. boks, eksklusive moms. Ingen regninger ud over det.",
+    "cta": "Book en uforpligtende snak på selfi punktum d k skråstreg erhverv."
+  }
+}
