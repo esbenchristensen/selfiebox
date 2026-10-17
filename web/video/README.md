@@ -1,6 +1,6 @@
 # Selfi-film
 
-To film med dansk tekst på skærmen og dansk speak (stemmen Noam fra ElevenLabs) og baggrundsmusik fra ElevenLabs Music. Begge vises med `components/Explainer.tsx` i sektionen "Se filmen".
+To film med dansk tekst på skærmen og dansk speak (Jonas, Eleven v4) og baggrundsmusik (Eleven Music v2.5) fra ElevenLabs. Begge vises med `components/Explainer.tsx` i sektionen "Se filmen".
 
 | Film | Side | Kilde | Filer i `public/video/` |
 |---|---|---|---|
@@ -16,7 +16,7 @@ Begge bruger `shared.css` og `shared.js` (farver, fonte, boksen, tidslinjen).
 - `.webm` med samme navn er en reserve til browsere uden H.264
 - `.jpg` med samme navn er plakatbilledet, før filmen starter
 
-Længde: 55,3 sekunder, 30 fps, med speak og musik.
+Længde: 53,6 sekunder, 30 fps, med speak og musik.
 
 ## Scener og tider
 
@@ -34,7 +34,7 @@ Længde: 55,3 sekunder, 30 fps, med speak og musik.
 
 ## Erhverv
 
-Længde: 52,0 sekunder, med speak og musik. Stederne i filmen (Kælderbaren, Hotel Fjord, Skovfest) er opdigtede med vilje. Så viser filmen, hvad et tema kan, uden at det ligner, at et rigtigt sted er kunde.
+Længde: 51,7 sekunder, med speak og musik. Stederne i filmen (Kælderbaren, Hotel Fjord, Skovfest) er opdigtede med vilje. Så viser filmen, hvad et tema kan, uden at det ligner, at et rigtigt sted er kunde.
 
 | Tid | Scene | Tekst på skærmen |
 |---|---|---|
@@ -66,21 +66,32 @@ Scriptet laver også WebM-reserven og plakatbilledet.
 
 ## Speak
 
-Replikkerne står i `voiceover.json`, én pr. scene. Tal og domæner er skrevet, som de skal udtales. `voice.cjs` laver lyden med ElevenLabs (`eleven_multilingual_v2`, stemmen Noam, ung og beregnet til reklamer, tempo 1,08) og lægger klippene i `voice/<film>/`. Et klip laves kun igen, når teksten, stemmen eller indstillingerne ændres. Bagefter lægger `render.cjs` hver replik ind 0,4 sekund inde i sin scene. En scene forlænges, hvis repliken er længere end scenen.
+Replikkerne står i `voiceover.json`, én pr. scene. Tal og domæner er skrevet, som de skal udtales. `voice.cjs` følger ElevenLabs' egne anbefalinger for bedst mulig kvalitet:
 
-Filmene afspilles 1,2 gange hurtigere, end de er skrevet (`FILM_SPEED` i `shared.js`), så de har mere tempo. Tiderne i tabellerne er de rigtige tider i videoen.
+- **Eleven v4** (`eleven_v4`), deres bedste model, med `language_code: "da"`, så den taler og normaliserer dansk.
+- **Stemmen Jonas** fra biblioteket. Han er ung og artikuleret og har den reneste optagelse af de unge danske stemmer. v4 kopierer kildeoptagelsen, også støj, så stemmen er valgt ud fra målt støjgulv og båndbredde.
+- **Et let lydtag** (`[upbeat, warm and energetic]`) styrer leveringen. Tempo og style findes ikke i v4.
+- **Flere optagelser pr. replik.** Hver optagelse bliver skrevet ned med Scribe, og den, der passer bedst med manuskriptet, bliver brugt. Et forkert ord kommer derfor aldrig med i en film.
+- **Opus i 48 kHz og 192 kbps.** Stilhed i start og slut skæres væk.
+
+`render.cjs` lægger hver replik ind 0,4 sekund inde i sin scene. En scene forlænges, hvis repliken er længere end scenen. Filmene afspilles 1,2 gange hurtigere, end de er skrevet (`FILM_SPEED` i `shared.js`). Tiderne i tabellerne er de rigtige tider i videoen.
 
 ## Musik
 
-`music.cjs` laver et instrumentalt nummer til hver film med ElevenLabs Music og lægger det i `music/`. Prompterne står i scriptet: festlig pop til privat leje og poleret natteliv-elektronika til erhverv. `render.cjs` fader musikken ind og ud, lægger den et godt stykke under stemmen og dykker den yderligere, mens der bliver talt. Til sidst normaliseres lyden lineært til -15 LUFS, så musikken ikke vokser i pauserne.
+`music.cjs` laver et instrumentalt nummer til hver film med **`music_v2_5`**, ElevenLabs' bedste musikmodel, i 48 kHz og 192 kbps. Nummeret bygges ud fra en kompositionsplan og ikke en løs prompt. Hver sektion (intro, groove, build, lift, slutning) starter på et sceneskift i filmen. Musikken bygger derfor op med historien og lander sit slutslag, når slutkortet kommer. Scenetiderne læses fra filmen efter `voice.cjs`, fordi speaken bestemmer, hvor lang hver scene er.
+
+`render.cjs` lægger musikken et godt stykke under stemmen og dykker den yderligere, mens der bliver talt (sidechain). Til sidst normaliseres lyden lineært i to pas til -15 LUFS.
+
+Eleven Music er ifølge ElevenLabs godkendt til næsten al kommerciel brug. Se deres music terms for den plan, kontoen er på.
+
+## Lav lyden igen
 
 ```sh
 cd web/video
-NODE_USE_ENV_PROXY=1 ELEVENLABS_API_KEY=... node voice.cjs   # efter en rettelse i voiceover.json
-NODE_USE_ENV_PROXY=1 ELEVENLABS_API_KEY=... node music.cjs   # efter en rettelse i en musikprompt
-NODE_PATH=$(npm root -g) node render.cjs                      # og render filmene igen
+export NODE_USE_ENV_PROXY=1 NODE_PATH=$(npm root -g) ELEVENLABS_API_KEY=...
+node voice.cjs     # efter en rettelse i voiceover.json
+node music.cjs     # derefter, så musikken passer til de nye scenetider
+node render.cjs && node render.cjs erhverv
 ```
 
-128 kbps er det bedste format uden abonnement. Med Creator kan du sætte `FORMAT=mp3_44100_192`.
-
-På siden starter filmen uden lyd, fordi browsere kun selv afspiller video uden lyd. Knappen "Slå lyd til" afspiller den forfra med speak.
+På siden starter filmen uden lyd, fordi browsere kun selv afspiller video uden lyd. Knappen "Slå lyd til" afspiller den forfra med lyd.
