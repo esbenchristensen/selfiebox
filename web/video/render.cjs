@@ -1,5 +1,5 @@
 // Renders a film frame by frame and encodes it with ffmpeg.
-// Usage (from web/video): NODE_PATH=$(npm root -g) node render.cjs [explainer|erhverv] [wide|tall ...]
+// Usage (from web/video): NODE_PATH=$(npm root -g) node render.cjs [explainer|erhverv|events] [wide|tall ...]
 // Writes ../public/video/selfi-<film>-<format>.mp4, a .webm fallback and a poster .jpg next to it.
 // If voice/<film>/ has a voice-over (see voice.cjs), each line is placed at the start of its scene, and
 // music/<film>.mp3 (see music.cjs) plays underneath, ducking while someone speaks, and the sound effects
@@ -12,7 +12,7 @@ const { chromium } = require("playwright");
 const FPS = 30;
 const SIZES = { wide: { width: 1920, height: 1080 }, tall: { width: 1080, height: 1350 } };
 // Poster frame, as [scene, real seconds into it]: the laughing guests after the flash, or the club with the ring.
-const POSTER = { explainer: ["peak", 4.0], erhverv: ["queue", 3.5] };
+const POSTER = { explainer: ["peak", 4.0], erhverv: ["queue", 3.5], events: ["variety", 1.0] };
 const OUT = path.join(__dirname, "..", "public", "video");
 
 const run = (args) =>
