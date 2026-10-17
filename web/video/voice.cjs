@@ -1,5 +1,5 @@
 // Danish voice-over for the films with ElevenLabs, one clip per scene from voiceover.json.
-// Usage (from web/video): ELEVENLABS_API_KEY=... VOICE_ID=... node voice.cjs [explainer|erhverv ...]
+// Usage (from web/video): ELEVENLABS_API_KEY=... [VOICE_ID=...] node voice.cjs [explainer|erhverv ...]
 // Writes voice/<film>/<scene>.mp3 and voice/<film>/timing.js. A clip is only made again when its text,
 // voice or settings change. Then run render.cjs: scenes stretch to fit their line, and the voice is mixed in.
 const fs = require("fs");
@@ -8,13 +8,14 @@ const crypto = require("crypto");
 const { execFileSync } = require("child_process");
 
 const KEY = process.env.ELEVENLABS_API_KEY;
-const VOICE = process.env.VOICE_ID;
+// Mathias from the ElevenLabs voice library: the most used Danish narrator there, warm and natural.
+const VOICE = process.env.VOICE_ID || "ygiXC2Oa1BiHksD3WkJZ";
 const MODEL = process.env.MODEL_ID || "eleven_multilingual_v2";
 const SETTINGS = { stability: 0.5, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true, speed: 1.0 };
 const FORMAT = "mp3_44100_192";
 
-if (!KEY || !VOICE) {
-  console.error("Set ELEVENLABS_API_KEY and VOICE_ID.");
+if (!KEY) {
+  console.error("Set ELEVENLABS_API_KEY.");
   process.exit(1);
 }
 
