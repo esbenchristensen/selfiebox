@@ -1,7 +1,8 @@
 // Renders a film frame by frame and encodes it with ffmpeg.
 // Usage (from web/video): NODE_PATH=$(npm root -g) node render.cjs [explainer|erhverv] [wide|tall ...]
 // Writes ../public/video/selfi-<film>-<format>.mp4, a .webm fallback and a poster .jpg next to it.
-// If voice/<film>/ has a voice-over (see voice.cjs), each line is placed at the start of its scene.
+// If voice/<film>/ has a voice-over (see voice.cjs), each line is placed at the start of its scene, and
+// music/<film>.mp3 (see music.cjs) plays underneath, ducking while someone speaks.
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
@@ -11,21 +12,48 @@ const FPS = 30;
 const SIZES = { wide: { width: 1920, height: 1080 }, tall: { width: 1080, height: 1350 } };
 // Poster frame, as [scene, seconds into it]: the intro with the glowing ring, or the box in Kælderbaren's design.
 const POSTER = { explainer: ["intro", 4.2], erhverv: ["morph", 9.0] };
-const VOICE_LEAD = 0.5; // same as in shared.js
 const OUT = path.join(__dirname, "..", "public", "video");
 
 const run = (args) =>
   new Promise((res, rej) => spawn("ffmpeg", ["-y", "-loglevel", "error", ...args], { stdio: "inherit" }).on("close", (c) => (c === 0 ? res() : rej(new Error("ffmpeg " + c)))));
 
-// One track with every line at its scene's start, levelled for the web.
-async function voiceTrack(film, scenes, duration, out) {
+function measure(file) {
+  return new Promise((res, rej) => {
+    const p = spawn("ffmpeg", ["-hide_banner", "-i", file, "-af", "loudnorm=I=-15:TP=-1.5:LRA=20:print_format=json", "-f", "null", "-"]);
+    let err = "";
+    p.stderr.on("data", (d) => (err += d));
+    p.on("close", () => { const j = err.slice(err.lastIndexOf("{")); try { res(JSON.parse(j)); } catch (e) { rej(new Error("loudnorm measure failed")); } });
+  });
+}
+
+// The sound: every line at its scene's start (real time), the music under it and ducked while the
+// voice speaks, then levelled for the web.
+async function soundTrack(film, scenes, { speed, lead }, duration, out) {
   const dir = path.join(__dirname, "voice", film);
+  const music = path.join(__dirname, "music", `${film}.mp3`);
   const lines = scenes.filter((s) => fs.existsSync(path.join(dir, `${s.id}.mp3`)));
-  if (!lines.length) return false;
+  const hasMusic = fs.existsSync(music);
+  if (!lines.length && !hasMusic) return false;
+  const D = duration.toFixed(3);
   const inputs = lines.flatMap((s) => ["-i", path.join(dir, `${s.id}.mp3`)]);
-  const delays = lines.map((s, i) => `[${i}:a]adelay=${Math.round((s.start + VOICE_LEAD) * 1000)}:all=1[a${i}]`);
-  const mix = `${lines.map((_, i) => `[a${i}]`).join("")}amix=inputs=${lines.length}:normalize=0,apad,atrim=0:${duration.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=11[out]`;
-  await run([...inputs, "-filter_complex", [...delays, mix].join(";"), "-map", "[out]", "-ar", "48000", "-ac", "2", out]);
+  const graph = lines.map((s, i) => `[${i}:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay=${Math.round((s.start / speed + lead) * 1000)}:all=1[a${i}]`);
+  if (lines.length) graph.push(`${lines.map((_, i) => `[a${i}]`).join("")}amix=inputs=${lines.length}:normalize=0,apad,atrim=0:${D}[voice]`);
+  if (hasMusic) {
+    inputs.push("-i", music);
+    const m = lines.length;
+    graph.push(`[${m}:a]aformat=sample_rates=48000:channel_layouts=stereo,apad,atrim=0:${D},loudnorm=I=-31:TP=-8,afade=t=in:d=0.8,afade=t=out:st=${(duration - 2.5).toFixed(3)}:d=2.5[bed]`);
+    if (lines.length) {
+      graph.push("[voice]asplit[v1][v2]");
+      graph.push("[bed][v2]sidechaincompress=threshold=0.01:ratio=8:attack=15:release=500[duck]");
+      graph.push("[v1][duck]amix=inputs=2:normalize=0[mix]");
+    } else graph.push("[bed]anull[mix]");
+  } else graph.push("[voice]anull[mix]");
+  // Levelled in two passes with a fixed gain, so the music does not swell in the pauses.
+  const mixed = `${out}.mix.wav`;
+  await run([...inputs, "-filter_complex", graph.join(";"), "-map", "[mix]", "-ar", "48000", "-ac", "2", mixed]);
+  const m = await measure(mixed);
+  await run(["-i", mixed, "-af", `loudnorm=I=-15:TP=-1.5:LRA=20:linear=true:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}`, "-ar", "48000", out]);
+  fs.unlinkSync(mixed);
   return true;
 }
 
@@ -36,8 +64,9 @@ async function render(film, format) {
   page.on("pageerror", (e) => console.error("pageerror:", e.message));
   await page.goto("file://" + path.join(__dirname, `${film}.html`) + "?format=" + format);
   await page.evaluate(() => window.ready);
-  const duration = await page.evaluate(() => window.DURATION);
-  const scenes = await page.evaluate(() => window.SCENE_TIMES);
+  // The page counts film time; the video plays it FILM_SPEED times faster.
+  const { filmDuration, scenes, speed, lead } = await page.evaluate(() => ({ filmDuration: window.DURATION, scenes: window.SCENE_TIMES, speed: window.FILM_SPEED || 1, lead: window.VOICE_LEAD || 0.5 }));
+  const duration = filmDuration / speed;
   const frames = Math.round(duration * FPS);
   fs.mkdirSync(OUT, { recursive: true });
   const name = path.join(OUT, `selfi-${film}-${format}`);
@@ -48,7 +77,7 @@ async function render(film, format) {
   const done = new Promise((res, rej) => ff.on("close", (c) => (c === 0 ? res() : rej(new Error("ffmpeg " + c)))));
 
   for (let f = 0; f < frames; f++) {
-    await page.evaluate((t) => window.seek(t), f / FPS);
+    await page.evaluate((t) => window.seek(t), (f / FPS) * speed);
     const buf = await page.screenshot({ type: "jpeg", quality: 95 });
     if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once("drain", r));
     if (f % 150 === 0) console.log(`${format}: ${f}/${frames}`);
@@ -62,17 +91,19 @@ async function render(film, format) {
   await page.screenshot({ path: `${name}.jpg`, type: "jpeg", quality: 82 });
   await browser.close();
 
-  const voiced = await voiceTrack(film, scenes, duration, voice);
+  const voiced = await soundTrack(film, scenes, { speed, lead }, duration, voice);
   if (voiced) {
     await run(["-i", silent, "-i", voice, "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-shortest", file]);
   } else fs.renameSync(silent, file);
   await run(["-i", file, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "36", "-row-mt", "1", "-deadline", "good", "-cpu-used", "2",
     ...(voiced ? ["-c:a", "libopus", "-b:a", "128k"] : ["-an"]), `${name}.webm`]);
   for (const f of [silent, voice]) if (fs.existsSync(f)) fs.unlinkSync(f);
-  console.log(`${format}: ${file} (${duration.toFixed(1)} s${voiced ? ", med speak" : ""})`);
+  console.log(`${format}: ${file} (${duration.toFixed(1)} s${voiced ? ", med lyd" : ""})`);
 }
 
-(async () => {
+module.exports = { soundTrack };
+
+if (require.main === module) (async () => {
   let args = process.argv.slice(2);
   const film = args[0] && !SIZES[args[0]] ? args.shift() : "explainer";
   const formats = args.length ? args : ["wide", "tall"];
