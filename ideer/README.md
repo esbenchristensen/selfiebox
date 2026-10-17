@@ -12,5 +12,5 @@ Alt, der endnu ikke er bygget, bor her. Det færdige bor i `web/` (hjemmeside og
 
 - Er en idé bygget, flytter den ind i `web/` eller `hardware/`, og skitsen slettes her.
 - Er en idé droppet, slettes den. Git husker den, hvis den skal frem igen.
-- Ingen arkivmapper. Gamle designs ligger i git-historikken, fx under mærket `arkiv-okt-2026`:
-  `git checkout arkiv-okt-2026 -- hardware/docs/themes-page`
+- Ingen arkivmapper. Gamle designs ligger i git-historikken, og på grenen `arkiv-okt-2026`, der viser repoet, som det var før oprydningen:
+  `git checkout origin/arkiv-okt-2026 -- hardware/docs/themes-page`
