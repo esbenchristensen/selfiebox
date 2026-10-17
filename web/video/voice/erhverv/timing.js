@@ -4,7 +4,7 @@ window.VOICE_TIMING = {
   "morph": 7.29,
   "variety": 4.78,
   "guests": 4.18,
-  "list": 4.6,
+  "list": 5.02,
   "care": 5.2,
   "price": 4.78,
   "cta": 4
