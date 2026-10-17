@@ -1,0 +1,4 @@
+# Temporary files while video/render.cjs runs
+*.silent.mp4
+*.voice.wav
+*.voice.wav.mix.wav
