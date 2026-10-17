@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   }
 
   const data = {
-    type: clean(body.type, 20) === "privat" ? "privat" : "erhverv",
+    type: ["privat", "events"].includes(clean(body.type, 20)) ? clean(body.type, 20) : "erhverv",
     name: clean(body.name, 200),
     email: clean(body.email, 200),
     phone: clean(body.phone, 40),

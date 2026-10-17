@@ -10,7 +10,6 @@ import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
 import { Activities, Faq, Inside, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
-import { HeroBox, Showroom } from "@/components/ThemeStudio";
 import { Venues } from "@/components/Venues";
 import { business, faqBusiness } from "@/content";
 
@@ -79,7 +78,7 @@ export default function Erhverv() {
           lede="Selfi Boks hænger på væggen og kører uden personale. Gæsterne deler billederne med jeres navn i rammen, og I får en gæsteliste, I må invitere tilbage. 995 kr. om måneden, ekskl. moms. Vi monterer den, passer den og bytter den, hvis noget går galt."
           primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
           secondary={{ label: "Se, hvad den gør for jer", href: "#gevinst" }}
-          visual={<HeroBox />}
+          image={{ src: "/photos/klub.jpg", alt: "Selfi Boks på en betonsøjle i en natklub med venner på skærmen og dansegulvet bagved", pos: "50% 40%" }}
         />
         <Explainer
           film="erhverv"
@@ -93,12 +92,12 @@ export default function Erhverv() {
         <Venues
           label="Hvor den hænger"
           title="Fra bodegaen til hotelbaren."
-          lede="Boksen er lidt større end et A4-ark og kun 6,6 cm dyb. Den hænger på væggen med tyverilås, så den passer ind i et værtshus fra 1950 og i et festivaltelt i skoven."
+          lede="Boksen er lidt større end et A4-ark og kun 6,6 cm dyb. Den hænger på væggen med tyverilås, så den passer ind i et værtshus fra 1950 og på en søjle i en natklub."
           items={[
             { src: "sted-bodega", name: "Bodegaen", text: "Et nyt samtaleemne mellem dartskiven og baren.", alt: "Selfi Boks fotoboks på væggen i en bodega", pos: "50% 45%" },
             { src: "sted-vaertshus", name: "Værtshuset", text: "Fredagens gæster på billede, med jeres navn i rammen.", alt: "Selfi Boks fotoboks på murstensvæggen i et værtshus", pos: "60% 45%" },
             { src: "klub", name: "Natklubben", text: "Lysringen kan ses over dansegulvet og skaber kø af sig selv.", alt: "Selfi Boks fotoboks på en betonsøjle i en natklub", pos: "50% 40%" },
-            { src: "sted-festival", name: "Festivalen", text: "I festivalens farver og under tag, så regnen ikke stopper den.", alt: "Selfi Boks fotoboks på en festival i skoven", pos: "60% 50%" },
+            { src: "sted-julefrokost", name: "Restauranten", text: "Selskaber i baglokalet tager billeder med jeres navn i rammen hele aftenen.", alt: "Gæster til et selskab foran Selfi Boks på væggen i en restaurant", pos: "55% 40%" },
             { src: "sted-hotel", name: "Hotelbaren", text: "Et minde fra opholdet med hotellets navn i rammen.", alt: "Selfi Boks fotoboks på væggen i en hotelbar", pos: "30% 50%" },
           ]}
         />
@@ -109,9 +108,9 @@ export default function Erhverv() {
           items={[
             {
               kind: "photo",
-              src: "/photos/klub.jpg",
-              alt: "Selfi Boks på en betonsøjle i en natklub, venner på skærmen og dansegulvet bagved",
-              pos: "45% 45%",
+              src: "/photos/sted-vaertshus.jpg",
+              alt: "Venner på et værtshus griner foran Selfi Boks på murstensvæggen",
+              pos: "60% 45%",
               title: "Den samler folk",
               text: "Lysringen kan ses fra den anden ende af lokalet. Folk stiller sig i kø, griner af hinanden og bliver en omgang mere.",
             },
@@ -144,10 +143,6 @@ export default function Erhverv() {
         <Activities
           title="Giv gæsterne en grund til at blive."
           lede="Slå konkurrencer og små opgaver til på de aftener, hvor I vil have liv i lokalet, og fra igen, når stedet kører af sig selv. Alt styres fra kontrolpanelet."
-        />
-        <Showroom
-          title="Bygget til jeres sted."
-          lede="Top, sider, kabinet, lys og skærm i jeres farver og med jeres logo. Vi printer delene selv, så formen kan være lige det, stedet er."
         />
         <PhotoStrip
           prints={[

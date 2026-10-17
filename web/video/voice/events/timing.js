@@ -10,5 +10,5 @@ window.VOICE_TIMING = {
   "list": 4.33,
   "seasons": 3.74,
   "care": 4.93,
-  "cta": 4.64
+  "cta": 5.79
 };

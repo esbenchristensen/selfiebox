@@ -6,7 +6,7 @@ To reklamefilm med dansk tekst på skærmen, dansk speak (Jonas, Eleven v4), mus
 |---|---|---|---|
 | Privat leje | `/` | `explainer.html` | `selfi-explainer-*` |
 | Erhverv | `/erhverv` | `erhverv.html` | `selfi-erhverv-*` |
-| Store events | (ikke på siden endnu) | `events.html` | `selfi-events-*` |
+| Store events | `/events` | `events.html` | `selfi-events-*` |
 
 Alle bruger `shared.css` og `shared.js` (farver, fonte, boksen, tidslinjen). Erhverv og events bruger desuden `venue.css` og `venue.js` (bokse i stedets eget design).
 
@@ -70,7 +70,7 @@ Til store steder, hvor værdien er branding, omtale og aktiviteter på tværs af
 | Gæsteliste | "Gæsterne kan sige ja til nyheder fra jer, så I kan invitere dem igen næste sæson." | Liste og nyhedsbrev |
 | Sæsoner | "Til Halloween og jul skifter I skærm og ramme i kontrolpanelet." | Sommer, Halloween og jul på samme boks |
 | Service | "Vi designer, monterer og overvåger boksene og bytter dem, hvis noget går galt." | Det klarer vi over for "Tager imod gæsterne" |
-| Handling | "Book en snak på selfi punktum d k, så viser vi boksen i jeres tema." | Logo, knap og Selfi-lyden |
+| Handling | "Book en snak på selfi punktum d k skråstreg events, så viser vi boksen i jeres tema." | Logo, knap og Selfi-lyden |
 
 ## Ændre filmen
 

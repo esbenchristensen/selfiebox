@@ -9,6 +9,7 @@ export function Footer() {
         <nav className="footer-links" aria-label="Sider">
           <a href="/">Lej en fotoboks til festen</a>
           <a href="/erhverv">Fotoboks til bar, klub og hotel</a>
+          <a href="/events">Fotoboks til festival, forlystelsespark og zoo</a>
         </nav>
         <ThemeSwitch />
         <span>Selfi · selfi.dk</span>
