@@ -1,11 +1,11 @@
 // Made by voice.cjs. Seconds of speech per scene.
 window.VOICE_TIMING = {
-  "intro": 5.2,
-  "morph": 9.46,
-  "variety": 7.37,
-  "guests": 6.09,
-  "list": 8.54,
-  "care": 9.33,
-  "price": 9.2,
-  "cta": 6.58
+  "intro": 2.53,
+  "morph": 7.29,
+  "variety": 4.78,
+  "guests": 4.18,
+  "list": 4.6,
+  "care": 5.2,
+  "price": 4.78,
+  "cta": 4
 };

@@ -59,13 +59,15 @@ let flashT = null;
 function flashAt(t, at) { flashT = t >= at && t < at + 0.45 ? 1 - (t - at) / 0.45 : 0; }
 
 // The line starts this long into its scene, once the headline is in, and leaves a pause after it.
-const VOICE_LEAD = 0.5, VOICE_TAIL = 0.7;
+// Seconds of real time. The film itself plays FILM_SPEED times faster than it is written, so it has some pace.
+const VOICE_LEAD = 0.4, VOICE_TAIL = 0.45;
+const FILM_SPEED = 1.2;
 
 function mountFilm(SCENES, { steps = 4, stepLabel = "Sådan virker den", plain = ["intro", "cta"] } = {}) {
   document.getElementById("c-step").innerHTML = `<span>${stepLabel}</span><span class="dots">${"<i></i>".repeat(steps)}</span>`;
   // With a voice-over (voice/<film>/timing.js), a scene is held until its line has been said.
   const VOICE = window.VOICE_TIMING || {};
-  for (const s of SCENES) if (VOICE[s.id]) s.dur = Math.max(s.dur, VOICE_LEAD + VOICE[s.id] + VOICE_TAIL);
+  for (const s of SCENES) if (VOICE[s.id]) s.dur = Math.max(s.dur, (VOICE_LEAD + VOICE[s.id] + VOICE_TAIL) * FILM_SPEED);
   let start = 0;
   for (const s of SCENES) { s.start = start; start += s.dur; }
   window.SCENE_TIMES = SCENES.map(({ id, start, dur }) => ({ id, start, dur }));
@@ -108,7 +110,9 @@ function mountFilm(SCENES, { steps = 4, stepLabel = "Sådan virker den", plain =
     document.getElementById("flash").style.opacity = (flashT || 0) * 0.4;
   }
 
-  window.DURATION = DURATION;
+  window.DURATION = DURATION; // in film time; real time is DURATION / FILM_SPEED
+  window.FILM_SPEED = FILM_SPEED;
+  window.VOICE_LEAD = VOICE_LEAD;
   window.seek = seek;
   window.ready = Promise.all([
     document.fonts.ready,
@@ -117,5 +121,5 @@ function mountFilm(SCENES, { steps = 4, stepLabel = "Sådan virker den", plain =
   ]).then(() => seek(+(new URLSearchParams(location.search).get("t") || 0)));
 
   // Preview in a browser: ?play plays in real time.
-  if (new URLSearchParams(location.search).has("play")) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(f); }; f(); });
+  if (new URLSearchParams(location.search).has("play")) window.ready.then(() => { const t0 = performance.now(); const f = () => { seek(((performance.now() - t0) / 1000 * FILM_SPEED) % DURATION); requestAnimationFrame(f); }; f(); });
 }
