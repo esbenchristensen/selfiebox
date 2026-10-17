@@ -5,7 +5,8 @@
 // - Eleven v4, their highest-quality model, with language_code "da", so it speaks and normalises Danish.
 // - Jonas from the voice library: young and articulate, and the cleanest recording of the young Danish
 //   voices (v4 copies the source recording, noise and all, so a clean source matters).
-// - A light delivery tag instead of speed or style settings, which v4 does not have.
+// - A light delivery tag instead of speed or style settings, which v4 does not have. A line in
+//   voiceover.json that starts with its own [tag] uses that one instead.
 // - Several takes of every line. Each take is transcribed with Scribe and the one that matches the script
 //   best is kept, so a slipped word never ends up in a film.
 // Writes voice/<film>/<scene>.opus (silence trimmed) and voice/<film>/timing.js. A line is only made again
@@ -34,7 +35,7 @@ const API = "https://api.elevenlabs.io/v1";
 
 const duration = (file) => +execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString().trim();
 // Compares words, so punctuation and how Scribe spells "selfi" or "d k" do not count.
-const words = (t) => t.toLowerCase().replace(/selfie/g, "selfi").replace(/\bdk\b/g, "d k").replace(/[^\p{L}\p{N} ]/gu, " ").split(/\s+/).filter(Boolean);
+const words = (t) => t.replace(/\[[^\]]*\]/g, " ").toLowerCase().replace(/selfie/g, "selfi").replace(/\bdk\b/g, "d k").replace(/[^\p{L}\p{N} ]/gu, " ").split(/\s+/).filter(Boolean);
 function similarity(a, b) {
   const x = words(a), y = words(b);
   const dp = Array.from({ length: x.length + 1 }, (_, i) => [i, ...Array(y.length).fill(0)]);
@@ -47,7 +48,7 @@ async function tts(text, previous, next) {
   const res = await fetch(`${API}/text-to-speech/${VOICE}?output_format=${FORMAT}`, {
     method: "POST",
     headers: { "xi-api-key": KEY, "content-type": "application/json" },
-    body: JSON.stringify({ text: DIRECTION + text, model_id: MODEL, language_code: "da", voice_settings: SETTINGS, previous_text: previous, next_text: next }),
+    body: JSON.stringify({ text: (text.startsWith("[") ? "" : DIRECTION) + text, model_id: MODEL, language_code: "da", voice_settings: SETTINGS, previous_text: previous, next_text: next }),
   });
   if (!res.ok) throw new Error(`tts ${res.status} ${await res.text()}`);
   return Buffer.from(await res.arrayBuffer());

@@ -1,24 +1,27 @@
 {
-  "_note": "Speak til filmene, én replik pr. scene (samme id som i explainer.html og erhverv.html). Tal og domæner er skrevet, som de skal udtales. voice.cjs laver lyden, og scenerne bliver forlænget, hvis en replik er længere end scenen.",
+  "_note": "Speak til filmene, én replik pr. scene (samme id som i explainer.html og erhverv.html). Tal og domæner er skrevet, som de skal udtales. voice.cjs laver lyden, og hver scene varer lige så længe som sin replik.",
   "explainer": {
-    "intro": "Skal I holde fest? Lej en fotoboks, der får alle med på billedet.",
-    "why": "For det bedste billede er det, hvor alle er med.",
-    "s1": "Vælg jeres dage i kalenderen. Fra fire hundrede og femoghalvfems kroner.",
-    "s2": "Hent den selv, eller få den leveret. Den skal kun bruge en stikkontakt.",
-    "s3": "Et tryk, og ringen tæller ned fra tre. Så tænder studielyset, og alle står skarpt.",
-    "s4": "Billedet ligger på telefonen med det samme. Og alle fotos samles på jeres egen eventside.",
-    "themes": "Vælg et tema, så boksen passer til jeres fest.",
-    "price": "Ubegrænsede billeder og eventside. Fra fire hundrede og femoghalvfems kroner.",
-    "cta": "Se ledige datoer på selfi punktum d k."
+    "hook": "Hundrede billeder fra festen. Og ikke ét, hvor alle er med.",
+    "solve": "Selfi Boks samler gæsterne foran kameraet.",
+    "peak": "[playful, counting down slowly with a smile] Tre... to... én.",
+    "home": "Billedet ligger på telefonen med det samme. Og dagen efter har I dem alle.",
+    "easy": "Den står på en stander og passer sig selv.",
+    "themes": "Vælg tema til bryllup, fødselsdag eller julefrokost.",
+    "price": "En hel weekend koster syv hundrede og halvtreds kroner. Med femoghalvfjerds gæster er det ti kroner per gæst.",
+    "cta": "Tjek, om jeres dato er ledig, på selfi punktum d k."
   },
   "erhverv": {
-    "intro": "En fotoboks, der får gæsterne til at komme igen.",
-    "morph": "Og den bliver jeres. Jeres farver, jeres navn, jeres velkomst. Og jeres navn på hvert eneste foto.",
-    "variety": "Fra bodegaen til festivalen. Vi designer temaet sammen med jer.",
-    "guests": "Gæsterne klarer det helt selv. Og hver deling er omtale for jer.",
-    "list": "Gæsten siger selv ja til tilbud. Så får I en gæsteliste, I må bruge.",
-    "care": "Vi monterer, overvåger og bytter boksen, hvis noget går galt. I holder bare åbent.",
-    "price": "Ni hundrede og femoghalvfems kroner om måneden. Ingen ekstra regninger.",
-    "cta": "Book en snak på selfi punktum d k skråstreg erhverv."
+    "hook": "Fredag er baren fuld. Men på mandag ved I ikke, hvem der var der.",
+    "queue": "Selfi Boks hænger på væggen, og lysringen kan ses over hele dansegulvet. Folk stiller sig i kø af sig selv.",
+    "mission": "Skærmen giver dem en mission: Tag et billede med en, du ikke kender.",
+    "title": "Boksen kårer aftenens største smil. Det billede vil man have med hjem.",
+    "number": "For at få billedet skriver gæsten sit nummer og kan sige ja til tilbud fra jer.",
+    "contest": "Gæsterne stemmer på aftenens bedste billede, og vinderen henter præmien i baren.",
+    "money": "I sætter selv prisen på printet. Alt over femogtyve kroner er jeres.",
+    "list": "Så på mandag ved I, hvem der var her, og kan invitere dem til næste fest.",
+    "design": "Boksen får jeres farver og jeres logo.",
+    "care": "Vi monterer den, holder øje med den og bytter den, hvis noget går galt. I holder bare åbent.",
+    "price": "Ni hundrede og femoghalvfems kroner om måneden.",
+    "cta": "Book en uforpligtende snak på selfi punktum d k skråstreg erhverv."
   }
 }

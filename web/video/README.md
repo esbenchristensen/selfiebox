@@ -1,6 +1,6 @@
 # Selfi-film
 
-To film med dansk tekst på skærmen og dansk speak (Jonas, Eleven v4) og baggrundsmusik (Eleven Music v2.5) fra ElevenLabs. Begge vises med `components/Explainer.tsx` i sektionen "Se filmen".
+To reklamefilm med dansk tekst på skærmen, dansk speak (Jonas, Eleven v4), musik (Eleven Music v2.5) og lydeffekter fra ElevenLabs. Begge vises med `components/Explainer.tsx` i sektionen "Se filmen".
 
 | Film | Side | Kilde | Filer i `public/video/` |
 |---|---|---|---|
@@ -9,43 +9,49 @@ To film med dansk tekst på skærmen og dansk speak (Jonas, Eleven v4) og baggru
 
 Begge bruger `shared.css` og `shared.js` (farver, fonte, boksen, tidslinjen).
 
-## Privat leje
+## Hvordan filmene er skrevet
 
-- `public/video/selfi-explainer-wide.mp4` er 16:9, 1920 × 1080, til desktop
-- `public/video/selfi-explainer-tall.mp4` er 4:5, 1080 × 1350, til mobil (og fint til Instagram og Facebook)
-- `.webm` med samme navn er en reserve til browsere uden H.264
-- `.jpg` med samme navn er plakatbilledet, før filmen starter
+Begge film er skrevet som reklamefilm, ikke som en gennemgang af funktioner:
 
-Længde: 53,6 sekunder, 30 fps, med speak og musik.
+- **Et problem i de første sekunder**, som seeren kender, og brandet lige efter. Logo og lysring vises inden for 2–5 sekunder. Det giver markant bedre genkendelse.
+- **Ét følelsesmæssigt højdepunkt med brandet i** (peak-end): nedtællingen, blitzen og grinende gæster i privatfilmen.
+- **Mennesker i stedet for kun grafik:** rigtige billeder fra fester og barer.
+- **En fast lyd for Selfi:** et lukkerklik med en lys tone, når brandet vises første gang og på slutkortet. Desuden bip, klik, latter og pop på de vigtige øjeblikke.
+- **Speaken styrer tempoet:** hver scene varer lige så længe som sin replik plus 0,3 sekund før og efter, og animationen strækkes eller trykkes til at passe (`warp` i `shared.js`). Der er derfor ingen døde huller, kun bevidste pauser efter "Klik" og på slutkortet.
+- **Teksten på skærmen** følger speaken, så filmen kan forstås uden lyd.
+- **Prisen gøres lille med et regnestykke** (10 kr. pr. gæst og 15 kr. pr. print), og der er én klar handling til sidst.
 
-## Scener og tider
+## Privat leje (36 sekunder)
 
-| Tid | Scene | Tekst på skærmen |
+| Scene | Speak | Billede |
 |---|---|---|
-| 0:00–0:05.2 | Intro | Fotoboks til leje. "Lej en fotoboks, der får alle med på billedet." |
-| 0:05.2–0:10.4 | Hvorfor | "Det bedste billede fra festen er det, hvor alle er med." |
-| 0:10.4–0:16.7 | 01 Vælg jeres dage | "Vælg dagene i kalenderen." En dag 495 kr., en weekend 750 kr. og en uge 1.250 kr., altid inkl. moms. Vi bekræfter på mail. |
-| 0:16.7–0:22.2 | 02 Få boksen ud til festen | "Hent den, eller få den leveret." Stander og en almindelig stikkontakt. Afhent selv, levering, levering og opsætning. |
-| 0:22.2–0:30.2 | 03 Tryk og smil | "Et tryk, og ringen tæller ned fra 3." Hvidt studielys, ingen blitz i øjnene. |
-| 0:30.2–0:37.3 | 04 Billedet med hjem | "Billedet ligger på telefonen med det samme." QR-kode, SMS, eventside, Instax-print med fotomodulet. |
-| 0:37.3–0:43.3 | Temaer | "En boks, der ser ud som jeres fest." Bryllup, fødselsdag, julefrokost. |
-| 0:43.3–0:49.9 | Pris | "Fra 495 kr. inkl. moms." Ubegrænsede billeder, studielys, stander, eventside. |
-| 0:49.9–0:55.3 | Afslutning | "Se ledige datoer på selfi.dk" |
+| Hook | "Hundrede billeder fra festen. Og ikke ét, hvor alle er med." | Mobilgalleri med halve ansigter, der scroller forbi og stopper på "Ingen med alle" |
+| Løsning | "Selfi Boks samler gæsterne foran kameraet." | Rigtigt festfoto med boksen, logo og Selfi-lyden |
+| Højdepunkt | "Tre... to... én." | Nedtælling med bip på hvert ord, blitz, klik, latter og fuldskærmsfoto med "Klik." |
+| Med hjem | "Billedet ligger på telefonen med det samme. Og dagen efter har I dem alle." | Eventsiden fyldes |
+| Indvending | "Den står på en stander og passer sig selv." | Boksen i en lade til et bryllup |
+| Tema | "Vælg tema til bryllup, fødselsdag eller julefrokost." | De tre temaer |
+| Pris | "En hel weekend koster syv hundrede og halvtreds kroner. Med femoghalvfjerds gæster er det ti kroner per gæst." | 750 kr. og regnestykket |
+| Handling | "Tjek, om jeres dato er ledig, på selfi punktum d k." | Logo, knap og Selfi-lyden |
 
-## Erhverv
+## Erhverv: barer og natklubber (60 sekunder)
 
-Længde: 51,7 sekunder, med speak og musik. Stederne i filmen (Kælderbaren, Hotel Fjord, Skovfest) er opdigtede med vilje. Så viser filmen, hvad et tema kan, uden at det ligner, at et rigtigt sted er kunde.
+Filmen er kun til barer, værtshuse og natklubber. Store steder som forlystelsesparker og festivaler får deres egen film med en anden vinkel. Stederne i filmen (Kælderbaren, Bar Nord og Klub Neon) er opdigtede med vilje.
 
-| Tid | Scene | Tekst på skærmen |
+| Scene | Speak | Billede |
 |---|---|---|
-| 0:00–0:04.7 | Intro | Til barer, klubber og hoteller. "En fotoboks, der får gæsterne til at komme igen." |
-| 0:04.7–0:13.0 | 01 Jeres stil | "Boksen bliver jeres." Boksen skifter til Kælderbarens design: lysring, sider og top, skærm, fotoramme. |
-| 0:13.0–0:19.5 | Til ethvert sted | "Fra bodegaen til festivalen." Vi designer temaet med jer og printer delene selv. Tre eksempler. |
-| 0:19.5–0:26.7 | 02 Gæsterne | "Hvert billede bærer jeres navn." Nedtælling, studielys, print og deling med navnet i rammen. |
-| 0:26.7–0:33.8 | 03 Gæstelisten | "En gæsteliste, I må bruge." Nummer for SMS og et særskilt ja til tilbud. |
-| 0:33.8–0:41.0 | 04 Fuld service | "Vi sørger for alt." Det klarer vi: seks ting. Det klarer I: "Holder åbent, som I plejer." |
-| 0:41.0–0:46.6 | Pris | "Én fast pris om måneden." 995 kr./md. pr. boks, ekskl. moms. |
-| 0:46.6–0:52.0 | Afslutning | "Book en snak på selfi.dk/erhverv" |
+| Hook (tab) | "Fredag er baren fuld. Men på mandag ved I ikke, hvem der var der." | Fuldt værtshus, der bliver gråt: "Fredag" bliver til "Mandag – Hvem var her?" |
+| Kø | "Selfi Boks hænger på væggen, og lysringen kan ses over hele dansegulvet. Folk stiller sig i kø af sig selv." | Rigtigt klubfoto, logo og Selfi-lyden |
+| Mission | "Skærmen giver dem en mission: Tag et billede med en, du ikke kender." | Klub Neon-boksen med missionen og stemplet "Klaret" |
+| Titel | "Boksen kårer aftenens største smil. Det billede vil man have med hjem." | Print med stemplet "Aftenens største smil" |
+| Nummer | "For at få billedet skriver gæsten sit nummer og kan sige ja til tilbud fra jer." | Telefonen med nummer og samtykke, gæstelisten tæller op |
+| Konkurrence | "Gæsterne stemmer på aftenens bedste billede, og vinderen henter præmien i baren." | Afstemning, vinder og "Præmien venter i baren" |
+| Print | "I sætter selv prisen på printet. Alt over femogtyve kroner er jeres." | Eksempel: 40 − 25 = 15 kr. til jer, og 67 prints om måneden betaler boksen |
+| Gæsteliste | "Så på mandag ved I, hvem der var her, og kan invitere dem til næste fest." | 1.284 på listen og en SMS til fredag |
+| Design | "Boksen får jeres farver og jeres logo." | Værtshus, cocktailbar og natklub |
+| Service | "Vi monterer den, holder øje med den og bytter den, hvis noget går galt. I holder bare åbent." | Det klarer vi over for Det klarer I |
+| Pris | "Ni hundrede og femoghalvfems kroner om måneden." | 995 kr./md. ekskl. moms |
+| Handling | "Book en uforpligtende snak på selfi punktum d k skråstreg erhverv." | Logo, knap og Selfi-lyden |
 
 ## Ændre filmen
 
@@ -74,11 +80,11 @@ Replikkerne står i `voiceover.json`, én pr. scene. Tal og domæner er skrevet,
 - **Flere optagelser pr. replik.** Hver optagelse bliver skrevet ned med Scribe, og den, der passer bedst med manuskriptet, bliver brugt. Et forkert ord kommer derfor aldrig med i en film.
 - **Opus i 48 kHz og 192 kbps.** Stilhed i start og slut skæres væk.
 
-`render.cjs` lægger hver replik ind 0,4 sekund inde i sin scene. En scene forlænges, hvis repliken er længere end scenen. Filmene afspilles 1,2 gange hurtigere, end de er skrevet (`FILM_SPEED` i `shared.js`). Tiderne i tabellerne er de rigtige tider i videoen.
+`render.cjs` lægger hver replik ind 0,3 sekund inde i sin scene, og scenen varer lige så længe som repliken.
 
 ## Musik
 
-`music.cjs` laver et instrumentalt nummer til hver film med **`music_v2_5`**, ElevenLabs' bedste musikmodel, i 48 kHz og 192 kbps. Nummeret bygges ud fra en kompositionsplan og ikke en løs prompt. Hver sektion (intro, groove, build, lift, slutning) starter på et sceneskift i filmen. Musikken bygger derfor op med historien og lander sit slutslag, når slutkortet kommer. Scenetiderne læses fra filmen efter `voice.cjs`, fordi speaken bestemmer, hvor lang hver scene er.
+`music.cjs` laver et instrumentalt nummer til hver film med **`music_v2_5`**, ElevenLabs' bedste musikmodel, i 48 kHz og 192 kbps. Nummeret bygges ud fra en kompositionsplan og ikke en løs prompt. Hver sektion starter på et sceneskift i filmen. I privatfilmen forsvinder trommerne under nedtællingen, og musikken kommer tilbage på "Klik". Musikken bygger derfor op med historien og lander sit slutslag, når slutkortet kommer. Scenetiderne læses fra filmen efter `voice.cjs`, fordi speaken bestemmer, hvor lang hver scene er.
 
 `render.cjs` lægger musikken et godt stykke under stemmen og dykker den yderligere, mens der bliver talt (sidechain). Til sidst normaliseres lyden lineært i to pas til -15 LUFS.
 
@@ -91,6 +97,7 @@ cd web/video
 export NODE_USE_ENV_PROXY=1 NODE_PATH=$(npm root -g) ELEVENLABS_API_KEY=...
 node voice.cjs     # efter en rettelse i voiceover.json
 node music.cjs     # derefter, så musikken passer til de nye scenetider
+node sfx.cjs       # kun hvis en lydeffekt ændres
 node render.cjs && node render.cjs erhverv
 ```
 
