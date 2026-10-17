@@ -11,8 +11,9 @@ const KEY = process.env.ELEVENLABS_API_KEY;
 // Mathias from the ElevenLabs voice library: the most used Danish narrator there, warm and natural.
 const VOICE = process.env.VOICE_ID || "ygiXC2Oa1BiHksD3WkJZ";
 const MODEL = process.env.MODEL_ID || "eleven_multilingual_v2";
-const SETTINGS = { stability: 0.5, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true, speed: 1.0 };
-const FORMAT = "mp3_44100_192";
+const SETTINGS = { stability: 0.5, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true, speed: 1.1 };
+// 128 kbps is the best format without a subscription. With Creator or above, set FORMAT=mp3_44100_192.
+const FORMAT = process.env.FORMAT || "mp3_44100_128";
 
 if (!KEY) {
   console.error("Set ELEVENLABS_API_KEY.");
