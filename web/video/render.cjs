@@ -11,8 +11,8 @@ const { chromium } = require("playwright");
 
 const FPS = 30;
 const SIZES = { wide: { width: 1920, height: 1080 }, tall: { width: 1080, height: 1350 } };
-// Poster frame, as [scene, seconds into it]: the intro with the glowing ring, or the box in Kælderbaren's design.
-const POSTER = { explainer: ["intro", 4.2], erhverv: ["morph", 9.0] };
+// Poster frame, as [scene, real seconds into it]: the laughing guests after the flash, or the club with the ring.
+const POSTER = { explainer: ["peak", 4.0], erhverv: ["queue", 3.5] };
 const OUT = path.join(__dirname, "..", "public", "video");
 
 const run = (args) =>
