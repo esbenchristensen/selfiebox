@@ -58,10 +58,17 @@ function tapAt(tap, frame, t, taps) {
 let flashT = null;
 function flashAt(t, at) { flashT = t >= at && t < at + 0.45 ? 1 - (t - at) / 0.45 : 0; }
 
+// The line starts this long into its scene, once the headline is in, and leaves a pause after it.
+const VOICE_LEAD = 0.5, VOICE_TAIL = 0.7;
+
 function mountFilm(SCENES, { steps = 4, stepLabel = "Sådan virker den", plain = ["intro", "cta"] } = {}) {
   document.getElementById("c-step").innerHTML = `<span>${stepLabel}</span><span class="dots">${"<i></i>".repeat(steps)}</span>`;
+  // With a voice-over (voice/<film>/timing.js), a scene is held until its line has been said.
+  const VOICE = window.VOICE_TIMING || {};
+  for (const s of SCENES) if (VOICE[s.id]) s.dur = Math.max(s.dur, VOICE_LEAD + VOICE[s.id] + VOICE_TAIL);
   let start = 0;
   for (const s of SCENES) { s.start = start; start += s.dur; }
+  window.SCENE_TIMES = SCENES.map(({ id, start, dur }) => ({ id, start, dur }));
   const DURATION = start;
 
   const root = document.getElementById("scenes");
