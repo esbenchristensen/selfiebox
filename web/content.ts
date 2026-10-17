@@ -111,6 +111,45 @@ export const faqPrivate: Faq[] = [
   },
 ];
 
+// Big venues (festivals, theme parks, zoos): several boxes across the site, so the multi-box games belong here.
+export const eventActivities: ActivityId[] = ["skattejagt", "rundtur", "konkurrence", "titler", "missioner"];
+
+// Big venues: their own universe, reach, games across the site, sponsors and seasons. No bar prices.
+export const faqEvents: Faq[] = [
+  {
+    q: "Kan boksen laves i vores tema?",
+    a: "Ja. Vi designer top, sider og kabinet sammen med jer og printer delene selv. Skærmen og rammen på hvert foto får jeres figurer, farver og logo.",
+  },
+  {
+    q: "Hvordan virker skattejagt og rundtur?",
+    a: "Med flere bokse på området følger gæsterne spor fra boks til boks gennem en lille historie, eller de samler et stempel ved hver boks. I bestemmer ruten, fx forbi en scene, et dyreanlæg eller en butik, og hvilken præmie der venter til sidst.",
+  },
+  {
+    q: "Kan en sponsor komme med på billederne?",
+    a: "Ja. Rammen på hvert foto designes frit, så der er plads til en sponsor ved siden af jeres eget navn.",
+  },
+  {
+    q: "Kan vi skifte tema i løbet af året?",
+    a: "Ja. Skærmen og rammen skifter I selv i kontrolpanelet, fx til Halloween og jul. Skal boksens sider også skifte, printer vi nye dele.",
+  },
+  {
+    q: "Kan vi samle kontakter til vores nyhedsbrev?",
+    a: "Ja. Gæsten skriver sit nummer for at få billedet og kan samtidig sige ja til nyheder fra jer. Kun dem, der har sagt ja, kan bruges til markedsføring, så I holder jer inden for reglerne.",
+  },
+  {
+    q: "Hvem sætter boksene op og passer dem?",
+    a: "Det gør vi. Vi monterer og tester boksene, holder øje med dem hele tiden og sender en ny, hvis en går i stykker.",
+  },
+  {
+    q: "Kan boksen stå udendørs?",
+    a: "Den skal stå under tag, fx i et telt, ved en indgang eller under et halvtag. Så stopper regnen den ikke.",
+  },
+  {
+    q: "Hvad koster det?",
+    a: "Prisen afhænger af antal bokse, tema og periode. Book en snak, så laver vi et tilbud til jer.",
+  },
+];
+
 // Venues: what it earns, how it runs, what the law allows. Nothing about wedding dates.
 export const faqBusiness: Faq[] = [
   {

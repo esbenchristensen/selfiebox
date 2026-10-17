@@ -7,7 +7,7 @@ type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind:
 
 // The page decides the audience. Private hosts mostly book in the calendar, so their
 // form is for questions; venues have no calendar, so this form is how they buy.
-export function Contact({ type }: { type: "erhverv" | "privat" }) {
+export function Contact({ type }: { type: "erhverv" | "events" | "privat" }) {
   const [state, setState] = useState<State>({ kind: "idle" });
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,7 +33,16 @@ export function Contact({ type }: { type: "erhverv" | "privat" }) {
       <div className="wrap contact">
         <div className="sec-head" style={{ marginBottom: 0 }}>
           <span className="label">Kontakt</span>
-          {type === "erhverv" ? (
+          {type === "events" ? (
+            <>
+              <h2 id="contact-title" className="h-l">
+                Fortæl os om jeres park, festival eller zoo.
+              </h2>
+              <p className="lede">
+                Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om tema, antal bokse og aktiviteter. Er I en bar eller et værtshus, kan I <a href="/erhverv">se vores løsning til barer her</a>.
+              </p>
+            </>
+          ) : type === "erhverv" ? (
             <>
               <h2 id="contact-title" className="h-l">
                 Fortæl os om jeres sted.
@@ -52,7 +61,7 @@ export function Contact({ type }: { type: "erhverv" | "privat" }) {
               </p>
             </>
           )}
-          <div className="contact-art">{type === "erhverv" ? <OutlineWall /> : <OutlineStand />}</div>
+          <div className="contact-art">{type === "privat" ? <OutlineStand /> : <OutlineWall />}</div>
         </div>
 
         {state.kind === "sent" ? (
@@ -78,9 +87,9 @@ export function Contact({ type }: { type: "erhverv" | "privat" }) {
               <label htmlFor="f-email">E-mail</label>
               <input className="input" id="f-email" name="email" type="email" autoComplete="email" required />
             </div>
-            {type === "erhverv" ? (
+            {type !== "privat" ? (
               <div className="field full">
-                <label htmlFor="f-place">Sted eller firma</label>
+                <label htmlFor="f-place">{type === "events" ? "Park, festival eller sted" : "Sted eller firma"}</label>
                 <input className="input" id="f-place" name="place" autoComplete="organization" required />
               </div>
             ) : (

@@ -48,8 +48,8 @@ Produktet, brandet, "Sådan virker den", designsystemet og komponenterne. Hver s
 ## Grænsetilfælde
 
 - **Firmafest og julefrokost** hører under `/`, selv om køberen er en virksomhed. Opgaven er "en fest med en dato", ikke "et sted". Vi deler efter opgaven, ikke efter CVR-nummer. FAQ'en på `/` forklarer, at et fast sted skal se `/erhverv`.
-- **Festivaler** ligger på `/erhverv` for nu. De er sæsonbetonede, bruger mange bokse og har sponsorer, så de bør få deres egen side, når der er en reference (fx Smukfest).
-- **Krydslinks** er altid synlige, men aldrig i vejen: "Til barer og hoteller" / "Privat fest" i menuen ("Erhverv" / "Privat" på mobil) og begge sider i footeren.
+- **Festivaler, forlystelsesparker og zoo** har deres egen side, `/events` (oktober 2026). De køber noget andet end en bar: omtale og branding i deres eget univers, flere bokse med skattejagt og rundtur, sponsorer og sæsoner. De har deres egen film og deres egne spørgsmål og svar, og 3D-showroomet med temaerne ligger her. `/erhverv` handler kun om barer, værtshuse og natklubber.
+- **Krydslinks** er altid synlige, men aldrig i vejen: "Til barer og hoteller" / "Privat fest" / "Til barer og klubber" i menuen ("Erhverv" / "Privat" / "Barer" på mobil) og alle tre sider i footeren.
 
 ## Hvorfor privat er forsiden
 
@@ -59,7 +59,7 @@ Langt de fleste søgninger er private ("lej fotoboks", "fotoboks til bryllup"), 
 
 1. `/fotoboks-til-bryllup`: den største enkeltsøgning med egen hensigt. Egne billeder, tema med navne og dato, FAQ om bryllupper.
 2. `/fotoboks-til-firmafest`: julefrokost, reception, sommerfest. Faktura og pris ekskl. moms til firmaer, når det er besluttet.
-3. `/erhverv/festival`: når der er en reference.
+3. ~~`/erhverv/festival`~~: lavet som `/events`.
 4. Bysider ("lej fotoboks Aarhus" osv.), først når leveringsområdet er besluttet. Ellers lover vi noget, vi ikke kan holde.
 5. Guides, der svarer på søgninger: "Hvad koster en fotoboks?", "Fotoboks eller fotograf til brylluppet?".
 
