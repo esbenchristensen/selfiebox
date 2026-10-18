@@ -41,6 +41,7 @@ INS_M3 = [2.5, 12];
 // underside: everything sits behind the glow band (y 22-32) so the band stays one closed ring
 IF_SCREW = [[-70, 54], [70, 54]];  IF_DOWEL = [[-20, 54], [20, 54]];  IF_CABLE = [0, 54];
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
+UNIT_TOP = "closed";                        // nothing stacks on top in gen 2: no holes where the rain falls
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(
@@ -64,10 +65,12 @@ module box_like(h) translate([0, h/2]) offset(r = RING_FACE/2 + BORDER) sq2d(MAS
 J_U = SQ_A * pow(0.5, 1/SQ_N);
 JOINTS = [for (sx = [-1, 1], sz = [-1, 1]) [sx*(RING_X - SQ_A + J_U), (RING_Z0 + RING_Z1)/2 + sz*(MASTER[1]/2 - SQ_A + J_U)]];
 POST_D = 9;  BOSS_D = 8;
+CAM_WIN = [12.7, 1.0];   // [A] 1/2" optical window, 1 mm, bonded flush: seals the camera opening
 module bezel2() {
     difference() {
         union() { bezel(); for (j = JOINTS) cyl_y(BOSS_D, PT - 0.01, RIB_TOP, j[0], j[1]); }
         for (j = JOINTS) cyl_y(INS_M3_D, RIB_TOP - INS_M3_L, RIB_TOP + 0.1, j[0], j[1]);
+        cyl_y(CAM_WIN[0] + 0.3, -0.01, CAM_WIN[1], 0, LENS_Z);
     }
 }
 module led_rail2() { difference() { led_rail(); for (j = JOINTS) cyl_y(M3_CLR, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, j[0], j[1]); } }
@@ -89,6 +92,8 @@ module shell2(top = UNIT_TOP) {
         lock_cut();
         services_cut();
         for (x = MIC_HOLES) cyl_z(1.2, H - WALL - 1, H + 1, x, MIC_Y);    // mic ports in the top face
+        for (x = MIC_HOLES) cyl_z(MEMB[0], H - WALL - 0.01, H - WALL + MEMB[1], x, MIC_Y);   // ... each sealed by an acoustic membrane
+        lip_groove();
     }
     electronics_holders();
     services_add();
@@ -161,6 +166,25 @@ module wall_cleat2() {
     }
 }
 
+// ------------------------------------------------------------- weather (IPX4) ----
+// Rain, sleet and spills from any side under a light roof. Fixed seams are welded (ASA + acetone)
+// or bonded; the one seam that opens, front to shell, gets a TPU lip printed onto the shell edge
+// in the same print (second nozzle): it folds into its groove when the 4 screws pull tight.
+MEMB = [8.4, 0.6];                      // [A] adhesive acoustic membrane Ø8 (IP67 class), pocket
+LIP = [1.0, 0.6, 1.2, 0.8];             // from outside, lip width, groove depth, lip proud of the face
+module lip_ring(a, b) difference() { translate([0, a]) rr(W - 2*a, H - 2*a, R - a); translate([0, b]) rr(W - 2*b, H - 2*b, R - b); }
+module lip_groove() ext_y(SKIRT - 0.01, SKIRT + LIP[2]) lip_ring(LIP[0], LIP[0] + 1.6);
+module tpu_lip() ext_y(SKIRT - LIP[3], SKIRT + LIP[2]) lip_ring(LIP[0] + 0.2, LIP[0] + 0.2 + LIP[1]);
+// splash hoods over the underside vents: water bouncing up hits the roof and drops back out,
+// air turns sideways. Side walls only along x so the hood prints without support (back down).
+HOOD = [8, 1.6];                        // roof height above the floor, wall/roof thickness
+module vent_hoods() for (sx = [-1, 1]) {
+    x0 = VENT_XS[0] - VENT_SL[0]/2 - 2;  x1 = VENT_XS[len(VENT_XS) - 1] + VENT_SL[0]/2 + 2;
+    y0 = VENT_Y - VENT_SL[1]/2 - 2;      y1 = VENT_Y + VENT_SL[1]/2 + 2;
+    for (x = [x0 - HOOD[1], x1]) translate([sx > 0 ? x : -x - HOOD[1], y0, WALL - 0.01]) cube([HOOD[1], y1 - y0, HOOD[0] + HOOD[1]]);
+    translate([sx > 0 ? x0 - HOOD[1] : -x1 - HOOD[1], y0, WALL + HOOD[0]]) cube([x1 - x0 + 2*HOOD[1], y1 - y0, HOOD[1]]);
+}
+
 // ------------------------------------------------- underside and back services ----
 // Air: in through two slot fields in the underside (no drinks get in from below), out through
 // louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney.
@@ -194,6 +218,7 @@ module services_cut() {
 }
 function spk_holes() = [for (i = [-6:6], j = [-6:6]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (x*x + z*z < 20*20) [x, z]];
 module services_add() {
+    vent_hoods();
     // floor boss under the lock screw head
     difference() {
         cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], LOCK_X, LOCK_SY);
@@ -225,6 +250,7 @@ module cable_cap() {   // printed separately; underside flush with the box botto
             translate([0, 0, WALL - 0.01]) cylinder(d = 12, h = 2.21, $fn = 48);
         }
         for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 3, $fn = 16);   // spanner pins
+        translate([0, 0, 1.0]) difference() { cylinder(d = CAP_D + 1, h = 1.6, $fn = 64); cylinder(d = CAP_D - 2.4, h = 2, $fn = 64); }  // O-ring 16 x 1.5
     }
 }
 module placed_services() {
@@ -330,6 +356,7 @@ if (VIEW == "x_camera")    placed_camera();
 if (VIEW == "x_inside")    { placed_display(); placed_pi(); placed_power(); placed_camera(); placed_leds(); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cap")       cable_cap();
+if (VIEW == "x_lip")       tpu_lip();
 if (VIEW == "x_cleat")     wall_cleat2();
 if (VIEW == "x_shell_all") shell2();
 if (VIEW == "x_mod_shell") difference() { mod_shell(); band_cut(); }
