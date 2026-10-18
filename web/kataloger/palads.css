@@ -1,0 +1,59 @@
+@import url("https://fonts.googleapis.com/css2?family=Limelight&display=swap");
+/* Palads Teatret's colours over the shared catalogue styles, for the database copy (selfi.dk/kataloger/<slug>).
+   Made from app/erhverv/palads/palads.css with .kat--palads as .kat. Save it with:
+   node scripts/katalog.mjs gem palads kataloger/palads.html --titel "Selfi × Palads Teatret | Salgskatalog" --css kataloger/palads.css */
+.kat { --font-partner: "Limelight"; }
+.kat {
+  --k-night: #1b1a28;
+  --k-base: #2b2a3d;
+  --k-forest: #9b1c22;
+  --k-leaf: #e0ae45;
+  --k-lime: #e0ae45;
+  --k-red: #9b1c22;
+  --k-cream: #f7f5ee;
+  --k-ink: #1b1a28;
+  --k-line-dark: rgba(247, 245, 238, 0.2);
+  --k-line-light: rgba(27, 26, 40, 0.16);
+}
+.kat .kat-glow { background: radial-gradient(closest-side, rgba(224, 174, 69, 0.3), rgba(224, 174, 69, 0.08) 60%, transparent); }
+.kat .kat-screen { box-shadow: 0 0 0 6px var(--k-cream), 0 0 40px 8px rgba(224, 174, 69, 0.35); }
+.kat .kat-tag { background: rgba(224, 174, 69, 0.16); }
+.kat .kat-rec-screen { background: radial-gradient(circle at 50% 42%, rgba(255, 242, 194, 0.18), transparent 55%), linear-gradient(90deg, #9b1c22 0 14%, #312f43 14% 86%, #9b1c22 86%); }
+.kat .kat-qs span { font-family: var(--font-body), sans-serif; }
+.kat .kat-qs span:nth-child(3n) { background: var(--k-lime); color: var(--k-ink); }
+.kat .kat-setup2 .kat-box { filter: drop-shadow(0 18px 24px rgba(27, 26, 40, 0.3)); }
+.kat .kat-partner-logo { height: calc(var(--lk) * 1.3); }
+.kat .kat-pg h1, .kat .kat-pg h2 { font-family: var(--font-partner), sans-serif; font-weight: 400; letter-spacing: 0.01em; text-transform: uppercase; }
+.kat .kat-pg h1 { font-size: 56px; line-height: 1.02; max-width: 13ch; }
+.kat .kat-pg h2 { font-size: 34px; line-height: 1.08; }
+.kat .kat-facts b { font-size: 26px; }
+
+/* marquee bulbs and velvet curtains instead of hills and hearts */
+.kat-bulbs { position: absolute !important; left: 0; right: 0; bottom: 0; z-index: 0 !important;
+  background: radial-gradient(circle, #fff2c2 0 5px, rgba(255, 242, 194, 0.35) 6px, transparent 8px) 0 50% / 26px 26px repeat-x, #2b2a3d;
+  box-shadow: inset 0 3px 0 #e0ae45; }
+.kat-curtain { position: absolute !important; inset: 0; z-index: 0 !important; pointer-events: none; }
+.kat-curtain span { position: absolute; top: 0; width: 64px; height: 150px; }
+.kat-curtain .l { left: 0; }
+.kat-curtain .r { right: 0; transform: scaleX(-1); }
+.kat-curtain svg { display: block; width: 100%; height: 100%; }
+.kat-curtain path { fill: #9b1c22; }
+.kat-curtain path.f { fill: none; stroke: #5e0d14; stroke-width: 3; }
+.kat-pg .kat-folio { z-index: 3 !important; }
+.kat .kat-folio { bottom: 42px; }
+
+/* the premiere frame next to the cinema's own */
+.kat-frames { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 6px 0 22px; }
+.kat-frames figure { margin: 0; }
+.kat-frames img { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 14px 28px rgba(27, 26, 40, 0.28); }
+.kat-frames figcaption { font-size: 13px; line-height: 1.4; margin-top: 10px; opacity: 0.75; }
+
+/* the box in 3D: drag to turn it, the render underneath until it is ready and in print */
+.kat-3d-wrap { position: relative; height: 470px; flex: none; border-radius: 28px;
+  background: radial-gradient(closest-side, rgba(224, 174, 69, 0.26), rgba(224, 174, 69, 0.06) 62%, transparent); }
+.kat-3d { position: absolute; inset: 0; }
+.kat-3d-poster { position: absolute; inset: 6% 0; margin: auto; height: 88%; width: auto; transition: opacity 500ms ease; filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45)); }
+.kat-3d.is-ready .kat-3d-poster { opacity: 0; }
+.kat-angles { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; justify-items: center; margin-bottom: 70px; }
+.kat-angles .kat-box { height: 230px; width: auto; }
+@media print { .kat-3d .stage-canvas { display: none; } .kat-3d .kat-3d-poster { opacity: 1 !important; } }

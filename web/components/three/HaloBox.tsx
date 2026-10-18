@@ -24,6 +24,7 @@ export type Venue = {
   frame: { bg: string; ink: string; caption: string };
   photo: string;
   parts: string[];
+  unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 85 deep) instead of rev G
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -79,8 +80,8 @@ function baked(scene: THREE.Object3D) {
   return out;
 }
 
-function useUnit() {
-  const { scene } = useGLTF("/models/unit.glb", false, true);
+function useUnit(unit?: "gen2") {
+  const { scene } = useGLTF(unit === "gen2" ? "/models/unit_gen2.glb" : "/models/unit.glb", false, true);
   return useMemo(() => baked(scene), [scene]);
 }
 
@@ -128,7 +129,7 @@ function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject
 }
 
 export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0 }: Props) {
-  const nodes = useUnit();
+  const nodes = useUnit(venue?.unit);
   const casing = venue?.casing ?? PRIVATE_CASING;
   const ring = venue?.ring.idle ?? ["#fff3e3"];
 

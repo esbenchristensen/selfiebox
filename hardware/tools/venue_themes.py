@@ -1174,7 +1174,8 @@ def palads():
             L += [("bulb", U(bulbs_along(LineString([(X0 + 14, 112), (X0 + 14, 262)]), 12.5, 2.6),
                              bulbs_along(LineString([(X0 + 44, 112), (X0 + 44, 262)]), 12.5, 2.6)))]
             for ch, z in (("B", 236), ("I", 186), ("O", 136)):
-                L += [("white", text(ch, "limelight", X0 + 29, z, 30, 20))]
+                # Limelight's hairlines are thinner than a print can hold: thicken every stroke by 1.8 mm.
+                L += [("white", text(ch, "limelight", X0 + 29, z, 28, 18).buffer(0.9))]
             L += [("base", box(X0 + 22, 274, X0 + 36, 279)), ("white", body), ("velvet", stripes), ("corn", corn)]
             L += [("velvet", box(X0 + 6, 24, X0 + 56, 30).intersection(body))]
         else:
@@ -1219,7 +1220,7 @@ def palads():
         L += [("night", inner)]
         L += [("bulb", bulbs_along(sign.buffer(-5).exterior, 11, 2.7))]
         L += palads_logo((-96, 38, 96, 116))
-        L += [("white", box(-HW + 5, 4, HW - 5, 24)), ("deep", text("BIOGRAF  ·  FREDERIKSHAVN", "limelight", 0, 14, 10, 200))]
+        L += [("white", box(-HW + 5, 4, HW - 5, 24)), ("deep", text("BIOGRAF  ·  FREDERIKSHAVN", "limelight", 0, 14, 9.5, 196).buffer(0.45))]
         return outline, L
 
     def screen(w, h):
@@ -1407,7 +1408,7 @@ def build(tid):
     (web / "logo.svg").write_text(logo_svg)
 
     meta = dict(id=tid, name=t["name"], place=t["place"], palette=t["pal"], casing=t["casing"], ring=t["ring"],
-                frame=fr, photo=t["photo"], parts=[r[0] for r in report])
+                frame=fr, photo=t["photo"], parts=[r[0] for r in report], **({"unit": t["unit"]} if t.get("unit") else {}))
     (web / "theme.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
     theme_json = dict(name=t["name"], event=f"{t['name']} – concept design (venue artwork, internal use)", palette=pal,
                       casing={"style": "venue", "colour": t["casing"], "built_by": "hardware/tools/venue_themes.py"},

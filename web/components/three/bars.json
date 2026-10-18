@@ -71,5 +71,43 @@
       "wing_left",
       "topper"
     ]
+  },
+  {
+    "id": "palads",
+    "name": "Palads Teatret",
+    "place": "Frederikshavn",
+    "palette": {
+      "base": "#2b2a3d",
+      "night": "#312f43",
+      "deep": "#1b1a28",
+      "white": "#f7f5ee",
+      "gold": "#e0ae45",
+      "bulb": "#fff2c2",
+      "velvet": "#9b1c22",
+      "velvetd": "#5e0d14",
+      "corn": "#f3dc9a",
+      "silver": "#a7a9ba",
+      "sky": "#47456a"
+    },
+    "casing": "#2b2a3d",
+    "ring": {
+      "idle": [
+        "#fff2c2",
+        "#e0ae45"
+      ],
+      "glow": "#e0ae45"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "gold",
+      "caption": "Frederikshavn"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
   }
 ]
