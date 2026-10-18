@@ -5,6 +5,7 @@
 // - Eleven v4, their highest-quality model, with language_code "da", so it speaks and normalises Danish.
 // - Jonas from the voice library: young and articulate, and the cleanest recording of the young Danish
 //   voices (v4 copies the source recording, noise and all, so a clean source matters).
+//   The B2B film uses Søren instead, a more grown-up commercial voice (see VOICES).
 // - A light delivery tag instead of speed or style settings, which v4 does not have. A line in
 //   voiceover.json that starts with its own [tag] uses that one instead.
 // - Several takes of every line. Each take is transcribed with Scribe and the one that matches the script
@@ -17,10 +18,13 @@ const crypto = require("crypto");
 const { execFileSync } = require("child_process");
 
 const KEY = process.env.ELEVENLABS_API_KEY;
-const VOICE = process.env.VOICE_ID || "hbLdgbgzfKYPCUr4Rs2V"; // Jonas
+const JONAS = { voice: "hbLdgbgzfKYPCUr4Rs2V", direction: "[upbeat, warm and energetic] " };
+// The B2B film speaks to owners and managers, so it uses Søren: a more grown-up voice made for
+// commercials, still confident and lively. He had the cleanest recording of the adult Danish voices.
+const VOICES = { erhverv: { voice: "xj6X4BCUsv9oxohm1E8o", direction: "[confident, warm and energetic] " } };
+const voiceFor = (film) => (process.env.VOICE_ID ? { ...JONAS, voice: process.env.VOICE_ID } : VOICES[film] || JONAS);
 const MODEL = "eleven_v4";
 const SETTINGS = { stability: 0.5, similarity_boost: 0.75, use_speaker_boost: true };
-const DIRECTION = "[upbeat, warm and energetic] ";
 const FORMAT = "opus_48000_192";
 const TAKES = 3;
 
@@ -44,11 +48,11 @@ function similarity(a, b) {
   return 1 - dp[x.length][y.length] / Math.max(x.length, 1);
 }
 
-async function tts(text, previous, next) {
-  const res = await fetch(`${API}/text-to-speech/${VOICE}?output_format=${FORMAT}`, {
+async function tts({ voice, direction }, text, previous, next) {
+  const res = await fetch(`${API}/text-to-speech/${voice}?output_format=${FORMAT}`, {
     method: "POST",
     headers: { "xi-api-key": KEY, "content-type": "application/json" },
-    body: JSON.stringify({ text: (text.startsWith("[") ? "" : DIRECTION) + text, model_id: MODEL, language_code: "da", voice_settings: SETTINGS, previous_text: previous, next_text: next }),
+    body: JSON.stringify({ text: (text.startsWith("[") ? "" : direction) + text, model_id: MODEL, language_code: "da", voice_settings: SETTINGS, previous_text: previous, next_text: next }),
   });
   if (!res.ok) throw new Error(`tts ${res.status} ${await res.text()}`);
   return Buffer.from(await res.arrayBuffer());
@@ -74,18 +78,19 @@ function trim(src, dst) {
 (async () => {
   for (const film of films) {
     const lines = Object.entries(script[film]);
+    const v = voiceFor(film);
     const dir = path.join(__dirname, "voice", film), tmp = path.join(dir, ".takes");
     fs.mkdirSync(tmp, { recursive: true });
     const timing = {};
     for (let i = 0; i < lines.length; i++) {
       const [id, text] = lines[i];
       const file = path.join(dir, `${id}.opus`), stamp = `${file}.hash`;
-      const hash = crypto.createHash("sha1").update(JSON.stringify([text, VOICE, MODEL, SETTINGS, DIRECTION, FORMAT, TAKES])).digest("hex");
+      const hash = crypto.createHash("sha1").update(JSON.stringify([text, v.voice, MODEL, SETTINGS, v.direction, FORMAT, TAKES])).digest("hex");
       if (!fs.existsSync(file) || !fs.existsSync(stamp) || fs.readFileSync(stamp, "utf8") !== hash) {
         const takes = [];
         for (let k = 0; k < TAKES; k++) {
           const raw = path.join(tmp, `${id}-${k}.opus`);
-          fs.writeFileSync(raw, await tts(text, lines[i - 1]?.[1], lines[i + 1]?.[1]));
+          fs.writeFileSync(raw, await tts(v, text, lines[i - 1]?.[1], lines[i + 1]?.[1]));
           const heard = await transcribe(raw);
           takes.push({ raw, score: similarity(text, heard), seconds: duration(raw), heard });
           if (takes.at(-1).score === 1 && k >= 1) break; // two takes in, a perfect one is good enough
