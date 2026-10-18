@@ -94,8 +94,7 @@ Scriptet laver også WebM-reserven og plakatbilledet.
 Replikkerne står i `voiceover.json`, én pr. scene. Tal og domæner er skrevet, som de skal udtales. `voice.cjs` følger ElevenLabs' egne anbefalinger for bedst mulig kvalitet:
 
 - **Eleven v4** (`eleven_v4`), deres bedste model, med `language_code: "da"`, så den taler og normaliserer dansk.
-- **Stemmen Jonas** fra biblioteket i privatfilmen og events-filmen. B2B-filmen bruger **Søren**, en mere voksen reklamestemme, der stadig er frisk og selvsikker, fordi den taler til ejere og ledere. Han havde den reneste optagelse af de voksne danske stemmer.
-- Jonas: Han er ung og artikuleret og har den reneste optagelse af de unge danske stemmer. v4 kopierer kildeoptagelsen, også støj, så stemmen er valgt ud fra målt støjgulv og båndbredde.
+- **Stemmen Jonas** fra biblioteket i privatfilmen og events-filmen. B2B-filmen bruger **Søren**, en mere voksen reklamestemme, der stadig er frisk og selvsikker, fordi den taler til ejere og ledere. Han havde den reneste optagelse af de voksne danske stemmer. Jonas er ung og artikuleret og har den reneste optagelse af de unge danske stemmer. v4 kopierer kildeoptagelsen, også støj, så stemmen er valgt ud fra målt støjgulv og båndbredde.
 - **Et let lydtag** (`[upbeat, warm and energetic]`) styrer leveringen. Tempo og style findes ikke i v4.
 - **Flere optagelser pr. replik.** Hver optagelse bliver skrevet ned med Scribe, og den, der passer bedst med manuskriptet, bliver brugt. Et forkert ord kommer derfor aldrig med i en film.
 - **Opus i 48 kHz og 192 kbps.** Stilhed i start og slut skæres væk.
