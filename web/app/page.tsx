@@ -9,6 +9,7 @@ import { Hero } from "@/components/Hero";
 import { JsonLd } from "@/components/JsonLd";
 import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
+import { Quality } from "@/components/Quality";
 import { Activities, Faq, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
 import { HeroBox, Showroom } from "@/components/ThemeStudio";
@@ -74,6 +75,7 @@ export default function Home() {
           lede="Top, sider, kabinet, lys og skærm i jeres farver og med jeres figurer og logo. Vi printer delene selv, så formen kan være lige det, stedet er."
         />
         <ContentMachine />
+        <Quality />
         <Explainer
           film="events"
           label="Se filmen"
@@ -132,7 +134,7 @@ export default function Home() {
           steps={[
             { n: "01", title: "Lysringen trækker folk til", text: "Når ingen bruger boksen, pulserer ringen langsomt i jeres farver. Den kan ses fra den anden ende af lokalet." },
             { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Intet personale skal forklare noget." },
-            { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, så alle ansigter står skarpt, også i en mørk bar eller et telt om aftenen." },
+            { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, og 12 MP-kameraet med autofokus tager billedet, så alle ansigter står skarpt, også i en mørk bar eller et telt om aftenen." },
             { n: "04", title: "Billedet med hjem, og nummeret til jer", text: "Billedet kommer via QR-kode eller SMS med jeres ramme. Siger gæsten ja, lander nummeret på jeres gæsteliste." },
           ]}
         />
