@@ -35,7 +35,7 @@ Filmene er skrevet som reklamefilm, ikke som en gennemgang af funktioner:
 | Pris | "En hel weekend koster syv hundrede og halvtreds kroner. Med femoghalvfjerds gæster er det ti kroner per gæst." | 750 kr. og regnestykket |
 | Handling | "Tjek, om jeres dato er ledig, på selfi punktum d k." | Logo, knap og Selfi-lyden |
 
-## B2B: den samlede film på forsiden (ca. 62 sekunder)
+## B2B: den samlede film på forsiden (ca. 71 sekunder)
 
 Én film til alle slags steder, fra baren og natklubben til festivalen. Den viser, hvad stedet kan bruge boksen til: content, video, videohilsner, missioner, titler, konkurrence, deling og gæsteliste. Ingen pris og kun hovedenheden. Stederne (Kælderbaren, Klub Neon, Bar Nord og Skovfest) er opdigtede med vilje.
 
