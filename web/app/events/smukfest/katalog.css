@@ -1,0 +1,191 @@
+/* Selfi × Smukfest catalogue. The viewer chrome follows the Selfi tokens (dark or light).
+   The pages have fixed print colours: Smukfest's palette from the /events design takes over,
+   while Selfi's type, grid and logo stay. */
+.kat {
+  --k-night: #0a1f13;
+  --k-base: #0f3d24;
+  --k-forest: #1c5a33;
+  --k-leaf: #3f8f3a;
+  --k-lime: #9cc94a;
+  --k-red: #e2001a;
+  --k-cream: #f6eedc;
+  --k-ink: #0f2a1a;
+  --k-money: #1c5a33;
+  --k-line-dark: rgba(246, 238, 220, 0.22);
+  --k-line-light: rgba(15, 42, 26, 0.16);
+  min-height: 100vh;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body), sans-serif;
+  overflow-x: clip;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ---------- viewer ---------- */
+.kat-bar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 12px var(--gutter-r) 12px var(--gutter); background: color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.kat-bar-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kat-bar-t b { font: 600 16px/1.2 var(--font-display), sans-serif; letter-spacing: -0.01em; }
+.kat-bar-t span { font: 400 12px/1.3 var(--font-mono), monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+.kat-bar-acts { display: flex; gap: 8px; }
+.kat-pill { font: 500 14px/1 var(--font-body), sans-serif; border-radius: 999px; padding: 10px 16px; min-height: 40px; cursor: pointer; border: 1px solid var(--line-strong); background: transparent; color: var(--ink); }
+.kat-pill--primary { background: var(--green); color: var(--on-green); border-color: var(--green); }
+.kat-pill:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.kat-deck { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; padding: 28px 16px 64px; }
+.kat-slot { flex: none; zoom: 0.9; }
+/* Before the script measures the screen, these keep a page inside a phone. */
+@media (max-width: 760px) { .kat-slot { zoom: 0.5; } }
+@media (max-width: 420px) { .kat-slot { zoom: 0.44; } }
+@media (max-width: 360px) { .kat-slot { zoom: 0.4; } }
+@media (max-width: 900px) { .kat-pill--spread { display: none; } .kat-deck { gap: 18px; } }
+.kat-cap { font: 400 11px/1.3 var(--font-mono), monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-top: 8px; }
+
+/* ---------- page: A4 at 96 dpi (794 × 1123 px = 210 × 297 mm) ---------- */
+.kat-pg { width: 794px; height: 1123px; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 22px;
+  padding: 57px 57px 0; background: var(--k-cream); color: var(--k-ink); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35); }
+.kat-pg--dark { background: var(--k-night); color: var(--k-cream); }
+.kat-pg > * { position: relative; z-index: 1; }
+.kat-pg .kat-kicker { font: 400 11.5px/1.3 var(--font-mono), monospace; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.72; }
+.kat-pg h1 { margin: 0; font: 600 84px/0.94 var(--font-display), sans-serif; letter-spacing: -0.04em; text-wrap: balance; max-width: 9ch; }
+.kat-pg h2 { margin: 0; font: 600 46px/1 var(--font-display), sans-serif; letter-spacing: -0.035em; text-wrap: balance; max-width: 15ch; }
+.kat-pg h3 { margin: 0; font: 600 20px/1.2 var(--font-display), sans-serif; letter-spacing: -0.01em; }
+.kat-pg p { margin: 0; font-size: 14px; line-height: 1.43; max-width: 46ch; }
+.kat-pg .kat-lede { font-size: 17px; line-height: 1.45; opacity: 0.86; max-width: 40ch; }
+.kat-pg .kat-fine { font: 400 11px/1.45 var(--font-mono), monospace; opacity: 0.66; max-width: 60ch; }
+.kat-center { text-align: center; align-self: center; }
+.kat-push { margin-top: auto; }
+.kat-folio { position: absolute !important; left: 57px; right: 57px; bottom: 34px; display: flex; justify-content: space-between;
+  font: 400 10.5px/1 var(--font-mono), monospace; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.62; z-index: 3 !important; }
+.kat-folio--on-hills { bottom: 10px; color: var(--k-cream); opacity: 0.92; }
+
+/* hills, ribbon and hearts */
+.kat-hills { position: absolute !important; left: 0; right: 0; bottom: 0; z-index: 0 !important; }
+.kat-hills svg { display: block; width: 100%; height: auto; margin-bottom: -1px; }
+.kat-ribbon { height: 30px; background: var(--k-red); }
+.kat-hearts { position: absolute !important; inset: 0; z-index: 0 !important; pointer-events: none; }
+.kat-hearts svg { position: absolute; fill: var(--k-red); opacity: 0.9; }
+
+/* logo and lockup */
+.kat-pg .logo { color: inherit; --mark: currentColor; pointer-events: auto; }
+.kat-lockup { display: inline-flex; align-items: center; gap: 14px; }
+.kat-times { font: 300 22px/1 var(--font-body), sans-serif; opacity: 0.55; }
+.kat-partner-logo { height: calc(var(--lk) * 2.1); width: auto; display: block; }
+.kat-top { display: flex; justify-content: space-between; align-items: center; }
+
+/* the box */
+.kat-box { display: block; height: auto; align-self: center; filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45)); }
+.kat-glow { background: radial-gradient(closest-side, rgba(156, 201, 74, 0.28), rgba(156, 201, 74, 0.08) 60%, transparent); }
+.kat-theme { display: grid; grid-template-columns: 290px 1fr; gap: 34px; align-items: center; margin-top: 6px; }
+.kat-theme .kat-box { width: 100%; }
+
+/* photos and drawings */
+.kat-photo { border-radius: 30px; overflow: hidden; background: #111; }
+.kat-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.kat-drawing { border-radius: 24px; background: #fff; padding: 16px; display: grid; place-items: center; }
+.kat-drawing img { display: block; width: 100%; height: auto; }
+.kat-duo { display: grid; grid-template-columns: 1fr 1.25fr; gap: 16px; height: 420px; margin-top: 4px; }
+.kat-duo .kat-drawing { height: 100%; }
+.kat-duo .kat-drawing img { height: 100%; object-fit: contain; }
+.kat-setup { display: flex; flex-direction: column; gap: 24px; margin-top: 4px; }
+.kat-setup .kat-drawing { height: 380px; }
+.kat-setup .kat-drawing img { height: 348px; width: auto; max-width: 100%; object-fit: contain; }
+.kat-setup .kat-places { grid-template-columns: 1fr 1fr; gap: 18px 26px; }
+
+/* steps, specs, layers, tables */
+.kat-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.kat-steps--3 { grid-template-columns: repeat(3, 1fr); }
+.kat-steps > div { display: flex; flex-direction: column; gap: 6px; border-top: 1.5px solid currentColor; padding-top: 12px; }
+.kat-steps b { font: 500 40px/1 var(--font-display), sans-serif; letter-spacing: -0.03em; color: var(--k-lime); }
+.kat-steps p { font-size: 13.5px; opacity: 0.85; }
+.kat-specs { display: flex; flex-direction: column; }
+.kat-specs div { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid var(--k-line-dark); font-size: 14px; }
+.kat-specs--light div { border-top-color: var(--k-line-light); }
+.kat-specs span { font: 400 12px/1.4 var(--font-mono), monospace; opacity: 0.72; text-align: right; }
+.kat-layers { display: flex; flex-direction: column; gap: 12px; }
+.kat-layers div { border-radius: 20px; padding: 15px 16px; background: rgba(246, 238, 220, 0.07); display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; line-height: 1.4; }
+.kat-layers b { font: 600 17px/1.2 var(--font-display), sans-serif; }
+.kat-sw { display: flex; gap: 5px; margin-top: 4px; }
+.kat-sw i { width: 14px; height: 14px; border-radius: 50%; display: block; box-shadow: inset 0 0 0 1px rgba(246, 238, 220, 0.25); }
+.kat-facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1.5px solid currentColor; }
+.kat-facts div { padding: 12px 12px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.kat-facts b { font: 500 30px/1 var(--font-display), sans-serif; letter-spacing: -0.03em; }
+.kat-facts span { font: 400 10.5px/1.35 var(--font-mono), monospace; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
+.kat-sign { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.kat-sign b { font: 600 20px/1.2 var(--font-display), sans-serif; }
+.kat-pg .kat-quote { font: 600 46px/1.02 var(--font-display), sans-serif; letter-spacing: -0.035em; max-width: 14ch; margin-top: auto; color: var(--k-forest); }
+.kat-hero-num { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; }
+.kat-big { font: 500 92px/1 var(--font-display), sans-serif; letter-spacing: -0.045em; font-variant-numeric: tabular-nums; color: var(--k-money); }
+.kat-big sup { font-size: 0.3em; opacity: 0.7; margin-left: 4px; vertical-align: top; position: relative; top: 0.35em; }
+.kat-sub { font-size: 14px; opacity: 0.75; }
+.kat-ptable { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.kat-ptable th { text-align: right; font: 400 10.5px/1.3 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.65; padding: 9px 0; border-bottom: 1.5px solid currentColor; }
+.kat-ptable th:first-child, .kat-ptable td:first-child { text-align: left; }
+.kat-ptable td { text-align: right; padding: 11px 0; border-bottom: 1px solid var(--k-line-light); }
+.kat-ptable td.money { color: var(--k-money); font-weight: 600; }
+.kat-ptable tr.hl td { background: rgba(156, 201, 74, 0.2); }
+.kat-incl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; font-size: 14px; }
+.kat-incl li { padding: 10px 0; border-top: 1px solid var(--k-line-light); display: flex; justify-content: space-between; gap: 12px; }
+.kat-incl li span:last-child { font: 400 12px/1.4 var(--font-mono), monospace; opacity: 0.75; white-space: nowrap; }
+
+/* the print */
+.kat-print-wrap { flex: 1; display: grid; place-items: center; }
+.kat-print { width: 430px; height: auto; display: block; transform: rotate(-3deg); border-radius: 3px; box-shadow: 0 22px 48px rgba(15, 42, 26, 0.35); }
+
+/* activities */
+.kat-screen-wrap { flex: 1; display: grid; place-items: center; min-height: 0; }
+.kat-screen { height: 100%; max-height: 380px; width: auto; display: block; border-radius: 18px; border: 10px solid #101211; box-shadow: 0 0 0 6px var(--k-cream), 0 0 40px 8px rgba(156, 201, 74, 0.35); }
+.kat-acts { display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; }
+.kat-acts div { display: flex; gap: 14px; align-items: center; border-top: 1px solid var(--k-line-dark); padding: 14px 0; }
+.kat-acts svg { width: 30px; height: 30px; flex: none; color: var(--k-lime); }
+.kat-acts .s { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.kat-acts b { font: 600 16px/1.2 var(--font-display), sans-serif; display: block; }
+.kat-acts small { font-size: 12.5px; opacity: 0.72; }
+
+/* setup */
+.kat-places { display: grid; gap: 14px; }
+.kat-places div { border-top: 1.5px solid currentColor; padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.kat-places p { font-size: 13px; opacity: 0.85; }
+
+/* contact */
+.kat-contact { display: flex; flex-direction: column; gap: 5px; font-size: 14px; margin-top: 36px; }
+.kat-contact b { font: 600 20px/1.2 var(--font-display), sans-serif; }
+.kat-contact a { color: inherit; }
+
+/* control panel (Selfi light theme) */
+.kat-panel { background: #f3f4f1; color: #121412; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 18px 40px rgba(15, 42, 26, 0.18); font-size: 13px; margin-top: 8px; }
+.kat-panel .nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.kat-panel .tabs { display: flex; gap: 4px; background: #e8eae5; border-radius: 999px; padding: 4px; }
+.kat-panel .tabs span { padding: 7px 12px; border-radius: 999px; font-size: 12px; color: #5c615b; }
+.kat-panel .tabs span.on { background: #121412; color: #fff; }
+.kat-panel .loc { border: 1px solid #8a8f88; border-radius: 999px; padding: 7px 12px; font-size: 12px; }
+.kat-panel .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.kat-panel .tile { background: #fff; border: 1px solid #d9dcd6; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.kat-panel .lab { font: 400 9.5px/1.3 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: #5c615b; }
+.kat-panel .num { font: 500 32px/1 var(--font-display), sans-serif; letter-spacing: -0.03em; }
+.kat-panel .num sup { font-size: 0.32em; color: #5c615b; margin-left: 2px; }
+.kat-panel .num.g { color: #0f7a3b; }
+.kat-panel .card { background: #fff; border: 1px solid #d9dcd6; border-radius: 12px; padding: 4px 12px; }
+.kat-panel .row { display: grid; grid-template-columns: 1.4fr 1fr 0.8fr 0.7fr; gap: 8px; align-items: center; padding: 9px 0; border-top: 1px solid #e8eae5; font-size: 12px; }
+.kat-panel .row:first-child { border-top: 0; }
+.kat-panel .row.h { font: 400 9.5px/1.3 var(--font-mono), monospace; letter-spacing: 0.1em; text-transform: uppercase; color: #5c615b; }
+.kat-panel .st { display: inline-flex; align-items: center; gap: 6px; }
+.kat-panel .st::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #0f7a3b; }
+.kat-panel .st.w::before { background: #9a5a00; border-radius: 1px; transform: rotate(45deg); }
+.kat-panel .st.w { color: #9a5a00; }
+.kat-panel .r { text-align: right; font-family: var(--font-mono), monospace; font-size: 11.5px; }
+.kat-panel .theme { display: flex; align-items: center; gap: 12px; padding: 12px; }
+.kat-panel .theme b { font: 600 14px var(--font-display), sans-serif; }
+.kat-panel .theme .kat-sw { margin-top: 0; }
+.kat-panel .btn { margin-left: auto; background: #121412; color: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12px; }
+
+/* ---------- print ---------- */
+@page { size: A4; margin: 0; }
+@media print {
+  .kat-bar, .kat-cap { display: none !important; }
+  .kat { background: #fff; min-height: 0; }
+  .kat-deck { display: block; padding: 0; }
+  .kat-slot { zoom: 1 !important; break-after: page; page-break-after: always; }
+  .kat-slot:last-child { break-after: auto; page-break-after: auto; }
+  .kat-pg { box-shadow: none; width: 210mm; height: 297mm; }
+}
