@@ -38,3 +38,13 @@
 .kat-flood circle { fill: #fffdf6; filter: drop-shadow(0 0 4px rgba(255, 253, 246, 0.9)); }
 .kat-pg .kat-folio { z-index: 3 !important; }
 .kat--aab .kat-folio { bottom: 46px; }
+
+/* the box in 3D: drag to turn it, the render underneath until it is ready and in print */
+.kat-3d-wrap { position: relative; height: 470px; flex: none; border-radius: 28px;
+  background: radial-gradient(closest-side, rgba(237, 28, 36, 0.28), rgba(237, 28, 36, 0.06) 62%, transparent); }
+.kat-3d { position: absolute; inset: 0; }
+.kat-3d-poster { position: absolute; inset: 6% 0; margin: auto; height: 88%; width: auto; transition: opacity 500ms ease; filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45)); }
+.kat-3d.is-ready .kat-3d-poster { opacity: 0; }
+.kat-angles { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; justify-items: center; margin-bottom: 70px; }
+.kat-angles .kat-box { height: 230px; width: auto; }
+@media print { .kat-3d .stage-canvas { display: none; } .kat-3d .kat-3d-poster { opacity: 1 !important; } }

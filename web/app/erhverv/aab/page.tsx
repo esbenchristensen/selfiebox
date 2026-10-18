@@ -4,8 +4,9 @@ import { Logo } from "@/components/Logo";
 import { Viewer } from "@/components/katalog/Viewer";
 import "@/components/katalog/katalog.css";
 import "./aab.css";
+import { Box3D } from "./Box3D";
 
-// selfi.dk/erhverv/aab: the sales catalogue for AaB, twelve A4 pages that print to a PDF.
+// selfi.dk/erhverv/aab: the sales catalogue for AaB, thirteen A4 pages that print to a PDF.
 // The box is shown only in the AaB design (the top of the home shirt with the crest, a fan scarf and a
 // floodlight mast). No prices: they are agreed per deal. It is a proposal for one club, so it stays out of
 // search and the sitemap.
@@ -209,8 +210,27 @@ export default function AaBKatalog() {
           <Folio n={4} />
         </Page>
 
-        {/* 05 BRANDING */}
-        <Page n={5} cap="Branding">
+        {/* 05 I 3D */}
+        <Page n={5} cap="Boksen i 3D" dark>
+          <Floodlights />
+          <span className="kat-kicker">Boksen i 3D</span>
+          <h2>Se den fra alle sider</h2>
+          <p className="kat-lede">Træk i boksen for at dreje den. Trøjen, tørklædet og lysmasten er printede dele, der klikkes på den samme boks, så den kan skifte til et andet design til en partner eller en stor kamp.</p>
+          <div className="kat-3d-wrap">
+            <Box3D poster={`${IMG}/boks-aab.png`} alt="AaB-boksen i 3D. Træk for at dreje den." />
+          </div>
+          <div className="kat-angles">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="kat-box" src={`${IMG}/boks-aab-skraa-venstre.png`} alt="AaB-boksen set skråt fra venstre med halstørklædet forrest" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="kat-box" src={`${IMG}/boks-aab-skraa-hoejre.png`} alt="AaB-boksen set skråt fra højre med lysmasten forrest" />
+          </div>
+          <Stripes />
+          <Folio n={5} />
+        </Page>
+
+        {/* 06 BRANDING */}
+        <Page n={6} cap="Branding">
           <span className="kat-kicker">Branding</span>
           <h2>AaB på hvert opslag</h2>
           <p className="kat-lede">Alt, der kommer ud af boksen, bærer jeres ramme. Når fansene deler på Instagram, TikTok og Snapchat, følger logoet med ud i deres feeds.</p>
@@ -242,11 +262,11 @@ export default function AaBKatalog() {
           </div>
           <p className="kat-fine kat-push" style={{ marginBottom: 80 }}>Eksempel på et opslag. Navn og tal er opdigtede.</p>
           <Stripes height={18} />
-          <Folio n={5} />
+          <Folio n={6} />
         </Page>
 
-        {/* 06 VIDEOHILSNER */}
-        <Page n={6} cap="Videohilsner" dark>
+        {/* 07 VIDEOHILSNER */}
+        <Page n={7} cap="Videohilsner" dark>
           <span className="kat-kicker">Videohilsner</span>
           <h2>»Kom så, drenge!«</h2>
           <p className="kat-lede">Boksen har mikrofon og optager korte videohilsner. Fansene sender dem til holdet, til vennerne, der blev hjemme, eller til sig selv. Jeres intro og ramme sidder på hver hilsen.</p>
@@ -271,11 +291,11 @@ export default function AaBKatalog() {
             <div>Lyd<span>Mikrofon med støjfilter til fuld tribune</span></div>
             <div>Ramme<span>Jeres intro, logo og afslutning på hver video</span></div>
           </div>
-          <Folio n={6} />
+          <Folio n={7} />
         </Page>
 
-        {/* 07 FANSENES HISTORIER */}
-        <Page n={7} cap="Fansenes historier">
+        {/* 08 FANSENES HISTORIER */}
+        <Page n={8} cap="Fansenes historier">
           <span className="kat-kicker">Fansenes historier</span>
           <h2>Fansene laver jeres content</h2>
           <p className="kat-lede">Skærmen stiller et spørgsmål, og fansen svarer på video. Med deres samtykke bliver svarene til klubbens content, uden at I selv skal filme.</p>
@@ -297,11 +317,11 @@ export default function AaBKatalog() {
             <blockquote>»Rød og hvid. Det er ikke en farve, det er en følelse.«<span>Eksempel på et svar</span></blockquote>
           </div>
           <Stripes height={18} />
-          <Folio n={7} />
+          <Folio n={8} />
         </Page>
 
-        {/* 08 CASES 1 */}
-        <Page n={8} cap="Cases" dark>
+        {/* 09 CASES 1 */}
+        <Page n={9} cap="Cases" dark>
           <span className="kat-kicker">Cases · 1 af 2</span>
           <h2>Ti måder at bruge boksene på</h2>
           <p className="kat-lede">Aktiviteterne tilpasses AaB og jeres fans. Her er de første fem.</p>
@@ -310,11 +330,11 @@ export default function AaBKatalog() {
               <Case key={c.title} c={c} />
             ))}
           </div>
-          <Folio n={8} />
+          <Folio n={9} />
         </Page>
 
-        {/* 09 CASES 2 */}
-        <Page n={9} cap="Cases" dark>
+        {/* 10 CASES 2 */}
+        <Page n={10} cap="Cases" dark>
           <span className="kat-kicker">Cases · 2 af 2</span>
           <h2>Og fem mere</h2>
           <p className="kat-lede">Alle cases kan kombineres, og I kan skifte mellem dem fra kamp til kamp.</p>
@@ -323,11 +343,11 @@ export default function AaBKatalog() {
               <Case key={c.title} c={c} />
             ))}
           </div>
-          <Folio n={9} />
+          <Folio n={10} />
         </Page>
 
-        {/* 10 KONTROLPANEL */}
-        <Page n={10} cap="Kontrolpanelet">
+        {/* 11 KONTROLPANEL */}
+        <Page n={11} cap="Kontrolpanelet">
           <span className="kat-kicker">Kontrolpanelet</span>
           <h2>Hele kampdagen på én skærm</h2>
           <p className="kat-lede">Følg fotos, videoer og delinger live, hent fansenes klip, skift ramme og spørgsmål, og slå aktiviteter til fra telefonen.</p>
@@ -365,11 +385,11 @@ export default function AaBKatalog() {
             Eksempel med opdigtede tal. Klip vises først, når fansen har givet samtykke.
           </p>
           <Stripes height={18} />
-          <Folio n={10} />
+          <Folio n={11} />
         </Page>
 
-        {/* 11 OPSÆTNING */}
-        <Page n={11} cap="Opsætning">
+        {/* 12 OPSÆTNING */}
+        <Page n={12} cap="Opsætning">
           <span className="kat-kicker">Opsætning og drift</span>
           <h2>Hvor boksene står på stadion</h2>
           <p className="kat-lede">Boksene hænger på væggen eller står på en stander. Vi monterer, passer og opdaterer dem, så I kun skal tænke på kampen.</p>
@@ -390,11 +410,11 @@ export default function AaBKatalog() {
             <div>Service<span>Vi passer boksene og skifter design til de store kampe</span></div>
           </div>
           <Stripes height={18} />
-          <Folio n={11} />
+          <Folio n={12} />
         </Page>
 
-        {/* 12 BAGSIDE */}
-        <Page n={12} cap="Bagside" dark>
+        {/* 13 BAGSIDE */}
+        <Page n={13} cap="Bagside" dark>
           <Floodlights />
           <span className="kat-kicker">Næste skridt</span>
           <h2>Lad os bygge jeres boks</h2>
@@ -413,7 +433,7 @@ export default function AaBKatalog() {
             <Lockup size={40} />
           </div>
           <Stripes />
-          <Folio n={12} />
+          <Folio n={13} />
         </Page>
       </Viewer>
     </div>
