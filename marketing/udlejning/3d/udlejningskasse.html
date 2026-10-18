@@ -1,0 +1,282 @@
+<title>Selfi udlejningskasse</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F4F1; --card:#FFFFFF; --ink:#0E0F0E; --muted:#5d625d; --line:#dcdfd8;
+  --green:#22D36B; --green-ink:#0f7a3b; --halo:#FFF3E3; --foam:#3b3f3b; --foam-2:#545954;
+  --warn:#9a5b00; --warn-bg:#fff4df; --chip:#eceee9;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E0F0E; --card:#171917; --ink:#F3F4F1; --muted:#a3a8a3; --line:#2a2d2a;
+    --green:#22D36B; --green-ink:#5fe597; --halo:#FFF3E3; --foam:#454a45; --foam-2:#5d635d;
+    --warn:#ffc266; --warn-bg:#2a2210; --chip:#222522;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E0F0E; --card:#171917; --ink:#F3F4F1; --muted:#a3a8a3; --line:#2a2d2a;
+  --green:#22D36B; --green-ink:#5fe597; --halo:#FFF3E3; --foam:#454a45; --foam-2:#5d635d;
+  --warn:#ffc266; --warn-bg:#2a2210; --chip:#222522;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Geist,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-right)) 80px max(16px,env(safe-area-inset-left))}
+h1,h2,h3{font-family:"Instrument Sans",Geist,sans-serif;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.08;font-weight:700}
+h2{font-size:24px;font-weight:700;margin:56px 0 6px}
+h3{font-size:16px;font-weight:600}
+p{margin:8px 0}
+.lead{color:var(--muted);font-size:18px;max-width:680px;margin-top:12px}
+.eyebrow{font:500 12px/1 "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--green-ink);margin-bottom:14px;display:flex;gap:10px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green)}
+.sub{color:var(--muted);margin:0 0 18px;max-width:700px}
+.mono{font-family:"Geist Mono",monospace}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:28px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat b{display:block;font:600 26px/1.1 "Instrument Sans",sans-serif}
+.stat span{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:12px}
+.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font:500 13px "Geist Mono",monospace}
+.item h3{margin-bottom:2px}
+.item .meta{color:var(--muted);font-size:13px}
+.tag{display:inline-block;font:500 11px/1 "Geist Mono",monospace;padding:4px 7px;border-radius:6px;background:var(--chip);color:var(--muted);margin-top:6px}
+.tag.g{background:color-mix(in srgb,var(--green) 18%,transparent);color:var(--green-ink)}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:Geist,sans-serif;fill:var(--ink)}
+svg .in{fill:#F3F4F1}
+svg .in.dim{fill:#c3c8c3}
+svg .dim{font-family:"Geist Mono",monospace;font-size:11px;fill:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative}
+.step .who{font:500 11px/1 "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--green-ink)}
+.step h3{margin:8px 0 4px}
+.step p{color:var(--muted);font-size:14px;margin:0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 12px "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.r,th.r{text-align:right;white-space:nowrap}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 12px}
+.prints{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.prints figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.prints img{width:100%;height:auto;border-radius:6px;display:block;background:var(--chip)}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px}
+figcaption b{color:var(--ink);font-weight:600}
+.sketch img{width:100%;border-radius:10px;display:block}
+.open{display:grid;gap:10px}
+.open div{background:var(--warn-bg);border-radius:12px;padding:12px 14px;font-size:14px}
+.open b{color:var(--warn)}
+.status{display:inline-flex;gap:8px;align-items:center;background:var(--warn-bg);color:var(--warn);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500;margin-top:18px}
+footer{margin-top:60px;color:var(--muted);font-size:13px}
+.viewer{padding:0;overflow:hidden}
+.stage{position:relative;height:clamp(360px,62vw,600px);background:radial-gradient(120% 90% at 50% 20%,var(--card),var(--bg))}
+#v3d{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#v3d:active{cursor:grabbing}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px;pointer-events:none}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.35;padding:7px 10px;border-radius:8px;max-width:240px;transform:translate(12px,12px);box-shadow:0 4px 18px rgba(0,0,0,.18)}
+.tip b{display:block;font-weight:600}
+.views{position:absolute;top:12px;right:12px;display:flex;gap:4px;background:color-mix(in srgb,var(--card) 85%,transparent);border:1px solid var(--line);border-radius:10px;padding:3px}
+.views button,.steps button{font:500 13px Geist,sans-serif;border:0;background:transparent;color:var(--muted);padding:6px 10px;border-radius:7px;cursor:pointer}
+.views button.on{background:var(--ink);color:var(--bg)}
+.steps{display:flex;gap:6px;overflow-x:auto;padding:14px 16px 4px;border-top:1px solid var(--line);scrollbar-width:thin}
+.steps button{flex:none;background:var(--chip);color:var(--ink);display:flex;gap:7px;align-items:center;padding:7px 11px}
+.steps button i{font:500 11px "Geist Mono",monospace;font-style:normal;color:var(--muted)}
+.steps button.on{background:var(--ink);color:var(--bg)}
+.steps button.on i{color:var(--green)}
+.stepinfo{padding:8px 16px 0;min-height:48px;font-size:15px}
+.stepinfo b{margin-right:6px}
+.stepinfo span{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;padding:12px 16px 4px}
+.controls .primary{font:600 14px Geist,sans-serif;background:var(--green);color:#0E0F0E;border:0;border-radius:999px;padding:9px 16px;cursor:pointer}
+.slider{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.slider input{width:170px;accent-color:var(--green)}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);cursor:pointer}
+.check input{accent-color:var(--green);width:16px;height:16px}
+.fine{font-size:12px;color:var(--muted);padding:6px 16px 16px;margin:0}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>Udlejning med posten · B2C</div>
+  <h1>Én kasse ud, samme kasse retur</h1>
+  <p class="lead">Halo, stativ og alt tilbehør ligger i en almindelig standardkasse med to faste skumdele. Kunden printer intet: returlabelen ligger klar i kassen og skiftes ind i lommen på låget.</p>
+  <div class="status">Forslag C venter på din godkendelse før skabelon og renderinger laves om</div>
+
+  <div class="stats">
+    <div class="stat"><b>34 × 24 × 20</b><span>cm indvendigt, Husted 790163</span></div>
+    <div class="stat"><b>16,3 L</b><span>mod 21,9 L i forslag A</span></div>
+    <div class="stat"><b>ca. 4,2 kg</b><span>pakket, anslået. Under 5 kg-grænsen</span></div>
+    <div class="stat"><b>ca. 80 kr</b><span>dao pakkeshop ud og retur</span></div>
+  </div>
+
+  <h2>3D-model</h2>
+  <p class="sub">Drej med musen eller fingeren. Gå trin for trin gennem nedpakningen, eller træk i eksplosionen for at se alle lag på én gang. Peg på en del for at se dens navn og mål.</p>
+  <div class="viewer card">
+    <div class="stage">
+      <canvas id="v3d" aria-label="3D-model af udlejningskassen"></canvas>
+      <div id="tip" class="tip" hidden></div>
+      <div id="loading" class="loading">Henter 3D-model…</div>
+      <div class="views">
+        <button data-view="iso" class="on">Skråt</button>
+        <button data-view="top">Ovenfra</button>
+        <button data-view="side">Fra siden</button>
+      </div>
+    </div>
+    <div class="steps" id="steps"></div>
+    <div class="stepinfo"><b id="stepTitle"></b><span id="stepText"></span></div>
+    <div class="controls">
+      <button id="play" class="primary">▶ Afspil nedpakning</button>
+      <label class="slider">Eksplosion <input type="range" id="explode" min="0" max="1" step="0.01" value="0"></label>
+      <label class="check"><input type="checkbox" id="xray"> Gennemsigtig kasse</label>
+    </div>
+    <p class="fine">Halo er den rigtige model fra hjemmesiden. Skum, stativ og tilbehør er forenklede former i de rigtige mål. Labels og koder er eksempler.</p>
+  </div>
+
+  <h2>Indhold</h2>
+  <p class="sub">Det her ligger i kassen hver gang. Nummeret svarer til rummet på tegningen nedenfor.</p>
+  <div class="items">
+    <div class="item"><div class="num">1</div><div><h3>Halo fotoboks</h3><div class="meta">222,5 × 306 × 85 mm. Ligger med skærmen op i bundrammen, uden egen kasse.</div><span class="tag">ca. 1,8 kg anslået</span></div></div>
+    <div class="item"><div class="num">2</div><div><h3>Stativ Sirui Traveler 5AX</h3><div class="meta">33 cm sammenklappet, 138 cm udslået. Ligger i to sadler i topbakken.</div><span class="tag">ca. 1,0 kg</span></div></div>
+    <div class="item"><div class="num">3</div><div><h3>Strømforsyning</h3><div class="meta">Mean Well GST90A12, 145 × 60 × 32 mm med 1 m kabel.</div><span class="tag">450 g</span></div></div>
+    <div class="item"><div class="num">4</div><div><h3>Kabler og velcro</h3><div class="meta">Strømkabel til væg og to velcrobånd, så kablet følger stativbenet.</div><span class="tag">ca. 150 g</span></div></div>
+    <div class="item"><div class="num">5</div><div><h3>Forlængerledning 3 m</h3><div class="meta">Til fester hvor stikkontakten sidder langt væk.</div><span class="tag">ca. 300 g</span></div></div>
+    <div class="item"><div class="num">6</div><div><h3>Startguide A5</h3><div class="meta">Opsætning på forsiden, nedpakning og retur på bagsiden.</div><span class="tag g">Tryk klar</span></div></div>
+    <div class="item"><div class="num">7</div><div><h3>Lågkort og returlabel</h3><div class="meta">Lågkortet er det første kunden ser. Returlabel og et stykke tape ligger ovenpå.</div><span class="tag g">Tryk klar</span></div></div>
+    <div class="item"><div class="num">8</div><div><h3>AirTag (valgfri)</h3><div class="meta">Skjult i skummet, hvis en kasse forsvinder hos fragtfirmaet.</div><span class="tag">249 kr</span></div></div>
+  </div>
+
+  <h2>Opdeling, forslag C</h2>
+  <p class="sub">Kun to skumdele, begge limet fast, så intet kan blive væk. Bundrammen bliver i kassen. Topbakken løftes op i to stropper, og så ligger Halo frit.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Topbakken set ovenfra</h3>
+      <p class="sub" style="margin:2px 0 10px;font-size:14px">Fire rum. Stativet ligger langs den ene side, tilbehøret i tre lommer langs den anden.</p>
+      <svg viewBox="-30 -30 410 310" role="img" aria-label="Topbakken set ovenfra med fire rum">
+        <rect x="0" y="0" width="340" height="240" fill="var(--foam)" rx="3"/>
+        <!-- tripod lane -->
+        <rect x="10" y="10" width="320" height="96" fill="var(--foam-2)"/>
+        <rect x="45" y="10" width="30" height="96" fill="var(--foam)"/>
+        <rect x="235" y="10" width="30" height="96" fill="var(--foam)"/>
+        <rect x="20" y="37" width="300" height="42" rx="21" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="6 4"/>
+        <text class="in" x="170" y="62" text-anchor="middle" font-size="13" font-weight="600">2 · Stativ 330 mm</text>
+        <text class="in dim" x="60" y="24" text-anchor="middle">sadel</text>
+        <text class="in dim" x="250" y="24" text-anchor="middle">sadel</text>
+        <!-- accessory lane -->
+        <rect x="10" y="116" width="150" height="114" fill="var(--foam-2)"/>
+        <rect x="170" y="116" width="80" height="114" fill="var(--foam-2)"/>
+        <rect x="260" y="116" width="70" height="114" fill="var(--foam-2)"/>
+        <rect x="12" y="143" width="145" height="60" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="6 4"/>
+        <text class="in" x="85" y="170" text-anchor="middle" font-size="13" font-weight="600">3 · Strøm</text>
+        <text class="in dim" x="85" y="186" text-anchor="middle" >145 × 60</text>
+        <text class="in" x="210" y="170" text-anchor="middle" font-size="13" font-weight="600">4 · Kabler</text>
+        <text class="in dim" x="210" y="186" text-anchor="middle" >80 mm</text>
+        <text class="in" x="295" y="170" text-anchor="middle" font-size="13" font-weight="600">5 · Forl.</text>
+        <text class="in dim" x="295" y="186" text-anchor="middle" >70 mm</text>
+        <!-- straps -->
+        <rect x="100" y="-6" width="14" height="22" rx="3" fill="var(--green)"/>
+        <rect x="230" y="-6" width="14" height="22" rx="3" fill="var(--green)"/>
+        <!-- dims -->
+        <line x1="0" y1="262" x2="340" y2="262" stroke="var(--muted)" stroke-width="1"/>
+        <text x="170" y="278" text-anchor="middle" class="dim">340 mm</text>
+        <line x1="358" y1="0" x2="358" y2="240" stroke="var(--muted)" stroke-width="1"/>
+        <text x="372" y="124" class="dim" transform="rotate(90 372 120)" text-anchor="middle">240 mm</text>
+      </svg>
+      <div class="legend"><span><i style="background:var(--foam)"></i>PE-skum 10 mm</span><span><i style="background:var(--green)"></i>Løftestrop</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Snit på langs</h3>
+      <p class="sub" style="margin:2px 0 10px;font-size:14px">Halo nederst med skærmen op og 2 mm luft. Topbakken hviler på endeklodserne, ikke på boksen.</p>
+      <svg viewBox="-30 -20 410 260" role="img" aria-label="Snit gennem kassen med Halo i bunden og topbakken ovenpå">
+        <rect x="0" y="0" width="340" height="200" fill="none" stroke="var(--muted)" stroke-width="2"/>
+        <!-- base frame -->
+        <rect x="0" y="195" width="340" height="5" fill="var(--foam)"/>
+        <rect x="0" y="108" width="17" height="87" fill="var(--foam)"/>
+        <rect x="323" y="108" width="17" height="87" fill="var(--foam)"/>
+        <!-- halo -->
+        <rect x="17" y="110" width="306" height="85" rx="10" fill="var(--halo)" stroke="#c9b89c"/>
+        <rect x="30" y="110" width="280" height="6" rx="2" fill="#0E0F0E"/>
+        <text x="170" y="158" text-anchor="middle" font-size="13" font-weight="600" style="fill:#0E0F0E">1 · Halo, skærm op</text>
+        <!-- top tray -->
+        <rect x="0" y="103" width="340" height="5" fill="var(--foam)"/>
+        <rect x="0" y="8" width="10" height="95" fill="var(--foam)"/>
+        <rect x="330" y="8" width="10" height="95" fill="var(--foam)"/>
+        <rect x="45" y="58" width="30" height="45" fill="var(--foam)"/>
+        <rect x="235" y="58" width="30" height="45" fill="var(--foam)"/>
+        <rect x="20" y="30" width="300" height="42" rx="21" fill="var(--foam-2)" stroke="var(--green)" stroke-width="2" stroke-dasharray="6 4"/>
+        <text class="in" x="170" y="56" text-anchor="middle" font-size="13" font-weight="600">2 · Stativ</text>
+        <!-- dims -->
+        <line x1="358" y1="0" x2="358" y2="200" stroke="var(--muted)"/>
+        <text x="372" y="104" class="dim" transform="rotate(90 372 100)" text-anchor="middle">200 mm</text>
+        <text x="-8" y="155" class="dim" text-anchor="end" transform="rotate(-90 -8 152)">bundramme</text>
+        <text x="-8" y="58" class="dim" text-anchor="end" transform="rotate(-90 -8 55)">topbakke</text>
+        <line x1="0" y1="222" x2="340" y2="222" stroke="var(--muted)"/>
+        <text x="170" y="238" text-anchor="middle" class="dim">340 mm</text>
+      </svg>
+      <div class="legend"><span><i style="background:var(--halo);border:1px solid #c9b89c"></i>Halo</span><span><i style="background:var(--foam)"></i>Faste skumdele</span></div>
+    </div>
+  </div>
+
+  <div class="card sketch" style="margin-top:16px">
+    <h3 style="margin-bottom:10px">Målskitsen fra tråden</h3>
+    <img src="img/opdeling-c.png" alt="Målskitse af forslag C med topbakke og snit">
+  </div>
+
+  <h2>Forsendelse</h2>
+  <p class="sub">dao begge veje via Shipmondo. Vi sender hjemmefra og afleverer i pakkeshop. Kunden skal hverken printe eller skrive noget.</p>
+  <div class="flow">
+    <div class="step"><div class="who">Os</div><h3>Book begge labels</h3><p>Ud- og returlabel bookes samtidig i Shipmondo og printes på labelprinteren.</p></div>
+    <div class="step"><div class="who">Os</div><h3>Pak og aflever</h3><p>Returlabel lægges øverst i kassen. Kassen afleveres i en dao-pakkeshop.</p></div>
+    <div class="step"><div class="who">Kunden</div><h3>Henter og stiller op</h3><p>Lågkortet peger på startguiden. Fire trin til første billede.</p></div>
+    <div class="step"><div class="who">Kunden</div><h3>Pakker ned</h3><p>Halo i bunden, topbakken ned, låget lukkes med den medfølgende tape.</p></div>
+    <div class="step"><div class="who">Kunden</div><h3>Skifter label</h3><p>Returlabelen lægges i plastlommen på låget, ovenpå udlabelen.</p></div>
+    <div class="step"><div class="who">Os</div><h3>Tjek og nulstil</h3><p>Billeder slettes, boksen testes, skum og kasse tjekkes før næste tur.</p></div>
+  </div>
+
+  <h2>Tryksager</h2>
+  <p class="sub">Klar til tryk med 3 mm beskæring. Startguidens trin 2 om nedpakning skal rettes til forslag C.</p>
+  <div class="prints">
+    <figure><img src="img/guide-for.png" alt="Startguide forside"><figcaption><b>Startguide, forside</b> · A5, opsætning</figcaption></figure>
+    <figure><img src="img/guide-bag.png" alt="Startguide bagside"><figcaption><b>Startguide, bagside</b> · A5, retur. Rettes til C</figcaption></figure>
+    <figure><img src="img/laagkort.png" alt="Lågkort"><figcaption><b>Lågkort</b> · A4, ligger øverst</figcaption></figure>
+    <figure><img src="img/maerkat.png" alt="Lågmærkat"><figcaption><b>Lågmærkat</b> · 150 × 100 mm, på låget</figcaption></figure>
+  </div>
+
+  <h2>Pris pr. sæt og pr. tur</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Vare</th><th>Butik</th><th class="r">Kr</th></tr></thead>
+      <tbody>
+        <tr><td>Stativ Sirui Traveler 5AX</td><td>Goecker.dk</td><td class="r">800</td></tr>
+        <tr><td>Kasse 340 × 240 × 200 (790163)</td><td>Husted Emballage</td><td class="r">6,73</td></tr>
+        <tr><td>PE-skum til bundramme og topbakke</td><td>Ikke valgt</td><td class="r">ca. 100</td></tr>
+        <tr><td>Forlængerledning, velcro, kabelpose, stropper, lim</td><td>Bauhaus</td><td class="r">ca. 110</td></tr>
+        <tr><td>Plastlomme til label</td><td>Husted / Rajapack</td><td class="r">2</td></tr>
+        <tr><td><b>Pr. sæt, uden Halo og AirTag</b></td><td></td><td class="r"><b>ca. 1.020</b></td></tr>
+        <tr><td>Fragt dao ud + retur, 3–5 kg</td><td>Shipmondo</td><td class="r">79,60</td></tr>
+        <tr><td>Startguide, labels, tape</td><td>Trykkeri</td><td class="r">ca. 10</td></tr>
+        <tr><td><b>Pr. tur</b></td><td></td><td class="r"><b>ca. 90</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sub" style="margin-top:10px;font-size:14px">Engangskøb: labelprinter ca. 800 kr og 25 lågmærkater ca. 75 kr. Fragtprisen skal tjekkes for moms.</p>
+
+  <h2>Åbne punkter</h2>
+  <div class="open">
+    <div><b>Godkend forslag C.</b> Derefter laver vi skæreskabelon, renderinger, startguidens trin 2 og indkøbslisten om.</div>
+    <div><b>Wifi eller 4G.</b> Lågkortet lover, at man ikke skal bruge wifi. Det holder kun, hvis boksen har 4G.</div>
+    <div><b>Strømstik.</b> GST90A12 har sandsynligvis 5,5/2,1 mm stik, men bøsningen i styklisten er 5,5/2,5 mm.</div>
+    <div><b>Hjemmesiden.</b> Leveringsvalget "Med posten" skal kræve mindst 5 dages varsel, og prisforslaget er 99 kr for retur.</div>
+    <div><b>Depositum og forsikring.</b> Hvad sker der, hvis boksen kommer i stykker eller ikke kommer retur.</div>
+  </div>
+
+  <footer>Kilder og filer: marketing/udlejning i selfiebox-repoet og udlejning-mappen i projektet. Kontaktoplysninger på tryksagerne er pladsholdere.</footer>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="viewer.js"></script>
