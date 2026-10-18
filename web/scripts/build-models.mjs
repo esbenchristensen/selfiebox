@@ -4,7 +4,7 @@
 //
 //   --occasions builds only the private party designs (bryllup, fodselsdag, julefrokost) into
 //   components/three/occasions.json and leaves the enclosure and the venues alone.
-//   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads) into components/three/bars.json, for the bars' catalogues.
+//   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads, meny) into components/three/bars.json, for the bars' catalogues.
 //
 // unit.glb       the real Halo enclosure (bezel, diffuser ring, shell, photo module, joint spacer)
 //                taken from hardware/docs/pack/pack.json, the CAD export behind the build pack.
@@ -72,4 +72,4 @@ async function buildThemes(order, jsonFile) {
 
 if (!occasionsOnly && !barsOnly) await buildThemes(["smukfest", "roskilde", "nibe", "faarup", "legoland", "zoo"], "components/three/venues.json");
 if (!barsOnly) await buildThemes(["bryllup", "fodselsdag", "julefrokost"], "components/three/occasions.json");
-if (!occasionsOnly) await buildThemes(["flying_hirsch", "aab", "palads"], "components/three/bars.json");
+if (!occasionsOnly) await buildThemes(["flying_hirsch", "aab", "palads", "meny"], "components/three/bars.json");

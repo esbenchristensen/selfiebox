@@ -109,5 +109,47 @@
       "topper"
     ],
     "unit": "gen2"
+  },
+  {
+    "id": "meny",
+    "name": "MENY Fjerritslev",
+    "place": "Fjerritslev",
+    "palette": {
+      "base": "#3c3c3b",
+      "deep": "#262625",
+      "red": "#cc092f",
+      "darkred": "#8e0620",
+      "white": "#ffffff",
+      "cream": "#f4efe6",
+      "kraft": "#c4b9aa",
+      "wood": "#b07a45",
+      "woodd": "#7a4f2a",
+      "green": "#4f8a2b",
+      "lime": "#93c143",
+      "orange": "#ef7d1a",
+      "yellow": "#f2c230",
+      "bottle": "#24452f",
+      "bread": "#d9a25b"
+    },
+    "casing": "#cc092f",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#cc092f"
+      ],
+      "glow": "#ffffff"
+    },
+    "frame": {
+      "bg": "white",
+      "ink": "base",
+      "caption": "Fjerritslev"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
   }
 ]
