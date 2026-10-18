@@ -79,10 +79,10 @@ const ads = [
     sub: chips(),
     vis: {
       feed: box(scr.count(), "glow", "--bw:min(56cqw, calc(104cqh * .765));left:50%;top:0;translate:-50% 0")
-        + stamp("Videohilsner", "pill-line", "left:0;top:10%;rotate:-4deg") + stamp("Titler", "pill-line", "right:2%;top:42%;rotate:5deg") + `<div class="price-sticker" style="right:0;top:0;rotate:8deg"><small>Fra</small><b>499 kr.</b><small>Markedets laveste pris</small></div>`
+        + stamp("Videohilsner", "pill-line", "left:0;top:10%;rotate:-4deg") + stamp("Titler", "pill-line", "right:2%;top:42%;rotate:5deg") + `<div class="price-sticker" style="right:0;top:0;rotate:8deg"><small>Fra</small><b>495 kr.</b><small>Markedets laveste pris</small></div>`
         + stamp("Missioner", "pill-line", "left:2%;top:56%;rotate:3deg") + stamp("Spørgsmål", "pill-line", "right:0;top:72%;rotate:-3deg"),
       story: box(scr.count(), "glow", "--bw:min(68cqw, calc(100cqh * .765));left:50%;top:0;translate:-50% 0")
-        + stamp("Videohilsner", "pill-line", "left:0;top:2%;rotate:-4deg") + stamp("Titler", "pill-line", "right:0;top:40%;rotate:5deg") + `<div class="price-sticker" style="right:0;top:0;rotate:8deg"><small>Fra</small><b>499 kr.</b><small>Markedets laveste pris</small></div>`
+        + stamp("Videohilsner", "pill-line", "left:0;top:2%;rotate:-4deg") + stamp("Titler", "pill-line", "right:0;top:40%;rotate:5deg") + `<div class="price-sticker" style="right:0;top:0;rotate:8deg"><small>Fra</small><b>495 kr.</b><small>Markedets laveste pris</small></div>`
         + stamp("Missioner", "pill-line", "left:0;top:46%;rotate:3deg") + stamp("Spørgsmål", "pill-line", "right:0;top:60%;rotate:-3deg"),
     },
     tag: "Markedets laveste pris",
@@ -231,7 +231,7 @@ function carousel() {
   <div class="c1" style="left:${x(0)}px">
     <span class="kick">Til jeres næste fest</span>
     <h1>Det kan jeres gæster i en Selfi.</h1>
-    <div class="price"><span class="from">Fra</span><b>499 kr.</b><span class="claim">Markedets laveste pris</span></div>
+    <div class="price"><span class="from">Fra</span><b>495 kr.</b><span class="claim">Markedets laveste pris</span></div>
     ${chips("small")}
     <span class="swipe">Swipe</span>
   </div>
