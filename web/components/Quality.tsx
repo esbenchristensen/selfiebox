@@ -11,7 +11,7 @@ export function Quality() {
           <h2 id="quality-title" className="h-l">
             Skarpt billede, klar video og tydelig lyd.
           </h2>
-          <p className="lede">Content er kun noget værd, hvis det kan bruges. Derfor er boksen bygget med kamera, studielys og mikrofon i høj kvalitet, så billeder og videoer kan gå direkte videre til jeres kanaler.</p>
+          <p className="lede">Content er kun noget værd, hvis det kan bruges. Derfor er boksen bygget med et skarpt kamera, studielys og fire mikrofoner med støjfjernelse, så billeder og videoer kan gå direkte videre til jeres kanaler.</p>
         </div>
         <div className="quality">
           {quality.map((q) => (
