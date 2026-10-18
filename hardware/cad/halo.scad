@@ -119,6 +119,7 @@ GAP_WALL = 14;  PLATE_T = 4;
 VESA = 75;  VESA_Z = GC;
 LOCK_Z = H - 72;
 VESA_ON = true;  TRIPOD_ON = true;  LOCK_INSIDE = true;   // gen 2 turns these off (fewer inserts)
+DC_PANEL = true;                                          // gen 2 moves the jack into a pocket
 DC_POS = [-52, 40];
 PB_RAIL = [70, 50, 1.6];   PB_Z0 = 18;  PB_Y = D - BACK_T - 6;   // perfboard: size, bottom, back face y
 POL_X = 46;  POL_Z = [18, 50];                                      // Pololu cradles (right side)
@@ -298,7 +299,7 @@ module shell(top = UNIT_TOP) {
         ext_x(-CLEAT_L/2, CLEAT_L/2) cleat_groove_2d();
         if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);
         if (LOCK_INSIDE) cyl_y(M4_CLR, D - BACK_T - 1, D + 1, 0, LOCK_Z);
-        cyl_y(DC_JACK_HOLE, D - BACK_T - 1, D + 1, DC_POS[0], DC_POS[1]);
+        if (DC_PANEL) cyl_y(DC_JACK_HOLE, D - BACK_T - 1, D + 1, DC_POS[0], DC_POS[1]);
         for (sx = [-1, 1], x = [50, 57]) ext_y(D - BACK_T - 1, D + 1) translate([sx*x, VESA_Z + 25]) rotate(90) slot2d(36, 3);
         ext_y(D - 1.2, D + 1) translate([0, 12]) difference() { rr(W - 24, H - 24, 8); translate([0, 11]) rr(W - 46, H - 46, 2); }
         cyl_y(5, D - BACK_T - 1, D + 1, -(HW - 17.5), 17.5);
@@ -505,7 +506,7 @@ module placed_power() {
     for (z = POL_Z) translate([POL_X, D - BACK_T - 1.2 - POL50[2], z]) pololu([POL50[0], POL50[2], POL50[1]]);
     color([0.15, 0.4, 0.2]) translate([-PB_RAIL[0]/2, PB_Y - PB_RAIL[2], PB_Z0]) cube([PB_RAIL[0], PB_RAIL[2], PB_RAIL[1]]);
     color([0.3, 0.3, 0.3]) translate([-PB_RAIL[0]/2 + 4, PB_Y - PB_RAIL[2] - 12, PB_Z0 + 4]) cube([PB_RAIL[0] - 8, 12, PB_RAIL[1] - 8]);
-    color([0.2, 0.2, 0.2]) translate([DC_POS[0], D - BACK_T - DC_JACK_BODY[1], DC_POS[1]]) rotate([-90, 0, 0]) cylinder(d = DC_JACK_BODY[0], h = DC_JACK_BODY[1]);
+    if (DC_PANEL) color([0.2, 0.2, 0.2]) translate([DC_POS[0], D - BACK_T - DC_JACK_BODY[1], DC_POS[1]]) rotate([-90, 0, 0]) cylinder(d = DC_JACK_BODY[0], h = DC_JACK_BODY[1]);
 }
 // In each run: RGBW strip on the inner half, COB strip on the outer half.
 COB_W = 8;
