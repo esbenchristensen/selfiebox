@@ -1,6 +1,6 @@
 # selfi.dk
 
-Landingssiden for Selfi Boks. Next.js (App Router). MongoDB bruges kun til katalogerne. Design og tekst følger Selfis brandguide.
+Hjemmesiden for Selfi Boks, kun til erhverv: fotobokse i stedets eget design til venues, klubber, barer, hoteller og festivaler. Next.js (App Router). MongoDB bruges kun til katalogerne. Design og tekst følger Selfis brandguide.
 
 ## Kør lokalt
 
@@ -16,12 +16,13 @@ npm run lint       # typecheck
 
 | Fil | Indhold |
 |---|---|
-| `content.ts` | Priser, pakker, aktiviteter, specifikationer og FAQ for hver målgruppe |
+| `content.ts` | Funktionerne (menu og sider), aktiviteter, contentregneren og FAQ |
 | `app/globals.css` | Tokens (farver, afstande, radier) og al styling |
-| `app/page.tsx` | Forsiden: leje til private fester. Tekster, billeder og rækkefølge |
-| `app/erhverv/page.tsx` | Barer, klubber og hoteller. Tekster, billeder og rækkefølge |
+| `app/page.tsx` | Forsiden: fotobokse i eget design og contentmaskinen. Tekster, billeder og rækkefølge |
+| `app/funktioner/` | Oversigten og én side pr. funktion, bygget fra `features` i `content.ts` |
+| `components/Nav.tsx` | Headeren med Funktioner-megamenuen |
 | `components/` | Én fil pr. sektion. Sektionerne tager deres tekst fra siden |
-| `SIDESTRUKTUR.md` | Hvorfor privat og erhverv har hver sin side |
+| `SIDESTRUKTUR.md` | Historik: dengang privat og erhverv havde hver sin side |
 | `app/api/kontakt/route.ts` | Kontaktformularen |
 | `components/three/` | 3D-boksen (React Three Fiber): den rigtige Halo-kasse og stedernes printede dele. `venues.json` er stederne, `themes.ts` er privattemaerne |
 | `public/models/` | 3D-modeller, skærme, fotorammer og logoer. Bygges fra hardware-branchen, se nedenfor |
@@ -30,9 +31,8 @@ npm run lint       # typecheck
 
 ## Før lancering
 
-- **Privatpriser:** sæt `price` på pakkerne i `content.ts`. Indtil da står der "Pris efter dato".
-- **Kontaktformular:** sæt miljøvariablen `CONTACT_WEBHOOK_URL` i Vercel (fx et Slack-, Zapier- eller Make-webhook). Uden den svarer formularen, at den ikke er sat op endnu.
-- **Fotos:** sektionerne Fotoet, fotobåndet og Privat bruger pladsholdere (`.ph`). Erstat dem med rigtige fotos, når de findes, og kun med samtykke.
+- **Kontaktformular:** sæt miljøvariablen `CONTACT_WEBHOOK_URL` i Vercel (fx et Slack-, Zapier- eller Make-webhook). Uden den svarer formularen, at den ikke er sat op endnu. Feltet `topic` fortæller, hvilken side beskeden kom fra.
+- **Funktionssiderne:** teksterne i `features` er første udkast. Tjek dem mod, hvad boksen kan i dag, før siden markedsføres.
 - **Temaer i 3D:** designene til Smukfest, Roskilde, Nibe, Fårup, LEGOLAND og Aalborg Zoo er konceptdesigns uden aftale med stederne. Få en tilladelse, eller skift dem ud med rigtige kunder, før siden bruges i markedsføring.
 - **Juridisk:** cookie- og privatlivstekst mangler, hvis der tilføjes analyse eller tracking.
 

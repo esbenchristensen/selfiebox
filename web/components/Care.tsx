@@ -1,7 +1,5 @@
-import { business } from "@/content";
-
-// Full service for venues. It sits right after the price because that is where a bar owner
-// stops and asks "what else will this cost me in time and trouble?". The answer is shown,
+// Full service for every place. It answers the question every owner asks after the design:
+// "what else will this cost me in time and trouble?". The answer is shown,
 // not claimed: our list is long, theirs has one line. Then each fear is named and answered
 // with a concrete promise. See TEKSTSTRATEGI.md, "Tryghed".
 
@@ -36,8 +34,8 @@ const fears = [
     a: "Boksen kører kun software, vi har signeret, og billeder og numre opbevares sikkert. Telefonnumre bruges kun til tilbud, hvis gæsten selv har sagt ja, så I holder jer inden for reglerne.",
   },
   {
-    q: "Kommer der regninger ud over den faste pris?",
-    a: `Nej. Service, opdateringer, support og en ny boks, hvis noget går galt, er med i de ${business.monthlyPricePerBox} kr. om måneden.`,
+    q: "Kommer der regninger ud over den aftalte pris?",
+    a: "Nej. Service, opdateringer, support og en ny boks, hvis noget går galt, er med i den pris, vi aftaler.",
   },
 ];
 
