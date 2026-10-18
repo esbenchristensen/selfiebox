@@ -1,7 +1,7 @@
 /* Selfi × AaB: the shared catalogue styles in the club's colours. Night blue like the stadium under the
    floodlights, the crest's reds and white, and broad stripes like the home shirt. The same rules sit in
    kataloger/aab.css for the copy that lives in the database. */
-.kat--aab {
+.kat.kat--aab {
   --k-night: #0e1730;
   --k-base: #870e12;
   --k-forest: #c4161d;
