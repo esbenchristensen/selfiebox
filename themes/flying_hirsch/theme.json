@@ -1,0 +1,79 @@
+{
+  "name": "Flying Hirsch",
+  "event": "Flying Hirsch – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#0d0b0a",
+      "filament": "PETG HF black"
+    },
+    "grey": {
+      "hex": "#333333",
+      "filament": "PETG HF dark grey"
+    },
+    "white": {
+      "hex": "#f8f7f4",
+      "filament": "PETG HF white"
+    },
+    "red": {
+      "hex": "#c8181f",
+      "filament": "PETG HF red"
+    },
+    "darkred": {
+      "hex": "#43060a",
+      "filament": "PETG HF burgundy"
+    },
+    "fur": {
+      "hex": "#89633d",
+      "filament": "PETG HF light brown"
+    },
+    "brown": {
+      "hex": "#65421f",
+      "filament": "PETG HF brown"
+    },
+    "tan": {
+      "hex": "#c59b6d",
+      "filament": "PETG HF tan"
+    },
+    "stone": {
+      "hex": "#6b6f78",
+      "filament": "PETG HF grey"
+    },
+    "pine": {
+      "hex": "#1d4a35",
+      "filament": "PETG HF dark green"
+    },
+    "night": {
+      "hex": "#14213a",
+      "filament": "PETG HF navy"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#0d0b0a",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#fff1de",
+        "#c8181f"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#e8333a"
+  },
+  "screen": {
+    "ticker": "The Craziest Afterskibar  •  Flying Hirsch  •  Søndergade, Frederikshavn  •  Prost!  •",
+    "cta": "Sig «Prost!»",
+    "background": "night",
+    "accent": "red"
+  }
+}

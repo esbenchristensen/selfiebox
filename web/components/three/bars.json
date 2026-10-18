@@ -1,0 +1,39 @@
+[
+  {
+    "id": "flying_hirsch",
+    "name": "Flying Hirsch",
+    "place": "Frederikshavn",
+    "palette": {
+      "base": "#0d0b0a",
+      "grey": "#333333",
+      "white": "#f8f7f4",
+      "red": "#c8181f",
+      "darkred": "#43060a",
+      "fur": "#89633d",
+      "brown": "#65421f",
+      "tan": "#c59b6d",
+      "stone": "#6b6f78",
+      "pine": "#1d4a35",
+      "night": "#14213a"
+    },
+    "casing": "#0d0b0a",
+    "ring": {
+      "idle": [
+        "#fff1de",
+        "#c8181f"
+      ],
+      "glow": "#e8333a"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "red",
+      "caption": "Flying Hirsch · Frederikshavn"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
+  }
+]

@@ -4,6 +4,7 @@
 //
 //   --occasions builds only the private party designs (bryllup, fodselsdag, julefrokost) into
 //   components/three/occasions.json and leaves the enclosure and the venues alone.
+//   --bars builds only the bar designs (flying_hirsch) into components/three/bars.json, for the bars' catalogues.
 //
 // unit.glb       the real Halo enclosure (bezel, diffuser ring, shell, photo module, joint spacer)
 //                taken from hardware/docs/pack/pack.json, the CAD export behind the build pack.
@@ -20,6 +21,7 @@ import { join, resolve } from "node:path";
 
 const halo = resolve(process.argv[2] ?? "../../halo");
 const occasionsOnly = process.argv.includes("--occasions");
+const barsOnly = process.argv.includes("--bars");
 const out = resolve("public/models");
 const UNIT = ["bezel", "diffuser_ring", "shell_closed", "shell_closed_band", "v_display", "v_camera", "instax_front", "instax_shell", "instax_shell_band", "joint_spacer"];
 
@@ -35,7 +37,7 @@ const kb = (f) => `${Math.round(statSync(f).size / 1024)} kB`;
 mkdirSync(out, { recursive: true });
 
 // The enclosure
-if (!occasionsOnly) {
+if (!occasionsOnly && !barsOnly) {
   const unit = await io.read(join(halo, "hardware/docs/pack/pack.json"));
   for (const node of unit.getRoot().listNodes()) {
     if (!UNIT.includes(node.getName())) node.dispose();
@@ -68,5 +70,6 @@ async function buildThemes(order, jsonFile) {
   console.log(`${jsonFile}: ${index.length} themes`);
 }
 
-if (!occasionsOnly) await buildThemes(["smukfest", "roskilde", "nibe", "faarup", "legoland", "zoo"], "components/three/venues.json");
-await buildThemes(["bryllup", "fodselsdag", "julefrokost"], "components/three/occasions.json");
+if (!occasionsOnly && !barsOnly) await buildThemes(["smukfest", "roskilde", "nibe", "faarup", "legoland", "zoo"], "components/three/venues.json");
+if (!barsOnly) await buildThemes(["bryllup", "fodselsdag", "julefrokost"], "components/three/occasions.json");
+if (!occasionsOnly) await buildThemes(["flying_hirsch"], "components/three/bars.json");
