@@ -147,43 +147,53 @@ function optionB() {
     ]);
 }
 
-// ---------- Forslag C: kompakt, kun endestykker ----------
+// ---------- Forslag C: kompakt, to faste dele ----------
+// Del 1 (bundramme) limes i kassen. Del 2 (topbakke) er limet sammen til én bakke med rum og løftes op i to stropper.
 function optionC() {
   svg = [];
   const keep = { ...BOX }; Object.assign(BOX, { L: 340, B: 240, H: 200 });
   const L = 340, Bw = 240, Hh = 200, Z = (z) => Hh - z;
-  const capT = (L - HALO.h) / 2;            // 17 mm endestykke ved Halo
-  const floor = 5, sheetZ = floor + HALO.d, sheetT = 5, top0 = sheetZ + sheetT; // 95..100
-  const sad = [[60, 30], [250, 30]];        // sadler i øverste lag: x, tykkelse
-  view(70, 250, "Snit på langs", "Nederst Halo med skærmen op mellem to endestykker. Øverst stativ, strøm og kabler i to sadler", () => {
-    boxOutline(L, Hh);
-    foam(0, Z(sheetZ), capT, sheetZ); foam(L - capT, Z(sheetZ), capT, sheetZ);         // endestykker
-    R(capT, Z(sheetZ), HALO.h, HALO.d, "halo", 8); T(L / 2, Z(floor + HALO.d / 2) + 5, "Halo · 306 × 85, skærm op");
-    foam(0, Z(top0), L, sheetT);                                                          // skumplade over skærmen
-    R(5, Z(top0 + TRI.d + 2), TRI.l, TRI.d, "tri", 20);
-    for (const [x, t] of sad) { svg.push(`<g opacity=".75">`); foam(x, Z(Hh - 2), t, Hh - 2 - top0); svg.push(`</g>`); T(x + t / 2, Z(top0) - 4, "sadel", "lbs"); }
-    T(L / 2 - 15, Z(top0 + TRI.d / 2 + 2) + 5, "Stativ · 330 × Ø90");
-    D(0, Z(0) + 22, L, Z(0) + 22, "340 indv."); D(L + 22, Z(0), L + 22, Z(Hh), "200");
+  const capT = (L - HALO.h) / 2, base = 5, capH = base + HALO.d + 2;   // 17 mm endestykker, 92 høje
+  const plate = 5, trayZ = capH, frameTop = trayZ + plate + 95;          // bakke 92..192
+  const rail = 10, triY = rail, triW = 96, divY = triY + triW, accY = divY + 10, accW = Bw - rail - accY;
+  const sad = [60, 250], sadT = 30;
+  const rooms = [["Strømforsyning", 150], ["Kabler", 80], ["Forlænger", 70]];
+  view(50, 250, "Topbakken set ovenfra", "Én limet del med fire rum. Løftes op i to stropper (rød)", () => {
+    boxOutline(L, Bw);
+    foam(0, 0, L, Bw);
+    R(5, triY, L - 10, triW, "inner");                                   // stativlomme
+    for (const x of sad) foam(x, triY, sadT, triW);
+    R(5, triY + (triW - TRI.d) / 2, TRI.l, TRI.d, "tri", 20);
+    for (const x of sad) { svg.push(`<g opacity=".7">`); foam(x, triY, sadT, triW); svg.push(`</g>`); }
+    T(L / 2 - 15, triY + triW / 2 + 5, "Stativ");
+    let x = rail;
+    rooms.forEach(([n, w], i) => { R(x, accY, w, accW, "inner"); T(x + w / 2, accY + accW / 2 + 5, n, "lbs"); x += w + 10; });
+    R(rail + 3, accY + (accW - PSU.b) / 2, PSU.l - 6, PSU.b, "psu", 4);
+    T(rail + 75, accY + accW / 2 + 5, "Strømforsyning", "lbs");
+    for (const sx of [100, 230]) R(sx, -6, 25, 12, "paper", 2);         // stropper
+    D(0, Bw + 22, L, Bw + 22, "340 indv."); D(L + 22, 0, L + 22, Bw, "240");
   });
-  view(860, 250, "Snit på tværs gennem en sadel", "Sadlen holder stativet i en rund udskæring og strøm og kabler ved siden af", () => {
-    boxOutline(Bw, Hh);
-    foam(0, Z(sheetZ), Bw, sheetZ); R((Bw - 224) / 2, Z(sheetZ), 224, HALO.d, "inner");  // endestykke set forfra med udskæring
-    R((Bw - HALO.b) / 2, Z(sheetZ), HALO.b, HALO.d, "halo", 8); T(Bw / 2, Z(floor + HALO.d / 2) + 5, "Halo · 222,5");
-    foam(0, Z(top0), Bw, sheetT);
-    foam(0, Z(Hh - 2), Bw, Hh - 2 - top0);                                               // sadel
-    const cy = top0 + 48; R(10, Z(top0 + 96), 96, 96, "inner", 46); C(58, Z(cy), TRI.d / 2, "tri"); T(58, Z(cy) + 5, "Stativ");
-    R(120, Z(top0 + 96), 112, 96, "inner", 4);
-    R(126, Z(top0 + PSU.h + 2), PSU.b + 4, PSU.h, "psu", 4); T(126 + 32, Z(top0 + PSU.h / 2 + 2) + 5, "Strøm", "lbs");
-    R(126, Z(top0 + PSU.h + 2 + 55), 100, 52, "cab", 6); T(176, Z(top0 + PSU.h + 30) + 5, "Kabler, forlænger", "lbs");
-    D(0, Z(0) + 22, Bw, Z(0) + 22, "240"); D(Bw + 22, Z(0), Bw + 22, Z(Hh), "200");
+  view(760, 250, "Snit på langs gennem stativet", "Nederst bundrammen med Halo, skærmen op og 2 mm luft. Øverst bakken", () => {
+    boxOutline(L, Hh);
+    foam(0, Z(base), L, base);                                             // bundplade, limet
+    foam(0, Z(capH), capT, capH); foam(L - capT, Z(capH), capT, capH);     // endestykker, limet
+    R(capT, Z(base + HALO.d), HALO.h, HALO.d, "halo", 8); T(L / 2, Z(base + HALO.d / 2) + 5, "Halo · 306 × 85, skærm op");
+    T(L / 2, Z(base + 10) + 2, "del 1 · bundramme, limet i kassen", "lbs");
+    foam(0, Z(trayZ + plate), L, plate);                                   // bakkens bund, limet til bakken
+    for (const x of sad) foam(x, Z(trayZ + plate + 50), sadT, 50);         // sadler med rund udskæring
+    R(5, Z(trayZ + plate + TRI.d + 2), TRI.l, TRI.d, "tri", 20); T(L / 2, Z(trayZ + plate + TRI.d / 2 + 2) + 5, "Stativ");
+    for (const x of sad) { svg.push(`<g opacity=".7">`); foam(x, Z(trayZ + plate + 50), sadT, 50); svg.push(`</g>`); }
+    T(L / 2, Z(trayZ + plate) - 4, "del 2 · topbakke", "lbs");
+    R(8, Z(frameTop + 1.5), L - 16, 1.5, "paper"); 
+    D(L + 22, Z(0), L + 22, Z(Hh), "200");
   });
   Object.assign(BOX, keep);
-  return sheet("C", "Forslag C · Kompakt med endestykker",
-    "Ingen skumkasse inde i papkassen. Kun fem skumdele holder tingene på plads: to endestykker om Halo, en tynd plade over skærmen og to sadler til stativet og strømmen. Kasse 340 × 240 × 200 mm indvendigt (Husted 790163, standardmål), ca. 350 × 250 × 212 mm udvendigt. Det er 16,3 liter mod 21,9 liter i forslag A, altså 25 % mindre.",
+  return sheet("C", "Forslag C · Kompakt i to faste dele",
+    "Ingen løse plader og ingen skumkasse inde i papkassen. Del 1 er en bundramme, der limes fast i kassen og holder Halo i enderne. Del 2 er en topbakke, limet sammen til én del med fire rum: stativ, strømforsyning, kabler og forlænger. Bakken hviler på bundrammens endestykker, ikke på skærmen. Kasse 340 × 240 × 200 mm indvendigt (Husted 790163), 16,3 liter mod 21,9 liter i A.",
     svg.join(""), [
-      ["Hvad er ændret", "Skumvæggene hele vejen rundt i A var reelt en kasse i kassen. Her bærer papkassen siderne, og skummet sidder kun ved enderne og mellem lagene. Halo ligger fladt, så kassen bliver 50 mm lavere."],
-      ["Til kunden", "Låg op, guide øverst, tag stativ, strøm og kabler, løft skumpladen, tag boksen op i løftebåndet. Retur i omvendt rækkefølge. Hver ting har sin egen udskæring."],
-      ["Mål og vægt", "Stativet ligger mellem kassens endevægge (330 i 340 mm). Halo har 17 mm skum i hver ende og 8 mm læber på siderne. Ca. 200 g lettere end A. Under 5 kg og passer i pakkebokse."],
+      ["Kun to dele", "Bundrammen sidder fast i kassen og kan ikke blive væk. Topbakken er én limet del med en bund på 5 mm, der dækker skærmen. Kunden løfter den op i stropperne og sætter den tilbage samme vej."],
+      ["Rum til alt", "Stativet ligger i to sadler med runde udskæringer. Strømforsyning, kabler og forlænger har hvert sit rum, så man kan se med det samme, hvis noget mangler."],
+      ["Mål og vægt", "Stativet fylder 330 af 340 mm. Halo har 17 mm skum i hver ende og 2 mm luft over skærmen. Ca. 150 g lettere end A. Under 5 kg og passer i pakkebokse."],
     ]);
 }
 
