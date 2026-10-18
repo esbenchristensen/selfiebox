@@ -29,8 +29,6 @@ were dropped; their modules stay in `cad/halo.scad` but are no longer built.
 | `docs/pack/drawings/` | 36 sheets: assembly drawings with balloons and parts list (A), sections (X), shaded fastening details (V), part drawings with hole tables (D), component outlines (K), outside dimensions (S) |
 | `docs/pack/renders/` | Photoreal Blender Cycles renders (`render/render.py`) |
 | `docs/pack/hardware.json` | Every screw, insert, dowel and hole with position and direction (`HW_LIST` / `HOLE_LIST` in `cad/halo.scad`) |
-| `docs/halo-page/`, `docs/themes-page/` | Earlier presentation pages |
-| `cad/archive/` | Earlier landscape design |
 
 ```sh
 # rebuild the pack: model + hardware -> drawings -> sections -> renders -> shopping list

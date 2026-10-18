@@ -230,7 +230,7 @@ add("Municipalities (98 kommuner - libraries, culture houses, city events)","Pub
 add("VisitDenmark / destination companies (group)","Tourism","National","National","All year",0,5,10,20,7,4,"'I was here' frames","Public-funded","visitdenmark.dk")
 add("Brand sponsors (Carlsberg, Tuborg, Coca-Cola, Red Bull, banks - group)","Brand sponsors","National","National","All year",0,10,20,40,9,5,"Sponsor frames at festivals/stadiums - collects leads & phone numbers","They pay for activations everywhere","-")
 
-out="/home/user/selfiebox/market_research/danish_market_selfiebox.csv"
+out="/home/user/selfiebox/ideer/marked/danish_market_selfiebox.csv"
 rows=[]
 for r in R:
     n,c,ci,rg,s,v,l,m,h,fit,yes,theme,why,web=r
