@@ -147,10 +147,50 @@ function optionB() {
     ]);
 }
 
+// ---------- Forslag C: kompakt, kun endestykker ----------
+function optionC() {
+  svg = [];
+  const keep = { ...BOX }; Object.assign(BOX, { L: 340, B: 240, H: 200 });
+  const L = 340, Bw = 240, Hh = 200, Z = (z) => Hh - z;
+  const capT = (L - HALO.h) / 2;            // 17 mm endestykke ved Halo
+  const floor = 5, sheetZ = floor + HALO.d, sheetT = 5, top0 = sheetZ + sheetT; // 95..100
+  const sad = [[60, 30], [250, 30]];        // sadler i øverste lag: x, tykkelse
+  view(70, 250, "Snit på langs", "Nederst Halo med skærmen op mellem to endestykker. Øverst stativ, strøm og kabler i to sadler", () => {
+    boxOutline(L, Hh);
+    foam(0, Z(sheetZ), capT, sheetZ); foam(L - capT, Z(sheetZ), capT, sheetZ);         // endestykker
+    R(capT, Z(sheetZ), HALO.h, HALO.d, "halo", 8); T(L / 2, Z(floor + HALO.d / 2) + 5, "Halo · 306 × 85, skærm op");
+    foam(0, Z(top0), L, sheetT);                                                          // skumplade over skærmen
+    R(5, Z(top0 + TRI.d + 2), TRI.l, TRI.d, "tri", 20);
+    for (const [x, t] of sad) { svg.push(`<g opacity=".75">`); foam(x, Z(Hh - 2), t, Hh - 2 - top0); svg.push(`</g>`); T(x + t / 2, Z(top0) - 4, "sadel", "lbs"); }
+    T(L / 2 - 15, Z(top0 + TRI.d / 2 + 2) + 5, "Stativ · 330 × Ø90");
+    D(0, Z(0) + 22, L, Z(0) + 22, "340 indv."); D(L + 22, Z(0), L + 22, Z(Hh), "200");
+  });
+  view(860, 250, "Snit på tværs gennem en sadel", "Sadlen holder stativet i en rund udskæring og strøm og kabler ved siden af", () => {
+    boxOutline(Bw, Hh);
+    foam(0, Z(sheetZ), Bw, sheetZ); R((Bw - 224) / 2, Z(sheetZ), 224, HALO.d, "inner");  // endestykke set forfra med udskæring
+    R((Bw - HALO.b) / 2, Z(sheetZ), HALO.b, HALO.d, "halo", 8); T(Bw / 2, Z(floor + HALO.d / 2) + 5, "Halo · 222,5");
+    foam(0, Z(top0), Bw, sheetT);
+    foam(0, Z(Hh - 2), Bw, Hh - 2 - top0);                                               // sadel
+    const cy = top0 + 48; R(10, Z(top0 + 96), 96, 96, "inner", 46); C(58, Z(cy), TRI.d / 2, "tri"); T(58, Z(cy) + 5, "Stativ");
+    R(120, Z(top0 + 96), 112, 96, "inner", 4);
+    R(126, Z(top0 + PSU.h + 2), PSU.b + 4, PSU.h, "psu", 4); T(126 + 32, Z(top0 + PSU.h / 2 + 2) + 5, "Strøm", "lbs");
+    R(126, Z(top0 + PSU.h + 2 + 55), 100, 52, "cab", 6); T(176, Z(top0 + PSU.h + 30) + 5, "Kabler, forlænger", "lbs");
+    D(0, Z(0) + 22, Bw, Z(0) + 22, "240"); D(Bw + 22, Z(0), Bw + 22, Z(Hh), "200");
+  });
+  Object.assign(BOX, keep);
+  return sheet("C", "Forslag C · Kompakt med endestykker",
+    "Ingen skumkasse inde i papkassen. Kun fem skumdele holder tingene på plads: to endestykker om Halo, en tynd plade over skærmen og to sadler til stativet og strømmen. Kasse 340 × 240 × 200 mm indvendigt (Husted 790163, standardmål), ca. 350 × 250 × 212 mm udvendigt. Det er 16,3 liter mod 21,9 liter i forslag A, altså 25 % mindre.",
+    svg.join(""), [
+      ["Hvad er ændret", "Skumvæggene hele vejen rundt i A var reelt en kasse i kassen. Her bærer papkassen siderne, og skummet sidder kun ved enderne og mellem lagene. Halo ligger fladt, så kassen bliver 50 mm lavere."],
+      ["Til kunden", "Låg op, guide øverst, tag stativ, strøm og kabler, løft skumpladen, tag boksen op i løftebåndet. Retur i omvendt rækkefølge. Hver ting har sin egen udskæring."],
+      ["Mål og vægt", "Stativet ligger mellem kassens endevægge (330 i 340 mm). Halo har 17 mm skum i hver ende og 8 mm læber på siderne. Ca. 200 g lettere end A. Under 5 kg og passer i pakkebokse."],
+    ]);
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const b = await chromium.launch();
-  for (const [n, html] of [["kasseopdeling-A-staaende", optionA()], ["kasseopdeling-B-to-lag", optionB()]]) {
+  for (const [n, html] of [["kasseopdeling-A-staaende", optionA()], ["kasseopdeling-B-to-lag", optionB()], ["kasseopdeling-C-kompakt", optionC()]]) {
     const f = path.join(__dirname, `_${n}.html`); fs.writeFileSync(f, html);
     const p = await b.newPage({ viewport: { width: 1500, height: 1060 }, deviceScaleFactor: 1.5 });
     await p.goto("file://" + f); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(200);
