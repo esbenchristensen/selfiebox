@@ -208,9 +208,6 @@ def write():
 
 if __name__ == "__main__":
     sums = write()
-    import json
-    with OUT.open(encoding="utf-8-sig") as f:
-        (ROOT / "docs" / "pack" / "bom.json").write_text(json.dumps(list(csv.reader(f, delimiter=";")), ensure_ascii=False))
     for k, (a, b) in sums.items():
         print(f"{k:45s} pr. boks {a:8.0f} kr   første indkøb {b:8.0f} kr")
     print("->", OUT.relative_to(REPO))
