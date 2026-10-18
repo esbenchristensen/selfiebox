@@ -51,7 +51,7 @@ node scripts/katalog.mjs skjul smukfest-2027   # viser 404 igen
 node scripts/katalog.mjs slet smukfest-2027
 ```
 
-Et katalog er HTML med én `<div class="kat-slot"><section class="kat-pg">…</section></div>` pr. A4-side. Det får stylingen fra `components/katalog/katalog.css`, og `--css fil.css` lægger katalogets egne regler ovenpå. `kataloger/smukfest.html` er Smukfest-kataloget fra `/events/smukfest` i det format, klar til at lægge ind. `kataloger/flying-hirsch.html` og `.css` er Flying Hirsch-kataloget fra `/erhverv/flying-hirsch` (gem med `--css kataloger/flying-hirsch.css`); designet bruger barens eget logo, så det kræver deres accept. `--udloeber` gør linket dødt efter datoen, `--index` lader Google finde det. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
+Et katalog er HTML med én `<div class="kat-slot"><section class="kat-pg">…</section></div>` pr. A4-side. Det får stylingen fra `components/katalog/katalog.css`, og `--css fil.css` lægger katalogets egne regler ovenpå. `kataloger/smukfest.html` er Smukfest-kataloget fra `/events/smukfest` i det format, klar til at lægge ind. `kataloger/flying-hirsch.html` og `.css` er Flying Hirsch-kataloget fra `/erhverv/flying-hirsch` (gem med `--css kataloger/flying-hirsch.css`); designet bruger barens eget logo, så det kræver deres accept. `kataloger/aab.html` og `.css` er AaB-kataloget fra `/erhverv/aab` (gem med `--css kataloger/aab.css`); det bruger klubbens logo og kræver også deres accept. `--udloeber` gør linket dødt efter datoen, `--index` lader Google finde det. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
 
 ## Hosting på Vercel
 
