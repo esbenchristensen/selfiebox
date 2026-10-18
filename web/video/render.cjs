@@ -12,7 +12,7 @@ const { chromium } = require("playwright");
 const FPS = 30;
 const SIZES = { wide: { width: 1920, height: 1080 }, tall: { width: 1080, height: 1350 } };
 // Poster frame, as [scene, real seconds into it]: the laughing guests after the flash, or the club with the ring.
-const POSTER = { explainer: ["peak", 4.0], erhverv: ["queue", 3.5], events: ["variety", 1.0] };
+const POSTER = { explainer: ["peak", 4.0], erhverv: ["queue", 3.5], events: ["variety", 1.0], palads: ["frame", 3.0] };
 const OUT = path.join(__dirname, "..", "public", "video");
 
 const run = (args) =>
