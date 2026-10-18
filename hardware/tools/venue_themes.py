@@ -967,6 +967,139 @@ def flying_hirsch():
                 logo_png=dict(file="flying_hirsch-source.png", screen=(300, 930, 400), frame=(40, 182, 172)))
 
 
+# --------------------------------------------------------- clubs (sport) --
+# AaB, Aalborg Boldspilklub af 1885: "De Røde" or "De Bolchestribede". The topper is the top of the 2026/27 home shirt
+# (broad red and white stripes, white retro collar) with the crest on the chest, the left wing a fan scarf
+# and the right wing a floodlight mast over the pitch. The crest is traced from logos/aab-source.png.
+
+def aab_logo(bounds):
+    lg = traced_logo("aab")
+    placed = place_logo(lg, bounds, [("red", "base"), ("white", "white"), ("bright", "bright"), ("darkred", "darkred")])
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in placed]
+
+
+def flip_text(g):
+    """Text that reads right after the left wing is mirrored."""
+    c = g.centroid
+    return affinity.scale(g, -1, 1, origin=(c.x, c.y))
+
+
+def football(cx, cz, r):
+    """A football: white ball, black centre pentagon and five cut pentagons at the rim."""
+    ballg = Point(cx, cz).buffer(r, 64)
+    pent = lambda x, z, s, rot: Polygon([(x + s * math.cos(math.radians(90 + rot + 72 * i)), z + s * math.sin(math.radians(90 + rot + 72 * i))) for i in range(5)])
+    black = [pent(cx, cz, r * 0.36, 0)]
+    for i in range(5):
+        a = math.radians(90 + 36 + 72 * i)
+        black.append(pent(cx + r * 0.92 * math.cos(a), cz + r * 0.92 * math.sin(a), r * 0.3, 36))
+    return ballg, U(*black).intersection(ballg)
+
+
+@theme
+def aab():
+    # The crest's own reds and white, the night over the stadium and the pitch.
+    pal = {"base": "#c4161d", "bright": "#ed1c24", "darkred": "#870e12", "white": "#f7f7f5", "ink": "#16181b",
+           "steel": "#8d939b", "grass": "#2f7d3a", "grass2": "#3b9548", "night": "#0e1730", "sky": "#1d2c52"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: a floodlight mast standing on the pitch, the light bank leaning in over the box, and a ball.
+            bank = affinity.rotate(box(X0 + 4, 236, X0 + 58, 284).buffer(5).buffer(-1), -6, origin=(X0 + 28, 260))
+            mast = box(X0 + 20, 40, X0 + 34, 244)
+            turf = hills_poly(X0 - 4, X0 + 64, 40, 2, 0.04, random.Random(3), z_floor=22).intersection(box(X0, 22, X0 + 64, 60))
+            ballg, patches = football(X0 + 44, 58, 15)
+            outline = U(wing_strip(20, 24, 280), bank.buffer(2), mast.buffer(2), turf.buffer(2), ballg.buffer(2))
+            outline = outline.intersection(box(X0, 22, X0 + 66, 296))
+            L = [("base", outline), ("steel", mast)]
+            lattice = U(*[line([(X0 + 21, z), (X0 + 33, z + 12)], 1.6) for z in np.arange(46, 232, 12)],
+                        *[line([(X0 + 33, z), (X0 + 21, z + 12)], 1.6) for z in np.arange(46, 232, 12)]).intersection(mast)
+            L += [("ink", lattice), ("ink", bank)]
+            lamps = []
+            for i in range(3):
+                for j in range(3):
+                    lamps.append(Point(X0 + 14 + i * 14, 248 + j * 13).buffer(5, 32))
+            L += [("white", affinity.rotate(U(*lamps), -6, origin=(X0 + 28, 260)))]
+            L += [("grass", turf), ("grass2", U(*[box(x, 22, x + 8, 60) for x in np.arange(X0 - 4, X0 + 64, 16)]).intersection(turf))]
+            L += [("white", line([(X0 - 2, 34), (X0 + 66, 34)], 1.6).intersection(turf))]
+            L += [("base", ballg.buffer(1.2)), ("white", ballg), ("ink", patches)]
+        else:
+            # Left: the fan scarf, red with AaB down the middle, striped ends and a fringe.
+            sx0, sx1 = X0 + 6, X0 + 46
+            scarf = box(sx0, 44, sx1, 270)
+            fr0 = U(*[box(x - 1.6, 26, x + 1.6, 46) for x in np.linspace(sx0 + 3, sx1 - 3, 7)])
+            fr1 = U(*[box(x - 1.6, 268, x + 1.6, 288) for x in np.linspace(sx0 + 3, sx1 - 3, 7)])
+            outline = U(wing_strip(10, 24, 286), scarf.buffer(2), fr0.buffer(1.8), fr1.buffer(1.8)).intersection(box(X0, 22, X0 + 52, 292))
+            L = [("base", outline), ("white", U(fr0, fr1))]
+            L += [("base", scarf)]
+            for z0, z1 in ((44, 270),):
+                stripes = U(*[box(sx0, z, sx1, z + 7) for z in (52, 66, 236, 250)])
+                L += [("white", stripes)]
+            word = affinity.rotate(text("AaB", "archivo-black", 0, 0, 24), 90, origin=(0, 0))
+            word = flip_text(fit(word, (sx0 + 9, 120, sx1 - 9, 200)))
+            year = affinity.rotate(text("1885", "archivo-black", 0, 0, 10), 90, origin=(0, 0))
+            year = flip_text(fit(year, (sx0 + 13, 86, sx1 - 13, 112)))
+            year2 = affinity.rotate(text("1885", "archivo-black", 0, 0, 10), 90, origin=(0, 0))
+            year2 = flip_text(fit(year2, (sx0 + 13, 208, sx1 - 13, 230)))
+            L += [("white", U(word, year, year2))]
+        return outline, L
+
+    def topper():
+        # The top of the home shirt above a white name plate: red sleeves, broad stripes, V collar, crest.
+        p = 24   # the shirt starts above the plate
+        shirt = Polygon([(-HW + 2, p - 2), (HW - 2, p - 2), (HW, p + 52), (HW + 16, p + 42), (HW + 18, p + 86), (HW - 8, p + 112),
+                         (36, p + 128), (0, p + 116), (-36, p + 128), (-HW + 8, p + 112), (-HW - 18, p + 86), (-HW - 16, p + 42), (-HW, p + 52)])
+        shirt = shirt.buffer(4, join_style="round").buffer(-4, join_style="round")
+        plate = box(-HW, 0, HW, p + 2)
+        outline = U(plate, shirt.buffer(2.4)).intersection(box(-HW - 22, 0, HW + 22, 200))
+        L = [("base", outline)]
+        body = shirt.intersection(box(-HW + 2, -10, HW - 2, 400))
+        L += [("white", U(*[box(x, p - 4, x + 26, p + 140) for x in (-91, -39, 13, 65)]).intersection(body))]
+        # Seams where the sleeves meet the body.
+        L += [("darkred", U(line([(HW - 2, p + 52), (HW - 9, p + 112)], 1.4), line([(-HW + 2, p + 52), (-HW + 9, p + 112)], 1.4)))]
+        neck = Polygon([(-36, p + 128), (0, p + 92), (36, p + 128)])
+        collar = neck.buffer(0).difference(Polygon([(-24, p + 130), (0, p + 104), (24, p + 130)]))
+        L += [("white", collar.intersection(shirt.buffer(0.1))), ("darkred", Polygon([(-24, p + 130), (0, p + 104), (24, p + 130)]).intersection(shirt))]
+        L += [("base", line([(-31, p + 126), (0, p + 98), (31, p + 126)], 1.6).intersection(shirt))]
+        crest = aab_logo((-36, p + 18, 36, p + 88))
+        L += crest
+        L += [("white", box(-HW + 5, 4, HW - 5, p - 2)), ("base", text("AALBORG BOLDSPILKLUB", "archivo-black", 0, (p + 2) / 2, 9, 200))]
+        return outline, L
+
+    def screen(w, h):
+        rng = random.Random(9)
+        L = [("night", box(0, 0, w, h))]
+        for cx in (70, w - 70):
+            beam = Polygon([(cx - 40, 880), (cx + 40, 880), (w / 2 + (cx - w / 2) * 0.2 + 140, 340), (w / 2 + (cx - w / 2) * 0.2 - 140, 340)])
+            L += [("sky", beam)]
+        stand = Polygon([(-10, 330), (-10, 470), (90, 500), (w / 2, 512), (w - 90, 500), (w + 10, 470), (w + 10, 330)])
+        L += [("darkred", stand)]
+        dots = []
+        for _ in range(260):
+            x, z = rng.uniform(0, w), rng.uniform(345, 490)
+            if Point(x, z).within(stand.buffer(-6)):
+                dots.append((x, z))
+        L += [("white", U(*[Point(x, z).buffer(4.2, 12) for x, z in dots[::2]])), ("bright", U(*[Point(x, z).buffer(4.2, 12) for x, z in dots[1::2]]))]
+        L += [("ink", line([(-10, 470), (90, 500), (w / 2, 512), (w - 90, 500), (w + 10, 470)], 6))]
+        for cx in (70, w - 70):
+            L += [("steel", box(cx - 6, 500, cx + 6, 880)), ("ink", box(cx - 40, 870, cx + 40, 930).buffer(6))]
+            L += [("white", U(*[Point(cx - 26 + i * 26, 888 + j * 26).buffer(9, 24) for i in range(3) for j in range(2)]))]
+        pitch = box(0, 0, w, 340)
+        L += [("grass", pitch), ("grass2", U(*[box(0, z, w, z + 34) for z in range(0, 340, 68)]))]
+        L += [("white", line([(-10, 334), (w + 10, 334)], 4))]
+        L += [("white", text("DE BOLCHESTRIBEDE", "archivo-black", w / 2, 560, 28, w * 0.78))]
+        return L
+
+    return dict(name="AaB", place="Aalborg", font="archivo-black", pal=pal,
+                filament={"base": "PETG HF red", "bright": "PETG HF bright red", "darkred": "PETG HF burgundy", "white": "PETG HF white",
+                          "ink": "PETG HF black", "steel": "PETG HF grey", "grass": "PETG HF green", "grass2": "PETG HF light green",
+                          "night": "PETG HF navy", "sky": "PETG HF blue"},
+                casing="#c4161d", ring={"idle": ["#ffffff", "#ed1c24"], "glow": "#ed1c24"},
+                screen=dict(bg="white", ink="white", accent="base", cta="Råb «Kom så AaB!»", ticker="De Bolchestribede  •  AaB af 1885  •  Aalborg Portland Park  •  Kom så AaB!  •"),
+                frame=dict(bg="base", ink="white", caption="Aalborg Portland Park"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: aab_logo((-60, 0, 60, 120)),
+                logo_png=dict(file="aab-source.png", screen=(300, 930, 300), frame=(40, 182, 150)))
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
