@@ -15,6 +15,30 @@ export const contentCalc = {
   hourlyWage: 250, // kr. pr. time inkl. omkostninger, default on the slider
 };
 
+// Picture, video and sound quality, shown on the front page. Camera: Raspberry Pi Camera Module 3 Wide
+// (12 MP, autofocus, HDR, 120°). Microphone: ReSpeaker XMOS XVF3800 array (4 mics, echo cancellation,
+// noise suppression, beamforming, speech up to about 5 m), chosen for gen 2 by Esben 18 Oct 2026.
+export const quality: { title: string; icon: string; text: string; facts: string[] }[] = [
+  {
+    title: "Billeder i høj opløsning",
+    icon: "M8 15 H16 L19 10 H29 L32 15 H40 V38 H8 Z M17 26 a7 7 0 1 0 14 0 a7 7 0 1 0 -14 0",
+    text: "Et 12 MP-kamera med autofokus og HDR tager skarpe billeder af alle i gruppen, også dem bagerst.",
+    facts: ["12 MP med autofokus", "HDR til lyse og mørke rum", "120° vidvinkel, så hele gruppen kommer med"],
+  },
+  {
+    title: "Video i Full HD",
+    icon: "M7 14 H31 V34 H7 Z M31 21 L41 15 V33 L31 27",
+    text: "Videohilsner og udtalelser optages i Full HD i stående format, klar til stories, reels og skærme.",
+    facts: ["Full HD-video", "Stående 9:16 til sociale medier", "Studielys på ansigterne, også i mørke lokaler"],
+  },
+  {
+    title: "Tydelig lyd",
+    icon: "M19 8 a5 5 0 0 1 10 0 V24 a5 5 0 0 1 -10 0 Z M12 22 a12 12 0 0 0 24 0 M24 34 V41 M17 41 H31",
+    text: "Fire mikrofoner retter sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde.",
+    facts: ["Fire mikrofoner, der finder den, der taler", "Støjfjernelse og ekkodæmpning", "Opfanger tale op til ca. 5 meter væk"],
+  },
+];
+
 export type Faq = { q: string; a: string };
 
 // ---------- Functions ----------
@@ -61,7 +85,7 @@ export const features: Feature[] = [
     photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi Boks på en festival i skoven", pos: "50% 50%" },
     points: [
       ["Autentisk, ikke iscenesat", "Gæsterne tager billederne selv, midt i stemningen. Det er ægte mennesker, der har det sjovt hos jer, og det kan mærkes."],
-      ["Billeder og video", "Fotos, korte videoklip og gæsternes svar på jeres spørgsmål. Både stående til stories og klar til feeds."],
+      ["Billeder og video i høj kvalitet", "12 MP-billeder, Full HD-video og tydelig lyd fra fire mikrofoner med støjfjernelse. Stående til stories og klar til feeds."],
       ["Samlet og med samtykke", "Alt ligger samlet i kontrolpanelet, og kun det, gæsten har sagt ja til, må bruges."],
       ["Hver aften, hele aftenen", "Boksen holder ikke fri, bliver ikke træt og skal ikke have løn. Den laver content, hver gang I har åbent."],
     ],
@@ -176,7 +200,8 @@ export const features: Feature[] = [
     photo: { src: "/photos/sted-festival.jpg", alt: "Gæster foran Selfi Boks på en festival", pos: "50% 50%" },
     points: [
       ["Jeres spørgsmål", "I vælger spørgsmålene på skærmen, og I kan skifte dem fra dag til dag."],
-      ["Færdigt content", "Korte, stående klip med jeres ramme, som I kan bruge på de sociale medier, når gæsten har sagt ja."],
+      ["Færdigt content", "Korte, stående klip i Full HD med jeres ramme, som I kan bruge på de sociale medier, når gæsten har sagt ja."],
+      ["Klar lyd", "Fire mikrofoner med støjfjernelse fanger stemmen tydeligt, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
       ["Hilsner", "Gæsterne kan sende en hilsen til en ven, et band eller et hold, som I kan vise frem."],
     ],
     uses: [
@@ -505,6 +530,10 @@ export const faq: Faq[] = [
   {
     q: "Kan vi bruge billederne og videoerne i vores egen markedsføring?",
     a: "Ja, når gæsten har sagt ja til det. Boksen laver autentiske billeder og videoklip hver aften, som I kan bruge på sociale medier, i nyhedsbreve, på hjemmesiden og i annoncer.",
+  },
+  {
+    q: "Hvor god er kvaliteten af billeder, video og lyd?",
+    a: "Høj nok til at bruge i jeres egen markedsføring. Boksen tager billeder med et 12 MP-kamera med autofokus og HDR, optager video i Full HD og har fire mikrofoner med støjfjernelse, der fanger stemmerne tydeligt, også når der er larm i lokalet. Lysringen bliver til studielys, så ansigterne står skarpt, også i et mørkt lokale.",
   },
   {
     q: "Kan en sponsor komme med på billederne?",

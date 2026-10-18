@@ -58,7 +58,7 @@ export function Viewer({ children }: { children: React.ReactNode }) {
           PDF
         </button>
       </div>
-      <main className="kat-deck">{children}</main>
+      <main className={`kat-deck${spread ? " kat-deck--spread" : ""}`}>{children}</main>
     </>
   );
 }

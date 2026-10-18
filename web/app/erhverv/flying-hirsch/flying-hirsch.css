@@ -1,7 +1,7 @@
 /* Selfi × Flying Hirsch: the shared catalogue styles with the bar's colours. Black like the hut at
    night, the logo's reds, the brown of the raw wood and snow white. The same rules sit in
    kataloger/flying-hirsch.css for the copy that lives in the database. */
-.kat--fh {
+.kat.kat--fh {
   --k-night: #0d0b0a;
   --k-base: #43060a;
   --k-forest: #b3151c;

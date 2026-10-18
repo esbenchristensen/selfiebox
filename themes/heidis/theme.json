@@ -1,0 +1,87 @@
+{
+  "name": "Heidi's Bier Bar",
+  "event": "Heidi's Bier Bar – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#00572a",
+      "filament": "PETG HF dark green"
+    },
+    "green": {
+      "hex": "#006a31",
+      "filament": "PETG HF green"
+    },
+    "deep": {
+      "hex": "#023d1e",
+      "filament": "PETG HF forest green"
+    },
+    "yellow": {
+      "hex": "#fccd28",
+      "filament": "PETG HF yellow"
+    },
+    "white": {
+      "hex": "#fbfaf4",
+      "filament": "PETG HF white"
+    },
+    "brown": {
+      "hex": "#734c1e",
+      "filament": "PETG HF brown"
+    },
+    "ginger": {
+      "hex": "#a5642b",
+      "filament": "PETG HF light brown"
+    },
+    "beer": {
+      "hex": "#f0a524",
+      "filament": "PETG HF orange"
+    },
+    "foam": {
+      "hex": "#fff6dc",
+      "filament": "PETG HF cream"
+    },
+    "glass": {
+      "hex": "#cfe6d8",
+      "filament": "PETG HF mint"
+    },
+    "steel": {
+      "hex": "#9aa3a0",
+      "filament": "PETG HF silver"
+    },
+    "sky": {
+      "hex": "#0b7a3c",
+      "filament": "PETG HF green"
+    },
+    "hop": {
+      "hex": "#8dbb3c",
+      "filament": "PETG HF lime"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#00572a",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#fccd28",
+        "#fff6dc"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#fccd28"
+  },
+  "screen": {
+    "ticker": "Heidi's Bier Bar  •  Afterski & Oktoberfest  •  Aalborg · Aarhus · København · Herning · Sønderborg · Thisted  •  Prost!  •",
+    "cta": "Sig «Prost!»",
+    "background": "green",
+    "accent": "yellow"
+  }
+}
