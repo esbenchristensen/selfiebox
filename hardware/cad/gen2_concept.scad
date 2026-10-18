@@ -34,6 +34,10 @@ RING_R = 26;                                // = SQ_A: straight light runs end w
 W = 2*RING_X + RING_FACE + 2*(RING_Z0 - RING_FACE/2);   // 222.5 (H stays 306)
 R = 42.8;                                   // = SQ_A + RING_FACE/2 + BORDER: where the box's straight faces begin
 BLOCK_Z = [];                               // no side screws
+// fewer loose parts: no VESA or tripod inserts, no lock screw inside, and every former M3 insert
+// becomes a pilot hole for a 3.0 mm thread-forming plastic screw (e.g. WN 1452 K30)
+VESA_ON = false;  TRIPOD_ON = false;  LOCK_INSIDE = false;
+INS_M3 = [2.5, 12];
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(
@@ -73,12 +77,72 @@ module shell2(top = UNIT_TOP) {
         union() {
             shell(top);
             for (j = JOINTS) cyl_y(POST_D, y0, D - BACK_T + 0.01, j[0], j[1]);
-            for (p = WING_P) cyl_y(9, D - BACK_T - 6, D - BACK_T + 0.01, p[0], p[1]);
             cyl_y(7, D - BACK_T - 0.01, D, -(HW - 17.5), 17.5);     // rev G cable hole sits on a joint post: plug it
         }
         for (j = JOINTS) { cyl_y(M3_CLR, y0 - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, y0 + 8, D + 1, j[0], j[1]); }
-        for (p = WING_P) cyl_y(INS_M3_D, D - INS_M3_L, D + 1, p[0], p[1]);
+        for (p = WING_P) translate([p[0] - 2, D - BACK_T - 1, p[1] - 4]) cube([4, BACK_T + 2, 14]);   // wing hooks drop in; the wall holds them
         cyl_y(5, D - BACK_T - 1, D + 1, CABLE2[0], CABLE2[1]);           // ... and move it in
+        lock_cut();
+        for (x = MIC_HOLES) cyl_z(1.2, H - WALL - 1, H + 1, x, MIC_Y);    // mic ports in the top face
+    }
+    electronics_holders();
+}
+
+// ------------------------------------------ 4G, vandal sensing, microphones ----
+// [A] Waveshare SIM7600G-H 4G HAT (B) 65 x 32 mm (waveshare.com); height with SIM holder [M]
+// [A] Adafruit LIS3DH breakout 25.4 x 17.8 x 4.6 (tap/shock interrupt to the Pi)
+// [A] reSpeaker Flex XVF3800 Linear with XIAO ESP32S3: mic strip 110 long, mics 33 apart,
+//     ports on the back of the board; core board on a 20 cm FPC. Width/thickness/core size [M]
+// [M] glass reed switch in a 20 x 4 x 4 sleeve; [A] N52 magnet 6 x 3
+HAT4G = [32, 65, 12];   HAT4G_P = [-88, 166];      // w (x), h (z), thickness (y); bottom-left on the back wall
+MCORE = [45, 60, 15];   MCORE_P = [48, 166];
+IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 200];
+MSTRIP = [110, 16, 5];  MIC_Y = 68;  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
+REED = [20, 4, 4];
+module back_part(p, sz, c) color(c) translate([p[0], D - BACK_T - 1.2 - sz[2], p[1]]) cube([sz[0], sz[2], sz[1]]);
+module placed_electronics() {
+    back_part(HAT4G_P, HAT4G, [0.1, 0.3, 0.6]);
+    back_part(MCORE_P, MCORE, [0.15, 0.15, 0.15]);
+    back_part(IMU_P, IMU, [0.1, 0.1, 0.4]);
+    color([0.15, 0.15, 0.15]) translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
+    color([0.8, 0.8, 0.85]) translate([LOCK_X - REED[0]/2, D - BACK_T - 6, LOCK_TZ[1] + 4]) cube(REED);
+}
+// snap trays like the Pololu cradles: no screws; the mic strip hangs in two hook clips
+module electronics_holders() {
+    for (q = [[HAT4G_P, HAT4G], [MCORE_P, MCORE], [IMU_P, IMU]])
+        translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) pololu_cradle([q[1][0], q[1][1], q[1][2]], q[1][2] + 1.5);
+    for (sx = [-1, 1]) translate([sx*40 - 4, MIC_Y - MSTRIP[1]/2 - 2, H - WALL - MSTRIP[2] - 2.2]) difference() {
+        cube([8, MSTRIP[1] + 4, MSTRIP[2] + 2.21]);
+        translate([-1, 2 - 0.15, 1.8]) cube([10, MSTRIP[1] + 0.3, MSTRIP[2] + 0.3]);
+        translate([-1, 4, -1]) cube([10, MSTRIP[1] - 4, 3]);
+    }
+    // reed switch sleeve, just above the lock tongue: lifting the box off the cleat moves the magnet away
+    translate([LOCK_X - REED[0]/2 - 1.6, D - BACK_T - 7.6, LOCK_TZ[1] + 2.4]) difference() {
+        cube([REED[0] + 3.2, 7.61, REED[2] + 3.2]);
+        translate([-1, 1.6, 1.6]) cube([REED[0] + 5, REED[1] + 0.3, REED[2] + 0.3]);
+    }
+}
+
+// ------------------------------------------------------------ wall lock ----
+// The cleat grows a tongue that enters a slot low in the back wall. One security screw
+// (Torx with pin, 4 x 30 thread-forming) goes up through the bottom into the tongue: the box
+// cannot be lifted off without the special bit, and the front screws stay behind the box.
+// With the printer module fitted, the screw is reached through the module's locked lid.
+LOCK_X = -56;  LOCK_W = 16;  LOCK_TZ = [14, 26];  LOCK_Y = 70;  DROP = CLEAT_D;
+module lock_cut() {
+    translate([LOCK_X - LOCK_W/2 - 0.6, D - BACK_T - 1, LOCK_TZ[0] - DROP - 0.6]) cube([LOCK_W + 1.2, BACK_T + 2, LOCK_TZ[1] - LOCK_TZ[0] + DROP + 1.2]);
+    cyl_z(4.5, -1, LOCK_TZ[0], LOCK_X, (LOCK_Y + D - BACK_T)/2);
+}
+module wall_cleat2() {
+    yb = D + GAP_WALL - PLATE_T;
+    wall_cleat();
+    difference() {
+        union() {
+            ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); translate([LOCK_X, LOCK_TZ[0] + 4]) rrc(LOCK_W + 8, 24, 6); }
+            translate([LOCK_X - LOCK_W/2, LOCK_Y, LOCK_TZ[0]]) cube([LOCK_W, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
+        }
+        cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 3, LOCK_X, (LOCK_Y + D - BACK_T)/2);   // pilot for the security screw
+        cyl_z(6.2, LOCK_TZ[1] - 3, LOCK_TZ[1] + 1, LOCK_X, (LOCK_Y + D - BACK_T)/2 + 0); // magnet pocket (press fit)
     }
 }
 
@@ -157,6 +221,7 @@ module main_unit() {        // gen 2 unit, without the wall cleat
     placed_pi();
     band_split() shell2();
     placed_power();
+    placed_electronics();
 }
 
 // ------------------------------------------- single parts for the renders ----
@@ -171,6 +236,9 @@ if (VIEW == "x_shell_band") band_keep() shell2();
 if (VIEW == "x_display")   placed_display();
 if (VIEW == "x_camera")    placed_camera();
 if (VIEW == "x_inside")    { placed_display(); placed_pi(); placed_power(); placed_camera(); placed_leds(); }
+if (VIEW == "x_elec")      placed_electronics();
+if (VIEW == "x_cleat")     wall_cleat2();
+if (VIEW == "x_shell_all") shell2();
 if (VIEW == "x_mod_shell") difference() { mod_shell(); band_cut(); }
 if (VIEW == "x_mod_shell_band") band_keep() mod_shell();
 if (VIEW == "x_lid")       lid(0);

@@ -118,6 +118,7 @@ CLEAT_L = 120;  CLEAT_ZC = H - 32;  CLEAT_D = 9;
 GAP_WALL = 14;  PLATE_T = 4;
 VESA = 75;  VESA_Z = GC;
 LOCK_Z = H - 72;
+VESA_ON = true;  TRIPOD_ON = true;  LOCK_INSIDE = true;   // gen 2 turns these off (fewer inserts)
 DC_POS = [-52, 40];
 PB_RAIL = [70, 50, 1.6];   PB_Z0 = 18;  PB_Y = D - BACK_T - 6;   // perfboard: size, bottom, back face y
 POL_X = 46;  POL_Z = [18, 50];                                      // Pololu cradles (right side)
@@ -282,9 +283,9 @@ module pololu_cradle(sz = POL50, hgt = 7) {
 module shell(top = UNIT_TOP) {
     difference() {
         union() {
-            shell_base(H, BLOCK_Z, top = top, bottom = "joint", tripod = true);
+            shell_base(H, BLOCK_Z, top = top, bottom = "joint", tripod = TRIPOD_ON);
             translate([-CLEAT_L/2 - 3, D - BACK_T - CLEAT_D, CLEAT_ZC - 27]) cube([CLEAT_L + 6, CLEAT_D + 0.01, 39]);
-            for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
+            if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
             // perfboard slide rails (board stands 6 mm off the back wall, components face forward)
             for (sx = [-1, 1]) translate([sx > 0 ? PB_RAIL[0]/2 - 1.8 : -PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0]) difference() {
                 cube([4, D - BACK_T - (PB_Y - 4) + 0.01, PB_RAIL[1] + 2]);
@@ -295,8 +296,8 @@ module shell(top = UNIT_TOP) {
             for (p = [[-60, 110], [60, 110], [-60, 160], [0, 95]]) translate([p[0] - 5, D - BACK_T - 3, p[1] - 2]) difference() { cube([10, 3.01, 4]); translate([2, -0.01, -1]) cube([6, 1.8, 6]); }
         }
         ext_x(-CLEAT_L/2, CLEAT_L/2) cleat_groove_2d();
-        for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);
-        cyl_y(M4_CLR, D - BACK_T - 1, D + 1, 0, LOCK_Z);
+        if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);
+        if (LOCK_INSIDE) cyl_y(M4_CLR, D - BACK_T - 1, D + 1, 0, LOCK_Z);
         cyl_y(DC_JACK_HOLE, D - BACK_T - 1, D + 1, DC_POS[0], DC_POS[1]);
         for (sx = [-1, 1], x = [50, 57]) ext_y(D - BACK_T - 1, D + 1) translate([sx*x, VESA_Z + 25]) rotate(90) slot2d(36, 3);
         ext_y(D - 1.2, D + 1) translate([0, 12]) difference() { rr(W - 24, H - 24, 8); translate([0, 11]) rr(W - 46, H - 46, 2); }
@@ -483,10 +484,10 @@ module wall_cleat() {
                 translate([0, (30 + CLEAT_ZC)/2]) rrc(60, CLEAT_ZC - 30, 6);
             }
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
-            cyl_y(14, D + 1, yb + 0.01, 0, LOCK_Z);
+            if (LOCK_INSIDE) cyl_y(14, D + 1, yb + 0.01, 0, LOCK_Z);
             for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
         }
-        cyl_y(INS_M4_D, D, D + 1 + INS_M4_L, 0, LOCK_Z);
+        if (LOCK_INSIDE) cyl_y(INS_M4_D, D, D + 1 + INS_M4_L, 0, LOCK_Z);
         for (p = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125]]) {
             cyl_y(5, yb - 1, yb + PLATE_T + 1, p[0], p[1]);
             translate([p[0], yb + 0.6, p[1]]) rotate([90, 0, 0]) cylinder(d1 = 5, d2 = 10.5, h = 2.8);
