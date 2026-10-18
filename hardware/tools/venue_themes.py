@@ -52,6 +52,20 @@ G = dict(W=234.0, H=306.0, D=66.0, R=24.0, SIDE_Y=10.0, BZ0=66.8, BZ1=239.2, H_S
          PRN_FRONT_W=82.0, PRN_FRONT_H=58.0)
 HW = G["W"] / 2
 X0 = HW + 0.2                      # inner edge of a wing
+# Gen 2 (gen2_concept.scad): one concentric squircle outline, 222.5 wide with a 7.8 mm border to the light ring,
+# 85 mm deep, and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
+G2 = dict(G, W=222.5, D=85.0, R=42.8, WING_X=222.5 / 2 - 12)
+
+
+def use_unit(unit):
+    """Point the shared geometry at rev G or gen 2 before a theme's parts are drawn."""
+    global G, HW, X0
+    G = G2 if unit == "gen2" else G_REVG
+    HW = G["W"] / 2
+    X0 = HW + 0.2
+
+
+G_REVG = G
 BED = (271.0, 292.0)               # H2C plate minus 7 mm each side
 
 
@@ -244,6 +258,13 @@ def coaster(pts, rail=2.2, ties=True, z_floor=0, support_every=14):
 
 
 # --------------------------------------------------------------- the parts --
+def cyl_y(d, y0, y1, x, z):
+    c = trimesh.creation.cylinder(radius=d / 2, height=y1 - y0, sections=32)
+    c.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, [1, 0, 0]))
+    c.apply_translation([x, (y0 + y1) / 2, z])
+    return c
+
+
 def wing_body(outline):
     """theme_builder's wing, with a free outline. `outline` is the right wing in unit coordinates."""
     outline = outline.intersection(box(X0, -50, X0 + 80, G["H"] + 60)).buffer(-1.5).buffer(1.5)
@@ -257,6 +278,13 @@ def wing_body(outline):
         if min(abs(zr - G["BZ0"]), abs(zr - G["BZ1"])) > 10:
             s = box(X0, zr - 1, X0 + reach * 0.3, zr + 1).intersection(outline)
             stiff.append(tb.extrude_xz(s, tb.FACE_T - 0.01, tb.FACE_T + 5))
+    if "WING_X" in G:
+        # Gen 2: the rib runs back along the side and turns in behind the back wall as a tab per insert.
+        rib = tb.cube(X0, X0 + 4, 0, G["D"] + 3, z0 + 4, z1 - 4)
+        tabs = [tb.cube(G["WING_X"] - 8, X0 + 4, G["D"] + 0.2, G["D"] + 3, z - 9, z + 9) for z in (G["BZ0"], G["BZ1"])]
+        body = tb.boolean("union", [face, rib] + tabs + stiff)
+        holes = [cyl_y(G["M3_CLR"], G["D"] - 1, G["D"] + 4, G["WING_X"], z) for z in (G["BZ0"], G["BZ1"])]
+        return tb.boolean("diff", [body] + holes), outline
     body = tb.boolean("union", [face, rib] + stiff)
     holes = [tb.cyl_x(G["M3_CLR"], X0 - 1, X0 + 5, G["SIDE_Y"], z) for z in (G["BZ0"], G["BZ1"])]
     return tb.boolean("diff", [body] + holes), outline
@@ -1103,7 +1131,7 @@ def aab():
 # ---------------------------------------------------------- cinemas (bio) --
 # Palads Teatret, Frederikshavn: a four-screen town cinema with an art deco name sign. The topper is a cinema
 # marquee with a ring of bulbs around the name and a stepped deco crown, the right wing a vertical BIO blade sign
-# over a striped popcorn box and the left wing a film strip unwinding from its reel. The logo is traced from
+# over a striped popcorn box and the left wing a film strip unwinding from its reel. Drawn for the gen 2 unit. The logo is traced from
 # logos/palads-source.png (white on the cinema's dark violet).
 
 def palads_logo(bounds):
@@ -1215,7 +1243,7 @@ def palads():
         L += [("bulb", U(*[Point(x, 520).buffer(4, 16) for x in np.arange(150, w - 140, 20)]), )]
         return L
 
-    return dict(name="Palads Teatret", place="Frederikshavn", font="limelight", pal=pal,
+    return dict(name="Palads Teatret", place="Frederikshavn", font="limelight", pal=pal, unit="gen2",
                 filament={"base": "PETG HF dark blue", "night": "PETG HF navy", "deep": "PETG HF black", "white": "PETG HF white",
                           "gold": "PETG HF gold", "bulb": "PETG HF cream", "velvet": "PETG HF red", "velvetd": "PETG HF burgundy",
                           "corn": "PETG HF yellow", "silver": "PETG HF silver", "sky": "PETG HF lilac"},
@@ -1280,6 +1308,7 @@ def logo_png_svg(src, size=480):
 
 def build(tid):
     t = THEMES[tid]
+    use_unit(t.get("unit"))
     out = ROOT / "themes" / tid / "build"
     web = out / "web"
     (out / "preview").mkdir(parents=True, exist_ok=True)
