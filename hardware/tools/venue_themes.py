@@ -1432,6 +1432,218 @@ def meny():
                 logo_png=dict(file="meny-source.png", screen=(300, 800, 380), frame=(40, 165, 110)))
 
 
+# ------------------------------------------------------------ bars (heidis) --
+# Heidi's Bier Bar: REKOM's afterski and Oktoberfest bar chain, six bars in Denmark (Aalborg, Aarhus, København,
+# Herning, Sønderborg, Thisted) and more in Norway. Staff in lederhosen and dirndl, 4-litre beer towers, bier pong,
+# singing on the tables. The topper is a gingerbread heart from the Oktoberfest stalls with the logo in its icing,
+# wheat and hops from the logo at its sides, the right wing a beer tower and the left wing a maypole in the bar's
+# green and white with a pretzel and a stein. Drawn for the gen 2 unit. The logo is traced from
+# logos/heidis-source.png (heidisbierbar.dk's 320 px logo, upscaled 4x): ask the bar for vector artwork before printing.
+
+def heidis_logo(bounds):
+    lg = traced_logo("heidis")
+    placed = place_logo(lg, bounds, [(k, k) for k in ("white", "yellow", "green", "brown")])
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in placed]
+
+
+def heart_shape(cx, cz, w, h):
+    """A plump gingerbread heart, `w` wide and `h` tall, its point at (cx, cz)."""
+    r = w / 4
+    lobes = U(Point(cx - r, cz + h - r).buffer(r, 64), Point(cx + r, cz + h - r).buffer(r, 64))
+    v = Polygon([(cx - 2 * r + 0.4, cz + h - r - r * 0.25), (cx, cz), (cx + 2 * r - 0.4, cz + h - r - r * 0.25), (cx, cz + h - r)])
+    return U(lobes, v).buffer(r * 0.12).buffer(-r * 0.12)
+
+
+def wheat(p0, p1, w, n=7):
+    """An ear of wheat from its stalk end p0 to its tip p1: grains in pairs along the stalk."""
+    dx, dz = p1[0] - p0[0], p1[1] - p0[1]
+    ln = math.hypot(dx, dz)
+    ang = math.degrees(math.atan2(dz, dx))
+    stalk = line([p0, (p0[0] + dx * 0.45, p0[1] + dz * 0.45)], max(1.6, w * 0.16))
+    grains = []
+    for i in range(n):
+        t = 0.42 + i * 0.52 / n
+        cx, cz = p0[0] + dx * t, p0[1] + dz * t
+        for s in (-1, 1):
+            g = affinity.rotate(ell(0, 0, w * 0.32, w * 0.17), s * 35, origin=(0, 0))
+            g = affinity.translate(affinity.rotate(affinity.translate(g, w * 0.18, s * w * 0.2), ang, origin=(0, 0)), cx, cz)
+            grains.append(g)
+    tip = affinity.translate(affinity.rotate(ell(0, 0, w * 0.3, w * 0.15), ang, origin=(0, 0)), p1[0], p1[1])
+    return stalk, U(*grains, tip)
+
+
+def hop(cx, cz, s, rot=0):
+    """A hop cone `s` mm tall, hanging from its stem: a pointed egg with rows of scale edges. Returns (cone, scales, stem)."""
+    ts = np.linspace(0, 1, 40)
+    half = [(s * 0.34 * math.sin(math.pi * t) ** 0.8 * (0.75 + 0.25 * t), -s + t * s) for t in ts]
+    cone = Polygon([(x, z) for x, z in half] + [(-x, z) for x, z in reversed(half)]).buffer(0)
+    arcs = []
+    for i, z in enumerate(np.linspace(-s * 0.8, -s * 0.2, 4)):
+        for x in ([-0.12, 0.12] if i % 2 == 0 else [-0.24, 0, 0.24]):
+            c = Point(x * s, z + s * 0.12).buffer(s * 0.16, 32).exterior
+            arcs.append(c.intersection(box(-s, z - s, s, z + s * 0.12)).buffer(max(0.7, s * 0.028)))
+    scales = U(*arcs).intersection(cone.buffer(-0.8))
+    stem = line([(0, 0), (s * 0.06, s * 0.18)], max(1.6, s * 0.07))
+    return [affinity.translate(affinity.rotate(g, rot, origin=(0, 0)), cx, cz) for g in (cone, scales, stem)]
+
+
+def catmull(pts, n=12):
+    """A smooth curve through `pts` (Catmull-Rom)."""
+    out = []
+    p = [pts[0]] + list(pts) + [pts[-1]]
+    for i in range(1, len(p) - 2):
+        p0, p1, p2, p3 = (np.array(q, float) for q in p[i - 1:i + 3])
+        for t in np.linspace(0, 1, n, endpoint=False):
+            out.append(tuple(0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t ** 3)))
+    out.append(pts[-1])
+    return out
+
+
+def pretzel(cx, cz, w):
+    """A Bavarian pretzel `w` mm wide: the belly, the arms twisted once at the top and their ends resting on the belly."""
+    knots = [(-0.3, -0.16), (-0.13, 0.04), (0.06, 0.2), (0.26, 0.3), (0.46, 0.2), (0.5, -0.02), (0.37, -0.26), (0, -0.36),
+             (-0.37, -0.26), (-0.5, -0.02), (-0.46, 0.2), (-0.26, 0.3), (-0.06, 0.2), (0.13, 0.04), (0.3, -0.16)]
+    band = LineString([(cx + x * w, cz + z * w) for x, z in catmull(knots)]).buffer(w * 0.075, 16)
+    return band
+
+
+def stein(cx, z0, w, h):
+    """A Maß stein: glass body, handle on the right, foam over the rim. Returns (glass, beer, foam, handle, dimples)."""
+    body = box(cx - w / 2, z0, cx + w / 2, z0 + h).buffer(w * 0.06).buffer(-w * 0.06)
+    beer = box(cx - w / 2 + 3, z0 + 3, cx + w / 2 - 3, z0 + h * 0.82)
+    foam = U(box(cx - w / 2 - 1, z0 + h * 0.8, cx + w / 2 + 1, z0 + h * 0.98), *[Point(cx + x, z0 + h * 0.98).buffer(w * 0.13, 24) for x in np.linspace(-w * 0.38, w * 0.38, 4)],
+             Point(cx - w * 0.42, z0 + h * 0.78).buffer(w * 0.1, 24))
+    handle = Point(cx + w / 2, z0 + h * 0.5).buffer(h * 0.3, 48).difference(Point(cx + w / 2, z0 + h * 0.5).buffer(h * 0.3 - w * 0.13, 48)).difference(box(cx - w, z0, cx + w / 2, z0 + h))
+    dimples = U(*[ell(cx + x, z0 + z, w * 0.08, h * 0.08) for x in (-w * 0.25, 0, w * 0.25) for z in (h * 0.25, h * 0.5)])
+    return body, beer, foam, handle, dimples
+
+
+def pennants(x0, x1, z, n, h, sag=8):
+    """Bunting: n triangles hanging from a sagging line between x0 and x1 at height z. Returns (line, [flags])."""
+    pts = [(x0 + (x1 - x0) * t, z - sag * math.sin(math.pi * t)) for t in np.linspace(0, 1, 40)]
+    flags = []
+    for i in range(n):
+        t0, t1 = (i + 0.1) / n, (i + 0.9) / n
+        a = (x0 + (x1 - x0) * t0, z - sag * math.sin(math.pi * t0))
+        b = (x0 + (x1 - x0) * t1, z - sag * math.sin(math.pi * t1))
+        flags.append(Polygon([a, b, ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - h)]))
+    return LineString(pts), flags
+
+
+@theme
+def heidis():
+    # The bar's own green and yellow, the logo's white and brown, gingerbread, beer and foam.
+    pal = {"base": "#00572a", "green": "#006a31", "deep": "#023d1e", "yellow": "#fccd28", "white": "#fbfaf4", "brown": "#734c1e",
+           "ginger": "#a5642b", "beer": "#f0a524", "foam": "#fff6dc", "glass": "#cfe6d8", "steel": "#9aa3a0", "sky": "#0b7a3c", "hop": "#8dbb3c"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: a 4-litre beer tower, foam at the top, the cooling rod down its middle and the tap at the foot.
+            cx = X0 + 30
+            tube = box(cx - 17, 52, cx + 17, 262).buffer(4).buffer(-4)
+            cap = box(cx - 20, 262, cx + 20, 278).buffer(3).buffer(-1)
+            knob = Point(cx, 284).buffer(7, 32)
+            foot = box(cx - 27, 24, cx + 27, 40).buffer(3).buffer(-1)
+            neck = box(cx - 12, 40, cx + 12, 54)
+            tap = U(box(cx + 12, 44, cx + 26, 50), box(cx + 22, 44, cx + 28, 62).buffer(1.5))
+            # Solid blocks only: the knob, cap and tap sit inside the hull of their neighbours, so nothing can snap off.
+            outline = U(wing_strip(12, 24, 284), tube.buffer(2.5), U(cap, knob).convex_hull.buffer(2.5), U(foot, neck, tap).convex_hull.buffer(2.5)).buffer(4).buffer(-4)
+            outline = outline.intersection(box(X0, 22, X0 + 64, 294))
+            L = [("base", outline), ("steel", U(cap, knob, foot, neck)), ("glass", tube)]
+            L += [("beer", box(cx - 14, 56, cx + 14, 228).buffer(2).buffer(-2))]
+            rng = random.Random(9)
+            L += [("foam", U(box(cx - 14, 222, cx + 14, 240), *[Point(cx + x, 240).buffer(5.2, 24) for x in np.linspace(-9, 9, 4)]))]
+            L += [("yellow", U(*[Point(cx + rng.uniform(-10, 10), rng.uniform(64, 214)).buffer(rng.uniform(0.9, 1.6), 16) for _ in range(22)]))]
+            L += [("steel", box(cx - 2.5, 56, cx + 2.5, 262))]
+            L += [("white", box(cx - 13, 244, cx - 9, 258).buffer(1))]
+            L += [("deep", U(*[box(cx - 24, z - 0.6, cx - 17, z + 0.6) for z in np.arange(70, 230, 40)]).intersection(tube.buffer(3)).difference(tube))]
+            L += [("steel", tap), ("base", box(cx + 23, 44, cx + 27, 48))]
+            L += [("green", box(cx - 25, 27, cx + 25, 37).buffer(0.5)), ("white", text("4 L", "lilita-one", cx, 32, 7, 30))]
+        else:
+            # Left: a maypole in green and white with a wreath, ribbons, a pretzel and a stein at its foot.
+            cx = X0 + 22
+            pole = box(cx - 7, 70, cx + 7, 252)
+            wreath = ell(cx, 252, 24, 7)
+            crown = U(Point(cx, 268).buffer(11, 48).intersection(box(cx - 12, 256, cx + 12, 290)), box(cx - 11, 256, cx + 11, 268))
+            ribbons = U(*[line([(cx + s * x, 248), (cx + s * (x + 2), 232 - x * 0.2)], 3) for s in (-1, 1) for x in (10, 19)])
+            prz = pretzel(cx + 14, 196, 38)
+            body, beer, foam, handle, dimples = stein(cx + 2, 24, 40, 50)
+            # Solid blocks only: crown, wreath and ribbons in one hull, the pretzel on a backing joined to the pole, the stein with its handle.
+            outline = U(wing_strip(10, 24, 262), pole.buffer(2), U(wreath, crown, ribbons).convex_hull.buffer(2.5),
+                        U(prz, box(cx + 2, 176, cx + 7, 222)).convex_hull.buffer(2.5), U(body, foam, handle).convex_hull.buffer(2.5)).buffer(4).buffer(-4)
+            outline = outline.intersection(box(X0, 22, X0 + 64, 294))
+            L = [("base", outline), ("white", pole)]
+            stripes = U(*[Polygon([(cx - 8, z), (cx - 8, z + 9), (cx + 8, z + 21), (cx + 8, z + 12)]) for z in np.arange(52, 260, 24)])
+            L += [("green", stripes.intersection(pole))]
+            L += [("deep", wreath), ("green", U(*[ell(cx + x, 252 + (2 if i % 2 else -2), 4.5, 3, 30 * (1 if i % 2 else -1)) for i, x in enumerate(np.linspace(-19, 19, 9))]))]
+            L += [("yellow", ribbons), ("yellow", crown), ("white", Point(cx, 272).buffer(3, 24))]
+            L += [("steel", line([(cx + 7, 214), (cx + 14, 214), (cx + 14, 207)], 2))]
+            L += [("brown", prz), ("white", U(*[Point(cx + 14 + x, 196 + z).buffer(1, 12) for x, z in ((-10, -6), (-4, -12), (6, -10), (11, -3), (-12, 3), (2, 6), (9, 6))]).intersection(prz))]
+            L += [("glass", body), ("beer", beer), ("glass", dimples.intersection(beer)), ("foam", foam), ("glass", handle)]
+        return outline, L
+
+    def topper():
+        # A gingerbread heart with the logo in the icing, on a green board with wheat to the left and hops to the right.
+        # Everything sits on one solid piece: the wheat and hops are inlays in the board, not loose shapes, so nothing
+        # sticks out thinner than the heart's own lobes.
+        heart = heart_shape(0, 22, 186, 152)
+        wl = [wheat((-84, 30), (-92, 104), 14, 6), wheat((-90, 30), (-106, 96), 14, 6), wheat((-96, 30), (-114, 78), 13, 6)]
+        hops = [hop(98, 98, 28, 8), hop(110, 70, 24, -8), hop(88, 62, 22, 14)]
+        leaf_r = U(leaf(100, 102, 20, 16, -28), leaf(92, 98, 18, 14, 42))
+        left = U(*[U(a, b) for a, b in wl], box(-HW, 0, -70, 30)).convex_hull.buffer(5)
+        right = U(*[h[0] for h in hops], leaf_r, box(70, 0, HW, 30)).convex_hull.buffer(5)
+        board = U(left, right, box(-HW, 0, HW, 34)).convex_hull
+        outline = U(board, heart.buffer(3)).buffer(6).buffer(-6)
+        outline = outline.intersection(box(-HW - 14, 0, HW + 14, 190))
+        L = [("base", outline), ("deep", board.buffer(-3).difference(heart.buffer(3))), ("ginger", heart)]
+        # Piped icing: a scalloped white border just inside the edge, and dots of sugar inside it.
+        edge = heart.buffer(-5).exterior
+        L += [("white", U(edge.buffer(1.4), bulbs_along(edge, 8, 2.4)))]
+        L += [("yellow", bulbs_along(heart.buffer(-10).exterior, 13, 1.6))]
+        L += heidis_logo((-74, 66, 74, 156))
+        L += [("green", leaf_r), ("base", line([(98, 98), (108, 74)], 1.6))]
+        for a, b in wl:
+            L += [("brown", a), ("yellow", b)]
+        for cone, edges, stem in hops:
+            L += [("hop", cone), ("green", edges), ("base", stem)]
+        L += [("green", box(-HW + 4, 4, HW - 4, 26)), ("yellow", text("AFTERSKI  ·  BIER  ·  PROST", "lilita-one", 0, 15, 10, 186))]
+        return outline, L
+
+    def screen(w, h):
+        L = [("green", box(0, 0, w, h))]
+        rng = random.Random(6)
+        # Sun rays from behind the mountains, the Alps with snow, a row of chalets and bunting over it all.
+        rays = U(*[Polygon([(w / 2, 300), (w / 2 + 900 * math.cos(math.radians(a - 4)), 300 + 900 * math.sin(math.radians(a - 4))),
+                            (w / 2 + 900 * math.cos(math.radians(a + 4)), 300 + 900 * math.sin(math.radians(a + 4)))]) for a in range(10, 180, 16)])
+        L += [("sky", rays.intersection(box(0, 0, w, h)))]
+        far = Polygon([(-10, 220), (60, 380), (130, 330), (230, 470), (320, 360), (420, 430), (520, 340), (610, 400), (610, 220)])
+        L += [("deep", far), ("white", far.intersection(U(Polygon([(180, 400), (230, 470), (280, 400), (255, 410), (232, 395), (208, 412)]).buffer(0),
+                                                        Polygon([(385, 395), (420, 430), (460, 395), (440, 400), (420, 388), (402, 402)]).buffer(0),
+                                                        Polygon([(30, 320), (60, 380), (95, 345), (75, 352), (58, 340), (44, 350)]).buffer(0))))]
+        L += [("base", hills_poly(0, w, 250, 14, 1.2, rng))]
+        for x in (78, w - 78):
+            house = U(box(x - 34, 150, x + 34, 210), Polygon([(x - 44, 206), (x, 240), (x + 44, 206)]))
+            L += [("ginger", house), ("brown", Polygon([(x - 46, 204), (x, 242), (x + 46, 204), (x + 46, 212), (x, 250), (x - 46, 212)])),
+                  ("yellow", U(box(x - 22, 176, x - 8, 194), box(x + 8, 176, x + 22, 194))), ("white", box(x - 34, 166, x + 34, 170))]
+        L += [("white", hills_poly(0, w, 140, 8, 2.0, rng)), ("deep", box(0, 0, w, 60))]
+        for z, n in ((900, 7), (840, 6)):
+            rope, flags = pennants(-10, w + 10, z, n, 38, 22)
+            L += [("white", rope.buffer(1.6))] + [(("yellow", "white")[i % 2], f) for i, f in enumerate(flags)]
+        L += [("yellow", text("AFTERSKI HVER WEEKEND", "lilita-one", w / 2, 452, 26, w * 0.7))]
+        return L
+
+    return dict(name="Heidi's Bier Bar", place="Aalborg · Aarhus · København · Herning · Sønderborg · Thisted", font="lilita-one", pal=pal, unit="gen2",
+                filament={"base": "PETG HF dark green", "green": "PETG HF green", "deep": "PETG HF forest green", "yellow": "PETG HF yellow",
+                          "white": "PETG HF white", "brown": "PETG HF brown", "ginger": "PETG HF light brown", "beer": "PETG HF orange",
+                          "foam": "PETG HF cream", "glass": "PETG HF mint", "steel": "PETG HF silver", "sky": "PETG HF green", "hop": "PETG HF lime"},
+                casing="#00572a", ring={"idle": ["#fccd28", "#fff6dc"], "glow": "#fccd28"},
+                screen=dict(bg="green", ink="white", accent="yellow", cta="Sig «Prost!»",
+                            ticker="Heidi's Bier Bar  •  Afterski & Oktoberfest  •  Aalborg · Aarhus · København · Herning · Sønderborg · Thisted  •  Prost!  •"),
+                frame=dict(bg="green", ink="yellow", caption="Prost!"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: heidis_logo((-60, 0, 60, 120)),
+                logo_png=dict(file="heidis-source.png", screen=(300, 772, 370), frame=(40, 170, 150)))
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 

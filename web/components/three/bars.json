@@ -111,6 +111,46 @@
     "unit": "gen2"
   },
   {
+    "id": "heidis",
+    "name": "Heidi's Bier Bar",
+    "place": "Aalborg · Aarhus · København · Herning · Sønderborg · Thisted",
+    "palette": {
+      "base": "#00572a",
+      "green": "#006a31",
+      "deep": "#023d1e",
+      "yellow": "#fccd28",
+      "white": "#fbfaf4",
+      "brown": "#734c1e",
+      "ginger": "#a5642b",
+      "beer": "#f0a524",
+      "foam": "#fff6dc",
+      "glass": "#cfe6d8",
+      "steel": "#9aa3a0",
+      "sky": "#0b7a3c",
+      "hop": "#8dbb3c"
+    },
+    "casing": "#00572a",
+    "ring": {
+      "idle": [
+        "#fccd28",
+        "#fff6dc"
+      ],
+      "glow": "#fccd28"
+    },
+    "frame": {
+      "bg": "green",
+      "ink": "yellow",
+      "caption": "Prost!"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
+  },
+  {
     "id": "meny",
     "name": "MENY Fjerritslev",
     "place": "Fjerritslev",
