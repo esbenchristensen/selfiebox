@@ -5,8 +5,9 @@ import { Viewer } from "@/components/katalog/Viewer";
 import "@/components/katalog/katalog.css";
 import "./palads.css";
 import { Box3D } from "./Box3D";
+import { KatVideo } from "@/components/katalog/KatVideo";
 
-// selfi.dk/erhverv/palads: the sales catalogue for Palads Teatret in Frederikshavn, fourteen A4 pages that
+// selfi.dk/erhverv/palads: the sales catalogue for Palads Teatret in Frederikshavn, fifteen A4 pages that
 // print to a PDF. The box is shown only in the Palads design on the gen 2 unit (an art deco marquee with the
 // name in bulbs, a BIO blade sign over a popcorn box and a film strip). The idea that sells it: a photo frame
 // for every premiere, so each shared photo advertises the film and the distributor can pay for it. No prices:
@@ -105,6 +106,15 @@ const CASES: { title: string; angle: string; text: string; gain: string }[] = [
   { title: "Månedens publikumsfoto", angle: "Konkurrence", text: "Alle billeder i måneden er med i lodtrækningen om fribilletter og popcorn. Vinderen vises på jeres SoMe og i foyeren.", gain: "Gæster, der tager et billede hver gang" },
 ];
 
+// What happens in the film, and when.
+const CHAPTERS: [string, string][] = [
+  ["0:00", "Premiereaften uden afsender"],
+  ["0:08", "Biografskiltet og »Sig Popcorn!«"],
+  ["0:23", "En ny ramme til hver premiere"],
+  ["0:34", "Filmudlejeren betaler rammen"],
+  ["0:40", "Anmeldelser og rammer hele året"],
+];
+
 function Case({ c }: { c: (typeof CASES)[number] }) {
   return (
     <div className="kat-case">
@@ -159,8 +169,27 @@ export default function PaladsKatalog() {
           <Folio n={2} />
         </Page>
 
-        {/* 03 SÅDAN VIRKER DEN */}
-        <Page n={3} cap="Sådan virker den" dark>
+        {/* 03 FILMEN */}
+        <Page n={3} cap="Filmen" dark>
+          <Curtain />
+          <span className="kat-kicker">Filmen</span>
+          <h2>Premiereaften i Palads, på et minut</h2>
+          <p className="kat-lede">Idéen fortalt fra foyeren til feedet: boksen som biografskilt, premiererammen, som filmudlejeren betaler for, og publikums anmeldelser på video. Tryk på filmen for at se den med lyd.</p>
+          <KatVideo src="/video/selfi-palads-wide" title="Selfi × Palads Teatret, filmen" />
+          <div className="kat-chapters">
+            {CHAPTERS.map(([t, x]) => (
+              <div key={t}><b>{t}</b><span>{x}</span></div>
+            ))}
+          </div>
+          <p className="kat-fine kat-push" style={{ marginBottom: 110 }}>
+            Filmtitlerne, opslaget og tallene i filmen er eksempler.
+          </p>
+          <Bulbs />
+          <Folio n={3} />
+        </Page>
+
+        {/* 04 SÅDAN VIRKER DEN */}
+        <Page n={4} cap="Sådan virker den" dark>
           <span className="kat-kicker">Sådan virker den</span>
           <h2>Fire trin fra popcorn til opslag</h2>
           <p className="kat-lede">Publikum klarer det selv. Intet personale, ingen app, intet login. Det virker også, når foyeren er fuld lige før filmen.</p>
@@ -174,11 +203,11 @@ export default function PaladsKatalog() {
             <div><b>3</b><h3>Sig »Popcorn!«</h3><p>Ringen tæller ned og giver studielys, også i den mørke foyer.</p></div>
             <div><b>4</b><h3>Del</h3><p>En QR-kode sender det til telefonen med filmens ramme.</p></div>
           </div>
-          <Folio n={3} />
+          <Folio n={4} />
         </Page>
 
-        {/* 04 DESIGNET */}
-        <Page n={4} cap="Designet" dark>
+        {/* 05 DESIGNET */}
+        <Page n={5} cap="Designet" dark>
           <Curtain />
           <span className="kat-kicker">Designet</span>
           <h2>Biografskiltet, BIO og filmen</h2>
@@ -208,11 +237,11 @@ export default function PaladsKatalog() {
             Konceptdesign udarbejdet til Palads Teatret. Navn og logo bruges kun med jeres tilladelse.
           </p>
           <Bulbs />
-          <Folio n={4} />
+          <Folio n={5} />
         </Page>
 
-        {/* 05 I 3D */}
-        <Page n={5} cap="Boksen i 3D" dark>
+        {/* 06 I 3D */}
+        <Page n={6} cap="Boksen i 3D" dark>
           <Curtain />
           <span className="kat-kicker">Boksen i 3D</span>
           <h2>Se den fra alle sider</h2>
@@ -227,11 +256,11 @@ export default function PaladsKatalog() {
             <img className="kat-box" src={`${IMG}/boks-palads-skraa-hoejre.png`} alt="Palads-boksen set skråt fra højre med BIO-skiltet forrest" />
           </div>
           <Bulbs />
-          <Folio n={5} />
+          <Folio n={6} />
         </Page>
 
-        {/* 06 PREMIERERAMMEN */}
-        <Page n={6} cap="Premiererammen">
+        {/* 07 PREMIERERAMMEN */}
+        <Page n={7} cap="Premiererammen">
           <span className="kat-kicker">Premiererammen</span>
           <h2>Hvert foto er en reklame for filmen</h2>
           <p className="kat-lede">Til hver stor premiere får boksen en ny ramme med filmens titel og premieredato. Når publikum deler deres billede, deler de også reklamen for filmen, og det er noget, filmudlejeren gerne betaler for.</p>
@@ -253,11 +282,11 @@ export default function PaladsKatalog() {
             <div><b>3</b><h3>I får tallene</h3><p>Fotos, delinger og visninger, så filmudlejeren kan se, hvad rammen gav.</p></div>
           </div>
           <Bulbs height={22} />
-          <Folio n={6} />
+          <Folio n={7} />
         </Page>
 
-        {/* 07 BRANDING */}
-        <Page n={7} cap="Branding">
+        {/* 08 BRANDING */}
+        <Page n={8} cap="Branding">
           <span className="kat-kicker">Branding</span>
           <h2>Palads på hvert opslag</h2>
           <p className="kat-lede">Alt, der kommer ud af boksen, bærer jeres ramme. Når publikum deler på Instagram, TikTok og Snapchat, følger filmen og Palads med ud i deres feeds.</p>
@@ -289,11 +318,11 @@ export default function PaladsKatalog() {
           </div>
           <p className="kat-fine kat-push" style={{ marginBottom: 80 }}>Eksempel på et opslag. Navn og tal er opdigtede.</p>
           <Bulbs height={18} />
-          <Folio n={7} />
+          <Folio n={8} />
         </Page>
 
-        {/* 08 ANMELDELSER PÅ VIDEO */}
-        <Page n={8} cap="Anmeldelser på video" dark>
+        {/* 09 ANMELDELSER PÅ VIDEO */}
+        <Page n={9} cap="Anmeldelser på video" dark>
           <span className="kat-kicker">Anmeldelser på video</span>
           <h2>»Den skal du se!«</h2>
           <p className="kat-lede">Boksen har mikrofon og optager korte videoer. På vej ud af salen giver publikum filmen stjerner og siger, hvad de synes. Jeres intro og ramme sidder på hver video.</p>
@@ -318,11 +347,11 @@ export default function PaladsKatalog() {
             <div>Lyd<span>Mikrofon med støjfilter til en fuld foyer</span></div>
             <div>Ramme<span>Jeres intro, logo og filmens titel på hver video</span></div>
           </div>
-          <Folio n={8} />
+          <Folio n={9} />
         </Page>
 
-        {/* 09 PUBLIKUMS HISTORIER */}
-        <Page n={9} cap="Publikums historier">
+        {/* 10 PUBLIKUMS HISTORIER */}
+        <Page n={10} cap="Publikums historier">
           <span className="kat-kicker">Publikums historier</span>
           <h2>Publikum laver jeres content</h2>
           <p className="kat-lede">Skærmen stiller et spørgsmål, og gæsten svarer på video. Med deres samtykke bliver svarene til biografens content, uden at I selv skal filme.</p>
@@ -344,11 +373,11 @@ export default function PaladsKatalog() {
             <blockquote>»Seks stjerner. Og saltede popcorn, selvfølgelig.«<span>Eksempel på et svar</span></blockquote>
           </div>
           <Bulbs height={18} />
-          <Folio n={9} />
+          <Folio n={10} />
         </Page>
 
-        {/* 10 CASES 1 */}
-        <Page n={10} cap="Cases" dark>
+        {/* 11 CASES 1 */}
+        <Page n={11} cap="Cases" dark>
           <span className="kat-kicker">Cases · 1 af 2</span>
           <h2>Ti måder at bruge boksene på</h2>
           <p className="kat-lede">Aktiviteterne tilpasses Palads og jeres publikum. Her er de første fem.</p>
@@ -357,11 +386,11 @@ export default function PaladsKatalog() {
               <Case key={c.title} c={c} />
             ))}
           </div>
-          <Folio n={10} />
+          <Folio n={11} />
         </Page>
 
-        {/* 11 CASES 2 */}
-        <Page n={11} cap="Cases" dark>
+        {/* 12 CASES 2 */}
+        <Page n={12} cap="Cases" dark>
           <span className="kat-kicker">Cases · 2 af 2</span>
           <h2>Og fem mere</h2>
           <p className="kat-lede">Alle cases kan kombineres, og I kan skifte mellem dem fra film til film.</p>
@@ -370,11 +399,11 @@ export default function PaladsKatalog() {
               <Case key={c.title} c={c} />
             ))}
           </div>
-          <Folio n={11} />
+          <Folio n={12} />
         </Page>
 
-        {/* 12 KONTROLPANEL */}
-        <Page n={12} cap="Kontrolpanelet">
+        {/* 13 KONTROLPANEL */}
+        <Page n={13} cap="Kontrolpanelet">
           <span className="kat-kicker">Kontrolpanelet</span>
           <h2>Hele premiereaftenen på én skærm</h2>
           <p className="kat-lede">Følg fotos, videoer og delinger live, hent publikums klip, skift ramme og spørgsmål, og vis filmudlejeren, hvad premiererammen gav.</p>
@@ -412,11 +441,11 @@ export default function PaladsKatalog() {
             Eksempel med opdigtede tal. Klip vises først, når gæsten har givet samtykke.
           </p>
           <Bulbs height={18} />
-          <Folio n={12} />
+          <Folio n={13} />
         </Page>
 
-        {/* 13 OPSÆTNING */}
-        <Page n={13} cap="Opsætning">
+        {/* 14 OPSÆTNING */}
+        <Page n={14} cap="Opsætning">
           <span className="kat-kicker">Opsætning og drift</span>
           <h2>Hvor boksene står i biografen</h2>
           <p className="kat-lede">Boksene hænger på væggen eller står på en stander. Vi monterer, passer og opdaterer dem, så I kun skal tænke på filmene.</p>
@@ -437,11 +466,11 @@ export default function PaladsKatalog() {
             <div>Service<span>Vi passer boksene og skifter ramme til hver premiere</span></div>
           </div>
           <Bulbs height={18} />
-          <Folio n={13} />
+          <Folio n={14} />
         </Page>
 
-        {/* 14 BAGSIDE */}
-        <Page n={14} cap="Bagside" dark>
+        {/* 15 BAGSIDE */}
+        <Page n={15} cap="Bagside" dark>
           <Curtain />
           <span className="kat-kicker">Næste skridt</span>
           <h2>Lad os bygge jeres boks</h2>
@@ -460,7 +489,7 @@ export default function PaladsKatalog() {
             <Lockup size={40} />
           </div>
           <Bulbs />
-          <Folio n={14} />
+          <Folio n={15} />
         </Page>
       </Viewer>
     </div>

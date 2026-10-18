@@ -202,6 +202,14 @@
 .kat-panel .theme .kat-sw { margin-top: 0; }
 .kat-panel .btn { margin-left: auto; background: #121412; color: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12px; }
 
+/* ---------- film (components/katalog/KatVideo.tsx) ---------- */
+.kat-video { margin: 22px 0 0; flex: none; }
+.kat-video video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 18px; background: #000; object-fit: cover; box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.6); }
+.kat-video-print { display: none; }
+.kat-chapters { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 18px; }
+.kat-chapters div { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.06); font-size: 12.5px; line-height: 1.35; }
+.kat-chapters b { font: 600 13px var(--font-mono), monospace; color: var(--k-lime); }
+
 /* ---------- print ---------- */
 @page { size: A4; margin: 0; }
 @media print {
@@ -211,4 +219,5 @@
   .kat-slot { zoom: 1 !important; break-after: page; page-break-after: always; }
   .kat-slot:last-child { break-after: auto; page-break-after: auto; }
   .kat-pg { box-shadow: none; width: 210mm; height: 297mm; }
+  .kat-video-print { display: block; margin-top: 10px; font-size: 12px; opacity: 0.8; }
 }
