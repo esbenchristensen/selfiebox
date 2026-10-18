@@ -1,6 +1,6 @@
 # selfi.dk
 
-Landingssiden for Selfi Boks. Next.js (App Router), ingen andre afhængigheder. Design og tekst følger Selfis brandguide.
+Landingssiden for Selfi Boks. Next.js (App Router). MongoDB bruges kun til katalogerne. Design og tekst følger Selfis brandguide.
 
 ## Kør lokalt
 
@@ -25,6 +25,7 @@ npm run lint       # typecheck
 | `app/api/kontakt/route.ts` | Kontaktformularen |
 | `components/three/` | 3D-boksen (React Three Fiber): den rigtige Halo-kasse og stedernes printede dele. `venues.json` er stederne, `themes.ts` er privattemaerne |
 | `public/models/` | 3D-modeller, skærme, fotorammer og logoer. Bygges fra hardware-branchen, se nedenfor |
+| `app/kataloger/[slug]/` | Kataloger fra MongoDB, se nedenfor |
 | `components/Outline.tsx` | Stregtegninger af boksen: sort streg med grønne detaljer |
 
 ## Før lancering
@@ -34,6 +35,23 @@ npm run lint       # typecheck
 - **Fotos:** sektionerne Fotoet, fotobåndet og Privat bruger pladsholdere (`.ph`). Erstat dem med rigtige fotos, når de findes, og kun med samtykke.
 - **Temaer i 3D:** designene til Smukfest, Roskilde, Nibe, Fårup, LEGOLAND og Aalborg Zoo er konceptdesigns uden aftale med stederne. Få en tilladelse, eller skift dem ud med rigtige kunder, før siden bruges i markedsføring.
 - **Juridisk:** cookie- og privatlivstekst mangler, hvis der tilføjes analyse eller tracking.
+
+## Kataloger fra databasen
+
+Salgskataloger ligger i MongoDB og vises på `selfi.dk/kataloger/<slug>`. Et nyt eller rettet katalog er online, så snart det er gemt, uden at siden skal deployes. Siderne er skjult for Google og står ikke i menuen eller sitemap.
+
+1. Sæt `MONGODB_URI` i Vercel (og i `web/.env.local` på din egen maskine, se `.env.example`). Uden den viser alle katalog-URL'er en pæn "ikke tilgængeligt"-side.
+2. Læg et katalog ind:
+
+```bash
+cd web
+node scripts/katalog.mjs gem smukfest-2027 kataloger/smukfest.html --titel "Selfi × Smukfest | Salgskatalog" --udloeber 2027-12-31
+node scripts/katalog.mjs liste
+node scripts/katalog.mjs skjul smukfest-2027   # viser 404 igen
+node scripts/katalog.mjs slet smukfest-2027
+```
+
+Et katalog er HTML med én `<div class="kat-slot"><section class="kat-pg">…</section></div>` pr. A4-side. Det får stylingen fra `components/katalog/katalog.css`, og `--css fil.css` lægger katalogets egne regler ovenpå. `kataloger/smukfest.html` er Smukfest-kataloget fra `/events/smukfest` i det format, klar til at lægge ind. `--udloeber` gør linket dødt efter datoen, `--index` lader Google finde det. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
 
 ## Hosting på Vercel
 

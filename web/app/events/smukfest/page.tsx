@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { Logo } from "@/components/Logo";
-import { Viewer } from "./Viewer";
-import "./katalog.css";
+import { Viewer } from "@/components/katalog/Viewer";
+import "@/components/katalog/katalog.css";
 
 // selfi.dk/events/smukfest: the sales catalogue for Smukfest, twelve A4 pages that print to a PDF.
 // The box is shown only in the Smukfest design from the showroom on /events. No prices: they are agreed per deal.
