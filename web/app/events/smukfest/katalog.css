@@ -79,18 +79,6 @@
 .kat-theme { display: grid; grid-template-columns: 290px 1fr; gap: 34px; align-items: center; margin-top: 6px; }
 .kat-theme .kat-box { width: 100%; }
 
-/* photos and drawings */
-.kat-photo { border-radius: 30px; overflow: hidden; background: #111; }
-.kat-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.kat-drawing { border-radius: 24px; background: #fff; padding: 16px; display: grid; place-items: center; }
-.kat-drawing img { display: block; width: 100%; height: auto; }
-.kat-duo { display: grid; grid-template-columns: 1fr 1.25fr; gap: 16px; height: 420px; margin-top: 4px; }
-.kat-duo .kat-drawing { height: 100%; }
-.kat-duo .kat-drawing img { height: 100%; object-fit: contain; }
-.kat-setup { display: flex; flex-direction: column; gap: 24px; margin-top: 4px; }
-.kat-setup .kat-drawing { height: 380px; }
-.kat-setup .kat-drawing img { height: 348px; width: auto; max-width: 100%; object-fit: contain; }
-.kat-setup .kat-places { grid-template-columns: 1fr 1fr; gap: 18px 26px; }
 
 /* steps, specs, layers, tables */
 .kat-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
@@ -114,27 +102,11 @@
 .kat-sign { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
 .kat-sign b { font: 600 20px/1.2 var(--font-display), sans-serif; }
 .kat-pg .kat-quote { font: 600 46px/1.02 var(--font-display), sans-serif; letter-spacing: -0.035em; max-width: 14ch; margin-top: auto; color: var(--k-forest); }
-.kat-hero-num { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; }
-.kat-big { font: 500 92px/1 var(--font-display), sans-serif; letter-spacing: -0.045em; font-variant-numeric: tabular-nums; color: var(--k-money); }
-.kat-big sup { font-size: 0.3em; opacity: 0.7; margin-left: 4px; vertical-align: top; position: relative; top: 0.35em; }
-.kat-sub { font-size: 14px; opacity: 0.75; }
-.kat-ptable { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
-.kat-ptable th { text-align: right; font: 400 10.5px/1.3 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.65; padding: 9px 0; border-bottom: 1.5px solid currentColor; }
-.kat-ptable th:first-child, .kat-ptable td:first-child { text-align: left; }
-.kat-ptable td { text-align: right; padding: 11px 0; border-bottom: 1px solid var(--k-line-light); }
-.kat-ptable td.money { color: var(--k-money); font-weight: 600; }
-.kat-ptable tr.hl td { background: rgba(156, 201, 74, 0.2); }
-.kat-incl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; font-size: 14px; }
-.kat-incl li { padding: 10px 0; border-top: 1px solid var(--k-line-light); display: flex; justify-content: space-between; gap: 12px; }
-.kat-incl li span:last-child { font: 400 12px/1.4 var(--font-mono), monospace; opacity: 0.75; white-space: nowrap; }
 
-/* the print */
-.kat-print-wrap { flex: 1; display: grid; place-items: center; }
-.kat-print { width: 430px; height: auto; display: block; transform: rotate(-3deg); border-radius: 3px; box-shadow: 0 22px 48px rgba(15, 42, 26, 0.35); }
 
 /* activities */
 .kat-screen-wrap { flex: 1; display: grid; place-items: center; min-height: 0; }
-.kat-screen { height: 100%; max-height: 380px; width: auto; display: block; border-radius: 18px; border: 10px solid #101211; box-shadow: 0 0 0 6px var(--k-cream), 0 0 40px 8px rgba(156, 201, 74, 0.35); }
+.kat-screen { height: 100%; max-height: 470px; width: auto; display: block; border-radius: 18px; border: 10px solid #101211; box-shadow: 0 0 0 6px var(--k-cream), 0 0 40px 8px rgba(156, 201, 74, 0.35); }
 .kat-acts { display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; }
 .kat-acts div { display: flex; gap: 14px; align-items: center; border-top: 1px solid var(--k-line-dark); padding: 14px 0; }
 .kat-acts svg { width: 30px; height: 30px; flex: none; color: var(--k-lime); }
@@ -142,7 +114,60 @@
 .kat-acts b { font: 600 16px/1.2 var(--font-display), sans-serif; display: block; }
 .kat-acts small { font-size: 12.5px; opacity: 0.72; }
 
+.kat-steps--4 { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.kat-steps--light b { color: var(--k-forest); }
+
+/* branding */
+.kat-brand { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: center; margin-top: 8px; }
+.kat-phone { background: #fff; color: #121412; border-radius: 34px; padding: 14px 12px 16px; border: 8px solid #101211; box-shadow: 0 24px 48px rgba(15, 42, 26, 0.3); transform: rotate(-2deg); display: flex; flex-direction: column; gap: 10px; }
+.kat-phone img { display: block; width: 100%; height: auto; }
+.kat-phone-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.kat-phone-bar i { width: 26px; height: 26px; border-radius: 50%; background: conic-gradient(var(--k-red), var(--k-lime), var(--k-red)); display: block; }
+.kat-phone-bar span { display: flex; flex-direction: column; line-height: 1.2; }
+.kat-phone-bar small { font-size: 10px; color: #5c615b; }
+.kat-phone-foot { font-size: 11.5px; display: flex; flex-direction: column; gap: 4px; }
+.kat-pg .kat-phone-foot p { font-size: 11.5px; }
+.kat-phone-heart { color: var(--k-red); }
+.kat-points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.kat-points li { display: flex; flex-direction: column; gap: 3px; padding: 12px 0; border-top: 1px solid var(--k-line-light); font-size: 13.5px; line-height: 1.4; }
+.kat-points b { font: 600 17px/1.2 var(--font-display), sans-serif; }
+
+/* video greetings */
+.kat-rec { display: grid; grid-template-columns: 250px 1fr; gap: 34px; align-items: center; margin-top: 4px; }
+.kat-rec-screen { aspect-ratio: 10 / 16; border-radius: 18px; border: 10px solid #101211; box-shadow: 0 0 0 6px var(--k-cream), 0 0 40px 8px rgba(226, 0, 26, 0.3);
+  background: radial-gradient(circle at 50% 42%, rgba(246, 238, 220, 0.18), transparent 55%), linear-gradient(160deg, #2b5a3a, #0f3d24 60%, #0a2a18); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 16px 14px; text-align: center; }
+.kat-rec-top { font: 500 10.5px/1 var(--font-mono), monospace; letter-spacing: 0.08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.35); padding: 6px 10px; border-radius: 999px; }
+.kat-rec-top i { width: 8px; height: 8px; border-radius: 50%; background: var(--k-red); display: block; }
+.kat-rec-q { font: 700 19px/1.15 var(--font-partner), sans-serif; text-wrap: balance; }
+.kat-rec-heart { font-size: 40px; color: var(--k-red); line-height: 1; }
+.kat-rec-bar { width: 100%; height: 6px; border-radius: 3px; background: rgba(246, 238, 220, 0.25); overflow: hidden; }
+.kat-rec-bar i { display: block; width: 46%; height: 100%; background: var(--k-red); }
+.kat-rec .kat-places div { border-top-color: var(--k-line-dark); }
+
+/* testimonials */
+.kat-qs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.kat-qs span { font: 700 17px/1.2 var(--font-partner), sans-serif; padding: 14px 18px; border-radius: 20px; background: var(--k-base); color: var(--k-cream); }
+.kat-qs span:nth-child(3n + 2) { background: var(--k-red); }
+.kat-qs span:nth-child(3n) { background: var(--k-lime); color: var(--k-ink); }
+.kat-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.kat-quotes blockquote { margin: 0; font: 600 24px/1.2 var(--font-display), sans-serif; letter-spacing: -0.02em; color: var(--k-forest); display: flex; flex-direction: column; gap: 8px; }
+.kat-quotes blockquote span { font: 400 10.5px/1.3 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--k-ink); opacity: 0.6; }
+
+/* cases */
+.kat-cases { display: flex; flex-direction: column; margin-top: 6px; }
+.kat-case { display: grid; grid-template-columns: 110px 1fr; grid-template-areas: "tag title" "tag text" "tag gain"; column-gap: 20px; row-gap: 5px; padding: 18px 0; border-top: 1px solid var(--k-line-dark); }
+.kat-tag { grid-area: tag; align-self: start; justify-self: start; font: 500 10.5px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; background: rgba(156, 201, 74, 0.16); color: var(--k-lime); }
+.kat-case h3 { grid-area: title; }
+.kat-case p { grid-area: text; opacity: 0.85; max-width: 56ch; }
+.kat-gain { grid-area: gain; font-size: 13px; color: var(--k-lime); }
+.kat-gain::before { content: "→ "; }
+
 /* setup */
+.kat-setup2 { display: grid; grid-template-columns: 250px 1fr; gap: 34px; align-items: center; margin-top: 4px; }
+.kat-setup2 .kat-box { width: 100%; filter: drop-shadow(0 18px 24px rgba(15, 42, 26, 0.3)); }
+.kat-panel .tiles.tiles--4 { grid-template-columns: repeat(4, 1fr); }
+
+/* places */
 .kat-places { display: grid; gap: 14px; }
 .kat-places div { border-top: 1.5px solid currentColor; padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
 .kat-places p { font-size: 13px; opacity: 0.85; }
