@@ -1,7 +1,7 @@
 /* Selfi × Heidi's Bier Bar: the shared catalogue styles in the bar's colours. Heidi's green and yellow, the
    white of the maypole and gingerbread brown. The same rules sit in kataloger/heidis.css for the copy that
    lives in the database. */
-.kat--heidis {
+.kat.kat--heidis {
   --k-night: #023d1e;
   --k-base: #00572a;
   --k-forest: #006a31;
