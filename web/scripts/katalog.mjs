@@ -39,7 +39,12 @@ if (!process.env.MONGODB_URI) die("MONGODB_URI mangler. Sæt den i miljøet elle
 
 const client = await new MongoClient(process.env.MONGODB_URI).connect();
 const col = client.db(process.env.MONGODB_DB || "selfi").collection("kataloger");
-await col.createIndex({ slug: 1 }, { unique: true });
+// A plain slug_1 index (e.g. made by hand in Atlas) blocks the unique one, so it is swapped out.
+await col.createIndex({ slug: 1 }, { unique: true }).catch(async (e) => {
+  if (e.code !== 85 && e.code !== 86) throw e;
+  await col.dropIndex("slug_1");
+  await col.createIndex({ slug: 1 }, { unique: true });
+});
 const site = process.env.SITE_URL || "https://selfi.dk";
 
 try {

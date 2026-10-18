@@ -40,7 +40,7 @@ npm run lint       # typecheck
 
 Salgskataloger ligger i MongoDB og vises på `selfi.dk/kataloger/<slug>`. Et nyt eller rettet katalog er online, så snart det er gemt, uden at siden skal deployes. Siderne er skjult for Google og står ikke i menuen eller sitemap.
 
-1. Sæt `MONGODB_URI` i Vercel (og i `web/.env.local` på din egen maskine, se `.env.example`). Uden den viser alle katalog-URL'er en pæn "ikke tilgængeligt"-side.
+1. Sæt `MONGODB_URI` i Vercel (og i `web/.env.local` på din egen maskine, se `.env.example`). Uden den viser alle katalog-URL'er en pæn "ikke tilgængeligt"-side. Vercel læser kun miljøvariabler ved deploy, så redeploy efter du har sat eller ændret den. Giv Vercel en databasebruger med kun `read` på databasen `selfi`; brugeren med skriveadgang hører kun til i `.env.local` til scriptet.
 2. Læg et katalog ind:
 
 ```bash
