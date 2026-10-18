@@ -25,9 +25,9 @@ SAMPLES, SIZE = ns["SAMPLES"], ns["SIZE"]
 shots = [s for s in ns["shots"] if s in ("main", "module", "pair", "side", "cut", "exploded")] or ["main", "module", "exploded", "pair", "side", "cut"]
 
 # gen 2 geometry (mm, OpenSCAD frame): see gen2_concept.scad
-W, H, D = 234, 306, 85
+W, H, D = 222.5, 306, 85
 HP = 147                  # module height below the main unit
-CHEEK = 60
+CHEEK = 34
 GC, GLASS_Y, VIEW = 151.85, 3.7, (136.4, 217.6)
 
 ROLE = {"bezel": "body", "diffuser": "diff", "shell": "body", "shell_band": "band", "display": "glass", "camera": "lens",
