@@ -33,7 +33,7 @@ const kr = (n: number) => n.toLocaleString("da-DK");
 
 // Hearts scattered on the dark pages, at fixed spots so screen and print look the same.
 const HEARTS: [number, number, number][] = [
-  [8, 6, 14], [22, 14, 9], [84, 9, 12], [70, 4, 8], [92, 22, 10], [14, 30, 8], [62, 18, 7], [40, 8, 7], [78, 34, 9], [5, 44, 7],
+  [4, 17, 12], [22, 14, 9], [84, 9, 12], [70, 4, 8], [92, 22, 10], [14, 30, 8], [62, 18, 7], [40, 8, 7], [78, 34, 9], [5, 44, 7],
 ];
 
 function Hearts({ n = HEARTS.length }: { n?: number }) {
