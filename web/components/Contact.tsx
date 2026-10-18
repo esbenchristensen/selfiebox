@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { OutlineStand, OutlineWall } from "./Outline";
+import { OutlineWall } from "./Outline";
 
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "error"; message: string };
 
-// The page decides the audience. Private hosts mostly book in the calendar, so their
-// form is for questions; venues have no calendar, so this form is how they buy.
-export function Contact({ type }: { type: "erhverv" | "events" | "privat" }) {
+// Places buy through a conversation, so this form is how they get in touch. `topic` tells us which page they wrote from.
+export function Contact({ topic }: { topic?: string }) {
   const [state, setState] = useState<State>({ kind: "idle" });
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -18,7 +17,7 @@ export function Contact({ type }: { type: "erhverv" | "events" | "privat" }) {
       const res = await fetch("/api/kontakt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, type }),
+        body: JSON.stringify({ ...data, type: "erhverv", topic }),
       });
       const body = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) throw new Error(body.error ?? "Beskeden blev ikke sendt. Prøv igen om lidt.");
@@ -33,35 +32,15 @@ export function Contact({ type }: { type: "erhverv" | "events" | "privat" }) {
       <div className="wrap contact">
         <div className="sec-head" style={{ marginBottom: 0 }}>
           <span className="label">Kontakt</span>
-          {type === "events" ? (
-            <>
-              <h2 id="contact-title" className="h-l">
-                Fortæl os om jeres park, festival eller zoo.
-              </h2>
-              <p className="lede">
-                Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om tema, antal bokse og aktiviteter. Er I en bar eller et værtshus, kan I <a href="/erhverv">se vores løsning til barer her</a>.
-              </p>
-            </>
-          ) : type === "erhverv" ? (
-            <>
-              <h2 id="contact-title" className="h-l">
-                Fortæl os om jeres sted.
-              </h2>
-              <p className="lede">
-                Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om, hvor boksen skal hænge, og hvad den skal gøre for jer. Skal I kun bruge en boks til én fest, kan I <a href="/#book">leje den her</a>.
-              </p>
-            </>
-          ) : (
-            <>
-              <h2 id="contact-title" className="h-l">
-                Spørgsmål før I booker?
-              </h2>
-              <p className="lede">
-                Skriv et par linjer, så svarer vi på mail. Ledige datoer og priser kan I se direkte i <a href="#book">bookingkalenderen</a>.
-              </p>
-            </>
-          )}
-          <div className="contact-art">{type === "privat" ? <OutlineStand /> : <OutlineWall />}</div>
+          <h2 id="contact-title" className="h-l">
+            Fortæl os om jeres sted.
+          </h2>
+          <p className="lede">
+            Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om design, antal bokse og aktiviteter.
+          </p>
+          <div className="contact-art">
+            <OutlineWall />
+          </div>
         </div>
 
         {state.kind === "sent" ? (
@@ -87,19 +66,10 @@ export function Contact({ type }: { type: "erhverv" | "events" | "privat" }) {
               <label htmlFor="f-email">E-mail</label>
               <input className="input" id="f-email" name="email" type="email" autoComplete="email" required />
             </div>
-            {type !== "privat" ? (
-              <div className="field full">
-                <label htmlFor="f-place">{type === "events" ? "Park, festival eller sted" : "Sted eller firma"}</label>
-                <input className="input" id="f-place" name="place" autoComplete="organization" required />
-              </div>
-            ) : (
-              <div className="field full">
-                <label htmlFor="f-date">
-                  Dato for festen <small>(valgfri)</small>
-                </label>
-                <input className="input" id="f-date" name="date" type="date" />
-              </div>
-            )}
+            <div className="field full">
+              <label htmlFor="f-place">Sted eller firma</label>
+              <input className="input" id="f-place" name="place" autoComplete="organization" required />
+            </div>
             <div className="field full">
               <label htmlFor="f-msg">
                 Besked <small>(valgfri)</small>

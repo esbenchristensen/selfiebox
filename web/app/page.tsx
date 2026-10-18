@@ -1,31 +1,33 @@
 import type { Metadata } from "next";
+import { Care } from "@/components/Care";
 import { Contact } from "@/components/Contact";
+import { ContentMachine } from "@/components/ContentMachine";
 import { Explainer } from "@/components/Explainer";
+import { Features } from "@/components/Features";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
-import { HeroBooking } from "@/components/booking/HeroBooking";
 import { JsonLd } from "@/components/JsonLd";
 import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
-import { Private } from "@/components/Private";
 import { Activities, Faq, PhotoStrip } from "@/components/Sections";
 import { Story } from "@/components/Story";
-import { Themes } from "@/components/Themes";
+import { HeroBox, Showroom } from "@/components/ThemeStudio";
 import { Venues } from "@/components/Venues";
-import { faqPrivate, presets, privateActivities } from "@/content";
+import { faq } from "@/content";
 
-// selfi.dk: renting a box for one party. Venues have their own page at /erhverv.
+// selfi.dk: fotobokse designed for each place. Venues, clubs, bars, hotels, festivals, parks and
+// anywhere else guests gather. Sold through a conversation, so the one action is "Book en snak".
 
 export const metadata: Metadata = {
-  title: "Lej fotoboks fra 495 kr. til bryllup og fest | Selfi",
+  title: "Fotobokse i jeres eget design til venues, klubber og festivaler | Selfi",
   description:
-    "Lej en fotoboks til bryllup, fødselsdag eller firmafest fra 495 kr. inkl. moms. Ubegrænsede billeder, studielys og jeres egen eventside med alle fotos.",
+    "Selfi Boks designet til jeres sted og en contentmaskine, der laver autentiske billeder og videoer af jeres gæster hver aften. Aktiviteter, gæsteliste og fuld service.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Lej en fotoboks fra 495 kr. | Selfi",
-    description: "Fotoboksen, der får alle med på billedet. Til bryllup, fødselsdag og firmafest.",
+    title: "Fotobokse i jeres eget design | Selfi",
+    description: "En fotoboks bygget til jeres sted, der giver omtale hver dag og får gæsterne til at komme igen.",
     url: "/",
-    images: [{ url: "/photos/sted-bryllup.jpg", width: 1600, height: 1195, alt: "Brudepar og venner foran Selfi Boks til et bryllup i en lade" }],
+    images: [{ url: "/photos/sted-festival.jpg", width: 1600, height: 1195, alt: "Gæster ved Selfi Boks på en festival i skoven" }],
   },
 };
 
@@ -33,15 +35,14 @@ const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Leje af fotoboks",
-    serviceType: "Udlejning af fotoboks til fester",
+    name: "Fotobokse i eget design til venues, klubber og festivaler",
+    serviceType: "Fotobokse i stedets eget design med aktiviteter og fuld service",
     provider: { "@type": "Organization", name: "Selfi", url: "https://selfi.dk" },
-    offers: presets.map((p) => ({ "@type": "Offer", name: `${p.name}: ${p.period}`, price: p.price, priceCurrency: "DKK" })),
   },
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqPrivate.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
   },
 ];
 
@@ -51,103 +52,104 @@ export default function Home() {
       <JsonLd data={jsonLd} />
       <Nav
         links={[
-          { label: "Sådan virker den", href: "#saadan" },
-          { label: "Priser", href: "#privat" },
-          { label: "Temaer", href: "#temaer" },
+          { label: "Design", href: "#temaer" },
+          { label: "Content", href: "#content" },
+          { label: "Se filmen", href: "#film" },
+          { label: "Aktiviteter", href: "#aktiviteter" },
+          { label: "Service", href: "#service" },
           { label: "Spørgsmål", href: "#faq" },
         ]}
-        other={{ label: "Til barer og hoteller", short: "Erhverv", href: "/erhverv" }}
-        cta={{ label: "Se ledige datoer", href: "#datoer" }}
       />
       <main>
         <Hero
-          label="Fotoboks til leje"
-          title="Lej en fotoboks, der får alle med på billedet."
-          lede="Til bryllup, fødselsdag og firmafest fra 495 kr. Gæsterne tager så mange billeder, de vil, i ægte studielys, og alle fotos samles på jeres egen eventside bagefter."
-          secondary={{ label: "Sådan virker den", href: "#saadan" }}
-          aside={<HeroBooking />}
+          label="Til venues, klubber og festivaler"
+          title="En fotoboks bygget til jeres sted."
+          lede="Selfi Boks får jeres form, farver og logo og laver autentiske billeder og videoer af jeres gæster hver aften, klar til jeres egne kanaler. Til barer, natklubber, sportsklubber, hoteller, festivaler, parker og alle andre steder, hvor gæster samles. Vi monterer, passer og bytter boksene."
+          primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
+          secondary={{ label: "Se designene", href: "#temaer" }}
+          visual={<HeroBox />}
         />
+        <Showroom
+          title="Bygget til jeres univers."
+          lede="Top, sider, kabinet, lys og skærm i jeres farver og med jeres figurer og logo. Vi printer delene selv, så formen kan være lige det, stedet er."
+        />
+        <ContentMachine />
         <Explainer
+          film="events"
           label="Se filmen"
-          title="Alle med på billedet."
-          lede="Nedtællingen, billedet på telefonen, eventsiden dagen efter og hvad en hel weekend koster."
-          alt="Film: Selfi Boks til festen, fra nedtællingen til billedet på telefonen, og prisen for en weekend"
+          title="Omtale, aktiviteter og jeres univers på hvert foto."
+          lede="Se, hvordan boksen bliver en del af stedet, sender gæsterne rundt på skattejagt og giver jer og jeres sponsorer plads på hvert billede."
+          alt="Film: Selfi Boks i en forlystelsespark, på en festival og i en zoo, med tema, skattejagt, rundtur, sponsorer, sæsoner og fuld service"
+        />
+        <Features
+          title="Alt, boksen kan for jer."
+          lede="Fra designet af boksen til gæstelisten bagefter. Vælg en funktion og se, hvordan andre steder bruger den."
+        />
+        <Venues
+          label="Hvor den passer"
+          title="Fra natklubben til festivalpladsen."
+          lede="Boksen er lidt større end et A4-ark. Den hænger på væggen med tyverilås eller står på en stander, så den passer ind i et værtshus fra 1950, på en søjle i en natklub og i et telt på en festival."
+          items={[
+            { src: "sted-festival", name: "Festivalen", text: "Flere bokse i festivalens univers sender publikum rundt på pladsen.", alt: "Gæster ved Selfi Boks på en festival i skoven", pos: "50% 50%" },
+            { src: "klub", name: "Natklubben", text: "Lysringen kan ses over dansegulvet og skaber kø af sig selv.", alt: "Selfi Boks fotoboks på en betonsøjle i en natklub", pos: "50% 40%" },
+            { src: "sted-vaertshus", name: "Baren", text: "Fredagens gæster på billede, med jeres navn i rammen.", alt: "Selfi Boks fotoboks på murstensvæggen i et værtshus", pos: "60% 45%" },
+            { src: "sted-hotel", name: "Hotellet", text: "Et minde fra opholdet med hotellets navn i rammen.", alt: "Selfi Boks fotoboks på væggen i en hotelbar", pos: "30% 50%" },
+            { src: "reception", name: "Messer og konferencer", text: "Deltagerne på billede med jeres navn og jeres sponsorer.", alt: "Gæster til en reception bruger Selfi Boks fotoboks", pos: "75% 50%" },
+          ]}
         />
         <Moments
-          label="Hvorfor en fotoboks"
-          title="Det bedste billede fra festen er det, hvor alle er med."
-          lede="Mobilerne tager hundrede billeder i løbet af aftenen. Selfi Boks tager dem, gæsterne faktisk gemmer: alle samlet foran kameraet, i godt lys og på telefonen med det samme."
+          label="Det, gæsterne får"
+          title="Et billede, de tager med hjem, med jeres navn på."
+          lede="Mobilerne tager hundrede billeder i løbet af en aften. Selfi Boks tager dem, folk faktisk gemmer og deler, og hvert eneste bærer jeres navn."
           items={[
             {
               kind: "photo",
-              src: "/photos/sted-gymnasie.jpg",
-              alt: "Unge til en fest griner foran Selfi Boks på en søjle",
-              pos: "40% 50%",
-              title: "Den samler gæsterne",
-              text: "Lysringen kan ses fra den anden ende af salen. Folk stiller sig i kø, griner af hinanden og ender på billede med en, de ikke kendte før festen.",
+              src: "/photos/sted-vaertshus.jpg",
+              alt: "Venner på et værtshus griner foran Selfi Boks på murstensvæggen",
+              pos: "60% 45%",
+              title: "Den samler folk",
+              text: "Lysringen kan ses fra den anden ende af lokalet. Folk stiller sig i kø, griner af hinanden og bliver lidt længere.",
             },
             {
               kind: "photo",
-              src: "/photos/print-birthday.jpg",
-              alt: "Tre gæster til en 60-års fødselsdag smiler på et foto fra Selfi Boks",
-              title: "Alle generationer med",
-              text: "Et tryk på skærmen og en nedtælling fra 3. Det kan alle finde ud af, fra børnebørnene til fødselaren.",
+              src: "/photos/sted-festival.jpg",
+              alt: "Gæster foran Selfi Boks på en festival",
+              title: "Jeres univers på billedet",
+              text: "Boksen, skærmen og rammen er i jeres design, så alle kan se, hvor billedet er taget.",
             },
             {
               kind: "phone",
-              src: "/photos/print-wedding.jpg",
-              caption: "Skål for brudeparret",
-              user: "sofie.l",
-              post: "Sikke en dag",
-              title: "Alle billeder samlet ét sted",
-              text: "Gæsterne får billedet via QR-kode eller SMS, og alle festens fotos samles på jeres eventside. Dagen efter har I dem alle.",
+              src: "/photos/print-club.jpg",
+              caption: "Fredag · Kælderbaren",
+              user: "maja.k",
+              post: "Bedste fredag i lang tid",
+              title: "Delt samme aften",
+              text: "Gæsterne scanner en QR-kode eller får billedet på SMS. Når de deler, ser deres venner, hvor de var.",
             },
-          ]}
-        />
-        <Venues
-          label="Til hvilke fester"
-          title="Til bryllup, fødselsdag og firmafest."
-          lede="Boksen står på en stander og skal kun bruge en stikkontakt. Den er lidt større end et A4-ark, så den passer ind i en lade, en stue og en kantine."
-          items={[
-            { src: "sted-bryllup", name: "Brylluppet", text: "Gæsterne på billede med brudeparret, også dem, fotografen ikke nåede.", alt: "Selfi Boks fotoboks på stander til et bryllup i en lade", pos: "50% 50%" },
-            { src: "print-birthday", name: "Den runde fødselsdag", text: "Hele familien på ét billede, før nogen går hjem.", alt: "Gæster til en 60-års fødselsdag på et foto fra fotoboksen", pos: "50% 40%" },
-            { src: "sted-gymnasie", name: "Gymnasiefesten", text: "Hele klassen på ét billede, før natten er slut.", alt: "Selfi Boks fotoboks til en gymnasiefest", pos: "35% 50%" },
-            { src: "sted-julefrokost", name: "Julefrokosten", text: "Kollegerne viser en side, man ikke ser til morgenmødet.", alt: "Kolleger til julefrokost foran Selfi Boks fotoboks", pos: "55% 40%" },
-            { src: "reception", name: "Receptionen", text: "Et billede med jubilaren til alle, der kom forbi.", alt: "Kolleger til en reception bruger Selfi Boks fotoboks", pos: "75% 50%" },
           ]}
         />
         <Story
           steps={[
-            { n: "01", title: "Lysringen viser vej", text: "Når ingen bruger boksen, pulserer ringen langsomt, så gæsterne finder den hele aftenen." },
-            { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Der er tid til at få alle med på billedet." },
-            { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, så alle ansigter står skarpt, også når lyset er dæmpet til festen. Ingen blitz i øjnene." },
-            { n: "04", title: "Billedet med hjem", text: "Billedet ligger klar på telefonen via QR-kode eller SMS og på jeres eventside. Med fotomodulet printer boksen også et Instax-foto." },
-          ]}
-        />
-        <Private />
-        <Themes
-          title="En boks, der ser ud som jeres fest."
-          lede="Vælg et tema til bryllup, fødselsdag eller julefrokost. Boksen får vinger og topper i festens farver, og skærmen og rammen på hvert foto følger med. Så ved alle, hvilken fest billedet er fra, også om ti år."
-          layers={[
-            ["Boksen", "Vinger og topper i festens farver."],
-            ["Skærmen", "En velkomst i samme stil, når gæsterne kommer hen til boksen."],
-            ["Fotoet", "En ramme med temaets farver og hilsen på hvert billede."],
+            { n: "01", title: "Lysringen trækker folk til", text: "Når ingen bruger boksen, pulserer ringen langsomt i jeres farver. Den kan ses fra den anden ende af lokalet." },
+            { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Intet personale skal forklare noget." },
+            { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, så alle ansigter står skarpt, også i en mørk bar eller et telt om aftenen." },
+            { n: "04", title: "Billedet med hjem, og nummeret til jer", text: "Billedet kommer via QR-kode eller SMS med jeres ramme. Siger gæsten ja, lander nummeret på jeres gæsteliste." },
           ]}
         />
         <Activities
-          only={privateActivities}
-          title="Gør festen til et spil."
-          lede="Boksen kan mere end at tage billeder. Slå små konkurrencer og opgaver til, når I vil have gang i festen, og fra igen, når den kører af sig selv."
+          title="Giv gæsterne en grund til at blive."
+          lede="Konkurrencer, titler og missioner holder gang i hver boks. Med flere bokse kan I lave skattejagt og rundture forbi de steder, I gerne vil vise frem."
         />
+        <Care />
         <PhotoStrip
           prints={[
-            ["print-wedding", "Bryllup"],
-            ["print-birthday", "Fødselsdag"],
-            ["print-office", "Julefrokost"],
+            ["print-bar", "Fredag · Bodegaen"],
+            ["print-club", "Lørdag · Klubben"],
+            ["print-office", "Firmafesten"],
           ]}
         />
-        <Faq title="Spørgsmål om at leje en fotoboks." items={faqPrivate} />
-        <Contact type="privat" />
+        <Faq title="Spørgsmål fra venues, klubber og festivaler." items={faq} />
+        <Contact topic="forside" />
       </main>
       <Footer />
     </>

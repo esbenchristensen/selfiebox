@@ -1,14 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { FeatureIcon } from "./FeatureIcon";
 import { Logo } from "./Logo";
+import { featureGroups, features } from "@/content";
 
 type Link = { label: string; href: string };
-type Other = Link & { short: string };
 
-// `other` is the door to the other audience's page: always visible, never in the way.
-export function Nav({ links, cta, other }: { links: Link[]; cta: Link; other: Other }) {
+const HOVER_CLOSE_MS = 180;
+
+// The same header on every page: section links, the "Funktioner" mega menu and one call to action.
+// The menu opens on hover with a mouse and on tap or click everywhere else; Escape and a click outside close it.
+export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }: { links: Link[]; cta?: Link }) {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // A mouse opens the menu on hover, so the click that follows must not close it again.
+  const byHover = useRef(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -17,8 +26,34 @@ export function Nav({ links, cta, other }: { links: Link[]; cta: Link; other: Ot
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onDown = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onDown);
+    };
+  }, [open]);
+
+  const hoverOpen = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    clearTimeout(closeTimer.current);
+    if (!open) byHover.current = true;
+    setOpen(true);
+  };
+  const hoverClose = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    closeTimer.current = setTimeout(() => {
+      byHover.current = false;
+      setOpen(false);
+    }, HOVER_CLOSE_MS);
+  };
+
   return (
-    <header className={`nav${scrolled ? " scrolled" : ""}`}>
+    <header ref={ref} className={`nav${scrolled || open ? " scrolled" : ""}`}>
       <div className="wrap nav-inner">
         <Logo />
         <nav className="nav-links" aria-label="Sektioner">
@@ -29,12 +64,46 @@ export function Nav({ links, cta, other }: { links: Link[]; cta: Link; other: Ot
           ))}
         </nav>
         <div className="nav-end">
-          <a className="nav-other" href={other.href} aria-label={other.label}>
-            <span className="long">{other.label}</span>
-            <span className="short">{other.short}</span>
-          </a>
+          <div className="mega-wrap" onPointerEnter={hoverOpen} onPointerLeave={hoverClose}>
+            <button type="button" className="nav-mega" aria-expanded={open} aria-controls="mega" onClick={() => {
+                if (byHover.current) byHover.current = false;
+                else setOpen((o) => !o);
+              }}>
+              Funktioner
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <path d="M2.5 4.5 6 8l3.5-3.5" />
+              </svg>
+            </button>
+          </div>
           <a className="btn btn-primary" href={cta.href}>
             {cta.label}
+          </a>
+        </div>
+      </div>
+      <div id="mega" className="mega" hidden={!open} onPointerEnter={hoverOpen} onPointerLeave={hoverClose}>
+        <div className="wrap mega-inner">
+          {featureGroups.map((g) => (
+            <div key={g.id} className="mega-group">
+              <span className="label">{g.name}</span>
+              <ul>
+                {features
+                  .filter((f) => f.group === g.id)
+                  .map((f) => (
+                    <li key={f.slug}>
+                      <a href={`/funktioner/${f.slug}`} onClick={() => setOpen(false)}>
+                        <FeatureIcon d={f.icon} />
+                        <span>
+                          <b>{f.name}</b>
+                          <span className="muted">{f.short}</span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ))}
+          <a className="mega-all" href="/funktioner" onClick={() => setOpen(false)}>
+            Se alle funktioner →
           </a>
         </div>
       </div>

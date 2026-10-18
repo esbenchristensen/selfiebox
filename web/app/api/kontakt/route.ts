@@ -9,7 +9,7 @@ type Payload = {
   email?: string;
   phone?: string;
   place?: string;
-  date?: string;
+  topic?: string;
   message?: string;
 };
 
@@ -24,12 +24,12 @@ export async function POST(req: Request) {
   }
 
   const data = {
-    type: ["privat", "events"].includes(clean(body.type, 20)) ? clean(body.type, 20) : "erhverv",
+    type: "erhverv",
+    topic: clean(body.topic, 80),
     name: clean(body.name, 200),
     email: clean(body.email, 200),
     phone: clean(body.phone, 40),
     place: clean(body.place, 200),
-    date: clean(body.date, 20),
     message: clean(body.message),
   };
 
