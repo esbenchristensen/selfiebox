@@ -28,7 +28,9 @@
 .kat-pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .kat-pill--primary { background: var(--green); color: var(--on-green); border-color: var(--green); }
 .kat-pill:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.kat-deck { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; padding: 16px 16px 96px; }
+/* One page under the next, however wide the screen. "Opslag" puts two side by side. */
+.kat-deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 16px 16px 96px; }
+.kat-deck--spread { display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; align-items: start; }
 .kat-slot { flex: none; zoom: 0.9; }
 /* Before the script measures the screen, these keep a page inside a phone. */
 @media (max-width: 760px) { .kat-slot { zoom: 0.5; } }

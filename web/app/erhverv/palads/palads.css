@@ -1,7 +1,7 @@
 /* Selfi × Palads Teatret: the shared catalogue styles in the cinema's colours. The dark violet of its name
    sign, brass and warm bulbs from the marquee, and red velvet from the hall. The same rules sit in
    kataloger/palads.css for the copy that lives in the database. */
-.kat--palads {
+.kat.kat--palads {
   --k-night: #1b1a28;
   --k-base: #2b2a3d;
   --k-forest: #9b1c22;
