@@ -344,7 +344,7 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 .theme-switch { display: flex; align-items: center; gap: var(--space-3); }
 .theme-switch .seg button { padding: 7px 14px; font-size: 13px; }
 
-#kontakt, #content, #temaer, #aktiviteter, #saadan, #film, #funktioner, #brug, #faq, #service { scroll-margin-top: 80px; }
+#kontakt, #content, #kvalitet, #temaer, #aktiviteter, #saadan, #film, #funktioner, #brug, #faq, #service { scroll-margin-top: 80px; }
 /* ---------- Moments: what guests remember ---------- */
 .moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
 .moment { margin: 0; display: flex; flex-direction: column; gap: var(--space-4); }
@@ -528,3 +528,14 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 .cm-cost { font: 500 20px/1.2 var(--font-display), sans-serif; font-variant-numeric: tabular-nums; }
 .cm-solo { max-width: 640px; display: flex; flex-direction: column; gap: var(--space-5); }
 @media (max-width: 900px) { .cm { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); } }
+
+/* Quality: picture, video and sound */
+.quality { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.quality-item { padding: var(--space-6); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--space-3); }
+.quality-item svg { width: 36px; height: 36px; fill: none; stroke: var(--green-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.quality-item h3 { font-size: 22px; letter-spacing: -0.015em; }
+.quality-item p { color: var(--ink-muted); font-size: 16px; }
+.quality-item ul { list-style: none; margin: var(--space-2) 0 0; padding: 0; border-top: 1px solid var(--line); }
+.quality-item li { padding: 10px 0; border-bottom: 1px solid var(--line); font: 400 13px/1.3 var(--font-mono), monospace; color: var(--ink); }
+.quality-item li:last-child { border-bottom: 0; }
+@media (max-width: 900px) { .quality { grid-template-columns: minmax(0, 1fr); } }
