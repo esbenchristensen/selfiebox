@@ -1,0 +1,95 @@
+{
+  "name": "MENY Fjerritslev",
+  "event": "MENY Fjerritslev – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#3c3c3b",
+      "filament": "PETG HF dark grey"
+    },
+    "deep": {
+      "hex": "#262625",
+      "filament": "PETG HF black"
+    },
+    "red": {
+      "hex": "#cc092f",
+      "filament": "PETG HF red"
+    },
+    "darkred": {
+      "hex": "#8e0620",
+      "filament": "PETG HF burgundy"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "PETG HF white"
+    },
+    "cream": {
+      "hex": "#f4efe6",
+      "filament": "PETG HF cream"
+    },
+    "kraft": {
+      "hex": "#c4b9aa",
+      "filament": "PETG HF beige"
+    },
+    "wood": {
+      "hex": "#b07a45",
+      "filament": "PETG HF light brown"
+    },
+    "woodd": {
+      "hex": "#7a4f2a",
+      "filament": "PETG HF brown"
+    },
+    "green": {
+      "hex": "#4f8a2b",
+      "filament": "PETG HF green"
+    },
+    "lime": {
+      "hex": "#93c143",
+      "filament": "PETG HF lime"
+    },
+    "orange": {
+      "hex": "#ef7d1a",
+      "filament": "PETG HF orange"
+    },
+    "yellow": {
+      "hex": "#f2c230",
+      "filament": "PETG HF yellow"
+    },
+    "bottle": {
+      "hex": "#24452f",
+      "filament": "PETG HF dark green"
+    },
+    "bread": {
+      "hex": "#d9a25b",
+      "filament": "PETG HF tan"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#cc092f",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#cc092f"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ffffff"
+  },
+  "screen": {
+    "ticker": "MENY Fjerritslev  •  Søgade 10  •  Slagter, vinmand og mad ud af huset  •  Sig ost!  •",
+    "cta": "Sig «Ost!»",
+    "background": "white",
+    "accent": "red"
+  }
+}

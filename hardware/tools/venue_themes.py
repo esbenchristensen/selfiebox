@@ -1256,6 +1256,182 @@ def palads():
                 logo_png=dict(file="palads-source.png", screen=(300, 800, 420), frame=(40, 160, 112)))
 
 
+# --------------------------------------------------------- grocers (købmand) --
+# MENY Fjerritslev, Søgade 10: the town's food market with a butcher, a wine man and food to take home for
+# the party. The topper is a market awning with the MENY arch on it, the left wing a stack of greengrocer's
+# crates, the right wing a MENY-red shopping basket with a baguette, a bottle of wine and a leek. Drawn for
+# the gen 2 unit. The logo is traced from logos/meny-source.png (meny.dk's own vector logo).
+
+def meny_logo(bounds, outline=True):
+    """The MENY arch: red arch with white letters. With `outline`, a white edge 1.6 mm wide around it."""
+    lg = traced_logo("meny")
+    flip = {k: affinity.scale(g, 1, -1, origin=(0, 0)) for k, g in lg.items()}
+    arch = U(*[Polygon(p.exterior) for p in getattr(flip["red"], "geoms", [flip["red"]])])
+    letters = flip["white"].intersection(arch.buffer(-1))
+    gx0, gz0, gx1, gz1 = arch.bounds
+    x0, z0, x1, z1 = bounds
+    k = min((x1 - x0) / (gx1 - gx0), (z1 - z0) / (gz1 - gz0))
+    place = lambda g: affinity.translate(affinity.scale(g, k, k, origin=(0, 0)), (x0 + x1) / 2 - (gx0 + gx1) / 2 * k, (z0 + z1) / 2 - (gz0 + gz1) / 2 * k)
+    arch, letters = place(arch), place(letters)
+    # Letters thickened a little so their inner corners print cleanly.
+    L = [("white", arch.buffer(1.6))] if outline else []
+    return L + [("red", arch), ("white", letters.buffer(0.25).intersection(arch.buffer(-0.8)))]
+
+
+def scallops(x0, x1, z, r):
+    """The scalloped front edge of an awning: half discs hanging down from z."""
+    n = max(1, round((x1 - x0) / (2 * r)))
+    step = (x1 - x0) / n
+    return U(*[Point(x0 + step * (i + 0.5), z).buffer(step / 2, 32).intersection(box(x0 + step * i, z - step, x0 + step * (i + 1), z)) for i in range(n)])
+
+
+def crate(x0, z0, w, h):
+    """A greengrocer's wooden crate seen from the front: frame, two slats and the gaps between them."""
+    body = box(x0, z0, x0 + w, z0 + h)
+    gaps = U(box(x0 + 4, z0 + h * 0.36 - 1.6, x0 + w - 4, z0 + h * 0.36 + 1.6), box(x0 + 4, z0 + h * 0.68 - 1.6, x0 + w - 4, z0 + h * 0.68 + 1.6))
+    posts = U(box(x0, z0, x0 + 5, z0 + h), box(x0 + w - 5, z0, x0 + w, z0 + h))
+    return body, gaps, posts
+
+
+def apple(cx, cz, r, rot=0):
+    """An apple with a stalk and one fat leaf. Returns (fruit, leaf, stalk)."""
+    fruit = U(Point(cx - r * 0.36, cz).buffer(r * 0.72, 32), Point(cx + r * 0.36, cz).buffer(r * 0.72, 32), Point(cx, cz - r * 0.2).buffer(r * 0.8, 32))
+    fruit = affinity.rotate(fruit, rot, origin=(cx, cz))
+    return fruit, leaf(cx + 1, cz + r * 0.62, r * 0.75, r * 0.5, -55 + rot), line([(cx, cz + r * 0.5), (cx - 1, cz + r * 1.05)], 2.2)
+
+
+def carrot(cx, cz, ln, w, rot=0):
+    """A carrot pointing down from (cx, cz), with three chunky leaves. Returns (root, tops)."""
+    root = Polygon([(cx - w / 2, cz), (cx + w / 2, cz), (cx + 1.2, cz - ln), (cx - 1.2, cz - ln)]).buffer(1.2)
+    tops = U(*[leaf(cx, cz - 1, w * 1.35, w * 0.62, a) for a in (-28, 0, 28)])
+    return affinity.rotate(root, rot, origin=(cx, cz)), affinity.rotate(tops, rot, origin=(cx, cz))
+
+
+@theme
+def meny():
+    # MENY's own red, charcoal and kraft from meny.dk; wood for the crates, greens and orange for the produce.
+    pal = {"base": "#3c3c3b", "deep": "#262625", "red": "#cc092f", "darkred": "#8e0620", "white": "#ffffff", "cream": "#f4efe6",
+           "kraft": "#c4b9aa", "wood": "#b07a45", "woodd": "#7a4f2a", "green": "#4f8a2b", "lime": "#93c143", "orange": "#ef7d1a",
+           "yellow": "#f2c230", "bottle": "#24452f", "bread": "#d9a25b"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: a MENY-red shopping basket with a baguette, a bottle of red wine and a leek standing in it,
+            # and the price tag every customer knows, here for a smile.
+            bx0, bx1 = X0 + 4, X0 + 60
+            basket = Polygon([(bx0, 96), (bx1, 96), (bx1 - 5, 26), (bx0 + 5, 26)]).buffer(2.5)
+            slots = U(*[box(x - 2.2, 40, x + 2.2, 82) for x in np.linspace(bx0 + 13, bx1 - 13, 4)])
+            rim = box(bx0 - 3, 90, bx1 + 3, 102).buffer(2)
+            handle = U(box(bx0 + 2, 96, bx0 + 9, 124), box(bx1 - 9, 96, bx1 - 2, 124), box(bx0 + 2, 117, bx1 - 2, 124)).buffer(1.5)
+            bottle = U(box(X0 + 34, 92, X0 + 54, 214).buffer(5).intersection(box(X0 + 20, 92, X0 + 70, 214)),
+                       Polygon([(X0 + 34, 206), (X0 + 54, 206), (X0 + 49, 232), (X0 + 39, 232)]), box(X0 + 38.5, 228, X0 + 49.5, 268).buffer(1))
+            label = box(X0 + 36, 136, X0 + 52, 170).buffer(1.5)
+            capsule = box(X0 + 37.5, 254, X0 + 50.5, 269).buffer(1)
+            bread = line([(X0 + 16, 92), (X0 + 22, 262)], 17)
+            cuts = U(*[affinity.rotate(ell(X0 + 16 + 6 * t, 92 + 170 * t, 6.2, 2.2), 28, origin=(X0 + 16 + 6 * t, 92 + 170 * t)) for t in (0.45, 0.6, 0.75, 0.9)])
+            tag_c = (X0 + 31, 166)
+            tag = affinity.rotate(box(tag_c[0] - 27, tag_c[1] - 19, tag_c[0] + 27, tag_c[1] + 19).buffer(4), -8, origin=tag_c)
+            outline = U(wing_strip(12, 24, 276), basket.buffer(2), rim.buffer(2), handle.buffer(2), bottle.buffer(2), bread.buffer(2), tag.buffer(2), capsule.buffer(2))
+            outline = outline.intersection(box(X0, 22, X0 + 66, 294))
+            L = [("base", outline), ("bread", bread), ("cream", cuts.intersection(bread.buffer(-1.5)))]
+            L += [("bottle", bottle), ("cream", label), ("darkred", capsule), ("darkred", box(X0 + 39, 146, X0 + 49, 160).buffer(1))]
+            L += [("red", handle.difference(rim)), ("red", basket), ("darkred", slots), ("red", rim)]
+            L += [("white", tag), ("red", affinity.rotate(text("SMIL", "lilita-one", tag_c[0], tag_c[1] + 9, 11, 40), -8, origin=tag_c))]
+            L += [("deep", affinity.rotate(text("0,-", "lilita-one", tag_c[0], tag_c[1] - 7, 15, 40), -8, origin=tag_c))]
+        else:
+            # Left: three greengrocer's crates on top of each other, heaped with apples, carrots and greens.
+            cw, ch, gap = 58, 44, 24
+            cx0 = X0 + 3
+            L, shapes = [], []
+            for i, z0 in enumerate((24, 24 + ch + gap, 24 + 2 * (ch + gap))):
+                body, gaps, posts = crate(cx0, z0, cw, ch)
+                shapes.append(body)
+                L += [("wood", body), ("woodd", gaps), ("woodd", posts.difference(gaps))]
+            rng = random.Random(3)
+            # Produce heaped on each crate (drawn behind the crate front above it).
+            heaps = []
+            z_bot, z_mid, z_top = 24 + ch, 24 + 2 * ch + gap, 24 + 3 * ch + 2 * gap
+            apples = [apple(cx0 + 10 + j * 13, z_bot + 7 + (j % 2) * 3, 7.5, rng.uniform(-12, 12)) for j in range(4)]
+            heaps += [("red", U(*[a[0] for a in apples])), ("green", U(*[a[1] for a in apples])), ("woodd", U(*[a[2] for a in apples]))]
+            oranges = U(*[Point(cx0 + 9 + j * 13.3, z_mid + 7 + (j % 2) * 3).buffer(7.6, 32) for j in range(4)])
+            heaps += [("orange", oranges), ("green", U(*[leaf(cx0 + 9 + j * 13.3, z_mid + 12 + (j % 2) * 3, 7, 4.5, -60) for j in (0, 2)]))]
+            # Top crate: carrots fanned out and a head of broccoli, the tallest thing on the stand.
+            tops, roots = [], []
+            for a, dx in ((14, 9), (4, 20), (-8, 31)):
+                # Root up, leaves down over the rim of the crate.
+                r, t = carrot(cx0 + dx, z_top + 17, 34, 11, 180 + a)
+                roots.append(r)
+                tops.append(t)
+            broc = U(*[Point(cx0 + 44 + x, z_top + 26 + z).buffer(r, 32) for x, z, r in ((-6, 6, 9), (6, 8, 9), (0, 16, 10), (-10, 14, 7), (10, 16, 7))])
+            stem = box(cx0 + 41, z_top - 2, cx0 + 47, z_top + 20).buffer(1)
+            leaves = U(*tops)
+            heaps += [("green", leaves), ("orange", U(*roots)), ("lime", stem), ("green", broc), ("lime", U(*[Point(cx0 + 44 + x, z_top + 26 + z).buffer(2.4, 16) for x, z in ((-6, 8), (5, 11), (0, 19), (-11, 15), (11, 18))]))]
+            heap_shape = U(*[g for _, g in heaps])
+            outline = U(wing_strip(10, 24, 270), *[s.buffer(2) for s in shapes], heap_shape.buffer(2)).intersection(box(X0, 22, X0 + 66, 294))
+            # Round off the notches between the heaps, and fill the pockets that closing them leaves.
+            outline = outline.buffer(3).buffer(-3)
+            outline = Polygon(max(getattr(outline, "geoms", [outline]), key=lambda q: q.area).exterior)
+            # Draw back to front: produce first, then the crate fronts over the bottom of each heap.
+            L = [("base", outline)] + heaps + L
+        return outline, L
+
+    def topper():
+        # A market awning with the MENY arch on top and a name plate below.
+        plate = box(-HW, 0, HW, 26)
+        aw0, aw1 = 30, 82
+        awning = Polygon([(-HW - 8, aw0), (HW + 8, aw0), (HW - 4, aw1), (-HW + 4, aw1)])
+        edge = scallops(-HW - 8, HW + 8, aw0, 9)
+        n = 10
+        stripes = []
+        for i in range(0, n, 2):
+            t0, t1 = i / n, (i + 1) / n
+            xb0, xb1 = -HW - 8 + (2 * HW + 16) * t0, -HW - 8 + (2 * HW + 16) * t1
+            xt0, xt1 = -HW + 4 + (2 * HW - 8) * t0, -HW + 4 + (2 * HW - 8) * t1
+            stripes.append(Polygon([(xb0, aw0 - 10), (xb1, aw0 - 10), (xt1, aw1), (xt0, aw1)]))
+        stripes = U(*stripes)
+        canvas = U(awning, edge)
+        logo = meny_logo((-108, 78, 108, 176))
+        arch = U(*[g for _, g in logo])
+        filler = box(-70, aw1 - 2, 70, arch.bounds[1] + 30).intersection(arch.convex_hull)
+        outline = U(plate, canvas.buffer(2), arch.buffer(2.5), filler).buffer(2).buffer(-2)
+        L = [("base", outline), ("white", canvas), ("red", stripes.intersection(canvas)), ("darkred", box(-HW - 9, aw1 - 4, HW + 9, aw1 + 1).intersection(awning.buffer(1)))]
+        L += logo
+        L += [("cream", box(-HW + 5, 4, HW - 5, 22).buffer(2).buffer(-2)), ("base", text("FØDEVAREMARKED  ·  FJERRITSLEV", "lilita-one", 0, 13, 9, 200))]
+        return outline, L
+
+    def screen(w, h):
+        # The shop floor: kraft paper wall, the awning across the top, crates of produce along the bottom.
+        L = [("cream", box(0, 0, w, h))]
+        L += [("kraft", U(*[box(x, 0, x + 18, h) for x in np.arange(-6, w, 60)]))]
+        aw = box(-10, 820, w + 10, 960)
+        L += [("white", U(aw, scallops(-10, w + 10, 820, 26)))]
+        L += [("red", U(*[box(x, 790, x + 60, 960) for x in np.arange(-10, w + 10, 120)]).intersection(U(aw, scallops(-10, w + 10, 820, 26))))]
+        L += [("darkred", box(-10, 952, w + 10, 960))]
+        rng = random.Random(9)
+        crates = []
+        for i, x in enumerate(np.arange(10, w, 148)):
+            body, gaps, posts = crate(x, 46, 136, 92)
+            fill, extra = (("red", "green") if i % 2 == 0 else ("orange", "yellow"))
+            fruit = U(*[Point(x + 16 + j * 21 + rng.uniform(-2, 2), 140 + (j % 2) * 8).buffer(14, 32) for j in range(6)])
+            crates += [(fill, fruit), (extra, U(*[Point(x + 12 + j * 21, 148 + (j % 2) * 8).buffer(3.5, 16) for j in range(6)])), ("wood", body), ("woodd", gaps), ("woodd", posts)]
+        L += crates
+        L += [("base", text("FJERRITSLEV SMILER", "lilita-one", w / 2, 520, 34, w * 0.74))]
+        L += [("red", U(*[Point(x, 478).buffer(4, 16) for x in np.arange(150, w - 140, 20)]))]
+        return L
+
+    return dict(name="MENY Fjerritslev", place="Fjerritslev", font="lilita-one", pal=pal, unit="gen2",
+                filament={"base": "PETG HF dark grey", "deep": "PETG HF black", "red": "PETG HF red", "darkred": "PETG HF burgundy", "white": "PETG HF white",
+                          "cream": "PETG HF cream", "kraft": "PETG HF beige", "wood": "PETG HF light brown", "woodd": "PETG HF brown",
+                          "green": "PETG HF green", "lime": "PETG HF lime", "orange": "PETG HF orange", "yellow": "PETG HF yellow",
+                          "bottle": "PETG HF dark green", "bread": "PETG HF tan"},
+                casing="#cc092f", ring={"idle": ["#ffffff", "#cc092f"], "glow": "#ffffff"},
+                screen=dict(bg="white", ink="red", accent="red", cta="Sig «Ost!»",
+                            ticker="MENY Fjerritslev  •  Søgade 10  •  Slagter, vinmand og mad ud af huset  •  Sig ost!  •"),
+                frame=dict(bg="white", ink="base", caption="Fjerritslev"), photo="print-birthday",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: meny_logo((-60, 0, 60, 120), outline=False),
+                logo_png=dict(file="meny-source.png", screen=(300, 800, 380), frame=(40, 165, 110)))
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
