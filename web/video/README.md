@@ -1,18 +1,18 @@
 # Selfi-film
 
-To reklamefilm med dansk tekst på skærmen, dansk speak (Jonas, Eleven v4), musik (Eleven Music v2.5) og lydeffekter fra ElevenLabs. Begge vises med `components/Explainer.tsx` i sektionen "Se filmen".
+Reklamefilm med dansk tekst på skærmen, dansk speak (Jonas, Eleven v4), musik (Eleven Music v2.5) og lydeffekter fra ElevenLabs. De vises med `components/Explainer.tsx` i sektionen "Se filmen". Forsiden viser B2B-filmen (`erhverv`).
 
 | Film | Side | Kilde | Filer i `public/video/` |
 |---|---|---|---|
-| Privat leje | `/` | `explainer.html` | `selfi-explainer-*` |
-| Erhverv | `/erhverv` | `erhverv.html` | `selfi-erhverv-*` |
-| Store events | `/events` | `events.html` | `selfi-events-*` |
+| Privat leje (bruges ikke) | – | `explainer.html` | `selfi-explainer-*` |
+| B2B (forsiden) | `/` | `erhverv.html` | `selfi-erhverv-*` |
+| Store events (bruges ikke) | – | `events.html` | `selfi-events-*` |
 
 Alle bruger `shared.css` og `shared.js` (farver, fonte, boksen, tidslinjen). Erhverv og events bruger desuden `venue.css` og `venue.js` (bokse i stedets eget design).
 
 ## Hvordan filmene er skrevet
 
-Begge film er skrevet som reklamefilm, ikke som en gennemgang af funktioner:
+Filmene er skrevet som reklamefilm, ikke som en gennemgang af funktioner:
 
 - **Et problem i de første sekunder**, som seeren kender, og brandet lige efter. Logo og lysring vises inden for 2–5 sekunder. Det giver markant bedre genkendelse.
 - **Ét følelsesmæssigt højdepunkt med brandet i** (peak-end): nedtællingen, blitzen og grinende gæster i privatfilmen.
@@ -35,24 +35,24 @@ Begge film er skrevet som reklamefilm, ikke som en gennemgang af funktioner:
 | Pris | "En hel weekend koster syv hundrede og halvtreds kroner. Med femoghalvfjerds gæster er det ti kroner per gæst." | 750 kr. og regnestykket |
 | Handling | "Tjek, om jeres dato er ledig, på selfi punktum d k." | Logo, knap og Selfi-lyden |
 
-## Erhverv: barer og natklubber (60 sekunder)
+## B2B: den samlede film på forsiden (ca. 62 sekunder)
 
-Filmen er kun til barer, værtshuse og natklubber. Store steder som forlystelsesparker og festivaler får deres egen film med en anden vinkel. Stederne i filmen (Kælderbaren, Bar Nord og Klub Neon) er opdigtede med vilje.
+Én film til alle slags steder, fra baren og natklubben til festivalen. Den viser, hvad stedet kan bruge boksen til: content, video, videohilsner, missioner, titler, konkurrence, deling og gæsteliste. Ingen pris og kun hovedenheden. Stederne (Kælderbaren, Klub Neon, Bar Nord og Skovfest) er opdigtede med vilje.
 
 | Scene | Speak | Billede |
 |---|---|---|
-| Hook (tab) | "Fredag er baren fuld. Men på mandag ved I ikke, hvem der var der." | Fuldt værtshus, der bliver gråt: "Fredag" bliver til "Mandag – Hvem var her?" |
-| Kø | "Selfi Boks hænger på væggen, og lysringen kan ses over hele dansegulvet. Folk stiller sig i kø af sig selv." | Rigtigt klubfoto, logo og Selfi-lyden |
-| Mission | "Skærmen giver dem en mission: Tag et billede med en, du ikke kender." | Klub Neon-boksen med missionen og stemplet "Klaret" |
+| Hook (tab) | "Lørdag aften er stedet fyldt med glade gæster. Men på jeres sociale medier ses det ikke." | Fuldt værtshus, der bliver gråt: "Sidste opslag: for 3 uger siden" |
+| Eget design | "Selfi Boks er en fotoboks i jeres eget design. Og den kan meget mere end at tage billeder." | Logo, Selfi-lyden og tre bokse: værtshus, natklub og festival |
+| Content | "Den er en contentmaskine. Hver aften laver den autentiske billeder og videoer af jeres gæster, klar til jeres egne kanaler." | Aftenens fotos og videoer fylder et gitter, tælleren kører, og kanalerne kommer frem |
+| Video | "Gæsterne optager korte videoer, når de skåler, danser og griner." | Klub Neon-boksen optager med REC og tid |
+| Videohilsner | "Med videohilsner svarer de på et spørgsmål, I har valgt. Så får I ægte udtalelser." | Spørgsmålet på skærmen og en udtalelse med lydbølge |
+| Mission | "Skærmen giver dem en mission: Tag et billede med en, du ikke kender." | Missionen og stemplet "Klaret" |
 | Titel | "Boksen kårer aftenens største smil. Det billede vil man have med hjem." | Print med stemplet "Aftenens største smil" |
-| Nummer | "For at få billedet skriver gæsten sit nummer og kan sige ja til tilbud fra jer." | Telefonen med nummer og samtykke, gæstelisten tæller op |
 | Konkurrence | "Gæsterne stemmer på aftenens bedste billede, og vinderen henter præmien i baren." | Afstemning, vinder og "Præmien venter i baren" |
-| Print | "I sætter selv prisen på printet. Alt over femogtyve kroner er jeres." | Eksempel: 40 − 25 = 15 kr. til jer, og 67 prints om måneden betaler boksen |
-| Gæsteliste | "Så på mandag ved I, hvem der var her, og kan invitere dem til næste fest." | 1.284 på listen og en SMS til fredag |
-| Design | "Boksen får jeres farver og jeres logo." | Værtshus, cocktailbar og natklub |
+| Deling | "Når gæsterne deler billedet, ser alle deres venner, hvor de var. Hver deling viser jer frem." | Opslag med festivalens ramme, likes og delinger |
+| Gæsteliste | "For at få billedet skriver gæsten sit nummer og kan sige ja til tilbud fra jer." | Telefonen med nummer og samtykke, gæstelisten tæller op |
 | Service | "Vi monterer den, holder øje med den og bytter den, hvis noget går galt. I holder bare åbent." | Det klarer vi over for Det klarer I |
-| Pris | "Ni hundrede og femoghalvfems kroner om måneden." | 995 kr./md. ekskl. moms |
-| Handling | "Book en uforpligtende snak på selfi punktum d k skråstreg erhverv." | Logo, knap og Selfi-lyden |
+| Handling | "Book en uforpligtende snak på selfi punktum d k, så viser vi boksen i jeres design." | Logo, knap og Selfi-lyden |
 
 ## Store events: festivaler, forlystelsesparker og zoo (71 sekunder)
 
@@ -74,7 +74,7 @@ Til store steder, hvor værdien er branding, omtale og aktiviteter på tværs af
 
 ## Ændre filmen
 
-Alt er tegnet i `explainer.html` og `erhverv.html` med sidens farver og fonte. Hver scene har en længde (`dur`) og tider for, hvornår tingene kommer ind (`data-in`). Hvis speaken skal have mere tid et sted, så gør scenens `dur` længere og render igen.
+Alt er tegnet i `explainer.html`, `erhverv.html` og `events.html` med sidens farver og fonte. Hver scene har en længde (`dur`) og tider for, hvornår tingene kommer ind (`data-in`). Hvis speaken skal have mere tid et sted, så gør scenens `dur` længere og render igen.
 
 Se den i browseren: åbn `explainer.html?format=wide&play` (eller `format=tall`) fra en lokal server i `web/`, fx `npx http-server web`. Med `&t=30` står den stille på sekund 30.
 
