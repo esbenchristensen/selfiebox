@@ -1,0 +1,60 @@
+/* Selfi brandpakke: fælles fonte, farver og byggeklodser. ASSETS erstattes af build.cjs. */
+@font-face { font-family: "Instrument Sans"; font-weight: 400 700; src: url(ASSETS/InstrumentSans.woff2) format("woff2"); }
+@font-face { font-family: "Geist"; font-weight: 100 900; src: url(ASSETS/Geist.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-weight: 100 900; src: url(ASSETS/GeistMono.woff2) format("woff2"); }
+:root {
+  --night: #0e0f0e; --raised: #171917; --line: #2a2d2a; --halo: #fff3e3; --cream-muted: #a3a8a2;
+  --paper: #f3f4f1; --ink: #121412; --ink-muted: #5c615b; --green: #22d36b; --green-ink: #0f7a3b; --on-green: #0b1a10;
+  --display: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --body: "Geist", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: var(--W); height: var(--H); overflow: hidden; }
+body { font-family: var(--body); -webkit-font-smoothing: antialiased; position: relative; }
+.dark { background: var(--night); color: var(--halo); --muted: var(--cream-muted); --rule: var(--line); }
+.light { background: var(--paper); color: var(--ink); --muted: var(--ink-muted); --rule: #d9dcd6; }
+.green { background: var(--green); color: var(--on-green); --muted: #134a28; --rule: rgba(11, 26, 16, .2); }
+.creme { background: var(--halo); color: var(--ink); --muted: #6b6258; --rule: #e6d9c6; }
+.glowbg::before { content: ""; position: absolute; inset: 0; background: radial-gradient(var(--gw, 60%) var(--gh, 60%) at var(--gx, 70%) var(--gy, 50%), rgba(255, 243, 227, .09), transparent 70%); pointer-events: none; }
+.abs { position: absolute; }
+.k { font: 500 var(--ks, 22px)/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.green .k { color: var(--on-green); opacity: .7; }
+.h { font: 600 var(--hs, 80px)/.94 var(--display); letter-spacing: -.045em; text-wrap: balance; }
+.p { font-size: var(--ps, 28px); line-height: 1.35; color: var(--muted); text-wrap: pretty; }
+.url { font: 500 var(--us, 22px)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.url b { color: var(--green); font-weight: 600; }
+.light .url b, .creme .url b { color: var(--green-ink); }
+.green .url b { color: var(--on-green); }
+.logo-svg { display: block; height: var(--lh, 60px); width: auto; }
+
+/* Boksen som flad grafik (samme tegning som i filmene og annoncerne). Kun hovedenheden. */
+.box { position: absolute; width: var(--bw); aspect-ratio: 234 / 306; container-type: inline-size; }
+.box > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.box .shell { fill: #0b0c0b; stroke: #2b2e2b; stroke-width: 1.5; }
+.light .box .shell, .green .box .shell, .creme .box .shell { stroke: #0b0c0b; }
+.box .ringb { fill: none; stroke: rgba(255, 243, 227, .12); stroke-width: 9; }
+.box .ring { fill: none; stroke: var(--halo); stroke-width: 9; filter: drop-shadow(0 0 2px rgba(255, 243, 227, .8)) drop-shadow(0 0 9px rgba(255, 243, 227, .32)); }
+.box .notch { fill: #0b0c0b; } .box .cam { fill: #1d201d; stroke: #3a3e3a; stroke-width: 1.5; }
+.box.glow::after { content: ""; position: absolute; inset: -14%; z-index: -1; border-radius: 30%; background: radial-gradient(closest-side, rgba(255, 243, 227, .16), transparent); }
+.light .box, .green .box, .creme .box { filter: drop-shadow(0 4cqw 6cqw rgba(18, 20, 18, .28)); }
+.box .screen { position: absolute; left: 12.82%; top: 9.8%; width: 74.36%; height: 80.4%; border-radius: 2.56cqw; background: #050605; overflow: hidden; color: var(--halo); display: grid; text-align: center; }
+.box .screen > * { grid-area: 1 / 1; }
+.s-count { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4cqw; }
+.s-count b { font: 600 36cqw/.9 var(--display); letter-spacing: -.05em; }
+.s-count small { font: 500 4.6cqw/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--cream-muted); }
+.s-photo { background: center / cover; }
+.s-word { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5cqw; padding: 0 7cqw; }
+.s-word .kk { font: 500 4.4cqw/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+.s-word b { font: 600 var(--sw, 14cqw)/1 var(--display); letter-spacing: -.035em; text-wrap: balance; }
+.s-cap { align-self: end; padding: 14cqw 5cqw 6cqw; background: linear-gradient(transparent, rgba(0, 0, 0, .75)); font: 600 7.2cqw/1.05 var(--display); letter-spacing: -.02em; color: #fff; }
+.s-mark { display: grid; place-items: center; }
+.s-mark svg { width: 34%; height: auto; }
+
+.stamp { position: absolute; z-index: 4; font: 600 var(--ss, 26px)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: .7em 1em; border-radius: 999px; white-space: nowrap; box-shadow: 0 .6em 1.2em rgba(0, 0, 0, .3); }
+.stamp.g { background: var(--green); color: var(--on-green); }
+.stamp.d { background: var(--ink); color: var(--halo); }
+.stamp.c { background: var(--halo); color: var(--ink); }
+.pill { display: inline-flex; align-items: center; gap: .5em; font: 600 var(--pls, 26px)/1 var(--body); padding: .8em 1.3em; border-radius: 999px; }
+.pill.d { background: var(--on-green); color: var(--halo); }
+.pill.g { background: var(--green); color: var(--on-green); }
