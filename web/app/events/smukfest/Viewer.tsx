@@ -7,7 +7,7 @@ const GAP = 28;
 const KEY = "kat-spread";
 
 // Scales the A4 pages to the screen. "Opslag" shows two pages side by side on wide screens,
-// and "Gem som PDF" prints every page at full size on its own sheet.
+// and the floating PDF button prints every page at full size on its own sheet.
 export function Viewer({ children }: { children: React.ReactNode }) {
   const [spread, setSpread] = useState(false);
 
@@ -47,19 +47,16 @@ export function Viewer({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="kat-bar">
-        <div className="kat-bar-t">
-          <b>Selfi × Smukfest</b>
-          <span>Salgskatalog · forslag 2027 · 12 sider A4</span>
-        </div>
-        <div className="kat-bar-acts">
-          <button type="button" className="kat-pill kat-pill--spread" onClick={toggle}>
-            {spread ? "Enkeltsider" : "Opslag"}
-          </button>
-          <button type="button" className="kat-pill kat-pill--primary" onClick={() => window.print()}>
-            Gem som PDF
-          </button>
-        </div>
+      <div className="kat-float">
+        <button type="button" className="kat-pill kat-pill--spread" onClick={toggle}>
+          {spread ? "Enkeltsider" : "Opslag"}
+        </button>
+        <button type="button" className="kat-pill kat-pill--primary" onClick={() => window.print()} aria-label="Gem kataloget som PDF">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" />
+          </svg>
+          PDF
+        </button>
       </div>
       <main className="kat-deck">{children}</main>
     </>
