@@ -25,7 +25,7 @@ Statiske annoncer til private fester: konfirmation, bryllup, fødselsdag, firmaf
 
 Karrusellen: 1 "Det kan jeres gæster i en Selfi", 2 videohilsner, 3 spørgsmål, 4 titler, 5 missioner, 6 jeres side, 7 pris, service og knap.
 
-"Markedets laveste pris · selfi.dk" står i bunden af alle annoncer. Prisen "Fra 499 kr." står på karrusellens første kort og på annonce 01 (Esben, 18. okt. 2026). Hjemmesiden siger 495 kr. for én dag, så de to skal bringes til at passe.
+"Markedets laveste pris · selfi.dk" står i bunden af alle annoncer. Prisen "Fra 495 kr." står på karrusellens første kort og på annonce 01, samme pris som på hjemmesiden (Esben, 18. okt. 2026).
 
 ## Det har jeg undgået (AI-slop i annoncer)
 
