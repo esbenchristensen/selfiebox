@@ -1,0 +1,79 @@
+{
+  "name": "Palads Teatret",
+  "event": "Palads Teatret – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#2b2a3d",
+      "filament": "PETG HF dark blue"
+    },
+    "night": {
+      "hex": "#312f43",
+      "filament": "PETG HF navy"
+    },
+    "deep": {
+      "hex": "#1b1a28",
+      "filament": "PETG HF black"
+    },
+    "white": {
+      "hex": "#f7f5ee",
+      "filament": "PETG HF white"
+    },
+    "gold": {
+      "hex": "#e0ae45",
+      "filament": "PETG HF gold"
+    },
+    "bulb": {
+      "hex": "#fff2c2",
+      "filament": "PETG HF cream"
+    },
+    "velvet": {
+      "hex": "#9b1c22",
+      "filament": "PETG HF red"
+    },
+    "velvetd": {
+      "hex": "#5e0d14",
+      "filament": "PETG HF burgundy"
+    },
+    "corn": {
+      "hex": "#f3dc9a",
+      "filament": "PETG HF yellow"
+    },
+    "silver": {
+      "hex": "#a7a9ba",
+      "filament": "PETG HF silver"
+    },
+    "sky": {
+      "hex": "#47456a",
+      "filament": "PETG HF lilac"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#2b2a3d",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#fff2c2",
+        "#e0ae45"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#e0ae45"
+  },
+  "screen": {
+    "ticker": "Palads Teatret  •  Ørnevej 6A, Frederikshavn  •  4 sale  •  Dolby Atmos  •  Vi ses i biografen  •",
+    "cta": "Sig «Popcorn!»",
+    "background": "night",
+    "accent": "gold"
+  }
+}

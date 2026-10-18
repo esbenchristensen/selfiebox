@@ -1,0 +1,3 @@
+# Regenerate with: python3 hardware/tools/venue_themes.py palads
+build/*.stl
+build/web/
