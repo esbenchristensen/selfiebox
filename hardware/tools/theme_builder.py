@@ -74,6 +74,8 @@ def extrude_xz(geom, y0, y1):
         if p.is_empty or p.area < 0.05:
             continue
         m = trimesh.creation.extrude_polygon(p, y1 - y0)
+        if not m.is_volume:   # traced artwork can triangulate badly; a tiny clean-up usually closes it
+            m = trimesh.creation.extrude_polygon(p.buffer(0.02).simplify(0.03), y1 - y0)
         m.apply_transform(np.array([[1, 0, 0, 0], [0, 0, 1, y0], [0, 1, 0, 0], [0, 0, 0, 1]], float))
         if m.volume < 0:
             m.invert()

@@ -851,6 +851,122 @@ def julefrokost():
                 logo=lambda: [("snow", text("Julefrokost", "lilita-one", 0, 16, 26)), ("gold", star4(0, -8, 9))])
 
 
+# --------------------------------------------------------- bars (business) --
+# Flying Hirsch in Frederikshavn: an afterski hut with raw wood, the DJ in an old gondola lift and the
+# staff in lederhosen. "The Craziest Afterskibar". The logo (the stag in ski goggles with its skis in the
+# air) is traced from the bar's own artwork in logos/flying_hirsch-source.png.
+
+def flying_hirsch_logo(bounds):
+    lg = traced_logo("flying_hirsch")
+    placed = place_logo(lg, bounds, [("black", "base")] + [(k, k) for k in ("darkred", "red", "grey", "brown", "fur", "tan", "white")])
+    # Snap the traced outlines to a 0.05 mm grid so every colour extrudes to a clean solid.
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in placed]
+
+
+def gondola(cx, cz, w):
+    """A gondola cabin hanging from its arm, `w` mm wide, the cable passing through (cx, cz)."""
+    h = w * 0.82
+    cab = box(cx - w / 2, cz - w * 0.32 - h, cx + w / 2, cz - w * 0.32).buffer(w * 0.12).buffer(-w * 0.06)
+    window = box(cx - w * 0.36, cz - w * 0.32 - h * 0.55, cx + w * 0.36, cz - w * 0.32 - h * 0.12)
+    arm = U(line([(cx, cz), (cx, cz - w * 0.36)], max(1.4, w * 0.08)), Point(cx, cz).buffer(max(1.4, w * 0.1), 16))
+    return cab, window, arm
+
+
+def ski(p0, p1, w):
+    """A ski from its tail p0 to its tip p1, `w` mm wide, and a stripe down its middle."""
+    body = LineString([p0, p1]).buffer(w / 2, cap_style="flat")
+    dx, dz = p1[0] - p0[0], p1[1] - p0[1]
+    n = math.hypot(dx, dz)
+    ux, uz = dx / n, dz / n
+    tip = Point(p1[0] + ux * w * 0.1, p1[1] + uz * w * 0.1).buffer(w / 2, 32)
+    tail = Point(p0).buffer(w / 2, 32)
+    stripe = LineString([(p0[0] + ux * w, p0[1] + uz * w), (p1[0] - ux * w, p1[1] - uz * w)]).buffer(w * 0.13, cap_style="flat")
+    return U(body, tip, tail), stripe
+
+
+@theme
+def flying_hirsch():
+    # The logo's own colours: black, three reds, two browns, tan antlers and white type.
+    pal = {"base": "#0d0b0a", "grey": "#333333", "white": "#f8f7f4", "red": "#c8181f", "darkred": "#43060a",
+           "fur": "#89633d", "brown": "#65421f", "tan": "#c59b6d", "stone": "#6b6f78", "pine": "#1d4a35", "night": "#14213a"}
+
+    def wing(side_seed):
+        rng = random.Random(side_seed)
+        if side_seed % 2 == 0:
+            # Right: the mountain, with the gondola from the DJ booth on its way up.
+            peak = Polygon([(X0, 22), (X0 + 58, 22), (X0 + 56, 90), (X0 + 48, 150), (X0 + 52, 176), (X0 + 40, 232), (X0 + 30, 290), (X0 + 18, 262), (X0, 250)])
+            outline = U(wing_strip(26, 22, 240), peak.buffer(3).buffer(-3))
+            L = [("base", outline), ("stone", peak.buffer(-3))]
+            snow = Polygon([(X0 - 2, 214), (X0 + 18, 262), (X0 + 30, 290), (X0 + 40, 232), (X0 + 44, 214), (X0 + 36, 222), (X0 + 30, 206), (X0 + 22, 220), (X0 + 12, 204), (X0 + 4, 216)])
+            L += [("white", snow.intersection(peak.buffer(-3)))]
+            L += [("pine", U(*[pine(X0 + rng.uniform(8, 50), rng.uniform(22, 70), rng.uniform(16, 22), rng.uniform(30, 40)) for _ in range(7)]))]
+            L += [("white", hills_poly(X0 - 5, X0 + 70, 32, 3, 0.08, rng))]
+            L += [("base", line([(X0 - 4, 96), (X0 + 70, 176)], 1.4).intersection(peak.buffer(-3)))]
+            for u in (12, 36):
+                cab, win, arm = gondola(X0 + u, 96 + (u + 4) * 80 / 74, 16)
+                L += [("base", arm), ("red", cab), ("white", win)]
+        else:
+            # Left: crossed skis leaning on the hut's log wall, stuck in the snow.
+            sk1, st1 = ski((X0 + 10, 40), (X0 + 44, 274), 14)
+            sk2, st2 = ski((X0 + 48, 40), (X0 + 16, 274), 14)
+            wall = box(X0, 22, X0 + 30, 268)
+            outline = U(wall, sk1, sk2, hills_poly(X0, X0 + 58, 44, 4, 0.06, rng).intersection(box(X0, 22, X0 + 60, 80)))
+            outline = outline.intersection(box(X0, 22, X0 + 62, 290))
+            L = [("base", outline), ("fur", wall.buffer(-2)), ("brown", U(*[box(X0, z - 0.7, X0 + 30, z + 0.7) for z in np.arange(34, 268, 13)]).intersection(wall.buffer(-2)))]
+            L += [("red", sk2), ("white", st2)]
+            L += [("base", sk1.buffer(1.4)), ("grey", sk1), ("red", st1)]
+            L += [("white", hills_poly(X0 - 5, X0 + 70, 46, 4, 0.06, rng))]
+        return outline, L
+
+    def topper():
+        # The hut's gable with snow on the roof, and the logo in front of it.
+        roof = Polygon([(-HW - 12, 30), (0, 112), (HW + 12, 30)])
+        logo = flying_hirsch_logo((-78, 30, 78, 186))
+        # Keep the badge in one piece: the ski poles are too thin to print, so they and their baskets go.
+        badge = U(*[g for _, g in logo]).buffer(0.6).buffer(-2.1).buffer(1.5)
+        badge = max(getattr(badge, "geoms", [badge]), key=lambda g: g.area).buffer(2.4).buffer(-0.8)
+        logo = [(k, g.intersection(badge).buffer(0)) for k, g in logo]
+        outline = U(box(-HW, 0, HW, 34), roof, badge).intersection(box(-HW - 14, 0, HW + 14, 190))
+        L = [("base", outline)]
+        gable = Polygon([(-HW + 8, 30), (0, 94), (HW - 8, 30)])
+        L += [("fur", gable), ("brown", U(*[box(x - 0.8, 26, x + 0.8, 120) for x in np.arange(-HW + 16, HW, 14)]).intersection(gable))]
+        L += [("red", roof.difference(Polygon([(-HW + 6, 26), (0, 96), (HW - 6, 26)])))]
+        rng = random.Random(11)
+        ridge = LineString([(-HW - 12, 30), (0, 112), (HW + 12, 30)])
+        drips = U(*[Point(x, 30 + (HW + 12 - abs(x)) * 82 / (HW + 12) - 6).buffer(rng.uniform(3, 5.5), 24) for x in np.linspace(-HW + 4, HW - 4, 26)])
+        L += [("white", U(ridge.buffer(7), drips).intersection(roof))]
+        L += [("base", box(-HW + 4, 4, HW - 4, 30)), ("tan", box(-HW + 6, 6, HW - 6, 28))]
+        L += [("base", badge)] + logo
+        L += [("base", text("THE CRAZIEST AFTERSKIBAR", "alfa-slab-one", 0, 17, 9, 200))]
+        return outline, L
+
+    def screen(w, h):
+        rng = random.Random(4)
+        L = [("night", box(0, 0, w, h))]
+        L += [("white", U(*[star4(rng.uniform(10, w - 10), rng.uniform(h * 0.5, h - 10), rng.uniform(2.5, 5)) for _ in range(26)]))]
+        far = Polygon([(-10, 300), (90, 420), (160, 380), (260, 490), (330, 420), (420, 460), (520, 390), (610, 430), (610, 300)])
+        near = Polygon([(-10, 250), (70, 360), (150, 300), (240, 420), (330, 330), (440, 400), (540, 310), (610, 370), (610, 250)])
+        L += [("stone", far), ("white", far.intersection(box(-10, 400, w + 10, h)).buffer(0)), ("pine", near)]
+        L += [("pine", U(*[pine(x, 210, rng.uniform(40, 60), rng.uniform(80, 120)) for x in np.linspace(10, w - 10, 11)]))]
+        L += [("white", hills_poly(0, w, 240, 10, 1.6, rng))]
+        L += [("white", line([(-10, 350), (w + 10, 450)], 3))]
+        cab, win, arm = gondola(w * 0.82, 350 + (w * 0.82 + 10) * 100 / (w + 20), 50)
+        L += [("base", arm), ("red", cab), ("tan", win)]
+        L += [("tan", text("THE CRAZIEST AFTERSKIBAR", "alfa-slab-one", w / 2, 498, 19, w * 0.78))]
+        return L
+
+    return dict(name="Flying Hirsch", place="Frederikshavn", font="alfa-slab-one", pal=pal,
+                filament={"base": "PETG HF black", "grey": "PETG HF dark grey", "white": "PETG HF white", "red": "PETG HF red",
+                          "darkred": "PETG HF burgundy", "fur": "PETG HF light brown", "brown": "PETG HF brown", "tan": "PETG HF tan", "stone": "PETG HF grey",
+                          "pine": "PETG HF dark green", "night": "PETG HF navy"},
+                casing="#0d0b0a", ring={"idle": ["#fff1de", "#c8181f"], "glow": "#e8333a"},
+                screen=dict(bg="night", ink="white", accent="red", cta="Sig «Prost!»", ticker="The Craziest Afterskibar  •  Flying Hirsch  •  Søndergade, Frederikshavn  •  Prost!  •"),
+                frame=dict(bg="base", ink="red", caption="Flying Hirsch · Frederikshavn"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: flying_hirsch_logo((-60, 0, 60, 120)),
+                # The bar's artwork itself on the screen, the photo frame and the site, sharper than the traced inlay.
+                logo_png=dict(file="flying_hirsch-source.png", screen=(300, 930, 400), frame=(40, 182, 172)))
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
@@ -876,6 +992,30 @@ def layers_svg(layers, pal, w, h, bg=None, scale=1.0, extra=""):
 def png(svg, out, w=None, h=None):
     import cairosvg
     cairosvg.svg2png(bytestring=svg.encode(), write_to=str(out), output_width=w, output_height=h)
+
+
+def paste_logo(target, src, x, y, width=None, height=None, anchor="middle"):
+    """Paste a venue's own logo artwork onto a rendered PNG: centred on x (or from x when anchor is left), top at y, in pixels."""
+    from PIL import Image
+    im = Image.open(target).convert("RGBA")
+    lg = Image.open(TOOLS / "logos" / src).convert("RGBA")
+    lg = lg.crop(lg.getbbox())
+    k = width / lg.width if width else height / lg.height
+    lg = lg.resize((round(lg.width * k), round(lg.height * k)), Image.LANCZOS)
+    im.alpha_composite(lg, (round(x - lg.width / 2) if anchor == "middle" else round(x), round(y)))
+    im.save(target)
+
+
+def logo_png_svg(src, size=480):
+    """The venue's logo artwork wrapped in an SVG, so the site can use it like the drawn logos."""
+    from PIL import Image
+    lg = Image.open(TOOLS / "logos" / src).convert("RGBA")
+    lg = lg.crop(lg.getbbox())
+    lg.thumbnail((size, size), Image.LANCZOS)
+    buf = io.BytesIO()
+    lg.save(buf, "PNG", optimize=True)
+    data = base64.b64encode(buf.getvalue()).decode()
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {lg.width} {lg.height}" width="{lg.width}" height="{lg.height}"><image href="data:image/png;base64,{data}" width="{lg.width}" height="{lg.height}"/></svg>'
 
 
 def build(tid):
@@ -942,6 +1082,9 @@ def build(tid):
     tick_text = text(sc["ticker"], "poppins", 12, 23, 14, None, anchor="start")
     sl += [("base", box(0, 0, 0, 0)), (sc["accent"], btn), (sc["ink"], cta), (sc["accent"], tick), (sc["bg"] if spal[sc["bg"]] != spal[sc["accent"]] else "base", tick_text.intersection(tick))]
     png(layers_svg(sl, spal, sw, sh), web / "screen.png", 600, 960)
+    art = t.get("logo_png")
+    if art:
+        paste_logo(web / "screen.png", art["file"], art["screen"][0], sh - art["screen"][1], width=art["screen"][2])
 
     # Photo frame for an Instax Square print (72 × 86 mm), photo window 62 × 62 mm left transparent.
     fr = t["frame"]
@@ -960,12 +1103,18 @@ def build(tid):
     placed = [(key, affinity.translate(g, 60 - pb[0], 95 - (pb[1] + pb[3]) / 2)) for key, g in placed]
     cap = text(fr["caption"].upper(), "poppins", 685, 95, 18, 440, anchor="end")
     fl += placed + [(fr["ink"], cap)]
+    if art:
+        fl = [(fr["bg"], frame), (fr["ink"], cap)]
     png(layers_svg(fl, spal, fw, fh), web / "print.png", 720, 860)
+    if art:
+        paste_logo(web / "print.png", art["file"], art["frame"][0], fh - art["frame"][1], height=art["frame"][2], anchor="left")
 
     # Logo on its own, for the site
     lb = lg.bounds
     pad = 4
     logo_svg = layers_svg([(key, affinity.translate(g, -lb[0] + pad, -lb[1] + pad)) for key, g in logo], spal, lb[2] - lb[0] + pad * 2, lb[3] - lb[1] + pad * 2, scale=4)
+    if art:
+        logo_svg = logo_png_svg(art["file"])
     (web / "logo.svg").write_text(logo_svg)
 
     meta = dict(id=tid, name=t["name"], place=t["place"], palette=t["pal"], casing=t["casing"], ring=t["ring"],
