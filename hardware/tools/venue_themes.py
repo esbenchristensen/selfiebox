@@ -52,6 +52,20 @@ G = dict(W=234.0, H=306.0, D=66.0, R=24.0, SIDE_Y=10.0, BZ0=66.8, BZ1=239.2, H_S
          PRN_FRONT_W=82.0, PRN_FRONT_H=58.0)
 HW = G["W"] / 2
 X0 = HW + 0.2                      # inner edge of a wing
+# Gen 2 (gen2_concept.scad): one concentric squircle outline, 222.5 wide with a 7.8 mm border to the light ring,
+# 85 mm deep, and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
+G2 = dict(G, W=222.5, D=85.0, R=42.8, WING_X=222.5 / 2 - 12)
+
+
+def use_unit(unit):
+    """Point the shared geometry at rev G or gen 2 before a theme's parts are drawn."""
+    global G, HW, X0
+    G = G2 if unit == "gen2" else G_REVG
+    HW = G["W"] / 2
+    X0 = HW + 0.2
+
+
+G_REVG = G
 BED = (271.0, 292.0)               # H2C plate minus 7 mm each side
 
 
@@ -244,6 +258,13 @@ def coaster(pts, rail=2.2, ties=True, z_floor=0, support_every=14):
 
 
 # --------------------------------------------------------------- the parts --
+def cyl_y(d, y0, y1, x, z):
+    c = trimesh.creation.cylinder(radius=d / 2, height=y1 - y0, sections=32)
+    c.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, [1, 0, 0]))
+    c.apply_translation([x, (y0 + y1) / 2, z])
+    return c
+
+
 def wing_body(outline):
     """theme_builder's wing, with a free outline. `outline` is the right wing in unit coordinates."""
     outline = outline.intersection(box(X0, -50, X0 + 80, G["H"] + 60)).buffer(-1.5).buffer(1.5)
@@ -257,6 +278,13 @@ def wing_body(outline):
         if min(abs(zr - G["BZ0"]), abs(zr - G["BZ1"])) > 10:
             s = box(X0, zr - 1, X0 + reach * 0.3, zr + 1).intersection(outline)
             stiff.append(tb.extrude_xz(s, tb.FACE_T - 0.01, tb.FACE_T + 5))
+    if "WING_X" in G:
+        # Gen 2: the rib runs back along the side and turns in behind the back wall as a tab per insert.
+        rib = tb.cube(X0, X0 + 4, 0, G["D"] + 3, z0 + 4, z1 - 4)
+        tabs = [tb.cube(G["WING_X"] - 8, X0 + 4, G["D"] + 0.2, G["D"] + 3, z - 9, z + 9) for z in (G["BZ0"], G["BZ1"])]
+        body = tb.boolean("union", [face, rib] + tabs + stiff)
+        holes = [cyl_y(G["M3_CLR"], G["D"] - 1, G["D"] + 4, G["WING_X"], z) for z in (G["BZ0"], G["BZ1"])]
+        return tb.boolean("diff", [body] + holes), outline
     body = tb.boolean("union", [face, rib] + stiff)
     holes = [tb.cyl_x(G["M3_CLR"], X0 - 1, X0 + 5, G["SIDE_Y"], z) for z in (G["BZ0"], G["BZ1"])]
     return tb.boolean("diff", [body] + holes), outline
@@ -1100,6 +1128,134 @@ def aab():
                 logo_png=dict(file="aab-source.png", screen=(300, 930, 300), frame=(40, 182, 150)))
 
 
+# ---------------------------------------------------------- cinemas (bio) --
+# Palads Teatret, Frederikshavn: a four-screen town cinema with an art deco name sign. The topper is a cinema
+# marquee with a ring of bulbs around the name and a stepped deco crown, the right wing a vertical BIO blade sign
+# over a striped popcorn box and the left wing a film strip unwinding from its reel. Drawn for the gen 2 unit. The logo is traced from
+# logos/palads-source.png (white on the cinema's dark violet).
+
+def palads_logo(bounds):
+    lg = traced_logo("palads")
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in place_logo(lg, bounds, [("white", "white")])]
+
+
+def bulbs_along(ring, step, r):
+    """Marquee bulbs every `step` mm along a closed or open line."""
+    n = max(1, int(ring.length // step))
+    return U(*[ring.interpolate(i * ring.length / n).buffer(r, 24) for i in range(n)])
+
+
+def popcorn_box(cx, z0, w0, w1, h):
+    """A striped popcorn box, `w0` wide at the bottom and `w1` at the top, and the popcorn heaped on it."""
+    body = Polygon([(cx - w0 / 2, z0), (cx + w0 / 2, z0), (cx + w1 / 2, z0 + h), (cx - w1 / 2, z0 + h)])
+    stripes = U(*[Polygon([(cx + a * w0 / 2, z0), (cx + b * w0 / 2, z0), (cx + b * w1 / 2, z0 + h), (cx + a * w1 / 2, z0 + h)])
+                  for a, b in ((-0.6, -0.2), (0.2, 0.6))])
+    rng = random.Random(5)
+    corn = U(*[Point(cx + rng.uniform(-w1 * 0.42, w1 * 0.42), z0 + h + rng.uniform(-1, 9)).buffer(rng.uniform(4.2, 6.2), 24) for _ in range(9)],
+             Point(cx, z0 + h + 10).buffer(6.5, 24))
+    return body, stripes, corn
+
+
+@theme
+def palads():
+    # The cinema's own dark violet and white, brass and warm bulbs for the marquee, red velvet for the hall.
+    pal = {"base": "#2b2a3d", "night": "#312f43", "deep": "#1b1a28", "white": "#f7f5ee", "gold": "#e0ae45",
+           "bulb": "#fff2c2", "velvet": "#9b1c22", "velvetd": "#5e0d14", "corn": "#f3dc9a", "silver": "#a7a9ba", "sky": "#47456a"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: a vertical BIO blade sign with bulbs down both sides, standing on a popcorn box.
+            blade = box(X0 + 8, 104, X0 + 50, 268).buffer(6).buffer(-2)
+            cap = Polygon([(X0 + 10, 270), (X0 + 48, 270), (X0 + 40, 284), (X0 + 18, 284)]).buffer(1.5)
+            body, stripes, corn = popcorn_box(X0 + 31, 24, 38, 50, 52)
+            outline = U(wing_strip(12, 24, 284), blade.buffer(2), cap.buffer(2), body.buffer(2), corn.buffer(2))
+            outline = outline.intersection(box(X0, 22, X0 + 64, 294))
+            L = [("base", outline), ("gold", U(blade, cap)), ("night", blade.buffer(-4))]
+            L += [("bulb", U(bulbs_along(LineString([(X0 + 14, 112), (X0 + 14, 262)]), 12.5, 2.6),
+                             bulbs_along(LineString([(X0 + 44, 112), (X0 + 44, 262)]), 12.5, 2.6)))]
+            for ch, z in (("B", 236), ("I", 186), ("O", 136)):
+                # Limelight's hairlines are thinner than a print can hold: thicken every stroke by 1.8 mm.
+                L += [("white", text(ch, "limelight", X0 + 29, z, 28, 18).buffer(0.9))]
+            L += [("base", box(X0 + 22, 274, X0 + 36, 279)), ("white", body), ("velvet", stripes), ("corn", corn)]
+            L += [("velvet", box(X0 + 6, 24, X0 + 56, 30).intersection(body))]
+        else:
+            # Left: a film strip unwinding from its reel down to the foot of the box.
+            reel_c = (X0 + 32, 258)
+            path = LineString([(X0 + 32 + 7 * math.sin(t * 2.2), 238 - t * 196) for t in np.linspace(0, 1, 60)])
+            strip = path.buffer(15, cap_style="flat")
+            reel = Point(reel_c).buffer(28, 64)
+            outline = U(wing_strip(10, 24, 286), strip.buffer(2), reel.buffer(2)).intersection(box(X0, 22, X0 + 64, 292))
+            L = [("base", outline), ("deep", strip)]
+            perf, frames = [], []
+            n = 22
+            for i in range(n):
+                d = 6 + i * (path.length - 12) / (n - 1)
+                p, q = path.interpolate(d), path.interpolate(min(path.length, d + 0.5))
+                ang = math.degrees(math.atan2(q.y - p.y, q.x - p.x))
+                for off in (-11.2, 11.2):
+                    nx, nz = -math.sin(math.radians(ang)) * off, math.cos(math.radians(ang)) * off
+                    perf.append(affinity.rotate(box(-2.3, -1.6, 2.3, 1.6), ang, origin=(0, 0)).buffer(0.6))
+                    perf[-1] = affinity.translate(perf[-1], p.x + nx, p.y + nz)
+                if i % 3 == 1:
+                    frames.append(affinity.translate(affinity.rotate(box(-8.5, -6.5, 8.5, 6.5).buffer(1), ang, origin=(0, 0)), p.x, p.y))
+            L += [("white", U(*perf)), ("bulb", U(*frames).intersection(strip.buffer(-1)))]
+            L += [("base", reel.buffer(1.5)), ("silver", reel), ("deep", Point(reel_c).buffer(23, 64).difference(Point(reel_c).buffer(21, 64)))]
+            holes = [Point(reel_c[0] + 13 * math.cos(math.radians(90 + 72 * i)), reel_c[1] + 13 * math.sin(math.radians(90 + 72 * i))).buffer(5.5, 32) for i in range(5)]
+            L += [("deep", U(*holes)), ("deep", Point(reel_c).buffer(4, 24)), ("silver", Point(reel_c).buffer(1.8, 16))]
+        return outline, L
+
+    def topper():
+        # A marquee over the entrance: brass frame with bulbs, the name in the middle, a stepped crown and a letter board.
+        sign = box(-HW - 10, 26, HW + 10, 128).buffer(9).buffer(-9)
+        crown = U(box(-74, 120, 74, 140).buffer(3).buffer(-3), box(-48, 120, 48, 154).buffer(3).buffer(-3), Point(0, 150).buffer(30, 64).intersection(box(-31, 150, 31, 200)))
+        plate = box(-HW, 0, HW, 28)
+        outline = U(plate, sign.buffer(2), crown.buffer(2)).intersection(box(-HW - 14, 0, HW + 14, 190))
+        L = [("base", outline), ("gold", U(sign, crown))]
+        # Sunburst: brass rays on the violet fan.
+        fan = Point(0, 150).buffer(25, 64).intersection(box(-26, 150, 26, 190))
+        rays = U(*[Polygon([(0, 150), (40 * math.cos(math.radians(a - 5)), 150 + 40 * math.sin(math.radians(a - 5))), (40 * math.cos(math.radians(a + 5)), 150 + 40 * math.sin(math.radians(a + 5)))]) for a in range(15, 180, 30)])
+        L += [("night", fan.difference(rays)), ("night", box(-70, 140, 70, 136).buffer(0)), ("base", box(-42, 141, 42, 150)), ("base", box(-70, 126, 70, 136))]
+        L += [("velvet", Point(0, 150).buffer(6, 32).intersection(box(-7, 150, 7, 160)))]
+        inner = sign.buffer(-10)
+        L += [("night", inner)]
+        L += [("bulb", bulbs_along(sign.buffer(-5).exterior, 11, 2.7))]
+        L += palads_logo((-96, 38, 96, 116))
+        L += [("white", box(-HW + 5, 4, HW - 5, 24)), ("deep", text("BIOGRAF  ·  FREDERIKSHAVN", "limelight", 0, 14, 9.5, 196).buffer(0.45))]
+        return outline, L
+
+    def screen(w, h):
+        L = [("night", box(0, 0, w, h))]
+        # Spotlights crossing over the stage, the glowing big screen, and the velvet curtains drawn aside.
+        for cx, tx in ((40, w * 0.62), (w - 40, w * 0.38)):
+            L += [("sky", Polygon([(cx - 12, 860), (cx + 12, 860), (tx + 90, 380), (tx - 90, 380)]))]
+        L += [("deep", U(*[Point(x, 140).buffer(26, 32) for x in np.arange(20, w, 56)], box(0, 0, w, 140)))]
+        L += [("deep", U(*[Point(x, 74).buffer(28, 32) for x in np.arange(-8, w + 30, 56)]))]
+        for side in (0, 1):
+            xs = np.linspace(0, 1, 40)
+            edge = [(120 - 30 * (1 - t) ** 2 + 8 * math.sin(t * 14), 960 - t * 960) for t in xs]
+            poly = Polygon([(-10, 970)] + edge + [(-10, -10)])
+            folds = U(*[line([(x0, 960), (x0 + 6, 0)], 5) for x0 in (24, 56, 88)]).intersection(poly)
+            if side:
+                poly, folds = affinity.scale(poly, -1, 1, origin=(w / 2, 0)), affinity.scale(folds, -1, 1, origin=(w / 2, 0))
+            L += [("velvet", poly), ("velvetd", folds)]
+        val = U(box(0, 880, w, 960), *[Point(x, 880).buffer(26, 32) for x in np.arange(26, w, 54)])
+        L += [("velvet", val), ("gold", line([(-10, 900), (w + 10, 900)], 4)), ("velvetd", U(*[line([(x, 960), (x, 870)], 4) for x in np.arange(53, w, 54)]).intersection(val))]
+        L += [("gold", text("PREMIERE I AFTEN", "limelight", w / 2, 560, 30, w * 0.66))]
+        L += [("bulb", U(*[Point(x, 520).buffer(4, 16) for x in np.arange(150, w - 140, 20)]), )]
+        return L
+
+    return dict(name="Palads Teatret", place="Frederikshavn", font="limelight", pal=pal, unit="gen2",
+                filament={"base": "PETG HF dark blue", "night": "PETG HF navy", "deep": "PETG HF black", "white": "PETG HF white",
+                          "gold": "PETG HF gold", "bulb": "PETG HF cream", "velvet": "PETG HF red", "velvetd": "PETG HF burgundy",
+                          "corn": "PETG HF yellow", "silver": "PETG HF silver", "sky": "PETG HF lilac"},
+                casing="#2b2a3d", ring={"idle": ["#fff2c2", "#e0ae45"], "glow": "#e0ae45"},
+                screen=dict(bg="night", ink="white", accent="gold", cta="Sig «Popcorn!»",
+                            ticker="Palads Teatret  •  Ørnevej 6A, Frederikshavn  •  4 sale  •  Dolby Atmos  •  Vi ses i biografen  •"),
+                frame=dict(bg="base", ink="gold", caption="Frederikshavn"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: palads_logo((-60, 0, 60, 120)),
+                logo_png=dict(file="palads-source.png", screen=(300, 800, 420), frame=(40, 160, 112)))
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
@@ -1153,6 +1309,7 @@ def logo_png_svg(src, size=480):
 
 def build(tid):
     t = THEMES[tid]
+    use_unit(t.get("unit"))
     out = ROOT / "themes" / tid / "build"
     web = out / "web"
     (out / "preview").mkdir(parents=True, exist_ok=True)
@@ -1251,7 +1408,7 @@ def build(tid):
     (web / "logo.svg").write_text(logo_svg)
 
     meta = dict(id=tid, name=t["name"], place=t["place"], palette=t["pal"], casing=t["casing"], ring=t["ring"],
-                frame=fr, photo=t["photo"], parts=[r[0] for r in report])
+                frame=fr, photo=t["photo"], parts=[r[0] for r in report], **({"unit": t["unit"]} if t.get("unit") else {}))
     (web / "theme.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
     theme_json = dict(name=t["name"], event=f"{t['name']} – concept design (venue artwork, internal use)", palette=pal,
                       casing={"style": "venue", "colour": t["casing"], "built_by": "hardware/tools/venue_themes.py"},
