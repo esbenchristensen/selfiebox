@@ -71,6 +71,7 @@ module bezel2() {
         union() { bezel(); for (j = JOINTS) cyl_y(BOSS_D, PT - 0.01, RIB_TOP, j[0], j[1]); }
         for (j = JOINTS) cyl_y(INS_M3_D, RIB_TOP - INS_M3_L, RIB_TOP + 0.1, j[0], j[1]);
         cyl_y(CAM_WIN[0] + 0.3, -0.01, CAM_WIN[1], 0, LENS_Z);
+        glass_seal_groove();
     }
 }
 module led_rail2() { difference() { led_rail(); for (j = JOINTS) cyl_y(M3_CLR, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, j[0], j[1]); } }
@@ -173,8 +174,27 @@ module wall_cleat2() {
 MEMB = [8.4, 0.6];                      // [A] adhesive acoustic membrane Ø8 (IP67 class), pocket
 LIP = [1.0, 0.6, 1.2, 0.8];             // from outside, lip width, groove depth, lip proud of the face
 module lip_ring(a, b) difference() { translate([0, a]) rr(W - 2*a, H - 2*a, R - a); translate([0, b]) rr(W - 2*b, H - 2*b, R - b); }
-module lip_groove() ext_y(SKIRT - 0.01, SKIRT + LIP[2]) lip_ring(LIP[0], LIP[0] + 1.6);
-module tpu_lip() ext_y(SKIRT - LIP[3], SKIRT + LIP[2]) lip_ring(LIP[0] + 0.2, LIP[0] + 0.2 + LIP[1]);
+// TPU does not bond reliably to ASA (Bambu only rates TPU with PLA/PETG), so every TPU seal is
+// locked in mechanically: the groove widens at its bottom (dovetail) and the TPU fills that.
+module lip_groove() {
+    ext_y(SKIRT - 0.01, SKIRT + LIP[2]) lip_ring(LIP[0], LIP[0] + 1.6);
+    ext_y(SKIRT + LIP[2] - 0.6, SKIRT + LIP[2]) lip_ring(LIP[0] - 0.4, LIP[0] + 1.6);
+}
+module tpu_lip() {
+    ext_y(SKIRT - LIP[3], SKIRT + LIP[2]) lip_ring(LIP[0] + 0.2, LIP[0] + 0.2 + LIP[1]);
+    ext_y(SKIRT + LIP[2] - 0.6, SKIRT + LIP[2]) lip_ring(LIP[0] - 0.4, LIP[0] + 1.6);
+}
+// display glass: two thin TPU fins printed on the bezel's glass seat replace the EVA ring;
+// thin fins fold at low force, so the rail's cross bars still seat the display
+GSEAL = [2.0, 3.6];
+module glass_seal_groove() for (g = GSEAL) ext_y(PT - 0.6, PT + 0.01) difference() { window2d(g + 0.85); window2d(g - 0.4); }
+module tpu_glass_seal() for (g = GSEAL) {
+    ext_y(PT - 0.01, GLASS_Y + 0.3) difference() { window2d(g + 0.45); window2d(g); }
+    ext_y(PT - 0.6, PT) difference() { window2d(g + 0.85); window2d(g - 0.4); }
+}
+// bayonet cap: TPU ring in the cap's rim groove instead of a bought O-ring
+module tpu_cap_seal() translate([IF_CABLE[0], IF_CABLE[1], 1.0]) difference() { cylinder(d = CAP_D + 0.5, h = 1.6, $fn = 64); cylinder(d = CAP_D - 2.4, h = 2, $fn = 64); }
+module tpu_all() { tpu_lip(); tpu_glass_seal(); tpu_cap_seal(); }
 // splash hoods over the underside vents: water bouncing up hits the roof and drops back out,
 // air turns sideways. Side walls only along x so the hood prints without support (back down).
 HOOD = [8, 1.6];                        // roof height above the floor, wall/roof thickness
@@ -250,7 +270,7 @@ module cable_cap() {   // printed separately; underside flush with the box botto
             translate([0, 0, WALL - 0.01]) cylinder(d = 12, h = 2.21, $fn = 48);
         }
         for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 3, $fn = 16);   // spanner pins
-        translate([0, 0, 1.0]) difference() { cylinder(d = CAP_D + 1, h = 1.6, $fn = 64); cylinder(d = CAP_D - 2.4, h = 2, $fn = 64); }  // O-ring 16 x 1.5
+        translate([0, 0, 1.0]) difference() { cylinder(d = CAP_D + 1, h = 1.6, $fn = 64); cylinder(d = CAP_D - 2.4, h = 2, $fn = 64); }  // TPU ring (tpu_cap_seal)
     }
 }
 module placed_services() {
@@ -357,6 +377,7 @@ if (VIEW == "x_inside")    { placed_display(); placed_pi(); placed_power(); plac
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cap")       cable_cap();
 if (VIEW == "x_lip")       tpu_lip();
+if (VIEW == "x_tpu")       tpu_all();
 if (VIEW == "x_cleat")     wall_cleat2();
 if (VIEW == "x_shell_all") shell2();
 if (VIEW == "x_mod_shell") difference() { mod_shell(); band_cut(); }
