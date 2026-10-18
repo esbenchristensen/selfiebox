@@ -77,11 +77,11 @@ export default function Home() {
         <ContentMachine />
         <Quality />
         <Explainer
-          film="events"
+          film="erhverv"
           label="Se filmen"
-          title="Omtale, aktiviteter og jeres univers på hvert foto."
-          lede="Se, hvordan boksen bliver en del af stedet, sender gæsterne rundt på skattejagt og giver jer og jeres sponsorer plads på hvert billede."
-          alt="Film: Selfi Boks i en forlystelsespark, på en festival og i en zoo, med tema, skattejagt, rundtur, sponsorer, sæsoner og fuld service"
+          title="Content, aktiviteter og jeres navn på hvert foto."
+          lede="Se, hvad boksen kan for jeres sted: nyt content hver aften, videoer og videohilsner, missioner, titler og konkurrencer, en gæsteliste med samtykke og fuld service."
+          alt="Film: Selfi Boks i jeres eget design som contentmaskine med billeder, videoer og videohilsner, missioner, titler, konkurrence, deling, gæsteliste og fuld service"
         />
         <Features
           title="Alt, boksen kan for jer."
