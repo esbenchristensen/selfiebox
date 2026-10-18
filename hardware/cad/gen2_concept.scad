@@ -157,8 +157,7 @@ module wall_cleat2() {
         }
         cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
         cyl_z(6.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket (press fit)
-        cyl_y(PWR_PLATE_D, yb - 1, yb + PLATE_T + 1, PWR_P[0], PWR_P[1]);       // power lead straight into the wall
-        translate([PWR_P[0] - 5, D + 0.5, 0]) cube([10, yb - D - 0.49, 250]);       // ... or down the gap: notch the stand-offs
+        translate([PWR_P[0] - 5, D + 0.5, 0]) cube([10, yb - D - 0.49, 250]);       // power lead down the gap: notch the stand-offs
     }
 }
 
@@ -172,9 +171,9 @@ EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; /
 // printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
 CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
 // power: a pocket in the back wall holds the jack facing backwards; a right-angle plug lies inside
-// it, so a pull on the lead loads the pocket walls, not the jack. The lead runs either straight
-// into the wall through the cleat plate or down the wall gap into a metal trunking.
-PWR_P = [0, 146];  PWR_IN = [26, 36, 18];  PWR_PLATE_D = 18;      // pocket opening (x, z), depth; plate hole
+// it, so a pull on the lead loads the pocket walls, not the jack. The lead runs down the wall gap
+// and leaves under the box in steel cable armour, which starts hidden behind the box.
+PWR_P = [0, 146];  PWR_IN = [26, 36, 18];                         // pocket opening (x, z), depth
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
 SPK_P = [-66, 80];  SPK = [50, 25];                               // [M] 50 mm full-range 4 ohm 5 W, depth
 module bottom_vents() for (sx = [-1, 1], x = VENT_XS) hull() for (dy = [-1, 1])
