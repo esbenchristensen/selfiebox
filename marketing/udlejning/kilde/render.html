@@ -1,0 +1,78 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#f3f4f1;overflow:hidden}</style></head><body>
+<script type="module">
+// Renderinger af udlejningskassen (forslag A). Styres fra render.cjs med ?view=pakket|laag|tom
+import * as THREE from "./three.module.min.js";
+const view = new URLSearchParams(location.search).get("view") || "pakket";
+const W = 1800, H = 1300;
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r.setSize(W, H); r.setPixelRatio(1); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
+document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xf3f4f1);
+// mm-koordinater: x langs kassen (350), y på tværs (250), z op. Origo i kassens indre bundhjørne.
+scene.up = new THREE.Vector3(0, 0, 1);
+const M = (c, rough = 0.85, extra = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: rough, metalness: 0, ...extra });
+const kraft = M(0xc29a62, 0.95), kraftIn = M(0xb48a54, 0.95), foam = M(0x4a4e4a, 0.98), black = M(0x111211, 0.55), psu = M(0x1a1b1a, 0.6), pouch = M(0x7d827c, 0.9), metal = M(0x3a3d3a, 0.4, { metalness: 0.5 });
+function boxMesh(x, y, z, w, d, h, mat) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, d, h), mat); m.position.set(x + w / 2, y + d / 2, z + h / 2); m.castShadow = m.receiveShadow = true; scene.add(m); return m; }
+const L = 350, B = 250, HH = 250, WALL = 4;
+// Kasse: bund og fire vægge
+boxMesh(-WALL, -WALL, -WALL, L + 2 * WALL, B + 2 * WALL, WALL, kraft);
+boxMesh(-WALL, -WALL, 0, WALL, B + 2 * WALL, HH, kraft); boxMesh(L, -WALL, 0, WALL, B + 2 * WALL, HH, kraft);
+boxMesh(0, -WALL, 0, L, WALL, HH, kraft); if (view !== "snit") boxMesh(0, B, 0, L, WALL, HH, kraft);
+// Klapper, foldet ud
+function flap(len, wid, pivot, rot) { const g = new THREE.BoxGeometry(len, wid, 3); g.translate(0, wid / 2, 0); const m = new THREE.Mesh(g, kraftIn); m.castShadow = m.receiveShadow = true; const p = new THREE.Group(); p.position.copy(pivot); p.add(m); p.rotation.z = rot[0]; m.rotation.x = rot[1]; scene.add(p); }
+if (false) {
+  flap(L + 8, B / 2, new THREE.Vector3(L / 2, B + WALL, HH), [0, -1.45]);
+  flap(L + 8, B / 2, new THREE.Vector3(L / 2, -WALL, HH), [Math.PI, -1.45]);
+  flap(B + 8, B / 2 - 10, new THREE.Vector3(L + WALL, B / 2, HH), [-Math.PI / 2, -1.45]);
+  flap(B + 8, B / 2 - 10, new THREE.Vector3(-WALL, B / 2, HH), [Math.PI / 2, -1.45]);
+}
+// Skum (samme mål som skæreskabelonen)
+const T15 = 15, T10 = 10, WH = 222, Z0 = 15;
+boxMesh(0, 0, 0, L, B, T15, foam);                       // 1 bund
+boxMesh(0, 0, Z0, L, T15, WH, foam); if (view !== "snit") boxMesh(0, B - T15, Z0, L, T15, WH, foam); // 3 langvægge
+boxMesh(0, T15, Z0, T10, B - 2 * T15, WH, foam); boxMesh(L - T10, T15, Z0, T10, B - 2 * T15, WH, foam); // 5 endevægge
+const yDiv = T15 + 88; boxMesh(T10, yDiv, Z0, L - 2 * T10, T15, WH, foam);  // 4 skillevæg
+boxMesh(T10, T15, Z0, T10, 88, WH, foam); boxMesh(L - 2 * T10, T15, Z0, T10, 88, WH, foam); // 6 fyldklodser
+// Halo: 306 × 222,5 forfra, 85 dyb, squircle-hjørner R44,5. Står på den lange kant, skærmen mod skillevæggen.
+function rrShape(w, h, rad) { const s = new THREE.Shape(), x = -w / 2, y = -h / 2; s.moveTo(x + rad, y); s.lineTo(x + w - rad, y); s.bezierCurveTo(x + w - rad * 0.2, y, x + w, y + rad * 0.2, x + w, y + rad); s.lineTo(x + w, y + h - rad); s.bezierCurveTo(x + w, y + h - rad * 0.2, x + w - rad * 0.2, y + h, x + w - rad, y + h); s.lineTo(x + rad, y + h); s.bezierCurveTo(x + rad * 0.2, y + h, x, y + h - rad * 0.2, x, y + h - rad); s.lineTo(x, y + rad); s.bezierCurveTo(x, y + rad * 0.2, x + rad * 0.2, y, x + rad, y); return s; }
+const showContents = view !== "tom";
+if (showContents) {
+  const g = new THREE.ExtrudeGeometry(rrShape(306, 222.5, 44.5), { depth: 85, bevelEnabled: true, bevelThickness: 1.5, bevelSize: 1.5, bevelSegments: 3, curveSegments: 24 });
+  g.translate(0, 0, -42.5);
+  const halo = new THREE.Mesh(g, black); halo.castShadow = halo.receiveShadow = true;
+  halo.rotation.x = Math.PI / 2; halo.position.set(L / 2, T15 + 1.5 + 42.5, Z0 + 222.5 / 2 + 0.5); scene.add(halo);
+  // translucent glødestribe på kabinettet (rev G-stil), synlig på kanten
+  // Løftebånd
+  boxMesh(L / 2 - 12.5 - 70, T15, Z0 + 222.5 - 30, 25, 1, 31, M(0x22d36b, 0.8)); boxMesh(L / 2 - 12.5 + 70, T15, Z0 + 222.5 - 30, 25, 1, 31, M(0x22d36b, 0.8));
+  // Stativ: tre ben, kuglehoved, sammenklappet på langs i bunden af den brede lomme
+  const yT = yDiv + T15 + 117 / 2, zT = Z0 + 45;
+  for (const [dy, dz] of [[0, 22], [-19, -11], [19, -11]]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(9, 11, 300, 24), M(0x1c1d1c, 0.5)); c.rotation.z = Math.PI / 2; c.position.set(T10 + 2 + 170, yT + dy, zT + dz); c.castShadow = c.receiveShadow = true; scene.add(c); for (let k = 0; k < 4; k++) { const ring = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 8, 24), metal); ring.rotation.z = Math.PI / 2; ring.position.set(T10 + 40 + k * 70, yT + dy, zT + dz); scene.add(ring); } }
+  const head = new THREE.Mesh(new THREE.SphereGeometry(20, 32, 16), metal); head.position.set(T10 + 20, yT, zT); head.castShadow = true; scene.add(head);
+  // Strømforsyning og kabelpose ovenpå stativet
+  boxMesh(T10 + 25, yT - 30, zT + 45 + 4, 145, 60, 32, psu);
+  const pg = new THREE.BoxGeometry(150, 95, 45, 4, 4, 4); const pm = new THREE.Mesh(pg, pouch); pm.position.set(T10 + 25 + 145 + 10 + 75, yT, zT + 45 + 4 + 22); pm.castShadow = pm.receiveShadow = true; scene.add(pm);
+  boxMesh(T10 + 25 + 145 + 10, yT - 2, zT + 45 + 4 + 44, 150, 4, 3, M(0x22d36b, 0.6)); // lynlås
+}
+if (view === "laag") {
+  boxMesh(0, 0, Z0 + WH, L, B, 13, foam);                 // 2 låg-pude
+  const tex = new THREE.TextureLoader().load("lagkort.png", () => draw());
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const card = new THREE.Mesh(new THREE.PlaneGeometry(297, 210), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.7 }));
+  card.position.set(L / 2 + 6, B / 2 - 4, Z0 + WH + 13.6); card.rotation.z = 0.035; card.receiveShadow = true; scene.add(card);
+  const g2 = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
+  const guide = new THREE.Mesh(new THREE.BoxGeometry(148, 210, 0.6), g2); guide.position.set(L / 2 + 60, B / 2 + 4, Z0 + WH + 13.2); guide.rotation.z = -0.06; scene.add(guide);
+}
+// Gulv og lys
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), new THREE.ShadowMaterial({ opacity: 0.18 })); floor.position.z = -WALL; floor.receiveShadow = true; scene.add(floor);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d4cc, 1.35));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(-500, -700, 1400); sun.target.position.set(L / 2, B / 2, 0); scene.add(sun.target);
+sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096); Object.assign(sun.shadow.camera, { left: -600, right: 600, top: 600, bottom: -600, near: 100, far: 4000 }); sun.shadow.bias = -0.0004; scene.add(sun);
+const top = new THREE.DirectionalLight(0xffffff, 1.2); top.position.set(L / 2, B / 2, 2000); top.target.position.set(L / 2, B / 2, 0); scene.add(top, top.target);
+const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(900, 400, 800); scene.add(fill);
+const cam = new THREE.PerspectiveCamera(24, W / H, 10, 10000); cam.up.set(0, 0, 1);
+cam.position.set(L / 2 - 330, B / 2 - 700, 1350); cam.lookAt(L / 2 + 5, B / 2 + 5, 140);
+if (view === "snit") { cam.position.set(L / 2 + 420, B / 2 + 1250, 700); cam.lookAt(L / 2, B / 2, 110); }
+function draw() { r.render(scene, cam); window.__done = true; }
+if (view !== "laag") draw();
+</script></body></html>

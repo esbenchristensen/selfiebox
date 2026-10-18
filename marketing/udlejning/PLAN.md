@@ -7,7 +7,7 @@ Plan for at sende Halo ud til private med posten og få den retur samme vej. Skr
 | Emne | Forslag |
 |---|---|
 | Kasse | Standard papkasse **350 × 250 × 250 mm indvendigt** (ca. 364 × 264 × 270 udvendigt). Helst 2-lags bølgepap |
-| Opdeling | PE-skum. To skitser: [A stående i ét lag](skitser/kasseopdeling-A-staaende.png) (anbefalet) og [B to lag](skitser/kasseopdeling-B-to-lag.png) |
+| Opdeling | **Forslag A, stående i ét lag** (valgt af Esben 18. okt.). PE-skum efter [skæreskabelonen](tryk/skaereskabelon/selfi-skumskabelon-A3.pdf). Skitse B ligger stadig i `skitser/` |
 | Stativ | **Sirui Traveler 5AX**, Goecker.dk, 800 kr. Pakmål ca. 33 cm, maks. højde 138 cm, ca. 1 kg |
 | Vægt | Ca. 4,3 kg i alt (anslået). Skal holdes under 5 kg, for det er der, prisen hopper |
 | Fragt | **dao pakkeshop begge veje, booket gennem Shipmondo.** Kunden skal hverken printe eller skrive noget |
@@ -27,7 +27,7 @@ Brandpakkens forslag (320 × 400 × 120 mm) passer ikke længere: Gen 2 er 85 mm
 
 **3D-print.** En 3D-printet kasse ville veje 1,5–2 kg mere og tage dage at printe pr. stk. Pap og skum er lettere og billigere og kan skiftes, når det er slidt. 3D-printeren er god til små ting: kabelclips til stativbenet, en skæreskabelon til skummet og evt. en fast stativplade i stedet for kuglehovedet.
 
-**Skum.** PE-skum (polyethylen, ca. 30 kg/m³) i plader på 15 og 30 mm. Lommerne skæres med kniv efter en 1:1-skabelon, som jeg laver, når opdelingen er valgt. Leverandør er ikke valgt endnu.
+**Skum.** PE-skum (polyethylen, ca. 30 kg/m³). Ét sæt kræver én plade 1000 × 500 × 15 mm og en halv plade 1000 × 500 × 10 mm. Delene skæres med kniv efter skæreskabelonen (A3, print i 100 %, der er en kontrolstreg på 100 mm) og limes sammen: bundplade, to langvægge, to endevægge, skillevæg, to fyldklodser og en løs låg-pude. Et løftebånd (25 mm stofbånd) under boksen gør den nem at tage op. Leverandør er ikke valgt endnu.
 
 **Label uden klister.** En selvklæbende plastlomme (dokumentlomme til 100 × 150 mm labels) på låget. Vores label sidder i lommen på vej ud; kunden tager den ud og sætter returlabelen i. Så hober labels sig ikke op på kassen, og den holder længere.
 
@@ -96,14 +96,16 @@ Sådan kører det:
 
 | Mappe | Indhold |
 |---|---|
-| `skitser/` | To skitser af kasseopdelingen. Vælg én, så laver jeg skæreskabelon og renderinger bagefter |
+| `skitser/` | Skitserne af kasseopdelingen. A er valgt |
+| `renders/` | Den pakkede kasse: åbnet med lågkortet, pakket, snit bagfra med stativ og strøm, og det tomme skumindlæg (interne billeder, ikke til kunder) |
+| `tryk/skaereskabelon/` | Skæreskabelon 1:1 på A3 med udlægning på plader |
 | `tryk/startguide/` | Startguide A5, forside (opsætning) og bagside (retur). Tryk-PDF med 3 mm beskæring og PNG |
 | `tryk/laagkort/` | Lågkort A4 på tværs: "Start med guiden" og hvad der er i kassen, med afkrydsning |
 | `tryk/maerkat/` | Mærkat 150 × 100 mm til låget ved siden af labellommen |
 | `indkobsliste.csv` | Indkøb pr. udlejningssæt og engangskøb |
-| `kilde/` | `build.cjs` bygger tryksagerne, `skitser.cjs` tegner skitserne. Kør med `NODE_PATH=$(npm root -g) node build.cjs` |
+| `kilde/` | `build.cjs` bygger tryksagerne, `skitser.cjs` tegner skitserne, `skabelon.cjs` laver skæreskabelonen og `render.cjs` renderingerne (three.js i Chromium). Kør med `NODE_PATH=$(npm root -g) node build.cjs` |
 
-Tryksagerne bruger pladsholdere til telefon og mail (`KONTAKT` i `kilde/build.cjs`). Trin 2 på bagsiden ("Boksen med skærmen ind mod skummet") passer til forslag A og skal rettes, hvis vi vælger B.
+Tryksagerne bruger pladsholdere til telefon og mail (`KONTAKT` i `kilde/build.cjs`). Trin 2 på bagsiden passer til forslag A.
 
 ## Kilder
 
