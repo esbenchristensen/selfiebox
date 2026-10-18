@@ -23,16 +23,12 @@
 }
 
 /* ---------- viewer ---------- */
-.kat-bar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  padding: 12px var(--gutter-r) 12px var(--gutter); background: color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.kat-bar-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.kat-bar-t b { font: 600 16px/1.2 var(--font-display), sans-serif; letter-spacing: -0.01em; }
-.kat-bar-t span { font: 400 12px/1.3 var(--font-mono), monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
-.kat-bar-acts { display: flex; gap: 8px; }
-.kat-pill { font: 500 14px/1 var(--font-body), sans-serif; border-radius: 999px; padding: 10px 16px; min-height: 40px; cursor: pointer; border: 1px solid var(--line-strong); background: transparent; color: var(--ink); }
+.kat-float { position: fixed; z-index: 10; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 8px; }
+.kat-pill { display: inline-flex; align-items: center; gap: 5px; font: 500 13px/1 var(--font-body), sans-serif; border-radius: 999px; padding: 8px 13px; min-height: 36px; cursor: pointer; border: 1px solid var(--line-strong); background: var(--surface-raised); color: var(--ink); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28); }
+.kat-pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .kat-pill--primary { background: var(--green); color: var(--on-green); border-color: var(--green); }
 .kat-pill:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.kat-deck { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; padding: 28px 16px 64px; }
+.kat-deck { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; padding: 16px 16px 96px; }
 .kat-slot { flex: none; zoom: 0.9; }
 /* Before the script measures the screen, these keep a page inside a phone. */
 @media (max-width: 760px) { .kat-slot { zoom: 0.5; } }
@@ -207,7 +203,7 @@
 /* ---------- print ---------- */
 @page { size: A4; margin: 0; }
 @media print {
-  .kat-bar, .kat-cap { display: none !important; }
+  .kat-float, .kat-cap { display: none !important; }
   .kat { background: #fff; min-height: 0; }
   .kat-deck { display: block; padding: 0; }
   .kat-slot { zoom: 1 !important; break-after: page; page-break-after: always; }
