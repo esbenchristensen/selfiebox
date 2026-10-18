@@ -1,0 +1,75 @@
+{
+  "name": "AaB",
+  "event": "AaB – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#c4161d",
+      "filament": "PETG HF red"
+    },
+    "bright": {
+      "hex": "#ed1c24",
+      "filament": "PETG HF bright red"
+    },
+    "darkred": {
+      "hex": "#870e12",
+      "filament": "PETG HF burgundy"
+    },
+    "white": {
+      "hex": "#f7f7f5",
+      "filament": "PETG HF white"
+    },
+    "ink": {
+      "hex": "#16181b",
+      "filament": "PETG HF black"
+    },
+    "steel": {
+      "hex": "#8d939b",
+      "filament": "PETG HF grey"
+    },
+    "grass": {
+      "hex": "#2f7d3a",
+      "filament": "PETG HF green"
+    },
+    "grass2": {
+      "hex": "#3b9548",
+      "filament": "PETG HF light green"
+    },
+    "night": {
+      "hex": "#0e1730",
+      "filament": "PETG HF navy"
+    },
+    "sky": {
+      "hex": "#1d2c52",
+      "filament": "PETG HF blue"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#c4161d",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#ed1c24"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ed1c24"
+  },
+  "screen": {
+    "ticker": "De Bolchestribede  •  AaB af 1885  •  Aalborg Portland Park  •  Kom så AaB!  •",
+    "cta": "Råb «Kom så AaB!»",
+    "background": "white",
+    "accent": "base"
+  }
+}

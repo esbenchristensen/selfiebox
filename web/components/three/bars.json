@@ -35,5 +35,41 @@
       "wing_left",
       "topper"
     ]
+  },
+  {
+    "id": "aab",
+    "name": "AaB",
+    "place": "Aalborg",
+    "palette": {
+      "base": "#c4161d",
+      "bright": "#ed1c24",
+      "darkred": "#870e12",
+      "white": "#f7f7f5",
+      "ink": "#16181b",
+      "steel": "#8d939b",
+      "grass": "#2f7d3a",
+      "grass2": "#3b9548",
+      "night": "#0e1730",
+      "sky": "#1d2c52"
+    },
+    "casing": "#c4161d",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#ed1c24"
+      ],
+      "glow": "#ed1c24"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": "Aalborg Portland Park"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ]
   }
 ]
