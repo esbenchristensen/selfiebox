@@ -70,8 +70,7 @@ export default function Gaester() {
 
       <h2>Børn</h2>
       <p>
-        Er du under 15 år, skal en forælder sige ja for dig, før stedet må bruge dit billede eller sende dig tilbud. Boksen spørger om din alder,
-        før du kan sige ja.
+        Er du under 15 år, så vælg &quot;Kun til mig&quot;. Stedet må kun bruge dit billede eller sende dig tilbud, hvis en forælder siger ja for dig.
       </p>
 
       <h2>Hvem får dine data?</h2>

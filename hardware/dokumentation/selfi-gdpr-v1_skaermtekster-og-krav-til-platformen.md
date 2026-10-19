@@ -12,7 +12,7 @@
 | P4 | Numre på gæstelisten slettes ved afmelding eller efter 2 år uden brug | Gæsteinfo |
 | P5 | Tekniske logs med personoplysninger slettes efter 90 dage | Gæsteinfo, DPA |
 | P6 | Samtykker gemmes med tidspunkt, boks, sted og den præcise tekst/version | GDPR art. 7(1) |
-| P7 | Aldersspørgsmål ("Er du 15 år eller ældre?") før samtykke til brug og markedsføring. Nej → ingen samtykke-knapper | Gæsteinfo, DPA |
+| P7 | Linjen "Under 15? Vælg Kun til mig." på samtykkeskærmen (ingen separat aldersskærm). Stedet kan slå en aldersskærm til, hvis boksen står hvor der er mange børn | Gæsteinfo, DPA |
 | P8 | Samtykke til markedsføring må ikke være krav for konkurrencer eller for at få billedet | GDPR art. 7(4), vilkår |
 | P9 | Hver SMS fra stedet har en nem afmelding | Markedsføringsloven § 10 |
 | P10 | Ingen ansigtsgenkendelse/følelsesgenkendelse. AI-genererede billeder mærkes "lavet med AI" | Gæsteinfo, AI-forordningen art. 50 |
@@ -26,40 +26,35 @@
 | P18 | Totrinsbekræftelse for Selfis administratorer i admin.selfi.dk | DPA punkt 7 |
 | P19 | **Stedet kan redigere alle gæstetekster i kontrolpanelet** (tekst under startknap, samtykketekster, link til egne vilkår, skilt). Selfis tekster er standard. Hver ændring gemmes som ny version med tidspunkt og bruger, og hvert samtykke peger på den version, gæsten så. Ved første ændring viser kontrolpanelet: "I står selv for, at jeres tekster er lovlige" og stedet accepterer | Vilkår punkt 7, DPA punkt 4 (ansvaret ligger hos stedet) |
 | P20 | **Hilsen til storskærmen:** skærmen siger før optagelsen, at hilsenen vises på storskærm og bruges af stedet. Knappen "Send hilsen" er samtykket (gemmes som P6). "Slet" sletter med det samme | Gæstevilkår punkt 4 |
-| P21 | Tekst under startknappen: "Ved at tage et billede accepterer du vilkårene for [Stedets navn]. selfi.dk/brugsvilkaar" | Gæstevilkår |
+| P21 | Tekst under startknappen: "Ved at tage et billede siger du ja til vilkårene · selfi.dk/brugsvilkaar" | Gæstevilkår |
 | P22 | Kontrolpanelet kan fjerne et billede fra stedets egne flader (fotovæg, storskærm, galleri) med det samme, når en gæst trækker sit ja tilbage, og viser stedet en liste over tilbagetrukne samtykker | Gæstevilkår punkt 6 |
 
-## Skærmtekster (forslag, lag 1)
+## Skærmtekster (valgt af Esben 19. okt.: to knapper, kort og indbydende)
 
-**Startskærm, lille tekst under startknappen:**
-> Ved at tage et billede accepterer du vilkårene for [Stedets navn]. Boksen optager først, når du trykker start. selfi.dk/brugsvilkaar
+Princip: én skærm, ét tryk, ingen juratekst på skærmen. Det juridiske står på selfi.dk/brugsvilkaar og selfi.dk/gaester. [Sted] er stedets navn. Stedet kan ændre alle tekster i kontrolpanelet (P19).
 
-**Efter billedet, før deling:**
-> Få dit billede: scan QR-koden, eller skriv dit nummer, så sender vi det på SMS.
-> Nummeret bruges kun til at sende billedet og slettes efter 30 dage, medmindre du siger ja nedenfor.
+**1. Startskærm** (lille, grå tekst under startknappen)
+> Ved at tage et billede siger du ja til vilkårene · selfi.dk/brugsvilkaar
 
-**Alder (vises før samtykker):**
-> Er du 15 år eller ældre?  [Ja] [Nej]
-> (Nej: "Så får du bare dit billede. Spørg en voksen, hvis I vil dele det med [stedet].")
+**2. Efter billedet** (billedet stort, to knapper under)
+> **Skal [Sted] vise dit billede frem?**
+> [STOR KNAP i stedets farve] **Ja, del det** 
+> lille tekst under: På storskærm, SoMe og i reklamer. Du kan altid fortryde.
+> [tekstknap] Kun til mig
+> nederst, lille: Under 15? Vælg "Kun til mig".
 
-**Samtykke til brug af billede/video (afhænger af Esbens valg 19. okt.):**
+Begge knapper går videre til QR-koden/SMS. Kun "Ja, del det" gemmer samtykke (med tekstversion, P6). Ingen forvalg, ingen nedtælling, og "Kun til mig" skal være tydelig at se (ikke grå på grå), ellers er det ikke et frit valg.
 
-*Anbefalet: ét tryk, to knapper.* Efter billedet, i stedet for en ja/nej-dialog:
-> [STOR KNAP, stedets farve] **Del, og [Stedets navn] må bruge det**
-> [lille tekstknap] Kun til mig
-> Lille tekst: "Så må [Stedet] bruge billedet på storskærm, sociale medier og i markedsføring. Du kan fortryde på selfi.dk/gaester."
-Begge knapper giver gæsten billedet (QR/SMS). Kun den store knap gemmer samtykke.
+**3. Få billedet** (QR-kode + felt til nummer)
+> Scan koden, eller skriv dit nummer, så sender vi det.
+> [ ] Send mig også tilbud fra [Sted]  ← ikke sat på forhånd, vises kun når et nummer er skrevet
 
-*Alternativ (Esbens oprindelige ønske):* teksten under startknappen dækker også brugen, og billedet udleveres kun efter accept. Holder sandsynligvis ikke som samtykke (GDPR art. 7(4), EDPB 05/2020), så stedet bærer risikoen.
+**4. Hilsen til storskærmen** (før optagelse)
+> Din hilsen bliver vist på storskærmen.
+> Efter optagelse: [STOR KNAP] **Send hilsen**  · [tekstknap] Slet
 
-**Samtykke til markedsføring (separat, ikke forvalgt, kun hvis nummer er givet):**
-> Vil du have tilbud og nyheder fra [Stedets navn] på SMS? Du kan altid afmelde dig i beskederne.  [Ja tak] [Nej tak]
-
-**Konkurrence:**
-> Du er med i lodtrækningen, uanset hvad du svarer om tilbud.
-
-**Video med lyd, før optagelse:**
-> Videoen optager billede og lyd i [X] sekunder, når du trykker start.
+**5. Konkurrence** (hvis aktiv, én linje)
+> Du er med i lodtrækningen, uanset hvad du vælger.
 
 ## Skilt ved boksen (lag 1)
 

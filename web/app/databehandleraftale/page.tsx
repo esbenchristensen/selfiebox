@@ -36,7 +36,7 @@ export default function Databehandleraftale() {
       <table>
         <tbody>
           <tr><th>Registrerede</th><td>Gæster, der bruger boksen, og stedets medarbejdere, der bruger kontrolpanelet</td></tr>
-          <tr><th>Oplysninger</th><td>Billeder og videoer med lyd af gæster, telefonnumre, samtykker (tidspunkt, tekst og svar), alder ja/nej (over/under 15), tekniske logs, brugernavne og e-mails til kontrolpanelet</td></tr>
+          <tr><th>Oplysninger</th><td>Billeder og videoer med lyd af gæster, telefonnumre, samtykker (tidspunkt, tekst og svar), tekniske logs, brugernavne og e-mails til kontrolpanelet</td></tr>
           <tr><th>Følsomme oplysninger</th><td>Ingen tilsigtet. Billeder og video bruges ikke til at identificere personer (ingen ansigtsgenkendelse) og behandles derfor ikke som biometriske data</td></tr>
           <tr><th>Formål</th><td>At drive Selfi Boks for stedet: tage og levere billeder og videoer, sende dem på SMS eller QR-kode, indhente og dokumentere samtykker, vise dem i kontrolpanel og på fotovæg, udlevere gæstelisten til stedet, samt drift, overvågning, support og sikkerhed</td></tr>
           <tr><th>Varighed</th><td>Så længe kundeaftalen løber. Slettefrister: billeder uden samtykke 30 dage, billeder og videoer med samtykke til de trækkes tilbage, eller ikke er brugt i 5 år, numre til markedsføring til de afmeldes eller ikke er brugt i 2 år, tekniske logs 90 dage. Stedet kan sætte kortere frister i kontrolpanelet</td></tr>
