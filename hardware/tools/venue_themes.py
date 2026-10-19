@@ -1647,7 +1647,7 @@ def heidis():
 # ------------------------------------------------------------- ice hockey --
 # Frederikshavn White Hawks: the Metal League ice hockey club in Frederikshavn (Nordjyske Bank Arena), Danish
 # champions in 1989 and 2000. The topper is the club's crest with a pair of white hawk wings spread out behind
-# it over a red board, the right wing a taped hockey stick with a puck on the blade and the left wing the red
+# it over a red board with »Sammen er vi White Hawks«, the right wing a taped hockey stick with a puck on the blade and the left wing the red
 # goal lamp over a fan banner. Drawn for the gen 2 unit. The logo is traced from logos/white_hawks-source.png
 # (the club's 2000 px logo from whitehawks.dk): ask the club for vector artwork and permission before printing.
 
@@ -1720,7 +1720,7 @@ def white_hawks():
         return outline, L
 
     def topper():
-        # The crest with a pair of white hawk wings spread out behind it, on a red board with the two titles.
+        # The crest with a pair of white hawk wings spread out behind it, on a red board with the club's own sign-off.
         p = 30
         feathers, shoulder = hawk_wing(46, [(p + 112, 70, 26), (p + 88, 62, 24), (p + 64, 52, 22), (p + 42, 40, 20)])
         wings_r = U(*feathers, shoulder)
@@ -1737,7 +1737,7 @@ def white_hawks():
                 L += [("ink", f.buffer(1.4)), ("white", f.intersection(outline.buffer(-2.4)))]
                 L += [("grey", f.difference(affinity.translate(f, 0, 8)).intersection(outline.buffer(-2.4)))]
         L += [("ink", crest_all.buffer(2.4))] + crest
-        L += [("red", box(-HW + 4, 4, HW - 4, p - 2)), ("white", text("DANMARKSMESTRE  1989  ·  2000", "archivo-black", 0, (p + 2) / 2, 10, 200))]
+        L += [("red", box(-HW + 4, 4, HW - 4, p - 2)), ("white", text("SAMMEN ER VI WHITE HAWKS", "archivo-black", 0, (p + 2) / 2, 11, 200))]
         return outline, L
 
     def screen(w, h):
@@ -1764,7 +1764,7 @@ def white_hawks():
                           "iceline": "ASA blue", "steel": "ASA silver", "sky": "ASA blue"},
                 casing="#011a3f", ring={"idle": ["#ffffff", "#a61d26"], "glow": "#e0262f"},
                 screen=dict(bg="white", ink="base", accent="red", cta="Råb «Kom så Hawks!»",
-                            ticker="Frederikshavn White Hawks  •  Nordjyske Bank Arena  •  Danmarksmestre 1989 og 2000  •  Kom så Hawks!  •"),
+                            ticker="Frederikshavn White Hawks  •  Sammen er vi White Hawks  •  Nordjyske Bank Arena  •  Kom så Hawks!  •"),
                 frame=dict(bg="base", ink="white", caption="Kom så Hawks!"), photo="print-club",
                 wing=wing, topper=topper, screen_art=screen, logo=lambda: white_hawks_logo((-60, 0, 60, 120)),
                 logo_png=dict(file="white_hawks-source.png", screen=(300, 860, 330), frame=(40, 170, 150)))
