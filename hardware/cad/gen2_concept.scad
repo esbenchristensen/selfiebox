@@ -615,6 +615,7 @@ module shell3(top = UNIT_TOP) {
     difference() {
         union() {
             difference() { shell2(top); for (j = JOINTS) cyl_y(POST_D + 0.5, RIB_TOP + RAIL_T - 0.1, D - BACK_T + 0.02, j[0], j[1]); }
+            for (j = JOINTS) cyl_y(M3_HEAD_CB + 1, D - BACK_T - 0.01, D, j[0], j[1]);   // close v1's screw holes (Ø6.4) in the back wall: no screw there since v2
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
             power_holders();
         }
