@@ -127,6 +127,8 @@ DC_PANEL = true;                                          // gen 2 moves the jac
 DC_POS = [-52, 40];
 PB_RAIL = [70, 50, 1.6];   PB_Z0 = 18;  PB_Y = D - BACK_T - 6;   // perfboard: size, bottom, back face y
 POL_X = 46;  POL_Z = [18, 50];                                      // Pololu cradles (right side)
+POWER_REVG = true;                                                  // perfboard + Pololu holders (gen 2 v2 uses its own)
+CLIPS = [[-60, 110], [60, 110], [-60, 160], [0, 95]];               // cable-tie loops on the back wall (x, z)
 
 // attachments
 H_PRN = 84;  PRN_Z = 38;
@@ -293,13 +295,13 @@ module shell(top = UNIT_TOP) {
             translate([-CLEAT_L/2 - 3, D - BACK_T - CLEAT_D, CLEAT_ZC - 27]) cube([CLEAT_L + 6, CLEAT_D + 0.01, 39]);
             if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
             // perfboard slide rails (board stands 6 mm off the back wall, components face forward)
-            for (sx = [-1, 1]) translate([sx > 0 ? PB_RAIL[0]/2 - 1.8 : -PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0]) difference() {
+            if (POWER_REVG) for (sx = [-1, 1]) translate([sx > 0 ? PB_RAIL[0]/2 - 1.8 : -PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0]) difference() {
                 cube([4, D - BACK_T - (PB_Y - 4) + 0.01, PB_RAIL[1] + 2]);
                 translate([sx > 0 ? -0.01 : 2.21, 4 - PB_RAIL[2] - 0.15, -1]) cube([1.8, PB_RAIL[2] + 0.3, PB_RAIL[1] + 4]);
             }
-            translate([-PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0 - 3]) cube([PB_RAIL[0] + 4.4, D - BACK_T - (PB_Y - 4) + 0.01, 3]);
-            for (z = POL_Z) translate([POL_X, D - BACK_T + 0.01, z]) rotate([90, 0, 0]) pololu_cradle();
-            for (p = [[-60, 110], [60, 110], [-60, 160], [0, 95]]) translate([p[0] - 5, D - BACK_T - 3, p[1] - 2]) difference() { cube([10, 3.01, 4]); translate([2, -0.01, -1]) cube([6, 1.8, 6]); }
+            if (POWER_REVG) translate([-PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0 - 3]) cube([PB_RAIL[0] + 4.4, D - BACK_T - (PB_Y - 4) + 0.01, 3]);
+            if (POWER_REVG) for (z = POL_Z) translate([POL_X, D - BACK_T + 0.01, z]) rotate([90, 0, 0]) pololu_cradle();
+            for (p = CLIPS) translate([p[0] - 5, D - BACK_T - 3, p[1] - 2]) difference() { cube([10, 3.01, 4]); translate([2, -0.01, -1]) cube([6, 1.8, 6]); }
         }
         ext_x(-CLEAT_L/2, CLEAT_L/2) cleat_groove_2d();
         if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);

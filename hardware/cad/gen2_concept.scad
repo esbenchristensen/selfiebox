@@ -44,7 +44,8 @@ GLOW = false;
 RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
 IF_SCREW = [[-70, 54], [70, 54]];  IF_DOWEL = [[-20, 54], [20, 54]];  IF_CABLE = [0, 54];
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
-UNIT_TOP = "closed";                        // nothing stacks on top in gen 2: no holes where the rain falls
+UNIT_TOP = "closed";
+POWER_REVG = false;  CLIPS = [[-60, 135], [60, 140], [-60, 160], [100, 90]];                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
 // camera (Esben 19 Oct, Wide chosen): lens tip 0.3 behind the face, hole 0.4 over the tip, only a 0.4 x 45 deg edge break
 CAM_TIP_Y = 0.3;  CAM_HOLE = CAM_BARREL + 0.4;  CAM_HOLE_REAR = CAM_BARREL + 0.85;  CAM_CONE = [0.4, 45];
 
@@ -386,6 +387,39 @@ module placed_printers() {
 }
 
 
+
+// --------------------------------------------- v2 power and light control ----
+// No soldering (Esben 19 Oct): only finished modules with screw or lever terminals, joined with Wago clamps.
+// [A] Mean Well RSD-60G-5, 24 V -> 5 V 12 A, 128 x 60 x 25 incl. flanges (reichelt / Mean Well datasheet),
+//     screw terminals on the right-hand end; lies flat on the back wall under the Pi.
+// [C] Gledopto GL-C-016WL-D WLED controller 108 x 45 x 18 (one retailer listing): flat on the back wall above the PSU
+// (the right wall is taken by the mic board higher up).
+// [M] DFRobot Gravity MOSFET (white strips) 42 x 32 x 12: on the left side wall.
+PSU5 = [128, 60, 25];  PSU5_P = [-37, 16];                    // x, z (bottom-left), on the back wall
+WLED = [108, 45, 18];  WLED_P = [-30, 80];                    // x, z (bottom-left), on the back wall
+MOSF = [42, 32, 12];   MOSF_P = [40, 112];                    // on the left wall
+module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+    difference() {
+        translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
+        translate([0, 0, 1.2]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
+        translate([6, 6, -1]) cube([sz[0] - 12, sz[1] - 12, 3]);                   // open floor: less print, air
+        translate([-2, -2, end_h]) cube([sz[0] + 4.3, sz[1] + 4.3, hgt]) ;          // ends cut down ...
+    }
+    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -1.6, 0]) cube([sz[0] + 0.3, 1.6, hgt]);   // ... long walls stay full height
+    for (sy = [0, 1], x = [sz[0]*0.2, sz[0]*0.7]) translate([x, sy > 0 ? sz[1] + 0.3 : -1.6, hgt - 0.01]) hull() {
+        cube([8, 1.6, 0.01]); translate([0, sy > 0 ? -0.6 : 0.6, 1.2]) cube([8, 1.6, 0.01]); }
+}
+module power_holders() {
+    translate([PSU5_P[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([90, 0, 0]) wall_tray([PSU5[0], PSU5[1], PSU5[2]], PSU5[2] + 1.5);
+    translate([WLED_P[0], D - BACK_T + 0.01, WLED_P[1]]) rotate([90, 0, 0]) wall_tray([WLED[0], WLED[1], WLED[2]], WLED[2] + 1.5);
+    translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], MOSF[2] + 1.5);
+}
+module placed_power3() {
+    color([0.75, 0.76, 0.78]) translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
+    color([0.9, 0.9, 0.92]) translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
+    color([0.1, 0.3, 0.6]) translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
+}
+
 // ================================================== v2c: light channel, ring, frame ==
 // Approved 19 Oct (drawing halo-gen2-v2_kamera_lysring_print). The front is one black print with an
 // open channel (no ceilings when printed face down). The light ring drops into the slot from behind;
@@ -512,6 +546,7 @@ module shell3(top = UNIT_TOP) {
         union() {
             difference() { shell2(top); for (j = JOINTS) cyl_y(POST_D + 0.5, RIB_TOP + RAIL_T - 0.1, D - BACK_T + 0.02, j[0], j[1]); }
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
+            power_holders();
         }
         for (j = J2) { cyl_y(7.0, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); }
     }
@@ -527,7 +562,7 @@ module main_unit() {        // gen 2 unit, without the wall cleat
     color([1, 0.95, 0.8]) placed_strips3("w"); color([0.5, 0.3, 0.8]) placed_strips3("rgb");
     placed_pi3();
     color(C_BODY) shell3();
-    placed_power();
+    placed_power3();
     placed_electronics();
     placed_services();
 }
@@ -584,6 +619,9 @@ if (VIEW == "x_strip_w")   placed_strips3("w");
 if (VIEW == "x_strip_rgb") placed_strips3("rgb");
 if (VIEW == "x_display3")  placed_display3();
 if (VIEW == "c_pi3")       placed_pi3();
+if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
+if (VIEW == "c_wled")      translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
+if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
 if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [5.6, 2], j[0], FR_BACK + 2, j[1], -1);
 if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 5, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + 2.0, GC + z, -1);
