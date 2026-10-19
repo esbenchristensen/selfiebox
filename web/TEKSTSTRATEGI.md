@@ -23,7 +23,7 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 | Kører uden personale | Kontrolpanel på nettet: tema, tekster, priser, aktiviteter |
 | Billig | Privat fra 495 kr./dag, 750 kr./weekend. Erhverv 995 kr./md. ekskl. moms |
 | Gæsteliste | Gæsten skriver nummer for at få billedet på SMS og kan sige ja til tilbud |
-| Fuld service (erhverv) | Vi monterer, overvåger (boksen melder sig til fleet, alarmer i admin), opdaterer (signerede releases, trinvis udrulning), døgnsupport, ny boks ved fejl uden regning. Besluttet oktober 2026 |
+| Fuld service (erhverv) | Stedet hænger selv boksen op efter monteringsguiden (Selfi monterer ikke, besluttet 19. okt. 2026). Vi overvåger (boksen melder sig til fleet, alarmer i admin), opdaterer (signerede releases, trinvis udrulning), døgnsupport, ny boks ved fejl uden regning. Besluttet oktober 2026 |
 
 ### Ét budskab pr. målgruppe
 

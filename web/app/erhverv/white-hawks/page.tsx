@@ -450,7 +450,7 @@ export default function WhiteHawksKatalog() {
         <Page n={15} cap="Opsætning">
           <span className="kat-kicker">Opsætning og drift</span>
           <h2>Hvor boksen står i hallen</h2>
-          <p className="kat-lede">Boksen hænger på væggen eller står på en stander. Vi monterer, passer og opdaterer den, så I kun skal tænke på kampen.</p>
+          <p className="kat-lede">Boksen hænger på væggen. I hænger den selv op med vægbeslaget og vores korte guide, og vi passer og opdaterer den, så I kun skal tænke på kampen.</p>
           <div className="kat-setup2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="kat-box" src={`${IMG}/boks-white-hawks.png`} alt="Selfi Boks i White Hawks-design" />
@@ -463,7 +463,7 @@ export default function WhiteHawksKatalog() {
             </div>
           </div>
           <div className="kat-specs kat-specs--light kat-push" style={{ marginBottom: 70 }}>
-            <div>Montering<span>Væg eller stander</span></div>
+            <div>Montering<span>Vægbeslag, I hænger den selv op</span></div>
             <div>Strøm<span>230 V, én stikkontakt</span></div>
             <div>Service<span>Vi passer boksen og skifter rammer fra kamp til kamp</span></div>
           </div>

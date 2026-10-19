@@ -32,7 +32,7 @@ export default function Vilkaar() {
 
       <h2>2. Ydelsen</h2>
       <p>
-        Selfi stiller Selfi Boks til rådighed i den periode og det antal, der er aftalt, med design, software, kontrolpanel, montering,
+        Selfi stiller Selfi Boks til rådighed i den periode og det antal, der er aftalt, med design, software, kontrolpanel, vægbeslag, monteringsguide,
         overvågning, opdateringer og support som beskrevet i tilbuddet. Tilvalg, fx 4G, printer eller ekstra designs, er kun med, når de står i tilbuddet.
       </p>
 
@@ -40,7 +40,7 @@ export default function Vilkaar() {
       <ul>
         <li>Boksen, softwaren og designfilerne til boksen tilhører Selfi, medmindre andet er aftalt skriftligt. Kunden får brugsret i aftaleperioden.</li>
         <li>Kunden må ikke åbne, ændre, flytte, udlåne eller fjerne boksen fra det aftalte sted uden Selfis accept, og skal bruge den efter <a href="/dokumentation/brugsanvisning">brugsanvisningen</a>.</li>
-        <li>Kunden sørger for en stikkontakt med HFI-relæ inden for kablets rækkevidde, adgang til monteringen og, hvis aftalt, Wi-Fi. Kunden sætter informationsskiltet til gæsterne op ved boksen.</li>
+        <li>Kunden hænger boksen op efter monteringsguiden og sørger for en stikkontakt med HFI-relæ inden for kablets rækkevidde og, hvis aftalt, Wi-Fi. Kunden sætter informationsskiltet til gæsterne op ved boksen.</li>
         <li>Logoer, billeder og tekster, kunden leverer til designet, må Selfi bruge til at lave og vise designet. Kunden indestår for at have ret til dem.</li>
       </ul>
 
@@ -52,9 +52,9 @@ export default function Vilkaar() {
         <li>Selfi kan regulere løbende priser én gang om året med 3 måneders varsel. Kunden kan opsige aftalen til ikrafttrædelsen.</li>
       </ul>
 
-      <h2>5. Levering og montering</h2>
+      <h2>5. Levering og opsætning</h2>
       <p>
-        Selfi monterer og tester boksen på det aftalte sted og tidspunkt. Kan Selfi ikke levere til tiden, giver Selfi besked hurtigst muligt og
+        Selfi sender boksen med vægbeslag og monteringsguide, så den er fremme på den aftalte dato. Kunden hænger den op efter guiden, og Selfi tjekker på afstand, at den virker. Skader, der skyldes, at boksen ikke er hængt op efter guiden, er kundens ansvar. Kan Selfi ikke levere til tiden, giver Selfi besked hurtigst muligt og
         aftaler en ny dato. Forsinkelse giver kun ret til at hæve aftalen, hvis den er væsentlig og Selfi ikke leverer inden for en rimelig frist.
       </p>
 

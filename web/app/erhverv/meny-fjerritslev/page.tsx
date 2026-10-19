@@ -422,7 +422,7 @@ export default function MenyKatalog() {
             </div>
           </div>
           <div className="kat-specs kat-specs--light kat-push" style={{ marginBottom: 80 }}>
-            <div>Montering<span>Stander, væg eller transportkasse</span></div>
+            <div>Montering<span>Vægbeslag, I hænger den selv op</span></div>
             <div>Strøm<span>230 V, én almindelig stikkontakt</span></div>
             <div>Service<span>Vi skifter rammer, spørgsmål og design fra kontrolpanelet</span></div>
           </div>

@@ -473,24 +473,24 @@ export const features: Feature[] = [
     slug: "fuld-service",
     group: "drift",
     name: "Fuld service",
-    short: "Vi monterer, overvåger og bytter boksen.",
+    short: "Vi overvåger, opdaterer og bytter boksen.",
     icon: "M24 6 L39 12 V23 C39 32 32 39 24 42 C16 39 9 32 9 23 V12 Z M17 24 l5 5 9-10",
     title: "I holder åbent. Vi tager os af boksen.",
-    lede: "Vi monterer boksen, holder øje med den, opdaterer den og sender en ny, hvis noget går galt. I kan ringe til os døgnet rundt.",
+    lede: "I hænger boksen op med vægbeslaget og vores korte guide. Vi holder øje med den, opdaterer den og sender en ny, hvis noget går galt. I kan ringe til os døgnet rundt.",
     seo: {
       title: "Fotoboks med fuld service, overvågning og døgnsupport | Selfi",
-      description: "Selfi monterer, overvåger og opdaterer jeres fotobokse og sender en ny, hvis noget går galt. Support døgnet rundt.",
+      description: "Selfi overvåger og opdaterer jeres fotobokse og sender en ny, hvis noget går galt. Support døgnet rundt.",
     },
     photo: { src: "/photos/klub.jpg", alt: "Selfi Boks på en betonsøjle i en natklub", pos: "50% 40%" },
     points: [
-      ["Montering", "Vi hænger boksen op med tyverilås eller stiller den på en stander, tilslutter og tester den."],
+      ["Nem opsætning", "Boksen kommer med vægbeslag, tyverilås og en kort guide. I hænger den selv op på ca. 20 minutter."],
       ["Overvågning", "Boksen melder sig til os hele tiden. Driller den, får vi en alarm, ofte før I opdager det."],
       ["Ny boks", "Går en boks i stykker, sender vi en ny med det samme. I betaler ikke for reparation."],
       ["Support døgnet rundt", "Ring eller skriv, også lørdag kl. 01."],
     ],
     uses: [
       ["Natklubben", "Ingen personale ved boksen. Den kører hele natten, og vi har øje på den."],
-      ["Festivalen", "Vi sætter boksene op før åbning og tager dem ned igen bagefter."],
+      ["Festivalen", "Boksene hænges op på få minutter før åbning, og vi har øje på dem hele festivalen."],
       ["Hotellet", "Boksen hænger fast i lobbyen eller baren, og opdateringer kommer af sig selv."],
     ],
     faq: [{ q: "Kommer der regninger ud over den aftalte pris?", a: "Nej. Service, opdateringer, support og en ny boks, hvis noget går galt, er med i den pris, vi aftaler." }],
@@ -549,7 +549,7 @@ export const faq: Faq[] = [
   },
   {
     q: "Hvem sætter boksene op og passer dem?",
-    a: "Det gør vi. Vi monterer og tester boksene, holder øje med dem hele tiden og sender en ny, hvis en går i stykker.",
+    a: "I hænger dem selv op med vægbeslaget og en kort guide. Det tager ca. 20 minutter. Vi holder øje med dem hele tiden og sender en ny, hvis en går i stykker.",
   },
   {
     q: "Kan boksen stå udendørs?",

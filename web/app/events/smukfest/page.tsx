@@ -379,7 +379,7 @@ export default function SmukfestKatalog() {
         <Page n={11} cap="Opsætning">
           <span className="kat-kicker">Opsætning og drift</span>
           <h2>Hvor boksene står i Bøgeskoven</h2>
-          <p className="kat-lede">Boksene hænger på en væg, en stander eller en bod. Vi monterer, passer og bytter dem, så I kun skal tænke på gæsterne.</p>
+          <p className="kat-lede">Boksene hænger på en væg eller i en bod. I hænger dem selv op med vægbeslaget og vores korte guide, og vi passer og bytter dem, så I kun skal tænke på gæsterne.</p>
           <div className="kat-setup2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="kat-box" src={`${IMG}/boks-smukfest.png`} alt="Selfi Boks i Smukfest-design" />
@@ -392,7 +392,7 @@ export default function SmukfestKatalog() {
             </div>
           </div>
           <div className="kat-specs kat-specs--light kat-push" style={{ marginBottom: 80 }}>
-            <div>Montering<span>Væg, stander eller bod</span></div>
+            <div>Montering<span>Væg eller bod, I hænger den selv op</span></div>
             <div>Strøm<span>230 V, én stikkontakt pr. boks</span></div>
             <div>Service<span>Vi passer boksene under hele festivalen</span></div>
           </div>

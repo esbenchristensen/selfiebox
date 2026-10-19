@@ -51,7 +51,7 @@ Filmene er skrevet som reklamefilm, ikke som en gennemgang af funktioner:
 | Konkurrence | "Gæsterne stemmer på aftenens bedste billede, og vinderen henter præmien i baren." | Afstemning, vinder og "Præmien venter i baren" |
 | Deling | "Når gæsterne deler billedet, ser alle deres venner, hvor de var. Hver deling viser jer frem." | Opslag med festivalens ramme, likes og delinger |
 | Gæsteliste | "For at få billedet skriver gæsten sit nummer og kan sige ja til tilbud fra jer." | Telefonen med nummer og samtykke, gæstelisten tæller op |
-| Service | "Vi monterer den, holder øje med den og bytter den, hvis noget går galt. I holder bare åbent." | Det klarer vi over for Det klarer I |
+| Service | "Vi holder øje med den, opdaterer den og bytter den, hvis noget går galt. I holder bare åbent." | Det klarer vi over for Det klarer I |
 | Handling | "Book en uforpligtende snak på selfi punktum d k, så viser vi boksen i jeres design." | Logo, knap og Selfi-lyden |
 
 ## Store events: festivaler, forlystelsesparker og zoo (71 sekunder)
@@ -69,7 +69,7 @@ Til store steder, hvor værdien er branding, omtale og aktiviteter på tværs af
 | Sponsor | "Titler og konkurrencer holder gang i dagen, og rammen har plads til en sponsor." | Print med "Dagens bedste billede" og sponsoren i rammen |
 | Gæsteliste | "Gæsterne kan sige ja til nyheder fra jer, så I kan invitere dem igen næste sæson." | Liste og nyhedsbrev |
 | Sæsoner | "Til Halloween og jul skifter I skærm og ramme i kontrolpanelet." | Sommer, Halloween og jul på samme boks |
-| Service | "Vi designer, monterer og overvåger boksene og bytter dem, hvis noget går galt." | Det klarer vi over for "Tager imod gæsterne" |
+| Service | "Vi designer og overvåger boksene og bytter dem, hvis noget går galt." | Det klarer vi over for "Tager imod gæsterne" |
 | Handling | "Book en snak på selfi punktum d k skråstreg events, så viser vi boksen i jeres tema." | Logo, knap og Selfi-lyden |
 
 ## Case: Palads Teatret (ca. 55 sekunder)
