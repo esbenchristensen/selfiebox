@@ -43,6 +43,18 @@ const PLANS = {
       { from: "cta", name: "Ending", styles: ["final phrase", "ends on one clean final hit", "short natural tail, no fade"] },
     ],
   },
+  palads: {
+    global: ["instrumental", "elegant cinematic swing pop", "116 BPM", "in D minor", "brushed jazz drums", "upright bass", "warm piano and muted brass stabs", "a hint of 1930s movie palace glamour", "premium brand film mix"],
+    sections: [
+      { from: "hook", name: "Intro", styles: ["soft and expectant, like the lights dimming in a cinema", "a ticking film projector feel", "solo piano and soft strings", "no drums yet"] },
+      { from: "sign", name: "Reveal", styles: ["a short brass fanfare as the curtain opens", "brushed drums and upright bass enter", "confident, leaves room for a voice-over"] },
+      { from: "popcorn", name: "Countdown", styles: ["drums drop out", "a ticking build with rising strings", "ends in a short silence just before the drop"] },
+      { from: "phone", name: "Swing", styles: ["full swinging groove comes back on the first beat", "playful piano and brass", "leaves room for a voice-over"] },
+      { from: "pay", name: "Groove two", styles: ["steady and warm", "a touch more percussion", "same tempo and key", "leaves room for a voice-over"] },
+      { from: "year", name: "Lift", styles: ["brighter and fuller", "big band warmth", "leaves room for a voice-over"] },
+      { from: "cta", name: "Ending", styles: ["final brass phrase", "ends on one clean final hit", "short natural tail, no fade"] },
+    ],
+  },
   events: {
     global: ["instrumental", "uplifting cinematic pop", "118 BPM", "in D major", "bright pianos and plucked strings", "big but tasteful drums", "warm synth pads", "sense of wonder and adventure", "premium brand film mix"],
     sections: [

@@ -72,6 +72,27 @@ Til store steder, hvor værdien er branding, omtale og aktiviteter på tværs af
 | Service | "Vi designer, monterer og overvåger boksene og bytter dem, hvis noget går galt." | Det klarer vi over for "Tager imod gæsterne" |
 | Handling | "Book en snak på selfi punktum d k skråstreg events, så viser vi boksen i jeres tema." | Logo, knap og Selfi-lyden |
 
+## Case: Palads Teatret (ca. 55 sekunder)
+
+Kilde `palads.html`, filer `public/video/selfi-palads-*`. Hører til kataloget på `/erhverv/palads`. Salgsidéen er premiererammen, som filmudlejeren betaler for. Filmtitlerne (Nordlyset, Den sidste sommer, Rumhunden), opslaget og tallene er opdigtede og står som eksempler i filmen. Ingen pris. Boksen vises kun i Palads-designet. Skrift: Limelight (OFL) i `fonts/`, og `img/premiere-gaester.jpg` er fotoet fra premiererammen uden ramme.
+
+| Scene | Speak | Billede |
+|---|---|---|
+| Hook | "Premiereaften i Palads. Foyeren er fuld, og alle tager billeder. Men der står hverken Palads eller filmen på dem." | Pæreskilt "Premiere i aften" og telefoner med billeder uden afsender |
+| Skiltet | "Selfi Boks bliver jeres eget biografskilt, med Palads i pærer, lige midt i foyeren." | Palads-boksen, logo og Selfi-lyden |
+| Popcorn | "Publikum trykker på skærmen og siger popcorn." | Skærmen tæller ned 3-2-1, blitz og foto |
+| Telefonen | "Og billedet ligger på telefonen med det samme." | QR-kode og telefonen med Palads-rammen |
+| Premiererammen | "Til hver premiere får boksen en ny ramme, med filmens titel og dato." | Rammen skifter titel tre gange |
+| Deling | "Når publikum deler billedet, deler de også reklamen for filmen." | Opslag fra sofie.frh, likes tæller op |
+| Betaling | "Den ramme kan filmudlejeren betale for. Vi skifter den på premieredagen, og bagefter får I tallene." | Tre trin og fotos, delinger og visninger |
+| Anmeldelse | "På vej ud af salen giver publikum filmen stjerner, på video. Ægte anmeldelser, klar til jeres opslag." | Optagelse med stjerner |
+| Hele året | "Resten af året bærer hvert foto jeres egen ramme. Til Cheap Tuesday, SeniorBio og gallapremieren." | Tre rammer |
+| Handling | "Selfi. Hver premiere, på hvert foto. Book en snak på selfi punktum d k." | Selfi × Palads og knappen |
+
+```sh
+node voice.cjs palads && node music.cjs palads && node render.cjs palads
+```
+
 ## Ændre filmen
 
 Alt er tegnet i `explainer.html`, `erhverv.html` og `events.html` med sidens farver og fonte. Hver scene har en længde (`dur`) og tider for, hvornår tingene kommer ind (`data-in`). Hvis speaken skal have mere tid et sted, så gør scenens `dur` længere og render igen.

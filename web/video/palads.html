@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Selfi × Palads Teatret</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* A case film for Palads Teatret (Frederikshavn), to go with the catalogue on /erhverv/palads.
+   The sale is the premiere frame: a new frame with the film's title on every photo, paid for by the
+   film distributor. The film titles and numbers are made up on purpose and marked as examples. */
+@font-face { font-family: "Limelight"; src: url(fonts/Limelight.woff2) format("woff2"); }
+:root {
+  --surface: #1b1a28; --surface-raised: #262536; --line: #3a3950; --ink: #f6ead2; --ink-muted: #b4aec4;
+  --gold: #e3b04b; --velvet: #9b1c24; --bulb: #fff1c9; --deco: "Limelight", var(--display);
+}
+#stage { background: radial-gradient(90% 80% at 50% 40%, #2b2a3d 0%, #1b1a28 60%, #13121c 100%); }
+#stage::before { background: none; }
+h1, h2 { font-family: var(--deco); font-weight: 400; letter-spacing: 0.01em; line-height: 1.08; }
+.label .n { color: var(--gold); }
+.lede { color: var(--ink-muted); }
+.gold { color: var(--gold); }
+
+/* Velvet curtains at the edges of every frame */
+.curtain { position: absolute; top: 0; bottom: 0; width: 7%; z-index: 30; pointer-events: none;
+  background: repeating-linear-gradient(90deg, #7d141b 0 18px, #a8222b 18px 34px, #6a1016 34px 46px); box-shadow: 0 0 60px rgba(0,0,0,0.6); }
+.curtain.l { left: 0; border-radius: 0 0 60% 0 / 0 0 12% 0; }
+.curtain.r { right: 0; border-radius: 0 0 0 60% / 0 0 0 12%; }
+.valance { position: absolute; left: 0; right: 0; top: 0; height: 26px; z-index: 31; background: #8f1a22; border-bottom: 3px solid var(--gold); }
+.tall .curtain { width: 6%; }
+.chrome { z-index: 45; top: 60px; }
+.chrome.l { left: var(--pad); }
+.wide { --pad: 210px; --gap: 70px; }
+.tall { --pad: 104px; }
+
+/* Marquee with bulbs */
+.marquee { position: relative; padding: 28px 44px; border: 6px solid var(--gold); border-radius: 18px; background: #232236; text-align: center; }
+.marquee b { display: block; font: 400 var(--mq, 60px)/1 var(--deco); color: var(--ink); letter-spacing: 0.04em; white-space: nowrap; }
+.marquee small { display: block; margin-top: 14px; font: 500 calc(var(--mq, 60px) * 0.26)/1 var(--mono); letter-spacing: 0.3em; color: var(--gold); }
+.bulbs { position: absolute; inset: -6px; pointer-events: none; }
+.bulbs i { position: absolute; width: 14px; height: 14px; margin: -7px; border-radius: 50%; background: var(--bulb); box-shadow: 0 0 12px 3px rgba(255, 220, 140, 0.7); }
+
+/* Phones with unbranded photos */
+.phones { display: flex; gap: 26px; justify-content: center; }
+.ph2 { width: var(--pw, 190px); aspect-ratio: 9 / 18; border-radius: 34px; background: #0c0c12; border: 6px solid #3c3b4f; overflow: hidden; position: relative; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8); }
+.ph2 img { position: absolute; inset: 14% 0 auto 0; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.ph2 .q { position: absolute; left: 50%; bottom: 14%; transform: translateX(-50%); padding: 8px 14px; border-radius: 999px; background: var(--velvet); color: #fff; font: 600 17px/1 var(--body); white-space: nowrap; opacity: 0; }
+
+/* The box (the Palads design on the gen 2 unit) */
+.boxshot { position: relative; height: var(--bh, 820px); }
+.boxshot img { height: 100%; display: block; position: relative; }
+.boxshot .glow { position: absolute; left: 50%; top: 52%; width: 120%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 214, 140, 0.32), transparent); }
+
+/* The box's own screen */
+.scr { position: relative; width: var(--sw, 420px); aspect-ratio: 600 / 960; border-radius: 26px; overflow: hidden; border: 14px solid #0b0b10; box-shadow: 0 0 0 6px #e9e3d6, 0 0 60px 10px rgba(255, 236, 200, 0.35), 0 40px 80px -30px #000; }
+.scr > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.scr .count { position: absolute; inset: 0; display: grid; place-items: center; font: 400 calc(var(--sw, 420px) * 0.5)/1 var(--deco); color: var(--gold); text-shadow: 0 6px 30px rgba(0,0,0,0.6); opacity: 0; }
+.scr .shot { opacity: 0; }
+.scr .dim { position: absolute; inset: 0; background: rgba(20, 18, 30, 0.6); opacity: 0; }
+
+/* Phone with the photo and a QR code */
+.handoff { display: flex; align-items: center; gap: 56px; }
+.qrcard { padding: 26px; border-radius: 24px; background: #fff; }
+.qrcard .code { display: grid; grid-template-columns: repeat(21, 12px); }
+.qrcard .code i { width: 12px; height: 12px; background: #1b1a28; }
+.qrcard .code i.o { background: transparent; }
+.phone3 { width: var(--pw, 340px); border-radius: 44px; padding: 18px; background: #0c0c12; border: 6px solid #3c3b4f; box-shadow: 0 40px 80px -30px #000; }
+.phone3 img { width: 100%; display: block; border-radius: 10px; }
+.phone3 .acts { display: flex; gap: 12px; margin-top: 16px; }
+.phone3 .acts span { flex: 1; padding: 14px 0; border-radius: 14px; text-align: center; font: 600 19px/1 var(--body); background: #262536; color: var(--ink); }
+.phone3 .acts span.on { background: var(--gold); color: #1b1a28; }
+
+/* The premiere frame, as in the catalogue */
+.pframe { position: relative; overflow: hidden; width: var(--fw, 540px); aspect-ratio: 720 / 860; background: #1d1c2b; border-radius: 6px; box-shadow: 0 40px 90px -30px #000; container-type: inline-size; }
+.pframe .fdots { position: absolute; inset: 0; }
+.pframe .fdots i { position: absolute; width: 1.8cqw; height: 1.8cqw; margin: -0.9cqw; border-radius: 50%; background: var(--bulb); }
+.pframe .win { position: absolute; left: 6.5%; right: 6.5%; top: 5.5%; height: 72%; border: 0.55cqw solid var(--gold); overflow: hidden; }
+.pframe .win img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.pframe .rib { position: absolute; right: -12%; top: 7%; width: 52%; padding: 1.4cqw 0; transform: rotate(45deg); background: var(--gold); color: #1d1c2b; text-align: center; font: 400 3.6cqw/1 var(--deco); letter-spacing: 0.08em; }
+.pframe .foot { position: absolute; left: 6.5%; right: 6.5%; bottom: 4.5%; height: 15%; display: flex; align-items: center; gap: 3cqw; }
+.pframe .foot img { height: 78%; }
+.pframe .t { flex: 1; text-align: right; overflow: hidden; }
+.pframe .t b { display: block; font: 400 7.4cqw/1.05 var(--deco); color: var(--gold); white-space: nowrap; }
+.pframe .t small { display: block; margin-top: 1.4cqw; font: 600 2.8cqw/1 var(--body); color: #fff; }
+.pframe.own .rib { display: none; }
+.pframe.own .t b { font-size: 5cqw; }
+
+/* A post in the feed */
+.post { width: var(--pw, 460px); border-radius: 26px; background: #fff; color: #111; padding: 18px 18px 22px; box-shadow: 0 40px 80px -30px #000; }
+.post .who { display: flex; align-items: center; gap: 12px; font: 600 19px/1.2 var(--body); margin-bottom: 14px; }
+.post .who i { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #f9a03f, #d6249f, #285aeb); }
+.post .who small { display: block; font-weight: 400; font-size: 15px; color: #777; }
+.post .pframe { --fw: 100%; width: 100%; box-shadow: none; }
+.post .likes { margin-top: 16px; font: 700 21px/1 var(--body); }
+.post .cap { margin-top: 10px; font: 400 18px/1.35 var(--body); color: #333; }
+.post .cap b { color: #111; }
+.post .cap span { color: #285aeb; }
+.heart { position: absolute; font: 400 54px/1 var(--body); color: #e0245e; opacity: 0; }
+
+/* Steps and numbers */
+.steps3 { display: flex; flex-direction: column; gap: 22px; width: var(--sw, 640px); }
+.step3 { display: flex; gap: 26px; align-items: center; padding: 26px 30px; border-radius: 22px; background: var(--surface-raised); border: 1px solid var(--line); }
+.step3 .n { flex: none; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: #1b1a28; font: 400 32px/1 var(--deco); }
+.step3 b { display: block; font: 600 30px/1.2 var(--display); }
+.step3 span { display: block; margin-top: 6px; font: 400 22px/1.3 var(--body); color: var(--ink-muted); }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.stat { padding: 22px; border-radius: 20px; background: #12111b; border: 1px solid var(--gold); text-align: center; }
+.stat b { display: block; font: 400 44px/1 var(--deco); color: var(--gold); font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 10px; font: 500 16px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+.ex { font: 500 15px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+
+/* Video review on the screen */
+.rec { position: relative; width: var(--sw, 440px); aspect-ratio: 600 / 900; border-radius: 26px; overflow: hidden; border: 14px solid #0b0b10; box-shadow: 0 0 0 6px #e9e3d6, 0 0 60px 10px rgba(255, 236, 200, 0.3), 0 40px 80px -30px #000; }
+.rec img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rec::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(20,18,30,0.85) 0%, transparent 34%, transparent 60%, rgba(20,18,30,0.9) 100%); }
+.rec .top, .rec .bot { position: absolute; left: 24px; right: 24px; z-index: 2; }
+.rec .top { top: 22px; display: flex; justify-content: space-between; font: 600 18px/1 var(--mono); color: #fff; }
+.rec .top .r::before { content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 10px; border-radius: 50%; background: #ff3b3b; vertical-align: -1px; }
+.rec .qq { position: absolute; top: 64px; left: 24px; right: 24px; z-index: 2; font: 400 30px/1.15 var(--deco); color: var(--gold); }
+.rec .bot { bottom: 26px; }
+.stars { display: flex; gap: 8px; font-size: 46px; line-height: 1; color: #5b5870; }
+.stars i { font-style: normal; }
+.stars i.on { color: var(--gold); text-shadow: 0 0 14px rgba(227, 176, 75, 0.7); }
+.rec .say { margin-top: 14px; font: 600 30px/1.2 var(--display); color: #fff; opacity: 0; }
+
+/* Frames all year */
+.trio { display: flex; gap: 20px; align-items: flex-end; }
+.trio .pframe { --fw: 215px; }
+.trio > div:nth-child(2) .pframe { --fw: 250px; }
+.trio .k { margin-top: 16px; text-align: center; font: 500 18px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+
+/* End card */
+.duo { display: flex; align-items: center; gap: 44px; }
+.duo .x { font: 300 70px/1 var(--display); color: var(--ink-muted); }
+.duo img { height: 120px; }
+.btn2 { display: inline-flex; padding: 26px 46px; border-radius: 999px; background: var(--gold); color: #1b1a28; font: 600 34px/1 var(--display); }
+.fine { font: 500 20px/1.4 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
+
+/* 4:5 */
+.tall .marquee { --mq: 70px; padding: 26px 44px; }
+.tall .phones { gap: 22px; }
+.tall .ph2 { --pw: 210px; }
+.tall .trio .pframe { --fw: 250px; }
+.tall .trio > div:nth-child(2) .pframe { --fw: 280px; }
+.tall .trio { gap: 18px; }
+.tall .step3 { padding: 20px 24px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="valance"></div>
+  <div class="curtain l"></div><div class="curtain r"></div>
+  <div class="chrome l" id="c-logo"></div>
+  <div class="chrome r" id="c-step"></div>
+  <div id="scenes"></div>
+  <div id="flash"></div>
+</div>
+<script src="voice/palads/timing.js"></script>
+<script src="shared.js"></script>
+<script>
+const KP = "../public/katalog/palads/", MP = "../public/models/palads/";
+const PLOGO = `${MP}logo.svg`;
+const SZ = TALL
+  ? { box: 700, scr: 380, phone: 300, frame: 500, post: 430, steps: 860, rec: 400 }
+  : { box: 860, scr: 440, phone: 340, frame: 560, post: 470, steps: 700, rec: 470 };
+
+// Bulbs around a box, spaced evenly along the edges (in % of the box).
+function bulbs(nx, ny) {
+  let o = "";
+  for (let i = 0; i <= nx; i++) o += `<i style="left:${(i / nx) * 100}%;top:0"></i><i style="left:${(i / nx) * 100}%;top:100%"></i>`;
+  for (let j = 1; j < ny; j++) o += `<i style="left:0;top:${(j / ny) * 100}%"></i><i style="left:100%;top:${(j / ny) * 100}%"></i>`;
+  return o;
+}
+// Bulbs chase: every third bulb is dimmed, moving along with time.
+function chase(el, t, speed = 6) {
+  el.querySelectorAll(".bulbs i, .pframe .fdots i").forEach((b, i) => {
+    const on = (i + Math.floor(t * speed)) % 3 !== 0;
+    b.style.opacity = on ? 1 : 0.35;
+  });
+}
+const frameDots = () => `<div class="fdots">${(() => { let o = ""; const nx = 18, ny = 22; for (let i = 0; i <= nx; i++) o += `<i style="left:${3 + (i / nx) * 94}%;top:2.5%"></i><i style="left:${3 + (i / nx) * 94}%;top:97.5%"></i>`; for (let j = 1; j < ny; j++) o += `<i style="left:3%;top:${2.5 + (j / ny) * 95}%"></i><i style="left:97%;top:${2.5 + (j / ny) * 95}%"></i>`; return o; })()}</div>`;
+const pframe = ({ photo = "img/premiere-gaester.jpg", title = "FILMENS TITEL", sub = "Premiere 12. november · kun i biografen", own = false, bg = "#1d1c2b", acc = "" } = {}, attrs = "") =>
+  `<div class="pframe${own ? " own" : ""}" style="background:${bg}${acc ? `;--gold:${acc}` : ""}" ${attrs}>${frameDots()}<div class="win"><img src="${photo}" alt=""></div><span class="rib">PREMIERE</span><div class="foot"><img src="${PLOGO}" alt=""><div class="t"><b>${title}</b><small>${sub}</small></div></div></div>`;
+
+// Made-up film titles, so no real film looks like a customer.
+const FILMS = [["FILMENS TITEL", "Premiere 12. november · kun i biografen"], ["NORDLYSET", "Premiere 12. november · kun i biografen"], ["DEN SIDSTE SOMMER", "Premiere 3. december · kun i biografen"], ["RUMHUNDEN", "Premiere 26. december · kun i biografen"]];
+
+const SCENES = [
+  {
+    id: "hook", dur: 6.4,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1">Palads Teatret · Frederikshavn</span>
+        <h1 data-in="0.25">Premiereaften i Palads.</h1>
+        <p class="lede" data-in="1.6">Foyeren er fuld, og alle tager billeder.</p>
+        <p class="lede" data-in="3.8"><b>Men der står hverken Palads eller filmen på dem.</b></p>
+      </div>
+      <div class="visual">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:${TALL ? 40 : 60}px">
+          <div class="marquee" data-in="0"><div class="bulbs">${bulbs(14, 3)}</div><b>PREMIERE I AFTEN</b><small>SAL 1 · KL. 19.30</small></div>
+          <div class="phones">
+            ${["print-club", "print-birthday", "print-office"].map((p, i) => `<div class="ph2" data-in="${1.4 + i * 0.35}"><img src="${PH}${p}.jpg" alt=""><span class="q">Hvor er det?</span></div>`).join("")}
+          </div>
+        </div>
+      </div>`,
+    update(t, el) {
+      chase(el, t);
+      const k = E.out(prog(t, 3.9, 0.5));
+      el.querySelectorAll(".ph2 .q").forEach((q, i) => { q.style.opacity = E.out(prog(t, 3.9 + i * 0.15, 0.4)); });
+      el.querySelectorAll(".ph2 img").forEach((img) => (img.style.filter = `saturate(${1 - 0.6 * k}) brightness(${1 - 0.25 * k})`));
+    },
+  },
+  {
+    id: "sign", dur: 4.8,
+    sfx: [[0.3, "chime", 0.7]],
+    html: `
+      <div class="copy">
+        <div data-in="0.05">${logo(TALL ? 56 : 64)}</div>
+        <h2 data-in="0.3">Jeres eget biografskilt.</h2>
+        <p class="lede" data-in="1.6"><b>Palads i pærer,</b> lige midt i foyeren.</p>
+      </div>
+      <div class="visual">
+        <div class="boxshot" style="--bh:${SZ.box}px" data-in="0"><div class="glow"></div><img src="${KP}boks-palads.png" alt=""></div>
+      </div>`,
+    update(t, el) {
+      const k = 0.5 - 0.5 * Math.cos((t / 1.6) * Math.PI * 2);
+      el.querySelector(".glow").style.opacity = 0.6 + 0.4 * k;
+      el.querySelector(".boxshot img").style.transform = `scale(${0.96 + 0.04 * E.out(prog(t, 0, 4))})`;
+    },
+  },
+  {
+    id: "popcorn", dur: 5.6, hold: 2.6,
+    sfx: [[2.2, "beep", 0.5], [3.0, "beep", 0.5], [3.8, "beep", 0.5], [4.6, "shutter", 0.9]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">01</span>Tryk og smil</span>
+        <h2 data-in="0.2">Sig »Popcorn!«</h2>
+        <p class="lede" data-in="1.0">Publikum klarer det selv. Intet personale, ingen app.</p>
+      </div>
+      <div class="visual">
+        <div class="scr" style="--sw:${SZ.scr}px" data-in="0">
+          <img src="${MP}screen.png" alt="">
+          <img class="shot" src="img/premiere-gaester.jpg" alt="" style="object-fit:cover">
+          <div class="dim"></div><span class="count">3</span>
+        </div>
+      </div>`,
+    update(t, el) {
+      const c = el.querySelector(".count");
+      const n = t < 2.2 ? 0 : t < 3.0 ? 3 : t < 3.8 ? 2 : t < 4.6 ? 1 : 0;
+      c.textContent = n || "";
+      const ph = (t - 2.2) % 0.8;
+      c.style.opacity = n ? 1 : 0;
+      el.querySelector(".dim").style.opacity = n ? 1 : 0;
+      c.style.transform = `scale(${n ? 1.25 - 0.25 * E.out(clamp(ph / 0.3)) : 1})`;
+      el.querySelector(".shot").style.opacity = t >= 4.6 ? 1 : 0;
+      flashAt(t, 4.6);
+    },
+  },
+  {
+    id: "phone", dur: 3.4,
+    sfx: [[1.4, "pop", 0.6]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">02</span>Med hjem</span>
+        <h2 data-in="0.2">Billedet ligger på telefonen med det samme.</h2>
+        <p class="lede" data-in="1.2">En QR-kode, og det er gemt. <b>Med Palads på.</b></p>
+      </div>
+      <div class="visual">
+        <div class="handoff">
+          ${TALL ? "" : `<div class="qrcard" data-in="0">${qr()}</div>`}
+          <div class="phone3" style="--pw:${SZ.phone}px" data-in="0.6"><img src="${KP}foto-palads.jpg" alt=""><div class="acts"><span>Gem</span><span class="on">Del</span></div></div>
+        </div>
+      </div>`,
+  },
+  {
+    id: "frame", dur: 6.0, hold: 1.2,
+    sfx: [[2.0, "pop", 0.5], [3.4, "pop", 0.5], [4.8, "pop", 0.5]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">03</span>Premiererammen</span>
+        <h2 data-in="0.2">Ny film. <span class="gold">Ny ramme.</span></h2>
+        <p class="lede" data-in="1.0">Til hver premiere får boksen en ramme med <b>filmens titel og dato.</b></p>
+        <p class="ex" data-in="1.6">Filmtitlerne er eksempler</p>
+      </div>
+      <div class="visual">${pframe({}, `style="--fw:${SZ.frame}px" data-in="0"`)}</div>`,
+    update(t, el) {
+      chase(el, t, 4);
+      const SW = [2.0, 3.4, 4.8];
+      const i = SW.filter((s) => t >= s).length;
+      el.querySelector(".pframe .t b").textContent = FILMS[i][0];
+      el.querySelector(".pframe .t small").textContent = FILMS[i][1];
+      let sx = 1;
+      for (const s of SW) { const d = Math.abs(t - s); if (d < 0.2) sx = d / 0.2; }
+      el.querySelector(".pframe .t").style.transform = `scaleY(${Math.max(0.02, sx)})`;
+    },
+  },
+  {
+    id: "share", dur: 4.0,
+    sfx: [[1.0, "cheer", 0.35]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">04</span>Branding</span>
+        <h2 data-in="0.2">Hver deling er en reklame for filmen.</h2>
+        <p class="lede" data-in="1.4">Palads og filmen følger med ud i publikums feeds.</p>
+        <p class="ex" data-in="1.8">Eksempel på et opslag · navn og tal er opdigtede</p>
+      </div>
+      <div class="visual">
+        <div style="position:relative" data-in="0">
+          <div class="post" style="--pw:${SZ.post}px">
+            <div class="who"><i></i><div>sofie.frh<small>Palads Teatret</small></div></div>
+            ${pframe({ title: "NORDLYSET" })}
+            <div class="likes">0 synes godt om</div>
+            <div class="cap"><b>sofie.frh</b> Premiere med pigerne <span>#PaladsTeatret #Nordlyset</span></div>
+          </div>
+          ${[[18, 40], [72, 30], [50, 55], [85, 62], [30, 66]].map(([x, y]) => `<span class="heart" style="left:${x}%;top:${y}%">♥</span>`).join("")}
+        </div>
+      </div>`,
+    update(t, el) {
+      el.querySelector(".likes").textContent = `${Math.round(187 * E.out(prog(t, 0.6, 2.6)))} synes godt om`;
+      el.querySelectorAll(".heart").forEach((h, i) => {
+        const k = prog(t, 0.8 + i * 0.4, 1.2);
+        h.style.opacity = k > 0 && k < 1 ? Math.sin(k * Math.PI) : 0;
+        h.style.transform = `translateY(${-120 * k}px) scale(${0.6 + 0.6 * k})`;
+      });
+    },
+  },
+  {
+    id: "pay", dur: 6.0,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">05</span>En ny indtægt</span>
+        <h2 data-in="0.2">Filmudlejeren betaler rammen.</h2>
+        <p class="lede" data-in="1.0">Vi skifter den på premieredagen, og bagefter får I tallene.</p>
+      </div>
+      <div class="visual">
+        <div class="steps3" style="--sw:${SZ.steps}px">
+          <div class="step3" data-in="0.4"><span class="n">1</span><div><b>Filmudlejeren booker</b><span>Rammen kører fra premieren, typisk de første uger.</span></div></div>
+          <div class="step3" data-in="1.4"><span class="n">2</span><div><b>Vi laver og skifter rammen</b><span>Titel, dato og plakatens farver, fra kontrolpanelet.</span></div></div>
+          <div class="step3" data-in="2.6"><span class="n">3</span><div><b>I får tallene</b><span>Så filmudlejeren kan se, hvad rammen gav.</span></div></div>
+          <div class="stats" data-in="3.2">
+            <div class="stat"><b data-n="1240">0</b><span>Fotos</span></div>
+            <div class="stat"><b data-n="860">0</b><span>Delinger</span></div>
+            <div class="stat"><b data-n="41000">0</b><span>Visninger</span></div>
+          </div>
+          <span class="ex" data-in="3.6">Eksempel på tal</span>
+        </div>
+      </div>`,
+    update(t, el) {
+      const k = E.out(prog(t, 3.3, 2.2));
+      el.querySelectorAll(".stat b").forEach((b) => (b.textContent = Math.round(+b.dataset.n * k).toLocaleString("da-DK")));
+    },
+  },
+  {
+    id: "review", dur: 6.0,
+    sfx: [[1.4, "pop", 0.35], [1.7, "pop", 0.35], [2.0, "pop", 0.35], [2.3, "pop", 0.35], [2.6, "pop", 0.35]],
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1"><span class="n">06</span>Anmeldelser på video</span>
+        <h2 data-in="0.2">»Den skal du se!«</h2>
+        <p class="lede" data-in="1.2">På vej ud af salen giver publikum filmen stjerner. <b>Ægte anmeldelser, klar til jeres opslag.</b></p>
+      </div>
+      <div class="visual">
+        <div class="rec" style="--sw:${SZ.rec}px" data-in="0">
+          <img src="${PH}print-office.jpg" alt="" style="object-position:55% 50%">
+          <div class="top"><span class="r">REC</span><span class="tc">0:00 / 0:15</span></div>
+          <div class="qq">Hvad syntes du om filmen?</div>
+          <div class="bot"><div class="stars">${"<i>★</i>".repeat(5)}</div><div class="say">»Seks stjerner, hvis jeg måtte.«</div></div>
+        </div>
+      </div>`,
+    update(t, el) {
+      el.querySelector(".tc").textContent = `0:${String(Math.min(15, Math.floor(t * 1.4))).padStart(2, "0")} / 0:15`;
+      el.querySelector(".r").style.opacity = Math.floor(t * 2) % 2 ? 0.35 : 1;
+      el.querySelectorAll(".stars i").forEach((s, i) => s.classList.toggle("on", t >= 1.4 + i * 0.3));
+      el.querySelector(".say").style.opacity = E.out(prog(t, 3.2, 0.5));
+    },
+  },
+  {
+    id: "year", dur: 6.0,
+    html: `
+      <div class="copy">
+        <span class="label" data-in="0.1">Hele året</span>
+        <h2 data-in="0.2">Jeres ramme resten af tiden.</h2>
+        <p class="lede" data-in="1.0">Til Cheap Tuesday, SeniorBio og gallapremieren.</p>
+      </div>
+      <div class="visual">
+        <div class="trio">
+          <div data-in="0.6">${pframe({ own: true, photo: `${PH}print-bar.jpg`, title: "CHEAP TUESDAY", sub: "Billig film, god aften", bg: "#2b2a3d" })}<div class="k">Tirsdag</div></div>
+          <div data-in="1.2">${pframe({ own: true, photo: `${PH}print-wedding.jpg`, title: "GALLAPREMIERE", sub: "Rød løber i Palads", bg: "#3a0f16" })}<div class="k">Gallaaften</div></div>
+          <div data-in="1.8">${pframe({ own: true, photo: `${PH}print-birthday.jpg`, title: "SENIORBIO", sub: "Kaffe og film", bg: "#1f2a36", acc: "#d9c9a3" })}<div class="k">Formiddag</div></div>
+        </div>
+      </div>`,
+    update(t, el) { chase(el, t, 4); },
+  },
+  {
+    id: "cta", dur: 5.0, center: true, last: true, hold: 1.4,
+    sfx: [[0.15, "shutter", 0.8], [0.3, "chime", 0.8]],
+    html: `
+      <div class="duo" data-in="0.05">${logo(TALL ? 84 : 96)}<span class="x">×</span><img src="${PLOGO}" alt=""></div>
+      <h2 data-in="0.4" style="margin-top:56px">Hver premiere på hvert foto.</h2>
+      <span class="btn2" data-in="0.8" style="margin-top:52px">Book en snak · selfi.dk/erhverv</span>
+      <p class="fine" data-in="1.1" style="margin-top:30px">Premiereramme · Videoanmeldelser · Palads på alt, der deles</p>`,
+  },
+];
+
+mountFilm(SCENES, { steps: 0, plain: ["cta", "sign"] });
+</script>
+</body>
+</html>
