@@ -1,6 +1,6 @@
 // ============================================================================
 //  SELFIEBOX HALO gen 2 – CONCEPT (not a print file)
-//  Main unit 85 mm deep (room for 4G and a mic array) and a printer module that
+//  Main unit 70 mm deep (room for 4G and a mic array) and a printer module that
 //  cradles the main unit's lower corners without changing it: the main unit is
 //  complete on its own. The module holds two Instax Link WIDE printers on edge,
 //  one behind the other, exits down; the whole underside is a locked lid.
@@ -21,7 +21,7 @@
 include <halo.scad>
 include <logo_selfi.scad>
 
-D       = 85;          // gen 2 depth (rev G: 66)
+D       = 70;          // gen 2 depth (v1-v4: 85, rev G: 66). Set by the 5 V PSU (25 mm) behind the frame (31.7) + 9 mm air
 BOTTOM  = "none";
 PART    = "none";
 VIEW    = "pair";      // "main" | "module" | "pair" | "pair_xray" | "module_open" | "x_..." single meshes
@@ -43,7 +43,9 @@ INS_M3 = [2.4, 12];                          // pilot for the 3.0 x 15 SPUN+ fro
 // no glow band (Esben 19 Oct): the shell is one print in one colour; only the front ring lights
 GLOW = false;
 RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
-IF_SCREW = [[-70, 54], [70, 54]];  IF_DOWEL = [[-20, 54], [20, 54]];  IF_CABLE = [0, 54];
+// underside services at y = D/2 + 11.5 (85 deep: 54). Written out, not via a new variable: these override
+// halo.scad's values, and OpenSCAD evaluates an override where the first assignment stands.
+IF_SCREW = [[-70, D/2 + 11.5], [70, D/2 + 11.5]];  IF_DOWEL = [[-20, D/2 + 11.5], [20, D/2 + 11.5]];  IF_CABLE = [0, D/2 + 11.5];
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
 POWER_REVG = false;  CLIPS = [[-60, 135], [60, 140], [-60, 160], [100, 90]];                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
@@ -149,7 +151,7 @@ module shell2(top = UNIT_TOP) {
 HAT4G = [32, 65, 12];   HAT4G_P = [-88, 166];      // w (x), h (z), thickness (y); bottom-left on the back wall
 MCORE = [52.2, 70.5, 12];   MCORE_P = [48, 160];
 IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 200];
-MSTRIP = [110, 11, 4.8];  MIC_Y = 68;  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
+MSTRIP = [110, 11, 4.8];  MIC_Y = D - 17;  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
 REED = [32, 19, 7];                         // w (x), h (z), thickness (y); REED_P below the lock
 module back_part(p, sz, c) color(c) translate([p[0], D - BACK_T - 1.2 - sz[2], p[1]]) cube([sz[0], sz[2], sz[1]]);
 module placed_electronics() {
@@ -179,7 +181,7 @@ module electronics_holders() {
 // The box cannot be lifted off without the special bit, and the front screws stay behind
 // the box. With the printer module fitted, the module (key lid + 2 screws) comes off first.
 // Lifting force on the tongue: 18 x 18 section, 19 mm lever to the plate.
-LOCK_X = -56;  LOCK_W = 18;  LOCK_TZ = [18, 36];  LOCK_Y = 70;  DROP = CLEAT_D;
+LOCK_X = -56;  LOCK_W = 18;  LOCK_TZ = [18, 36];  LOCK_Y = D - 15;  DROP = CLEAT_D;
 LOCK_SY = (LOCK_Y + D - BACK_T)/2;                  // screw axis, y
 REED_P = [LOCK_X - REED[0]/2, LOCK_TZ[1] + 4];      // reed module tray, bottom-left on the back wall
 LOCK_HEAD = [8.6, 0.3];                             // [A] Bolte 88115 = DIN 7982 ST4.2 countersunk (head Ø8.1, ISO 14586 max 8.4), 90°; head 0.3 below the bottom
@@ -246,7 +248,7 @@ module mic_rings() for (x = MIC_HOLES) translate([x, MIC_Y, H - WALL - MIC_RING[
 HOOD = [8, 1.6];                        // roof height above the floor, wall/roof thickness
 module vent_hoods() for (sx = [-1, 1]) {
     x0 = VENT_XS[0] - VENT_SL[0]/2 - 2;  x1 = VENT_XS[len(VENT_XS) - 1] + VENT_SL[0]/2 + 2;
-    y0 = VENT_Y - VENT_SL[1]/2 - 2;      y1 = VENT_Y + VENT_SL[1]/2 + 2;
+    y0 = vent_y(sx) - vent_l(sx)/2 - 2;  y1 = vent_y(sx) + vent_l(sx)/2 + 2;
     for (x = [x0 - HOOD[1], x1]) translate([sx > 0 ? x : -x - HOOD[1], y0, WALL - 0.01]) cube([HOOD[1], y1 - y0, HOOD[0] + HOOD[1]]);
     translate([sx > 0 ? x0 - HOOD[1] : -x1 - HOOD[1], y0, WALL + HOOD[0]]) cube([x1 - x0 + 2*HOOD[1], y1 - y0, HOOD[1]]);
 }
@@ -255,7 +257,12 @@ module vent_hoods() for (sx = [-1, 1]) {
 // Air: in through two slot fields in the underside (no drinks get in from below), out through
 // louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney.
 // Every opening is 2.5 mm wide: no fingers, and a poked wire meets only 12 V parts.
-VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];  VENT_Y = 52;   // underside: 2 x 7 slots, 9.8 cm2
+VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];   // underside: 2 x 7 slots, 7.5 cm2 (85 deep: 9.8)
+// 70 deep, the hoods sit between the frame (y 31.7, it reaches down to z 7) and the back wall. The left
+// field stops short of the lock screw's floor boss, so its slots are shorter: [left, right] slot length.
+VENT_Y0 = 33.5;  VENT_L = [16, D - BACK_T - 1.5 - 4 - VENT_Y0];
+function vent_l(sx) = VENT_L[sx > 0 ? 1 : 0];
+function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 EXH_XS = [for (i = [0:36]) -90 + 5*i];  EXH_Z = [235, 245];  EXH_DROP = 2;    // back: 37 louvres, 9.3 cm2
 EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; // + 8 in the top corners, 4.0 cm2
 // printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
@@ -272,7 +279,7 @@ PWR_SOCK = [14, 14, 33];  PWR_SOCK_Z = 159;  PWR_PLUG = [11, 35];  // socket box
 //     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
 SPK_P = [-72.5, 94];  SPK = [69.9, 31, 16];  SPK_FL = 3.7;  SPK_EAR = [63.6, 24];   // centre (x, z); w, h, depth
 module bottom_vents() for (sx = [-1, 1], x = VENT_XS) hull() for (dy = [-1, 1])
-    cyl_z(VENT_SL[0], -1, WALL + 1, sx*x, VENT_Y + dy*(VENT_SL[1] - VENT_SL[0])/2);
+    cyl_z(VENT_SL[0], -1, WALL + 1, sx*x, vent_y(sx) + dy*(vent_l(sx) - VENT_SL[0])/2);
 module louvre(x, z0, z1) hull() {   // outer opening lower than the inner one: water runs out
     translate([x - VENT_SL[0]/2, D - BACK_T - 0.5, z0]) cube([VENT_SL[0], 0.01, z1 - z0]);
     translate([x - VENT_SL[0]/2, D + 0.5, z0 - EXH_DROP]) cube([VENT_SL[0], 0.01, z1 - z0]);
@@ -417,7 +424,7 @@ module placed_printers() {
 // [A] DFRobot Gravity MOSFET DFR0457 (white strips) 44 x 32, 4 x Ø3.1 on 20 x 25; height not published (~16): on the left side wall.
 PSU5 = [128, 60, 25];  PSU5_P = [-37, 16];                    // x, z (bottom-left), on the back wall
 WLED = [108, 45, 18];  WLED_P = [-30, 80];                    // x, z (bottom-left), on the back wall
-MOSF = [44, 32, 16];   MOSF_P = [40, 112];                    // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
+MOSF = [44, 32, 16];   MOSF_P = [34.5, 112];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
 module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
     difference() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
