@@ -45,6 +45,8 @@ RAIL_T = 4;                                 // rail ring as deep as the cross ba
 IF_SCREW = [[-70, 54], [70, 54]];  IF_DOWEL = [[-20, 54], [20, 54]];  IF_CABLE = [0, 54];
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";                        // nothing stacks on top in gen 2: no holes where the rain falls
+// camera (Esben 19 Oct, Wide chosen): lens tip 0.3 behind the face, hole 0.4 over the tip, only a 0.4 x 45 deg edge break
+CAM_TIP_Y = 0.3;  CAM_HOLE = CAM_BARREL + 0.4;  CAM_HOLE_REAR = CAM_BARREL + 0.85;  CAM_CONE = [0.4, 45];
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(

@@ -69,7 +69,8 @@ RING_X  = GW/2 + 1.2 + CH_HALF;                    // centre line
 RING_Z0 = GLASS_BOT - 1.2 - CH_HALF;               // bottom centre line
 LENS_Z = GLASS_TOP + 10.5 + 2.3 + 0.5;              // lower camera bosses (Ø4.6) clear the glass top by 0.5
 RING_Z1 = LENS_Z;                                   // camera eye sits on the ring's top line
-CAM_PCB_Y = 1.2 + CAM_LENS_H;
+CAM_TIP_Y = 1.2;                                    // lens tip behind the front face
+CAM_PCB_Y = CAM_TIP_Y + CAM_LENS_H;
 CAM_TOP = LENS_Z + CAM_PCB[0]/2;                    // rotated board: 12.5 above the lens
 H = ceil(RING_Z1 + CH_HALF + TOPM);
 EDGE_X = RING_X + CH_HALF + 0.4;                   // rail edge, carries the glow strip
@@ -88,6 +89,8 @@ function run_leds(len) = floor((len - 20)/LED_PITCH);
 GLOW_LEDS = floor((RUN_V - 8)/LED_PITCH);
 VIEW_X = 0;                                         // [M] picture assumed centred
 CAM_HOLE = CAM_BARREL + 1.65;
+CAM_HOLE_REAR = CAM_HOLE;                           // behind the lens tip (barrel widens towards the holder)
+CAM_CONE = [1.2, 62];                               // front cone: depth, half angle
 CAM_RING = 24;
 
 // side screws
@@ -215,8 +218,9 @@ module bezel() {
         ext_y(-1, PT + 1) slot_shape(0);
         ext_y(PT - DIFF_FLANGE_T, PT + 1) slot_shape(DIFF_FLANGE);
         // camera: barrel clearance, front cone, accent ring inlay, screw pilots
-        cyl_y(CAM_HOLE, 1.2 - 0.01, PT + 1, 0, LENS_Z);
-        translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*1.2*tan(62), d2 = CAM_HOLE, h = 1.22);
+        cyl_y(CAM_HOLE, CAM_CONE[0] - 0.01, PT + 1, 0, LENS_Z);
+        cyl_y(CAM_HOLE_REAR, max(CAM_CONE[0], CAM_TIP_Y + 1), PT + 1, 0, LENS_Z);
+        translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]), d2 = CAM_HOLE, h = CAM_CONE[0] + 0.02);
         for (h = CAM_HOLES_ROT) cyl_y(M2_PILOT, PT + 0.6, CAM_PCB_Y + 1, h[0], LENS_Z + h[1]);
         // tongue relief above the camera board
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
@@ -224,7 +228,7 @@ module bezel() {
     }
 }
 module camera_ring(depth, y0 = 0) {
-    ext_y(y0, y0 + depth) translate([0, LENS_Z]) difference() { circle(d = CAM_RING); circle(d = CAM_HOLE + 2*1.2*tan(62) + 0.4); }
+    ext_y(y0, y0 + depth) translate([0, LENS_Z]) difference() { circle(d = CAM_RING); circle(d = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]) + 0.4); }
 }
 module logo_shape(depth, y0 = 0) {
     ext_y(y0, y0 + depth) translate([0, (RING_Z0 - CH_HALF)/2 + 0.5])
