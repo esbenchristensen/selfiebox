@@ -67,8 +67,30 @@
  },
  {
   "node": "skaerm",
-  "label": "Skærm 10\"",
-  "color": "#253041",
+  "label": "Skærm: glas med sort kant",
+  "color": "#0b0b0d",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   65
+  ]
+ },
+ {
+  "node": "skaerm_billede",
+  "label": "Skærm: aktivt billede 1200 × 1920",
+  "color": "#4f7df0",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   65
+  ]
+ },
+ {
+  "node": "skaerm_bag",
+  "label": "Skærm: bagside med skrueører",
+  "color": "#8a8d94",
   "group": "Elektronik",
   "explode": [
    0,
@@ -113,6 +135,28 @@
   "node": "pi",
   "label": "Raspberry Pi 5",
   "color": "#2e9e5b",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "koeler",
+  "label": "Active Cooler (blæser bagud)",
+  "color": "#3b3e46",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "blaeser",
+  "label": "Blæser i Active Cooler",
+  "color": "#9ca3af",
   "group": "Elektronik",
   "explode": [
    0,
@@ -336,31 +380,7 @@
   ]
  },
  {
-  "node": "kabel_6_skaerm",
-  "label": "Skærmkabel (DSI) + strøm",
-  "color": "#253041",
-  "group": "Kabler",
-  "owner": "skaerm",
-  "explode": [
-   0,
-   0,
-   0
-  ]
- },
- {
-  "node": "kabel_7_kamera",
-  "label": "Kamerakabel (CSI), bløde bøjninger",
-  "color": "#9aa3b5",
-  "group": "Kabler",
-  "owner": "kamera",
-  "explode": [
-   0,
-   0,
-   0
-  ]
- },
- {
-  "node": "kabel_8_modem4g",
+  "node": "kabel_6_modem4g",
   "label": "4G: USB → Pi",
   "color": "#2563eb",
   "group": "Kabler",
@@ -372,7 +392,7 @@
   ]
  },
  {
-  "node": "kabel_9_lydkerne",
+  "node": "kabel_7_lydkerne",
   "label": "Mikrofon-kerne: USB → Pi",
   "color": "#0ea5e9",
   "group": "Kabler",
@@ -384,7 +404,7 @@
   ]
  },
  {
-  "node": "kabel_10_mikrofoner",
+  "node": "kabel_8_mikrofoner",
   "label": "Mikrofonstrip → kerne",
   "color": "#14b8a6",
   "group": "Kabler",
@@ -396,7 +416,7 @@
   ]
  },
  {
-  "node": "kabel_11_hoejttaler",
+  "node": "kabel_9_hoejttaler",
   "label": "Højttaler → kerne",
   "color": "#f97316",
   "group": "Kabler",
@@ -408,7 +428,7 @@
   ]
  },
  {
-  "node": "kabel_12_sensor",
+  "node": "kabel_10_sensor",
   "label": "Stødsensor → Pi (I2C)",
   "color": "#84cc16",
   "group": "Kabler",
@@ -420,11 +440,35 @@
   ]
  },
  {
-  "node": "kabel_13_reed",
+  "node": "kabel_11_reed",
   "label": "Løftesensor → Pi",
   "color": "#ec4899",
   "group": "Kabler",
   "owner": "reed",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "fladkabel_0_kamera",
+  "label": "Kamerakabel (fladt, 16 mm)",
+  "color": "#c9a227",
+  "group": "Kabler",
+  "owner": "kamera",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "fladkabel_1_skaerm",
+  "label": "Skærmkabel (fladt, følger med skærmen)",
+  "color": "#c9a227",
+  "group": "Kabler",
+  "owner": "skaerm",
   "explode": [
    0,
    0,
