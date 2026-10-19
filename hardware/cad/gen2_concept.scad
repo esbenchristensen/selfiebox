@@ -467,7 +467,7 @@ module frame3() {
         union() {
             ext_y(CH_BACK, FR_BACK) {
                 ring_band2d(-CH_HALF, CH_HALF);
-                for (j = J2) translate(j) circle(d = 7, $fn = 32);
+                for (j = J2) translate(j) circle(d = 6.4, $fn = 32);
                 translate([-16, LENS_Z - 14]) square([20, 28]);               // behind the camera board
             }
             // reflector, strip wall and floor, all inside the channel
@@ -513,7 +513,7 @@ module shell3(top = UNIT_TOP) {
             difference() { shell2(top); for (j = JOINTS) cyl_y(POST_D + 0.5, RIB_TOP + RAIL_T - 0.1, D - BACK_T + 0.02, j[0], j[1]); }
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
         }
-        for (j = J2) { cyl_y(6.6, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); }
+        for (j = J2) { cyl_y(7.0, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); }
     }
 }
 
