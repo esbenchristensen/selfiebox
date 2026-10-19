@@ -385,15 +385,148 @@ module placed_printers() {
     color(C_FILM) translate([-FILM_W[0]/2, PRN_Y[0] + INW[1]/2 - 0.6, -60]) cube([FILM_W[0], 1.2, 70]);
 }
 
+
+// ================================================== v2c: light channel, ring, frame ==
+// Approved 19 Oct (drawing halo-gen2-v2_kamera_lysring_print). The front is one black print with an
+// open channel (no ceilings when printed face down). The light ring drops into the slot from behind;
+// its flange rests on the back of the front plate and the white frame clamps it all the way round.
+// The frame carries the 45 deg reflector, the strip wall with two white COB strips + one RGB strip,
+// and the display, screwed into the display's own four M2.5 tabs. r = offset from the ring centre line.
+S3 = SLOT_W/2;                            // 7.0: slot half width
+RF3 = S3 - 0.15;                          // 6.85: ring face half width (0.15 shadow gap)
+RW3 = 1.2;                                // ring wall
+FL3 = CH_IN - 0.1;                        // 8.1: ring flange half width
+CH_BACK = RIB_TOP + 8;                    // 27.7: channel back (front walls end here)
+FR_T = 4;                                 // frame back plate
+FR_BACK = CH_BACK + FR_T;                 // 31.7: flat back of the frame
+RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
+CAM_END = CAM_HOLE/2 + 4 + S3;            // slot end centres, 4 mm black round the camera hole
+CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
+REFL = [[4.2, -6.0], [25.7, 5.0]];        // reflector line (y, r): from the ring flange to the floor
+FLOOR3 = 25.7;
+STRIPS3 = [[4.6, 12.6, "w"], [12.7, 20.7, "w"], [20.8, 25.6, "rgb"]];   // [A] LEDlife COB Ra95 8 mm x2, RGB 5 mm
+STRIP_T3 = [5.4, 6.9];                    // strips on the frame's strip wall (r)
+J_R = 11.8;                               // front screws: in the outer wall at the 4 corners
+J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
+// [A] Touch Display 2 10" (RP-010276 physical spec): panel 7.05 deep incl. the 1.1 cover lens,
+// four M2.5 tabs 3 deep at 22.54 from the sides, 46.42 from the top and 41.68 from the bottom edge;
+// Pi stand-offs 8.5 high on a 49 x 58 pattern, 6.87 below the centre. [M] up = the drawing's up,
+// so the frame's tab holes are slots (+/-2.4) and fit either way round.
+DSP_PANEL = 7.05;  DSP_TAB3 = [8, 12, 3];  DSP_TAB_X = 166.9/2 - 22.54;  DSP_TAB_Z = [248.1/2 - 46.42, -(248.1/2 - 41.68)];
+DSP_PI_DZ = -6.87;  DSP_SO = [5, 8.5];
+TAB_Y = GLASS_Y + DSP_PANEL + DSP_TAB3[2];   // 13.75: back face of the tabs
+PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the glass land
+PI_Y3 = GLASS_Y + DSP_PANEL + DSP_SO[1];
+
+module cam_keep2d() translate([-CAM_KEEP[0], RING_Z1 - CAM_KEEP[1]]) square([2*CAM_KEEP[0], 2*CAM_KEEP[1]]);
+// the ring's plan shape at half width h: the band with round ends next to the camera
+module ring3_2d(h) {
+    difference() { ring_band2d(-h, h); translate([-CAM_END, RING_Z1 - 20]) square([2*CAM_END, 40]); }
+    for (sx = [-1, 1]) translate([sx*CAM_END, RING_Z1]) circle(r = h, $fn = 48);
+}
+module ring3_band(a, b) difference() { ring3_2d(b); ring3_2d(a); }
+// a 45 deg step from half width a at y0 to half width b at y1, in n layers
+module ring3_bevel(y0, y1, a, b, n = 5) for (i = [0:n - 1]) ext_y(y0 + i*(y1 - y0)/n - 0.01, y0 + (i + 1)*(y1 - y0)/n) ring3_2d(a + (i + 1)*(b - a)/n);
+
+module front3() {
+    difference() {
+        union() {
+            front_base(H, BLOCK_Z);
+            // the skirt carries the tongue: no 1.4 mm ledge hanging over air when printed face down
+            ext_y(PT - 0.01, SKIRT + 0.01) difference() { rr(W, H, R); translate([0, WALL + FIT + TONGUE_T]) rr(W - 2*(WALL + FIT + TONGUE_T), H - 2*(WALL + FIT + TONGUE_T), R - WALL - TONGUE_T); }
+            ext_y(PT - 0.01, CH_BACK) difference() { ring_band2d(-CH_HALF, CH_HALF); ring_band2d(-CH_IN, CH_IN); glass_keep2d(); cam_keep2d(); }
+            for (j = J2) cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
+            for (h = CAM_HOLES_ROT) { cyl_y(4.6, PT - 0.01, CAM_PCB_Y, h[0], LENS_Z + h[1]); cyl_y(2.0, CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5, h[0], LENS_Z + h[1]); }
+            glass_land(); cam_shroud(); joint_rib();
+        }
+        hull() { ext_y(-1, PT - 1.6) window2d(1.6); ext_y(-1, PT + 1) window2d(0); }
+        ext_y(-1, PT + 0.01) ring3_2d(S3);
+        ring3_bevel(1.95, PT + 0.01, S3, FL3 + 0.1);                      // seat for the ring's flange
+        cyl_y(CAM_HOLE, CAM_CONE[0] - 0.01, PT + 1, 0, LENS_Z);
+        cyl_y(CAM_HOLE_REAR, max(CAM_CONE[0], CAM_TIP_Y + 1), PT + 1, 0, LENS_Z);
+        translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]), d2 = CAM_HOLE, h = CAM_CONE[0] + 0.02);
+        translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
+        for (j = J2) cyl_y(INS_M3_D, CH_BACK - 11, CH_BACK + 1, j[0], j[1]);
+    }
+}
+module ring3() {
+    ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
+    ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
+    ext_y(RING_Y[1] - 0.01, 1.95) ring3_band(RF3 - RW3, RF3);
+    difference() {
+        union() { ring3_bevel(1.95, PT, RF3, FL3); ext_y(PT - 0.01, PT + 1) ring3_2d(FL3); }
+        ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
+        translate([-7.4, PT - 2, LENS_Z - 8]) cube([14.8, 4, 16]);       // clear of the camera shroud
+    }
+}
+function refl_r(y) = REFL[0][1] + (y - REFL[0][0])*(REFL[1][1] - REFL[0][1])/(REFL[1][0] - REFL[0][0]);
+REFL_STEP = 0.5;
+module frame3() {
+    tabs = [for (sx = [-1, 1], z = DSP_TAB_Z) [sx*DSP_TAB_X, GC + z]];
+    difference() {
+        union() {
+            ext_y(CH_BACK, FR_BACK) {
+                ring_band2d(-CH_HALF, CH_HALF);
+                for (j = J2) translate(j) circle(d = 7, $fn = 32);
+                translate([-16, LENS_Z - 14]) square([20, 28]);               // behind the camera board
+            }
+            // reflector, strip wall and floor, all inside the channel
+            difference() {
+                union() {
+                    for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - REFL_STEP]) ext_y(y, y + REFL_STEP + 0.01) ring_band2d(-FL3, refl_r(y + REFL_STEP));
+                    ext_y(REFL[0][0], CH_BACK + 0.01) ring_band2d(STRIP_T3[1], FL3);
+                    ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
+                }
+                ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
+            }
+            // cross bars at the display tabs, with bosses down to the tabs
+            for (z = DSP_TAB_Z) ext_y(RIB_TOP + 4, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
+            for (t = tabs) cyl_y(7, TAB_Y - PRELOAD, RIB_TOP + 4.01, t[0], t[1]);
+            // tubes that press the camera board onto its pegs
+            for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
+        }
+        for (t = tabs) {
+            hull() for (dz = [-2.4, 2.4]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0], t[1] + dz);
+            hull() for (dz = [-2.4, 2.4]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0], t[1] + dz);   // head 2 mm above the tab
+        }
+        for (h = CAM_HOLES_ROT) cyl_y(2.4, CAM_PCB_Y, CAM_PCB_Y + CAM_PCB[2] + 2, h[0], LENS_Z + h[1]);
+        for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
+        for (sx = [-1, 1]) cyl_y(5, FLOOR3 - 1, FR_BACK + 1, sx*(CAM_KEEP[0] + 8), RING_Z1 + 6.2);   // strip leads
+    }
+}
+module placed_strips3(kind) for (s = STRIPS3) if (s[2] == kind)
+    ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[0], STRIP_T3[1]); cam_keep2d(); }
+module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
+    color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
+        translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
+    color([0.12, 0.3, 0.55]) translate([-TD10_VIEW[0]/2, -0.05, -TD10_VIEW[1]/2]) cube([TD10_VIEW[0], 0.05, TD10_VIEW[1]]);
+    color([0.6, 0.6, 0.63]) for (sx = [-1, 1], z = DSP_TAB_Z) translate([sx*DSP_TAB_X - DSP_TAB3[0]/2, DSP_PANEL - 0.01, z - DSP_TAB3[1]/2]) cube([DSP_TAB3[0], DSP_TAB3[2], DSP_TAB3[1]]);
+    color([0.6, 0.6, 0.63]) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(DSP_SO[0], DSP_PANEL - 0.01, DSP_PANEL + DSP_SO[1], sx*24.5, DSP_PI_DZ + sz*29);
+    color([0.1, 0.45, 0.2]) translate([-20, DSP_PANEL, DSP_PI_DZ - 20]) cube([40, 2, 50]);       // [M] adapter board
+}
+module placed_display3() translate([0, GLASS_Y, GC]) td2_10();
+module placed_pi3() translate([0, PI_Y3, GC + DSP_PI_DZ]) rpi5();
+// the shell gives way round the 4 front screw bosses (they sit in the outer wall)
+module shell3(top = UNIT_TOP) {
+    difference() {
+        union() {
+            difference() { shell2(top); for (j = JOINTS) cyl_y(POST_D + 0.5, RIB_TOP + RAIL_T - 0.1, D - BACK_T + 0.02, j[0], j[1]); }
+            for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
+        }
+        for (j = J2) { cyl_y(6.6, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); }
+    }
+}
+
 // ------------------------------------------------------------ main unit ----
 module main_unit() {        // gen 2 unit, without the wall cleat
-    color(C_BODY) bezel2();
-    color(C_DIFF) diffuser2();
-    placed_display();
+    color(C_BODY) front3();
+    color(C_DIFF) ring3();
+    placed_display3();
     placed_camera();
-    color(C_INT) led_rail2(); placed_strip();
-    placed_pi();
-    color(C_BODY) shell2();
+    color([0.95, 0.94, 0.9]) frame3();
+    color([1, 0.95, 0.8]) placed_strips3("w"); color([0.5, 0.3, 0.8]) placed_strips3("rgb");
+    placed_pi3();
+    color(C_BODY) shell3();
     placed_power();
     placed_electronics();
     placed_services();
@@ -441,6 +574,23 @@ if (VIEW == "x_lid")       lid(0);
 if (VIEW == "x_lid_open")  lid(100);
 if (VIEW == "x_printers")  for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide();
 if (VIEW == "x_photo")     translate([-FILM_W[0]/2, PRN_Y[0] + INW[1]/2 - 0.6, -60]) cube([FILM_W[0], 1.2, 70]);
+
+
+// v2c meshes
+if (VIEW == "x_front3")    front3();
+if (VIEW == "x_ring3")     ring3();
+if (VIEW == "x_frame3")    frame3();
+if (VIEW == "x_strip_w")   placed_strips3("w");
+if (VIEW == "x_strip_rgb") placed_strips3("rgb");
+if (VIEW == "x_display3")  placed_display3();
+if (VIEW == "c_pi3")       placed_pi3();
+if (VIEW == "x_shell3")    shell3();
+if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [5.6, 2], j[0], FR_BACK + 2, j[1], -1);
+if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 5, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + 2.0, GC + z, -1);
+if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
+if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
+if (VIEW == "p_frame3")    translate([0, 0, FR_BACK]) rotate([-90, 0, 0]) frame3();      // flat back down
+if (VIEW == "info3") echo(J2 = J2, TAB_Y = TAB_Y, PI_Y3 = PI_Y3, CAM_END = CAM_END, CH_BACK = CH_BACK, FR_BACK = CH_BACK + FR_T, CAM_PCB_Y = CAM_PCB_Y);
 
 // cutaway: keep x > -20 so the camera on the left looks into the printer bay
 module cut_keep() { intersection() { children(); translate([-20, -500, -500]) cube([1000, 1000, 1000]); } }
