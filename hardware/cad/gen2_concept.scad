@@ -255,7 +255,7 @@ module vent_hoods() for (sx = [-1, 1]) {
 
 // ------------------------------------------------- underside and back services ----
 // Air: in through two slot fields in the underside (no drinks get in from below), out through
-// louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney.
+// louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney (closed in v7, BACK_EXH).
 // Every opening is 2.5 mm wide: no fingers, and a poked wire meets only 12 V parts.
 VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];   // underside: 2 x 7 slots, 7.5 cm2 (85 deep: 9.8)
 // 70 deep, the hoods sit between the frame (y 31.7, it reaches down to z 7) and the back wall. The left
@@ -265,6 +265,9 @@ function vent_l(sx) = VENT_L[sx > 0 ? 1 : 0];
 function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 EXH_XS = [for (i = [0:36]) -90 + 5*i];  EXH_Z = [235, 245];  EXH_DROP = 2;    // back: 37 louvres, 9.3 cm2
 EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; // + 8 in the top corners, 4.0 cm2
+// v7 (Esben 19 Oct): the back louvres are closed, only the underside vents stay. Without an outlet up high
+// there is no chimney: the box cools through its walls, about as if it were sealed.
+BACK_EXH = false;
 // printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
 CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
 // power (Esben 19 Oct): a vertical channel in the back wall, beside the boards. A 5.5/2.5 socket with
@@ -286,8 +289,7 @@ module louvre(x, z0, z1) hull() {   // outer opening lower than the inner one: w
 }
 module services_cut() {
     bottom_vents();
-    for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]);
-    for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]);
+    if (BACK_EXH) { for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]); for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]); }
     // bayonet entry notches next to the pass-through
     for (a = CAP_ANG) translate([IF_CABLE[0], IF_CABLE[1], -1]) rotate(a + CAP_ENTRY) translate([0, -(CAP_LUG[0] + 0.6)/2]) cube([CAP_LUG[1] + 0.5, CAP_LUG[0] + 0.6, WALL + 2]);
     // power pocket opening and the speaker grille
