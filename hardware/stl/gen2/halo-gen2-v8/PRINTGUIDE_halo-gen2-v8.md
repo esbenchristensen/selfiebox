@@ -1,5 +1,7 @@
 # Selfi Halo gen 2, version v8: printguide
 
+> **Må ikke printes.** Mikrofonkortet passer ikke i lommen (lydhullerne sidder 0,68 mm fra kortets midte), og kablet til mikrofon-kernen er for kort. Brug halo-gen2-v9.
+
 **Version:** halo-gen2-v8 (19. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v8_`. Den erstatter halo-gen2-v7; kun skallen er ny (mikrofonerne sidder nu i undersiden). CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; printermodulet kommer i en senere version.
