@@ -1,6 +1,6 @@
 """3D model of Halo gen 2 for the admin viewer: one node per part, component, cable and screw set.
 
-Usage:  python3 hardware/render/gen2_viewer.py <stl dir> <out dir> <version>
+Usage:  python3 hardware/render/gen2_viewer.py <stl dir> <out dir> <version> [depth, default 85]
 Input:  STLs from hardware/cad/gen2_concept.scad, one per VIEW named below (x_*, c_*, s_*).
 Output: <version>_3d.glb and <version>_parts.json (labels, colours, groups, explode offsets).
 
@@ -16,6 +16,7 @@ import numpy as np
 import trimesh
 
 STL, OUT, VER = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+DEPTH = float(sys.argv[4]) if len(sys.argv) > 4 else 85.0   # box depth (D in gen2_concept.scad)
 
 # node, STL view, label, colour, group, explode [x, y, z] in glTF axes (mm at full explode)
 PARTS = [
@@ -79,6 +80,12 @@ RIBBONS = [
 ]
 
 
+def back_y(y):
+    """Cable points were routed for the 85 mm box: points along the back-wall parts (y >= 50) move
+    forward with the back wall; points at the Pi and the frame stay put."""
+    return y - (85.0 - DEPTH) if y >= 50 else y
+
+
 def ribbon(sections, w, th):
     P = [np.array(p, float) for p, _ in sections]
     V, F = [], []
@@ -140,7 +147,7 @@ for node, view, label, hexc, group, ex in PARTS:
 
 owners = {p[0]: p for p in PARTS}
 for i, (owner, label, d, pts) in enumerate(CABLES):
-    m = tube(pts, d)
+    m = tube([(x, back_y(y), z) for x, y, z in pts], d)
     m.apply_transform(M)
     m.apply_translation([0, Y0, 0])
     hexc = owners[owner][3]
