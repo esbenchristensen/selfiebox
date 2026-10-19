@@ -38,7 +38,8 @@ BLOCK_Z = [];                               // no side screws
 // becomes a pilot hole for a 3.0 mm thread-forming plastic screw (e.g. WN 1452 K30)
 VESA_ON = false;  TRIPOD_ON = false;  LOCK_INSIDE = false;  DC_PANEL = false;
 INS_M3 = [2.5, 12];
-// underside: everything sits behind the glow band (y 22-32) so the band stays one closed ring
+// no glow band (Esben 19 Oct): the shell is one print in one colour; only the front ring lights
+GLOW = false;
 IF_SCREW = [[-70, 54], [70, 54]];  IF_DOWEL = [[-20, 54], [20, 54]];  IF_CABLE = [0, 54];
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";                        // nothing stacks on top in gen 2: no holes where the rain falls
@@ -65,16 +66,16 @@ module box_like(h) translate([0, h/2]) offset(r = RING_FACE/2 + BORDER) sq2d(MAS
 J_U = SQ_A * pow(0.5, 1/SQ_N);
 JOINTS = [for (sx = [-1, 1], sz = [-1, 1]) [sx*(RING_X - SQ_A + J_U), (RING_Z0 + RING_Z1)/2 + sz*(MASTER[1]/2 - SQ_A + J_U)]];
 POST_D = 9;  BOSS_D = 8;
-CAM_WIN = [12.7, 1.0];   // [A] 1/2" optical window, 1 mm, bonded flush: seals the camera opening
 module bezel2() {
     difference() {
-        union() { bezel(); for (j = JOINTS) cyl_y(BOSS_D, PT - 0.01, RIB_TOP, j[0], j[1]); }
+        union() {
+            bezel(); for (j = JOINTS) cyl_y(BOSS_D, PT - 0.01, RIB_TOP, j[0], j[1]);
+            glass_land(); cam_shroud(); joint_rib();
+        }
         for (j = JOINTS) cyl_y(INS_M3_D, RIB_TOP - INS_M3_L, RIB_TOP + 0.1, j[0], j[1]);
-        cyl_y(CAM_WIN[0] + 0.3, -0.01, CAM_WIN[1], 0, LENS_Z);
-        glass_seal_groove();
     }
 }
-module led_rail2() { difference() { led_rail(); for (j = JOINTS) cyl_y(M3_CLR, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, j[0], j[1]); } }
+module led_rail2() { difference() { union() { led_rail(); rail_springs(); } for (j = JOINTS) cyl_y(M3_CLR, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, j[0], j[1]); rail_spring_cut(); } }
 // theme wings: hook slots in the back wall (hidden against the wall)
 WING_P = [for (sx = [-1, 1], z = [RING_Z0 + 50, RING_Z1 - 50]) [sx*(W/2 - 12), z]];
 module shell2(top = UNIT_TOP) {
@@ -83,19 +84,16 @@ module shell2(top = UNIT_TOP) {
         union() {
             shell(top);
             for (j = JOINTS) cyl_y(POST_D, y0, D - BACK_T + 0.01, j[0], j[1]);
-            // the glow band (y 22-32) is its own print: tie each post's slice to the outer wall with a
-            // rib, so it prints as part of the band instead of a loose spacer ring
-            for (j = JOINTS) hull() for (t = [0, 14]) cyl_y(3, y0, BAND_Y1 + 2, j[0] + sign(j[0])*t/sqrt(2), j[1] + sign(j[1] - H/2)*t/sqrt(2));
             cyl_y(7, D - BACK_T - 0.01, D, -(HW - 17.5), 17.5);     // rev G cable hole sits on a joint post: plug it
         }
         for (j = JOINTS) { cyl_y(M3_CLR, y0 - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, y0 + 8, D + 1, j[0], j[1]); }
         for (p = WING_P) translate([p[0] - 2, D - BACK_T - 1, p[1] - 4]) cube([4, BACK_T + 2, 14]);   // wing hooks drop in; the wall holds them
         lock_cut();
         services_cut();
-        for (x = MIC_HOLES) cyl_z(1.2, H - WALL - 1, H + 1, x, MIC_Y);    // mic ports in the top face
-        for (x = MIC_HOLES) cyl_z(MEMB[0], H - WALL - 0.01, H - WALL + MEMB[1], x, MIC_Y);   // ... each sealed by an acoustic membrane
-        lip_groove();
+        for (x = MIC_HOLES) cyl_z(MIC_PORT, H - WALL - 1, H + 1, x, MIC_Y);    // mic ports in the top face
+        joint_groove();
     }
+    mic_rings();
     electronics_holders();
     services_add();
 }
@@ -167,34 +165,41 @@ module wall_cleat2() {
     }
 }
 
-// ------------------------------------------------------------- weather (IPX4) ----
-// Rain, sleet and spills from any side under a light roof. Fixed seams are welded (ASA + acetone)
-// or bonded; the one seam that opens, front to shell, gets a TPU lip printed onto the shell edge
-// in the same print (second nozzle): it folds into its groove when the 4 screws pull tight.
-MEMB = [8.4, 0.6];                      // [A] adhesive acoustic membrane Ø8 (IP67 class), pocket
-LIP = [1.0, 0.6, 1.2, 0.8];             // from outside, lip width, groove depth, lip proud of the face
+// ------------------------------------------------------- weather, print only ----
+// Rain, sleet and spills from any side under a light roof, with no added parts (Esben 19 Oct):
+// no gaskets, membranes, glass or glue. The shell is one print; the one fixed seam is acetone-welded
+// (diffuser ring); every opening is shaped so water runs back out.
+// Front to shell: a rib on the bezel's skirt enters a groove in the shell's front face. Water that
+// passes the butt joint meets the rib, runs round the groove and leaves through two drain notches
+// in the underside. Behind it the bezel's 5 mm tongue still overlaps the shell wall.
+JR = [1.0, 1.4, 1.4, 0.6, 1.0];         // groove: from outside, width, depth; rib: width, height
+DRAIN_X = [-60, 60];
 module lip_ring(a, b) difference() { translate([0, a]) rr(W - 2*a, H - 2*a, R - a); translate([0, b]) rr(W - 2*b, H - 2*b, R - b); }
-// TPU does not bond reliably to ASA (Bambu only rates TPU with PLA/PETG), so every TPU seal is
-// locked in mechanically: the groove widens at its bottom (dovetail) and the TPU fills that.
-module lip_groove() {
-    ext_y(SKIRT - 0.01, SKIRT + LIP[2]) lip_ring(LIP[0], LIP[0] + 1.6);
-    ext_y(SKIRT + LIP[2] - 0.6, SKIRT + LIP[2]) lip_ring(LIP[0] - 0.4, LIP[0] + 1.6);
+module joint_groove() {
+    ext_y(SKIRT - 0.01, SKIRT + JR[2]) lip_ring(JR[0], JR[0] + JR[1]);
+    for (x = DRAIN_X) translate([x - 0.8, SKIRT - 0.01, -0.01]) cube([1.6, JR[2] + 0.01, JR[0] + JR[1] - 0.2]);
 }
-module tpu_lip() {
-    ext_y(SKIRT - LIP[3], SKIRT + LIP[2]) lip_ring(LIP[0] + 0.2, LIP[0] + 0.2 + LIP[1]);
-    ext_y(SKIRT + LIP[2] - 0.6, SKIRT + LIP[2]) lip_ring(LIP[0] - 0.4, LIP[0] + 1.6);
+module joint_rib() { c = JR[0] + (JR[1] - JR[3])/2;  ext_y(SKIRT - 0.01, SKIRT + JR[4]) lip_ring(c, c + JR[3]); }
+// display glass: a printed 0.5 mm land around the window replaces the EVA ring (glass on ASA,
+// clamped by the rail); outside the land a 0.5 mm gap is a capillary break. Behind the display the
+// EVA pads become printed springs: each pad spot on the cross bars is a 1.2 mm bridge with a bump.
+module glass_land() ext_y(PT - 0.01, GLASS_Y) difference() { window2d(2.6); window2d(0.6); }
+SPR = [30, 1.2, 0.6];                   // bridge length, thickness, bump
+module rail_springs() for (sx = [-1, 1], z = XBAR_Z) translate([sx*40, 0, z]) hull() {
+    translate([-4, RIB_TOP - SPR[2], -3]) cube([8, 0.01, 6]); translate([-6, RIB_TOP, -5]) cube([12, 0.01, 10]); }
+module rail_spring_cut() for (sx = [-1, 1], z = XBAR_Z) translate([sx*40 - SPR[0]/2, RIB_TOP + SPR[1], z - 7.5]) cube([SPR[0], XBAR_T, 15]);
+// camera: open aperture (no window); the lens barrel fills the hole bar a 0.8 mm gap. A printed
+// sleeve round the lens holder, from the bezel to just short of the camera board, keeps a splash
+// that gets through that gap on the lens side instead of on the electronics.
+module cam_shroud() translate([0, 0, LENS_Z]) difference() {
+    ext_y(PT - 0.01, CAM_PCB_Y - 0.6) square(CAM_HOLDER + 3.2, center = true);
+    ext_y(PT - 1, CAM_PCB_Y) square(CAM_HOLDER + 0.8, center = true);
 }
-// display glass: two thin TPU fins printed on the bezel's glass seat replace the EVA ring;
-// thin fins fold at low force, so the rail's cross bars still seat the display
-GSEAL = [2.0, 3.6];
-module glass_seal_groove() for (g = GSEAL) ext_y(PT - 0.6, PT + 0.01) difference() { window2d(g + 0.85); window2d(g - 0.4); }
-module tpu_glass_seal() for (g = GSEAL) {
-    ext_y(PT - 0.01, GLASS_Y + 0.3) difference() { window2d(g + 0.45); window2d(g); }
-    ext_y(PT - 0.6, PT) difference() { window2d(g + 0.85); window2d(g - 0.4); }
-}
-// bayonet cap: TPU ring in the cap's rim groove instead of a bought O-ring
-module tpu_cap_seal() translate([IF_CABLE[0], IF_CABLE[1], 1.0]) difference() { cylinder(d = CAP_D + 0.5, h = 1.6, $fn = 64); cylinder(d = CAP_D - 2.4, h = 2, $fn = 64); }
-module tpu_all() { tpu_lip(); tpu_glass_seal(); tpu_cap_seal(); }
+// mic ports: Ø1.0 through the top; under each a printed crush ring presses on the strip round the
+// mic's port, so the port is a closed air pocket that water cannot push into.
+MIC_PORT = 1.0;  MIC_RING = [1.8, 3.6, 0.45];
+module mic_rings() for (x = MIC_HOLES) translate([x, MIC_Y, H - WALL - MIC_RING[2]]) difference() {
+    cylinder(d = MIC_RING[1], h = MIC_RING[2] + 0.01, $fn = 32); translate([0, 0, -1]) cylinder(d = MIC_RING[0], h = 3, $fn = 24); }
 // splash hoods over the underside vents: water bouncing up hits the roof and drops back out,
 // air turns sideways. Side walls only along x so the hood prints without support (back down).
 HOOD = [8, 1.6];                        // roof height above the floor, wall/roof thickness
@@ -239,6 +244,8 @@ module services_cut() {
 function spk_holes() = [for (i = [-6:6], j = [-6:6]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (x*x + z*z < 20*20) [x, z]];
 module services_add() {
     vent_hoods();
+    // collar round the printer pass-through: splash that gets past the cap must climb 4 mm
+    difference() { cyl_z(CAP_D + 7, WALL - 0.01, WALL + 4, IF_CABLE[0], IF_CABLE[1]); cyl_z(CAP_D + 4.6, WALL - 1, WALL + 5, IF_CABLE[0], IF_CABLE[1]); }
     // floor boss under the lock screw head
     difference() {
         cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], LOCK_X, LOCK_SY);
@@ -270,7 +277,6 @@ module cable_cap() {   // printed separately; underside flush with the box botto
             translate([0, 0, WALL - 0.01]) cylinder(d = 12, h = 2.21, $fn = 48);
         }
         for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 3, $fn = 16);   // spanner pins
-        translate([0, 0, 1.0]) difference() { cylinder(d = CAP_D + 1, h = 1.6, $fn = 64); cylinder(d = CAP_D - 2.4, h = 2, $fn = 64); }  // TPU ring (tpu_cap_seal)
     }
 }
 module placed_services() {
@@ -332,16 +338,7 @@ module lid(open = 0) {
         translate([W/2 - 40, D - 22, -0.6]) difference() { cylinder(d = 15, h = WALL + 0.6, $fn = 40); translate([-1, -4, -1]) cube([2, 8, 1.6]); }
     }
 }
-module module_band() {      // glow stripe on the module, same y band as the main unit
-    color(C_DIFF) intersection() {
-        ext_y(BAND_Y0, BAND_Y1) difference() { module_2d(); offset(-WALL) module_2d(); }
-        translate([-500, 0, -500]) cube([1000, 1000, 1000]);
-    }
-}
-module module_body() {
-    color(C_BODY) difference() { printer_module(); translate([-500, BAND_Y0, -500]) cube([1000, BAND_Y1 - BAND_Y0, 1000]); }
-    module_band();
-}
+module module_body() color(C_BODY) printer_module();
 module placed_printers() {
     for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide();
     // a photo held by the lips in the front slot
@@ -356,7 +353,7 @@ module main_unit() {        // gen 2 unit, without the wall cleat
     placed_camera();
     color(C_INT) led_rail2(); placed_leds();
     placed_pi();
-    band_split() shell2();
+    color(C_BODY) shell2();
     placed_power();
     placed_electronics();
     placed_services();
@@ -364,24 +361,18 @@ module main_unit() {        // gen 2 unit, without the wall cleat
 
 // ------------------------------------------- single parts for the renders ----
 // one mesh per material: openscad -D 'VIEW="x_bezel"' -o bezel.stl gen2_concept.scad
-module band_cut()  { translate([-500, BAND_Y0, -500]) cube([1000, BAND_Y1 - BAND_Y0, 1000]); }
-module band_keep() { intersection() { children(); band_cut(); } }
 if (VIEW == "x_bezel")     bezel2();
 if (VIEW == "x_diffuser")  diffuser_ring();
 if (VIEW == "x_rail")      led_rail2();
-if (VIEW == "x_shell")     difference() { shell2(); band_cut(); }
-if (VIEW == "x_shell_band") band_keep() shell2();
+if (VIEW == "x_shell")     shell2();
 if (VIEW == "x_display")   placed_display();
 if (VIEW == "x_camera")    placed_camera();
 if (VIEW == "x_inside")    { placed_display(); placed_pi(); placed_power(); placed_camera(); placed_leds(); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cap")       cable_cap();
-if (VIEW == "x_lip")       tpu_lip();
-if (VIEW == "x_tpu")       tpu_all();
 if (VIEW == "x_cleat")     wall_cleat2();
 if (VIEW == "x_shell_all") shell2();
-if (VIEW == "x_mod_shell") difference() { mod_shell(); band_cut(); }
-if (VIEW == "x_mod_shell_band") band_keep() mod_shell();
+if (VIEW == "x_mod_shell") mod_shell();
 if (VIEW == "x_lid")       lid(0);
 if (VIEW == "x_lid_open")  lid(100);
 if (VIEW == "x_printers")  for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide();
@@ -389,14 +380,13 @@ if (VIEW == "x_photo")     translate([-FILM_W[0]/2, PRN_Y[0] + INW[1]/2 - 0.6, -
 
 // cutaway: keep x > -20 so the camera on the left looks into the printer bay
 module cut_keep() { intersection() { children(); translate([-20, -500, -500]) cube([1000, 1000, 1000]); } }
-if (VIEW == "x_mod_shell_cut")      cut_keep() difference() { mod_shell(); band_cut(); }
-if (VIEW == "x_mod_shell_band_cut") cut_keep() band_keep() mod_shell();
+if (VIEW == "x_mod_shell_cut")      cut_keep() mod_shell();
 if (VIEW == "x_lid_cut")            cut_keep() lid(0);
 
 // ----------------------------------------------------------------- views ----
 if (VIEW == "main") main_unit();
 if (VIEW == "module") module_body();
-if (VIEW == "module_open") { color(C_BODY) printer_module(open = 100); module_band(); for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide(); }
+if (VIEW == "module_open") { color(C_BODY) printer_module(open = 100); for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide(); }
 if (VIEW == "pair") { translate([0, 0, HP]) main_unit(); module_body(); placed_printers(); }
 if (VIEW == "pair_xray") { translate([0, 0, HP]) main_unit(); %module_body(); placed_printers(); }
 if (VIEW == "info") echo(W = W, H = H, R = R, BORDER = BORDER, RUN_V = RUN_V, RUN_H = RUN_H, RUN_T = RUN_T, JOINTS = JOINTS, WING_P = WING_P, HP = HP);

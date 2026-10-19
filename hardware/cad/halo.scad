@@ -76,6 +76,7 @@ EDGE_X = RING_X + CH_HALF + 0.4;                   // rail edge, carries the glo
 W  = 2 * ceil(EDGE_X + 2 + 7 + WALL);
 HW = W / 2;
 BAND_Y0 = 22;  BAND_Y1 = 32;
+GLOW = true;                                        // side glow band lit by strips on the rail edges
 // runs: [x, z, length, vertical?]  (straight parts only; corners stay solid)
 RUN_V = (RING_Z1 - RING_Z0) - 2*RING_R;
 RUN_H = 2*RING_X - 2*RING_R;
@@ -255,7 +256,7 @@ module led_rail() {
                 for (sx = [-1, 1], z = BLOCK_Z) hull() { translate([sx*RAIL_EAR_X, z]) circle(d = 7); translate([sx*(EDGE_X - 1), z]) square([1, 7], center = true); }
             }
             ext_y(RIB_TOP, RIB_TOP + XBAR_T) for (z = XBAR_Z) translate([0, z]) square([2*xi + 1, 14], center = true);
-            for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X - 1.6 : -EDGE_X, RIB_TOP + RAIL_T - 0.01, RING_Z0 + RING_R]) cube([1.6, BAND_Y1 + 0.5 - RIB_TOP - RAIL_T, RUN_V]);
+            if (GLOW) for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X - 1.6 : -EDGE_X, RIB_TOP + RAIL_T - 0.01, RING_Z0 + RING_R]) cube([1.6, BAND_Y1 + 0.5 - RIB_TOP - RAIL_T, RUN_V]);
         }
         for (sx = [-1, 1], z = BLOCK_Z) cyl_y(2.9, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, sx*RAIL_EAR_X, z);
         // wire passes at both ends of every run (COB + RGBW)
@@ -519,7 +520,7 @@ module placed_leds() {
                 if (r[3]) translate([-strip[0]/2, 0, -n*LED_PITCH/2]) cube([strip[0], LED_T, n*LED_PITCH]);
                 else      translate([-n*LED_PITCH/2, 0, -strip[0]/2]) cube([n*LED_PITCH, LED_T, strip[0]]);
     }
-    color([1, 0.9, 0.7]) for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X : -EDGE_X - LED_T, BAND_Y0, GC - GLOW_LEDS*LED_PITCH/2]) cube([LED_T, LED_W, GLOW_LEDS*LED_PITCH]);
+    if (GLOW) color([1, 0.9, 0.7]) for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X : -EDGE_X - LED_T, BAND_Y0, GC - GLOW_LEDS*LED_PITCH/2]) cube([LED_T, LED_W, GLOW_LEDS*LED_PITCH]);
 }
 
 // ============================================================ ASSEMBLY =====
