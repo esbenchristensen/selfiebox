@@ -1,7 +1,7 @@
 """Line drawing v2c: camera hole from the Wide drawing, light ring captured from behind, print without ceilings."""
 import math, sys
 OUT = sys.argv[1]
-W, H = 1800, 1230
+W, H = 1800, 1660
 o = []
 def t(x, y, s, size=14, col="#111", w=400, anchor="start"):
     o.append(f'<text x="{x:.1f}" y="{y:.1f}" font-size="{size}" fill="{col}" font-weight="{w}" text-anchor="{anchor}">{s}</text>')
@@ -27,7 +27,7 @@ def flush(top, step=28):
 o.append('<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0L6,3L0,6Z" fill="#d97706"/></marker>'
          '<marker id="da" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse"><path d="M0,1L7,4L0,7Z" fill="#2563eb"/></marker>'
          '<linearGradient id="rgb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ef4444"/><stop offset=".5" stop-color="#22c55e"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs>')
-t(60, 56, "Selfi Halo gen 2 · v2: kamera, lysring der ikke kan slippe, og print uden lofter", 26, w=700)
+t(60, 56, "Selfi Halo gen 2 · v2: kamera, lysring, skærm og print uden lofter", 26, w=700)
 t(60, 84, "Stregtegning til godkendelse, kun hovedenheden. Mål i mm, forstørret. 19. okt. 2026", 14, "#666")
 BLK, WHT, WST, NAT, NST = "#2b2b2f", "#f4f0e6", "#8a8578", "#fffdf8", "#a39e90"
 
@@ -148,6 +148,40 @@ steps = ["1. Fronten lægges med forsiden ned på bordet.", "2. Lysringen lægge
          "3. Strips klikkes i stik og sættes på bagrammens stripvæg ved bordet.", "4. Skærm og kamera på plads, bagrammen lægges i. Den klemmer ringen og skærmen.",
          "5. Skallen over, 4 skruer bagfra i hjørnerne. Samme 4 skruer som før, ingen nye dele."]
 for i, s_ in enumerate(steps): t(60, y + 60 + 20 * i, s_, 13, "#444")
+
+# ---------- F: display fixed with its own 4 M2.5 screws -----------------------------------------
+t(60, 1290, "F  Skærmen skrues fast i sine egne 4 gevindører (set bagfra)", 18, w=600)
+sf = 1.25; XF, YF = 80, 1320
+Fd = lambda x, z: (XF + x * sf, YF + z * sf)        # x from the display's left edge, z from its top (back view)
+o.append(f'<rect x="{XF}" y="{YF}" width="{166.88 * sf:.1f}" height="{248.1 * sf:.1f}" rx="{5 * sf}" fill="#e5e7eb" stroke="#374151" stroke-width="1.4"/>')
+for x0, x1, z0, z1 in [(-6, 0, -6, 254.1), (166.88, 172.88, -6, 254.1)]:
+    pass
+fr = [(22.54 - 8, 46.42 - 8, 22.54 + 8, 206.42 + 8), (144.34 - 8, 46.42 - 8, 144.34 + 8, 206.42 + 8)]
+for x0, z0, x1, z1 in fr:
+    a, b = Fd(x0, z0); c, d = Fd(x1, z1)
+    o.append(f'<rect x="{a:.1f}" y="{b:.1f}" width="{c - a:.1f}" height="{d - b:.1f}" fill="{WHT}" stroke="{WST}" stroke-width="1.2"/>')
+for z in (46.42 - 8, 206.42 - 8):
+    a, b = Fd(22.54 - 8, z); c, d = Fd(144.34 + 8, z + 16)
+    o.append(f'<rect x="{a:.1f}" y="{b:.1f}" width="{c - a:.1f}" height="{d - b:.1f}" fill="{WHT}" stroke="{WST}" stroke-width="1.2"/>')
+for x in (22.54, 144.34):
+    for z in (46.42, 206.42):
+        cx, cy = Fd(x, z); o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="6" fill="#2563eb"/>')
+a, b = Fd(58.96 - 6, 101.92 - 6); c, d = Fd(107.92 + 6, 159.92 + 6)
+o.append(f'<rect x="{a:.1f}" y="{b:.1f}" width="{c - a:.1f}" height="{d - b:.1f}" fill="#2e7d4f" fill-opacity=".35" stroke="#14532d"/>')
+for x in (58.96, 107.92):
+    for z in (101.92, 159.92):
+        cx, cy = Fd(x, z); o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="4.5" fill="#16a34a"/>')
+LF = XF + 166.88 * sf + 40
+for i, (col, s_) in enumerate([("#2563eb", "4 × M2,5 gennem bagrammens kryds ind i skærmens egne gevindører"),
+                               ("#16a34a", "Pi 5 på skærmens 4 midterste gevindører (som Raspberry Pi har lavet det)"),
+                               (WST, "Bagrammens kryds (hvid ASA), klemt fast af de 4 frontskruer")]):
+    o.append(f'<circle cx="{LF + 6}" cy="{1340 + 26 * i - 5}" r="6" fill="{col}"/>'); t(LF + 20, 1340 + 26 * i, s_)
+fn = ["Alle 8 skruer følger med skærmen, så der skal intet købes. Skærmen sidder nu fast med skruer i metal, ikke kun klemt.",
+      "Fremad: skærmen ligger an mod fronten hele vejen rundt og kan ikke trykkes ind. Bagud og til siden: 4 skruer M2,5 i stål,",
+      "der hver holder flere hundrede N. Skærmen vejer skønsmæssigt ca. 0,5 kg, så et stød på 10 g giver ca. 50 N i alt, ca. 12 N pr. skrue.",
+      "Bagrammens skruetårne er 0,3 mm for korte, så skruerne trækker skærmen let ind mod fronten. Så ligger den tæt og rasler ikke.",
+      "Trykbuerne fra før udgår. De var den svage del, og en printet bue mister spændingen over tid i varme."]
+for i, n in enumerate(fn): t(LF, 1440 + 20 * i, n, 13, "#444")
 
 svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="Inter, Helvetica, Arial, sans-serif"><rect width="100%" height="100%" fill="#fff"/>' + "".join(o) + "</svg>"
 open(OUT, "w").write(svg)
