@@ -38,7 +38,7 @@ BLOCK_Z = [];                               // no side screws
 // fewer loose parts: no VESA or tripod inserts, no lock screw inside, and every former M3 insert
 // becomes a pilot hole for a 3.0 mm thread-forming plastic screw (e.g. WN 1452 K30)
 VESA_ON = false;  TRIPOD_ON = false;  LOCK_INSIDE = false;  DC_PANEL = false;
-INS_M3 = [2.5, 12];
+INS_M3 = [2.4, 12];                          // pilot for the 3.0 x 15 SPUN+ front screws (core 1.8, ITW datasheet)
 // no glow band (Esben 19 Oct): the shell is one print in one colour; only the front ring lights
 GLOW = false;
 RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
@@ -142,21 +142,21 @@ module shell2(top = UNIT_TOP) {
 // ------------------------------------------ 4G, vandal sensing, microphones ----
 // [A] Waveshare SIM7600G-H 4G HAT (B) 65 x 32 mm (waveshare.com); height with SIM holder [M]
 // [A] Adafruit LIS3DH breakout 25.4 x 17.8 x 4.6 (tap/shock interrupt to the Pi)
-// [A] reSpeaker Flex XVF3800 Linear with XIAO ESP32S3: mic strip 110 long, mics 33 apart,
-//     ports on the back of the board; core board on a 20 cm FPC. Width/thickness/core size [M]
-// [M] glass reed switch in a 20 x 4 x 4 sleeve; [A] N52 magnet 6 x 3
+// [A] reSpeaker Flex XVF3800 Linear (Seeed DXF): core board 70.5 x 52.2 x 1.2, 4 x Ø3.3 on 62.5 x 44.2;
+//     mic board 110 x 11 x 1.2 (~4.8 with parts), 4 mics 33 apart, ports on the back; core on a 20 cm FPC
+// [C] reed module OKY3440-1 32 x 19 x 7 (retailer; one M3 hole), [C] neodymium magnet Ø8 x 3 (retailer)
 HAT4G = [32, 65, 12];   HAT4G_P = [-88, 166];      // w (x), h (z), thickness (y); bottom-left on the back wall
-MCORE = [45, 60, 15];   MCORE_P = [48, 166];
+MCORE = [52.2, 70.5, 12];   MCORE_P = [48, 160];
 IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 200];
-MSTRIP = [110, 16, 5];  MIC_Y = 68;  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
-REED = [20, 4, 4];
+MSTRIP = [110, 11, 4.8];  MIC_Y = 68;  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
+REED = [32, 19, 7];                         // w (x), h (z), thickness (y); REED_P below the lock
 module back_part(p, sz, c) color(c) translate([p[0], D - BACK_T - 1.2 - sz[2], p[1]]) cube([sz[0], sz[2], sz[1]]);
 module placed_electronics() {
     back_part(HAT4G_P, HAT4G, [0.1, 0.3, 0.6]);
     back_part(MCORE_P, MCORE, [0.15, 0.15, 0.15]);
     back_part(IMU_P, IMU, [0.1, 0.1, 0.4]);
     color([0.15, 0.15, 0.15]) translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
-    color([0.8, 0.8, 0.85]) translate([LOCK_X - REED[0]/2, D - BACK_T - 6, LOCK_TZ[1] + 4]) cube(REED);
+    back_part(REED_P, REED, [0.1, 0.3, 0.6]);
 }
 // snap trays like the Pololu cradles: no screws; the mic strip hangs in two hook clips
 module electronics_holders() {
@@ -167,11 +167,8 @@ module electronics_holders() {
         translate([-1, 2 - 0.15, 1.8]) cube([10, MSTRIP[1] + 0.3, MSTRIP[2] + 0.3]);
         translate([-1, 4, -1]) cube([10, MSTRIP[1] - 4, 3]);
     }
-    // reed switch sleeve, just above the lock tongue: lifting the box off the cleat moves the magnet away
-    translate([LOCK_X - REED[0]/2 - 1.6, D - BACK_T - 7.6, LOCK_TZ[1] + 2.4]) difference() {
-        cube([REED[0] + 3.2, 7.61, REED[2] + 3.2]);
-        translate([-1, 1.6, 1.6]) cube([REED[0] + 5, REED[1] + 0.3, REED[2] + 0.3]);
-    }
+    // reed module tray just above the lock tongue (reed glass at the bottom edge): lifting the box off the cleat moves the magnet away
+    translate([REED_P[0], D - BACK_T + 0.01, REED_P[1]]) rotate([90, 0, 0]) pololu_cradle([REED[0], REED[1], REED[2]], REED[2] + 1.5);
 }
 
 // ------------------------------------------------------------ wall lock ----
@@ -183,12 +180,14 @@ module electronics_holders() {
 // Lifting force on the tongue: 18 x 18 section, 19 mm lever to the plate.
 LOCK_X = -56;  LOCK_W = 18;  LOCK_TZ = [18, 36];  LOCK_Y = 70;  DROP = CLEAT_D;
 LOCK_SY = (LOCK_Y + D - BACK_T)/2;                  // screw axis, y
-LOCK_HEAD = [8.4, 2.6];                             // ISO 7380 M4 head 7.6 x 2.2 + clearance
+REED_P = [LOCK_X - REED[0]/2, LOCK_TZ[1] + 4];      // reed module tray, bottom-left on the back wall
+LOCK_HEAD = [8.6, 0.3];                             // [A] Bolte 88115 = DIN 7982 ST4.2 countersunk (head Ø8.1, ISO 14586 max 8.4), 90°; head 0.3 below the bottom
 LOCK_BOSS = [15, 8];                                // floor boss under the head: dia, top z (tongue clears it by 1 mm while hanging on)
 module lock_cut() {
     translate([LOCK_X - LOCK_W/2 - 0.6, D - BACK_T - 1, LOCK_TZ[0] - DROP - 0.6]) cube([LOCK_W + 1.2, BACK_T + 2, LOCK_TZ[1] - LOCK_TZ[0] + DROP + 1.2]);
     cyl_z(4.5, -1, LOCK_TZ[0], LOCK_X, LOCK_SY);
     cyl_z(LOCK_HEAD[0], -1, LOCK_HEAD[1], LOCK_X, LOCK_SY);
+    translate([LOCK_X, LOCK_SY, LOCK_HEAD[1] - 0.01]) cylinder(d1 = LOCK_HEAD[0], d2 = 4.4, h = (LOCK_HEAD[0] - 4.4)/2, $fn = 32);   // 90° countersink
 }
 module wall_cleat2() {
     yb = D + GAP_WALL - PLATE_T;
@@ -201,7 +200,7 @@ module wall_cleat2() {
             translate([LOCK_X - LOCK_W/2, yb + 0.01, LOCK_TZ[0]]) rotate([0, 90, 0]) linear_extrude(LOCK_W) polygon([[0, 0], [-(LOCK_TZ[1] - LOCK_TZ[0]), 0], [0, -6]]);
         }
         cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
-        cyl_z(6.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket (press fit)
+        cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit)
         translate([PWR_P[0] - 5, D + 0.5, 0]) cube([10, yb - D - 0.49, 250]);       // power lead down the gap: notch the stand-offs
     }
 }
@@ -265,7 +264,9 @@ CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
 // and leaves under the box in steel cable armour, which starts hidden behind the box.
 PWR_P = [0, 146];  PWR_IN = [26, 36, 18];                         // pocket opening (x, z), depth
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
-SPK_P = [-66, 80];  SPK = [50, 25];                               // [M] 50 mm full-range 4 ohm 5 W, depth
+// [A] DFRobot FIT0502 3 W 8 ohm enclosed speaker (drawing KN-SP4030-05): 69.9 x 31, flange 3.7,
+//     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
+SPK_P = [-72.5, 94];  SPK = [69.9, 31, 16];  SPK_FL = 3.7;  SPK_EAR = [63.6, 24];   // centre (x, z); w, h, depth
 module bottom_vents() for (sx = [-1, 1], x = VENT_XS) hull() for (dy = [-1, 1])
     cyl_z(VENT_SL[0], -1, WALL + 1, sx*x, VENT_Y + dy*(VENT_SL[1] - VENT_SL[0])/2);
 module louvre(x, z0, z1) hull() {   // outer opening lower than the inner one: water runs out
@@ -282,7 +283,7 @@ module services_cut() {
     ext_y(D - BACK_T - 1, D + 1) translate([PWR_P[0], PWR_P[1] - PWR_IN[1]/2]) rr(PWR_IN[0], PWR_IN[1], 4);
     for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);
 }
-function spk_holes() = [for (i = [-6:6], j = [-6:6]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (x*x + z*z < 20*20) [x, z]];
+function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
 module services_add() {
     vent_hoods();
     // collar round the printer pass-through: splash that gets past the cap must climb 4 mm
@@ -301,14 +302,21 @@ module services_add() {
         translate([PWR_P[0], 0, PWR_P[1]]) translate([-PWR_IN[0]/2, D - BACK_T - PWR_IN[2], -PWR_IN[1]/2]) cube([PWR_IN[0], PWR_IN[2] + 1, PWR_IN[1]]);
         cyl_y(8.2, D - BACK_T - PWR_IN[2] - 3, D - BACK_T - PWR_IN[2] + 1, PWR_P[0], PWR_P[1] + 8);   // M8 panel jack, upper half
     }
-    // speaker ring: the frame drops in and three hooks snap over it
+    // speaker: a rim round the flange, 4 pegs through the ear holes and 2 hooks over the flange
     translate([SPK_P[0], D - BACK_T + 0.01, SPK_P[1]]) rotate([90, 0, 0]) {
-        difference() { cylinder(d = SPK[0] + 5, h = 5, $fn = 64); translate([0, 0, -1]) cylinder(d = SPK[0] + 0.6, h = 7, $fn = 64); }
-        for (a = [90, 210, 330]) rotate(a) translate([SPK[0]/2 + 0.3, -3, 0]) {
-            cube([2.2, 6, 6.2]);
-            translate([0, 0, 4.2]) hull() { cube([2.2, 6, 0.01]); translate([-1, 0, 1.2]) cube([3.2, 6, 0.01]); }
+        difference() { translate([-SPK[0]/2 - 1.8, -SPK[1]/2 - 1.8, 0]) cube([SPK[0] + 3.6, SPK[1] + 3.6, SPK_FL + 1.6]);
+                       translate([-SPK[0]/2 - 0.3, -SPK[1]/2 - 0.3, -1]) cube([SPK[0] + 0.6, SPK[1] + 0.6, SPK_FL + 4]);
+                       for (sx = [-1, 1]) translate([sx*(SPK[0]/2 + 0.9) - 2, -SPK[1]/2 - 3, SPK_FL]) cube([4, SPK[1] + 6, 3]); }
+        for (sx = [-1, 1], sz = [-1, 1]) translate([sx*SPK_EAR[0]/2, sz*SPK_EAR[1]/2, 0]) cylinder(d = 2.7, h = SPK_FL - 0.3, $fn = 16);
+        for (sz = [-1, 1]) translate([-5, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
+            cube([10, 1.5, SPK_FL + 0.3]);
+            translate([0, 0, SPK_FL + 0.3]) hull() { cube([10, 1.5, 0.01]); translate([0, sz > 0 ? -0.8 : 0, 1]) cube([10, 2.3, 0.01]); }
         }
     }
+}
+module speaker3() translate([SPK_P[0] - SPK[0]/2, D - BACK_T - SPK[2], SPK_P[1] - SPK[1]/2]) {
+    translate([0, SPK[2] - SPK_FL, 0]) cube([SPK[0], SPK_FL, SPK[1]]);                          // flange with the ears
+    translate([4, 0, 2]) cube([SPK[0] - 8, SPK[2] - SPK_FL + 0.01, SPK[1] - 4]);               // box behind it
 }
 module cable_cap() {   // printed separately; underside flush with the box bottom
     difference() {
@@ -326,8 +334,7 @@ module placed_services() {
     color([0.2, 0.2, 0.2]) cyl_y(11, D - BACK_T - PWR_IN[2] - 2.4 - 16, D - BACK_T - PWR_IN[2] - 2.4, PWR_P[0], PWR_P[1] + 8);
     color([0.25, 0.25, 0.25]) translate([PWR_P[0] - 5.5, D - BACK_T - PWR_IN[2] + 0.5, PWR_P[1] - 15]) cube([11, 12, 28]);
     // speaker
-    color([0.2, 0.2, 0.22]) translate([SPK_P[0], D - BACK_T - 3, SPK_P[1]]) rotate([-90, 0, 0]) cylinder(d = SPK[0], h = 3, $fn = 64);
-    color([0.3, 0.3, 0.32]) translate([SPK_P[0], D - BACK_T - SPK[1], SPK_P[1]]) rotate([-90, 0, 0]) cylinder(d = 32, h = SPK[1] - 3, $fn = 48);
+    color([0.2, 0.2, 0.22]) speaker3();
 }
 
 // Instax Link WIDE: 139.9 x 128.3 x 36.0 (fujifilm.com spec), film 86 x 108
@@ -392,12 +399,12 @@ module placed_printers() {
 // No soldering (Esben 19 Oct): only finished modules with screw or lever terminals, joined with Wago clamps.
 // [A] Mean Well RSD-60G-5, 24 V -> 5 V 12 A, 128 x 60 x 25 incl. flanges (reichelt / Mean Well datasheet),
 //     screw terminals on the right-hand end; lies flat on the back wall under the Pi.
-// [C] Gledopto GL-C-016WL-D WLED controller 108 x 45 x 18 (one retailer listing): flat on the back wall above the PSU
+// [A] Gledopto GL-C-016WL-D WLED controller 108 x 45 x 18 (Gledopto manual; no drawing, terminals at both short ends): flat on the back wall above the PSU
 // (the right wall is taken by the mic board higher up).
-// [M] DFRobot Gravity MOSFET (white strips) 42 x 32 x 12: on the left side wall.
+// [A] DFRobot Gravity MOSFET DFR0457 (white strips) 44 x 32, 4 x Ø3.1 on 20 x 25; height not published (~16): on the left side wall.
 PSU5 = [128, 60, 25];  PSU5_P = [-37, 16];                    // x, z (bottom-left), on the back wall
 WLED = [108, 45, 18];  WLED_P = [-30, 80];                    // x, z (bottom-left), on the back wall
-MOSF = [42, 32, 12];   MOSF_P = [40, 112];                    // on the left wall
+MOSF = [44, 32, 16];   MOSF_P = [40, 112];                    // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
 module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
     difference() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
@@ -436,10 +443,19 @@ FR_BACK = CH_BACK + FR_T;                 // 31.7: flat back of the frame
 RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
 CAM_END = CAM_HOLE/2 + 4 + S3;            // slot end centres, 4 mm black round the camera hole
 CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
-REFL = [[4.2, -6.0], [25.7, 5.0]];        // reflector line (y, r): from the ring flange to the floor
-FLOOR3 = 25.7;
-STRIPS3 = [[4.6, 12.6, "w"], [12.7, 20.7, "w"], [20.8, 25.6, "rgb"]];   // [A] LEDlife COB Ra95 8 mm x2, RGB 5 mm
-STRIP_T3 = [5.4, 6.9];                    // strips on the frame's strip wall (r)
+REFL = [[4.2, -6.0], [26.45, 4.4]];       // reflector line (y, r): from the ring flange to the floor
+FLOOR3 = 26.45;
+// [y0, y1, kind, thickness, end |x| left, end |x| right] (strip ends next to the camera)
+// [C] white: Ledproff COB Ra95 24 V, 8 x 2 mm; RGB: Ledprodukter WS2812b COB 5 V, 5 x 2.2 mm (dimension sheet)
+// Each strip is fed from ONE end. The clip connectors are wider than the strips (white 9.6, RGB 6.8,
+// up to 4.4 high), so they cannot sit side by side: white 1 and RGB take their clips at the left end,
+// white 2 at the right end, and the strip next to a clip stops 17 mm further out.
+CLIP_L = 17;                              // clip zone along the strip, from the camera keep-out
+STRIPS3 = [[5.1, 13.1, "w", 2.0, 17, 34], [13.15, 21.15, "w", 2.0, 34, 17], [21.2, 26.2, "rgb", 2.2, 17, 34]];
+STRIP_T3 = [4.7, 6.9];                    // strip wall face at r 6.9; thickest strip reaches r 4.7
+// [C] Ledproff low-profile start clip 8 mm COB: 9.6 wide (retailer), ~15.5 x 4.3 (comparable LinearLux, unconfirmed)
+// [C] Ledprodukter MiniClip 5 mm 3-pole: 16.53 x 6.8 x 4.4 (retailer table)
+CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.15, [16, 9.6, 4.3]], [-1, 23.7, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
 J_R = 11.8;                               // front screws: in the outer wall at the 4 corners
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
 // [A] Touch Display 2 10" (RP-010276 physical spec): panel 7.05 deep incl. the 1.1 cover lens,
@@ -524,6 +540,8 @@ module frame3() {
                     ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
                 }
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
+                for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
+                    cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);       // room for the clips
             }
             // cross bars at the display tabs, with bosses down to the tabs
             for (z = DSP_TAB_Z) ext_y(RIB_TOP + 4, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
@@ -540,11 +558,17 @@ module frame3() {
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
-        for (sx = [-1, 1]) cyl_y(5, FLOOR3 - 1, FR_BACK + 1, sx*(CAM_KEEP[0] + 8), RING_Z1 + 6.2);   // strip leads
+        for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*(CAM_KEEP[0] - 1.5), RING_Z1 + 4);   // strip leads, straight out of the clips
     }
 }
+// 90 deg countersink, wide end (d1) at y0, narrowing towards -y to d2: for a screw driven in from the back
+module csk_y(d1, d2, y0, x, z) translate([x, y0 + 0.01, z]) rotate([90, 0, 0]) cylinder(d1 = d1, d2 = d2, h = (d1 - d2)/2 + 0.01, $fn = 32);
+module strip_cut2d(s) translate([-s[4], RING_Z1 - CAM_KEEP[1]]) square([s[4] + s[5], 2*CAM_KEEP[1]]);
 module placed_strips3(kind) for (s = STRIPS3) if (s[2] == kind)
-    ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[0], STRIP_T3[1]); cam_keep2d(); }
+    ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
+// clip connectors on the strip ends (on the top run, next to the camera); cable leaves towards the camera
+module placed_clips3() for (c = CLIPS3)
+    translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2]) cube([c[2][0], c[2][1], c[2][2]], center = true);
 module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
@@ -563,7 +587,7 @@ module shell3(top = UNIT_TOP) {
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
             power_holders();
         }
-        for (j = J2) { cyl_y(7.0, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); }
+        for (j = J2) { cyl_y(7.0, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
     }
 }
 
@@ -604,16 +628,15 @@ if (VIEW == "c_4g")        back_part(HAT4G_P, HAT4G, "red");
 if (VIEW == "c_mcore")     back_part(MCORE_P, MCORE, "red");
 if (VIEW == "c_imu")       back_part(IMU_P, IMU, "red");
 if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
-if (VIEW == "c_reed")      { translate([LOCK_X - REED[0]/2, D - BACK_T - 6, LOCK_TZ[1] + 4]) cube(REED); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 6, h = 3, $fn = 24); }
-if (VIEW == "c_speaker")   { translate([SPK_P[0], D - BACK_T - 3, SPK_P[1]]) rotate([-90, 0, 0]) cylinder(d = SPK[0], h = 3, $fn = 64);
-                             translate([SPK_P[0], D - BACK_T - SPK[1], SPK_P[1]]) rotate([-90, 0, 0]) cylinder(d = 32, h = SPK[1] - 3, $fn = 48); }
+if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
+if (VIEW == "c_speaker")   speaker3();
 if (VIEW == "c_jack")      { cyl_y(11, D - BACK_T - PWR_IN[2] - 2.4 - 16, D - BACK_T - PWR_IN[2] - 2.4, PWR_P[0], PWR_P[1] + 8);
                              translate([PWR_P[0] - 5.5, D - BACK_T - PWR_IN[2] + 0.5, PWR_P[1] - 15]) cube([11, 12, 28]); }
 if (VIEW == "c_cap")       translate([IF_CABLE[0], IF_CABLE[1], 0]) cable_cap();
 // screws: 4 front (3.0 x 14 thread-forming, heads in the back wall), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
 if (VIEW == "s_front")     for (j = JOINTS) screw_y(3, 14, [5.6, 2], j[0], RIB_TOP + RAIL_T + 8, j[1], -1);
 if (VIEW == "s_camera")    for (h = CAM_HOLES_ROT) screw_y(2, 6, [3.8, 1.3], h[0], CAM_PCB_Y + CAM_PCB[2], LENS_Z + h[1], -1);
-if (VIEW == "s_lock")      translate([LOCK_X, LOCK_SY, LOCK_HEAD[1]]) { translate([0, 0, -LOCK_HEAD[1]]) cylinder(d = LOCK_HEAD[0], h = LOCK_HEAD[1], $fn = 24); cylinder(d = 4, h = 25 - LOCK_HEAD[1], $fn = 16); }
+if (VIEW == "s_lock")      translate([LOCK_X, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
 if (VIEW == "x_core")      { placed_pi(); placed_power(); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cap")       cable_cap();
@@ -664,7 +687,7 @@ if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU
 if (VIEW == "c_wled")      translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
-if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [5.6, 2], j[0], FR_BACK + 2, j[1], -1);
+if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [6, 2.3], j[0], FR_BACK + 2, j[1], -1);
 if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 5, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + 2.0, GC + z, -1);
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
 if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
@@ -690,3 +713,4 @@ if (VIEW == "module_open") { color(C_BODY) printer_module(open = 100); for (y = 
 if (VIEW == "pair") { translate([0, 0, HP]) main_unit(); module_body(); placed_printers(); }
 if (VIEW == "pair_xray") { translate([0, 0, HP]) main_unit(); %module_body(); placed_printers(); }
 if (VIEW == "info") echo(W = W, H = H, R = R, BORDER = BORDER, RUN_V = RUN_V, RUN_H = RUN_H, RUN_T = RUN_T, JOINTS = JOINTS, WING_P = WING_P, HP = HP);
+if (VIEW == "c_clips")     placed_clips3();

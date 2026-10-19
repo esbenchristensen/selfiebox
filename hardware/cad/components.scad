@@ -46,13 +46,13 @@ function dsp_tab_pos(fpc_shift = 0) = [for (sx = [-1, 1], sz = [-1, 1]) [sx*DSP_
 
 
 // ---------------------------------------------------- Raspberry Pi Touch Display 2, 10-inch
-// [A] outline 166.9 x 248.1, depth 15.5, viewing area 136.4 x 217.6, active 135.4 x 216.6,
+// [A] outline 166.88 x 248.096, depth 15.55 (RP-010276 drawing), cover glass 1.1, viewing area 136.4 x 217.6, active 135.4 x 216.6,
 //     1200 x 1920 native portrait (raspberrypi.com Touch Display 2 docs)
 // [C] metal back plate ~232 x 145 (landscape), inset ~4 mm from the glass edges, thicker black
 //     border on the FPC edge (measured on the official back-view photo)
 // [M] picture centring on the glass (assumed centred)
-TD10_GLASS = [166.9, 248.1];  TD10_D = 15.5;  TD10_VIEW = [136.4, 217.6];
-TD10_GLASS_T = 2.0;  TD10_PLATE = [145, 232];  TD10_R = 3;
+TD10_GLASS = [166.9, 248.1];  TD10_D = 15.55;  TD10_VIEW = [136.4, 217.6];
+TD10_GLASS_T = 1.1;  TD10_PLATE = [145, 232];  TD10_R = 3;   // glass corners are R5 (drawing); R3 keeps the pockets roomier in the corners
 // Portrait, glass front face at y = 0, centred on x = 0, z = 0; FPC at the top edge.
 module rpi_touch_display2_10() {
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
@@ -81,12 +81,12 @@ module rpi5() {
 // ---------------------------------------------------- Camera Module 3 Wide
 // [A] PCB 25 x 23.862, holes Ø2.2 (M2), "PCB size and mounting holes the same as Camera Module 2"
 // [B] holes at x = 2 / 23, y = 9.362 / 21.862 from the flex-connector edge (NopSCADlib rpi_camera_v2)
-// [B] lens centre x = 12.5, y = 9.53 from the flex-connector edge (NopSCADlib; CM3 may differ ±0.4)
+// [A] lens centre x = 12.5, y = 9.462 from the flex-connector edge (CM3 Wide mechanical drawing)
 // [B] PCB 1.12, flex connector 2.75 on the back, lens holder 10.8 x 10.8,
 //     lens top 8.3 above the PCB front, front barrel Ø6.95 (CM3 Wide drawing labels)
 CAM_PCB = [25, 23.862, 1.12];
-CAM_HOLES = [[-10.5, -0.168], [10.5, -0.168], [-10.5, 12.332], [10.5, 12.332]];   // relative to lens centre (x, z)
-CAM_LENS_FROM_EDGE = 9.53;
+CAM_HOLES = [[-10.5, -0.1], [10.5, -0.1], [-10.5, 12.4], [10.5, 12.4]];   // relative to lens centre (x, z)
+CAM_LENS_FROM_EDGE = 9.462;   // [A] CM3 Wide drawing: lens 14.4 from the far edge (23.862 - 14.4)
 CAM_HOLDER = 10.8;  CAM_HOLDER_H = 4.07;  CAM_LENS_H = 8.3;  CAM_BARREL = 6.95;   // RP-008155 (Wide): tip Ø6.95, 8.3 above the board  CAM_CONN_H = 2.75;
 // Lens centre at x = 0, z = 0; PCB front face at y = 0, lens pointing to -y; flex edge at -z.
 // Rotated 90 deg (flex edge to +x): the sensor's long side runs vertically -> native portrait.
