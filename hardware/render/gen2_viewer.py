@@ -54,11 +54,11 @@ PARTS = [
 # and the display back, clear of the boards; each cable belongs to the component it serves.
 CABLES = [
     ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(-44, 76.5, 191), (-44, 66, 192), (-44, 58, 190), (-20, 55, 170), (40, 55, 130), (86, 54, 100), (88, 52, 76)]),
-    ("ledstyring", "24 V → WLED-styring",            2.0, [(88, 52, 76), (84, 56, 100), (80, 60, 108)]),
+    ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(88, 52, 68), (84, 56, 100), (80, 60, 108)]),
     ("daemper",    "24 V → dæmper",                  2.0, [(88, 52, 76), (40, 52, 80), (-60, 52, 110), (-100, 55, 125)]),
     ("stroem",     "5 V → Pi",                       2.2, [(88, 52, 70), (60, 45, 85), (25, 38, 120)]),
     ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 50, 160), (-100, 55, 150)]),
-    ("ledrgb",     "RGB-strip ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (88, 50, 180), (86, 54, 125), (80, 60, 115)]),
+    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (88, 50, 180), (86, 54, 125), (80, 60, 115)]),
     ("modem4g",    "4G: USB → Pi",                   2.6, [(-56, 72, 190), (-32, 52, 170), (-18, 44, 118)]),
     ("lydkerne",   "Mikrofon-kerne: USB → Pi",       2.6, [(48, 72, 190), (30, 52, 170), (18, 44, 118)]),
     ("mikrofoner", "Mikrofonstrip → kerne",          1.2, [(40, 68, 297), (62, 70, 270), (70, 70, 226)]),

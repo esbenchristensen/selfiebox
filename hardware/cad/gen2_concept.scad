@@ -547,7 +547,8 @@ module frame3() {
             // reflector, strip wall and floor, all inside the channel
             difference() {
                 union() {
-                    for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - REFL_STEP]) ext_y(y, y + REFL_STEP + 0.01) ring_band2d(-FL3, refl_r(y + REFL_STEP));
+                    // the last step runs into the floor, so the reflector is one piece with the frame (v2 left a 0.24 mm gap)
+                    for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - 0.01]) ext_y(y, min(y + REFL_STEP, FLOOR3) + 0.01) ring_band2d(-FL3, refl_r(min(y + REFL_STEP, FLOOR3)));
                     ext_y(REFL[0][0], CH_BACK + 0.01) ring_band2d(STRIP_T3[1], FL3);
                     ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
                 }
@@ -556,7 +557,10 @@ module frame3() {
                     cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);       // room for the clips
             }
             // cross bars at the display tabs, with bosses down to the tabs
+            // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
+            // in v2 they were loose pieces in the print
             for (z = DSP_TAB_Z) ext_y(RIB_TOP + 4, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
+            for (z = DSP_TAB_Z) ext_y(CH_BACK, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF + 1), 16], center = true);
             for (t = tabs) cyl_y(7, TAB_Y - PRELOAD, RIB_TOP + 4.01, t[0], t[1]);
             // tubes that press the camera board onto its pegs
             for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
