@@ -21,6 +21,8 @@ STL, OUT, VER = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
 PARTS = [
     ("lysring",       "x_ring3",       "Lysring (naturfarvet ASA)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
+    ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
+    ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
     ("ledskinne",     "x_frame3",      "Bagramme med reflektor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
