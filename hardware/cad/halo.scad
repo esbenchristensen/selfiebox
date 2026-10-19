@@ -53,7 +53,7 @@ GW = TD10_GLASS[0];  GH = TD10_GLASS[1];  // portrait: 166.9 wide, 248.1 tall
 
 // light ring: four straight light channels on a rounded-rectangle centre line
 SLOT_W = 14;  DIFF_FLANGE = 1.2;  DIFF_FLANGE_T = 1.2;  RIB_T = 1.6;
-RIB_TOP = GLASS_Y + TD10_D + 0.5;  RAIL_T = 2.5;  XBAR_T = 4;   // 1 mm foam pads -> 0.5 mm
+RIB_TOP = GLASS_Y + TD10_D + 0.45;  RAIL_T = 2.5;  XBAR_T = 4;   // 1 mm foam pads -> 0.5 mm
 CH_HALF = SLOT_W/2 + DIFF_FLANGE + RIB_T;          // 9.8: centre line -> rib outer face
 RING_R  = 22;                                      // centre-line corner radius
 RING_PROUD = 1.6;  RING_FACE = SLOT_W + 4;         // raised diffuser ring: height, width
