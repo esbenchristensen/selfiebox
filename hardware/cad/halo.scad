@@ -76,6 +76,7 @@ EDGE_X = RING_X + CH_HALF + 0.4;                   // rail edge, carries the glo
 W  = 2 * ceil(EDGE_X + 2 + 7 + WALL);
 HW = W / 2;
 BAND_Y0 = 22;  BAND_Y1 = 32;
+GLOW = true;                                        // side glow band lit by strips on the rail edges
 // runs: [x, z, length, vertical?]  (straight parts only; corners stay solid)
 RUN_V = (RING_Z1 - RING_Z0) - 2*RING_R;
 RUN_H = 2*RING_X - 2*RING_R;
@@ -118,6 +119,8 @@ CLEAT_L = 120;  CLEAT_ZC = H - 32;  CLEAT_D = 9;
 GAP_WALL = 14;  PLATE_T = 4;
 VESA = 75;  VESA_Z = GC;
 LOCK_Z = H - 72;
+VESA_ON = true;  TRIPOD_ON = true;  LOCK_INSIDE = true;   // gen 2 turns these off (fewer inserts)
+DC_PANEL = true;                                          // gen 2 moves the jack into a pocket
 DC_POS = [-52, 40];
 PB_RAIL = [70, 50, 1.6];   PB_Z0 = 18;  PB_Y = D - BACK_T - 6;   // perfboard: size, bottom, back face y
 POL_X = 46;  POL_Z = [18, 50];                                      // Pololu cradles (right side)
@@ -253,7 +256,7 @@ module led_rail() {
                 for (sx = [-1, 1], z = BLOCK_Z) hull() { translate([sx*RAIL_EAR_X, z]) circle(d = 7); translate([sx*(EDGE_X - 1), z]) square([1, 7], center = true); }
             }
             ext_y(RIB_TOP, RIB_TOP + XBAR_T) for (z = XBAR_Z) translate([0, z]) square([2*xi + 1, 14], center = true);
-            for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X - 1.6 : -EDGE_X, RIB_TOP + RAIL_T - 0.01, RING_Z0 + RING_R]) cube([1.6, BAND_Y1 + 0.5 - RIB_TOP - RAIL_T, RUN_V]);
+            if (GLOW) for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X - 1.6 : -EDGE_X, RIB_TOP + RAIL_T - 0.01, RING_Z0 + RING_R]) cube([1.6, BAND_Y1 + 0.5 - RIB_TOP - RAIL_T, RUN_V]);
         }
         for (sx = [-1, 1], z = BLOCK_Z) cyl_y(2.9, RIB_TOP - 1, RIB_TOP + RAIL_T + 1, sx*RAIL_EAR_X, z);
         // wire passes at both ends of every run (COB + RGBW)
@@ -282,9 +285,9 @@ module pololu_cradle(sz = POL50, hgt = 7) {
 module shell(top = UNIT_TOP) {
     difference() {
         union() {
-            shell_base(H, BLOCK_Z, top = top, bottom = "joint", tripod = true);
+            shell_base(H, BLOCK_Z, top = top, bottom = "joint", tripod = TRIPOD_ON);
             translate([-CLEAT_L/2 - 3, D - BACK_T - CLEAT_D, CLEAT_ZC - 27]) cube([CLEAT_L + 6, CLEAT_D + 0.01, 39]);
-            for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
+            if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
             // perfboard slide rails (board stands 6 mm off the back wall, components face forward)
             for (sx = [-1, 1]) translate([sx > 0 ? PB_RAIL[0]/2 - 1.8 : -PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0]) difference() {
                 cube([4, D - BACK_T - (PB_Y - 4) + 0.01, PB_RAIL[1] + 2]);
@@ -295,9 +298,9 @@ module shell(top = UNIT_TOP) {
             for (p = [[-60, 110], [60, 110], [-60, 160], [0, 95]]) translate([p[0] - 5, D - BACK_T - 3, p[1] - 2]) difference() { cube([10, 3.01, 4]); translate([2, -0.01, -1]) cube([6, 1.8, 6]); }
         }
         ext_x(-CLEAT_L/2, CLEAT_L/2) cleat_groove_2d();
-        for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);
-        cyl_y(M4_CLR, D - BACK_T - 1, D + 1, 0, LOCK_Z);
-        cyl_y(DC_JACK_HOLE, D - BACK_T - 1, D + 1, DC_POS[0], DC_POS[1]);
+        if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);
+        if (LOCK_INSIDE) cyl_y(M4_CLR, D - BACK_T - 1, D + 1, 0, LOCK_Z);
+        if (DC_PANEL) cyl_y(DC_JACK_HOLE, D - BACK_T - 1, D + 1, DC_POS[0], DC_POS[1]);
         for (sx = [-1, 1], x = [50, 57]) ext_y(D - BACK_T - 1, D + 1) translate([sx*x, VESA_Z + 25]) rotate(90) slot2d(36, 3);
         ext_y(D - 1.2, D + 1) translate([0, 12]) difference() { rr(W - 24, H - 24, 8); translate([0, 11]) rr(W - 46, H - 46, 2); }
         cyl_y(5, D - BACK_T - 1, D + 1, -(HW - 17.5), 17.5);
@@ -483,10 +486,10 @@ module wall_cleat() {
                 translate([0, (30 + CLEAT_ZC)/2]) rrc(60, CLEAT_ZC - 30, 6);
             }
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
-            cyl_y(14, D + 1, yb + 0.01, 0, LOCK_Z);
+            if (LOCK_INSIDE) cyl_y(14, D + 1, yb + 0.01, 0, LOCK_Z);
             for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
         }
-        cyl_y(INS_M4_D, D, D + 1 + INS_M4_L, 0, LOCK_Z);
+        if (LOCK_INSIDE) cyl_y(INS_M4_D, D, D + 1 + INS_M4_L, 0, LOCK_Z);
         for (p = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125]]) {
             cyl_y(5, yb - 1, yb + PLATE_T + 1, p[0], p[1]);
             translate([p[0], yb + 0.6, p[1]]) rotate([90, 0, 0]) cylinder(d1 = 5, d2 = 10.5, h = 2.8);
@@ -504,7 +507,7 @@ module placed_power() {
     for (z = POL_Z) translate([POL_X, D - BACK_T - 1.2 - POL50[2], z]) pololu([POL50[0], POL50[2], POL50[1]]);
     color([0.15, 0.4, 0.2]) translate([-PB_RAIL[0]/2, PB_Y - PB_RAIL[2], PB_Z0]) cube([PB_RAIL[0], PB_RAIL[2], PB_RAIL[1]]);
     color([0.3, 0.3, 0.3]) translate([-PB_RAIL[0]/2 + 4, PB_Y - PB_RAIL[2] - 12, PB_Z0 + 4]) cube([PB_RAIL[0] - 8, 12, PB_RAIL[1] - 8]);
-    color([0.2, 0.2, 0.2]) translate([DC_POS[0], D - BACK_T - DC_JACK_BODY[1], DC_POS[1]]) rotate([-90, 0, 0]) cylinder(d = DC_JACK_BODY[0], h = DC_JACK_BODY[1]);
+    if (DC_PANEL) color([0.2, 0.2, 0.2]) translate([DC_POS[0], D - BACK_T - DC_JACK_BODY[1], DC_POS[1]]) rotate([-90, 0, 0]) cylinder(d = DC_JACK_BODY[0], h = DC_JACK_BODY[1]);
 }
 // In each run: RGBW strip on the inner half, COB strip on the outer half.
 COB_W = 8;
@@ -517,7 +520,7 @@ module placed_leds() {
                 if (r[3]) translate([-strip[0]/2, 0, -n*LED_PITCH/2]) cube([strip[0], LED_T, n*LED_PITCH]);
                 else      translate([-n*LED_PITCH/2, 0, -strip[0]/2]) cube([n*LED_PITCH, LED_T, strip[0]]);
     }
-    color([1, 0.9, 0.7]) for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X : -EDGE_X - LED_T, BAND_Y0, GC - GLOW_LEDS*LED_PITCH/2]) cube([LED_T, LED_W, GLOW_LEDS*LED_PITCH]);
+    if (GLOW) color([1, 0.9, 0.7]) for (sx = [-1, 1]) translate([sx > 0 ? EDGE_X : -EDGE_X - LED_T, BAND_Y0, GC - GLOW_LEDS*LED_PITCH/2]) cube([LED_T, LED_W, GLOW_LEDS*LED_PITCH]);
 }
 
 // ============================================================ ASSEMBLY =====

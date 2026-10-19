@@ -30,11 +30,11 @@ HP = 147                  # module height below the main unit
 CHEEK = 34
 GC, GLASS_Y, VIEW = 151.85, 3.7, (136.4, 217.6)
 
-ROLE = {"bezel": "body", "diffuser": "diff", "shell": "body", "shell_band": "band", "display": "glass", "camera": "lens",
-        "mod_shell": "body", "mod_shell_band": "band", "lid": "body", "lid_open": "body", "printers": "printer", "photo": "paper",
-        "mod_shell_cut": "body", "mod_shell_band_cut": "band", "lid_cut": "body"}
-MAIN = ["bezel", "diffuser", "shell", "shell_band", "display", "camera"]
-MOD = ["mod_shell", "mod_shell_band", "printers"]
+ROLE = {"bezel": "body", "diffuser": "diff", "shell": "body", "display": "glass", "camera": "lens",
+        "mod_shell": "body", "lid": "body", "lid_open": "body", "printers": "printer", "photo": "paper",
+        "mod_shell_cut": "body", "lid_cut": "body"}
+MAIN = ["bezel", "diffuser", "shell", "display", "camera"]
+MOD = ["mod_shell", "printers"]
 
 
 def load(part, M, dz):
@@ -65,7 +65,7 @@ def shoot(name):
             dz_main = HP + 110
             parts = [(p, dz_main) for p in MAIN] + [(p, 0) for p in MOD if p != "printers"] + [("lid", 0)]
         if name == "cut":
-            parts = [(p, HP) for p in MAIN] + [("mod_shell_cut", 0), ("mod_shell_band_cut", 0), ("lid_cut", 0), ("printers", 0), ("photo", 0)]
+            parts = [(p, HP) for p in MAIN] + [("mod_shell_cut", 0), ("lid_cut", 0), ("printers", 0), ("photo", 0)]
         else:
             parts += [("lid", 0), ("photo", 0)]
     for p, dz in parts:

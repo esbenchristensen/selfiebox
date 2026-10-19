@@ -11,9 +11,15 @@ holds a Fujifilm Instax Square Link upside down: colour instant photos (62 × 62
 keeps the printer charged over USB. The thermal strip printer was replaced (black and white only). The sign, SELPHY photo base and table foot
 were dropped; their modules stay in `cad/halo.scad` but are no longer built.
 
-| Unit | Nightclub wall | Bar with photo prints | Festival | Exploded |
-|---|---|---|---|---|
-| ![unit](img/unit.png) | ![club](img/club.png) | ![bar](img/bar.png) | ![festival](img/fest.png) | ![exploded](img/exploded.png) |
+**The current design is gen 2** (`cad/gen2_concept.scad`, drawings and renders in `docs/gen2/`):
+222.5 × 306 × 85 mm, a 1:1 concentric outline with continuous-curvature corners and the same 7.8 mm
+border all round, and the front held by four M3 screws from the back in the ring's corners (no side
+screws). Gen 2 builds on `cad/halo.scad`, so the rev G description below still holds for everything gen 2
+does not change. The STL files in `stl/` are still rev G until gen 2 gets its own print files.
+
+| Gen 2 main unit | Exploded | Side | Section |
+|---|---|---|---|
+| ![unit](docs/gen2/main.jpg) | ![exploded](docs/gen2/exploded.jpg) | ![side](docs/gen2/side.jpg) | ![section](docs/gen2/cut.jpg) |
 
 ## Files
 
@@ -25,15 +31,11 @@ were dropped; their modules stay in `cad/halo.scad` but are no longer built.
 | `tools/check_bed.py` | Every STL fits the H2C plate (285 × 306 × 305 mm, ≥ 7 mm from the edges) |
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
-| `docs/pack/` | The complete A–Z build pack page: every part in 3D with fastening and datasheets, assembly steps, drawings, wiring, print settings, themes, shopping list and checks |
-| `docs/pack/drawings/` | 36 sheets: assembly drawings with balloons and parts list (A), sections (X), shaded fastening details (V), part drawings with hole tables (D), component outlines (K), outside dimensions (S) |
-| `docs/pack/renders/` | Photoreal Blender Cycles renders (`render/render.py`) |
-| `docs/pack/hardware.json` | Every screw, insert, dowel and hole with position and direction (`HW_LIST` / `HOLE_LIST` in `cad/halo.scad`) |
+| `cad/gen2_concept.scad` | Gen 2 (current design), built on top of `halo.scad` |
+| `docs/gen2/` | Gen 2 renders (`render/render_gen2.py`) and the CAD line sheet (`tools/gen2_sketches/make_cad_sheet.sh`) |
 
 ```sh
-# rebuild the pack: model + hardware -> drawings -> sections -> renders -> shopping list
-python3 tools/build_pack.py && node tools/drawings/render_drawings.js && python3 tools/drawings/sections.py
-blender -b -P render/render.py -- --samples 160 --size 1200x1500 && python3 tools/make_bom.py
+python3 tools/make_bom.py
 openscad -D 'PART="bezel"' -D 'PRINT=true' -o stl/bezel.stl cad/halo.scad
 python3 tools/check_bed.py && python3 tools/check_fit.py   # needs trimesh, manifold3d, rtree
 ```

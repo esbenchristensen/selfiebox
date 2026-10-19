@@ -1,0 +1,47 @@
+[
+ {
+  "node": "lysring",
+  "label": "Lysring (hvid ASA)",
+  "explode": 150
+ },
+ {
+  "node": "front",
+  "label": "Front (sort ASA)",
+  "explode": 100
+ },
+ {
+  "node": "kamera",
+  "label": "Kamera",
+  "explode": 100
+ },
+ {
+  "node": "skaerm",
+  "label": "Skærm 10\"",
+  "explode": 55
+ },
+ {
+  "node": "ledskinne",
+  "label": "LED-skinne med fjedre",
+  "explode": 15
+ },
+ {
+  "node": "indmad",
+  "label": "Pi, strøm og LED",
+  "explode": -25
+ },
+ {
+  "node": "skal",
+  "label": "Skal (sort ASA)",
+  "explode": -70
+ },
+ {
+  "node": "elektronik",
+  "label": "4G, sensor, mikrofon, højttaler",
+  "explode": -70
+ },
+ {
+  "node": "vaegbeslag",
+  "label": "Vægbeslag",
+  "explode": -170
+ }
+]
