@@ -310,7 +310,6 @@ module shell(top = UNIT_TOP) {
         for (sx = [-1, 1], x = [50, 57]) ext_y(D - BACK_T - 1, D + 1) translate([sx*x, VESA_Z + 25]) rotate(90) slot2d(36, 3);
         ext_y(D - 1.2, D + 1) translate([0, 12]) difference() { rr(W - 24, H - 24, 8); translate([0, 11]) rr(W - 46, H - 46, 2); }
         cyl_y(5, D - BACK_T - 1, D + 1, -(HW - 17.5), 17.5);
-        translate([HW - WALL - 0.01, 45, VESA_Z]) rotate([0, 90, 0]) difference() { cylinder(d = 24.6, h = 0.8); cylinder(d = 22.6, h = 2, center = true); }
         ext_y(D - 0.6, D + 1) translate([0, 40]) rrc(56, 22, 3);
     }
 }
