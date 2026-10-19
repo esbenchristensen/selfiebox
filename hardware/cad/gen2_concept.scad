@@ -255,7 +255,7 @@ module vent_hoods() for (sx = [-1, 1]) {
 
 // ------------------------------------------------- underside and back services ----
 // Air: in through two slot fields in the underside (no drinks get in from below), out through
-// louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney.
+// louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney (closed in v7, BACK_EXH).
 // Every opening is 2.5 mm wide: no fingers, and a poked wire meets only 12 V parts.
 VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];   // underside: 2 x 7 slots, 7.5 cm2 (85 deep: 9.8)
 // 70 deep, the hoods sit between the frame (y 31.7, it reaches down to z 7) and the back wall. The left
@@ -265,6 +265,9 @@ function vent_l(sx) = VENT_L[sx > 0 ? 1 : 0];
 function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 EXH_XS = [for (i = [0:36]) -90 + 5*i];  EXH_Z = [235, 245];  EXH_DROP = 2;    // back: 37 louvres, 9.3 cm2
 EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; // + 8 in the top corners, 4.0 cm2
+// v7 (Esben 19 Oct): the back louvres are closed, only the underside vents stay. Without an outlet up high
+// there is no chimney: the box cools through its walls, about as if it were sealed.
+BACK_EXH = false;
 // printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
 CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
 // power (Esben 19 Oct): a vertical channel in the back wall, beside the boards. A 5.5/2.5 socket with
@@ -286,8 +289,7 @@ module louvre(x, z0, z1) hull() {   // outer opening lower than the inner one: w
 }
 module services_cut() {
     bottom_vents();
-    for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]);
-    for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]);
+    if (BACK_EXH) { for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]); for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]); }
     // bayonet entry notches next to the pass-through
     for (a = CAP_ANG) translate([IF_CABLE[0], IF_CABLE[1], -1]) rotate(a + CAP_ENTRY) translate([0, -(CAP_LUG[0] + 0.6)/2]) cube([CAP_LUG[1] + 0.5, CAP_LUG[0] + 0.6, WALL + 2]);
     // power pocket opening and the speaker grille
@@ -524,7 +526,7 @@ module front3() {
             ext_y(PT - 0.01, CH_BACK) difference() { ring_band2d(-CH_HALF, CH_HALF); ring_band2d(-CH_IN, CH_IN); glass_keep2d(); cam_keep2d(); }
             for (j = J2) cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
             for (h = CAM_HOLES_ROT) { cyl_y(4.6, PT - 0.01, CAM_PCB_Y, h[0], LENS_Z + h[1]); cyl_y(2.0, CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5, h[0], LENS_Z + h[1]); }
-            glass_land(); cam_shroud(); joint_rib(); glass_ribs();
+            glass_land(); cam_shroud(); joint_rib(); glass_ribs(); snap_ledges();
         }
         hull() { ext_y(-1, PT - 1.6) window2d(1.6); ext_y(-1, PT + 1) window2d(0); }
         ext_y(-1, LOGO_D) translate([0, LOGO_Z]) logo_all2d();   // pocket for the inlay
@@ -547,6 +549,34 @@ module ring3() {
         translate([-7.4, PT - 2, LENS_Z - 8]) cube([14.8, 4, 16]);       // clear of the camera shroud
     }
 }
+// v6 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v5_skitse_snaplaase-front.png):
+// the light-ring slot leaves the inner plate (window + logo) hanging on the bridge at the camera only.
+// 6 printed snap locks hold it from behind, no new screws or parts: an arm on the frame reaches
+// forward along the plate side of the inner channel wall, behind the display glass, and its barb
+// catches a ledge on the wall. 2 per side between the glass ribs and the cross bars, 2 at the bottom.
+// Lock profile in (u, y): u = distance in from the wall face (r = -CH_HALF) towards the plate.
+SNAP = true;
+SNAP_W = 10;                              // along the wall
+SNAP_LEDGE = [0.9, 14.5, 16.5];           // front: ledge depth (u), catch face y, end of the flat face (then 45 deg)
+SNAP_ARM = [1.2, 1.8, 13];                // frame: arm face u (= glass edge), thickness, tip y
+SNAP_BARB = [0.1, 0.1];                   // barb reaches u 0.1; 0.1 play to the ledge: no constant pull against PRELOAD
+SNAP_PAD = [6, 18];                       // frame tab under the arm root: u depth, width
+SNAP_SLOT = [1.2, 8];                     // release slot through the tab, between wall and arm: u, width
+// [face point x, z], inward normal; locks 1-2 left, 3-4 right, 5-6 bottom (the sketch's numbering)
+SNAPS = [for (sx = [-1, 1], z = [110, 190]) [[sx*(RING_X - CH_HALF), z], [-sx, 0]],
+         for (sx = [-1, 1]) [[sx*60, RING_Z0 + CH_HALF], [0, 1]]];
+module snap_place(s) multmatrix([[s[1][0], 0, -s[1][1], s[0][0]], [0, 1, 0, 0], [s[1][1], 0, s[1][0], s[0][1]], [0, 0, 0, 1]]) children();
+// extrude a (u, y) profile along the wall, w wide, centred
+module snap_ext(w) translate([0, 0, -w/2]) linear_extrude(w) children();
+module snap_ledges() if (SNAP) for (s = SNAPS) snap_place(s) snap_ext(SNAP_W)
+    polygon([[-0.6, SNAP_LEDGE[1]], [SNAP_LEDGE[0], SNAP_LEDGE[1]], [SNAP_LEDGE[0], SNAP_LEDGE[2]], [-0.6, SNAP_LEDGE[2] + SNAP_LEDGE[0] + 0.6]]);
+module snap_arms() if (SNAP) for (s = SNAPS) snap_place(s) {
+    a0 = SNAP_ARM[0];  a1 = a0 + SNAP_ARM[1];  yc = SNAP_LEDGE[1] - SNAP_BARB[1];  ub = SNAP_BARB[0];
+    snap_ext(SNAP_W) polygon([[a0, SNAP_ARM[2]], [a0, yc - 0.25 - (a0 - ub)], [ub, yc - 0.25], [ub, yc], [a0, yc], [a0, CH_BACK + 0.01],
+                              [a1, CH_BACK + 0.01], [a1, SNAP_ARM[2]]]);   // barb: square catch face, 45 deg lead-in
+    snap_ext(SNAP_PAD[1]) translate([-0.5, CH_BACK]) square([SNAP_PAD[0] + 0.5, FR_T]);
+}
+module snap_slots() if (SNAP) for (s = SNAPS) snap_place(s) snap_ext(SNAP_SLOT[1]) translate([0, CH_BACK - 0.01]) square([SNAP_SLOT[0], FR_T + 1.02]);
 function refl_r(y) = REFL[0][1] + (y - REFL[0][0])*(REFL[1][1] - REFL[0][1])/(REFL[1][0] - REFL[0][0]);
 REFL_STEP = 0.5;
 CAM_RIB = [9.3, 17.5, 6.5];               // ribbon slot: x start (connector edge at 9.53), width (z), depth (x)
@@ -579,7 +609,9 @@ module frame3() {
             for (t = tabs) cyl_y(7, TAB_Y - PRELOAD, RIB_TOP + 4.01, t[0], t[1]);
             // tubes that press the camera board onto its pegs
             for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
+            snap_arms();
         }
+        snap_slots();
         for (t = tabs) {
             hull() for (dz = [-2.4, 2.4]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0], t[1] + dz);
             hull() for (dz = [-2.4, 2.4]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0], t[1] + dz);   // head 2 mm above the tab
