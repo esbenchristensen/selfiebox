@@ -468,7 +468,7 @@ module frame3() {
             ext_y(CH_BACK, FR_BACK) {
                 ring_band2d(-CH_HALF, CH_HALF);
                 for (j = J2) translate(j) circle(d = 6.4, $fn = 32);
-                translate([-16, LENS_Z - 14]) square([20, 28]);               // behind the camera board
+                translate([-16, LENS_Z - 13.5]) square([20, 27]);               // behind the camera board
             }
             // reflector, strip wall and floor, all inside the channel
             difference() {
