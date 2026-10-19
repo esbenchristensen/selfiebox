@@ -12,9 +12,10 @@
 //  so the box is 222.5 wide instead of 234.
 //
 //  Fastening without visible screws: the 4 side screws of rev G are gone. Four
-//  M3 screws from the back run through shell posts and the LED rail into
-//  inserts in bosses behind the ring's solid corners (clamping the rail too).
-//  Theme wings move from the side screws to inserts in the back wall.
+//  3.0 mm thread-forming screws from the back run through shell posts and the
+//  LED rail into bosses behind the ring's solid corners (clamping the rail too).
+//  Theme wings hook into slots in the back wall. No inserts, gaskets or glass.
+//  Print files: VIEW="p_<part>"; released sets live in hardware/stl/gen2/<version>/.
 //  Render: hardware/render/render_gen2.py
 // ============================================================================
 include <halo.scad>
@@ -40,6 +41,7 @@ VESA_ON = false;  TRIPOD_ON = false;  LOCK_INSIDE = false;  DC_PANEL = false;
 INS_M3 = [2.5, 12];
 // no glow band (Esben 19 Oct): the shell is one print in one colour; only the front ring lights
 GLOW = false;
+RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
 IF_SCREW = [[-70, 54], [70, 54]];  IF_DOWEL = [[-20, 54], [20, 54]];  IF_CABLE = [0, 54];
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";                        // nothing stacks on top in gen 2: no holes where the rain falls
@@ -368,6 +370,7 @@ if (VIEW == "x_shell")     shell2();
 if (VIEW == "x_display")   placed_display();
 if (VIEW == "x_camera")    placed_camera();
 if (VIEW == "x_inside")    { placed_display(); placed_pi(); placed_power(); placed_camera(); placed_leds(); }
+if (VIEW == "x_core")      { placed_pi(); placed_power(); placed_leds(); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cap")       cable_cap();
 if (VIEW == "x_cleat")     wall_cleat2();
@@ -384,6 +387,13 @@ if (VIEW == "x_mod_shell_cut")      cut_keep() mod_shell();
 if (VIEW == "x_lid_cut")            cut_keep() lid(0);
 
 // ----------------------------------------------------------------- views ----
+// print-ready, oriented for the bed (H2C): openscad -D 'VIEW="p_shell"' -o shell.stl gen2_concept.scad
+if (VIEW == "p_bezel")    rotate([90, 0, 0]) bezel2();                                  // face down on textured PEI
+if (VIEW == "p_diffuser") translate([0, 0, RING_PROUD]) rotate([90, 0, 0]) diffuser_ring(); // face down
+if (VIEW == "p_rail")     translate([0, 0, RIB_TOP + RAIL_T]) rotate([-90, 0, 0]) led_rail2(); // back down, bumps up
+if (VIEW == "p_shell")    translate([0, 0, D]) rotate([-90, 0, 0]) shell2();              // back down
+if (VIEW == "p_cleat")    translate([0, 0, D + GAP_WALL]) rotate([-90, 0, 0]) wall_cleat2(); // wall face down
+if (VIEW == "p_cap")      cable_cap();                                                  // outer face down
 if (VIEW == "main") main_unit();
 if (VIEW == "module") module_body();
 if (VIEW == "module_open") { color(C_BODY) printer_module(open = 100); for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide(); }
