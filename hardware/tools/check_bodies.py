@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Every print file must be one solid body: a part that falls apart into loose pieces in the slicer
 (halo-gen2-v2's frame: cross bars 0.4 mm from the ring, reflector 0.24 mm above the floor) prints badly or not at all.
+Inlays (`*_logo-*.stl`) are colour parts of the front, loaded with it as one object: they may hold several
+bodies, but each must be closed.
 
 Usage: python3 hardware/tools/check_bodies.py [stl dir ...]   (default: the newest hardware/stl/gen2/halo-gen2-v*)
 Needs trimesh and networkx.
@@ -24,7 +26,7 @@ def main():
         for f in sorted(d.glob("*.stl")):
             m = trimesh.load(f)
             n = len(m.split(only_watertight=False))
-            ok = n == 1 and m.is_watertight
+            ok = (n == 1 or "_logo-" in f.name) and m.is_watertight
             bad += not ok
             print(f"{'OK  ' if ok else 'FEJL'} {f.name}: {n} krop(pe){'' if m.is_watertight else ', ikke lukket'}")
     sys.exit(1 if bad else 0)

@@ -19,6 +19,7 @@
 //  Render: hardware/render/render_gen2.py
 // ============================================================================
 include <halo.scad>
+include <logo_selfi.scad>
 
 D       = 85;          // gen 2 depth (rev G: 66)
 BOTTOM  = "none";
@@ -501,6 +502,12 @@ module glass_ribs() {
         translate([sx*45 - GRIB_L/2, PT - 0.01, sz > 0 ? GC + GH/2 + GRIB_C : RING_Z0 + CH_IN])
             cube([GRIB_L, GLASS_Y + GRIB_H - PT, sz > 0 ? RING_Z1 - CH_IN - (GC + GH/2 + GRIB_C) : GC - GH/2 - GRIB_C - (RING_Z0 + CH_IN)]);
 }
+// logo (Esben 19 Oct, sketch /mnt/project-files/logo-paa-boksen/): the white Selfi logo with green dots,
+// 27.5 x 10, inlaid 0.8 mm (layers 1-4, AMS) flush in the front, centred in the black field
+// between the light ring and the display window. Separate white and green bodies for the slicer.
+LOGO_D = 0.8;
+LOGO_Z = ((RING_Z0 + S3) + (GC - (TD10_VIEW[1] + 1)/2 - 1.6))/2;
+module logo_inlay(c) ext_y(0, LOGO_D) translate([0, LOGO_Z]) if (c == "green") logo_green2d(); else if (c == "white") logo_white2d(); else logo_all2d();
 module front3() {
     difference() {
         union() {
@@ -513,6 +520,7 @@ module front3() {
             glass_land(); cam_shroud(); joint_rib(); glass_ribs();
         }
         hull() { ext_y(-1, PT - 1.6) window2d(1.6); ext_y(-1, PT + 1) window2d(0); }
+        ext_y(-1, LOGO_D) translate([0, LOGO_Z]) logo_all2d();   // pocket for the inlay
         ext_y(-1, PT + 0.01) ring3_2d(S3);
         ring3_bevel(1.95, PT + 0.01, S3, FL3 + 0.1);                      // seat for the ring's flange
         cyl_y(CAM_HOLE, CAM_CONE[0] - 0.01, PT + 1, 0, LENS_Z);
@@ -666,6 +674,8 @@ if (VIEW == "x_photo")     translate([-FILM_W[0]/2, PRN_Y[0] + INW[1]/2 - 0.6, -
 
 // v2c meshes
 if (VIEW == "x_front3")    front3();
+if (VIEW == "x_logo_w")    logo_inlay("white");
+if (VIEW == "x_logo_g")    logo_inlay("green");
 if (VIEW == "x_ring3")     ring3();
 if (VIEW == "x_frame3")    frame3();
 if (VIEW == "x_strip_w")   placed_strips3("w");
