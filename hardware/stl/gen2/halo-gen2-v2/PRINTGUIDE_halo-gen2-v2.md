@@ -9,7 +9,7 @@ Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del p
 - **Lyset:** To hvide COB-strips (Ra95) og én RGB-strip sidder på en hvid bagramme bag fronten og lyser ind på en skrå hvid reflektor. Lyset kommer ud gennem en lysring i natur-ASA med en 1 mm tynd lysflade.
 - **Fronten** er kun sort og åben bagtil. Den har ingen lofter, der hænger ud i luften, når den printes med forsiden ned. Det var dem, der gav de grimme kanter og hjørner i gen 1.
 - **Lysringen** sættes i bagfra og holdes af sin krave. Bagrammen klemmer den fast hele vejen rundt, så den ikke kan løsne sig.
-- **Skærmen** skrues i sine egne fire M2,5-ører gennem bagrammen. Kameraet trykkes på printede tappe af bagrammen.
+- **Skærmen** skrues i sine egne fire M2,5-ører gennem bagrammen, og 8 ribber i fronten holder glasset centreret i vinduet (±0,2 mm). Kameraet trykkes på printede tappe af bagrammen.
 - **Kamerahullet** passer nu til Camera Module 3 Wide (Ø7,35), og linsen sidder 0,3 mm bag forsiden.
 - **Strøm:** Mean Well RSD-60G-5, WLED-styringen og dæmperen klikkes i printede bakker i skallen. Der er ingen hulprint og ingen lodning.
 - LED-skinnen fra v1 udgår. Bagrammen overtager dens job.
@@ -66,19 +66,20 @@ Start fra Bambus egen profil **Bambu ASA** og ret dette:
 
 1. Bor de 4 skruehuller i frontens hjørner rene med et 2,5 mm bor i hånden.
 2. Prøv lysringen i fronten bagfra. Den skal falde på plads uden at klemme, med en lige, smal skyggefuge (0,15 mm) rundt om lysfladen.
-3. Prøv kameraet på bagrammens tappe. Det skal kunne trykkes på med fingrene.
+3. Prøv skærmen i fronten. Den skal falde ned mellem ribberne uden at klemme; klemmer den, skrabes ribberne let med en kniv.
+4. Prøv kameraet på bagrammens tappe. Det skal kunne trykkes på med fingrene.
 
 ## Samling
 
 Læg fronten med forsiden ned på et blødt underlag.
 
 1. **Lysringen** lægges i slidsen bagfra. Kraven hviler på bagsiden af fronten.
-2. **Skærmen** lægges i fronten med glasset ned på den printede kant rundt om vinduet.
+2. **Skærmen** lægges i fronten med glasset ned på den printede kant rundt om vinduet. 8 små ribber langs glassets kant styrer den på plads, så billedet sidder lige i vinduet. Den skal falde ned uden at blive trykket.
 3. **Strips** klæbes på den lodrette væg i bagrammens lyskanal, med lyset ind mod den skrå reflektor: hvid strip 1 nærmest forsiden, hvid strip 2 i midten og RGB-strippen bagerst. Strippene starter og slutter ved kameraet, og ledningerne går ud gennem de to huller over kameraet. Klikstikkene sættes på før montering.
-4. **Kameraet** trykkes på bagrammens fire printede tappe.
-5. **Bagrammen** lægges ned i fronten. Den klemmer lysringens krave fast hele vejen rundt og trykker kameraet mod forsiden.
+4. **Kameraet:** Sæt kamerakablet (300 mm) i kameraet først. Kablet går ud til siden, mod slidsen i bagrammen. Tryk kameraet på de fire printede tappe.
+5. **Bagrammen** lægges ned i fronten. Før kamerakablet gennem slidsen i bagrammen lige ved kameraet. Kablet laver én blød bue bagud og må ikke knækkes eller foldes skarpt. Den klemmer lysringens krave fast hele vejen rundt og trykker kameraet mod forsiden.
 6. **Skærmen skrues fast** med 4 M2,5-skruer fra skærmens egen pose, gennem bagrammen og ind i skærmens fire gevindører. Spænd let; bagrammen trykker skærmen 0,2 mm mod glaskanten, så den sidder uden slør.
-7. **Pi'en** skrues på skærmens afstandsstykker med de 4 andre skruer fra posen. Sæt skærmkablet og kamerakablet i.
+7. **Pi'en:** Sæt skærmens korte flade kabel i skærmen og i Pi'ens DISP-stik, før Pi'en skrues på skærmens afstandsstykker med de 4 andre skruer fra posen. Kablet skal ligge i en blød bue rundt om Pi'ens kant. Kamerakablet føres i en løs bue bag bagrammen ned til Pi'ens CAM-stik. Active Cooler sidder på Pi'en og vender bagud; der er ca. 45 mm fri luft bag blæseren.
 8. **Elektronik i skallen:** 5 V-forsyningen og WLED-styringen trykkes ned i deres bakker på bagvæggen, og dæmperen i bakken på venstre væg. Læberne på bakkerne holder dem. Forbind med Wago-klemmer og klikstik; kablerne er vist i 3D-visningen på admin.selfi.dk/admin/hardware.
 9. **Skallen** sættes ned over fronten. De 4 frontskruer (**spunskrue 3,0 × 15 mm, TX20**) skrues i bagfra gennem hullerne i bagvæggen. Hver skrue går gennem skallens stolpe og bagrammens øre og ind i fronten, så de tre dele holdes sammen af de samme 4 skruer. Brug en **lang TX20-bit (mindst 60 mm)**, fordi skruehovedet sidder ca. 52 mm inde.
 10. Vægbeslag og sikkerhedsskrue som i v1.
@@ -87,7 +88,7 @@ Købedele, der skal skrues: 4 frontskruer, 8 M2,5-skruer (følger med skærmen) 
 
 ## Tjek på første print
 
-- Kamera: sidder linsen midt i hullet, og er der ingen sort kant i billedets hjørner?
+- Kamera: sidder linsen midt i hullet, og er der ingen sort kant i billedets hjørner? Går kamerakablet gennem slidsen uden skarpe knæk?
 - Lysring: er skyggefugen jævn, og rasler ringen ikke, når boksen er samlet?
 - Skærm: sidder den helt fast uden slør? Ellers kan bagrammens knaster gøres 0,2 mm længere i CAD.
 - Lys: tænd begge hvide strips på 100 % og mål lux ved 0,8 m (målet er mindst 250 lux).
