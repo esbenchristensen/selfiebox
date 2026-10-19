@@ -1,0 +1,5 @@
+Contact: https://selfi.dk/dokumentation#sikkerhedshuller
+Expires: 2027-10-19T00:00:00.000Z
+Preferred-Languages: da, en
+Canonical: https://selfi.dk/.well-known/security.txt
+Policy: https://selfi.dk/dokumentation#sikkerhedshuller
