@@ -9,7 +9,7 @@ Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del p
 - **Lyset:** To hvide COB-strips (Ra95) og én RGB-strip sidder på en hvid bagramme bag fronten og lyser ind på en skrå hvid reflektor. Lyset kommer ud gennem en lysring i natur-ASA med en 1 mm tynd lysflade.
 - **Fronten** er kun sort og åben bagtil. Den har ingen lofter, der hænger ud i luften, når den printes med forsiden ned. Det var dem, der gav de grimme kanter og hjørner i gen 1.
 - **Lysringen** sættes i bagfra og holdes af sin krave. Bagrammen klemmer den fast hele vejen rundt, så den ikke kan løsne sig.
-- **Skærmen** skrues i sine egne fire M2,5-ører gennem bagrammen. Kameraet trykkes på printede tappe af bagrammen.
+- **Skærmen** skrues i sine egne fire M2,5-ører gennem bagrammen, og 8 ribber i fronten holder glasset centreret i vinduet (±0,2 mm). Kameraet trykkes på printede tappe af bagrammen.
 - **Kamerahullet** passer nu til Camera Module 3 Wide (Ø7,35), og linsen sidder 0,3 mm bag forsiden.
 - **Strøm:** Mean Well RSD-60G-5, WLED-styringen og dæmperen klikkes i printede bakker i skallen. Der er ingen hulprint og ingen lodning.
 - LED-skinnen fra v1 udgår. Bagrammen overtager dens job.
@@ -66,14 +66,15 @@ Start fra Bambus egen profil **Bambu ASA** og ret dette:
 
 1. Bor de 4 skruehuller i frontens hjørner rene med et 2,5 mm bor i hånden.
 2. Prøv lysringen i fronten bagfra. Den skal falde på plads uden at klemme, med en lige, smal skyggefuge (0,15 mm) rundt om lysfladen.
-3. Prøv kameraet på bagrammens tappe. Det skal kunne trykkes på med fingrene.
+3. Prøv skærmen i fronten. Den skal falde ned mellem ribberne uden at klemme; klemmer den, skrabes ribberne let med en kniv.
+4. Prøv kameraet på bagrammens tappe. Det skal kunne trykkes på med fingrene.
 
 ## Samling
 
 Læg fronten med forsiden ned på et blødt underlag.
 
 1. **Lysringen** lægges i slidsen bagfra. Kraven hviler på bagsiden af fronten.
-2. **Skærmen** lægges i fronten med glasset ned på den printede kant rundt om vinduet.
+2. **Skærmen** lægges i fronten med glasset ned på den printede kant rundt om vinduet. 8 små ribber langs glassets kant styrer den på plads, så billedet sidder lige i vinduet. Den skal falde ned uden at blive trykket.
 3. **Strips** klæbes på den lodrette væg i bagrammens lyskanal, med lyset ind mod den skrå reflektor: hvid strip 1 nærmest forsiden, hvid strip 2 i midten og RGB-strippen bagerst. Strippene starter og slutter ved kameraet, og ledningerne går ud gennem de to huller over kameraet. Klikstikkene sættes på før montering.
 4. **Kameraet:** Sæt kamerakablet (300 mm) i kameraet først. Kablet går ud til siden, mod slidsen i bagrammen. Tryk kameraet på de fire printede tappe.
 5. **Bagrammen** lægges ned i fronten. Før kamerakablet gennem slidsen i bagrammen lige ved kameraet. Kablet laver én blød bue bagud og må ikke knækkes eller foldes skarpt. Den klemmer lysringens krave fast hele vejen rundt og trykker kameraet mod forsiden.

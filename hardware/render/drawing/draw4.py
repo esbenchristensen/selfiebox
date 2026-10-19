@@ -22,7 +22,7 @@ def lab(p, f, lx, ly, s, col="#111"):
     t(lx, ly, s, 14, col)
 o.append('<defs><marker id="da" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse"><path d="M0,1L7,4L0,7Z" fill="#2563eb"/></marker></defs>')
 t(60, 56, "Selfi Halo gen 2 · v2: skærmen bag fronten", 26, w=700)
-t(60, 84, "Stregtegning til godkendelse. Raspberry Pi Touch Display 2, 10\". Mål i mm. 19. okt. 2026", 14, "#666")
+t(60, 84, "Godkendt af Esben 19. okt. 2026. Raspberry Pi Touch Display 2, 10\". Mål i mm.", 14, "#666")
 BLK, NAT, ACT, VIEWC, ORG = "#2b2b2f", "#f4f0e6", "#5b8def", "#1e3a8a", "#ea580c"
 BW, BH, BR = 222.5, 306, 42.8
 GC, GW, GH, GR = 151.85, 166.9, 248.1, 3
@@ -60,7 +60,7 @@ lab((-RX, GC + 40), F, LX, 160, "Lysring (natur-ASA)")
 lab((-WINF[0] / 2 - 6, GC + 95), F, LX, 188, "Glassets sorte kant: skjult bag fronten (15,25 mm hele vejen rundt)")
 lab((-WINF[0] / 2, GC - 30), F, LX, 216, "Frontens vindue med 1,6 mm skrå kant")
 lab((-AW / 2 + 5, GC - 60), F, LX, 244, "Aktivt billede: intet dækkes")
-lab((-84.15, GC + 70), F, LX, 272, "NY: 8 styreribber, glasset sidder ±0,2 mm", ORG)
+lab((-84.15, GC + 70), F, LX, 272, "8 styreribber i fronten: glasset sidder ±0,2 mm", ORG)
 
 # ---------- B: section through the left edge ----------
 s2 = 15; BX0, BY0 = LX + 10, 420
@@ -91,12 +91,12 @@ lab((-93, 0.3), G, LB, 440, "Lysring")
 lab((-78, 1.6), G, LB, 468, "Front 3,2 mm, sort")
 lab((-70.3, 3.45), G, LB, 496, "Glasset hviler på en 2 mm printet kant (bag vinduet)")
 lab((-82, 4.75), G, LB, 524, "Glassets sorte tryk (skjult)")
-lab((-84.15, 5.5), G, LB, 552, "NY: styreribbe 1,0 mm (0,2 mm luft til glasset)", ORG)
+lab((-84.15, 5.5), G, LB, 552, "Styreribbe 1,0 mm (0,2 mm luft til glasset)", ORG)
 lab((-63, 8), G, LB, 580, "Skærmmodul 7,05 mm inkl. 1,1 mm glas")
 
 fn = ["Vinduet er 1,1 mm større end billedfeltet og 1,6 mm større end det aktive billede hele vejen rundt. Fronten dækker kun glassets sorte kant.",
-      "I dag holdes glasset kun på plads af skruerne i bagrammen, så det kan flytte op til 1,2 mm til siden. Selv da dækkes ingen pixels (1,6 > 1,2),",
-      "men den sorte kant i vinduet kan blive skæv (0–2,3 mm). De 8 nye ribber i fronten holder glasset inden for ±0,2 mm, så kanten er ens hele vejen rundt.",
+      "8 styreribber i fronten holder glasset inden for ±0,2 mm, så den sorte kant i vinduet er ens hele vejen rundt (uden ribber kunne glasset flytte 1,2 mm).",
+      "Ribberne er 12 mm lange og 2,5 mm høje over glassets bagside. De printes lodret med fronten, så der er ingen udhæng.",
       "Antagelse: billedet sidder midt på glasset (Raspberry Pi oplyser ikke andet). Mål den første skærm; CAD har et tal (VIEW_X), der kan flytte vinduet."]
 for i, n in enumerate(fn): t(LX, 800 + 22 * i, n, 13, "#444")
 svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="Inter, Helvetica, Arial, sans-serif"><rect width="100%" height="100%" fill="#fff"/>' + "".join(o) + "</svg>"
