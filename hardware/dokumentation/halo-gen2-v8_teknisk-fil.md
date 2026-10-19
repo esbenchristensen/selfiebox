@@ -40,7 +40,7 @@ Kilde: `/mnt/project-files/indkoeb/halo-gen2-v4_indkoebsliste.xlsx` (dele uændr
 | Hvid COB-strip 24 V Ra95 (2 rækker) | LEDlife (Ledproff) | EMC, RoHS, EN 62471 | Ledproff | ☐ |
 | RGB-strip WS2812B COB 5 V | Ledprodukter.dk | EMC, RoHS | Ledprodukter.dk | ☐ |
 | Klikstik, Wago 221-41x, hunstik EL 124-538, sikringsholder, kabler 1,0 mm² | Diverse | RoHS (passive) | Wago: wago.com; øvrige: bed leverandør | ☐ |
-| Sikring | Fladsikring **3,15 A træg** (ny, se punkt 6.3) | | | ☐ |
+| Sikring | Littelfuse 0287003.PXCN, fladsikring ATO **3 A** 32 V (ISO 8820-3, violet), i normOTO-holderen (se punkt 6.3) | | Littelfuse datablad | ☐ |
 | Tilvalg: SIM7600G-H 4G HAT (B) | Waveshare/SIMCom | **RED** (GSM/UMTS/LTE/GNSS), RoHS | waveshare.com | ☐ |
 | Tilvalg: reSpeaker Flex XVF3800 + XIAO ESP32-S3 | Seeed Studio | **RED** (XIAO har Wi-Fi/BLE), EMC, RoHS | seeedstudio.com | ☐ |
 | Tilvalg: højttaler FIT0502 3 W | DFRobot | RoHS | dfrobot.com | ☐ |
@@ -50,7 +50,7 @@ Kilde: `/mnt/project-files/indkoeb/halo-gen2-v4_indkoebsliste.xlsx` (dele uændr
 
 ## 3. Tegninger og diagrammer (bilag V, b)
 
-- Ledningsdiagram: `/mnt/project-files/gen2-printfiler/halo-gen2-v8/halo-gen2-v8_ledningsdiagram.png` (**skal rettes: sikring 3,15 A træg, ikke 5 A**).
+- Ledningsdiagram: `/mnt/project-files/gen2-printfiler/halo-gen2-v8/halo-gen2-v8_ledningsdiagram.png` (rettet 19. okt.: sikring 3 A fladsikring).
 - Printfiler og PRINTGUIDE: samme mappe. CAD-kilde i repo.
 - Placering af elektronik: `/mnt/project-files/gen2-elektronik/gen2_elektronik_og_laas.png`, `gen2_bund_kabler_hoejttaler.png`.
 
@@ -84,7 +84,7 @@ Tilgang: 62368-1 er "fareforebyggende": energikilder klassificeres, og der skal 
 
 ### 6.3 Brand (PS)
 - Netadapter 90 W slår først fra ved 105–150 % last → uden sikring er 24 V-kredsen **PS3** og kræver V-1-brandkabinet. ASA er HB. **Ikke acceptabelt.**
-- **Tiltag:** sikring 3,15 A træg (IEC 60127/ISO 8820) i 24 V-plus lige efter hunstikket → efterfølgende kredse er begrænset strømkilde efter bilag Q, tabel Q.2 (≤ 100/U = 4,16 A ved 24 V) → **PS2**.
+- **Tiltag:** fladsikring 3 A (ATO, ISO 8820-3, Littelfuse 0287003.PXCN) i den eksisterende normOTO-holder på 24 V-plus lige efter hunstikket. 3,15 A træg findes kun som 5 × 20 mm glassikring og ville kræve en anden holder, så 3 A fladsikring er valgt → efterfølgende kredse er begrænset strømkilde efter bilag Q, tabel Q.2 (≤ 100/U = 4,16 A ved 24 V) → **PS2**.
 - Sikringen sidder før al anden ledningsføring; mellem hunstik og sikringsholder maks. 5 cm ledning, fastholdt.
 - PS2: vis ved enkeltfejlstest (afsnit 6.4.3), at intet antændes (test F1–F6). Hvis en test viser flammer eller over 300 °C på plast: brug V-0-filament til bagrammen og bakkerne.
 - RGB-styringen begrænses i WLED til 2000 mA (ABL), så normal spidslast holder sig under sikringens værdi.
@@ -172,10 +172,10 @@ Laves på én prøveboks (første v8-boks) og noteres med dato, resultat og bill
 | Nr. | Test | Godkendt når | ✔ |
 |---|---|---|---|
 | T1 | Polaritet og spændinger: 24 V på hunstik, 5,0–5,2 V ud af RSD-60G-5, før Pi og strips sættes i | Rigtige værdier | ☐ |
-| T2 | Fuld last 30 min: hvide strips 100 %, RGB hvid 100 % (med ABL 2000 mA), Pi stresstest (`stress-ng`), skærm max | Sikringen holder, ingen dele over databladets grænse | ☐ |
+| T2 | 10 kolde starter i træk (indkoblingsstrøm) og derefter fuld last 30 min: hvide strips 100 %, RGB hvid 100 % (med ABL 2000 mA), Pi stresstest (`stress-ng`), skærm max | Sikringen holder, ingen dele over databladets grænse | ☐ |
 | T3 | Temperatur efter 4 timer normal brug ved stuetemperatur: front, skærm, top, adapter; `vcgencmd measure_temp` | Ydersider ≤ 43 °C, Pi < 80 °C | ☐ |
 | F1 | Kortslutning 5 V-udgang ved Wago W3/W4 (med boksen åben, ingen personer tæt på) | RSD-60G-5 går i hiccup, intet bliver over 300 °C, ingen røg | ☐ |
-| F2 | Kortslutning hvid strip ved klikstik | Sikring 3,15 A brænder eller dæmper slår fra, ingen flammer | ☐ |
+| F2 | Kortslutning hvid strip ved klikstik | Sikring 3 A brænder eller dæmper slår fra, ingen flammer | ☐ |
 | F3 | Kortslutning 24 V direkte efter sikringen | Sikringen brænder inden for 5 s | ☐ |
 | F4 | Pi-blæser stoppet (stik af), 1 time fuld last | Pi drosler, ingen dele over 300 °C eller deformeret plast | ☐ |
 | F5 | Alle ventilationshuller tapet til, 2 timer | Samme som F4 | ☐ |
@@ -187,7 +187,7 @@ Laves på én prøveboks (første v8-boks) og noteres med dato, resultat og bill
 ## 12. Produktion og sporbarhed (modul A, punkt 3; GPSR art. 9)
 
 - Serienummer: **SB2-ÅÅÅÅ-NNNN** (fx SB2-2026-0001), på typeskiltet og i boksens software (samme som fleet-id). Registreres i `halo-gen2-v8_produktionslog.xlsx` med dato, softwareversion, tilvalg, kunde og placering.
-- Sluttest på hver boks (fanen "Sluttest" i loggen): T1, visuel kontrol af ledninger og sikring 3,15 A, funktionstest af kamera/lys/touch/upload, opdatering til nyeste software, typeskilt sat på, brugsanvisning og skilt i kassen.
+- Sluttest på hver boks (fanen "Sluttest" i loggen): T1, visuel kontrol af ledninger og sikring 3 A, funktionstest af kamera/lys/touch/upload, opdatering til nyeste software, typeskilt sat på, brugsanvisning og skilt i kassen.
 - Ændringer i komponenter (anden strip, anden RGB-styring osv.) må kun ske efter vurdering i denne fil.
 - Klager, ulykker og nærved-hændelser registreres i loggens fane "Hændelser". Ulykker med en boks indberettes via EU's Safety Business Gateway (GPSR art. 20). Sårbarheder: se `selfi-gdpr-v1_fortegnelse-dpia-og-haendelser.md`.
 

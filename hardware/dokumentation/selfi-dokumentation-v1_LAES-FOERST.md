@@ -37,7 +37,7 @@ Markering: ✅ klaret med selverklæring, 🟡 selverklæring, men kræver jeres
 | Krav | Gælder? | Hvordan | Status |
 |---|---|---|---|
 | **CE-mærkning, radioudstyrsdirektivet (RED) 2014/53/EU** | Ja. Boksen har Wi-Fi (Pi 5, Gledopto, XIAO ESP32-S3) og evt. 4G, så hele boksen er radioudstyr. RED dækker også el-sikkerhed og EMC, så LVD- og EMC-direktivet bruges ikke særskilt. | Modul A (selverklæring). Moduler med egen CE bygget ind uændret. | 🟡 |
-| RED 3.1(a) el-sikkerhed (EN IEC 62368-1) | Ja, uden nedre spændingsgrænse | Risikovurdering i den tekniske fil. Netdelen er Mean Wells CE-godkendte adapter; inde i boksen kun 24 V/5 V. **Åbent punkt: brand (sikring 3,15 A + egne fejltest).** Se nedenfor. | 🟡 |
+| RED 3.1(a) el-sikkerhed (EN IEC 62368-1) | Ja, uden nedre spændingsgrænse | Risikovurdering i den tekniske fil. Netdelen er Mean Wells CE-godkendte adapter; inde i boksen kun 24 V/5 V. **Åbent punkt: brand (sikring 3 A + egne fejltest).** Se nedenfor. | 🟡 |
 | RED 3.1(a) elektromagnetiske felter (EN 62311) | Ja | Beregning i teknisk fil: langt under grænser, også med 4G | ✅ |
 | RED 3.1(a) fotobiologisk sikkerhed (EN 62471) | Ja, LED-lys | Diffust lys bag lysring, 4000 K: fritaget gruppe/RG0 ved skøn. Ingen måling krævet. | ✅ |
 | RED 3.1(b) EMC (EN 301 489, EN 55032/55035) | Ja | Teknisk vurdering (lovligt efter RED art. 17, stk. 2: modul A kræver ikke laboratorietest for 3.1(b)). Egen kontrol: radio/DAB/FM i nærheden, Wi-Fi-hastighed, touch med lys tændt. | 🟡 (🔴 valgfrit: en EMC-forscanning hos fx FORCE Technology koster typisk 10–20.000 kr. og fjerner den største restrisiko) |
@@ -71,7 +71,7 @@ EN IEC 62368-1 inddeler strømkredse efter, hvor meget effekt der er til rådigh
 
 Løsning uden ekstra dele:
 
-1. **Mindre sikring (gratis, skal gøres):** skift 5 A-sikringen på 24 V-plus til en **3,15 A træg**. Med en sikring på højst 100 W / 24 V = 4,1 A er alt efter sikringen en begrænset strømkilde (62368-1 bilag Q, tabel Q.2) og dermed PS2. Normalforbrug er ca. 14 W. Spids (fotolys + Pi + RGB) er ca. 2,2 A, når RGB-styringens strømbegrænser (WLED "max current") står på 2000 mA. **Ret ledningsdiagram og indkøbsliste: sikringen er nødvendig, den må ikke undværes, og den skal være 3,15 A.**
+1. **Mindre sikring (ca. 2 kr., skal gøres):** brug en **3 A fladsikring** (ATO, violet, Littelfuse 0287003.PXCN) i den nuværende holder på 24 V-plus i stedet for 5 A. 3,15 A træg findes kun som 5 × 20 mm glassikring og ville kræve en anden holder. Med en sikring på højst 100 W / 24 V = 4,1 A er alt efter sikringen en begrænset strømkilde (62368-1 bilag Q, tabel Q.2) og dermed PS2. Normalforbrug er ca. 14 W. Spids (fotolys + Pi + RGB) er ca. 2,2 A, når RGB-styringens strømbegrænser (WLED "max current") står på 2000 mA. **Sikringen er nødvendig, må ikke undværes og skal være 3 A (ledningsdiagram og indkøbsliste er rettet).**
 2. **Egne fejltest (62368-1 afsnit 6.4.3, "ingen antændelse ved enkeltfejl"):** kortslut og overbelast de udgange, der står i den tekniske fil, på én prøveboks og se, at sikringen eller forsyningen slår fra, uden flammer, smeltet plast eller over 300 °C. Det kan I gøre selv med et multimeter og et termometer, og det er jeres bevis. Ingen V-1-krav til kabinettet derefter.
 3. Kun hvis testen fejler: flammehæmmende filament (V-0) til bagrammen.
 
