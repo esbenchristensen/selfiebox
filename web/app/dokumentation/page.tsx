@@ -13,6 +13,7 @@ const docs = [
   { href: "/dokumentation/overensstemmelseserklaering", title: "EU-overensstemmelseserklæring", text: "CE-mærkning efter radioudstyrsdirektivet og RoHS, med standarder." },
   { href: "/dokumentation/brugsanvisning", title: "Brugsanvisning og sikkerhed", text: "Strøm, placering, vand og varme, radio, rengøring og bortskaffelse." },
   { href: "/gaester", title: "Information til gæster", text: "Hvad boksen gemmer, samtykke, slettefrister og rettigheder. Står på skiltet ved boksen." },
+  { href: "/brugsvilkaar", title: "Vilkår for gæster", text: "Det, gæsten accepterer i boksen: brugsret til storskærm, sociale medier og markedsføring." },
   { href: "/databehandleraftale", title: "Databehandleraftale", text: "Aftalen om gæsternes data mellem stedet og Selfi, med sikkerhed og underdatabehandlere." },
   { href: "/vilkaar", title: "Handelsbetingelser", text: "Leje og abonnement for erhverv." },
   { href: "/privatliv", title: "Privatlivspolitik", text: "Hvordan Selfi behandler oplysninger om kunder og besøgende." },

@@ -16,7 +16,7 @@ export default function Vilkaar() {
       label="Handelsbetingelser"
       title="Handelsbetingelser for erhverv"
       lede="Gælder for alle aftaler om Selfi Boks mellem Selfi og virksomheder, foreninger, arrangører og offentlige kunder. Selfi sælger ikke til forbrugere."
-      updated="19. oktober 2026 (version 1)"
+      updated="19. oktober 2026 (version 2)"
     >
       <h2>1. Parter og aftalen</h2>
       <p>
@@ -67,17 +67,20 @@ export default function Vilkaar() {
       </ul>
 
       <h2>7. Data, gæster og markedsføring</h2>
-      <p>
-        Kunden er dataansvarlig for gæsternes billeder, videoer og numre, og Selfi er databehandler efter{" "}
-        <a href="/databehandleraftale">databehandleraftalen</a>. Kunden må kun bruge content og numre, som gæsten har sagt ja til, og skal selv
-        overholde markedsføringsloven, når kunden sender SMS eller e-mail. Konkurrencer og lodtrækninger i boksen skal være gratis at deltage i.
-      </p>
+      <ul>
+        <li>Kunden er dataansvarlig for alle billeder, videoer, lyd, telefonnumre og samtykker fra gæsterne, og Selfi er databehandler efter <a href="/databehandleraftale">databehandleraftalen</a>. Kunden har det fulde ansvar for, at indsamlingen og brugen er lovlig, herunder efter databeskyttelsesforordningen, markedsføringsloven, ophavsretsloven og spilleloven.</li>
+        <li>Selfi leverer standardtekster til skærmen, skiltet og <a href="/brugsvilkaar">vilkårene for gæster</a>. De er et forslag, ikke rådgivning. Kunden skal selv vurdere, om de passer til kundens brug, og kan ændre dem i kontrolpanelet. Ændrede tekster er kundens instruks og kundens ansvar.</li>
+        <li>Kunden bestemmer, hvordan content bruges (storskærm, sociale medier, annoncer, redigering), og må kun bruge det, gæsten har sagt ja til. Kunden skal fjerne content fra egne kanaler, når en gæst trækker sit ja tilbage, og selv overholde markedsføringsloven, når kunden sender SMS eller e-mail.</li>
+        <li>Kunden sætter skiltet til gæsterne op ved boksen. Konkurrencer og lodtrækninger i boksen skal være gratis at deltage i.</li>
+        <li>Kunden holder Selfi skadesløs for krav, bøder og udgifter, som skyldes kundens brug af gæsternes data og content, kundens tekster og instrukser eller manglende overholdelse af dette punkt.</li>
+      </ul>
 
       <h2>8. Ansvar</h2>
       <ul>
         <li>Selfi er ikke ansvarlig for driftstab, mistet omsætning, avance, data, goodwill eller andre indirekte tab.</li>
         <li>Selfis samlede ansvar efter aftalen er begrænset til det beløb, kunden har betalt for de seneste 12 måneder, dog mindst 10.000 kr.</li>
         <li>Begrænsningerne gælder ikke ved forsæt eller grov uagtsomhed eller for produktansvar for skade på personer.</li>
+        <li>Selfi er ikke ansvarlig for kundens brug af gæsternes billeder, videoer og data, for indhold, kunden lægger ind, eller for, om kundens samtykker og tekster er tilstrækkelige.</li>
         <li>Produktansvar følger produktansvarsloven. Selfi er ikke ansvarlig for skade på fast ejendom eller løsøre, som kunden hovedsageligt bruger erhvervsmæssigt, i det omfang loven tillader det.</li>
       </ul>
 
