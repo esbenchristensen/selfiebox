@@ -1,6 +1,6 @@
 # Selfi Halo gen 2, version v7: printguide
 
-**Version:** halo-gen2-v7 (19. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v7_`. Den erstatter halo-gen2-v5; kun fronten og bagrammen er nye (6 snaplåse). CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
+**Version:** halo-gen2-v7 (19. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v7_`. Den erstatter halo-gen2-v6; kun skallen er ny (ingen ventilationshuller bagpå). CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; printermodulet kommer i en senere version.
 

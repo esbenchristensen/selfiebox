@@ -134,7 +134,7 @@ module shell2(top = UNIT_TOP) {
         for (p = WING_P) translate([p[0] - 2, D - BACK_T - 1, p[1] - 4]) cube([4, BACK_T + 2, 14]);   // wing hooks drop in; the wall holds them
         lock_cut();
         services_cut();
-        for (x = MIC_HOLES) cyl_z(MIC_PORT, H - WALL - 1, H + 1, x, MIC_Y);    // mic ports in the top face
+        if (MIC_FLOOR) mic_floor_cut(); else for (x = MIC_HOLES) cyl_z(MIC_PORT, H - WALL - 1, H + 1, x, MIC_Y);    // mic ports in the top face
         joint_groove();
     }
     mic_rings();
@@ -149,23 +149,35 @@ module shell2(top = UNIT_TOP) {
 //     mic board 110 x 11 x 1.2 (~4.8 with parts), 4 mics 33 apart, ports on the back; core on a 20 cm FPC
 // [C] reed module OKY3440-1 32 x 19 x 7 (retailer; one M3 hole), [C] neodymium magnet Ø8 x 3 (retailer)
 HAT4G = [32, 65, 12];   HAT4G_P = [-88, 166];      // w (x), h (z), thickness (y); bottom-left on the back wall
-MCORE = [52.2, 70.5, 12];   MCORE_P = [48, 160];
+MCORE = [52.2, 70.5, 12];   MCORE_P = [48, 144];     // v8: 16 mm lower (above the cable clip at z 140), so the mic FPC (20 cm) reaches the strip in the floor (~18 cm)
 IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 200];
-MSTRIP = [110, 11, 4.8];  MIC_Y = D - 17;  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
+MSTRIP = [110, 11, 4.8];  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
+// v8 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v8_skitse_mikrofon-underside.png):
+// the mic strip moves from under the top to a recess in the floor right behind the front, under the light
+// channel. Ports point down, 17 mm behind the front face: nothing runs in from above, a theme top cannot
+// cover them, and they sit closer to the talker. Two printed pegs through the board's own Ø3.3 holes
+// (62.5 apart, Seeed DXF) locate it; the front's channel wall 0.5 mm above keeps it in once assembled.
+// A drip groove in front of the ports stops water running back from the front face.
+MIC_FLOOR = true;
+MIC_Y = MIC_FLOOR ? 17.3 : D - 17;         // mic line, y
+MIC_POCKET = [MSTRIP[0] + 0.6, MSTRIP[1] + 0.6, 1.8];   // recess in the floor: x, y, depth (floor 1.2 under it)
+MIC_PEG = [3.0, 31.25, -0.68];            // peg Ø, |x|, y offset from the mic line (holes sit 0.68 in front of the mics)
+DRIP = [8.2, 2, 1];                       // drip groove: y start, width, depth
 REED = [32, 19, 7];                         // w (x), h (z), thickness (y); REED_P below the lock
 module back_part(p, sz, c) color(c) translate([p[0], D - BACK_T - 1.2 - sz[2], p[1]]) cube([sz[0], sz[2], sz[1]]);
 module placed_electronics() {
     back_part(HAT4G_P, HAT4G, [0.1, 0.3, 0.6]);
     back_part(MCORE_P, MCORE, [0.15, 0.15, 0.15]);
     back_part(IMU_P, IMU, [0.1, 0.1, 0.4]);
-    color([0.15, 0.15, 0.15]) translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
+    color([0.15, 0.15, 0.15]) translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, MIC_FLOOR ? WALL - MIC_POCKET[2] + MIC_RING[2] : H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
     back_part(REED_P, REED, [0.1, 0.3, 0.6]);
 }
 // snap trays like the Pololu cradles: no screws; the mic strip hangs in two hook clips
 module electronics_holders() {
     for (q = [[HAT4G_P, HAT4G], [MCORE_P, MCORE], [IMU_P, IMU]])
         translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) pololu_cradle([q[1][0], q[1][1], q[1][2]], q[1][2] + 1.5);
-    for (sx = [-1, 1]) translate([sx*40 - 4, MIC_Y - MSTRIP[1]/2 - 2, H - WALL - MSTRIP[2] - 2.2]) difference() {
+    if (MIC_FLOOR) for (sx = [-1, 1]) cyl_z(MIC_PEG[0], WALL - MIC_POCKET[2] - 0.01, WALL - MIC_POCKET[2] + MIC_RING[2] + 1.2 + 1.2, sx*MIC_PEG[1], MIC_Y + MIC_PEG[2]);
+    else for (sx = [-1, 1]) translate([sx*40 - 4, MIC_Y - MSTRIP[1]/2 - 2, H - WALL - MSTRIP[2] - 2.2]) difference() {
         cube([8, MSTRIP[1] + 4, MSTRIP[2] + 2.21]);
         translate([-1, 2 - 0.15, 1.8]) cube([10, MSTRIP[1] + 0.3, MSTRIP[2] + 0.3]);
         translate([-1, 4, -1]) cube([10, MSTRIP[1] - 4, 3]);
@@ -241,7 +253,12 @@ module cam_shroud() translate([0, 0, LENS_Z]) difference() {
 // mic ports: Ø1.0 through the top; under each a printed crush ring presses on the strip round the
 // mic's port, so the port is a closed air pocket that water cannot push into.
 MIC_PORT = 1.0;  MIC_RING = [1.8, 3.6, 0.45];
-module mic_rings() for (x = MIC_HOLES) translate([x, MIC_Y, H - WALL - MIC_RING[2]]) difference() {
+module mic_floor_cut() {
+    translate([-MIC_POCKET[0]/2, MIC_Y - MIC_POCKET[1]/2, WALL - MIC_POCKET[2]]) cube([MIC_POCKET[0], MIC_POCKET[1], MIC_POCKET[2] + 1]);
+    for (x = MIC_HOLES) cyl_z(MIC_PORT, -1, WALL - MIC_POCKET[2] + 0.01, x, MIC_Y);
+    translate([-(W/2 - R - 4), DRIP[0], -1]) cube([W - 2*R - 8, DRIP[1], DRIP[2] + 1]);   // ends 4 mm inside the flat floor
+}
+module mic_rings() for (x = MIC_HOLES) translate([x, MIC_Y, MIC_FLOOR ? WALL - MIC_POCKET[2] - 0.01 : H - WALL - MIC_RING[2]]) difference() {
     cylinder(d = MIC_RING[1], h = MIC_RING[2] + 0.01, $fn = 32); translate([0, 0, -1]) cylinder(d = MIC_RING[0], h = 3, $fn = 24); }
 // splash hoods over the underside vents: water bouncing up hits the roof and drops back out,
 // air turns sideways. Side walls only along x so the hood prints without support (back down).
@@ -691,7 +708,7 @@ if (VIEW == "c_perfboard") { translate([-PB_RAIL[0]/2, PB_Y - PB_RAIL[2], PB_Z0]
 if (VIEW == "c_4g")        back_part(HAT4G_P, HAT4G, "red");
 if (VIEW == "c_mcore")     back_part(MCORE_P, MCORE, "red");
 if (VIEW == "c_imu")       back_part(IMU_P, IMU, "red");
-if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
+if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, MIC_FLOOR ? WALL - MIC_POCKET[2] + MIC_RING[2] : H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
 if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
 if (VIEW == "c_speaker")   speaker3();
 if (VIEW == "c_jack")      power_inlet();
