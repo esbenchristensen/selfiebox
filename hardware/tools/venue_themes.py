@@ -53,8 +53,8 @@ G = dict(W=234.0, H=306.0, D=66.0, R=24.0, SIDE_Y=10.0, BZ0=66.8, BZ1=239.2, H_S
 HW = G["W"] / 2
 X0 = HW + 0.2                      # inner edge of a wing
 # Gen 2 (gen2_concept.scad): one concentric squircle outline, 222.5 wide with a 7.8 mm border to the light ring,
-# 85 mm deep, and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
-G2 = dict(G, W=222.5, D=85.0, R=42.8, WING_X=222.5 / 2 - 12)
+# 70 mm deep since v5 (85 mm before), and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
+G2 = dict(G, W=222.5, D=70.0, R=42.8, WING_X=222.5 / 2 - 12)
 
 
 def use_unit(unit):
@@ -1642,6 +1642,132 @@ def heidis():
                 frame=dict(bg="green", ink="yellow", caption="Prost!"), photo="print-club",
                 wing=wing, topper=topper, screen_art=screen, logo=lambda: heidis_logo((-60, 0, 60, 120)),
                 logo_png=dict(file="heidis-source.png", screen=(300, 772, 370), frame=(40, 170, 150)))
+
+
+# ------------------------------------------------------------- ice hockey --
+# Frederikshavn White Hawks: the Metal League ice hockey club in Frederikshavn (Nordjyske Bank Arena), Danish
+# champions in 1989 and 2000. The topper is the club's crest with a pair of white hawk wings spread out behind
+# it over a red board with »Sammen er vi White Hawks«, the right wing a taped hockey stick with a puck on the blade and the left wing the red
+# goal lamp over a fan banner. Drawn for the gen 2 unit. The logo is traced from logos/white_hawks-source.png
+# (the club's 2000 px logo from whitehawks.dk): ask the club for vector artwork and permission before printing.
+
+def white_hawks_logo(bounds):
+    lg = traced_logo("white_hawks")
+    placed = place_logo(lg, bounds, [(k, k) for k in ("black", "red", "navy", "grey", "white", "gold")])
+    placed = [({"black": "ink", "navy": "base"}.get(k, k), g) for k, g in placed]
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in placed]
+
+
+def hawk_wing(root_x, rows, sweep=10):
+    """A heraldic hawk wing, right side: stacked feathers reaching outward, the top one longest, each a tapered bar
+    with a broad round tip, swept up by `sweep` degrees. `rows` is [(z, length, width)] from the top down.
+    Returns ([feathers from the bottom up], shoulder)."""
+    feathers = []
+    for z, ln, w in rows:
+        f = U(Point(root_x, z).buffer(w / 2, 48), Point(root_x + ln, z).buffer(w * 0.38, 48)).convex_hull
+        feathers.append(affinity.rotate(f, sweep, origin=(root_x, z)))
+    z_top, z_bot = rows[0][0], rows[-1][0]
+    shoulder = ell(root_x + 14, (z_top + z_bot) / 2 + 8, 30, (z_top - z_bot) / 2 + 16, sweep + 4)
+    return feathers[::-1], shoulder
+
+
+@theme
+def white_hawks():
+    # The crest's navy, red, white, grey and gold, the black of its outlines, and the ice.
+    pal = {"base": "#011a3f", "navy2": "#163463", "red": "#a61d26", "lamp": "#e0262f", "glow": "#f2685f", "white": "#ffffff",
+           "grey": "#cdcccc", "ink": "#121417", "gold": "#f7a60b", "ice": "#e6f1f8", "iceline": "#2a5fa8", "steel": "#8d939b", "sky": "#0d2f63"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: a hockey stick in white tape standing on its blade, with a puck resting on the blade.
+            shaft = box(X0 + 18, 58, X0 + 34, 284).buffer(2.5).buffer(-2.5)
+            blade = Polygon([(X0 + 18, 30), (X0 + 18, 64), (X0 + 34, 64), (X0 + 36, 52), (X0 + 58, 46), (X0 + 63, 38), (X0 + 60, 30)]).buffer(3).buffer(-3)
+            puck = box(X0 + 38, 48.5, X0 + 62, 58.5).buffer(2).buffer(-1)
+            # One solid panel: the strip, the stick and the blade with the puck in one hull, nothing loose.
+            outline = U(wing_strip(14, 24, 290), box(X0, 26, X0 + 37, 290), U(blade, puck).convex_hull.buffer(2.5)).buffer(4).buffer(-4)
+            outline = outline.intersection(box(X0, 22, X0 + 66, 294))
+            L = [("base", outline), ("red", box(X0 + 4, 32, X0 + 9, 282))]
+            L += [("ink", U(shaft, blade).buffer(1.4)), ("white", shaft), ("white", blade)]
+            # Black grip tape at the top, wound in bands, and the end knob.
+            L += [("ink", box(X0 + 18, 244, X0 + 34, 284).buffer(2.5).buffer(-2.5))]
+            L += [("steel", U(*[Polygon([(X0 + 18, z), (X0 + 34, z + 5), (X0 + 34, z + 6.6), (X0 + 18, z + 1.6)]) for z in np.arange(246, 278, 7)]).intersection(shaft))]
+            # Navy tape on the blade and the club name down the shaft.
+            L += [("navy2", U(*[Polygon([(x, 30), (x + 4, 30), (x + 7, 50), (x + 3, 50)]) for x in np.arange(X0 + 38, X0 + 60, 7)]).intersection(blade.buffer(-2.5)))]
+            word = affinity.rotate(text("WHITE HAWKS", "archivo-black", 0, 0, 9), 90, origin=(0, 0))
+            L += [("base", fit(word, (X0 + 21, 82, X0 + 31, 232)))]
+            L += [("ink", puck), ("steel", box(X0 + 40, 55.5, X0 + 60, 57).buffer(0.6))]
+        else:
+            # Left: the red goal lamp in its glow over a fan banner in navy, red and white with a swallowtail.
+            cx = X0 + 26
+            glow = Point(cx, 262).buffer(27, 64)
+            lamp = Point(cx, 256).buffer(15, 64).intersection(box(cx - 16, 256, cx + 16, 280))
+            foot = box(cx - 17, 248, cx + 17, 257).buffer(1.5).buffer(-1.5)
+            bar = line([(X0 + 3, 242), (X0 + 49, 242)], 6)
+            flag = Polygon([(X0 + 7, 238), (X0 + 45, 238), (X0 + 45, 44), (cx, 60), (X0 + 7, 44)])
+            outline = U(wing_strip(12, 24, 284), glow.buffer(2), bar.buffer(2), flag.buffer(3), box(X0, 30, X0 + 49, 240)).buffer(4).buffer(-4)
+            outline = outline.intersection(box(X0, 22, X0 + 60, 294))
+            L = [("base", outline), ("glow", glow)]
+            rays = U(*[Polygon([(cx, 256), (cx + 40 * math.cos(math.radians(a - 7)), 256 + 40 * math.sin(math.radians(a - 7))),
+                                (cx + 40 * math.cos(math.radians(a + 7)), 256 + 40 * math.sin(math.radians(a + 7)))]) for a in range(10, 180, 34)])
+            L += [("gold", rays.intersection(glow.buffer(-3)))]
+            L += [("ink", U(lamp, foot).buffer(1.4)), ("lamp", lamp), ("white", ell(cx - 6, 266, 3, 5, -25)), ("steel", foot), ("ink", bar)]
+            L += [("ink", flag.buffer(1.4)), ("red", flag), ("white", flag.buffer(-3)), ("base", flag.buffer(-6))]
+            L += [("red", U(*[box(X0 + 7, z, X0 + 45, z + 5) for z in (206, 82)]).intersection(flag.buffer(-6)))]
+            word = affinity.rotate(text("HAWKS", "archivo-black", 0, 0, 22), 90, origin=(0, 0))
+            L += [("white", flip_text(fit(word, (X0 + 13, 96, X0 + 39, 200))))]
+            yr = text("1964", "archivo-black", 0, 0, 7)
+            L += [("white", flip_text(fit(yr, (X0 + 14, 216, X0 + 38, 226))))]
+        return outline, L
+
+    def topper():
+        # The crest with a pair of white hawk wings spread out behind it, on a red board with the club's own sign-off.
+        p = 30
+        feathers, shoulder = hawk_wing(46, [(p + 112, 70, 26), (p + 88, 62, 24), (p + 64, 52, 22), (p + 42, 40, 20)])
+        wings_r = U(*feathers, shoulder)
+        wings = U(wings_r, mirror(wings_r))
+        crest_box = (-70, p - 4, 70, p + 132)
+        crest = white_hawks_logo(crest_box)
+        crest_all = U(*[g for _, g in crest])
+        board = box(-HW, 0, HW, p + 2)
+        outline = U(board, wings.buffer(2.4), crest_all.buffer(3)).buffer(6).buffer(-6)
+        outline = outline.intersection(box(-HW - 18, 0, HW + 18, 200))
+        L = [("base", outline)]
+        for fl in (feathers, [mirror(f) for f in feathers]):
+            for i, f in enumerate(fl):
+                L += [("ink", f.buffer(1.4)), ("white", f.intersection(outline.buffer(-2.4)))]
+                L += [("grey", f.difference(affinity.translate(f, 0, 8)).intersection(outline.buffer(-2.4)))]
+        L += [("ink", crest_all.buffer(2.4))] + crest
+        L += [("red", box(-HW + 4, 4, HW - 4, p - 2)), ("white", text("SAMMEN ER VI WHITE HAWKS", "archivo-black", 0, (p + 2) / 2, 11, 200))]
+        return outline, L
+
+    def screen(w, h):
+        rng = random.Random(11)
+        L = [("base", box(0, 0, w, h))]
+        # Spotlights over the stands, the crowd in red and white, the boards and the ice with its lines.
+        for cx in (90, w / 2, w - 90):
+            L += [("sky", Polygon([(cx - 30, h + 10), (cx + 30, h + 10), (w / 2 + (cx - w / 2) * 0.4 + 120, 430), (w / 2 + (cx - w / 2) * 0.4 - 120, 430)]))]
+        stand = box(0, 430, w, 520)
+        L += [("navy2", stand)]
+        dots = [(rng.uniform(0, w), rng.uniform(438, 514)) for _ in range(300)]
+        L += [("white", U(*[Point(x, z).buffer(4.2, 12) for x, z in dots[::2]])), ("red", U(*[Point(x, z).buffer(4.2, 12) for x, z in dots[1::2]]))]
+        L += [("white", box(0, 392, w, 430)), ("red", box(0, 386, w, 394)), ("iceline", box(0, 424, w, 430))]
+        L += [("ice", box(0, 0, w, 386))]
+        L += [("iceline", box(0, 352, w, 364))]
+        circle = ell(w / 2, 190, 190, 74)
+        L += [("red", circle.difference(ell(w / 2, 190, 184, 69))), ("red", box(0, 186, w / 2 - 190, 194)), ("red", box(w / 2 + 190, 186, w, 194))]
+        L += [("white", text("ISHOCKEY I FREDERIKSHAVN SIDEN 1964", "archivo-black", w / 2, 900, 18, w * 0.8))]
+        return L
+
+    return dict(name="Frederikshavn White Hawks", place="Nordjyske Bank Arena, Frederikshavn", font="archivo-black", pal=pal, unit="gen2",
+                filament={"base": "ASA navy", "navy2": "ASA blue", "red": "ASA red", "lamp": "ASA bright red", "glow": "ASA coral",
+                          "white": "ASA white", "grey": "ASA light grey", "ink": "ASA black", "gold": "ASA yellow", "ice": "ASA white",
+                          "iceline": "ASA blue", "steel": "ASA silver", "sky": "ASA blue"},
+                casing="#011a3f", ring={"idle": ["#ffffff", "#a61d26"], "glow": "#e0262f"},
+                screen=dict(bg="white", ink="base", accent="red", cta="Råb «Kom så Hawks!»",
+                            ticker="Frederikshavn White Hawks  •  Sammen er vi White Hawks  •  Nordjyske Bank Arena  •  Kom så Hawks!  •"),
+                frame=dict(bg="base", ink="white", caption="Kom så Hawks!"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: white_hawks_logo((-60, 0, 60, 120)),
+                logo_png=dict(file="white_hawks-source.png", screen=(300, 860, 330), frame=(40, 170, 150)))
 
 
 # ------------------------------------------------------------------ build --

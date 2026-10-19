@@ -191,5 +191,45 @@
       "topper"
     ],
     "unit": "gen2"
+  },
+  {
+    "id": "white_hawks",
+    "name": "Frederikshavn White Hawks",
+    "place": "Nordjyske Bank Arena, Frederikshavn",
+    "palette": {
+      "base": "#011a3f",
+      "navy2": "#163463",
+      "red": "#a61d26",
+      "lamp": "#e0262f",
+      "glow": "#f2685f",
+      "white": "#ffffff",
+      "grey": "#cdcccc",
+      "ink": "#121417",
+      "gold": "#f7a60b",
+      "ice": "#e6f1f8",
+      "iceline": "#2a5fa8",
+      "steel": "#8d939b",
+      "sky": "#0d2f63"
+    },
+    "casing": "#011a3f",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#a61d26"
+      ],
+      "glow": "#e0262f"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": "Kom så Hawks!"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
   }
 ]
