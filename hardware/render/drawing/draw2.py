@@ -50,7 +50,7 @@ for y in (5, 7.5, 10, 13.5, 16):
     line([(y, r + 0.2), (-0.4, r + 0.2)], F, col, 1.3, arrow=True)
 LX = X0 + 26 * s + 40
 lead(*F((-1.1, 3)), LX, 162, "Lysring: kun 1 mm lysflade i naturfarvet ASA (var 4,8 mm hvid)", "#8a8578")
-lead(*F((7.6, 7.1)), LX, 190, "Hvid foto-strip 8 mm, 24 V, CRI 90+, 4000 K", "#b45309")
+lead(*F((7.6, 7.1)), LX, 190, "Hvid foto-strip 8 mm, 24 V, ca. 20 W/m, CRI 90+, 4000 K", "#b45309")
 lead(*F((14.6, 7.1)), LX, 218, "RGB-strip 5 mm til effekter (adresserbar)", "#7c3aed")
 lead(*F((12, -3)), LX, 268, "45° hvid reflektor kaster lyset ud gennem ringen", "#8a8578")
 lead(*F((18.7, 0)), LX, 296, "Hvid bund og vægge, printet i fronten (2. materiale)", "#8a8578")
@@ -61,7 +61,9 @@ lead(*F((20, 15.3)), LX, 424, "Skal, sort ASA", "#3f3f46")
 flush(Y0 - 17 * s)
 notes = ["Begge strips står på kant mod ydervæggen, så de bøjer pænt rundt i hjørnerne og går rundt i ét stykke.",
          "Reflektoren vender lyset 90° frem mod ringen. Hvid lyser den inderste halvdel af ringen, RGB den yderste.",
-         "Skøn: ca. 500 lm ud af ringen, ca. 260–300 lux på ansigtet ved 0,8 m (mål: 250). Testes på et 20 cm prøvestykke."]
+         "Hvid strip på strømstyret driver (som RECOM RCD-24), dæmpes uden flimmer, så billedet ikke får striber.",
+         "Fuldt lys kun under nedtælling og billede, ellers dæmpet, så strippen holder sig kølig.",
+         "Skøn: ca. 1.000 lm ud af ringen, ca. 500 lux på ansigtet ved 0,8 m (mål: 250). Testes på et 20 cm prøvestykke."]
 for i, n in enumerate(notes): t(60, Y0 + 16 * s + 26 + 19 * i, n, 13, "#444")
 
 # ---------- B: camera on printed pegs ---------------------------------------------------
