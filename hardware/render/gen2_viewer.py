@@ -22,7 +22,7 @@ PARTS = [
     ("lysring",       "x_ring3",       "Lysring (naturfarvet ASA)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("ledskinne",     "x_frame3",      "Bagramme med reflektor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
-    ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#2a2a2e", "Kabinet",    [0, 0, -90]),
+    ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
     ("printerdaeksel", "c_cap",        "Dæksel til printerhul",           "#3a3a3f", "Kabinet",    [0, -45, -90]),
     ("skaerm",        "x_display3",    "Skærm 10\"",                      "#253041", "Elektronik", [0, 0, 65]),
