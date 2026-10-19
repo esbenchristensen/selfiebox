@@ -634,6 +634,32 @@ if (VIEW == "x_strip_w")   placed_strips3("w");
 if (VIEW == "x_strip_rgb") placed_strips3("rgb");
 if (VIEW == "x_display3")  placed_display3();
 if (VIEW == "c_pi3")       placed_pi3();
+// the display and the Pi in their own materials for the 3D viewer: glass with its black border,
+// the active picture, the metal back; the Pi board and the Active Cooler
+if (VIEW == "x_dsp_glass")  translate([0, GLASS_Y, GC]) hull() for (sx = [-1, 1], sz = [-1, 1])
+        translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = 1.1, $fn = 24);
+if (VIEW == "x_dsp_active") translate([-135.4/2, GLASS_Y - 0.06, GC - 216.6/2]) cube([135.4, 0.05, 216.6]);
+if (VIEW == "x_dsp_back")   translate([0, GLASS_Y, GC]) {
+    translate([-TD10_GLASS[0]/2 + 3, 1.1, -TD10_GLASS[1]/2 + 3]) cube([TD10_GLASS[0] - 6, DSP_PANEL - 1.1, TD10_GLASS[1] - 6]);
+    for (sx = [-1, 1], z = DSP_TAB_Z) translate([sx*DSP_TAB_X - DSP_TAB3[0]/2, DSP_PANEL - 0.01, z - DSP_TAB3[1]/2]) cube([DSP_TAB3[0], DSP_TAB3[2], DSP_TAB3[1]]);
+    for (sx = [-1, 1], sz = [-1, 1]) cyl_y(DSP_SO[0], DSP_PANEL - 0.01, DSP_PANEL + DSP_SO[1], sx*24.5, DSP_PI_DZ + sz*29);
+    translate([-20, DSP_PANEL, DSP_PI_DZ - 20]) cube([40, 2, 50]);
+}
+if (VIEW == "c_pi_board")   translate([0, PI_Y3, GC + DSP_PI_DZ]) {
+    difference() {
+        translate([-PI_W/2, 0, -29 - 23.5]) cube([PI_W, PI_T, PI_L]);
+        for (sx = [-1, 1], sz = [-1, 1]) translate([sx*24.5, -1, sz*29]) rotate([-90, 0, 0]) cylinder(d = PI_HOLE, h = 4, $fn = 16);
+    }
+    translate([-PI_W/2 + 1.5, PI_T, -29 - 23.5 - 2.5]) cube([PI_W - 3, PI_PORT_H, 21]);
+}
+if (VIEW == "c_cooler")     translate([0, PI_Y3, GC + DSP_PI_DZ]) difference() {     // Active Cooler with its fan
+    translate([-PI_COOLER[1]/2, PI_T, -PI_COOLER[0]/2 + 8]) cube([PI_COOLER[1], PI_COOLER[2], PI_COOLER[0]]);
+    translate([0, PI_T + PI_COOLER[2] - 2, 8 + 6]) rotate([-90, 0, 0]) cylinder(d = 34, h = 3, $fn = 48);
+}
+if (VIEW == "c_fan")        translate([0, PI_Y3, GC + DSP_PI_DZ]) translate([0, PI_T + PI_COOLER[2] - 2, 8 + 6]) rotate([-90, 0, 0]) {
+    cylinder(d = 12, h = 1.8, $fn = 32);
+    for (a = [0:30:330]) rotate([0, 0, a]) translate([6, -1, 0]) cube([10.5, 2, 1.6]);
+}
 if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
 if (VIEW == "c_wled")      translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);

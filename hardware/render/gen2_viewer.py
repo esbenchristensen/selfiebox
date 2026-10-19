@@ -25,11 +25,15 @@ PARTS = [
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
     ("printerdaeksel", "c_cap",        "Dæksel til printerhul",           "#3a3a3f", "Kabinet",    [0, -45, -90]),
-    ("skaerm",        "x_display3",    "Skærm 10\"",                      "#253041", "Elektronik", [0, 0, 65]),
+    ("skaerm",        "x_dsp_glass",   "Skærm: glas med sort kant",       "#0b0b0d", "Elektronik", [0, 0, 65]),
+    ("skaerm_billede", "x_dsp_active", "Skærm: aktivt billede 1200 × 1920", "#4f7df0", "Elektronik", [0, 0, 65]),
+    ("skaerm_bag",    "x_dsp_back",    "Skærm: bagside med skrueører",    "#8a8d94", "Elektronik", [0, 0, 65]),
     ("kamera",        "x_camera",      "Kamera (Wide)",                   "#9aa3b5", "Elektronik", [0, 0, 120]),
     ("ledhvid",       "x_strip_w",     "2 × hvid COB-strip Ra95",         "#ffb000", "Elektronik", [0, 0, 60]),
     ("ledrgb",        "x_strip_rgb",   "RGB-strip 5 mm",                  "#a855f7", "Elektronik", [0, 0, 60]),
-    ("pi",            "c_pi3",         "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
+    ("pi",            "c_pi_board",    "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
+    ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
+    ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
     ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto WLED)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (MOSFET)",       "#0f766e", "Elektronik", [-90, 0, 0]),
@@ -54,8 +58,6 @@ CABLES = [
     ("stroem",     "5 V → Pi",                       2.2, [(88, 52, 70), (60, 45, 85), (25, 38, 120)]),
     ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 50, 160), (-100, 55, 150)]),
     ("ledrgb",     "RGB-strip ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (88, 50, 180), (86, 54, 125), (80, 60, 115)]),
-    ("skaerm",     "Skærmkabel (DSI) + strøm",        1.2, [(0, 11.5, 150), (0, 19.0, 150)]),
-    ("kamera",     "Kamerakabel (CSI), bløde bøjninger", 1.2, [(9.6, 10.6, 289), (12.5, 13, 289), (12.5, 33, 289), (12, 40, 268), (8, 40, 205), (5, 38, 187)]),
     ("modem4g",    "4G: USB → Pi",                   2.6, [(-56, 72, 190), (-32, 52, 170), (-18, 44, 118)]),
     ("lydkerne",   "Mikrofon-kerne: USB → Pi",       2.6, [(48, 72, 190), (30, 52, 170), (18, 44, 118)]),
     ("mikrofoner", "Mikrofonstrip → kerne",          1.2, [(40, 68, 297), (62, 70, 270), (70, 70, 226)]),
@@ -63,6 +65,33 @@ CABLES = [
     ("sensor",     "Stødsensor → Pi (I2C)",          1.4, [(0, 76, 200), (12, 52, 190), (24, 41, 165)]),
     ("reed",       "Løftesensor → Pi",               1.4, [(-46, 75, 44), (-32, 60, 90), (-24, 41, 150)]),
 ]
+
+# flat cables (FFC): owner, label, width, thickness, sections [(point, width direction)].
+# They bend only about their width; the camera ribbon twists slowly behind the frame.
+RIBBONS = [
+    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 10.7, 289), (0, 0, 1)), ((11.5, 11.2, 289), (0, 0, 1)), ((12.6, 13.5, 289), (0, 0, 1)),
+        ((12.6, 34, 289), (0, 0, 1)), ((12.6, 44, 282), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 40, 190), (1, 0, 0))]),
+    ("skaerm", "Skærmkabel (fladt, følger med skærmen)", 11.5, 0.3, [((0, 12.9, 205), (1, 0, 0)), ((0, 13.4, 196), (1, 0, 0)), ((0, 16, 189.5), (1, 0, 0)),
+        ((0, 19.5, 188), (1, 0, 0)), ((0, 21.5, 186.5), (1, 0, 0))]),
+]
+
+
+def ribbon(sections, w, th):
+    P = [np.array(p, float) for p, _ in sections]
+    V, F = [], []
+    for i, (p, wd) in enumerate(sections):
+        tdir = P[min(i + 1, len(P) - 1)] - P[max(i - 1, 0)]
+        tdir /= np.linalg.norm(tdir)
+        wd = np.array(wd, float); wd -= tdir * wd.dot(tdir); wd /= np.linalg.norm(wd)
+        n = np.cross(tdir, wd)
+        for a, b in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
+            V.append(P[i] + a * wd * w / 2 + b * n * th / 2)
+    for i in range(len(sections) - 1):
+        for k in range(4):
+            a, b, c, d = 4 * i + k, 4 * i + (k + 1) % 4, 4 * (i + 1) + (k + 1) % 4, 4 * (i + 1) + k
+            F += [(a, b, c), (a, c, d)]
+    return trimesh.Trimesh(np.array(V), np.array(F), process=False)
+
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
 Y0 = -153.0                                                                     # centre the box on y = 0
@@ -116,6 +145,15 @@ for i, (owner, label, d, pts) in enumerate(CABLES):
     node = f"kabel_{i}_{owner}"
     scene.add_geometry(m, node_name=node, geom_name=node)
     meta.append({"node": node, "label": label, "color": hexc, "group": "Kabler", "owner": owner, "explode": [0, 0, 0]})
+
+for i, (owner, label, w, th, secs) in enumerate(RIBBONS):
+    m = ribbon(secs, w, th)
+    m.apply_transform(M)
+    m.apply_translation([0, Y0, 0])
+    m.visual = trimesh.visual.TextureVisuals(material=material("#c9a227", 0.45))
+    node = f"fladkabel_{i}_{owner}"
+    scene.add_geometry(m, node_name=node, geom_name=node)
+    meta.append({"node": node, "label": label, "color": "#c9a227", "group": "Kabler", "owner": owner, "explode": [0, 0, 0]})
 
 OUT.mkdir(parents=True, exist_ok=True)
 (OUT / f"{VER}_3d.glb").write_bytes(scene.export(file_type="glb"))
