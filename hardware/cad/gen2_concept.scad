@@ -38,7 +38,7 @@ R = 42.8;                                   // = SQ_A + RING_FACE/2 + BORDER: wh
 BLOCK_Z = [];                               // no side screws
 // fewer loose parts: no VESA or tripod inserts, no lock screw inside, and every former M3 insert
 // becomes a pilot hole for a 3.0 mm thread-forming plastic screw (e.g. WN 1452 K30)
-VESA_ON = false;  TRIPOD_ON = false;  LOCK_INSIDE = false;  DC_PANEL = false;
+VESA_ON = false;  TRIPOD_ON = false;  LOCK_INSIDE = false;  DC_PANEL = false;  REVG_BACK = false;   // rev G's back-wall slots (3 mm, behind the mic core), recessed band and label recess had no use
 INS_M3 = [2.4, 12];                          // pilot for the 3.0 x 15 SPUN+ front screws (core 1.8, ITW datasheet)
 // no glow band (Esben 19 Oct): the shell is one print in one colour; only the front ring lights
 GLOW = false;

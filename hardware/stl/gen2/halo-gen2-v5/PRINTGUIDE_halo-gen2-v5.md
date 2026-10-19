@@ -11,6 +11,7 @@ Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del p
 - Låsetungen går stadig 12 mm ind i boksen, og låseskruen sidder 15 mm længere fremme (vægbeslaget er uændret). Mikrofonstrippen under toppen er rykket 15 mm frem.
 - Dæmperen på venstre væg er rykket 5,5 mm frem, så den ikke rammer bagvæggen.
 - **4 huller lukket i bagvæggen.** Under hver frontskrue sad et ekstra hul (Ø6,4) fra v1, hvor frontskruerne sad tættere på midten. Siden v2 har der ikke siddet en skrue i dem, så de var bare åbne huller ind i boksen. De er nu lukket.
+- **Rester fra rev G fjernet bagpå:** 4 lodrette slidser (3 mm brede, bag mikrofon-kernen), en 1,2 mm fordybet ramme rundt om bagsiden og en lille fordybning til et mærkat. De havde ingen funktion i gen 2, som har sine egne lameller. Bagvæggen er nu helt plan og fuld tykkelse, så skallen ligger bedre på pladen.
 - **Bundventilation:** hætterne over bundhullerne ligger nu mellem bagrammen og bagvæggen. I venstre side er hullerne kortere, så hætten går fri af låseskruen. Indsugningen er 7,5 cm² mod 9,8 cm² før.
 - Printerhullet og skruerne til printermodulet er rykket 7,5 mm frem, så de stadig sidder midt i bunden.
 - Der er ca. 30 mm fri luft bag Pi'ens blæser (før 45 mm).
@@ -56,7 +57,7 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 
 | Fil | Del | Mål på pladen (mm) | Materiale | Ca. vægt | Plade | Support |
 |---|---|---|---|---|---|---|
-| `halo-gen2-v5_skal.stl` | Skal (bag, sider, top, bund) | 222,5 × 306 × 64 | ASA sort | 315 g | Glat PEI | Kun fra pladen |
+| `halo-gen2-v5_skal.stl` | Skal (bag, sider, top, bund) | 222,5 × 306 × 64 | ASA sort | 325 g | Glat PEI | Kun fra pladen |
 | `halo-gen2-v5_front.stl` | Front | 222,5 × 306 × 27,7 | ASA sort | 120 g | **Tekstureret PEI** | Nej |
 | `halo-gen2-v5_logo-hvid.stl` | Logo, hvide dele (farvedel til fronten) | 27,5 × 9,9 × 0,8 | ASA hvid | under 1 g | Sammen med fronten | Nej |
 | `halo-gen2-v5_logo-groen.stl` | Logo, grønne prikker (farvedel til fronten) | 24,6 × 2,6 × 0,8 | ASA grøn | under 1 g | Sammen med fronten | Nej |
@@ -65,7 +66,7 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 | `halo-gen2-v5_vaegbeslag.stl` | Vægbeslag med låsetunge (uændret fra v4) | 131 × 276 × 29 | ASA sort | 140 g | Glat PEI | Nej |
 | `halo-gen2-v5_printerdaeksel.stl` | Dæksel til printerhullet (uændret fra v1) | 21,6 × 23,4 × 5,2 | ASA sort | 1 g | **Tekstureret PEI** | Nej |
 
-Vægtene er skøn ud fra rumfanget, i alt ca. 805 g ASA: ca. 575 g sort, 200 g hvid og 25 g natur. Bambu Studio viser den rigtige vægt og tid, når delene er skåret.
+Vægtene er skøn ud fra rumfanget, i alt ca. 815 g ASA: ca. 585 g sort, 200 g hvid og 25 g natur. Bambu Studio viser den rigtige vægt og tid, når delene er skåret.
 
 Fire farver ASA: **sort** (skal, front, beslag, dæksel), **hvid** (bagrammen og logoet; hvid giver mest lys tilbage fra reflektoren), **natur/ufarvet** (lysringen; den lader mest lys igennem og giver et blødt, jævnt lys) og **grøn** (kun de to prikker i logoet, så tæt på Selfi-grøn #22D36B som muligt). Logoet skal være ASA ligesom fronten, ellers hæfter lagene ikke.
 
