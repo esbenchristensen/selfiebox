@@ -553,7 +553,7 @@ export const faq: Faq[] = [
   },
   {
     q: "Kan boksen stå udendørs?",
-    a: "Den skal stå under tag, fx i et telt, ved en indgang eller under et halvtag. Så stopper regnen den ikke.",
+    a: "Den skal stå under tag, fx i et telt, ved en indgang eller under et halvtag. Så stopper regnen den ikke. Strømforsyningen skal ligge tørt, og boksen må ikke stå i direkte sol.",
   },
   {
     q: "Hvad koster det?",
