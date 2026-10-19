@@ -17,7 +17,7 @@ export default function Databehandleraftale() {
       label="Databehandleraftale"
       title="Databehandleraftale"
       lede="Aftalen mellem det sted, der bruger Selfi Boks (dataansvarlig), og Selfi (databehandler). Den er en del af enhver aftale om Selfi Boks og gælder, så længe Selfi behandler data for stedet."
-      updated="19. oktober 2026 (version 1)"
+      updated="19. oktober 2026 (version 2)"
     >
       <h2>1. Parter og formål</h2>
       <p>
@@ -39,7 +39,7 @@ export default function Databehandleraftale() {
           <tr><th>Oplysninger</th><td>Billeder og videoer med lyd af gæster, telefonnumre, samtykker (tidspunkt, tekst og svar), alder ja/nej (over/under 15), tekniske logs, brugernavne og e-mails til kontrolpanelet</td></tr>
           <tr><th>Følsomme oplysninger</th><td>Ingen tilsigtet. Billeder og video bruges ikke til at identificere personer (ingen ansigtsgenkendelse) og behandles derfor ikke som biometriske data</td></tr>
           <tr><th>Formål</th><td>At drive Selfi Boks for stedet: tage og levere billeder og videoer, sende dem på SMS eller QR-kode, indhente og dokumentere samtykker, vise dem i kontrolpanel og på fotovæg, udlevere gæstelisten til stedet, samt drift, overvågning, support og sikkerhed</td></tr>
-          <tr><th>Varighed</th><td>Så længe kundeaftalen løber. Slettefrister: billeder uden samtykke 30 dage, billeder og videoer med samtykke til de trækkes tilbage, dog højst 3 år, numre til markedsføring til de afmeldes eller ikke er brugt i 2 år, tekniske logs 90 dage. Stedet kan sætte kortere frister i kontrolpanelet</td></tr>
+          <tr><th>Varighed</th><td>Så længe kundeaftalen løber. Slettefrister: billeder uden samtykke 30 dage, billeder og videoer med samtykke til de trækkes tilbage, eller ikke er brugt i 5 år, numre til markedsføring til de afmeldes eller ikke er brugt i 2 år, tekniske logs 90 dage. Stedet kan sætte kortere frister i kontrolpanelet</td></tr>
         </tbody>
       </table>
 
@@ -59,13 +59,15 @@ export default function Databehandleraftale() {
 
       <h2>4. Stedets forpligtelser</h2>
       <ul>
-        <li>Stedet har ansvaret for, at der er et lovligt grundlag for behandlingen, og for de tekster, temaer og aktiviteter, stedet selv lægger ind.</li>
+        <li>Stedet har det fulde ansvar for, at der er et lovligt grundlag for behandlingen og for al brug af gæsternes billeder, videoer og data, også når stedet redigerer, deler eller bruger dem i markedsføring.</li>
+        <li>Selfis standardtekster til samtykke, skilt og gæstevilkår er et forslag. Stedet vurderer selv, om de er tilstrækkelige, og kan ændre dem i kontrolpanelet. Stedets tekster og valg i kontrolpanelet er stedets instruks.</li>
+        <li>Stedet fjerner content fra egne kanaler, når en gæst trækker sit samtykke tilbage, og svarer selv gæsternes anmodninger med Selfis hjælp efter punkt 3.</li>
         <li>Stedet sætter Selfis skilt med information til gæsterne op ved boksen og bruger kun billeder, videoer og numre, som gæsten har sagt ja til.</li>
         <li>Stedet sender kun markedsføring til numre på gæstelisten og stopper straks, når en gæst afmelder sig (markedsføringslovens § 10).</li>
       </ul>
 
       <h2>5. Ansvar</h2>
-      <p>Hver part hæfter efter GDPR art. 82. Ansvarsbegrænsningen i kundeaftalen gælder ikke for bøder eller erstatning, der følger af en parts egne overtrædelser af databeskyttelsesreglerne.</p>
+      <p>Hver part hæfter efter GDPR art. 82. Stedet holder Selfi skadesløs for krav, bøder og udgifter, der skyldes stedets instrukser, tekster eller brug af data. Ansvarsbegrænsningen i kundeaftalen gælder ikke for bøder eller erstatning, der følger af en parts egne overtrædelser af databeskyttelsesreglerne.</p>
 
       <h2>6. Ændringer og opsigelse</h2>
       <p>

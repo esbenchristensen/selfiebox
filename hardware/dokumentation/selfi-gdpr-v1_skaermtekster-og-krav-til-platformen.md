@@ -8,7 +8,7 @@
 |---|---|---|
 | P1 | Kamera og mikrofon gemmer/sender intet, før gæsten trykker start. Livebilledet vises kun på skærmen | Gæsteinfo, DPA, tv-overvågningsloven |
 | P2 | Billeder uden "må bruges"-samtykke slettes automatisk senest 30 dage efter (server og galleri-link). Numre kun til SMS-deling slettes samtidig | Gæsteinfo |
-| P3 | Content med samtykke slettes, når samtykket trækkes tilbage, og senest efter 3 år | Gæsteinfo |
+| P3 | Content med samtykke slettes, når samtykket trækkes tilbage, eller når det ikke er brugt i 5 år | Gæsteinfo |
 | P4 | Numre på gæstelisten slettes ved afmelding eller efter 2 år uden brug | Gæsteinfo |
 | P5 | Tekniske logs med personoplysninger slettes efter 90 dage | Gæsteinfo, DPA |
 | P6 | Samtykker gemmes med tidspunkt, boks, sted og den præcise tekst/version | GDPR art. 7(1) |
@@ -24,11 +24,15 @@
 | P16 | Stedets navn vises på skærmen som dataansvarlig, og link/QR til selfi.dk/gaester | GDPR art. 13 |
 | P17 | Galleri-links er lange og tilfældige (≥ 128 bit) | DPA punkt 7 |
 | P18 | Totrinsbekræftelse for Selfis administratorer i admin.selfi.dk | DPA punkt 7 |
+| P19 | **Stedet kan redigere alle gæstetekster i kontrolpanelet** (tekst under startknap, samtykketekster, link til egne vilkår, skilt). Selfis tekster er standard. Hver ændring gemmes som ny version med tidspunkt og bruger, og hvert samtykke peger på den version, gæsten så. Ved første ændring viser kontrolpanelet: "I står selv for, at jeres tekster er lovlige" og stedet accepterer | Vilkår punkt 7, DPA punkt 4 (ansvaret ligger hos stedet) |
+| P20 | **Hilsen til storskærmen:** skærmen siger før optagelsen, at hilsenen vises på storskærm og bruges af stedet. Knappen "Send hilsen" er samtykket (gemmes som P6). "Slet" sletter med det samme | Gæstevilkår punkt 4 |
+| P21 | Tekst under startknappen: "Ved at tage et billede accepterer du vilkårene for [Stedets navn]. selfi.dk/brugsvilkaar" | Gæstevilkår |
+| P22 | Kontrolpanelet kan fjerne et billede fra stedets egne flader (fotovæg, storskærm, galleri) med det samme, når en gæst trækker sit ja tilbage, og viser stedet en liste over tilbagetrukne samtykker | Gæstevilkår punkt 6 |
 
 ## Skærmtekster (forslag, lag 1)
 
-**Startskærm, lille tekst nederst:**
-> Boksen optager først, når du trykker start. [Stedets navn] står for dine billeder. Læs mere: selfi.dk/gaester
+**Startskærm, lille tekst under startknappen:**
+> Ved at tage et billede accepterer du vilkårene for [Stedets navn]. Boksen optager først, når du trykker start. selfi.dk/brugsvilkaar
 
 **Efter billedet, før deling:**
 > Få dit billede: scan QR-koden, eller skriv dit nummer, så sender vi det på SMS.
@@ -38,9 +42,15 @@
 > Er du 15 år eller ældre?  [Ja] [Nej]
 > (Nej: "Så får du bare dit billede. Spørg en voksen, hvis I vil dele det med [stedet].")
 
-**Samtykke til brug af billede/video (separat, ikke forvalgt):**
-> Må [Stedets navn] bruge dette billede/denne video på sociale medier, hjemmeside, skærme og i annoncer?
-> Du kan altid trække dit ja tilbage på selfi.dk/gaester.  [Ja, gerne] [Nej tak]
+**Samtykke til brug af billede/video (afhænger af Esbens valg 19. okt.):**
+
+*Anbefalet: ét tryk, to knapper.* Efter billedet, i stedet for en ja/nej-dialog:
+> [STOR KNAP, stedets farve] **Del, og [Stedets navn] må bruge det**
+> [lille tekstknap] Kun til mig
+> Lille tekst: "Så må [Stedet] bruge billedet på storskærm, sociale medier og i markedsføring. Du kan fortryde på selfi.dk/gaester."
+Begge knapper giver gæsten billedet (QR/SMS). Kun den store knap gemmer samtykke.
+
+*Alternativ (Esbens oprindelige ønske):* teksten under startknappen dækker også brugen, og billedet udleveres kun efter accept. Holder sandsynligvis ikke som samtykke (GDPR art. 7(4), EDPB 05/2020), så stedet bærer risikoen.
 
 **Samtykke til markedsføring (separat, ikke forvalgt, kun hvis nummer er givet):**
 > Vil du have tilbud og nyheder fra [Stedets navn] på SMS? Du kan altid afmelde dig i beskederne.  [Ja tak] [Nej tak]

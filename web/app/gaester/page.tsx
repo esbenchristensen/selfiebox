@@ -20,7 +20,7 @@ export default function Gaester() {
     >
       <h2>Hvem er ansvarlig?</h2>
       <p>
-        Det sted, hvor boksen står (fx baren, klubben eller festivalen), er dataansvarlig for dine billeder og oplysninger. Stedets navn står på
+        Det sted, hvor boksen står (fx baren, klubben eller festivalen), er dataansvarlig for dine billeder og oplysninger og har ansvaret for, hvordan de bruges. Stedets navn står på
         boksens skærm og på skiltet ved boksen. Selfi leverer boksen og opbevarer data for stedet som databehandler, efter en databehandleraftale.
       </p>
 
@@ -43,9 +43,14 @@ export default function Gaester() {
             <td>Billedet slettes senest 30 dage efter, det er taget. Et nummer, der kun er brugt til at sende billedet, slettes samtidig.</td>
           </tr>
           <tr>
-            <td>At stedet bruger billedet eller videoen på sociale medier, hjemmeside, skærme eller i annoncer</td>
-            <td>Kun hvis du har sagt ja (samtykke, art. 6, stk. 1, litra a)</td>
-            <td>Når du trækker dit ja tilbage, og senest 3 år efter, det er taget</td>
+            <td>At stedet bruger billedet eller videoen på storskærme, sociale medier, hjemmeside, i nyhedsbreve og i annoncer, også redigeret og klippet sammen med andet (se <a href="/brugsvilkaar">vilkårene</a>)</td>
+            <td>Kun hvis du har sagt ja i boksen (samtykke, art. 6, stk. 1, litra a)</td>
+            <td>Når du trækker dit ja tilbage. Bruges det ikke i 5 år, slettes det</td>
+          </tr>
+          <tr>
+            <td>At vise din hilsen på storskærmen og bruge den som ovenfor</td>
+            <td>Du har selv optaget hilsenen og trykket Send hilsen (samtykke, art. 6, stk. 1, litra a)</td>
+            <td>Som ovenfor</td>
           </tr>
           <tr>
             <td>At stedet sender dig tilbud og nyheder på SMS eller e-mail</td>
@@ -60,7 +65,7 @@ export default function Gaester() {
         </tbody>
       </table>
       <p>
-        Siger du nej, får du stadig dit billede. Du behøver ikke sige ja til markedsføring for at være med i en konkurrence i boksen.
+        Når du tager et billede, accepterer du <a href="/brugsvilkaar">vilkårene for brug af boksen</a>. Siger du nej til, at stedet må bruge billedet, får du det stadig selv. Du behøver ikke sige ja til markedsføring for at være med i en konkurrence i boksen.
       </p>
 
       <h2>Børn</h2>
