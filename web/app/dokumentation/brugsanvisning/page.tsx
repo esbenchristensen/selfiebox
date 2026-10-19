@@ -23,7 +23,7 @@ export default function Brugsanvisning() {
       <p>
         {product.name} er en fotoboks, som hænger på en væg eller en søjle på et sted, hvor gæster kommer: en bar, en klub, et hotel,
         en festival eller lignende. Gæsterne bruger selv berøringsskærmen til at tage billeder og korte videoer. Boksen er til
-        erhvervsbrug. Selfi monterer, overvåger og vedligeholder den.
+        erhvervsbrug. Stedet hænger den op efter monteringsguiden, og Selfi overvåger og vedligeholder den.
       </p>
       <p>Den må bruges indendørs og under tag, fx i et telt eller under et halvtag. Den er ikke til direkte regn, sne eller sol.</p>
 
@@ -44,7 +44,7 @@ export default function Brugsanvisning() {
       </ul>
       <h3>Montering</h3>
       <ul>
-        <li>Boksen må kun monteres af Selfi eller efter Selfis anvisning, på en fast væg eller søjle med det medfølgende vægbeslag, fire skruer og dybler, der passer til væggen. Den vejer {product.weight}.</li>
+        <li>Boksen skal monteres efter monteringsguiden, på en fast væg eller søjle med det medfølgende vægbeslag, fire skruer og dybler, der passer til væggen. Den vejer {product.weight}.</li>
         <li>Placer boksen, så ingen kan falde over kablet, og så den ikke sidder, hvor døre, stole eller folk i bevægelse kan ramme den.</li>
         <li>Vi anbefaler, at skærmens midte sidder ca. 120–140 cm over gulvet, så den også kan bruges fra en kørestol.</li>
       </ul>

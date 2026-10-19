@@ -4,7 +4,7 @@
 // with a concrete promise. See TEKSTSTRATEGI.md, "Tryghed".
 
 const ours = [
-  ["Montering", "Vi hænger boksen op, tilslutter og tester den."],
+  ["Nem opsætning", "Boksen kommer med vægbeslag, tyverilås og en kort guide. I hænger den selv op på ca. 20 minutter."],
   ["Overvågning", "Boksen melder sig til os hele tiden. Driller den, får vi en alarm."],
   ["Opdateringer", "Nye funktioner og rettelser kommer af sig selv."],
   ["Ny boks", "Går en boks i stykker, sender vi en ny med det samme."],
@@ -57,7 +57,7 @@ export function Care() {
             I betaler én fast pris. Vi tager os af resten.
           </h2>
           <p className="lede">
-            Selfi Boks er ikke endnu en ting, I skal passe. Det er en service, vi leverer. Vi monterer den, holder øje med den, opdaterer den og bytter den, hvis noget går galt.
+            Selfi Boks er ikke endnu en ting, I skal passe. Det er en service, vi leverer. I hænger den op, og vi holder øje med den, opdaterer den og bytter den, hvis noget går galt.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function Care() {
           <div className="care-card care-yours">
             <span className="label">Det klarer I</span>
             <p className="care-one">Holder åbent, som I plejer.</p>
-            <p className="muted">Der er ingen manual, ingen opsætning og ingen leverandør, I skal jagte. Boksen er klar, når I åbner.</p>
+            <p className="muted">Boksen hænges op én gang på ca. 20 minutter. Derefter er der ingen software at passe og ingen leverandør, I skal jagte.</p>
           </div>
         </div>
 

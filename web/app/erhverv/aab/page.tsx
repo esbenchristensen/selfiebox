@@ -392,7 +392,7 @@ export default function AaBKatalog() {
         <Page n={12} cap="Opsætning">
           <span className="kat-kicker">Opsætning og drift</span>
           <h2>Hvor boksene står på stadion</h2>
-          <p className="kat-lede">Boksene hænger på væggen eller står på en stander. Vi monterer, passer og opdaterer dem, så I kun skal tænke på kampen.</p>
+          <p className="kat-lede">Boksene hænger på væggen. I hænger dem selv op med vægbeslaget og vores korte guide, og vi passer og opdaterer dem, så I kun skal tænke på kampen.</p>
           <div className="kat-setup2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="kat-box" src={`${IMG}/boks-aab.png`} alt="Selfi Boks i AaB-design" />
@@ -405,7 +405,7 @@ export default function AaBKatalog() {
             </div>
           </div>
           <div className="kat-specs kat-specs--light kat-push" style={{ marginBottom: 80 }}>
-            <div>Montering<span>Væg eller stander</span></div>
+            <div>Montering<span>Vægbeslag, I hænger den selv op</span></div>
             <div>Strøm<span>230 V, én stikkontakt pr. boks</span></div>
             <div>Service<span>Vi passer boksene og skifter design til de store kampe</span></div>
           </div>

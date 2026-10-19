@@ -65,7 +65,7 @@ export default function Home() {
         <Hero
           label="Til venues, klubber og festivaler"
           title="En fotoboks bygget til jeres sted."
-          lede="Selfi Boks får jeres form, farver og logo og laver autentiske billeder og videoer af jeres gæster hver aften, klar til jeres egne kanaler. Til barer, natklubber, sportsklubber, hoteller, festivaler, parker og alle andre steder, hvor gæster samles. Vi monterer, passer og bytter boksene."
+          lede="Selfi Boks får jeres form, farver og logo og laver autentiske billeder og videoer af jeres gæster hver aften, klar til jeres egne kanaler. Til barer, natklubber, sportsklubber, hoteller, festivaler, parker og alle andre steder, hvor gæster samles. I hænger dem selv op, og vi passer og bytter dem."
           primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
           secondary={{ label: "Se designene", href: "#temaer" }}
           visual={<HeroBox />}

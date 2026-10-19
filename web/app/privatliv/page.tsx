@@ -42,7 +42,7 @@ export default function Privatliv() {
           <tr>
             <td>Kunder og kontaktpersoner</td>
             <td>Navn, firma, CVR, adresse, e-mail, telefon, aftaler, fakturaer og henvendelser</td>
-            <td>At levere, montere og passe boksene, fakturere og give support (litra b). Bogføring (litra c, bogføringsloven)</td>
+            <td>At levere og passe boksene, fakturere og give support (litra b). Bogføring (litra c, bogføringsloven)</td>
             <td>Når aftalen slutter. Bogføringsbilag gemmes i 5 år efter regnskabsårets udløb</td>
           </tr>
           <tr>
