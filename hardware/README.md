@@ -29,6 +29,7 @@ does not change. The STL files in `stl/` are still rev G until gen 2 gets its ow
 | `cad/halo.scad` | Parametric enclosure: unit, attachments, assembly, print orientation |
 | `stl/*.stl` | Print-ready, already in print orientation |
 | `tools/check_bed.py` | Every STL fits the H2C plate (285 × 306 × 305 mm, ≥ 7 mm from the edges) |
+| `tools/check_bodies.py` | Every gen 2 print file is one solid body (no loose pieces in the slicer) |
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
 | `cad/gen2_concept.scad` | Gen 2 (current design), built on top of `halo.scad` |

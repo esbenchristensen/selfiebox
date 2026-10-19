@@ -1,4 +1,6 @@
 # Selfi Halo gen 2, version v2: printguide
+> **Print ikke denne version.** Bagrammen falder fra hinanden i printfilen (fire løse dele). Brug halo-gen2-v3.
+
 
 **Version:** halo-gen2-v2 (19. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v2_`. Den erstatter halo-gen2-v1. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
