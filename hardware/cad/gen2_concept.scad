@@ -495,6 +495,7 @@ module ring3() {
 }
 function refl_r(y) = REFL[0][1] + (y - REFL[0][0])*(REFL[1][1] - REFL[0][1])/(REFL[1][0] - REFL[0][0]);
 REFL_STEP = 0.5;
+CAM_RIB = [9.3, 17.5, 6.5];               // ribbon slot: x start (connector edge at 9.53), width (z), depth (x)
 module frame3() {
     tabs = [for (sx = [-1, 1], z = DSP_TAB_Z) [sx*DSP_TAB_X, GC + z]];
     difference() {
@@ -502,7 +503,7 @@ module frame3() {
             ext_y(CH_BACK, FR_BACK) {
                 ring_band2d(-CH_HALF, CH_HALF);
                 for (j = J2) translate(j) circle(d = 6.4, $fn = 32);
-                translate([-16, LENS_Z - 13.5]) square([20, 27]);               // behind the camera board
+                translate([-16, LENS_Z - 13.5]) square([34, 27]);               // behind the camera board and round the ribbon slot
             }
             // reflector, strip wall and floor, all inside the channel
             difference() {
@@ -524,6 +525,9 @@ module frame3() {
             hull() for (dz = [-2.4, 2.4]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0], t[1] + dz);   // head 2 mm above the tab
         }
         for (h = CAM_HOLES_ROT) cyl_y(2.4, CAM_PCB_Y, CAM_PCB_Y + CAM_PCB[2] + 2, h[0], LENS_Z + h[1]);
+        // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),
+        // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
+        translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
         for (sx = [-1, 1]) cyl_y(5, FLOOR3 - 1, FR_BACK + 1, sx*(CAM_KEEP[0] + 8), RING_Z1 + 6.2);   // strip leads
     }

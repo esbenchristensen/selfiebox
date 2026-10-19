@@ -349,7 +349,7 @@
  },
  {
   "node": "kabel_7_kamera",
-  "label": "Kamerakabel (CSI)",
+  "label": "Kamerakabel (CSI), bløde bøjninger",
   "color": "#9aa3b5",
   "group": "Kabler",
   "owner": "kamera",
