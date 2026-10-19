@@ -259,10 +259,13 @@ EXH_XS = [for (i = [0:36]) -90 + 5*i];  EXH_Z = [235, 245];  EXH_DROP = 2;    //
 EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; // + 8 in the top corners, 4.0 cm2
 // printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
 CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
-// power: a pocket in the back wall holds the jack facing backwards; a right-angle plug lies inside
-// it, so a pull on the lead loads the pocket walls, not the jack. The lead runs down the wall gap
-// and leaves under the box in steel cable armour, which starts hidden behind the box.
-PWR_P = [0, 146];  PWR_IN = [26, 36, 18];                         // pocket opening (x, z), depth
+// power (Esben 19 Oct): a vertical channel in the back wall, beside the boards. A 5.5/2.5 socket with
+// screw terminals (elektronik-lavpris 124-538) clicks in with its mouth down; the PSU's straight plug
+// goes in from below and the lead hangs straight down the wall gap, so water runs off the lead, not
+// into the plug. Two ribs at the bottom hold the lead, so the plug cannot drop out. The wires go into
+// the box through a Ø5 hole at the top. Socket and plug sizes are estimates (no drawings): measure.
+PWR_P = [-44, 154];  PWR_IN = [18, 84, 16];                      // channel centre (x, z); w, h, depth
+PWR_SOCK = [14, 14, 33];  PWR_SOCK_Z = 159;  PWR_PLUG = [11, 35];  // socket box, mouth z; plug Ø, length
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
 // [A] DFRobot FIT0502 3 W 8 ohm enclosed speaker (drawing KN-SP4030-05): 69.9 x 31, flange 3.7,
 //     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
@@ -300,7 +303,12 @@ module services_add() {
     difference() {
         translate([PWR_P[0], 0, PWR_P[1]]) translate([-PWR_IN[0]/2 - 2.4, D - BACK_T - PWR_IN[2] - 2.4, -PWR_IN[1]/2 - 2.4]) cube([PWR_IN[0] + 4.8, PWR_IN[2] + 2.41, PWR_IN[1] + 4.8]);
         translate([PWR_P[0], 0, PWR_P[1]]) translate([-PWR_IN[0]/2, D - BACK_T - PWR_IN[2], -PWR_IN[1]/2]) cube([PWR_IN[0], PWR_IN[2] + 1, PWR_IN[1]]);
-        cyl_y(8.2, D - BACK_T - PWR_IN[2] - 3, D - BACK_T - PWR_IN[2] + 1, PWR_P[0], PWR_P[1] + 8);   // M8 panel jack, upper half
+        cyl_y(5, D - BACK_T - PWR_IN[2] - 3, D - BACK_T - PWR_IN[2] + 1, PWR_P[0], PWR_P[1] + PWR_IN[1]/2 - 4);   // wires into the box
+    }
+    // snap lips that hold the socket, and two ribs at the bottom that leave a 5.5 mm slot for the lead
+    for (sx = [-1, 1]) {
+        translate([PWR_P[0] + sx*(PWR_IN[0]/2 - 1.25) - 1.25, D - 4.5, PWR_SOCK_Z + 5]) cube([2.5, 2.5, PWR_SOCK[2] - 10]);
+        translate([PWR_P[0] + sx*(5.5/2 + (PWR_IN[0] - 5.5)/4), D - BACK_T + 0.5, PWR_P[1] - PWR_IN[1]/2 + 2]) translate([-(PWR_IN[0] - 5.5)/4, 0, 0]) cube([(PWR_IN[0] - 5.5)/2 + 0.01, 2.5, 4]);
     }
     // speaker: a rim round the flange, 4 pegs through the ear holes and 2 hooks over the flange
     translate([SPK_P[0], D - BACK_T + 0.01, SPK_P[1]]) rotate([90, 0, 0]) {
@@ -328,11 +336,15 @@ module cable_cap() {   // printed separately; underside flush with the box botto
         for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 3, $fn = 16);   // spanner pins
     }
 }
+module power_inlet() {
+    yc = D - PWR_IN[2]/2 - 0.5;
+    translate([PWR_P[0] - PWR_SOCK[0]/2, yc - PWR_SOCK[1]/2, PWR_SOCK_Z]) cube(PWR_SOCK);
+    translate([PWR_P[0], yc, PWR_SOCK_Z - PWR_PLUG[1]]) cylinder(d = PWR_PLUG[0], h = PWR_PLUG[1], $fn = 32);
+}
 module placed_services() {
     translate([IF_CABLE[0], IF_CABLE[1], 0]) color([0.11, 0.11, 0.12]) cable_cap();
-    // panel jack and a right-angle plug in the pocket
-    color([0.2, 0.2, 0.2]) cyl_y(11, D - BACK_T - PWR_IN[2] - 2.4 - 16, D - BACK_T - PWR_IN[2] - 2.4, PWR_P[0], PWR_P[1] + 8);
-    color([0.25, 0.25, 0.25]) translate([PWR_P[0] - 5.5, D - BACK_T - PWR_IN[2] + 0.5, PWR_P[1] - 15]) cube([11, 12, 28]);
+    // socket (mouth down) and the PSU's straight plug in the channel
+    color([0.2, 0.2, 0.2]) power_inlet();
     // speaker
     color([0.2, 0.2, 0.22]) speaker3();
 }
@@ -630,8 +642,7 @@ if (VIEW == "c_imu")       back_part(IMU_P, IMU, "red");
 if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MIC_Y - MSTRIP[1]/2, H - WALL - MSTRIP[2] - 0.2]) cube(MSTRIP);
 if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
 if (VIEW == "c_speaker")   speaker3();
-if (VIEW == "c_jack")      { cyl_y(11, D - BACK_T - PWR_IN[2] - 2.4 - 16, D - BACK_T - PWR_IN[2] - 2.4, PWR_P[0], PWR_P[1] + 8);
-                             translate([PWR_P[0] - 5.5, D - BACK_T - PWR_IN[2] + 0.5, PWR_P[1] - 15]) cube([11, 12, 28]); }
+if (VIEW == "c_jack")      power_inlet();
 if (VIEW == "c_cap")       translate([IF_CABLE[0], IF_CABLE[1], 0]) cable_cap();
 // screws: 4 front (3.0 x 14 thread-forming, heads in the back wall), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
 if (VIEW == "s_front")     for (j = JOINTS) screw_y(3, 14, [5.6, 2], j[0], RIB_TOP + RAIL_T + 8, j[1], -1);

@@ -38,7 +38,7 @@ PARTS = [
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
     ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto WLED)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (DFRobot DFR0457)",       "#0f766e", "Elektronik", [-90, 0, 0]),
-    ("stik",          "c_jack",        "Strømstik 24 V",                  "#e11d48", "Elektronik", [0, 0, -90]),
+    ("stik",          "c_jack",        "Strømindgang: hunstik + GST-stik",                  "#e11d48", "Elektronik", [0, 0, -90]),
     ("modem4g",       "c_4g",          "4G-modem med GPS",                "#2563eb", "Tilvalg",    [0, 0, -90]),
     ("lydkerne",      "c_mcore",       "Mikrofon-kerne (XVF3800)",        "#0ea5e9", "Tilvalg",    [0, 0, -90]),
     ("mikrofoner",    "c_mics",        "Mikrofonstrip",                   "#14b8a6", "Tilvalg",    [0, 0, -90]),
@@ -53,7 +53,7 @@ PARTS = [
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. Routed along the back wall
 # and the display back, clear of the boards; each cable belongs to the component it serves.
 CABLES = [
-    ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(0, 60, 131), (40, 58, 130), (86, 54, 100), (88, 52, 76)]),
+    ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(-44, 76.5, 191), (-44, 66, 192), (-44, 58, 190), (-20, 55, 170), (40, 55, 130), (86, 54, 100), (88, 52, 76)]),
     ("ledstyring", "24 V → WLED-styring",            2.0, [(88, 52, 76), (84, 56, 100), (80, 60, 108)]),
     ("daemper",    "24 V → dæmper",                  2.0, [(88, 52, 76), (40, 52, 80), (-60, 52, 110), (-100, 55, 125)]),
     ("stroem",     "5 V → Pi",                       2.2, [(88, 52, 70), (60, 45, 85), (25, 38, 120)]),

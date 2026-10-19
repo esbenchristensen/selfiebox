@@ -25,6 +25,7 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 - **Låseskrue:** forsænket hoved Ø8,6, med 90° forsænkning i tungen.
 - **Magnet:** lomme Ø8,2 til en Ø8 × 3 mm magnet.
 - **Bakker:** dæmperen (DFRobot DFR0457, 44 × 32 mm), reed-modulet (32 × 19 mm) og højttaleren (DFRobot FIT0502) har fået bakker i de rigtige mål.
+- **Strømindgang:** den gamle lomme midt bagpå er erstattet af en lodret kanal 44 mm til venstre for midten (set forfra). Et 2,5-hunstik med skrueklemmer klikkes i med åbningen nedad, og strømforsyningens lige stik sættes i nedefra. Vægbeslagets udsparing til kablet er flyttet med.
 
 ## Delene
 
@@ -94,7 +95,8 @@ Læg fronten med forsiden ned på et blødt underlag.
 7. **Pi'en:** Sæt skærmens korte flade kabel i skærmen og i Pi'ens DISP-stik, før Pi'en skrues på skærmens afstandsstykker med de 4 andre skruer fra posen. Kablet skal ligge i en blød bue rundt om Pi'ens kant. Kamerakablet føres i en løs bue bag bagrammen ned til Pi'ens CAM-stik. Active Cooler sidder på Pi'en og vender bagud; der er ca. 45 mm fri luft bag blæseren.
 8. **Elektronik i skallen:** 5 V-forsyningen og WLED-styringen trykkes ned i deres bakker på bagvæggen, og dæmperen i bakken på venstre væg. Læberne på bakkerne holder dem. Forbind med **Wago 221-41x** (ikke 221-6xx, som ikke tager de tynde ledninger fra strips) og klikstik; kablerne er vist i 3D-visningen på admin.selfi.dk/admin/hardware.
 9. **Skallen** sættes ned over fronten. De 4 frontskruer (**SPUN+ 3,0 × 15 mm, forsænket**; databladet siger TX10, Bauhaus siger TX20, så tjek pakken) skrues i bagfra gennem hullerne i bagvæggen. Hver skrue går gennem skallens stolpe og bagrammens øre og ind i fronten, så de tre dele holdes sammen af de samme 4 skruer. Brug en **lang Torx-bit i den størrelse (mindst 60 mm)**, fordi skruehovedet sidder ca. 52 mm inde.
-10. Vægbeslag og sikkerhedsskrue som i v1.
+10. **Strømindgangen:** Skru 24 V-ledningerne i hunstikket (124-538), før skallen lukkes, og før dem gennem Ø5-hullet øverst i kanalen. Tryk hunstikket ind i kanalen bagfra med åbningen nedad, til det klikker forbi de to læber. Sæt strømforsyningens stik i nedefra, og tryk kablet ind mellem de to ribber nederst i kanalen, så stikket ikke kan falde ud.
+11. Vægbeslag og sikkerhedsskrue som i v1. Kablet hænger lodret ned i vægspalten og ud under boksen.
 
 Købedele, der skal skrues: 4 frontskruer, 8 M2,5-skruer (følger med skærmen) og 1 sikkerhedsskrue. Der er ingen gevindindsatser, fjedre, pakninger, glas eller lim.
 
@@ -106,5 +108,6 @@ Købedele, der skal skrues: 4 frontskruer, 8 M2,5-skruer (følger med skærmen) 
 - Lys: tænd begge hvide strips på 100 % og mål lux ved 0,8 m (målet er mindst 250 lux).
 - Bakker: sidder 5 V-forsyning, WLED-styring og dæmper fast, også når boksen vendes?
 - Mål WLED-styringen. Målene i CAD (108 × 45 × 18 mm) er fra én forhandler og er ikke bekræftet.
+- Mål hunstikket (124-538) og GST-stikket. CAD regner med 14 × 14 × 33 mm og Ø11 × 35 mm; klikker hunstikket ikke fast, eller kan stikket glide ud, rettes læberne og ribberne.
 - Mål dæmperens højde og klikstikkene. Der findes ingen officiel tegning af dem, så CAD bruger forhandlerens mål.
 - Vejr: sprøjtetest med en blomstersprøjte fra alle sider i 10 minutter med tændt boks, som i v1.

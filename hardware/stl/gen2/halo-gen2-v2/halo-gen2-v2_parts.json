@@ -210,7 +210,7 @@
  },
  {
   "node": "stik",
-  "label": "Strømstik 24 V",
+  "label": "Strømindgang: hunstik + GST-stik",
   "color": "#e11d48",
   "group": "Elektronik",
   "explode": [
