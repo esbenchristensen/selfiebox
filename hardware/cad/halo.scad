@@ -69,7 +69,8 @@ RING_X  = GW/2 + 1.2 + CH_HALF;                    // centre line
 RING_Z0 = GLASS_BOT - 1.2 - CH_HALF;               // bottom centre line
 LENS_Z = GLASS_TOP + 10.5 + 2.3 + 0.5;              // lower camera bosses (Ø4.6) clear the glass top by 0.5
 RING_Z1 = LENS_Z;                                   // camera eye sits on the ring's top line
-CAM_PCB_Y = 1.2 + CAM_LENS_H;
+CAM_TIP_Y = 1.2;                                    // lens tip behind the front face
+CAM_PCB_Y = CAM_TIP_Y + CAM_LENS_H;
 CAM_TOP = LENS_Z + CAM_PCB[0]/2;                    // rotated board: 12.5 above the lens
 H = ceil(RING_Z1 + CH_HALF + TOPM);
 EDGE_X = RING_X + CH_HALF + 0.4;                   // rail edge, carries the glow strip
@@ -88,6 +89,8 @@ function run_leds(len) = floor((len - 20)/LED_PITCH);
 GLOW_LEDS = floor((RUN_V - 8)/LED_PITCH);
 VIEW_X = 0;                                         // [M] picture assumed centred
 CAM_HOLE = CAM_BARREL + 1.65;
+CAM_HOLE_REAR = CAM_HOLE;                           // behind the lens tip (barrel widens towards the holder)
+CAM_CONE = [1.2, 62];                               // front cone: depth, half angle
 CAM_RING = 24;
 
 // side screws
@@ -124,6 +127,8 @@ DC_PANEL = true;                                          // gen 2 moves the jac
 DC_POS = [-52, 40];
 PB_RAIL = [70, 50, 1.6];   PB_Z0 = 18;  PB_Y = D - BACK_T - 6;   // perfboard: size, bottom, back face y
 POL_X = 46;  POL_Z = [18, 50];                                      // Pololu cradles (right side)
+POWER_REVG = true;                                                  // perfboard + Pololu holders (gen 2 v2 uses its own)
+CLIPS = [[-60, 110], [60, 110], [-60, 160], [0, 95]];               // cable-tie loops on the back wall (x, z)
 
 // attachments
 H_PRN = 84;  PRN_Z = 38;
@@ -215,8 +220,9 @@ module bezel() {
         ext_y(-1, PT + 1) slot_shape(0);
         ext_y(PT - DIFF_FLANGE_T, PT + 1) slot_shape(DIFF_FLANGE);
         // camera: barrel clearance, front cone, accent ring inlay, screw pilots
-        cyl_y(CAM_HOLE, 1.2 - 0.01, PT + 1, 0, LENS_Z);
-        translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*1.2*tan(62), d2 = CAM_HOLE, h = 1.22);
+        cyl_y(CAM_HOLE, CAM_CONE[0] - 0.01, PT + 1, 0, LENS_Z);
+        cyl_y(CAM_HOLE_REAR, max(CAM_CONE[0], CAM_TIP_Y + 1), PT + 1, 0, LENS_Z);
+        translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]), d2 = CAM_HOLE, h = CAM_CONE[0] + 0.02);
         for (h = CAM_HOLES_ROT) cyl_y(M2_PILOT, PT + 0.6, CAM_PCB_Y + 1, h[0], LENS_Z + h[1]);
         // tongue relief above the camera board
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
@@ -224,7 +230,7 @@ module bezel() {
     }
 }
 module camera_ring(depth, y0 = 0) {
-    ext_y(y0, y0 + depth) translate([0, LENS_Z]) difference() { circle(d = CAM_RING); circle(d = CAM_HOLE + 2*1.2*tan(62) + 0.4); }
+    ext_y(y0, y0 + depth) translate([0, LENS_Z]) difference() { circle(d = CAM_RING); circle(d = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]) + 0.4); }
 }
 module logo_shape(depth, y0 = 0) {
     ext_y(y0, y0 + depth) translate([0, (RING_Z0 - CH_HALF)/2 + 0.5])
@@ -289,13 +295,13 @@ module shell(top = UNIT_TOP) {
             translate([-CLEAT_L/2 - 3, D - BACK_T - CLEAT_D, CLEAT_ZC - 27]) cube([CLEAT_L + 6, CLEAT_D + 0.01, 39]);
             if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(11, D - BACK_T - 8, D - 0.5, sx*VESA/2, VESA_Z + sz*VESA/2);
             // perfboard slide rails (board stands 6 mm off the back wall, components face forward)
-            for (sx = [-1, 1]) translate([sx > 0 ? PB_RAIL[0]/2 - 1.8 : -PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0]) difference() {
+            if (POWER_REVG) for (sx = [-1, 1]) translate([sx > 0 ? PB_RAIL[0]/2 - 1.8 : -PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0]) difference() {
                 cube([4, D - BACK_T - (PB_Y - 4) + 0.01, PB_RAIL[1] + 2]);
                 translate([sx > 0 ? -0.01 : 2.21, 4 - PB_RAIL[2] - 0.15, -1]) cube([1.8, PB_RAIL[2] + 0.3, PB_RAIL[1] + 4]);
             }
-            translate([-PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0 - 3]) cube([PB_RAIL[0] + 4.4, D - BACK_T - (PB_Y - 4) + 0.01, 3]);
-            for (z = POL_Z) translate([POL_X, D - BACK_T + 0.01, z]) rotate([90, 0, 0]) pololu_cradle();
-            for (p = [[-60, 110], [60, 110], [-60, 160], [0, 95]]) translate([p[0] - 5, D - BACK_T - 3, p[1] - 2]) difference() { cube([10, 3.01, 4]); translate([2, -0.01, -1]) cube([6, 1.8, 6]); }
+            if (POWER_REVG) translate([-PB_RAIL[0]/2 - 2.2, PB_Y - 4, PB_Z0 - 3]) cube([PB_RAIL[0] + 4.4, D - BACK_T - (PB_Y - 4) + 0.01, 3]);
+            if (POWER_REVG) for (z = POL_Z) translate([POL_X, D - BACK_T + 0.01, z]) rotate([90, 0, 0]) pololu_cradle();
+            for (p = CLIPS) translate([p[0] - 5, D - BACK_T - 3, p[1] - 2]) difference() { cube([10, 3.01, 4]); translate([2, -0.01, -1]) cube([6, 1.8, 6]); }
         }
         ext_x(-CLEAT_L/2, CLEAT_L/2) cleat_groove_2d();
         if (VESA_ON) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(INS_M4_D, D - INS_M4_L, D + 1, sx*VESA/2, VESA_Z + sz*VESA/2);

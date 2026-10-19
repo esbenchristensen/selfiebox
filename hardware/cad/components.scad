@@ -87,7 +87,7 @@ module rpi5() {
 CAM_PCB = [25, 23.862, 1.12];
 CAM_HOLES = [[-10.5, -0.168], [10.5, -0.168], [-10.5, 12.332], [10.5, 12.332]];   // relative to lens centre (x, z)
 CAM_LENS_FROM_EDGE = 9.53;
-CAM_HOLDER = 10.8;  CAM_LENS_H = 8.3;  CAM_BARREL = 6.95;  CAM_CONN_H = 2.75;
+CAM_HOLDER = 10.8;  CAM_HOLDER_H = 4.07;  CAM_LENS_H = 8.3;  CAM_BARREL = 6.95;   // RP-008155 (Wide): tip Ø6.95, 8.3 above the board  CAM_CONN_H = 2.75;
 // Lens centre at x = 0, z = 0; PCB front face at y = 0, lens pointing to -y; flex edge at -z.
 // Rotated 90 deg (flex edge to +x): the sensor's long side runs vertically -> native portrait.
 CAM_HOLES_ROT = [for (h = CAM_HOLES) [-h[1], h[0]]];
@@ -98,8 +98,8 @@ module camera_module3_wide() {
         for (h = CAM_HOLES) translate([h[0], -1, h[1]]) rotate([-90, 0, 0]) cylinder(d = 2.2, h = 3, $fn = 16);
     }
     color([0.15, 0.15, 0.15]) {
-        translate([-CAM_HOLDER/2, -(CAM_LENS_H - 3), -CAM_HOLDER/2]) cube([CAM_HOLDER, CAM_LENS_H - 3, CAM_HOLDER]);
-        translate([0, -CAM_LENS_H, 0]) rotate([-90, 0, 0]) cylinder(d = CAM_BARREL, h = 3.01, $fn = 32);
+        translate([-CAM_HOLDER/2, -CAM_HOLDER_H, -CAM_HOLDER/2]) cube([CAM_HOLDER, CAM_HOLDER_H, CAM_HOLDER]);
+        translate([0, -CAM_LENS_H, 0]) rotate([-90, 0, 0]) cylinder(d1 = CAM_BARREL, d2 = CAM_BARREL + 0.3, h = CAM_LENS_H - CAM_HOLDER_H + 0.01, $fn = 32);
     }
     color([0.85, 0.85, 0.8]) translate([-10, CAM_PCB[2], -CAM_LENS_FROM_EDGE]) cube([20, CAM_CONN_H, 5.5]);
 }
