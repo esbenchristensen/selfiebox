@@ -78,6 +78,13 @@ REFS = {
     "carlsberg_hop": {
         "green": [(35, 91, 44)],
     },
+    "airtox_dominance": {
+        "white": [(255, 255, 255)],
+        "orange": [(238, 62, 21)],
+    },
+    "airtox_dominance_word": {
+        "white": [(255, 255, 255)],
+    },
 }
 
 

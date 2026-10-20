@@ -336,5 +336,35 @@
       "topper"
     ],
     "unit": "gen2"
+  },
+  {
+    "id": "airtox_dominance",
+    "name": "Airtox Dominance",
+    "place": "MMA-ligaens boks",
+    "palette": {
+      "base": "#141414",
+      "orange": "#ee3e15",
+      "white": "#ffffff"
+    },
+    "casing": "#141414",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#ee3e15"
+      ],
+      "glow": "#ffffff"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": "Fear nothing"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
   }
 ]
