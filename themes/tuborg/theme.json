@@ -26,10 +26,6 @@
       "hex": "#8f8f93",
       "filament": "ASA silver"
     },
-    "glassb": {
-      "hex": "#4a2a12",
-      "filament": "ASA brown"
-    },
     "cream": {
       "hex": "#f4ead2",
       "filament": "ASA cream"
@@ -53,7 +49,7 @@
   },
   "casing": {
     "style": "venue",
-    "colour": "#2e9a48",
+    "colour": "#1d1d20",
     "built_by": "hardware/tools/venue_themes.py"
   },
   "light": {

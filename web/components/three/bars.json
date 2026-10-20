@@ -237,24 +237,23 @@
     "name": "Tuborg",
     "place": "Danmarks barer",
     "palette": {
-      "base": "#0c6928",
-      "green": "#309654",
-      "deep": "#1a4033",
-      "lime": "#a2f37c",
+      "base": "#2e9a48",
+      "band": "#1a8a3c",
+      "deep": "#1a3a30",
+      "lime": "#80e040",
       "white": "#ffffff",
-      "silver": "#adadb0",
-      "bottle": "#1f7a3e",
+      "silver": "#8f8f93",
       "cream": "#f4ead2",
       "beer": "#e7a21f",
-      "shine": "#4fae6e",
-      "sky": "#14803c",
-      "ink": "#1a4033"
+      "sky": "#3aa852",
+      "ink": "#1a3a30",
+      "shine": "#5cbf6a"
     },
-    "casing": "#0c6928",
+    "casing": "#1d1d20",
     "ring": {
       "idle": [
         "#ffffff",
-        "#a2f37c"
+        "#80e040"
       ],
       "glow": "#5fd36a"
     },

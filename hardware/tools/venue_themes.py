@@ -290,14 +290,21 @@ def wing_body(outline):
     return tb.boolean("diff", [body] + holes), outline
 
 
-def topper_body(outline):
-    """theme_builder's topper, with a free outline. z = 0 is the top of the joint spacer."""
+def topper_outline(outline):
+    """The topper's printed outline: the theme's outline on the mounting strip, rounded at the box's top corners."""
     outline = U(outline, box(-HW, 0, HW, 14)).buffer(-2).buffer(2)
     r = G["R"]
     for sx in (-1, 1):   # follow the box's rounded top corners where the outline is as wide as the box
         corner = box(min(sx * HW, sx * (HW - r)), -1, max(sx * HW, sx * (HW - r)), r)
         if outline.bounds[0] > -HW - 1 and outline.bounds[2] < HW + 1:
             outline = outline.difference(corner.difference(Point(sx * (HW - r), r).buffer(r, 48)))
+    return outline
+
+
+def topper_body(outline):
+    """theme_builder's topper, with a free outline. z = 0 is the top of the joint spacer (gen 2: of the unit)."""
+    r = G["R"]
+    outline = topper_outline(outline)
     th = outline.bounds[3]
     face = tb.extrude_xz(outline, 0, tb.FACE_T)
     base = tb.cube(-(HW - r - 2), HW - r - 2, 3, 62, 0, 12)
@@ -1821,24 +1828,28 @@ def tuborg():
     # Colours sampled from the Grøn Tuborg can on tuborg.dk: can green, the label's darker band, lime lettering,
     # the dark green of »GRØN«, the grey crown. The bottle is the brown Grøn Tuborg bottle from tuborg.dk's photos.
     pal = {"base": "#2e9a48", "band": "#1a8a3c", "deep": "#1a3a30", "lime": "#80e040", "white": "#ffffff", "silver": "#8f8f93",
-           "glassb": "#4a2a12", "cream": "#f4ead2", "beer": "#e7a21f", "sky": "#3aa852", "ink": "#1a3a30", "shine": "#5cbf6a"}
+           "cream": "#f4ead2", "beer": "#e7a21f", "sky": "#3aa852", "ink": "#1a3a30", "shine": "#5cbf6a"}
 
     def wing(side_seed):
         # Each object stands right against the box and the outline only hugs it, so the side is the object itself.
         strip = box(X0, 46, X0 + 4, 252)
         if side_seed % 2 == 0:
-            # Right: a brown Grøn Tuborg bottle with the green neck foil and the white oval label with »GRØN«.
-            bx = X0 + 25
-            body = box(bx - 22, 30, bx + 22, 172).buffer(7).buffer(-7)
-            shoulder = Polygon([(bx - 22, 166), (bx + 22, 166), (bx + 11, 212), (bx - 11, 212)])
-            neck = box(bx - 11, 208, bx + 11, 266)
-            lip = box(bx - 12.5, 262, bx + 12.5, 274).buffer(1.5)
-            bottle = U(body, shoulder, neck, lip).buffer(4).buffer(-4)
-            foil = U(box(bx - 11.5, 226, bx + 11.5, 274), lip).intersection(bottle)
-            label = ell(bx, 104, 17, 40)
-            word = fit(affinity.rotate(text("GRØN", "poppins", 0, 0, 10), 90, origin=(0, 0)), (bx - 8, 80, bx + 8, 128))
-            outline = U(bottle.buffer(3), strip).buffer(10).buffer(-10).intersection(box(X0, 0, X0 + 80, 300))
-            L = [("base", outline), ("glassb", bottle), ("band", foil), ("band", label.buffer(2.5)), ("white", label), ("deep", word)]
+            # Right: a 50 cl Grøn Tuborg can as it looks on tuborg.dk: green can, silver top and foot, the white label
+            # with TUBORG in lime on its green band and »GRØN« under it.
+            cx = X0 + 38
+            body = box(cx - 36, 58, cx + 36, 238).buffer(4).buffer(-4)
+            top = Polygon([(cx - 36, 236), (cx + 36, 236), (cx + 31, 250), (cx - 31, 250)]).buffer(1.5).buffer(-1.5)
+            foot = Polygon([(cx - 33, 50), (cx + 33, 50), (cx + 36, 60), (cx - 36, 60)]).buffer(1.5).buffer(-1.5)
+            can = U(body, top, foot)
+            label = ell(cx, 150, 33, 46)
+            band = label.buffer(-2.5).difference(ell(cx, 150, 23, 29)).intersection(box(cx - 40, 160, cx + 40, 260))
+            outline = U(can.buffer(3), strip).buffer(10).buffer(-10).intersection(box(X0, 0, X0 + 80, 300))
+            L = [("base", outline), ("base", can), ("silver", top), ("silver", foot), ("white", label), ("band", band)]
+            arch, _ = tuborg_arched(cx, 179.8, 26, 8, "lime")
+            L += arch
+            L += [("deep", box(cx - 33, 158.6, cx + 33, 160.2).intersection(label)), ("deep", box(cx - 33, 139.8, cx + 33, 141.4).intersection(label))]
+            L += [("deep", text("GRØN", "poppins", cx, 150, 11, 46))]
+            L += [("band", label.buffer(-2.5).difference(ell(cx, 150, 23, 29)).intersection(box(cx - 40, 0, cx + 40, 138)))]
         else:
             # Left: a draught glass, golden beer under a cream head.
             gx = X0 + 30
@@ -1873,15 +1884,15 @@ def tuborg():
 
     def screen(w, h):
         L = [("base", box(0, 0, w, h))]
-        # Light from above and a bar counter of brown Grøn Tuborg bottles at the foot, the label colours only.
+        # Light from above and a row of Grøn Tuborg cans at the foot, the label colours only.
         rays = U(*[Polygon([(w / 2, h + 40), (w / 2 + 1200 * math.cos(math.radians(a - 3)), h + 40 + 1200 * math.sin(math.radians(a - 3))),
                             (w / 2 + 1200 * math.cos(math.radians(a + 3)), h + 40 + 1200 * math.sin(math.radians(a + 3)))]) for a in range(200, 345, 14)])
         L += [("sky", rays.intersection(box(0, 0, w, h)))]
         for i, x in enumerate(np.linspace(60, w - 60, 7)):
             if i in (2, 3, 4):
                 continue
-            b = U(box(x - 20, 60, x + 20, 150).buffer(5).buffer(-5), Polygon([(x - 20, 146), (x + 20, 146), (x + 9, 176), (x - 9, 176)]), box(x - 9, 172, x + 9, 206), box(x - 10, 204, x + 10, 214))
-            L += [("deep", b.buffer(3)), ("glassb", b), ("band", box(x - 9, 188, x + 9, 214)), ("white", ell(x, 106, 14, 22))]
+            c = box(x - 24, 66, x + 24, 190).buffer(3).buffer(-3)
+            L += [("deep", c.buffer(3)), ("band", c), ("silver", box(x - 22, 182, x + 22, 192)), ("white", ell(x, 126, 17, 32))]
         L += [("deep", box(0, 0, w, 64)), ("lime", box(0, 60, w, 66))]
         L += tuborg_logo((90, 760, w - 90, 860))
         L += [("lime", text("HELE DANMARKS PILSNER", "archivo-black", w / 2, 700, 22, w * 0.7))]
@@ -1889,9 +1900,9 @@ def tuborg():
 
     return dict(name="Tuborg", place="Danmarks barer", font="archivo-black", pal=pal, unit="gen2",
                 filament={"base": "ASA green", "band": "ASA dark green", "deep": "ASA forest green", "lime": "ASA lime green", "white": "ASA white",
-                          "silver": "ASA silver", "glassb": "ASA brown", "cream": "ASA cream", "beer": "ASA yellow", "sky": "ASA light green",
+                          "silver": "ASA silver", "cream": "ASA cream", "beer": "ASA yellow", "sky": "ASA light green",
                           "ink": "ASA forest green", "shine": "ASA light green"},
-                casing="#2e9a48", ring={"idle": ["#ffffff", "#80e040"], "glow": "#5fd36a"},
+                casing="#1d1d20", ring={"idle": ["#ffffff", "#80e040"], "glow": "#5fd36a"},
                 screen=dict(bg="base", ink="white", accent="lime", cta="Sig «Skål!»",
                             ticker="Grøn Tuborg  •  Hele Danmarks pilsner  •  Drik med respekt  •  Kun for 18+  •"),
                 frame=dict(bg="base", ink="lime", caption="Skål for i aften"), photo="print-club",
