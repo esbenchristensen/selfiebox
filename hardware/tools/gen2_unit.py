@@ -50,7 +50,8 @@ def main():
                          tb.extrude_xz(outer.buffer(-1.0, 64), D - 1, D)],
         "shell_closed_band": [tb.extrude_xz(outer.difference(outer.buffer(-3, 64)), 22.2, 31.8)],
         "diffuser_ring": [tb.extrude_xz(channel.difference(gap), -1.6, 2.0)],
-        "v_display": [tb.extrude_xz(GLASS, 3.7, 6.0)],
+        # v12: the glass sits 1.6 mm behind the face (the front is a 1.6 mm lip over it)
+        "v_display": [tb.extrude_xz(GLASS, 1.6, 3.9)],
         "v_camera": [tb.extrude_xz(Point(0, RING_Z1).buffer(12, 64).difference(Point(0, RING_Z1).buffer(5, 48)), -0.6, 2.5),
                      tb.extrude_xz(Point(0, RING_Z1).buffer(5, 48), 0.6, 2.5)],
         # Sits on the unit's top face (z = 0 here); HaloBox lifts it to the top of the unit.

@@ -504,7 +504,8 @@ S3 = SLOT_W/2;                            // 7.0: slot half width
 RF3 = S3 - 0.15;                          // 6.85: ring face half width (0.15 shadow gap)
 RW3 = 1.2;                                // ring wall
 FL3 = CH_IN - 0.1;                        // 8.1: ring flange half width
-CH_BACK = RIB_TOP + 8;                    // 27.7: channel back (front walls end here)
+CH_BACK = 27.7;                           // channel back (front walls end here); v12: a fixed depth, no longer tied to the display
+XB3_Y = CH_BACK - 4;                      // 23.7: front face of the frame's cross bars
 FR_T = 4;                                 // frame back plate
 FR_BACK = CH_BACK + FR_T;                 // 31.7: flat back of the frame
 RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
@@ -525,15 +526,26 @@ STRIP_T3 = [4.7, 6.9];                    // strip wall face at r 6.9; thickest 
 CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.15, [16, 9.6, 4.3]], [-1, 23.7, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
 J_R = 11.8;                               // front screws: in the outer wall at the 4 corners
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
+// v12 (Esben 20 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v11_skitse_tyndere-front-og-rille.png):
+// the display stays behind the front, but the front is only 1.6 mm thick over the glass (v2-v11: 3.2 + a 0.5 land,
+// glass 3.7 in). The glass lies straight on the back of that lip, so there is no gap at the window edge. A groove
+// in the lip, 1 mm out from the window bevel, takes a self-adhesive soft foam tape that seals round the picture.
+GLASS_Y3 = 1.6;                           // glass front face = lip thickness
+GLASS_C3 = 0.4;                           // the thin pocket clears the glass by 0.4 (the 8 ribs locate it, 0.2)
+LAND3 = 1.0;                              // flat land from the window bevel to the groove
+GROOVE3 = [3.2, 0.6];                     // groove width, depth; [C] foam tape 3 x 1 mm, squeezed to 0.6 (40 %)
+WIN3_BEVEL = [1.6, 0.6];                  // window grows 1.6 at the face, 0.6 at the glass (as v2-v11)
+module groove3_2d(g) translate([VIEW_X, GC]) offset(r = WIN3_BEVEL[1] + g) square([TD10_VIEW[0] + 1, TD10_VIEW[1] + 1], center = true);
+module pocket3_2d() translate([VIEW_X, GC]) offset(r = TD10_R + GLASS_C3) square([GW - 2*TD10_R, GH - 2*TD10_R], center = true);
 // [A] Touch Display 2 10" (RP-010276 physical spec): panel 7.05 deep incl. the 1.1 cover lens,
 // four M2.5 tabs 3 deep at 22.54 from the sides, 46.42 from the top and 41.68 from the bottom edge;
 // Pi stand-offs 8.5 high on a 49 x 58 pattern, 6.87 below the centre. [M] up = the drawing's up,
 // so the frame's tab holes are slots (+/-2.4) and fit either way round.
 DSP_PANEL = 7.05;  DSP_TAB3 = [8, 12, 3];  DSP_TAB_X = 166.9/2 - 22.54;  DSP_TAB_Z = [248.1/2 - 46.42, -(248.1/2 - 41.68)];
 DSP_PI_DZ = -6.87;  DSP_SO = [5, 8.5];
-TAB_Y = GLASS_Y + DSP_PANEL + DSP_TAB3[2];   // 13.75: back face of the tabs
-PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the glass land
-PI_Y3 = GLASS_Y + DSP_PANEL + DSP_SO[1];
+TAB_Y = GLASS_Y3 + DSP_PANEL + DSP_TAB3[2];  // 11.65: back face of the tabs
+PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the lip (v12; v2-v11: the glass land)
+PI_Y3 = GLASS_Y3 + DSP_PANEL + DSP_SO[1];
 
 module cam_keep2d() translate([-CAM_KEEP[0], RING_Z1 - CAM_KEEP[1]]) square([2*CAM_KEEP[0], 2*CAM_KEEP[1]]);
 // the ring's plan shape at half width h: the band with round ends next to the camera
@@ -547,14 +559,15 @@ module ring3_bevel(y0, y1, a, b, n = 5) for (i = [0:n - 1]) ext_y(y0 + i*(y1 - y
 
 // 8 locating ribs round the glass edge (0.2 mm clearance): the picture sits evenly in the window.
 // Each runs from the glass edge out into the channel wall; 12 long, up to 2.5 mm over the glass back.
+// v12: they stand on the thin lip (y = GLASS_Y3) inside the glass pocket.
 GRIB_C = 0.2;  GRIB_L = 12;  GRIB_H = 2.5;
 module glass_ribs() {
     for (sx = [-1, 1], dz = [-70, 70])           // sides: wall is 1.2 mm from the glass
-        translate([sx > 0 ? GW/2 + GRIB_C : -(RING_X - CH_IN), PT - 0.01, GC + dz - GRIB_L/2])
-            cube([RING_X - CH_IN - GW/2 - GRIB_C, GLASS_Y + GRIB_H - PT, GRIB_L]);
+        translate([sx > 0 ? GW/2 + GRIB_C : -(RING_X - CH_IN), GLASS_Y3 - 0.01, GC + dz - GRIB_L/2])
+            cube([RING_X - CH_IN - GW/2 - GRIB_C, GRIB_H + 0.01, GRIB_L]);
     for (sx = [-1, 1], sz = [-1, 1])             // top and bottom
-        translate([sx*45 - GRIB_L/2, PT - 0.01, sz > 0 ? GC + GH/2 + GRIB_C : RING_Z0 + CH_IN])
-            cube([GRIB_L, GLASS_Y + GRIB_H - PT, sz > 0 ? RING_Z1 - CH_IN - (GC + GH/2 + GRIB_C) : GC - GH/2 - GRIB_C - (RING_Z0 + CH_IN)]);
+        translate([sx*45 - GRIB_L/2, GLASS_Y3 - 0.01, sz > 0 ? GC + GH/2 + GRIB_C : RING_Z0 + CH_IN])
+            cube([GRIB_L, GRIB_H + 0.01, sz > 0 ? RING_Z1 - CH_IN - (GC + GH/2 + GRIB_C) : GC - GH/2 - GRIB_C - (RING_Z0 + CH_IN)]);
 }
 // logo (Esben 19 Oct, sketch /mnt/project-files/logo-paa-boksen/): the white Selfi logo with green dots,
 // 27.5 x 10, inlaid 0.8 mm (layers 1-4, AMS) flush in the front, centred in the black field
@@ -562,7 +575,7 @@ module glass_ribs() {
 LOGO_D = 0.8;
 LOGO_Z = ((RING_Z0 + S3) + (GC - (TD10_VIEW[1] + 1)/2 - 1.6))/2;
 module logo_inlay(c) ext_y(0, LOGO_D) translate([0, LOGO_Z]) if (c == "green") logo_green2d(); else if (c == "white") logo_white2d(); else logo_all2d();
-module front3() {
+module front3() union() {
     difference() {
         union() {
             front_base(H, BLOCK_Z);
@@ -571,9 +584,11 @@ module front3() {
             ext_y(PT - 0.01, CH_BACK) difference() { ring_band2d(-CH_HALF, CH_HALF); ring_band2d(-CH_IN, CH_IN); glass_keep2d(); cam_keep2d(); }
             for (j = J2) cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
             for (h = CAM_HOLES_ROT) { cyl_y(4.6, PT - 0.01, CAM_PCB_Y, h[0], LENS_Z + h[1]); cyl_y(2.0, CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5, h[0], LENS_Z + h[1]); }
-            glass_land(); cam_shroud(); joint_rib(); glass_ribs(); snap_ledges();
+            cam_shroud(); joint_rib(); snap_ledges();
         }
-        hull() { ext_y(-1, PT - 1.6) window2d(1.6); ext_y(-1, PT + 1) window2d(0); }
+        hull() { ext_y(-1, 0) window2d(WIN3_BEVEL[0]); ext_y(-1, GLASS_Y3 + 0.01) window2d(WIN3_BEVEL[1]); }
+        ext_y(GLASS_Y3, PT + 0.01) pocket3_2d();                           // v12: thin lip over the glass
+        ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3 + 0.01) difference() { groove3_2d(LAND3 + GROOVE3[0]); groove3_2d(LAND3); }
         ext_y(-1, LOGO_D) translate([0, LOGO_Z]) logo_all2d();   // pocket for the inlay
         ext_y(-1, PT + 0.01) ring3_2d(S3);
         ring3_bevel(1.95, PT + 0.01, S3, FL3 + 0.1);                      // seat for the ring's flange
@@ -583,6 +598,7 @@ module front3() {
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
         for (j = J2) cyl_y(INS_M3_D, CH_BACK - 11, CH_BACK + 1, j[0], j[1]);
     }
+    glass_ribs();
 }
 module ring3() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
@@ -649,9 +665,9 @@ module frame3() {
             // cross bars at the display tabs, with bosses down to the tabs
             // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
             // in v2 they were loose pieces in the print
-            for (z = DSP_TAB_Z) ext_y(RIB_TOP + 4, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
+            for (z = DSP_TAB_Z) ext_y(XB3_Y, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
             for (z = DSP_TAB_Z) ext_y(CH_BACK, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF + 1), 16], center = true);
-            for (t = tabs) cyl_y(7, TAB_Y - PRELOAD, RIB_TOP + 4.01, t[0], t[1]);
+            for (t = tabs) cyl_y(7, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0], t[1]);
             // tubes that press the camera board onto its pegs
             for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
             snap_arms();
@@ -685,13 +701,13 @@ module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.6, 0.6, 0.63]) for (sx = [-1, 1], sz = [-1, 1]) cyl_y(DSP_SO[0], DSP_PANEL - 0.01, DSP_PANEL + DSP_SO[1], sx*24.5, DSP_PI_DZ + sz*29);
     color([0.1, 0.45, 0.2]) translate([-20, DSP_PANEL, DSP_PI_DZ - 20]) cube([40, 2, 50]);       // [M] adapter board
 }
-module placed_display3() translate([0, GLASS_Y, GC]) td2_10();
+module placed_display3() translate([0, GLASS_Y3, GC]) td2_10();
 module placed_pi3() translate([0, PI_Y3, GC + DSP_PI_DZ]) rpi5();
 // the shell gives way round the 4 front screw bosses (they sit in the outer wall)
 module shell3(top = UNIT_TOP) {
     difference() {
         union() {
-            difference() { shell2(top); for (j = JOINTS) cyl_y(POST_D + 0.5, RIB_TOP + RAIL_T - 0.1, D - BACK_T + 0.02, j[0], j[1]); }
+            difference() { shell2(top); for (j = JOINTS) cyl_y(POST_D + 0.5, XB3_Y - 0.1, D - BACK_T + 0.02, j[0], j[1]); }
             for (j = JOINTS) cyl_y(M3_HEAD_CB + 1, D - BACK_T - 0.01, D, j[0], j[1]);   // close v1's screw holes (Ø6.4) in the back wall: no screw there since v2
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
             power_holders();
@@ -767,13 +783,15 @@ if (VIEW == "x_frame3")    frame3();
 if (VIEW == "x_strip_w")   placed_strips3("w");
 if (VIEW == "x_strip_rgb") placed_strips3("rgb");
 if (VIEW == "x_display3")  placed_display3();
+// v12: the foam tape in the lip groove, squeezed to the groove depth (for the 3D viewer)
+if (VIEW == "x_tape3")     ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3) difference() { groove3_2d(LAND3 + GROOVE3[0] - 0.1); groove3_2d(LAND3 + 0.1); }
 if (VIEW == "c_pi3")       placed_pi3();
 // the display and the Pi in their own materials for the 3D viewer: glass with its black border,
 // the active picture, the metal back; the Pi board and the Active Cooler
-if (VIEW == "x_dsp_glass")  translate([0, GLASS_Y, GC]) hull() for (sx = [-1, 1], sz = [-1, 1])
+if (VIEW == "x_dsp_glass")  translate([0, GLASS_Y3, GC]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = 1.1, $fn = 24);
-if (VIEW == "x_dsp_active") translate([-135.4/2, GLASS_Y - 0.06, GC - 216.6/2]) cube([135.4, 0.05, 216.6]);
-if (VIEW == "x_dsp_back")   translate([0, GLASS_Y, GC]) {
+if (VIEW == "x_dsp_active") translate([-135.4/2, GLASS_Y3 - 0.06, GC - 216.6/2]) cube([135.4, 0.05, 216.6]);
+if (VIEW == "x_dsp_back")   translate([0, GLASS_Y3, GC]) {
     translate([-TD10_GLASS[0]/2 + 3, 1.1, -TD10_GLASS[1]/2 + 3]) cube([TD10_GLASS[0] - 6, DSP_PANEL - 1.1, TD10_GLASS[1] - 6]);
     for (sx = [-1, 1], z = DSP_TAB_Z) translate([sx*DSP_TAB_X - DSP_TAB3[0]/2, DSP_PANEL - 0.01, z - DSP_TAB3[1]/2]) cube([DSP_TAB3[0], DSP_TAB3[2], DSP_TAB3[1]]);
     for (sx = [-1, 1], sz = [-1, 1]) cyl_y(DSP_SO[0], DSP_PANEL - 0.01, DSP_PANEL + DSP_SO[1], sx*24.5, DSP_PI_DZ + sz*29);
@@ -803,7 +821,7 @@ if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 5, [4.
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
 if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
 if (VIEW == "p_frame3")    translate([0, 0, FR_BACK]) rotate([-90, 0, 0]) frame3();      // flat back down
-if (VIEW == "info3") echo(J2 = J2, TAB_Y = TAB_Y, PI_Y3 = PI_Y3, CAM_END = CAM_END, CH_BACK = CH_BACK, FR_BACK = CH_BACK + FR_T, CAM_PCB_Y = CAM_PCB_Y);
+if (VIEW == "info3") echo(J2 = J2, GLASS_Y3 = GLASS_Y3, TAB_Y = TAB_Y, PI_Y3 = PI_Y3, CAM_END = CAM_END, CH_BACK = CH_BACK, FR_BACK = CH_BACK + FR_T, CAM_PCB_Y = CAM_PCB_Y);
 
 // cutaway: keep x > -20 so the camera on the left looks into the printer bay
 module cut_keep() { intersection() { children(); translate([-20, -500, -500]) cube([1000, 1000, 1000]); } }
