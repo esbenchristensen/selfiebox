@@ -1,6 +1,6 @@
 # Sidestruktur: hvorfor privat og erhverv har hver sin side
 
-> **Historik.** Den 18. oktober 2026 droppede Selfi privatudlejningen og satser kun på erhverv. Forsiden `/` er nu fotobokse i eget design til alle slags steder, `/erhverv` og `/events` sender videre til `/`, og hver funktion har sin egen side under `/funktioner`. Kundesiderne `/erhverv/<sted>`, `/events/smukfest` og `/kataloger/<slug>` er uændrede. Resten af dokumentet beskriver den gamle opdeling.
+> **Historik.** Den 18. oktober 2026 droppede Selfi privatudlejningen og satser kun på erhverv. Forsiden `/` er nu fotobokse i eget design til alle slags steder, `/erhverv` og `/events` sender videre til `/`, og hver funktion har sin egen side under `/funktioner`. Kundesiderne `/erhverv/<sted>` og `/events/smukfest` er uændrede og er også katalogerne; `/kataloger/<slug>` sender videre til `/erhverv/<slug>` (20. okt. 2026). Resten af dokumentet beskriver den gamle opdeling.
 
 Oktober 2026. Erstatter den gamle forside, hvor privat og erhverv delte én side med en Privat/Erhverv-knap i toppen.
 
