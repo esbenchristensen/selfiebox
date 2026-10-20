@@ -1,5 +1,7 @@
 # Selfi Halo gen 2, version v10: printguide
 
+> **Må ikke printes.** Brug halo-gen2-v11 (strømindgangen sidder i midten).
+
 **Version:** halo-gen2-v10 (20. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v10_`. Den erstatter halo-gen2-v9, som ikke må printes; kun skallen og vægbeslaget er nye (strømindgangen er flyttet til bunden, og låsen er rykket ud). CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; printermodulet kommer i en senere version.

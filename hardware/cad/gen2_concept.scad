@@ -45,10 +45,10 @@ GLOW = false;
 RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
 // underside services at y = D/2 + 11.5 (85 deep: 54). Written out, not via a new variable: these override
 // halo.scad's values, and OpenSCAD evaluates an override where the first assignment stands.
-IF_SCREW = [[-70, D/2 + 11.5], [70, D/2 + 11.5]];  IF_DOWEL = [[-20, D/2 + 11.5], [20, D/2 + 11.5]];  IF_CABLE = [0, D/2 + 11.5];
+IF_SCREW = [[-70, D/2 + 11.5], [70, D/2 + 11.5]];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-22, 38];   // v11: the power column has the middle; cable cap and dowels step aside
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
-POWER_REVG = false;  CLIPS = [[-60, 135], [60, 140], [-60, 160], [100, 90]];                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
+POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 175], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
 // camera (Esben 19 Oct, Wide chosen): lens tip 0.3 behind the face, hole 0.4 over the tip, only a 0.4 x 45 deg edge break
 CAM_TIP_Y = 0.3;  CAM_HOLE = CAM_BARREL + 0.4;  CAM_HOLE_REAR = CAM_BARREL + 0.85;  CAM_CONE = [0.4, 45];
 
@@ -152,8 +152,8 @@ module shell2(top = UNIT_TOP) {
 //     FPC socket on top, centred, cable leaves from the long edge on the port side; Seeed's FPC is 20 cm
 // [C] reed module OKY3440-1 32 x 19 x 7 (retailer; one M3 hole), [C] neodymium magnet Ø8 x 3 (retailer)
 HAT4G = [32, 65, 12];   HAT4G_P = [-88, 166];      // w (x), h (z), thickness (y); bottom-left on the back wall
-MCORE = [70.5, 52.2, 12.2]; MCORE_P = [5 - 70.5/2, 136];  // v9: lying (long edge horizontal, FPC socket at the bottom), right behind the Pi above the WLED controller: the 20 cm FPC needs ~16 cm (v8's spot needed ~29)
-IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 200];
+MCORE = [70.5, 52.2, 12.2]; MCORE_P = [5 - 70.5/2, 148];  // v9: lying (long edge horizontal, FPC socket at the bottom), right behind the Pi above the WLED controller: the 20 cm FPC needs ~16 cm (v8's spot needed ~29)
+IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 205];
 MSTRIP = [110, 11, 3.0];  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
 // v8 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v8_skitse_mikrofon-underside.png):
 // the mic strip moves from under the top to a recess in the floor right behind the front, under the light
@@ -273,7 +273,7 @@ module mic_rings() for (x = MIC_HOLES) translate([x, MIC_Y, MIC_FLOOR ? WALL - M
 // air turns sideways. Side walls only along x so the hood prints without support (back down).
 HOOD = [8, 1.6];                        // roof height above the floor, wall/roof thickness
 module vent_hoods() for (sx = [-1, 1]) {
-    x0 = VENT_XS[0] - VENT_SL[0]/2 - 2;  x1 = VENT_XS[len(VENT_XS) - 1] + VENT_SL[0]/2 + 2;
+    xs = vent_xs(sx);  x0 = xs[0] - VENT_SL[0]/2 - 2;  x1 = xs[len(xs) - 1] + VENT_SL[0]/2 + 2;
     y0 = vent_y(sx) - vent_l(sx)/2 - 2;  y1 = vent_y(sx) + vent_l(sx)/2 + 2;
     for (x = [x0 - HOOD[1], x1]) translate([sx > 0 ? x : -x - HOOD[1], y0, WALL - 0.01]) cube([HOOD[1], y1 - y0, HOOD[0] + HOOD[1]]);
     translate([sx > 0 ? x0 - HOOD[1] : -x1 - HOOD[1], y0, WALL + HOOD[0]]) cube([x1 - x0 + 2*HOOD[1], y1 - y0, HOOD[1]]);
@@ -284,9 +284,11 @@ module vent_hoods() for (sx = [-1, 1]) {
 // louvred slots high in the back wall into the 14 mm wall gap, which works as a chimney (closed in v7, BACK_EXH).
 // Every opening is 2.5 mm wide: no fingers, and a poked wire meets only 12 V parts.
 VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];   // underside: 2 x 7 slots, 7.5 cm2 (85 deep: 9.8)
+// v11: the left field gives its two inner slots to the printer cable cap and gets full-length slots back
+function vent_xs(sx) = sx > 0 ? VENT_XS : [for (i = [2:6]) 30 + 5*i];
 // 70 deep, the hoods sit between the frame (y 31.7, it reaches down to z 7) and the back wall. The left
-// field stops short of the power socket's column (v10, before: the lock screw's floor boss), so its slots are shorter: [left, right] slot length.
-VENT_Y0 = 33.5;  VENT_L = [13, D - BACK_T - 1.5 - 4 - VENT_Y0];
+// field had shorter slots until v10 (lock boss, then the power column); in v11 both run full length: [left, right] slot length.
+VENT_Y0 = 33.5;  VENT_L = [D - BACK_T - 1.5 - 4 - VENT_Y0, D - BACK_T - 1.5 - 4 - VENT_Y0];
 function vent_l(sx) = VENT_L[sx > 0 ? 1 : 0];
 function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 EXH_XS = [for (i = [0:36]) -90 + 5*i];  EXH_Z = [235, 245];  EXH_DROP = 2;    // back: 37 louvres, 9.3 cm2
@@ -298,12 +300,12 @@ BACK_EXH = false;
 CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
 // power (v10, Esben 20 Oct): the back stays closed. The 5.5/2.5 socket with screw terminals
 // [A] TRU Components DC-13F (Conrad 1570909, drawing: 39.8 long, barrel Ø10 x 12, terminal block 10 wide, 5 long)
-// sits mouth down in a printed column low on the back wall, next to the PSU. The PSU's straight plug goes up through
+// sits mouth down in a printed column low on the back wall, in the middle between the PSU and the WLED controller. The PSU's straight plug goes up through
 // a hole in the underside and disappears in the column; only the lead comes out, straight down. A hole that faces
 // down cannot fill with rain. The socket is wired first and pushed down from above: it rests on the step above
 // the barrel bore (plug pulled out) and two snap fingers catch the top of its body (plug pushed in).
 // [C] Body ~13 square (photo); [C] plug grip Ø<=12, <=38 long under the barrel (no Mean Well drawing): measure.
-PWR_P = [-49, 60];                              // column axis (x, y)
+PWR_P = [0, 60];                                // column axis (x, y): v11 in the middle (v10: x -49)
 PWR_SOCK = [10, 12, 13, 22.8, 10, 5];           // barrel Ø, length; body width, length; terminal block width, length
 PWR_MOUTH = 38;                                 // socket mouth z: plug space below it
 PWR_BORE = 12.5;  PWR_CAV = 13.8;  PWR_WALLT = 2;  // plug bore Ø, body cavity, column wall
@@ -313,8 +315,8 @@ PWR_OUT = PWR_CAV + 2*PWR_WALLT;                 // column outside, square
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
 // [A] DFRobot FIT0502 3 W 8 ohm enclosed speaker (drawing KN-SP4030-05): 69.9 x 31, flange 3.7,
 //     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
-SPK_P = [-72.5, 104];  SPK = [69.9, 31, 16];  SPK_FL = 3.7;  SPK_EAR = [63.6, 24];   // centre (x, z); w, h, depth
-module bottom_vents() for (sx = [-1, 1], x = VENT_XS) hull() for (dy = [-1, 1])
+SPK_P = [-72.5, 143.5];  SPK = [69.9, 31, 16];  SPK_FL = 3.7;  SPK_EAR = [63.6, 24];   // centre (x, z); w, h, depth
+module bottom_vents() for (sx = [-1, 1], x = vent_xs(sx)) hull() for (dy = [-1, 1])
     cyl_z(VENT_SL[0], -1, WALL + 1, sx*x, vent_y(sx) + dy*(vent_l(sx) - VENT_SL[0])/2);
 module louvre(x, z0, z1) hull() {   // outer opening lower than the inner one: water runs out
     translate([x - VENT_SL[0]/2, D - BACK_T - 0.5, z0]) cube([VENT_SL[0], 0.01, z1 - z0]);
@@ -466,9 +468,9 @@ module placed_printers() {
 // [A] Gledopto GL-C-016WL-D WLED controller 108 x 45 x 18 (Gledopto manual; no drawing, terminals at both short ends): flat on the back wall above the PSU
 // (the right wall is taken by the mic board higher up).
 // [A] DFRobot Gravity MOSFET DFR0457 (white strips) 44 x 32, 4 x Ø3.1 on 20 x 25; height not published (~16): on the left side wall.
-PSU5 = [128, 60, 25];  PSU5_P = [-37, 16];                    // x, z (bottom-left), on the back wall
-WLED = [108, 45, 18];  WLED_P = [-30, 80];                    // x, z (bottom-left), on the back wall
-MOSF = [44, 32, 16];   MOSF_P = [34.5, 124];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
+PSU5 = [60, 128, 25];  PSU5_P = [12, 16];                     // x, z (bottom-left), on the back wall; v11: stands up right of the power column, terminals at the top
+WLED = [45, 108, 18];  WLED_P = [-57, 16];                    // x, z (bottom-left), on the back wall; v11: stands up left of the power column
+MOSF = [44, 32, 16];   MOSF_P = [34.5, 64];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
 module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
     difference() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
@@ -481,8 +483,9 @@ module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls
         cube([8, 1.6, 0.01]); translate([0, sy > 0 ? -0.6 : 0.6, 1.2]) cube([8, 1.6, 0.01]); }
 }
 module power_holders() {
-    translate([PSU5_P[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([90, 0, 0]) wall_tray([PSU5[0], PSU5[1], PSU5[2]], PSU5[2] + 1.5);
-    translate([WLED_P[0], D - BACK_T + 0.01, WLED_P[1]]) rotate([90, 0, 0]) wall_tray([WLED[0], WLED[1], WLED[2]], WLED[2] + 1.5);
+    // v11: both stand up; the trays turn with them, so the low end stops stay at the terminal ends (top and bottom)
+    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU5[2] + 1.5);
+    translate([WLED_P[0] + WLED[0], D - BACK_T + 0.01, WLED_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([WLED[1], WLED[0], WLED[2]], WLED[2] + 1.5);
     translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], MOSF[2] + 1.5);
 }
 module placed_power3() {
