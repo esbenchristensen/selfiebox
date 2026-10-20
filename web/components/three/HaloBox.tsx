@@ -24,7 +24,7 @@ export type Venue = {
   frame: { bg: string; ink: string; caption: string };
   photo: string;
   parts: string[];
-  unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 85 deep) instead of rev G
+  unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 70 deep) instead of rev G
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -140,7 +140,9 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
     const light = new THREE.MeshStandardMaterial({ color: "#ffffff", emissive: ring[0], emissiveIntensity: 1.6, roughness: 0.4, toneMapped: false });
     const glass = new THREE.MeshPhysicalMaterial({ color: "#050507", roughness: 0.1, clearcoat: 1 });
     const lens = new THREE.MeshStandardMaterial({ color: "#0a0a0c", roughness: 0.2, metalness: 0.4 });
-    return { body, light, glass, lens };
+    const logoWhite = new THREE.MeshStandardMaterial({ color: "#f5f5f4", roughness: 0.7 });
+    const logoGreen = new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.7 });
+    return { body, light, glass, lens, logoWhite, logoGreen };
   }, [casing, ring]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
 
@@ -213,6 +215,9 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       {part("shell_closed_band", mats.light)}
       {part("v_display", mats.glass)}
       {part("v_camera", mats.lens)}
+      {/* Gen 2: the Selfi logo inlaid in the front under the screen */}
+      {part("logo_white", mats.logoWhite)}
+      {part("logo_green", mats.logoGreen)}
       <mesh position={[0, SCREEN.y, venue?.unit === "gen2" ? SCREEN_Z_GEN2 : SCREEN.z]}>
         <planeGeometry args={[SCREEN.w, SCREEN.h]} />
         <meshBasicMaterial map={privateScreen ?? screenMap} toneMapped={false} />

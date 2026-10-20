@@ -4,7 +4,8 @@
 //
 //   --occasions builds only the private party designs (bryllup, fodselsdag, julefrokost) into
 //   components/three/occasions.json and leaves the enclosure and the venues alone.
-//   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads, heidis, meny, white_hawks, carlsberg) into components/three/bars.json, for the bars' catalogues.
+//   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads, heidis, meny, white_hawks, carlsberg, red_bull) into components/three/bars.json, for the bars' catalogues.
+//   --unit-gen2 only squeezes public/models/unit_gen2.glb, written by hardware/tools/gen2_unit.py from the released gen 2 set.
 //
 // unit.glb       the real Halo enclosure (bezel, diffuser ring, shell, photo module, joint spacer)
 //                taken from hardware/docs/pack/pack.json, the CAD export behind the build pack.
@@ -22,6 +23,7 @@ import { join, resolve } from "node:path";
 const halo = resolve(process.argv[2] ?? "../../halo");
 const occasionsOnly = process.argv.includes("--occasions");
 const barsOnly = process.argv.includes("--bars");
+const unitGen2 = process.argv.includes("--unit-gen2");
 const out = resolve("public/models");
 const UNIT = ["bezel", "diffuser_ring", "shell_closed", "shell_closed_band", "v_display", "v_camera", "instax_front", "instax_shell", "instax_shell_band", "joint_spacer"];
 
@@ -35,6 +37,16 @@ async function squeeze(doc, ratio) {
 
 const kb = (f) => `${Math.round(statSync(f).size / 1024)} kB`;
 mkdirSync(out, { recursive: true });
+
+// The gen 2 unit: already in place, only compressed here
+if (unitGen2) {
+  const f = join(out, "unit_gen2.glb");
+  const doc = await io.read(f);
+  await squeeze(doc, 0.5);
+  await io.write(f, doc);
+  console.log("unit_gen2.glb", kb(f));
+  process.exit(0);
+}
 
 // The enclosure
 if (!occasionsOnly && !barsOnly) {
@@ -79,4 +91,4 @@ async function buildThemes(order, jsonFile) {
 
 if (!occasionsOnly && !barsOnly) await buildThemes(["smukfest", "roskilde", "nibe", "faarup", "legoland", "zoo"], "components/three/venues.json");
 if (!barsOnly) await buildThemes(["bryllup", "fodselsdag", "julefrokost"], "components/three/occasions.json");
-if (!occasionsOnly) await buildThemes(["flying_hirsch", "aab", "palads", "heidis", "meny", "white_hawks", "carlsberg"], "components/three/bars.json");
+if (!occasionsOnly) await buildThemes(["flying_hirsch", "aab", "palads", "heidis", "meny", "white_hawks", "carlsberg", "red_bull"], "components/three/bars.json");
