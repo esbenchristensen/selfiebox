@@ -116,7 +116,7 @@ export default function AirtoxDominanceKatalog() {
             <span className="kat-kicker">Forslag · 2026/27</span>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="kat-box kat-glow" src={`${IMG}/boks-airtox-dominance.png`} alt="Selfi Boks i sort med Airtox Dominance-logoet på en ottekantet top og to burstolper med orange hætter på siderne" style={{ width: 460, marginTop: 4 }} />
+          <img className="kat-box kat-glow" src={`${IMG}/boks-airtox-dominance-foto.png`} alt="Selfi Boks i sort med Airtox Dominance-logoet på en ottekantet top og to burstolper med orange hætter. Skærmen viser et face-off-billede i Airtox-rammen med en QR-kode" style={{ width: 460, marginTop: 4 }} />
           <h1 className="kat-center">Fansene i ringen</h1>
           <p className="kat-lede kat-center">Et udkast til Airtox Dominance: en fotoboks i ligaens design i hallen og i klubberne, der tager billeder og videoer af fansene og sætter ADFC og Airtox på alt, der deles.</p>
           <Band />
@@ -230,9 +230,9 @@ export default function AirtoxDominanceKatalog() {
           </div>
           <div className="kat-angles">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="kat-box" src={`${IMG}/boks-airtox-dominance-skraa-venstre.png`} alt="Airtox Dominance-boksen set skråt fra venstre med burstolpen forrest" />
+            <img className="kat-box" src={`${IMG}/boks-airtox-dominance-skraa-venstre.png`} alt="Airtox Dominance-boksen set skråt fra venstre. Skærmen viser et fighterkort i sort/hvid" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="kat-box" src={`${IMG}/boks-airtox-dominance-skraa-hoejre.png`} alt="Airtox Dominance-boksen set skråt fra højre med burstolpen forrest" />
+            <img className="kat-box" src={`${IMG}/boks-airtox-dominance-skraa-hoejre.png`} alt="Airtox Dominance-boksen set skråt fra højre. Skærmen viser et gruppebillede fra stævnet" />
           </div>
           <Band />
           <Folio n={6} />
