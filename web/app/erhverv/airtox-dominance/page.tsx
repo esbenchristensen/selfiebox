@@ -241,20 +241,26 @@ export default function AirtoxDominanceKatalog() {
         {/* 07 RAMMERNE */}
         <Page n={7} cap="Rammerne">
           <span className="kat-kicker">Rammerne</span>
-          <h2>Stævnet og fighterkortet</h2>
-          <p className="kat-lede">Hvert stævne får sin egen ramme med logoet, hallen og datoen. Fighterkortet gør fansen til en del af kortet.</p>
-          <div className="kat-frames">
+          <h2>Face-off, fighterkort og stævnet</h2>
+          <p className="kat-lede">Hvert stævne får sin egen ramme med logoet, hallen og datoen. Face-off og fighterkort gør fansen til en del af kortet.</p>
+          <div className="kat-frames kat-frames--3">
             <figure>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`${IMG}/foto-staevne.jpg`} alt="Stævnerammen i sort med Airtox Dominance-logoet og K.B. Hallen med dato" />
-              <figcaption>Stævnerammen: logoet med hal og dato, her fra K.B. Hallen.</figcaption>
+              <img src={`${IMG}/foto-faceoff.jpg`} alt="To fans laver face-off i foyeren med knyttede næver, i Airtox Dominance-rammen med Face-off og K.B. Hallen" />
+              <figcaption>Face-off: to fans stirrer hinanden ned som til indvejningen.</figcaption>
             </figure>
             <figure>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`${IMG}/foto-fighterkort.jpg`} alt="Fighterkortet i sort/hvid med Fear nothing og Airtox Dominance-logoet" />
-              <figcaption>Fighterkortet i sort/hvid med »Fear nothing« og plads til navnet.</figcaption>
+              <img src={`${IMG}/foto-fighterkort.jpg`} alt="En fan med armene over kors i sort/hvid på fighterkortet med Fear nothing og Airtox Dominance-logoet" />
+              <figcaption>Fighterkortet i sort/hvid med »Fear nothing«.</figcaption>
+            </figure>
+            <figure>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`${IMG}/foto-staevne.jpg`} alt="Fire fans jubler mod kameraet i foyeren, i stævnerammen med Airtox Dominance-logoet og K.B. Hallen med dato" />
+              <figcaption>Stævnerammen med hal og dato, her fra K.B. Hallen.</figcaption>
             </figure>
           </div>
+          <p className="kat-fine">Eksempelbilleder lavet med AI for at vise rammerne. Ingen rigtige gæster.</p>
           <ul className="kat-points" style={{ marginTop: 6, marginBottom: 70 }}>
             <li><b>Altid logoet</b><span>ADFC og Airtox fast på rammen, stævnet eller klubben ved siden af.</span></li>
             <li><b>Klar til stories</b><span>Formater til feed, story og reels, så rammen sidder rigtigt overalt.</span></li>
