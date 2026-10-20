@@ -49,7 +49,7 @@
   },
   "casing": {
     "style": "venue",
-    "colour": "#1d1d20",
+    "colour": "#2e9a48",
     "built_by": "hardware/tools/venue_themes.py"
   },
   "light": {

@@ -1883,7 +1883,7 @@ def tuborg():
         return outline, L
 
     def screen(w, h):
-        L = [("base", box(0, 0, w, h))]
+        L = [("band", box(0, 0, w, h))]   # a shade darker than the green casing, so the screen stands out
         # Light from above and a row of Grøn Tuborg cans at the foot, the label colours only.
         rays = U(*[Polygon([(w / 2, h + 40), (w / 2 + 1200 * math.cos(math.radians(a - 3)), h + 40 + 1200 * math.sin(math.radians(a - 3))),
                             (w / 2 + 1200 * math.cos(math.radians(a + 3)), h + 40 + 1200 * math.sin(math.radians(a + 3)))]) for a in range(200, 345, 14)])
@@ -1902,7 +1902,7 @@ def tuborg():
                 filament={"base": "ASA green", "band": "ASA dark green", "deep": "ASA forest green", "lime": "ASA lime green", "white": "ASA white",
                           "silver": "ASA silver", "cream": "ASA cream", "beer": "ASA yellow", "sky": "ASA light green",
                           "ink": "ASA forest green", "shine": "ASA light green"},
-                casing="#1d1d20", ring={"idle": ["#ffffff", "#80e040"], "glow": "#5fd36a"},
+                casing="#2e9a48", ring={"idle": ["#ffffff", "#80e040"], "glow": "#5fd36a"},
                 screen=dict(bg="base", ink="white", accent="lime", cta="Sig «Skål!»",
                             ticker="Grøn Tuborg  •  Hele Danmarks pilsner  •  Drik med respekt  •  Kun for 18+  •"),
                 frame=dict(bg="base", ink="lime", caption="Skål for i aften"), photo="print-club",
