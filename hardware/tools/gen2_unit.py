@@ -1,57 +1,84 @@
 #!/usr/bin/env python3
-"""The gen 2 main unit for the website's 3D viewer: web/public/models/unit_gen2.glb.
+"""The gen 2 main unit for the website's 3D viewer and the theme sketches, taken straight from the CAD.
 
-Taken from the released print set's assembly (hardware/stl/gen2/<version>/<version>_3d.glb), so the site shows the
-real front: the light ring broken round the camera, the screen window, the Selfi logo under it and the 70 mm shell.
-Node names match unit.glb (bezel, shell_closed, diffuser_ring, v_display, v_camera), plus logo_white and logo_green
-for the logo inlays. Writes an uncompressed file; web/scripts/build-models.mjs --unit-gen2 squeezes it with meshopt.
+Reads the newest hardware/stl/gen2/halo-gen2-v*/halo-gen2-v*_3d.glb (the assembly the print files come from) and
+writes web/public/models/unit_gen2.glb with only what shows from outside: front, light ring, shell, glass, camera
+and the Selfi logo in the front. Node names match unit.glb (bezel, diffuser_ring, shell_closed, v_display,
+v_camera) so HaloBox can use either; the logo is logo_white / logo_green. There is no side light band and no
+joint spacer on gen 2.
 
-Usage: python3 hardware/tools/gen2_unit.py [version]          (default: the newest released set)
-       cd web && node scripts/build-models.mjs .. --unit-gen2
+front_layers() gives the same parts as flat front-view outlines (unit coordinates: x centred, z up from the
+bottom of the unit), so a theme sketch draws the real unit instead of a stand-in.
+
+Usage: python3 hardware/tools/gen2_unit.py
 """
-import sys
+import re
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
+import shapely
 import trimesh
-
-import theme_builder as tb
+from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parents[2]
-SETS = ROOT / "hardware/stl/gen2"
-H = 306.0
-
-# assembly node -> viewer node
-NODES = {"front": "bezel", "skal": "shell_closed", "lysring": "diffuser_ring", "skaerm": "v_display", "kamera": "v_camera",
+# Assembly part -> site node. The assembly has x right, y up (centred) and the front face at z = 0, facing +z.
+NODES = {"front": "bezel", "lysring": "diffuser_ring", "skal": "shell_closed", "skaerm": "v_display", "kamera": "v_camera",
          "logo_hvid": "logo_white", "logo_groen": "logo_green"}
+# Colours from the assembly's parts.json: black ASA front and shell, natural ASA ring, the logo inlays.
+COLOURS = {"skal": "#1d1d20", "skaerm": "#0a0a0c", "kamera": "#2b2f33", "front": "#1d1d20", "lysring": "#fbf8f1",
+           "logo_hvid": "#f5f5f4", "logo_groen": "#22d36b"}
+DRAW_ORDER = ["skal", "skaerm", "kamera", "front", "lysring", "logo_hvid", "logo_groen"]
 
 
-def newest():
-    return max((p.name for p in SETS.glob("halo-gen2-v*") if (p / f"{p.name}_3d.glb").exists()), key=lambda n: int(n.rsplit("v", 1)[1]))
+def latest_assembly():
+    found = sorted(ROOT.glob("hardware/stl/gen2/halo-gen2-v*/halo-gen2-v*_3d.glb"),
+                   key=lambda p: int(re.search(r"-v(\d+)_3d", p.name).group(1)))
+    return found[-1]
 
 
-def main(version=None):
-    version = version or newest()
-    asm = trimesh.load(SETS / version / f"{version}_3d.glb")
+def _parts():
+    scene = trimesh.load(latest_assembly())
+    out = {}
+    for part in NODES:
+        T, geom = scene.graph[part]
+        m = scene.geometry[geom].copy()
+        m.apply_transform(T)
+        out[part] = m
+    h = out["skal"].bounds[1][1] - out["skal"].bounds[0][1]
+    lift = trimesh.transformations.translation_matrix([0, -out["skal"].bounds[0][1], 0])   # bottom of the unit at y = 0
+    for m in out.values():
+        m.apply_transform(lift)
+    return out, h
+
+
+@lru_cache(maxsize=1)
+def front_layers():
+    """[(colour, outline)] back to front, as seen from the front, in unit coordinates (mm)."""
+    parts, _ = _parts()
+    layers = []
+    for part in DRAW_ORDER:
+        m = parts[part]
+        tri = m.vertices[m.faces[m.face_normals[:, 2] > 0.05]][:, :, :2]
+        polys = shapely.polygons(tri)
+        g = unary_union(polys[shapely.area(polys) > 1e-6]).buffer(0.05).buffer(-0.05)
+        layers.append((COLOURS[part], g))
+    return layers
+
+
+def main():
+    parts, h = _parts()
     scene = trimesh.Scene()
-    # The assembly is centred with the front at z = 0 facing +z; the viewer wants the unit's bottom at y = 0.
-    lift = trimesh.transformations.translation_matrix([0, H / 2, 0])
-    for node in asm.graph.nodes_geometry:
-        if node not in NODES:
-            continue
-        T, g = asm.graph[node]
-        m = asm.geometry[g].copy()
-        m.apply_transform(lift @ T)
+    for part, node in NODES.items():
+        m = parts[part]
+        if len(m.faces) > 6000:
+            m = m.simplify_quadric_decimation(face_count=6000)
         m.visual = trimesh.visual.ColorVisuals(m)
-        scene.add_geometry(m, node_name=NODES[node], geom_name=NODES[node])
-    # Sits on the unit's top face (y = 0 here); HaloBox lifts it to the top of the unit.
-    sp = tb.cube(-80, 80, 3, 62, 0, 6)
-    sp.apply_transform(np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float))
-    scene.add_geometry(sp, node_name="joint_spacer", geom_name="joint_spacer")
+        scene.add_geometry(m, node_name=node, geom_name=node)
     out = ROOT / "web/public/models/unit_gen2.glb"
     scene.export(out)
-    print(out, version, f"{out.stat().st_size // 1024} kB")
+    print(latest_assembly().name, f"-> {out} ({out.stat().st_size // 1024} kB, unit {h:.1f} mm high)")
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    main()

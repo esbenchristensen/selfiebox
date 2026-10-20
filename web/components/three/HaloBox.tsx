@@ -24,7 +24,7 @@ export type Venue = {
   frame: { bg: string; ink: string; caption: string };
   photo: string;
   parts: string[];
-  unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 70 deep) instead of rev G
+  unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 85 deep) instead of rev G
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -87,6 +87,9 @@ function useUnit(unit?: "gen2") {
   return useMemo(() => baked(scene), [scene]);
 }
 
+// Rev G has a joint spacer between the unit and the topper; gen 2 has none, the topper sits on the unit.
+const topAt = (venue: Venue) => UNIT_H + (venue.unit === "gen2" ? 0 : SPACER);
+
 function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject<number> }) {
   const { scene } = useGLTF(`/models/${venue.id}/parts.glb`, false, true);
   const groups = useMemo(() => {
@@ -116,14 +119,14 @@ function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject
     const k = 1 - attach.current; // 1 = pulled off, 0 = mounted
     if (left.current) left.current.position.x = -70 * k;
     if (right.current) right.current.position.x = 70 * k;
-    if (top.current) top.current.position.y = UNIT_H + SPACER + 80 * k;
+    if (top.current) top.current.position.y = topAt(venue) + 80 * k;
   });
 
   return (
     <>
       <group ref={left}>{groups.wing_left.map((m, i) => <primitive key={i} object={m} />)}</group>
       <group ref={right}>{groups.wing_right.map((m, i) => <primitive key={i} object={m} />)}</group>
-      <group ref={top} position={[0, UNIT_H + SPACER, 0]}>
+      <group ref={top} position={[0, topAt(venue), 0]}>
         {groups.topper.map((m, i) => <primitive key={i} object={m} />)}
       </group>
     </>
@@ -140,8 +143,9 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
     const light = new THREE.MeshStandardMaterial({ color: "#ffffff", emissive: ring[0], emissiveIntensity: 1.6, roughness: 0.4, toneMapped: false });
     const glass = new THREE.MeshPhysicalMaterial({ color: "#050507", roughness: 0.1, clearcoat: 1 });
     const lens = new THREE.MeshStandardMaterial({ color: "#0a0a0c", roughness: 0.2, metalness: 0.4 });
-    const logoWhite = new THREE.MeshStandardMaterial({ color: "#f5f5f4", roughness: 0.7 });
-    const logoGreen = new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.7 });
+    // Gen 2: the Selfi logo set into the front under the screen, white with green dots
+    const logoWhite = new THREE.MeshStandardMaterial({ color: "#f5f5f4", roughness: 0.6 });
+    const logoGreen = new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.6 });
     return { body, light, glass, lens, logoWhite, logoGreen };
   }, [casing, ring]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
@@ -215,7 +219,6 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       {part("shell_closed_band", mats.light)}
       {part("v_display", mats.glass)}
       {part("v_camera", mats.lens)}
-      {/* Gen 2: the Selfi logo inlaid in the front under the screen */}
       {part("logo_white", mats.logoWhite)}
       {part("logo_green", mats.logoGreen)}
       <mesh position={[0, SCREEN.y, venue?.unit === "gen2" ? SCREEN_Z_GEN2 : SCREEN.z]}>
@@ -240,7 +243,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       {/* Venue parts: wings on the side screws, topper on the top joint */}
       {venue && (
         <>
-          <group position={[0, UNIT_H, 0]}>{part("joint_spacer", mats.body)}</group>
+          {venue.unit !== "gen2" && <group position={[0, UNIT_H, 0]}>{part("joint_spacer", mats.body)}</group>}
           <Suspense fallback={null}>
             <Parts venue={venue} attach={attach} />
           </Suspense>
