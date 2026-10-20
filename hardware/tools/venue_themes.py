@@ -1770,6 +1770,123 @@ def white_hawks():
                 logo_png=dict(file="white_hawks-source.png", screen=(300, 860, 330), frame=(40, 170, 150)))
 
 
+# ------------------------------------------------------------------ tuborg --
+# Tuborg: the Danish beer brand from Hellerup (1873), today brewed by Carlsberg Danmark. Business case: Tuborg pays
+# for a box at a bar and gets its wordmark on every photo. The topper is the green bottle label with Tuborg's own
+# wordmark between gold rims over a gold board, a crown cap tilted on its corner; the right wing a Tuborg Grøn bottle,
+# the left wing a draught glass with a cream head. Drawn for the gen 2 unit. The wordmark is traced from
+# logos/tuborg-source.svg (the vector on tuborg.dk): it belongs to Carlsberg, ask before anything is printed.
+
+def tuborg_logo(bounds, key="white"):
+    lg = traced_logo("tuborg")
+    placed = place_logo(lg, bounds, [("white", key)])
+    return [(k, shapely.set_precision(g.buffer(0), 0.05)) for k, g in placed]
+
+
+def crown_cap(cx, cz, r, n=21):
+    """A crown cap seen from the front: a round body (the outline stays a circle) and the crimps as inlay bands."""
+    body = Point(cx, cz).buffer(r, 96)
+    crimps = U(*[Polygon([(cx + r * 0.78 * math.cos(a - 0.05), cz + r * 0.78 * math.sin(a - 0.05)), (cx + r * math.cos(a - 0.09), cz + r * math.sin(a - 0.09)),
+                          (cx + r * math.cos(a + 0.09), cz + r * math.sin(a + 0.09)), (cx + r * 0.78 * math.cos(a + 0.05), cz + r * 0.78 * math.sin(a + 0.05))])
+                 for a in np.linspace(0, 2 * math.pi, n, endpoint=False)])
+    return body, crimps
+
+
+@theme
+def tuborg():
+    # Tuborg's green from tuborg.dk, a deeper bottle green, the gold of the label rims, cream foam and the beer.
+    pal = {"base": "#006939", "deep": "#00482a", "bottle": "#0e7a3f", "shine": "#4fae6e", "gold": "#c9a54a", "white": "#ffffff",
+           "cream": "#f4ead2", "beer": "#e7a21f", "amber": "#c77d12", "ink": "#0c2016", "steel": "#b7bdb8", "sky": "#0a7d45"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: a Tuborg Grøn bottle standing on its base, the label running up the body and gold foil on the neck.
+            cx = X0 + 40
+            body = box(cx - 23, 30, cx + 23, 176).buffer(6).buffer(-6)
+            shoulder = Polygon([(cx - 23, 170), (cx + 23, 170), (cx + 12, 214), (cx - 12, 214)])
+            neck = box(cx - 12, 210, cx + 12, 268)
+            cap = box(cx - 14, 266, cx + 14, 282).buffer(2).buffer(-1)
+            bottle = U(body, shoulder, neck, cap).buffer(3).buffer(-3)
+            # One solid panel: the strip along the box and the bottle in one hull, nothing loose.
+            outline = U(wing_strip(16, 24, 288), box(X0, 24, cx, 282), bottle.buffer(3)).buffer(4).buffer(-4)
+            outline = outline.intersection(box(X0, 22, X0 + 72, 292))
+            L = [("base", outline), ("gold", box(X0 + 6, 32, X0 + 9, 280).difference(bottle.buffer(4))), ("deep", bottle.buffer(2.4)), ("bottle", bottle)]
+            L += [("shine", box(cx + 12, 40, cx + 17, 166).buffer(2.5).buffer(-1)), ("shine", box(cx + 5, 220, cx + 8, 258).buffer(1.5).buffer(-0.5))]
+            label = box(cx - 19, 62, cx + 19, 152).buffer(4).buffer(-2)
+            L += [("gold", label.buffer(1.6)), ("white", label)]
+            word = U(*[affinity.rotate(g, 90, origin=(0, 0)) for _, g in tuborg_logo((-60, 0, 60, 30))])
+            L += [("base", fit(word, (cx - 13, 70, cx + 13, 144)))]
+            L += [("gold", box(cx - 12, 232, cx + 12, 268)), ("deep", box(cx - 12, 244, cx + 12, 247)), ("gold", cap)]
+            L += [("deep", U(*[box(x - 0.8, 268, x + 0.8, 280) for x in np.arange(cx - 10, cx + 11, 5)]).intersection(cap))]
+        else:
+            # Left: a Tuborg draught glass with a cream head, rising bubbles and the wordmark on the glass.
+            cx = X0 + 40
+            glass = Polygon([(cx - 21, 34), (cx + 21, 34), (cx + 27, 236), (cx - 27, 236)]).buffer(3).buffer(-3)
+            head = U(box(cx - 28, 228, cx + 28, 248), *[Point(cx + x, 249).buffer(8.5, 32) for x in np.linspace(-20, 20, 4)]).buffer(2).buffer(-2)
+            outline = U(wing_strip(16, 24, 288), box(X0, 24, cx, 262), U(glass, head).buffer(3)).buffer(4).buffer(-4)
+            outline = outline.intersection(box(X0, 22, X0 + 72, 292))
+            L = [("base", outline), ("gold", box(X0 + 6, 32, X0 + 9, 280).difference(U(glass, head).buffer(4))), ("deep", U(glass, head).buffer(2.4)), ("steel", glass)]
+            beer = Polygon([(cx - 18, 40), (cx + 18, 40), (cx + 23.5, 230), (cx - 23.5, 230)])
+            L += [("beer", beer), ("amber", Polygon([(cx - 18, 40), (cx - 6, 40), (cx - 3, 230), (cx - 23.5, 230)]))]
+            rng = random.Random(18)
+            L += [("cream", U(*[Point(cx + rng.uniform(-14, 16), rng.uniform(52, 214)).buffer(rng.uniform(1.0, 1.8), 16) for _ in range(26)]).intersection(beer.buffer(-3)).difference(box(cx - 8, 76, cx + 14, 194)))]
+            L += [("cream", head)]
+            word = U(*[affinity.rotate(g, 90, origin=(0, 0)) for _, g in tuborg_logo((-60, 0, 60, 30))])
+            L += [("white", flip_text(fit(word, (cx - 6, 80, cx + 12, 190))))]
+            L += [("steel", box(cx - 22, 34, cx + 22, 42))]
+        return outline, L
+
+    def topper():
+        # The bottle label: an oval in Tuborg green between two gold rims with the wordmark, rays behind it, a gold
+        # board with »Skål for i aften«, and a Tuborg Grøn crown cap tilted on the right-hand corner. One solid plate.
+        label = ell(-8, 82, 94, 50)
+        ccx, ccz = 80, 112
+        cap, crimps = crown_cap(ccx, ccz, 27)
+        board = box(-HW, 0, HW, 30)
+        outline = U(board, label.buffer(3), cap.buffer(2)).buffer(8).buffer(-8)
+        outline = outline.intersection(box(-HW, 0, HW, 146))
+        rays = U(*[Polygon([(-8, 82), (-8 + 300 * math.cos(math.radians(a - 3.5)), 82 + 300 * math.sin(math.radians(a - 3.5))),
+                            (-8 + 300 * math.cos(math.radians(a + 3.5)), 82 + 300 * math.sin(math.radians(a + 3.5)))]) for a in range(0, 360, 15)])
+        L = [("base", outline), ("deep", rays.intersection(outline.buffer(-3)).difference(label.buffer(2)))]
+        L += [("gold", label), ("base", label.buffer(-4)), ("gold", label.buffer(-7)), ("base", label.buffer(-9))]
+        L += tuborg_logo((-80, 64, 64, 94))
+        L += [("gold", text("SIDEN 1873", "alfa-slab-one", -8, 108, 8, 70))]
+        L += [("deep", board), ("gold", box(-HW + 4, 4, HW - 4, 26))]
+        L += [("base", text("SKÅL FOR I AFTEN", "archivo-black", 0, 15, 10, 170))]
+        L += [("ink", cap.buffer(1.4)), ("gold", cap), ("amber", crimps), ("base", Point(ccx, ccz).buffer(19, 64)), ("gold", Point(ccx, ccz).buffer(19, 64).difference(Point(ccx, ccz).buffer(17, 64)))]
+        cw = U(*[g for _, g in tuborg_logo((-60, 0, 60, 30))])
+        L += [("white", fit(affinity.rotate(cw, 18, origin=(0, 0)), (ccx - 16, ccz - 8, ccx + 16, ccz + 8)))]
+        return outline, L
+
+    def screen(w, h):
+        L = [("base", box(0, 0, w, h))]
+        # Light from above, rising bubbles over the whole screen and a bar counter of green bottles at the foot.
+        rays = U(*[Polygon([(w / 2, h + 40), (w / 2 + 1200 * math.cos(math.radians(a - 3)), h + 40 + 1200 * math.sin(math.radians(a - 3))),
+                            (w / 2 + 1200 * math.cos(math.radians(a + 3)), h + 40 + 1200 * math.sin(math.radians(a + 3)))]) for a in range(200, 345, 14)])
+        L += [("sky", rays.intersection(box(0, 0, w, h)))]
+        rng = random.Random(5)
+        L += [("shine", U(*[Point(rng.uniform(0, w), rng.uniform(380, h)).buffer(rng.uniform(2, 6), 16) for _ in range(60)]))]
+        for i, x in enumerate(np.linspace(60, w - 60, 7)):
+            if i in (2, 3, 4):
+                continue
+            b = U(box(x - 20, 60, x + 20, 150).buffer(5).buffer(-5), Polygon([(x - 20, 146), (x + 20, 146), (x + 9, 176), (x - 9, 176)]), box(x - 9, 172, x + 9, 206), box(x - 10, 204, x + 10, 214))
+            L += [("deep", b.buffer(3)), ("bottle", b), ("white", box(x - 15, 84, x + 15, 128).buffer(3).buffer(-2)), ("gold", box(x - 9, 188, x + 9, 214))]
+        L += [("deep", box(0, 0, w, 64)), ("gold", box(0, 60, w, 66))]
+        L += tuborg_logo((90, 760, w - 90, 860))
+        L += [("gold", text("SKÅL FOR I AFTEN", "alfa-slab-one", w / 2, 700, 24, w * 0.7))]
+        return L
+
+    return dict(name="Tuborg", place="Danmarks barer", font="alfa-slab-one", pal=pal, unit="gen2",
+                filament={"base": "ASA green", "deep": "ASA dark green", "bottle": "ASA bottle green", "shine": "ASA light green", "gold": "ASA gold",
+                          "white": "ASA white", "cream": "ASA cream", "beer": "ASA yellow", "amber": "ASA orange", "ink": "ASA black",
+                          "steel": "ASA light grey", "sky": "ASA green"},
+                casing="#006939", ring={"idle": ["#ffffff", "#3fbf6a"], "glow": "#2fae5c"},
+                screen=dict(bg="white", ink="white", accent="gold", cta="Sig «Skål!»",
+                            ticker="Tuborg  •  Skål for i aften  •  Drink with respect  •  Kun for 18+  •"),
+                frame=dict(bg="base", ink="gold", caption="Skål for i aften"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: tuborg_logo((-60, 0, 60, 30)))
+
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
