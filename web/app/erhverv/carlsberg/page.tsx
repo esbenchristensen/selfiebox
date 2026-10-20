@@ -116,7 +116,7 @@ export default function CarlsbergKatalog() {
             <span className="kat-kicker">Forslag · 2026/27</span>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="kat-box kat-glow" src={`${IMG}/boks-carlsberg.png`} alt="Selfi Boks i Carlsberg-grøn med det hvide ordmærke og kronen på toppen, humlebladet på den ene side og en grøn Carlsberg-flaske på den anden" style={{ width: 430, marginTop: -6 }} />
+          <img className="kat-box kat-glow" src={`${IMG}/boks-carlsberg.png`} alt="Selfi Boks med det hvide Carlsberg-ordmærke og kronen på en grøn top, humlebladet på den ene side og en grøn Carlsberg-flaske på den anden" style={{ width: 460, marginTop: 4 }} />
           <h1 className="kat-center">Carlsberg på hvert foto</h1>
           <p className="kat-lede kat-center">Et udkast til Carlsberg: en fotoboks i jeres design i barerne, der tager billeder og videoer af gæsterne og sætter Carlsberg og baren på alt, der deles.</p>
           <Band />
