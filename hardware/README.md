@@ -31,6 +31,8 @@ does not change. The STL files in `stl/` are still rev G until gen 2 gets its ow
 | `tools/check_bed.py` | Every STL fits the H2C plate (285 × 306 × 305 mm, ≥ 7 mm from the edges) |
 | `tools/check_bodies.py` | Every gen 2 print file is one solid body (no loose pieces in the slicer) |
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
+| `tools/make_hurtig.py` | Hurtigprint set for a gen 2 version (draft profile + fit-test pieces cut from the released parts) in `stl/gen2-hurtig/<version>-hurtig/`. Rules: `docs/HURTIGPRINT.md` |
+| `tools/make_3mf.py` | Multi-colour front for Bambu Studio: `<version>_front_flerfarvet.3mf` = front + logo inlays as one object with three parts on AMS slots 1 sort / 2 hvid / 3 grøn. Run it on every released and hurtig version folder (`make_hurtig.py` does it for the hurtig set) |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
 | `cad/gen2_concept.scad` | Gen 2 (current design), built on top of `halo.scad` |
 | `docs/gen2/` | Gen 2 renders (`render/render_gen2.py`) and the CAD line sheet (`tools/gen2_sketches/make_cad_sheet.sh`) |
