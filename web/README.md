@@ -1,6 +1,6 @@
 # selfi.dk
 
-Hjemmesiden for Selfi Boks, kun til erhverv: fotobokse i stedets eget design til venues, klubber, barer, hoteller og festivaler. Next.js (App Router). MongoDB bruges kun til katalogerne. Design og tekst følger Selfis brandguide.
+Hjemmesiden for Selfi Boks, kun til erhverv: fotobokse i stedets eget design til venues, klubber, barer, hoteller og festivaler. Next.js (App Router). Design og tekst følger Selfis brandguide.
 
 ## Kør lokalt
 
@@ -26,7 +26,7 @@ npm run lint       # typecheck
 | `app/api/kontakt/route.ts` | Kontaktformularen |
 | `components/three/` | 3D-boksen (React Three Fiber): den rigtige Halo-kasse og stedernes printede dele. `venues.json` er stederne, `themes.ts` er privattemaerne |
 | `public/models/` | 3D-modeller, skærme, fotorammer og logoer. Bygges fra hardware-branchen, se nedenfor |
-| `app/kataloger/[slug]/` | Kataloger fra MongoDB, se nedenfor |
+| `app/erhverv/<slug>/` | Salgskatalogerne, ét pr. kunde, se nedenfor |
 | `components/Outline.tsx` | Stregtegninger af boksen: sort streg med grønne detaljer |
 
 ## Før lancering
@@ -36,22 +36,11 @@ npm run lint       # typecheck
 - **Temaer i 3D:** designene til Smukfest, Roskilde, Nibe, Fårup, LEGOLAND og Aalborg Zoo er konceptdesigns uden aftale med stederne. Få en tilladelse, eller skift dem ud med rigtige kunder, før siden bruges i markedsføring.
 - **Juridisk:** cookie- og privatlivstekst mangler, hvis der tilføjes analyse eller tracking.
 
-## Kataloger fra databasen
+## Kataloger
 
-Salgskataloger ligger i MongoDB og vises på `selfi.dk/kataloger/<slug>`. Et nyt eller rettet katalog er online, så snart det er gemt, uden at siden skal deployes. Siderne er skjult for Google og står ikke i menuen eller sitemap.
+Et salgskatalog er kundens side på `selfi.dk/erhverv/<slug>` (Smukfest ligger på `/events/smukfest`): en `page.tsx`, der viser A4-siderne med `components/katalog/Viewer` og `components/katalog/katalog.css`, plus kundens egen CSS i samme mappe. Siderne er skjult for Google og står ikke i menuen eller sitemap. Der er kun den ene version: de gamle MongoDB-kopier på `/kataloger/<slug>` sender videre til erhvervssiden (`next.config.ts`).
 
-1. Sæt `MONGODB_URI` i Vercel (og i `web/.env.local` på din egen maskine, se `.env.example`). Uden den viser alle katalog-URL'er en pæn "ikke tilgængeligt"-side. Vercel læser kun miljøvariabler ved deploy, så redeploy efter du har sat eller ændret den. Giv Vercel en databasebruger med kun `read` på databasen `selfi`; brugeren med skriveadgang hører kun til i `.env.local` til scriptet.
-2. Læg et katalog ind:
-
-```bash
-cd web
-node scripts/katalog.mjs gem smukfest-2027 kataloger/smukfest.html --titel "Selfi × Smukfest | Salgskatalog" --udloeber 2027-12-31
-node scripts/katalog.mjs liste
-node scripts/katalog.mjs skjul smukfest-2027   # viser 404 igen
-node scripts/katalog.mjs slet smukfest-2027
-```
-
-Et katalog er HTML med én `<div class="kat-slot"><section class="kat-pg">…</section></div>` pr. A4-side. Det får stylingen fra `components/katalog/katalog.css`, og `--css fil.css` lægger katalogets egne regler ovenpå. `kataloger/smukfest.html` er Smukfest-kataloget fra `/events/smukfest` i det format, klar til at lægge ind. `kataloger/flying-hirsch.html` og `.css` er Flying Hirsch-kataloget fra `/erhverv/flying-hirsch` (gem med `--css kataloger/flying-hirsch.css`); designet bruger barens eget logo, så det kræver deres accept. `kataloger/aab.html` og `.css` er AaB-kataloget fra `/erhverv/aab` (gem med `--css kataloger/aab.css`); det bruger klubbens logo og kræver også deres accept. `kataloger/palads.html` og `.css` er Palads Teatret-kataloget fra `/erhverv/palads` (gem med `--css kataloger/palads.css`); boksen er tegnet på gen 2, og designet bruger biografens logo, så det kræver også deres accept. `kataloger/meny.html` og `.css` er MENY Fjerritslev-kataloget fra `/erhverv/meny-fjerritslev` (gem med `--css kataloger/meny.css`); det bruger MENYs logo og kræver også deres accept. `kataloger/heidis.html` og `.css` er Heidi's Bier Bar-kataloget fra `/erhverv/heidis` (gem med `--css kataloger/heidis.css`); boksen er tegnet på gen 2, og designet bruger barens logo, så det kræver deres accept. `kataloger/white-hawks.html` og `.css` er Frederikshavn White Hawks-kataloget fra `/erhverv/white-hawks` (gem med `--css kataloger/white-hawks.css`); boksen er tegnet på gen 2, og designet bruger klubbens logo, så det kræver deres accept. `kataloger/carlsberg.html` og `.css` er Carlsberg-kataloget fra `/erhverv/carlsberg` (gem med `--css kataloger/carlsberg.css`); det er en brand-boks på gen 2, hvor Carlsberg betaler boksen i baren, og designet bruger Carlsbergs logo, så det kræver deres accept. `kataloger/red-bull.html` og `.css` er Red Bull-kataloget fra `/erhverv/red-bull` (gem med `--css kataloger/red-bull.css`); boksen er tegnet på gen 2, og designet bruger Red Bulls logo, så det kræver deres accept. `--udloeber` gør linket dødt efter datoen, `--index` lader Google finde det. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
+`selfi.dk/api/kataloger` lister alle sider, der bruger katalog-vieweren, med titel og beskrivelse fra sidens metadata. Admin (`admin.selfi.dk/admin/kataloger`) viser den liste, så et nyt katalog dukker op der ved næste deploy uden flere skridt. Katalogerne bruger kundens logo og kræver deres accept. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
 
 ## Hosting på Vercel
 
