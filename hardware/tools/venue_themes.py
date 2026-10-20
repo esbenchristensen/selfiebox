@@ -1870,6 +1870,97 @@ def carlsberg():
                 frame=dict(bg="base", ink="white", caption="Probably the best night in town"), photo="print-club",
                 wing=wing, topper=topper, screen_art=screen, logo=lambda: carlsberg_logo((-60, 0, 60, 50)),
                 logo_png=dict(file="carlsberg-white.png", screen=(300, 650, 440), frame=(40, 170, 110)))
+# --------------------------------------------------------------- red bull --
+# Red Bull: the energy drink brand sponsors a box at a venue (a bar, a club, a student bar, a skate hall) and puts
+# its logo on every photo. »Red Bull giver viiinger« (the Danish line, spelt as on redbull.com/dk-da) made literal and kept calm: the box gets a pair of plain white
+# wings, one folded down each side, and the topper is the sun with the two charging bulls over a silver board with
+# the wordmark. Drawn for the gen 2 unit. The logo is traced from logos/red_bull-source.png (the vector logo on
+# Wikipedia): Red Bull's permission and artwork are needed before anything is printed.
+
+def red_bull_logo(bounds, parts=("word", "emblem")):
+    """The traced logo, split by rows of the lockup: the wordmark, the sun with the bulls, and »Energy drink« (left out
+    by default). The ® is dropped."""
+    lg = traced_logo("red_bull")
+    rows = {"word": (0, 600), "emblem": (600, 1160), "energy": (1160, 1400)}
+    keep = U(*[box(0, rows[p][0], 2290, rows[p][1]) for p in parts])
+    lg = {k: g.intersection(keep) for k, g in lg.items()}
+    return place_logo(lg, bounds, [("yellow", "yellow"), ("red", "red")])
+
+
+def folded_wing(x0, z_top, tips, w=26):
+    """A white wing folded down the side of the box, right side: broad feathers from the shoulder at (x0, z_top) to
+    `tips`, overlapping so the outline only gets shallow notches, under a round covert. Returns (wing, grooves)."""
+    root = (x0 + 14, z_top - 16)
+    feathers = [U(Point(*root).buffer(w * 0.7, 64), Point(*tip).buffer(w / 2, 64)).convex_hull for tip in tips]
+    covert = ell(x0 + 30, z_top - 34, 30, 34)
+    wing = U(*feathers, covert).buffer(3).buffer(-3)
+    grooves = []
+    for a, b in zip(tips, tips[1:]):
+        m = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+        grooves.append(LineString([root, m]).interpolate(0.45, normalized=True))
+        grooves[-1] = line([grooves[-1].coords[0], (root[0] + (m[0] - root[0]) * 0.9, root[1] + (m[1] - root[1]) * 0.9)], 2.6)
+    return wing, grooves
+
+
+def checks(region, cell, cols=("blue2", "silver")):
+    """Red Bull's can pattern: a checkerboard of blue and silver cells, cut to `region`."""
+    x0, z0, x1, z1 = region.bounds
+    cells = {c: [] for c in cols}
+    for i, x in enumerate(np.arange(x0, x1, cell)):
+        for j, z in enumerate(np.arange(z0, z1, cell * 0.62)):
+            cells[cols[(i + j) % 2]].append(box(x, z, x + cell, z + cell * 0.62))
+    return [(c, U(*g).intersection(region)) for c, g in cells.items()]
+
+
+@theme
+def red_bull():
+    # Red Bull's blue and silver from the can, and the logo's red and yellow.
+    pal = {"base": "#0e1d48", "blue": "#14275e", "blue2": "#22407f", "silver": "#c9ced6", "red": "#d2003c",
+           "yellow": "#ffd300", "white": "#ffffff", "grey": "#9ea8b8", "ink": "#070c1f"}
+
+    def wing(side_seed):
+        # Both sides: one plain white wing folded down along the box, the same on each side, on a navy strip.
+        wg, grooves = folded_wing(X0 + 12, 282, [(X0 + 22, 44), (X0 + 44, 92), (X0 + 62, 150), (X0 + 72, 210)])
+        outline = U(wing_strip(14, 24, 288), wg.buffer(3)).buffer(5).buffer(-5).intersection(box(X0, 22, X0 + 88, 294))
+        L = [("base", outline), ("red", box(X0 + 4, 32, X0 + 8, 278))]
+        L += [("ink", wg.buffer(1.4)), ("white", wg), ("grey", U(*grooves).intersection(wg.buffer(-4)))]
+        return outline, L
+
+    def topper():
+        # The sun with the charging bulls over a silver board with the wordmark. Nothing else.
+        p = 34
+        sun = Point(0, p + 60).buffer(54, 128)
+        emblem = red_bull_logo((-100, p + 20, 100, p + 106), parts=("emblem",))
+        em_all = U(*[g for _, g in emblem])
+        board = box(-HW, 0, HW, p + 2)
+        outline = U(board, sun.buffer(4), em_all.buffer(4), box(-96, p, 96, p + 30)).buffer(8).buffer(-8)
+        outline = outline.intersection(box(-HW - 18, 0, HW + 18, 150))
+        L = [("base", outline), ("yellow", sun)] + [(k, g) for k, g in emblem]
+        L += [("silver", box(-HW + 4, 4, HW - 4, p - 2))]
+        L += red_bull_logo((-60, 8, 60, p - 6), parts=("word",))
+        return outline, L
+
+    def screen(w, h):
+        L = [("base", box(0, 0, w, h))]
+        # The can's checks up top, a big sun with the bulls, the wordmark and the line under it.
+        L += checks(box(0, 760, w, h), 50, ("blue", "blue2"))
+        L += [("base", box(0, 742, w, 762))]
+        L += [("yellow", Point(w / 2, 600).buffer(120, 128))]
+        L += red_bull_logo((40, 540, w - 40, 680), parts=("emblem",))
+        L += [("silver", box(60, 404, w - 60, 486).buffer(10).buffer(-10))]
+        L += red_bull_logo((110, 416, w - 110, 474), parts=("word",))
+        L += [("white", text("GIVER VIIINGER", "outfit", w / 2, 372, 22, w * 0.6))]
+        return L
+
+    return dict(name="Red Bull", place="Bars, klubber og studenterbarer", font="outfit", pal=pal, unit="gen2",
+                filament={"base": "ASA navy", "blue": "ASA dark blue", "blue2": "ASA blue", "silver": "ASA silver",
+                          "red": "ASA red", "yellow": "ASA yellow", "white": "ASA white", "grey": "ASA light grey", "ink": "ASA black"},
+                casing="#0e1d48", ring={"idle": ["#ffffff", "#ffd300"], "glow": "#d2003c"},
+                screen=dict(bg="base", ink="white", accent="red", cta="Hop – og få viiinger!",
+                            ticker="Red Bull giver viiinger  •  Hop når lyset blinker, så fanger vi dig i luften  •  Nattens højeste hop vinder  •"),
+                frame=dict(bg="silver", ink="base", caption="Red Bull giver viiinger"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: red_bull_logo((-60, 0, 60, 120)))
+
 
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)

@@ -1,0 +1,62 @@
+/* Selfi × Red Bull: the shared catalogue styles in Red Bull's colours. The can's blue and silver, the logo's red
+   and the sun's yellow. The same rules sit in kataloger/red-bull.css for the copy that lives in the database. */
+.kat.kat--rb {
+  --k-night: #0e1d48;
+  --k-base: #0e1d48;
+  --k-forest: #22407f;
+  --k-leaf: #d2003c;
+  --k-lime: #ffd300;
+  --k-red: #d2003c;
+  --k-cream: #f3f4f7;
+  --k-ink: #0a1230;
+  --k-line-dark: rgba(243, 244, 247, 0.2);
+  --k-line-light: rgba(10, 18, 48, 0.16);
+}
+.kat--rb .kat-glow { background: radial-gradient(closest-side, rgba(255, 211, 0, 0.32), rgba(210, 0, 60, 0.08) 60%, transparent); }
+.kat--rb .kat-screen { box-shadow: 0 0 0 6px #ffffff, 0 0 40px 8px rgba(255, 211, 0, 0.3); }
+.kat--rb .kat-tag { background: rgba(210, 0, 60, 0.2); }
+.kat--rb .kat-rec-screen { background: radial-gradient(circle at 50% 40%, rgba(255, 211, 0, 0.35), transparent 50%), linear-gradient(180deg, #22407f, #0e1d48 70%); }
+.kat--rb .kat-qs span { background: var(--k-forest); }
+.kat--rb .kat-qs span:nth-child(3n + 2) { background: var(--k-red); }
+.kat--rb .kat-qs span:nth-child(3n) { background: #c9ced6; color: var(--k-ink); }
+.kat--rb .kat-setup2 .kat-box { filter: drop-shadow(0 18px 24px rgba(14, 29, 72, 0.32)); }
+.kat--rb .kat-partner-logo { height: calc(var(--lk) * 1.7); }
+.kat--rb .kat-pg h1, .kat--rb .kat-pg h2 { font-family: var(--font-partner), sans-serif; font-weight: 800; letter-spacing: -0.01em; text-transform: uppercase; }
+.kat--rb .kat-pg h1 { font-size: 58px; line-height: 1; max-width: 13ch; }
+.kat--rb .kat-pg h2 { font-size: 38px; line-height: 1.02; max-width: 17ch; }
+.kat--rb .kat-facts b { font: 800 22px/1.1 var(--font-partner), sans-serif; text-transform: uppercase; }
+
+/* the can's blue checks along the top of a page and a silver and red band along the bottom */
+.kat-checks { position: absolute !important; left: 0; right: 0; top: 0; height: 22px; z-index: 0 !important; pointer-events: none;
+  background: conic-gradient(#22407f 25%, #14275e 0 50%, #22407f 0 75%, #14275e 0) 0 0 / 22px 22px; }
+.kat-band { position: absolute !important; left: 0; right: 0; bottom: 0; z-index: 0 !important;
+  background: linear-gradient(180deg, #c9ced6 0 40%, #d2003c 40% 64%, #0e1d48 64%); }
+.kat-pg .kat-folio { z-index: 3 !important; }
+.kat--rb .kat-folio { bottom: 38px; }
+.kat--rb .kat-pg--dark .kat-top { margin-top: 18px; }
+
+/* frames side by side */
+.kat-frames { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 4px 0 8px; }
+.kat-frames figure { margin: 0; }
+.kat-frames img { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 14px 28px rgba(14, 29, 72, 0.3); }
+.kat-frames figcaption { font-size: 13px; line-height: 1.4; margin-top: 10px; opacity: 0.78; }
+
+/* a screen next to its explanation */
+.kat-side { display: grid; grid-template-columns: 250px 1fr; gap: 34px; align-items: start; }
+.kat-side img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 0 0 6px #ffffff, 0 0 40px 8px rgba(255, 211, 0, 0.3); }
+.kat-side .kat-places { gap: 14px; }
+
+/* the network: the same campaign in many places */
+.kat-net { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 6px; }
+.kat-net div { border-radius: 18px; padding: 14px 15px; background: rgba(243, 244, 247, 0.07); display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.4; }
+.kat-net b { font: 800 16px/1.2 var(--font-partner), sans-serif; text-transform: uppercase; color: var(--k-lime); }
+
+/* the box in 3D: drag to turn it, the render underneath until it is ready and in print */
+.kat-3d-wrap { position: relative; height: 470px; flex: none; border-radius: 28px;
+  background: radial-gradient(closest-side, rgba(255, 211, 0, 0.22), rgba(210, 0, 60, 0.06) 62%, transparent); }
+.kat-3d { position: absolute; inset: 0; }
+.kat-3d-poster { position: absolute; inset: 6% 0; margin: auto; height: 88%; width: auto; transition: opacity 500ms ease; filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45)); }
+.kat-3d.is-ready .kat-3d-poster { opacity: 0; }
+.kat-angles { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; justify-items: center; margin-bottom: 70px; }
+.kat-angles .kat-box { height: 230px; width: auto; }
+@media print { .kat-3d .stage-canvas { display: none; } .kat-3d .kat-3d-poster { opacity: 1 !important; } }
