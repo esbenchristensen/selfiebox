@@ -249,7 +249,7 @@ def logo_section(ver, tag, material):
         "fordi en slicer skal have én krop for hver farve. Printes `_front.stl` alene, kommer fronten ud uden logo.", "",
         f"**Nemmest: åbn `{p}_front_flerfarvet.3mf`** i Bambu Studio (File > Open Project, eller træk den ind). Den indeholder fronten "
         "og logoet som ét objekt med tre dele, der allerede ligger på plads, og farverne er sat til AMS-plads 1 = sort (front), "
-        "2 = hvid (logo) og 3 = grøn (prikkerne). Læg filamentet i de pladser, vælg printer og profil som normalt, og slice. "
+        "2 = hvid (logo) og 3 = grøn (prikkerne). Læg filamentet i de pladser og tryk på synk-knappen ved \"Filament\" (Sync AMS), så alle tre pladser får de rigtige spoler. Filen har ingen materialer, så uden synk bruger Bambu de filamenter, der tilfældigvis står på plads 1–3, og de kan være forskellige. Vælg printer og profil som normalt, og slice. "
         "Der er ingen printer- eller profilindstillinger i filen.", "",
         f"**Alternativt med STL:** træk `{p}_front.stl`, `{p}_logo-hvid.stl` og `{p}_logo-groen.stl` ind på én gang og svar **Ja**, "
         "når Bambu Studio spørger, om de skal indlæses som ét objekt med flere dele. De har samme nulpunkt, så logoet lander præcis i "
