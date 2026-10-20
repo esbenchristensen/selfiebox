@@ -4,13 +4,13 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { BoxViewer } from "./BoxViewer";
 import { OutlinePoster } from "./Outline";
-import venues from "./three/venues.json";
+import { SHOWROOM as venues } from "./three/showroom";
 
 const Showroom3D = dynamic(() => import("./three/Showroom3D"), { ssr: false, loading: () => null });
 
 const ADVANCE_MS = 6000;
 
-// Venues: the whole box is designed for the place. Six designs on one wall; the visuals do the talking.
+// Venues: the whole box is designed for the place. All designs on one wall; the visuals do the talking.
 export function Showroom({ title, lede }: { title: string; lede: string }) {
   const [focus, setFocus] = useState(0);
   const [ready, setReady] = useState(false);
@@ -69,7 +69,7 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
             </button>
           ))}
         </div>
-        <p className="fine showroom-note">Konceptdesigns til intern brug. Stederne er ikke kunder hos Selfi, og logoer og navne tilhører dem.</p>
+        <p className="fine showroom-note">Konceptdesigns til intern brug. Stederne og mærkerne er ikke kunder hos Selfi, og logoer og navne tilhører dem.</p>
       </div>
     </section>
   );

@@ -34,6 +34,8 @@ const UNIT_H = 306;
 const SPACER = 6;
 const MODULE_H = 189;
 const SCREEN = { y: 151.85, z: -3.55, w: 136.4, h: 217.6 };
+// Gen 2 since v12: the glass sits 1.6 mm behind the front, so the picture goes just in front of the glass mesh.
+const SCREEN_Z_GEN2 = -1.5;
 const WINDOW = { y: 26, w: 84 };
 const PRINT = { w: 72, h: 86 };
 const PRIVATE_CASING = "#0b0b0d";
@@ -211,7 +213,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       {part("shell_closed_band", mats.light)}
       {part("v_display", mats.glass)}
       {part("v_camera", mats.lens)}
-      <mesh position={[0, SCREEN.y, SCREEN.z]}>
+      <mesh position={[0, SCREEN.y, venue?.unit === "gen2" ? SCREEN_Z_GEN2 : SCREEN.z]}>
         <planeGeometry args={[SCREEN.w, SCREEN.h]} />
         <meshBasicMaterial map={privateScreen ?? screenMap} toneMapped={false} />
       </mesh>

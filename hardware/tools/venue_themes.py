@@ -1770,6 +1770,107 @@ def white_hawks():
                 logo_png=dict(file="white_hawks-source.png", screen=(300, 860, 330), frame=(40, 170, 150)))
 
 
+# --------------------------------------------------------------- brewery --
+# Carlsberg, in the brand's current packaging look (the Taxi Studio identity on today's Danish Pilsner, 0.0 and Nordic):
+# the white wordmark on Carlsberg green, the royal warrant crown above it and the hop leaf as the one icon. The brand
+# pays for a box in a bar and has its logo on every photo. The topper is a green panel as wide as the box with the
+# wordmark and the crown on top, the left wing the green Danish Pilsner bottle, the right wing the hop leaf, large.
+# Drawn for the gen 2 unit. The logo is traced from logos/carlsberg-source.png (a vector copy of the wordmark):
+# ask Carlsberg for the official artwork and permission before printing.
+
+def carlsberg_logo(bounds, key="white"):
+    lg = traced_logo("carlsberg")
+    placed = place_logo(lg, bounds, [("green", key)])
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in placed]
+
+
+def carlsberg_hop(bounds, key="white"):
+    """The hop leaf on its own, as the brand uses it, traced from a large render of the leaf over the g."""
+    return place_logo(traced_logo("carlsberg_hop"), bounds, [("green", key)])
+
+
+def royal_crown(cx, z0, w):
+    """The royal warrant crown from the cans, drawn as the brand draws it: a band, arches that bow out and meet under the
+    orb, and a cross. Returns (outline, lines): the solid outline to build the part around and the white lines, so the
+    open spaces between the arches stay in the panel colour and nothing thin stands free."""
+    t = max(3.2, w * 0.06)                                      # line weight, printable
+    band = box(cx - w * 0.42, z0, cx + w * 0.42, z0 + w * 0.17).buffer(w * 0.02).buffer(-w * 0.02)
+    top = (cx, z0 + w * 0.66)
+    arches = []
+    for x0, bow in ((-0.4, -0.52), (-0.14, -0.2), (0.14, 0.2), (0.4, 0.52)):
+        pts = catmull([(cx + x0 * w, z0 + w * 0.17), (cx + bow * w, z0 + w * 0.42), (cx + bow * w * 0.45, z0 + w * 0.6), top], 10)
+        arches.append(LineString(pts).buffer(t / 2, cap_style="round"))
+    pearls = U(*[Point(cx + x * w, z0 + w * 0.2).buffer(t * 0.75, 24) for x in (-0.4, -0.14, 0.14, 0.4)])
+    orb = Point(cx, z0 + w * 0.72).buffer(w * 0.09, 48)
+    cross = U(box(cx - t / 2, z0 + w * 0.76, cx + t / 2, z0 + w * 1.0), box(cx - w * 0.1, z0 + w * 0.86, cx + w * 0.1, z0 + w * 0.86 + t))
+    lines = U(band, *arches, pearls, orb, cross)
+    outline = U(lines, lines.convex_hull.difference(box(cx - w, z0 + w * 0.74, cx + w, z0 + w * 2))).buffer(1).buffer(-1)
+    return outline, lines
+
+
+def bottle(cx, z0, w, h):
+    """A long-neck Carlsberg bottle, `w` wide and `h` tall, standing at z0. Returns (glass, label, cap)."""
+    n = w * 0.42
+    prof = [(w / 2, 0), (w / 2, h * 0.58), (w * 0.44, h * 0.66), (n / 2 + 1, h * 0.76), (n / 2, h * 0.8), (n / 2, h * 0.94)]
+    glass = Polygon([(cx + x, z0 + z) for x, z in prof] + [(cx - x, z0 + z) for x, z in reversed(prof)]).buffer(2).buffer(-2)
+    cap = box(cx - n / 2 - 1, z0 + h * 0.93, cx + n / 2 + 1, z0 + h).buffer(1).buffer(-0.5)
+    label = box(cx - w / 2, z0 + h * 0.12, cx + w / 2, z0 + h * 0.54)
+    return glass, label.intersection(glass), cap
+
+
+@theme
+def carlsberg():
+    # Carlsberg green from today's labels, a deeper green, the bottle's glass green and white. Nothing else.
+    pal = {"base": "#00703c", "deep": "#004d29", "glass": "#2c9a46", "white": "#ffffff"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: the hop leaf, large and white, at the top of a plain green panel.
+            leaf_box = (X0 + 4, 196, X0 + 60, 262)
+            leaf = carlsberg_hop(leaf_box)
+            leaf_all = U(*[g for _, g in leaf])
+            outline = U(wing_strip(14, 24, 290), box(X0, 26, X0 + 30, 288), leaf_all.buffer(6)).buffer(8).buffer(-8)
+            outline = outline.intersection(box(X0, 22, X0 + 66, 294))
+            L = [("base", outline)] + leaf
+        else:
+            # Left: the green Danish Pilsner bottle, its green label with the white wordmark running up it.
+            cx = X0 + 29
+            glass, label, cap = bottle(cx, 34, 48, 248)
+            outline = U(wing_strip(12, 24, 270), box(X0, 26, X0 + 30, 250), glass.buffer(3), cap.buffer(3)).buffer(5).buffer(-5)
+            outline = outline.intersection(box(X0, 22, X0 + 64, 294))
+            L = [("base", outline), ("glass", glass), ("base", label), ("base", cap)]
+            word = affinity.rotate(U(*[g for _, g in carlsberg_logo((0, 0, 100, 40))]), -90, origin=(0, 0))
+            L += [("white", flip_text(fit(word, label.buffer(-4).bounds)))]
+        return outline, L
+
+    def topper():
+        # One green panel as wide as the box with the white wordmark, and the crown standing on it.
+        ph = 92
+        panel = U(box(-HW, 0, HW, ph - 24), box(-HW + 24, 0, HW - 24, ph), *[Point(sx * (HW - 24), ph - 24).buffer(24, 64) for sx in (-1, 1)])
+        cr, lines = royal_crown(0, ph - 2, 56)
+        outline = U(panel, cr.buffer(4)).buffer(6).buffer(-6)
+        L = [("base", outline)]
+        L += carlsberg_logo((-92, 12, 92, ph - 14))
+        L += [("white", lines)]
+        return outline, L
+
+    def screen(w, h):
+        # Flat Carlsberg green with the crown, the wordmark (pasted from the artwork) and the brand line.
+        L = [("base", box(0, 0, w, h))]
+        _, lines = royal_crown(w / 2, 760, 110)
+        L += [("white", lines)]
+        L += [("white", text("PROBABLY THE BEST BEER IN THE WORLD", "outfit", w / 2, 420, 15, w * 0.78))]
+        return L
+
+    return dict(name="Carlsberg", place="Brand-boks i baren", font="outfit", pal=pal, unit="gen2",
+                filament={"base": "ASA green", "deep": "ASA dark green", "glass": "ASA light green", "white": "ASA white"},
+                casing="#00703c", ring={"idle": ["#ffffff", "#2c9a46"], "glow": "#ffffff"},
+                screen=dict(bg="base", ink="white", accent="white", cta="Sig «Skål!»",
+                            ticker="Carlsberg  •  Probably the best beer in the world  •  Skål fra Carlsberg og baren  •"),
+                frame=dict(bg="base", ink="white", caption="Probably the best night in town"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: carlsberg_logo((-60, 0, 60, 50)),
+                logo_png=dict(file="carlsberg-white.png", screen=(300, 650, 440), frame=(40, 170, 110)))
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 

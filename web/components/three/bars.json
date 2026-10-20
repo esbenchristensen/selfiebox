@@ -231,5 +231,36 @@
       "topper"
     ],
     "unit": "gen2"
+  },
+  {
+    "id": "carlsberg",
+    "name": "Carlsberg",
+    "place": "Brand-boks i baren",
+    "palette": {
+      "base": "#00703c",
+      "deep": "#004d29",
+      "glass": "#2c9a46",
+      "white": "#ffffff"
+    },
+    "casing": "#00703c",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#2c9a46"
+      ],
+      "glow": "#ffffff"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": "Probably the best night in town"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
   }
 ]

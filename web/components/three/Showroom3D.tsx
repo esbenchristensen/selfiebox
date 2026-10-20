@@ -4,7 +4,8 @@ import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { HaloBox, VENUES } from "./HaloBox";
+import { HaloBox } from "./HaloBox";
+import { SHOWROOM as VENUES } from "./showroom";
 import { radialTexture } from "./textures";
 
 // All venue designs side by side on one wall. The camera glides to the chosen one,
