@@ -2101,6 +2101,58 @@ def red_bull():
                 wing=wing, topper=topper, screen_art=screen, logo=lambda: red_bull_logo((-60, 0, 60, 120)))
 
 
+# ------------------------------------------------------------------- MMA --
+# Airtox Dominance Fighting Championship (ADFC), Denmark's largest MMA league, title sponsor Airtox (safety shoes).
+# Its current look, from the league's logo and the cage at K.B. Hallen: white on black with the orange bar. The topper is
+# one black plate with the cage's octagon corners and the logo, wide enough to cover the two side parts too; the sides
+# are the cage's corner posts, black pads with an orange cap and the name running up them. The name sits in the outer
+# half so nothing white comes within 30 mm of the light ring. The topper is wider than the plate, so it prints in two
+# halves (topper_venstre/topper_hoejre) that join in the middle. Logo traced from logos/airtox_dominance-source.png
+# (the league's own artwork from airtox.com): ask ADFC and Airtox for the official files and permission before printing.
+
+AD_POST_W = 58.0
+
+
+def airtox_dominance_logo(bounds):
+    return place_logo(traced_logo("airtox_dominance"), bounds, [("orange", "orange"), ("white", "white")])
+
+
+@theme
+def airtox_dominance():
+    # Black, the logo's orange bar and white. Nothing else.
+    pal = {"base": "#141414", "orange": "#ee3e15", "white": "#ffffff"}
+
+    def wing(side_seed):
+        # A cage corner post: black pad, orange cap, AIRTOX DOMINANCE up the outer half.
+        z0, z1, cap = 40, 305, 30
+        outline = U(box(X0, z0, X0 + AD_POST_W - 4, z1), box(X0, z0 + 4, X0 + AD_POST_W, z1 - 4),
+                    *[Point(X0 + AD_POST_W - 4, z).buffer(4, 24) for z in (z0 + 4, z1 - 4)])
+        L = [("base", outline), ("orange", outline.intersection(box(X0, z1 - cap, X0 + 100, z1 + 1)))]
+        word = U(*[g for _, g in place_logo(traced_logo("airtox_dominance_word"), (0, 0, 200, 10), [("white", "white")])])
+        word = affinity.rotate(word, 90, origin=(0, 0))
+        word = fit(word, (X0 + 31, z0 + 12, X0 + AD_POST_W - 9, z1 - cap - 12))
+        L += [("white", word if side_seed % 2 == 0 else flip_text(word))]
+        return outline, L
+
+    def topper():
+        # Half an octagon over the box and both posts, 100 mm high, the logo 24 mm above the box.
+        hw, top_hw, h = X0 + AD_POST_W, 75, 100
+        ch = (hw - top_hw) * 0.6
+        outline = Polygon([(-hw, 0), (-hw, h - ch), (-top_hw, h), (top_hw, h), (hw, h - ch), (hw, 0)])
+        return outline, [("base", outline)] + airtox_dominance_logo((-98, 24, 98, 84))
+
+    def screen(w, h):
+        return [("base", box(0, 0, w, h))]
+
+    return dict(name="Airtox Dominance", place="MMA-ligaens boks", font="outfit", pal=pal, unit="gen2", split_topper=True,
+                filament={"base": "ASA black", "orange": "ASA orange", "white": "ASA white"},
+                casing="#141414", ring={"idle": ["#ffffff", "#ee3e15"], "glow": "#ffffff"},
+                screen=dict(bg="base", ink="white", accent="orange", cta="Stil dig op til face-off",
+                            ticker="Airtox Dominance FC  •  Fear nothing  •  Del dit billede  •  Airtox Dominance FC  •"),
+                frame=dict(bg="base", ink="white", caption="Fear nothing"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: airtox_dominance_logo((-60, 0, 60, 34)),
+                logo_png=dict(file="airtox_dominance-source.png", screen=(300, 700, 460), frame=(40, 160, 90)))
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
@@ -2164,15 +2216,25 @@ def build(tid):
     view = trimesh.Scene()
     report = []
 
-    def make(name, body, outline, layers, place):
+    def make(name, body, outline, layers, place, split=False):
         region = outline.buffer(-tb.EDGE_KEEP)
         colours = tb.resolve(layers, region)
         colours.pop("base", None)
         base, inlays = tb.inlay(body, colours)
+        prints = [(name, base, inlays)]
+        if split:
+            # Wider than the plate: print it as a left and a right half that join at x = 0.
+            def half(m, sx):
+                return m.slice_plane([0, 0, 0], [sx, 0, 0], cap=True)
+            prints = [(f"{name}_{nm}", half(base, sx), {k: h for k, m in inlays.items() if not (h := half(m, sx)).is_empty})
+                      for nm, sx in (("venstre", -1), ("hoejre", 1))]
+        for pname, pbase, pinlays in prints:
+            lo, hi = pbase.bounds
+            size = sorted([hi[0] - lo[0], hi[2] - lo[2]])
+            assert size[0] <= BED[0] + 0.5 and size[1] <= BED[1] + 0.5, f"{pname} is {size} mm, larger than the plate"
+            tb.export_part(pname, pbase, pinlays, pal, out)
         lo, hi = base.bounds
         size = sorted([hi[0] - lo[0], hi[2] - lo[2]])
-        assert size[0] <= BED[0] + 0.5 and size[1] <= BED[1] + 0.5, f"{name} is {size} mm, larger than the plate"
-        tb.export_part(name, base, inlays, pal, out)
         tb.preview_svg(name, region, colours, pal, out / "preview")
         for key, m in {"base": base, **inlays}.items():
             v = m.copy()
@@ -2202,7 +2264,7 @@ def build(tid):
             c = tb.cyl_z(14, 128, 136, x, 14)
             studs.append(c)
         body = tb.boolean("union", [body] + studs)
-    make("topper", body, outline, layers, np.eye(4))
+    make("topper", body, outline, layers, np.eye(4), split=t.get("split_topper", False))
 
     view.export(web / "parts.glb")
 
