@@ -231,5 +231,44 @@
       "topper"
     ],
     "unit": "gen2"
+  },
+  {
+    "id": "tuborg",
+    "name": "Tuborg",
+    "place": "Danmarks barer",
+    "palette": {
+      "base": "#006939",
+      "deep": "#00482a",
+      "bottle": "#0e7a3f",
+      "shine": "#4fae6e",
+      "gold": "#c9a54a",
+      "white": "#ffffff",
+      "cream": "#f4ead2",
+      "beer": "#e7a21f",
+      "amber": "#c77d12",
+      "ink": "#0c2016",
+      "steel": "#b7bdb8",
+      "sky": "#0a7d45"
+    },
+    "casing": "#006939",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#3fbf6a"
+      ],
+      "glow": "#2fae5c"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "gold",
+      "caption": "Skål for i aften"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
   }
 ]

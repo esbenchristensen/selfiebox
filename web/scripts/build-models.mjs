@@ -4,7 +4,7 @@
 //
 //   --occasions builds only the private party designs (bryllup, fodselsdag, julefrokost) into
 //   components/three/occasions.json and leaves the enclosure and the venues alone.
-//   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads, heidis, meny, white_hawks) into components/three/bars.json, for the bars' catalogues.
+//   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads, heidis, meny, white_hawks, tuborg) into components/three/bars.json, for the bars' catalogues.
 //
 // unit.glb       the real Halo enclosure (bezel, diffuser ring, shell, photo module, joint spacer)
 //                taken from hardware/docs/pack/pack.json, the CAD export behind the build pack.
@@ -53,10 +53,17 @@ if (!occasionsOnly && !barsOnly) {
 // Venue themes (business) and occasion themes (private parties) are built the same way
 async function buildThemes(order, jsonFile) {
   const themes = join(halo, "themes");
+  // A theme whose build/web is not on this machine keeps its entry from the last build, so building one theme
+  // never drops the others from the list.
+  const before = existsSync(jsonFile) ? JSON.parse(readFileSync(jsonFile, "utf8")) : [];
   const index = [];
   for (const id of order) {
     const web = join(themes, id, "build/web");
-    if (!existsSync(join(web, "parts.glb"))) continue;
+    if (!existsSync(join(web, "parts.glb"))) {
+      const kept = before.find((t) => t.id === id);
+      if (kept) index.push(kept);
+      continue;
+    }
     const dir = join(out, id);
     mkdirSync(dir, { recursive: true });
     const doc = await io.read(join(web, "parts.glb"));
@@ -72,4 +79,4 @@ async function buildThemes(order, jsonFile) {
 
 if (!occasionsOnly && !barsOnly) await buildThemes(["smukfest", "roskilde", "nibe", "faarup", "legoland", "zoo"], "components/three/venues.json");
 if (!barsOnly) await buildThemes(["bryllup", "fodselsdag", "julefrokost"], "components/three/occasions.json");
-if (!occasionsOnly) await buildThemes(["flying_hirsch", "aab", "palads", "heidis", "meny", "white_hawks"], "components/three/bars.json");
+if (!occasionsOnly) await buildThemes(["flying_hirsch", "aab", "palads", "heidis", "meny", "white_hawks", "tuborg"], "components/three/bars.json");
