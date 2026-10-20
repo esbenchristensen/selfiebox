@@ -1,5 +1,7 @@
 # Selfi Halo gen 2, version v9: printguide
 
+> **Må ikke printes.** Strømindgangen er en åben kanal midt på bagsiden, hvor stik og stikprop ses, og den er tegnet til gættede stikmål. Brug halo-gen2-v10.
+
 **Version:** halo-gen2-v9 (20. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v9_`. Den erstatter halo-gen2-v8, som ikke må printes; kun skallen er ny (mikrofonkortet passer nu efter Seeeds tegning, og mikrofon-kernen har ny plads). CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; printermodulet kommer i en senere version.

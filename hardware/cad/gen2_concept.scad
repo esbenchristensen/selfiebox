@@ -202,7 +202,7 @@ module electronics_holders() {
 // The box cannot be lifted off without the special bit, and the front screws stay behind
 // the box. With the printer module fitted, the module (key lid + 2 screws) comes off first.
 // Lifting force on the tongue: 18 x 18 section, 19 mm lever to the plate.
-LOCK_X = -56;  LOCK_W = 18;  LOCK_TZ = [18, 36];  LOCK_Y = D - 15;  DROP = CLEAT_D;
+LOCK_X = -82;  LOCK_W = 18;  LOCK_TZ = [18, 36];  LOCK_Y = D - 15;  DROP = CLEAT_D;   // v10: x -56 -> -82, room for the power column
 LOCK_SY = (LOCK_Y + D - BACK_T)/2;                  // screw axis, y
 REED_P = [LOCK_X - REED[0]/2, LOCK_TZ[1] + 4];      // reed module tray, bottom-left on the back wall
 LOCK_HEAD = [8.6, 0.3];                             // [A] Bolte 88115 = DIN 7982 ST4.2 countersunk (head Ø8.1, ISO 14586 max 8.4), 90°; head 0.3 below the bottom
@@ -225,7 +225,6 @@ module wall_cleat2() {
         }
         cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
         cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit)
-        translate([PWR_P[0] - 5, D + 0.5, 0]) cube([10, yb - D - 0.49, 250]);       // power lead down the gap: notch the stand-offs
     }
 }
 
@@ -286,8 +285,8 @@ module vent_hoods() for (sx = [-1, 1]) {
 // Every opening is 2.5 mm wide: no fingers, and a poked wire meets only 12 V parts.
 VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];   // underside: 2 x 7 slots, 7.5 cm2 (85 deep: 9.8)
 // 70 deep, the hoods sit between the frame (y 31.7, it reaches down to z 7) and the back wall. The left
-// field stops short of the lock screw's floor boss, so its slots are shorter: [left, right] slot length.
-VENT_Y0 = 33.5;  VENT_L = [16, D - BACK_T - 1.5 - 4 - VENT_Y0];
+// field stops short of the power socket's column (v10, before: the lock screw's floor boss), so its slots are shorter: [left, right] slot length.
+VENT_Y0 = 33.5;  VENT_L = [13, D - BACK_T - 1.5 - 4 - VENT_Y0];
 function vent_l(sx) = VENT_L[sx > 0 ? 1 : 0];
 function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 EXH_XS = [for (i = [0:36]) -90 + 5*i];  EXH_Z = [235, 245];  EXH_DROP = 2;    // back: 37 louvres, 9.3 cm2
@@ -297,17 +296,24 @@ EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; /
 BACK_EXH = false;
 // printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
 CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
-// power (Esben 19 Oct): a vertical channel in the back wall, beside the boards. A 5.5/2.5 socket with
-// screw terminals (elektronik-lavpris 124-538) clicks in with its mouth down; the PSU's straight plug
-// goes in from below and the lead hangs straight down the wall gap, so water runs off the lead, not
-// into the plug. Two ribs at the bottom hold the lead, so the plug cannot drop out. The wires go into
-// the box through a Ø5 hole at the top. Socket and plug sizes are estimates (no drawings): measure.
-PWR_P = [-44, 154];  PWR_IN = [18, 84, 16];                      // channel centre (x, z); w, h, depth
-PWR_SOCK = [14, 14, 33];  PWR_SOCK_Z = 159;  PWR_PLUG = [11, 35];  // socket box, mouth z; plug Ø, length
+// power (v10, Esben 20 Oct): the back stays closed. The 5.5/2.5 socket with screw terminals
+// [A] TRU Components DC-13F (Conrad 1570909, drawing: 39.8 long, barrel Ø10 x 12, terminal block 10 wide, 5 long)
+// sits mouth down in a printed column low on the back wall, next to the PSU. The PSU's straight plug goes up through
+// a hole in the underside and disappears in the column; only the lead comes out, straight down. A hole that faces
+// down cannot fill with rain. The socket is wired first and pushed down from above: it rests on the step above
+// the barrel bore (plug pulled out) and two snap fingers catch the top of its body (plug pushed in).
+// [C] Body ~13 square (photo); [C] plug grip Ø<=12, <=38 long under the barrel (no Mean Well drawing): measure.
+PWR_P = [-49, 60];                              // column axis (x, y)
+PWR_SOCK = [10, 12, 13, 22.8, 10, 5];           // barrel Ø, length; body width, length; terminal block width, length
+PWR_MOUTH = 38;                                 // socket mouth z: plug space below it
+PWR_BORE = 12.5;  PWR_CAV = 13.8;  PWR_WALLT = 2;  // plug bore Ø, body cavity, column wall
+PWR_BODY_TOP = PWR_MOUTH + PWR_SOCK[1] + PWR_SOCK[3];   // 72.8: the fingers catch here
+PWR_TOP = PWR_BODY_TOP + 2;                      // column top; the terminal block stands 3 mm above it
+PWR_OUT = PWR_CAV + 2*PWR_WALLT;                 // column outside, square
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
 // [A] DFRobot FIT0502 3 W 8 ohm enclosed speaker (drawing KN-SP4030-05): 69.9 x 31, flange 3.7,
 //     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
-SPK_P = [-72.5, 94];  SPK = [69.9, 31, 16];  SPK_FL = 3.7;  SPK_EAR = [63.6, 24];   // centre (x, z); w, h, depth
+SPK_P = [-72.5, 104];  SPK = [69.9, 31, 16];  SPK_FL = 3.7;  SPK_EAR = [63.6, 24];   // centre (x, z); w, h, depth
 module bottom_vents() for (sx = [-1, 1], x = VENT_XS) hull() for (dy = [-1, 1])
     cyl_z(VENT_SL[0], -1, WALL + 1, sx*x, vent_y(sx) + dy*(vent_l(sx) - VENT_SL[0])/2);
 module louvre(x, z0, z1) hull() {   // outer opening lower than the inner one: water runs out
@@ -319,8 +325,9 @@ module services_cut() {
     if (BACK_EXH) { for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]); for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]); }
     // bayonet entry notches next to the pass-through
     for (a = CAP_ANG) translate([IF_CABLE[0], IF_CABLE[1], -1]) rotate(a + CAP_ENTRY) translate([0, -(CAP_LUG[0] + 0.6)/2]) cube([CAP_LUG[1] + 0.5, CAP_LUG[0] + 0.6, WALL + 2]);
-    // power pocket opening and the speaker grille
-    ext_y(D - BACK_T - 1, D + 1) translate([PWR_P[0], PWR_P[1] - PWR_IN[1]/2]) rr(PWR_IN[0], PWR_IN[1], 4);
+    // power: plug hole in the underside (0.8 chamfer), and the speaker grille
+    cyl_z(PWR_BORE, -1, WALL + 1, PWR_P[0], PWR_P[1]);
+    translate([PWR_P[0], PWR_P[1], -0.01]) cylinder(d1 = PWR_BORE + 1.6, d2 = PWR_BORE, h = 0.8, $fn = 48);
     for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);
 }
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
@@ -336,17 +343,7 @@ module services_add() {
     }
     // bayonet detents: a 0.4 mm bump the lugs click over in the locked position
     for (a = CAP_ANG) translate([IF_CABLE[0], IF_CABLE[1], WALL - 0.01]) rotate(a + 8) translate([CAP_D/2 + 0.8, -0.6, 0]) cube([1.2, 1.2, 0.41]);
-    // power pocket
-    difference() {
-        translate([PWR_P[0], 0, PWR_P[1]]) translate([-PWR_IN[0]/2 - 2.4, D - BACK_T - PWR_IN[2] - 2.4, -PWR_IN[1]/2 - 2.4]) cube([PWR_IN[0] + 4.8, PWR_IN[2] + 2.41, PWR_IN[1] + 4.8]);
-        translate([PWR_P[0], 0, PWR_P[1]]) translate([-PWR_IN[0]/2, D - BACK_T - PWR_IN[2], -PWR_IN[1]/2]) cube([PWR_IN[0], PWR_IN[2] + 1, PWR_IN[1]]);
-        cyl_y(5, D - BACK_T - PWR_IN[2] - 3, D - BACK_T - PWR_IN[2] + 1, PWR_P[0], PWR_P[1] + PWR_IN[1]/2 - 4);   // wires into the box
-    }
-    // snap lips that hold the socket, and two ribs at the bottom that leave a 5.5 mm slot for the lead
-    for (sx = [-1, 1]) {
-        translate([PWR_P[0] + sx*(PWR_IN[0]/2 - 1.25) - 1.25, D - 4.5, PWR_SOCK_Z + 5]) cube([2.5, 2.5, PWR_SOCK[2] - 10]);
-        translate([PWR_P[0] + sx*(5.5/2 + (PWR_IN[0] - 5.5)/4), D - BACK_T + 0.5, PWR_P[1] - PWR_IN[1]/2 + 2]) translate([-(PWR_IN[0] - 5.5)/4, 0, 0]) cube([(PWR_IN[0] - 5.5)/2 + 0.01, 2.5, 4]);
-    }
+    power_column();
     // speaker: a rim round the flange, 4 pegs through the ear holes and 2 hooks over the flange
     translate([SPK_P[0], D - BACK_T + 0.01, SPK_P[1]]) rotate([90, 0, 0]) {
         difference() { translate([-SPK[0]/2 - 1.8, -SPK[1]/2 - 1.8, 0]) cube([SPK[0] + 3.6, SPK[1] + 3.6, SPK_FL + 1.6]);
@@ -373,14 +370,32 @@ module cable_cap() {   // printed separately; underside flush with the box botto
         for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 3, $fn = 16);   // spanner pins
     }
 }
-module power_inlet() {
-    yc = D - PWR_IN[2]/2 - 0.5;
-    translate([PWR_P[0] - PWR_SOCK[0]/2, yc - PWR_SOCK[1]/2, PWR_SOCK_Z]) cube(PWR_SOCK);
-    translate([PWR_P[0], yc, PWR_SOCK_Z - PWR_PLUG[1]]) cylinder(d = PWR_PLUG[0], h = PWR_PLUG[1], $fn = 32);
+module power_column() translate([PWR_P[0], PWR_P[1], 0]) {
+    c = PWR_CAV;  o = PWR_OUT;  fz = PWR_BODY_TOP - 16;   // fingers: the ±x walls, free above fz
+    difference() {
+        translate([0, 0, WALL - 0.01]) linear_extrude(PWR_TOP - WALL + 0.01) rrc(o, o, 2);
+        cyl_z(PWR_BORE, -1, PWR_MOUTH, 0, 0);                                       // plug
+        cyl_z(PWR_SOCK[0] + 0.5, PWR_MOUTH - 0.01, PWR_MOUTH + PWR_SOCK[1], 0, 0);  // barrel; its top is the step the body rests on
+        translate([-c/2, -c/2, PWR_MOUTH + PWR_SOCK[1]]) cube([c, c, PWR_TOP]);    // body
+        for (sx = [-1, 1], sy = [-1, 1]) translate([sx > 0 ? c/2 - 0.5 : -o/2 - 0.5, sy > 0 ? c/2 - 0.8 : -c/2, fz])
+            cube([PWR_WALLT + 1, 0.8, PWR_TOP]);                                      // slots free the fingers
+    }
+    // catches: 1.2 over the body's top edge, ramped above so the socket pushes past them
+    for (sx = [-1, 1]) translate([sx*c/2, -c/2 + 1.5, PWR_BODY_TOP + 0.2]) rotate([-90, 0, 0]) linear_extrude(c - 3)
+        polygon([[0, 0], [-sx*1.2, 0], [-sx*1.2, -0.4], [0, -(PWR_TOP - PWR_BODY_TOP - 0.2)]]);
+}
+module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // socket mouth down, and the PSU plug pushed in from below
+    s = PWR_SOCK;  z1 = PWR_MOUTH + s[1];
+    cyl_z(s[0], PWR_MOUTH, z1, 0, 0);
+    hull() { translate([-(s[2] - 1.5)/2, -(s[2] - 1.5)/2, z1]) cube([s[2] - 1.5, s[2] - 1.5, 0.01]); translate([-s[2]/2, -s[2]/2, z1 + s[3] - 0.01]) cube([s[2], s[2], 0.01]); }
+    translate([-s[4]/2, -s[4]/2, z1 + s[3]]) cube([s[4], s[4], s[5]]);
+    cyl_z(10, 9, PWR_MOUTH, 0, 0);                                   // plug grip
+    translate([0, 0, 1]) cylinder(d1 = 6, d2 = 8.5, h = 8.01, $fn = 32);  // strain relief, inside the bore
+    cyl_z(4, -60, 1.01, 0, 0);                                       // lead, straight down
 }
 module placed_services() {
     translate([IF_CABLE[0], IF_CABLE[1], 0]) color([0.11, 0.11, 0.12]) cable_cap();
-    // socket (mouth down) and the PSU's straight plug in the channel
+    // socket (mouth down) in its column and the PSU's straight plug from below
     color([0.2, 0.2, 0.2]) power_inlet();
     // speaker
     color([0.2, 0.2, 0.22]) speaker3();
@@ -453,7 +468,7 @@ module placed_printers() {
 // [A] DFRobot Gravity MOSFET DFR0457 (white strips) 44 x 32, 4 x Ø3.1 on 20 x 25; height not published (~16): on the left side wall.
 PSU5 = [128, 60, 25];  PSU5_P = [-37, 16];                    // x, z (bottom-left), on the back wall
 WLED = [108, 45, 18];  WLED_P = [-30, 80];                    // x, z (bottom-left), on the back wall
-MOSF = [44, 32, 16];   MOSF_P = [34.5, 112];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
+MOSF = [44, 32, 16];   MOSF_P = [34.5, 124];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
 module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
     difference() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
@@ -679,6 +694,7 @@ module shell3(top = UNIT_TOP) {
             power_holders();
         }
         for (j = J2) { cyl_y(7.0, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
+        lock_cut();   // v10: the lock sits over a closed v1 screw hole now; keep its slot open
     }
 }
 

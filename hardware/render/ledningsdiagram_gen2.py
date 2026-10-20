@@ -1,5 +1,6 @@
-"""Ledningsdiagram for Halo gen 2 (halo-gen2-v3). Usage: python3 hardware/render/ledningsdiagram_gen2.py out.svg"""
+"""Ledningsdiagram for Halo gen 2. Usage: python3 hardware/render/ledningsdiagram_gen2.py out.svg [halo-gen2-vN]"""
 import sys
+VER = sys.argv[2] if len(sys.argv) > 2 else "halo-gen2-v3"
 W, H = 1800, 1270
 C = dict(v24="#d62828", v5="#e67700", gnd="#222222", sig="#1c7ed6", data="#9c36b5", sw="#868e96")
 out = []
@@ -23,12 +24,12 @@ def lab(x, y, t, col="#333", anchor="start", size=14):
     out.append(f'<text x="{x}" y="{y}" font-size="{size}" fill="{col}" font-weight="600" text-anchor="{anchor}">{t}</text>')
 
 out.append(f'<rect width="{W}" height="{H}" fill="#fff"/>')
-out.append('<text x="40" y="54" font-size="32" font-weight="800">Halo gen 2 · halo-gen2-v3 · ledningsdiagram</text>')
+out.append(f'<text x="40" y="54" font-size="32" font-weight="800">Halo gen 2 · {VER} · ledningsdiagram</text>')
 out.append('<text x="40" y="84" font-size="17" fill="#444">Kun købedele, ingen lodning: skrueklemmer, Wago 221-41x og klikstik. Ledningstyller på alle fintrådede ledninger, der går i en skrueklemme.</text>')
 
 # 24 V in, left column
 box(40, 140, 270, 100, "Strømforsyning", "Mean Well GST90A24|24 V, lige stik nedefra")
-box(40, 290, 270, 100, "Hunstik 124-538", "i kanalen bagpå|skrueklemmer + og −")
+box(40, 290, 270, 100, "Hunstik 5,5/2,5", "TRU DC-13F, i røret i bunden|skrueklemmer + og −")
 box(40, 450, 270, 80, "Sikring 3 A", "fladsikring ATO (violet), kun på +")
 wire([(175, 240), (175, 290)], C["v24"], 6); lab(185, 270, "24 V", C["v24"])
 w1 = wago(560, 150, 5, "W1 · 24 V + ", C["v24"])
