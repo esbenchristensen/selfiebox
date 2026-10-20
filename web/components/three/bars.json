@@ -237,30 +237,30 @@
     "name": "Tuborg",
     "place": "Danmarks barer",
     "palette": {
-      "base": "#006939",
-      "deep": "#00482a",
-      "bottle": "#0e7a3f",
-      "shine": "#4fae6e",
-      "gold": "#c9a54a",
+      "base": "#0c6928",
+      "green": "#309654",
+      "deep": "#1a4033",
+      "lime": "#a2f37c",
       "white": "#ffffff",
+      "silver": "#adadb0",
+      "bottle": "#1f7a3e",
       "cream": "#f4ead2",
       "beer": "#e7a21f",
-      "amber": "#c77d12",
-      "ink": "#0c2016",
-      "steel": "#b7bdb8",
-      "sky": "#0a7d45"
+      "shine": "#4fae6e",
+      "sky": "#14803c",
+      "ink": "#1a4033"
     },
-    "casing": "#006939",
+    "casing": "#0c6928",
     "ring": {
       "idle": [
         "#ffffff",
-        "#3fbf6a"
+        "#a2f37c"
       ],
-      "glow": "#2fae5c"
+      "glow": "#5fd36a"
     },
     "frame": {
       "bg": "base",
-      "ink": "gold",
+      "ink": "lime",
       "caption": "Skål for i aften"
     },
     "photo": "print-club",

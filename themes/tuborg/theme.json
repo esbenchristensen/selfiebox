@@ -3,28 +3,32 @@
   "event": "Tuborg – concept design (venue artwork, internal use)",
   "palette": {
     "base": {
-      "hex": "#006939",
+      "hex": "#0c6928",
       "filament": "ASA green"
     },
+    "green": {
+      "hex": "#309654",
+      "filament": "ASA grass green"
+    },
     "deep": {
-      "hex": "#00482a",
+      "hex": "#1a4033",
       "filament": "ASA dark green"
     },
-    "bottle": {
-      "hex": "#0e7a3f",
-      "filament": "ASA bottle green"
-    },
-    "shine": {
-      "hex": "#4fae6e",
-      "filament": "ASA light green"
-    },
-    "gold": {
-      "hex": "#c9a54a",
-      "filament": "ASA gold"
+    "lime": {
+      "hex": "#a2f37c",
+      "filament": "ASA lime green"
     },
     "white": {
       "hex": "#ffffff",
       "filament": "ASA white"
+    },
+    "silver": {
+      "hex": "#adadb0",
+      "filament": "ASA silver"
+    },
+    "bottle": {
+      "hex": "#1f7a3e",
+      "filament": "ASA bottle green"
     },
     "cream": {
       "hex": "#f4ead2",
@@ -34,26 +38,22 @@
       "hex": "#e7a21f",
       "filament": "ASA yellow"
     },
-    "amber": {
-      "hex": "#c77d12",
-      "filament": "ASA orange"
-    },
-    "ink": {
-      "hex": "#0c2016",
-      "filament": "ASA black"
-    },
-    "steel": {
-      "hex": "#b7bdb8",
-      "filament": "ASA light grey"
+    "shine": {
+      "hex": "#4fae6e",
+      "filament": "ASA light green"
     },
     "sky": {
-      "hex": "#0a7d45",
+      "hex": "#14803c",
       "filament": "ASA green"
+    },
+    "ink": {
+      "hex": "#1a4033",
+      "filament": "ASA black"
     }
   },
   "casing": {
     "style": "venue",
-    "colour": "#006939",
+    "colour": "#0c6928",
     "built_by": "hardware/tools/venue_themes.py"
   },
   "light": {
@@ -61,7 +61,7 @@
       "animation": "slow-wave",
       "colors": [
         "#ffffff",
-        "#3fbf6a"
+        "#a2f37c"
       ],
       "period_s": 8
     },
@@ -72,12 +72,12 @@
       "cob": 1.0,
       "rgbw": "#fff1de"
     },
-    "glow": "#2fae5c"
+    "glow": "#5fd36a"
   },
   "screen": {
-    "ticker": "Tuborg  •  Skål for i aften  •  Drink with respect  •  Kun for 18+  •",
+    "ticker": "Grøn Tuborg  •  Hele Danmarks pilsner  •  Drik med respekt  •  Kun for 18+  •",
     "cta": "Sig «Skål!»",
-    "background": "white",
-    "accent": "gold"
+    "background": "base",
+    "accent": "lime"
   }
 }

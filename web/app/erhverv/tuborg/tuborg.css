@@ -1,24 +1,24 @@
-/* Selfi × Tuborg: the shared catalogue styles in Tuborg's colours. The label green, a deeper bottle green, the gold of
-   the label rims and cream foam. The same rules sit in kataloger/tuborg.css for the copy that lives in the database. */
+/* Selfi × Tuborg: the shared catalogue styles in Tuborg's colours. The Grøn Tuborg greens, white, silver and the lime of
+   tuborg.dk's campaigns. The same rules sit in kataloger/tuborg.css for the copy that lives in the database. */
 .kat.kat--tuborg {
   --k-night: #00351f;
-  --k-base: #006939;
-  --k-forest: #00482a;
-  --k-leaf: #c9a54a;
-  --k-lime: #c9a54a;
-  --k-red: #c9a54a;
+  --k-base: #0c6928;
+  --k-forest: #0a4a22;
+  --k-leaf: #a2f37c;
+  --k-lime: #a2f37c;
+  --k-red: #a2f37c;
   --k-cream: #f7f3e8;
   --k-ink: #0c2016;
   --k-line-dark: rgba(247, 243, 232, 0.2);
   --k-line-light: rgba(12, 32, 22, 0.16);
 }
-.kat--tuborg .kat-pg--dark { background: radial-gradient(120% 70% at 50% 0%, #0a7d45, #006939 45%, #00482a); }
-.kat--tuborg .kat-glow { background: radial-gradient(closest-side, rgba(244, 234, 210, 0.28), rgba(201, 165, 74, 0.12) 60%, transparent); }
-.kat--tuborg .kat-screen { box-shadow: 0 0 0 6px #ffffff, 0 0 40px 8px rgba(201, 165, 74, 0.4); }
-.kat--tuborg .kat-tag { background: rgba(201, 165, 74, 0.22); }
-.kat--tuborg .kat-rec-screen { background: radial-gradient(circle at 50% 42%, rgba(201, 165, 74, 0.28), transparent 55%), linear-gradient(180deg, #0a7d45, #006939 60%, #00482a); }
+.kat--tuborg .kat-pg--dark { background: radial-gradient(120% 70% at 50% 0%, #1d8a45, #0c6928 45%, #0a4a22); }
+.kat--tuborg .kat-glow { background: radial-gradient(closest-side, rgba(244, 234, 210, 0.28), rgba(162, 243, 124, 0.12) 60%, transparent); }
+.kat--tuborg .kat-screen { box-shadow: 0 0 0 6px #ffffff, 0 0 40px 8px rgba(162, 243, 124, 0.4); }
+.kat--tuborg .kat-tag { background: rgba(162, 243, 124, 0.22); }
+.kat--tuborg .kat-rec-screen { background: radial-gradient(circle at 50% 42%, rgba(162, 243, 124, 0.28), transparent 55%), linear-gradient(180deg, #1d8a45, #0c6928 60%, #0a4a22); }
 .kat--tuborg .kat-qs span { background: rgba(255, 255, 255, 0.14); }
-.kat--tuborg .kat-qs span:nth-child(3n + 2) { background: #c9a54a; color: #0c2016; }
+.kat--tuborg .kat-qs span:nth-child(3n + 2) { background: #a2f37c; color: #0c2016; }
 .kat--tuborg .kat-qs span:nth-child(3n) { background: #ffffff; color: var(--k-ink); }
 .kat--tuborg .kat-setup2 .kat-box { filter: drop-shadow(0 18px 24px rgba(0, 40, 22, 0.32)); }
 .kat--tuborg .kat-partner-logo { height: calc(var(--lk) * 0.62); width: auto; }
@@ -27,27 +27,27 @@
 .kat--tuborg .kat-pg h2 { font-size: 34px; line-height: 1.08; max-width: 19ch; }
 .kat--tuborg .kat-facts b { font: 400 22px/1.1 var(--font-partner), serif; }
 
-/* the label's gold rims along the top of a page and its gold band along the bottom */
+/* the label's green rims along the top of a page and its green and lime band along the bottom */
 .kat-rim { position: absolute !important; left: 0; right: 0; top: 0; height: 20px; z-index: 0 !important; pointer-events: none;
-  background: linear-gradient(180deg, #c9a54a 0 7px, transparent 7px 11px, #c9a54a 11px 14px, transparent 14px); }
+  background: linear-gradient(180deg, #309654 0 7px, transparent 7px 11px, #a2f37c 11px 14px, transparent 14px); }
 .kat-band { position: absolute !important; left: 0; right: 0; bottom: 0; z-index: 0 !important;
-  background: linear-gradient(180deg, #c9a54a 0 30%, #00482a 30% 46%, #c9a54a 46% 62%, #006939 62%); }
+  background: linear-gradient(180deg, #a2f37c 0 22%, #309654 22% 52%, #ffffff 52% 64%, #0c6928 64%); }
 .kat-pg .kat-folio { z-index: 3 !important; }
 .kat--tuborg .kat-folio { bottom: 36px; }
 .kat--tuborg .kat-pg--dark .kat-top { margin-top: 16px; }
 
 /* who gets what */
 .kat-who { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 18px; }
-.kat-who > div { border-top: 3px solid #c9a54a; padding-top: 12px; }
-.kat-who b { display: block; font: 400 20px/1.1 var(--font-partner), serif; margin-bottom: 8px; color: #c9a54a; }
+.kat-who > div { border-top: 3px solid #a2f37c; padding-top: 12px; }
+.kat-who b { display: block; font: 400 20px/1.1 var(--font-partner), serif; margin-bottom: 8px; color: #a2f37c; }
 .kat-who ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .kat-who li { font-size: 13px; line-height: 1.4; opacity: 0.9; padding-left: 14px; position: relative; }
-.kat-who li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: #c9a54a; }
+.kat-who li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: #a2f37c; }
 
 /* campaigns through the year */
 .kat-year { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 26px; margin-top: 10px; }
-.kat-year div { border-left: 3px solid #c9a54a; padding: 2px 0 4px 14px; }
-.kat-year b { font: 400 15px/1.2 var(--font-partner), serif; color: #c9a54a; }
+.kat-year div { border-left: 3px solid #a2f37c; padding: 2px 0 4px 14px; }
+.kat-year b { font: 400 15px/1.2 var(--font-partner), serif; color: #a2f37c; }
 .kat-year h3 { font-size: 17px !important; margin: 4px 0 4px; }
 .kat-year p { font-size: 13px !important; opacity: 0.86; }
 
@@ -70,12 +70,12 @@
 
 /* a screen next to its explanation */
 .kat-side { display: grid; grid-template-columns: 250px 1fr; gap: 34px; align-items: start; }
-.kat-side img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 0 0 6px #ffffff, 0 0 40px 8px rgba(201, 165, 74, 0.4); }
+.kat-side img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 0 0 6px #ffffff, 0 0 40px 8px rgba(162, 243, 124, 0.4); }
 .kat-side .kat-places { gap: 14px; }
 
 /* the box in 3D: drag to turn it, the render underneath until it is ready and in print */
 .kat-3d-wrap { position: relative; height: 470px; flex: none; border-radius: 28px;
-  background: radial-gradient(closest-side, rgba(201, 165, 74, 0.26), rgba(201, 165, 74, 0.07) 62%, transparent); }
+  background: radial-gradient(closest-side, rgba(162, 243, 124, 0.26), rgba(162, 243, 124, 0.07) 62%, transparent); }
 .kat-3d { position: absolute; inset: 0; }
 .kat-3d-poster { position: absolute; inset: 6% 0; margin: auto; height: 88%; width: auto; transition: opacity 500ms ease; filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45)); }
 .kat-3d.is-ready .kat-3d-poster { opacity: 0; }
