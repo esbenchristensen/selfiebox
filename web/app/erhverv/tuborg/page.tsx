@@ -9,7 +9,7 @@ import { Box3D } from "./Box3D";
 // selfi.dk/erhverv/tuborg: the sales catalogue for Tuborg (Carlsberg Danmark), sixteen A4 pages that print to a PDF.
 // The deal is a brand deal, not a venue deal: Tuborg pays for one box per bar, the bar hangs it up itself, and
 // every photo and video carries the Tuborg wordmark. The box is shown only in the Tuborg design on the gen 2 unit
-// (the crown and label of the Danish Grøn Tuborg on top, a Grøn Tuborg bottle and a draught glass on the sides). What sells
+// (the crown and label of the Danish Grøn Tuborg can on top, the box in the can's green, a Grøn Tuborg can and a draught glass on the sides). What sells
 // it to a brand: the network of bars in one view, one-click campaigns on every box (J-dag at 20:59), the bar's
 // own name next to Tuborg, numbers per bar and responsible drinking built in. No prices: they are agreed per deal.
 // It stays out of search and the sitemap.
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 const IMG = "/katalog/tuborg";
-const PAL = { green: "#0c6928", can: "#309654", deep: "#1a4033", lime: "#a2f37c", silver: "#adadb0", white: "#ffffff", cream: "#f4ead2", beer: "#e7a21f", blue: "#123a8c" };
+const PAL = { green: "#1a8a3c", can: "#2e9a48", deep: "#1a3a30", lime: "#80e040", silver: "#adadb0", white: "#ffffff", cream: "#f4ead2", beer: "#e7a21f", blue: "#123a8c" };
 const kr = (n: number) => n.toLocaleString("da-DK");
 
 // The can's green rims along the top of a page.
@@ -117,7 +117,7 @@ export default function TuborgKatalog() {
             <span className="kat-kicker">Forslag · 2026/27</span>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="kat-box kat-glow" src={`${IMG}/boks-tuborg.png`} alt="Selfi Boks i Tuborg-design med kronen og Grøn Tuborg-etiketten på toppen, en Grøn Tuborg-flaske på den ene side og et fadølsglas på den anden" style={{ width: 430, marginTop: -6 }} />
+          <img className="kat-box kat-glow" src={`${IMG}/boks-tuborg.png`} alt="Selfi Boks i Tuborgs grønne farve med kronen og Grøn Tuborg-etiketten på toppen, en Grøn Tuborg-dåse på den ene side og et fadølsglas på den anden" style={{ width: 430, marginTop: -6 }} />
           <h1 className="kat-center">Tuborg på hvert billede</h1>
           <p className="kat-lede kat-center">Et udkast til Tuborg: en fotoboks i Tuborgs design i Danmarks barer, der tager billeder og videoer af gæsterne og sætter Tuborg på alt, der deles.</p>
           <Band />
@@ -128,7 +128,7 @@ export default function TuborgKatalog() {
           <span className="kat-kicker">Til Tuborg</span>
           <h2>Skålen bliver allerede taget</h2>
           <p className="kat-lede" style={{ maxWidth: "44ch" }}>
-            Hver aften rejser tusindvis af gæster glasset i en bar, der skænker Tuborg, og hver aften bliver det øjeblik fotograferet. Men Tuborg står sjældent på billedet. Selfi Boks er bygget i jeres design med kronen og Grøn Tuborg-etiketten, en grøn flaske og et fadølsglas med skum. Den hænger i baren, tager billeder og korte videoer af gæsterne og sætter Tuborg på alt, der deles.
+            Hver aften rejser tusindvis af gæster glasset i en bar, der skænker Tuborg, og hver aften bliver det øjeblik fotograferet. Men Tuborg står sjældent på billedet. Selfi Boks er bygget i jeres design: kabinettet i dåsens grøn, kronen og Grøn Tuborg-etiketten på toppen, en Grøn Tuborg-dåse og et fadølsglas med skum. Den hænger i baren, tager billeder og korte videoer af gæsterne og sætter Tuborg på alt, der deles.
           </p>
           <div className="kat-sign">
             <b>Skål for i aften</b>
@@ -195,7 +195,7 @@ export default function TuborgKatalog() {
         <Page n={4} cap="Designet" dark>
           <Rim />
           <span className="kat-kicker">Designet</span>
-          <h2>Kronen, flasken og glasset</h2>
+          <h2>Kronen, dåsen og glasset</h2>
           <p className="kat-lede">Ét design styrer fire lag, så boksen ligner en del af baren og Tuborgs univers, ikke en automat, der er stillet ind.</p>
           <div className="kat-theme">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -203,7 +203,7 @@ export default function TuborgKatalog() {
             <div className="kat-layers">
               <div>
                 <b>Top og sider</b>
-                Toppen af Grøn Tuborg-etiketten, som den ser ud i Danmark: kronen over en hvid etiket med TUBORG i bue og »GRØN«. En grøn flaske på den ene side og et fadølsglas med skum på den anden. Få, rolige former i jeres farver, printet massive og robuste nok til en fredag aften.
+                Toppen er etiketten fra Grøn Tuborg-dåsen, som den ser ud i Danmark: kongekronen, TUBORG i bue, »Brygget siden 1880« og »GRØN«. Selve boksen er printet i dåsens grøn med den hvide lysring rundt om skærmen. En Grøn Tuborg-dåse på den ene side og et fadølsglas med skum på den anden. Få, rolige former, printet massive og robuste nok til en fredag aften.
                 <Swatches keys={["green", "can", "white", "silver", "beer"]} />
               </div>
               <div>
@@ -211,7 +211,7 @@ export default function TuborgKatalog() {
                 <Swatches keys={["white", "lime", "blue"]} />
               </div>
               <div>
-                <b>Skærm</b>Ordmærket over lys og perler, »Hele Danmarks pilsner« og »Sig «Skål!»«.
+                <b>Skærm</b>Ordmærket over grønne lysstråler og en række Grøn Tuborg-dåser, »Hele Danmarks pilsner« og »Sig «Skål!»«.
               </div>
               <div>
                 <b>Hvert foto og hver video</b>Tuborg-rammen, barens egen ramme med Tuborg ved siden af, eller aftenens kampagne.
@@ -237,7 +237,7 @@ export default function TuborgKatalog() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="kat-box" src={`${IMG}/boks-tuborg-skraa-venstre.png`} alt="Tuborg-boksen set skråt fra venstre med fadølsglasset forrest" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="kat-box" src={`${IMG}/boks-tuborg-skraa-hoejre.png`} alt="Tuborg-boksen set skråt fra højre med den grønne flaske forrest" />
+            <img className="kat-box" src={`${IMG}/boks-tuborg-skraa-hoejre.png`} alt="Tuborg-boksen set skråt fra højre med Grøn Tuborg-dåsen forrest" />
           </div>
           <Band />
           <Folio n={5} />
