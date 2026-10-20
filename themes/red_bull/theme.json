@@ -1,0 +1,71 @@
+{
+  "name": "Red Bull",
+  "event": "Red Bull – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#0e1d48",
+      "filament": "ASA navy"
+    },
+    "blue": {
+      "hex": "#14275e",
+      "filament": "ASA dark blue"
+    },
+    "blue2": {
+      "hex": "#22407f",
+      "filament": "ASA blue"
+    },
+    "silver": {
+      "hex": "#c9ced6",
+      "filament": "ASA silver"
+    },
+    "red": {
+      "hex": "#d2003c",
+      "filament": "ASA red"
+    },
+    "yellow": {
+      "hex": "#ffd300",
+      "filament": "ASA yellow"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "ASA white"
+    },
+    "grey": {
+      "hex": "#9ea8b8",
+      "filament": "ASA light grey"
+    },
+    "ink": {
+      "hex": "#070c1f",
+      "filament": "ASA black"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#0e1d48",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#ffd300"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#d2003c"
+  },
+  "screen": {
+    "ticker": "Red Bull giver viiinger  •  Hop når lyset blinker, så fanger vi dig i luften  •  Nattens højeste hop vinder  •",
+    "cta": "Hop – og få viiinger!",
+    "background": "base",
+    "accent": "red"
+  }
+}
