@@ -41,7 +41,7 @@ PARTS = [
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
     ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto WLED)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (DFRobot DFR0457)",       "#0f766e", "Elektronik", [-90, 0, 0]),
-    ("stik",          "c_jack",        "Strømindgang: hunstik + GST-stik",                  "#e11d48", "Elektronik", [0, 0, -90]),
+    ("stik",          "c_jack",        "Strømindgang i bunden: hunstik TRU DC-13F + GST-stik nedefra",                  "#e11d48", "Elektronik", [0, 0, -90]),
     ("modem4g",       "c_4g",          "4G-modem med GPS",                "#2563eb", "Tilvalg",    [0, 0, -90]),
     ("lydkerne",      "c_mcore",       "Mikrofon-kerne (XVF3800)",        "#0ea5e9", "Tilvalg",    [0, 0, -90]),
     ("mikrofoner",    "c_mics",        "Mikrofonstrip",                   "#14b8a6", "Tilvalg",    [0, 0, -90]),
@@ -56,18 +56,18 @@ PARTS = [
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. Routed along the back wall
 # and the display back, clear of the boards; each cable belongs to the component it serves.
 CABLES = [
-    ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(-44, 76.5, 191), (-44, 66, 192), (-44, 58, 190), (-20, 55, 170), (40, 55, 130), (86, 54, 100), (88, 52, 76)]),
+    ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(-49, 60, 77.5), (-49, 60, 81), (-46, 50, 82), (-36, 42, 82), (60, 42, 82), (93, 44, 82), (96, 50, 75), (90, 52, 72)]),
     ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(88, 52, 68), (84, 56, 100), (80, 60, 108)]),
-    ("daemper",    "24 V → dæmper",                  2.0, [(88, 52, 76), (40, 52, 80), (-60, 52, 110), (-100, 55, 125)]),
+    ("daemper",    "24 V → dæmper",                  2.0, [(90, 52, 70), (97, 50, 74), (95, 44, 84), (60, 42, 88), (-36, 42, 88), (-60, 44, 126), (-100, 55, 137)]),
     ("stroem",     "5 V → Pi",                       2.2, [(88, 52, 70), (60, 45, 85), (25, 38, 120)]),
-    ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 50, 160), (-100, 55, 150)]),
+    ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 50, 172), (-100, 55, 162)]),
     ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (88, 50, 180), (86, 54, 125), (80, 60, 115)]),
     ("modem4g",    "4G: USB → Pi",                   2.6, [(-56, 72, 190), (-32, 52, 170), (-18, 44, 118)]),
     ("lydkerne",   "Mikrofon-kerne: USB → Pi",       2.6, [(30, 52, 150), (24, 44, 140), (18, 40, 118)]),
     ("mikrofoner", "Mikrofonstrip → kerne",          1.2, [(-0.7, 22.2, 3.6), (-0.7, 33, 3.6), (-0.7, 33.5, 12), (1, 39, 15), (3, 39, 126), (5, 47, 131), (5, 52, 133.5)]),
-    ("hoejttaler", "Højttaler → kerne",              1.6, [(-41, 74, 100), (-12, 76, 124), (40, 76, 150), (60, 74, 166)]),
+    ("hoejttaler", "Højttaler → kerne",              1.6, [(-41, 60, 110), (-34, 45, 128), (-12, 46, 134), (5, 52, 136)]),
     ("sensor",     "Stødsensor → Pi (I2C)",          1.4, [(0, 76, 200), (12, 52, 190), (24, 41, 165)]),
-    ("reed",       "Løftesensor → Pi",               1.4, [(-46, 75, 44), (-32, 60, 90), (-24, 41, 150)]),
+    ("reed",       "Løftesensor → Pi",               1.4, [(-70, 56, 50), (-64, 45, 66), (-36, 40, 92), (-24, 41, 150)]),
 ]
 
 # flat cables (FFC): owner, label, width, thickness, sections [(point, width direction)].
