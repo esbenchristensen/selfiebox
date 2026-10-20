@@ -290,14 +290,21 @@ def wing_body(outline):
     return tb.boolean("diff", [body] + holes), outline
 
 
-def topper_body(outline):
-    """theme_builder's topper, with a free outline. z = 0 is the top of the joint spacer."""
+def topper_outline(outline):
+    """The topper's printed outline: the theme's outline on the mounting strip, rounded at the box's top corners."""
     outline = U(outline, box(-HW, 0, HW, 14)).buffer(-2).buffer(2)
     r = G["R"]
     for sx in (-1, 1):   # follow the box's rounded top corners where the outline is as wide as the box
         corner = box(min(sx * HW, sx * (HW - r)), -1, max(sx * HW, sx * (HW - r)), r)
         if outline.bounds[0] > -HW - 1 and outline.bounds[2] < HW + 1:
             outline = outline.difference(corner.difference(Point(sx * (HW - r), r).buffer(r, 48)))
+    return outline
+
+
+def topper_body(outline):
+    """theme_builder's topper, with a free outline. z = 0 is the top of the joint spacer (gen 2: of the unit)."""
+    r = G["R"]
+    outline = topper_outline(outline)
     th = outline.bounds[3]
     face = tb.extrude_xz(outline, 0, tb.FACE_T)
     base = tb.cube(-(HW - r - 2), HW - r - 2, 3, 62, 0, 12)

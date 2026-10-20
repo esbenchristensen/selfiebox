@@ -26,6 +26,8 @@
 .kat--carlsberg .kat-pg h2 { font-size: 36px; line-height: 1.08; max-width: 18ch; }
 .kat--carlsberg .kat-facts b { font: 800 22px/1.1 var(--font-partner), sans-serif; }
 .kat--carlsberg .kat-points--dark li { border-top-color: var(--k-line-dark); }
+.kat--carlsberg .kat-theme { grid-template-columns: 330px 1fr; }
+.kat--carlsberg .kat-setup2 { grid-template-columns: 300px 1fr; }
 .kat--carlsberg .kat-places--grid { grid-template-columns: 1fr 1fr; gap: 18px 28px; }
 
 /* the label's gold rule along the top of a page and a band of green and gold along the bottom */
@@ -58,5 +60,5 @@
 .kat-3d-poster { position: absolute; inset: 6% 0; margin: auto; height: 88%; width: auto; transition: opacity 500ms ease; filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45)); }
 .kat-3d.is-ready .kat-3d-poster { opacity: 0; }
 .kat-angles { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; justify-items: center; margin-bottom: 70px; }
-.kat-angles .kat-box { height: 230px; width: auto; }
+.kat-angles .kat-box { height: 300px; width: auto; }
 @media print { .kat-3d .stage-canvas { display: none; } .kat-3d .kat-3d-poster { opacity: 1 !important; } }
