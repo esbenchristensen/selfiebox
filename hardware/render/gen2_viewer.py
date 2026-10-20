@@ -28,7 +28,7 @@ PARTS = [
     ("ledskinne",     "x_frame3",      "Bagramme med reflektor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
-    ("printerdaeksel", "c_cap",        "Dæksel til printerhul",           "#3a3a3f", "Kabinet",    [0, -45, -90]),
+    ("printerdaeksel", "c_cap",        "Prop til printerhul (drejes 60°, strammer på 3 fjedertunger)", "#3a3a3f", "Kabinet",    [0, -45, -90]),
     ("skaerm",        "x_dsp_glass",   "Skærm: glas med sort kant (ligger direkte på frontens 1,6 mm kant)",       "#0b0b0d", "Elektronik", [0, 0, 65]),
     ("skaerm_billede", "x_dsp_active", "Skærm: aktivt billede 1200 × 1920", "#4f7df0", "Elektronik", [0, 0, 65]),
     ("skaerm_bag",    "x_dsp_back",    "Skærm: bagside med skrueører",    "#8a8d94", "Elektronik", [0, 0, 65]),

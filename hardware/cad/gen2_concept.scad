@@ -45,7 +45,7 @@ GLOW = false;
 RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
 // underside services at y = D/2 + 11.5 (85 deep: 54). Written out, not via a new variable: these override
 // halo.scad's values, and OpenSCAD evaluates an override where the first assignment stands.
-IF_SCREW = [[-70, D/2 + 11.5], [70, D/2 + 11.5]];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-22, 38];   // v11: the power column has the middle; cable cap and dowels step aside
+IF_SCREW = [[-70, D/2 + 11.5], [70, D/2 + 11.5]];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-20, 38];   // v11: the power column has the middle; cable cap and dowels step aside. v13: x -22 -> -20, the wider collar clears the vent hood
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
 POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 175], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
@@ -296,8 +296,26 @@ EXH_C = [for (sx = [-1, 1], i = [0:3]) sx*(86 + 4.5*i)];  EXH_CZ = [254, 274]; /
 // v7 (Esben 19 Oct): the back louvres are closed, only the underside vents stay. Without an outlet up high
 // there is no chimney: the box cools through its walls, about as if it were sealed.
 BACK_EXH = false;
-// printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise)
-CAP_D = 19.6;  CAP_LUG = [6, 11.8];  CAP_ANG = [0, 120, 240];  CAP_ENTRY = 60;
+// printer pass-through: bayonet cap, flush, turned with a 2-pin spanner (no coin slot to vandalise).
+// v13 (Esben 20 Oct): in v12 nothing stopped the cap from the inside (a Ø19.6 disc in the Ø20 hole), so it
+// rattled, slid 4 mm up into the box and its detents never worked. Now a flange stops on a shoulder
+// (counterbore from below), so the cap sits flush; it is turned 60° clockwise seen from below, and each lug
+// rides onto a printed spring tongue in the floor: a hump bends the tongue 0.45 mm on the way, drops into a
+// groove under the lug at the end (click) and keeps 0.25 mm of preload (about 2.6 N per tongue) that pulls the
+// flange onto the shoulder. A hard stop ends the turn. Sketch: gen2-gennemgang/halo-gen2-v13_skitse_printerprop.png
+// Cap axes: z up (box), angles from +x, counter-clockwise seen from inside; a lug sits at a when locked, a - CAP_ENTRY on entry.
+CAP_ANG = [90, 210, 330];  CAP_ENTRY = 60;
+CAP_FL = [28.4, 1.8];  CAP_CB = 29;              // flange Ø, thickness (= counterbore depth); counterbore Ø
+CAP_PLUG = 19.4;                                 // plug Ø in the Ø20 hole (IF_CABLE_D)
+CAP_LUG = [9.5, 12.8, 15, 5.3, 6.7];             // lug: r in, r out, half angle, z bottom, z top (cap seated)
+CAP_NOTCH = [13.3, 17];                          // entry notch through the floor: r out, half angle
+CAP_COLLAR = [13.6, 15, 6.8];                    // collar r in, r out, top z (the frame starts at z 7 here)
+CAP_TONGUE = [10.2, 13.2, 3.7, 5.1, -36, 12];    // spring tongue: r in, r out, z under, z top, angle from root edge to tip
+CAP_ROOT = [-42, -36];                           // root post, angles (beside the entry notch)
+CAP_HUMP = [1.2, 0.3, 5.75];                     // hump at the lock angle: half width at the base and at the top, top z
+CAP_GROOVE = [0.62, 0.35, 0.2];                  // groove under the lug: half width at the face and at the bottom, depth
+CAP_STOP = [16, 26];                             // hard stop, angles
+module sector(r0, r1, a0, a1, z0, z1) translate([0, 0, z0]) rotate(a0) rotate_extrude(angle = a1 - a0, $fn = 96) translate([r0, 0]) square([r1 - r0, z1 - z0]);
 // power (v10, Esben 20 Oct): the back stays closed. The 5.5/2.5 socket with screw terminals
 // [A] TRU Components DC-13F (Conrad 1570909, drawing: 39.8 long, barrel Ø10 x 12, terminal block 10 wide, 5 long)
 // sits mouth down in a printed column low on the back wall, in the middle between the PSU and the WLED controller. The PSU's straight plug goes up through
@@ -326,7 +344,10 @@ module services_cut() {
     bottom_vents();
     if (BACK_EXH) { for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]); for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]); }
     // bayonet entry notches next to the pass-through
-    for (a = CAP_ANG) translate([IF_CABLE[0], IF_CABLE[1], -1]) rotate(a + CAP_ENTRY) translate([0, -(CAP_LUG[0] + 0.6)/2]) cube([CAP_LUG[1] + 0.5, CAP_LUG[0] + 0.6, WALL + 2]);
+    translate([IF_CABLE[0], IF_CABLE[1], 0]) {
+        cyl_z(CAP_CB, -1, CAP_FL[1], 0, 0);                                                         // shoulder: the flange stops here, flush
+        for (a = CAP_ANG) sector(0, CAP_NOTCH[0], a - CAP_ENTRY - CAP_NOTCH[1], a - CAP_ENTRY + CAP_NOTCH[1], -1, WALL + 1);
+    }
     // power: plug hole in the underside (0.8 chamfer), and the speaker grille
     cyl_z(PWR_BORE, -1, WALL + 1, PWR_P[0], PWR_P[1]);
     translate([PWR_P[0], PWR_P[1], -0.01]) cylinder(d1 = PWR_BORE + 1.6, d2 = PWR_BORE, h = 0.8, $fn = 48);
@@ -335,16 +356,13 @@ module services_cut() {
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
 module services_add() {
     vent_hoods();
-    // collar round the printer pass-through: splash that gets past the cap must climb 4 mm
-    difference() { cyl_z(CAP_D + 7, WALL - 0.01, WALL + 4, IF_CABLE[0], IF_CABLE[1]); cyl_z(CAP_D + 4.6, WALL - 1, WALL + 5, IF_CABLE[0], IF_CABLE[1]); }
+    cap_seat();
     // floor boss under the lock screw head
     difference() {
         cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], LOCK_X, LOCK_SY);
         cyl_z(4.5, -1, LOCK_BOSS[1] + 1, LOCK_X, LOCK_SY);
         translate([LOCK_X - LOCK_W/2 - 0.6, D - BACK_T - 0.01, 0]) cube([LOCK_W + 1.2, 5, 20]);
     }
-    // bayonet detents: a 0.4 mm bump the lugs click over in the locked position
-    for (a = CAP_ANG) translate([IF_CABLE[0], IF_CABLE[1], WALL - 0.01]) rotate(a + 8) translate([CAP_D/2 + 0.8, -0.6, 0]) cube([1.2, 1.2, 0.41]);
     power_column();
     // speaker: a rim round the flange, 4 pegs through the ear holes and 2 hooks over the flange
     translate([SPK_P[0], D - BACK_T + 0.01, SPK_P[1]]) rotate([90, 0, 0]) {
@@ -362,14 +380,31 @@ module speaker3() translate([SPK_P[0] - SPK[0]/2, D - BACK_T - SPK[2], SPK_P[1] 
     translate([0, SPK[2] - SPK_FL, 0]) cube([SPK[0], SPK_FL, SPK[1]]);                          // flange with the ears
     translate([4, 0, 2]) cube([SPK[0] - 8, SPK[2] - SPK_FL + 0.01, SPK[1] - 4]);               // box behind it
 }
-module cable_cap() {   // printed separately; underside flush with the box bottom
+// in the shell, round the pass-through: collar (splash past the cap must climb it), 3 spring tongues with a hump, 3 hard stops
+module cap_seat() translate([IF_CABLE[0], IF_CABLE[1], 0]) {
+    t = CAP_TONGUE;
+    difference() { cyl_z(2*CAP_COLLAR[1], WALL - 0.01, CAP_COLLAR[2], 0, 0); cyl_z(2*CAP_COLLAR[0], WALL - 1, CAP_COLLAR[2] + 1, 0, 0); }
+    for (a = CAP_ANG) {
+        sector(t[0], t[1], a + CAP_ROOT[0], a + CAP_ROOT[1] + 0.01, WALL - 0.01, t[3]);           // root post
+        sector(t[0], t[1], a + t[4], a + t[5], t[2], t[3]);                                        // tongue, 0.7 mm air under it
+        rotate(a) hull() { translate([t[0], -CAP_HUMP[0], t[3] - 0.01]) cube([t[1] - t[0], 2*CAP_HUMP[0], 0.01]);
+                           translate([t[0], -CAP_HUMP[1], CAP_HUMP[2] - 0.01]) cube([t[1] - t[0], 2*CAP_HUMP[1], 0.01]); }
+        sector(t[0], CAP_COLLAR[0] + 0.01, a + CAP_STOP[0], a + CAP_STOP[1], WALL - 0.01, CAP_COLLAR[2]);   // hard stop
+    }
+}
+module cable_cap() {   // printed separately, outer face down; flush with the box bottom when seated
+    l = CAP_LUG;
     difference() {
         union() {
-            cylinder(d = CAP_D, h = WALL, $fn = 64);
-            for (a = CAP_ANG) rotate(a) translate([0, -CAP_LUG[0]/2, WALL + 0.2]) cube([CAP_LUG[1], CAP_LUG[0], 2]);
-            translate([0, 0, WALL - 0.01]) cylinder(d = 12, h = 2.21, $fn = 48);
+            cylinder(d = CAP_FL[0], h = CAP_FL[1], $fn = 96);
+            cylinder(d = CAP_PLUG, h = l[4], $fn = 96);
+            for (a = CAP_ANG) sector(l[0], l[1], a - l[2], a + l[2], l[3], l[4]);
         }
-        for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 3, $fn = 16);   // spanner pins
+        for (sx = [-1, 1]) translate([sx*5, 0, -1]) cylinder(d = 2.2, h = 4, $fn = 16);       // spanner pins
+        for (a = CAP_ANG) rotate(a) hull() {                                                      // detent groove under each lug
+            translate([l[0] - 1, -CAP_GROOVE[0], l[3] - 0.01]) cube([l[1] - l[0] + 2, 2*CAP_GROOVE[0], 0.01]);
+            translate([l[0] - 1, -CAP_GROOVE[1], l[3] + CAP_GROOVE[2]]) cube([l[1] - l[0] + 2, 2*CAP_GROOVE[1], 0.01]);
+        }
     }
 }
 module power_column() translate([PWR_P[0], PWR_P[1], 0]) {
@@ -836,6 +871,7 @@ if (VIEW == "p_rail")     translate([0, 0, RIB_TOP + RAIL_T]) rotate([-90, 0, 0]
 if (VIEW == "p_shell")    translate([0, 0, D]) rotate([-90, 0, 0]) shell2();              // back down
 if (VIEW == "p_cleat")    translate([0, 0, D + GAP_WALL]) rotate([-90, 0, 0]) wall_cleat2(); // wall face down
 if (VIEW == "p_cap")      cable_cap();                                                  // outer face down
+if (VIEW == "p_shell3")   translate([0, -H/2, D]) rotate([-90, 0, 0]) shell3();          // back down, centred (as the released skal.stl)
 if (VIEW == "main") main_unit();
 if (VIEW == "module") module_body();
 if (VIEW == "module_open") { color(C_BODY) printer_module(open = 100); for (y = PRN_Y) translate([0, y, 3 + 10]) instax_wide(); }
