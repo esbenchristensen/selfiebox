@@ -3,19 +3,19 @@
   "event": "Tuborg – concept design (venue artwork, internal use)",
   "palette": {
     "base": {
-      "hex": "#0c6928",
+      "hex": "#2e9a48",
       "filament": "ASA green"
     },
-    "green": {
-      "hex": "#309654",
-      "filament": "ASA grass green"
-    },
-    "deep": {
-      "hex": "#1a4033",
+    "band": {
+      "hex": "#1a8a3c",
       "filament": "ASA dark green"
     },
+    "deep": {
+      "hex": "#1a3a30",
+      "filament": "ASA forest green"
+    },
     "lime": {
-      "hex": "#a2f37c",
+      "hex": "#80e040",
       "filament": "ASA lime green"
     },
     "white": {
@@ -23,12 +23,12 @@
       "filament": "ASA white"
     },
     "silver": {
-      "hex": "#adadb0",
+      "hex": "#8f8f93",
       "filament": "ASA silver"
     },
-    "bottle": {
-      "hex": "#1f7a3e",
-      "filament": "ASA bottle green"
+    "glassb": {
+      "hex": "#4a2a12",
+      "filament": "ASA brown"
     },
     "cream": {
       "hex": "#f4ead2",
@@ -38,22 +38,22 @@
       "hex": "#e7a21f",
       "filament": "ASA yellow"
     },
-    "shine": {
-      "hex": "#4fae6e",
+    "sky": {
+      "hex": "#3aa852",
       "filament": "ASA light green"
     },
-    "sky": {
-      "hex": "#14803c",
-      "filament": "ASA green"
-    },
     "ink": {
-      "hex": "#1a4033",
-      "filament": "ASA black"
+      "hex": "#1a3a30",
+      "filament": "ASA forest green"
+    },
+    "shine": {
+      "hex": "#5cbf6a",
+      "filament": "ASA light green"
     }
   },
   "casing": {
     "style": "venue",
-    "colour": "#0c6928",
+    "colour": "#2e9a48",
     "built_by": "hardware/tools/venue_themes.py"
   },
   "light": {
@@ -61,7 +61,7 @@
       "animation": "slow-wave",
       "colors": [
         "#ffffff",
-        "#a2f37c"
+        "#80e040"
       ],
       "period_s": 8
     },
