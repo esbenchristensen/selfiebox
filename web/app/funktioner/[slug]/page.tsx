@@ -43,7 +43,7 @@ export default async function FeaturePage({ params }: Props) {
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      name: `${f.name} i Selfi Boks`,
+      name: `${f.name} i Selfi`,
       description: f.seo.description,
       provider: { "@type": "Organization", name: "Selfi", url: "https://selfi.dk" },
     },

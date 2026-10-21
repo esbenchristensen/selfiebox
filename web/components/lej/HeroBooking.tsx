@@ -3,13 +3,14 @@
 import { addDays, formatRange, nights, weekday, type DayKey, type Range } from "@/lib/dates";
 import { kr, periodLabel, priceForDays } from "@/lib/udlejning/core";
 import { PRESETS } from "./Booking";
+import { Icon } from "./Drawings";
 import { Calendar } from "./Calendar";
 import { useRental } from "./RentalContext";
 
 // The first step of the booking, above the fold: is our day free, and what does it cost? "Vælg tilvalg"
 // hands the dates to the booking flow under #book, which opens at the add-ons.
 export function HeroBooking() {
-  const { data, loadError, load, s, set, win, canBook, preset, go, reach, priceFor } = useRental();
+  const { data, loadError, load, s, set, win, canBook, preset, go, reach, priceFor, loading } = useRental();
   const settings = data?.settings;
 
   if (loadError) {
@@ -38,7 +39,9 @@ export function HeroBooking() {
   const price = r ? priceForDays(settings, days) : 0;
   const perDay = r ? Math.round(price / days) : 0;
   const nextDay = r && days < settings.rules.maxDays ? priceForDays(settings, days + 1) - price : 0;
-  const hint = !r
+  const hint = loading
+    ? "Henter ledige datoer …"
+    : !r
     ? "Tryk på første dag og derefter på sidste dag."
     : r.from === r.to
       ? "Tryk på en senere dag for at tage flere dage med."
@@ -46,7 +49,7 @@ export function HeroBooking() {
   const nextWeekend = firstFreeWeekend(win.minDay, win.maxDay, canBook);
 
   return (
-    <div className="hb" id="datoer">
+    <div className="hb" id="datoer" aria-busy={loading}>
       <div className="hb-head">
         <div className="hb-title">
           <b>Hvornår er festen?</b>
@@ -59,7 +62,7 @@ export function HeroBooking() {
             </button>
           ))}
         </div>
-        <p className="muted hb-hint">{hint}</p>
+        <p className="muted hb-hint" aria-live="polite">{hint}</p>
         {nextWeekend && !r && (
           <button type="button" className="hb-next" onClick={() => set({ range: nextWeekend })}>
             <i aria-hidden="true" />
@@ -67,7 +70,7 @@ export function HeroBooking() {
           </button>
         )}
       </div>
-      <Calendar single selected={r} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(x) => set({ range: x })} priceFor={priceFor} />
+      <Calendar single selected={r} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(x) => set({ range: x })} priceFor={priceFor} loading={loading} />
       <div className="hb-foot">
         <div aria-live="polite">
           {r ? (
@@ -97,7 +100,10 @@ export function HeroBooking() {
           {r ? "Fortsæt til booking" : "Vælg datoer først"}
         </button>
       </div>
-      <p className="hb-pay">Betal med kort, MobilePay eller Apple Pay, først i kassen. Flyt datoen gratis, indtil boksen er sendt.</p>
+      <p className="hb-pay">
+        <Icon name="lock" />
+        <span>Betal med kort, MobilePay eller Apple Pay, først i kassen. Flyt datoen gratis, indtil boksen er sendt.</span>
+      </p>
     </div>
   );
 }

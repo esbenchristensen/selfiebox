@@ -53,6 +53,8 @@ type Ctx = {
   preset: (days: number, weekend: boolean) => void;
   /** The total for these days with the theme and printer chosen so far, for the price in each calendar cell. */
   priceFor: (r: Range) => number | null;
+  /** True until the free days have arrived: prices and dates are already there, the days are not yet known. */
+  loading: boolean;
 };
 
 const RentalCtx = createContext<Ctx | null>(null);
@@ -63,8 +65,13 @@ export function useRental() {
   return c;
 }
 
-export function RentalProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<Data | null>(null);
+/**
+ * `initial` is what the server already knows when it renders the page: the prices and rules and today's date.
+ * With it the calendar draws at once, with every price in place, and only which days are free is fetched.
+ */
+export function RentalProvider({ children, initial }: { children: ReactNode; initial?: { settings: RentalSettings; today: DayKey } }) {
+  const [data, setData] = useState<Data | null>(initial ? { settings: initial.settings, today: initial.today, usage: {} } : null);
+  const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [s, setS] = useState<State>(EMPTY);
   const [step, setStep] = useState(0);
@@ -76,7 +83,10 @@ export function RentalProvider({ children }: { children: ReactNode }) {
     setLoadError(false);
     return fetch("/api/udlejning/ledighed", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d: Data) => setData(d))
+      .then((d: Data) => {
+        setData(d);
+        setLoaded(true);
+      })
       .catch(() => setLoadError(true));
   }, []);
 
@@ -86,19 +96,19 @@ export function RentalProvider({ children }: { children: ReactNode }) {
 
   const canBookWith = useCallback(
     (r: Range, theme: boolean, printer: boolean) => {
-      if (!data) return false;
+      if (!data || !loaded) return false;
       const w = bookingWindow(data.settings, data.today, theme);
       return r.from >= w.minDay && r.to <= w.maxDay && nights(r) <= data.settings.rules.maxDays && fits(data.settings, data.usage, r, s.delivery, printer);
     },
-    [data, s.delivery],
+    [data, loaded, s.delivery],
   );
   const canBook = useCallback((r: Range) => canBookWith(r, !!s.theme, s.printer), [canBookWith, s.theme, s.printer]);
   const win = useMemo(() => (data ? bookingWindow(data.settings, data.today, !!s.theme) : null), [data, s.theme]);
 
   // New free days from the server (someone else booked first) can make the chosen dates impossible.
   useEffect(() => {
-    if (s.range && data && !canBook(s.range)) set({ range: null });
-  }, [canBook, s.range, data, set]);
+    if (s.range && data && loaded && !canBook(s.range)) set({ range: null });
+  }, [canBook, s.range, data, loaded, set]);
 
   const go = useCallback((to: number, scroll = true) => {
     setStep(to);
@@ -129,6 +139,6 @@ export function RentalProvider({ children }: { children: ReactNode }) {
     [data, s.theme, s.printer, s.photoType, s.delivery],
   );
 
-  const value: Ctx = { data, loadError, load, s, set, setAll: setS, step, done, go, reach, win, canBook, canBookWith, preset, priceFor };
+  const value: Ctx = { data, loadError, load, s, set, setAll: setS, step, done, go, reach, win, canBook, canBookWith, preset, priceFor, loading: !loaded && !loadError };
   return <RentalCtx.Provider value={value}>{children}</RentalCtx.Provider>;
 }

@@ -20,7 +20,7 @@ import { RentalProvider } from "@/components/lej/RentalContext";
 import { Example, Reviews, Stars } from "@/components/lej/Reviews";
 import { StickyCta } from "@/components/lej/StickyCta";
 import { DEFAULT_SETTINGS, kr, priceForDays, type RentalSettings } from "@/lib/udlejning/core";
-import { db, getSettings } from "@/lib/udlejning/db";
+import { db, getSettings, todayDK } from "@/lib/udlejning/db";
 import { PROOF, ratingText } from "@/lib/udlejning/proof";
 import "./lej/lej.css";
 
@@ -156,7 +156,7 @@ export default async function Home() {
   ];
 
   return (
-    <RentalProvider>
+    <RentalProvider initial={{ settings: s, today: todayDK() }}>
       <JsonLd data={jsonLd} />
       <Nav
         mega={false}
@@ -177,9 +177,18 @@ export default async function Home() {
           points={
             <>
               <ul className="lej-points">
-                <li>Alt er med i prisen. Ingen tilkøb, intet depositum.</li>
-                <li>Klar på fem minutter. Den skal kun i en stikkontakt.</li>
-                <li>Flyt datoen gratis, indtil boksen er sendt.</li>
+                <li>
+                  <Icon name="tag" />
+                  Alt er med i prisen. Ingen tilkøb, intet depositum.
+                </li>
+                <li>
+                  <Icon name="clock" />
+                  Klar på fem minutter. Den skal kun i en stikkontakt.
+                </li>
+                <li>
+                  <Icon name="undo" />
+                  Flyt datoen gratis, indtil boksen er sendt.
+                </li>
               </ul>
               <a className="lej-trust" href="#anmeldelser">
                 <Stars n={PROOF.rating} />

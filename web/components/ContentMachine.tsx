@@ -7,7 +7,7 @@ const n = (v: number) => Math.round(v).toLocaleString("da-DK");
 
 const points = [
   { title: "Ægte gæster, ægte stemning", text: "Billederne og videoerne er taget af gæsterne selv, midt i aftenen. Det kan ingen kampagne iscenesætte." },
-  { title: "Video med deres egne ord", text: "Gæsterne svarer på jeres spørgsmål foran kameraet, i Full HD og med tydelig lyd fra fire mikrofoner med støjfjernelse. Det giver udtalelser og hilsner, der virker, fordi de er ægte." },
+  { title: "Video med deres egne ord", text: "Gæsterne svarer på jeres spørgsmål foran kameraet i HD. Med mikrofonmodulet er lyden tydelig, også i et larmende lokale. Det giver udtalelser og hilsner, der virker, fordi de er ægte." },
   { title: "Høj kvalitet hele vejen", text: "12 MP-kamera med autofokus og HDR og studielys på ansigterne. Billederne kan bruges i annoncer og på storskærm, ikke kun på telefonen." },
   { title: "Klar til alle jeres kanaler", text: "Billeder og klip med samtykke ligger samlet i kontrolpanelet, klar til sociale medier, nyhedsbrev, hjemmeside, skærme og annoncer." },
   { title: "Ingen skal stå med kameraet", text: "Boksen arbejder hele aftenen, hver aften. Ingen medarbejder skal gå rundt, spørge om lov og samle filer bagefter." },
@@ -90,7 +90,7 @@ export function ContentMachine() {
             Ikke bare en fotoboks. En contentmaskine.
           </h2>
           <p className="lede">
-            Selfi Boks laver autentiske billeder og videoer af jeres gæster hver eneste aften. Det er materiale, I kan bruge langt ud over aftenen selv, og det kommer, uden at nogen skal stå med kameraet.
+            Selfi laver billeder og videoer af jeres gæster hver aften, I har åbent. Dem, gæsterne har sagt ja til, kan I bruge i jeres egne kanaler, og ingen skal stå med kameraet.
           </p>
         </div>
         <div className="cm">

@@ -13,11 +13,13 @@ type Props = {
   single?: boolean; // one month at a time, for narrow places like the hero
   /** The total for a range with the add-ons chosen so far, shown in every cell: for one day, or from the picked first day to this one. */
   priceFor?: (range: Range) => number | null;
+  /** The free days are still being fetched: the dates show, every day waits with a bar where its price will be. */
+  loading?: boolean;
 };
 
 // Free date picking: the first tap picks a day, a tap on a later day stretches it into a range.
 // Any tap after a finished range starts over.
-export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, priceFor }: Props) {
+export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, priceFor, loading }: Props) {
   const start = fromKey(selected?.from ?? minDay);
   const [cursor, setCursor] = useState({ y: start.getFullYear(), m: start.getMonth() });
   const [hover, setHover] = useState<Range | null>(null);
@@ -93,8 +95,9 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
                 .map((k, i) => {
                   if (!k) return <span key={`e${i}`} />;
                   const past = k < minDay || k > maxDay;
-                  const booked = !past && !canBook({ from: k, to: k });
-                  const ok = !past && !booked;
+                  const pending = !!loading && !past;
+                  const booked = !past && !pending && !canBook({ from: k, to: k });
+                  const ok = !past && !booked && !pending;
                   const busy = ok && seasonOf(k);
                   const r = rangeFor(k);
                   const price = ok && priceFor ? priceFor(r) : null;
@@ -103,6 +106,7 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
                     "cal-day",
                     past && "is-past",
                     booked && "is-booked",
+                    pending && "is-loading",
                     busy && "is-busy",
                     on && "is-in",
                     on && k === shown!.from && "is-start",
@@ -118,7 +122,7 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
                       className={cls}
                       disabled={!ok}
                       aria-pressed={!!selected && k >= selected.from && k <= selected.to}
-                      aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : busy ? `, travl periode: ${busy.name.toLowerCase()}` : ""}${price != null ? `, ${price.toLocaleString("da-DK")} kr.` : ""}`}
+                      aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : busy ? `, travl periode: ${busy.name.toLowerCase()}` : ""}${price != null ? `, ${price.toLocaleString("da-DK")} kr.` : ""}${pending ? ", henter ledighed" : ""}`}
                       onPointerEnter={(e) => ok && e.pointerType === "mouse" && setHover(r)}
                       onClick={() => {
                         setHover(null);
@@ -128,6 +132,7 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
                       <span>
                         {fromKey(k).getDate()}
                         {price != null && <small>{price.toLocaleString("da-DK")}</small>}
+                        {pending && <small className="sk" aria-hidden="true" />}
                       </span>
                     </button>
                   );

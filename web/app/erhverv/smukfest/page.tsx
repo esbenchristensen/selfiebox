@@ -4,8 +4,8 @@ import { Logo } from "@/components/Logo";
 import { Viewer } from "@/components/katalog/Viewer";
 import "@/components/katalog/katalog.css";
 
-// selfi.dk/events/smukfest: the sales catalogue for Smukfest, twelve A4 pages that print to a PDF.
-// The box is shown only in the Smukfest design from the showroom on /events. No prices: they are agreed per deal.
+// selfi.dk/erhverv/smukfest: the sales catalogue for Smukfest, twelve A4 pages that print to a PDF.
+// The box is shown only in the Smukfest design from the showroom on /erhverv. No prices: they are agreed per deal.
 // It is a proposal for one festival, so it stays out of search and the sitemap.
 
 const partner = Outfit({ subsets: ["latin", "latin-ext"], weight: ["700", "800"], variable: "--font-partner" });
@@ -13,7 +13,7 @@ const partner = Outfit({ subsets: ["latin", "latin-ext"], weight: ["700", "800"]
 export const metadata: Metadata = {
   title: "Selfi × Smukfest | Salgskatalog",
   description: "Forslag til Smukfest 2027: Selfi Boks i Smukfests eget design med videohilsner, publikums egne historier, aktiviteter og Smukfest på hvert foto, der deles.",
-  alternates: { canonical: "/events/smukfest" },
+  alternates: { canonical: "/erhverv/smukfest" },
   robots: { index: false, follow: false },
 };
 
@@ -57,7 +57,7 @@ function Hills({ height }: { height?: number }) {
 function Lockup({ size = 34 }: { size?: number }) {
   return (
     <span className="kat-lockup" style={{ "--lk": `${size}px` } as React.CSSProperties}>
-      <Logo size={size} href="/events" />
+      <Logo size={size} href="/erhverv" />
       <span className="kat-times">×</span>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/models/smukfest/logo.svg" alt="Smukfest" className="kat-partner-logo" />
@@ -413,7 +413,7 @@ export default function SmukfestKatalog() {
           <div className="kat-contact">
             <span className="kat-kicker">Jeres kontakt</span>
             <b>Holdet bag Selfi</b>
-            <a href="/events#kontakt">selfi.dk/events · Book en snak</a>
+            <a href="/erhverv#kontakt">selfi.dk/erhverv · Book en snak</a>
           </div>
           <div className="kat-push" style={{ marginBottom: 200 }}>
             <Lockup size={40} />

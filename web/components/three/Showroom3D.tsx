@@ -105,6 +105,16 @@ function Ready({ onReady }: { onReady?: () => void }) {
 
 export default function Showroom3D({ focus, onPick, onReady }: { focus: number; onPick: (i: number) => void; onReady?: () => void }) {
   const reduced = useReducedMotion();
+  // Models are fetched for the chosen design and its two neighbours, and kept once fetched. The whole
+  // wall is 5 MB of parts, screens and prints; a visitor who never clicks past the first design gets 1.5 MB.
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([focus]));
+  useEffect(() => {
+    setLoaded((prev) => {
+      const next = new Set(prev);
+      for (const k of [focus - 1, focus, focus + 1]) if (k >= 0 && k < VENUES.length) next.add(k);
+      return next.size === prev.size ? prev : next;
+    });
+  }, [focus]);
   const wrap = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   useEffect(() => {
@@ -135,9 +145,7 @@ export default function Showroom3D({ focus, onPick, onReady }: { focus: number; 
           <Lightformer form="rect" intensity={1.1} position={[7, 0, 2]} rotation-y={-Math.PI / 2.4} scale={[6, 4, 1]} color="#dfefff" />
         </Environment>
         <Wall colors={VENUES.map((v) => v.ring.glow)} />
-        {VENUES.map((_, i) => (
-          <Slot key={i} i={i} focus={focus} motion={!reduced} onPick={onPick} />
-        ))}
+        {VENUES.map((_, i) => loaded.has(i) && <Slot key={i} i={i} focus={focus} motion={!reduced} onPick={onPick} />)}
         <Suspense fallback={null}>
           <ContactShadows position={[(VENUES.length - 1) * GAP * 0.5, -1.8, 0]} opacity={0.35} scale={[VENUES.length * GAP + 6, 6]} blur={2.4} far={4} resolution={1024} frames={1} />
           <Ready onReady={onReady} />

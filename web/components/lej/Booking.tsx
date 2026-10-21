@@ -15,7 +15,7 @@ import {
 } from "@/lib/udlejning/core";
 import { Calendar } from "./Calendar";
 import { OutlinePrinter, OutlineStand } from "../Outline";
-import { DrawPolaroid, DrawStrip } from "./Drawings";
+import { DrawPolaroid, DrawStrip, Icon } from "./Drawings";
 import { SAVED, STEPS, useRental, type State, type Status } from "./RentalContext";
 
 // The booking on selfi.dk: the dates first, because "is our day free?" is the first question everyone has
@@ -29,7 +29,7 @@ export const PRESETS = [
 ];
 
 export function Booking() {
-  const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset, priceFor } = useRental();
+  const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset, priceFor, loading } = useRental();
   const [touched, setTouched] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -163,7 +163,7 @@ export function Booking() {
                   </button>
                 ))}
               </div>
-              <Calendar selected={s.range} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(r) => set({ range: r })} priceFor={priceFor} />
+              <Calendar selected={s.range} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(r) => set({ range: r })} priceFor={priceFor} loading={loading} />
               {s.range && (
                 <p className="bk-chosen">
                   <span className="label">Jeres valg · {periodLabel(s.range)}</span>
@@ -354,11 +354,11 @@ export function Booking() {
               <b>{s.range ? kr(sum) : "Vælg datoer"}</b>
             </div>
             <ul className="bk-sum-incl" aria-label="Med i prisen">
-              <li>Ubegrænsede billeder</li>
-              <li>Jeres egen eventside</li>
-              <li>Jeres navne og datoen på billedet</li>
-              <li>Fragt begge veje til pakkeshop</li>
-              <li>Forsikring, uden depositum</li>
+              <li><Icon name="check" />Ubegrænsede billeder</li>
+              <li><Icon name="check" />Jeres egen eventside</li>
+              <li><Icon name="check" />Jeres navne og datoen på billedet</li>
+              <li><Icon name="check" />Fragt begge veje til pakkeshop</li>
+              <li><Icon name="check" />Forsikring, uden depositum</li>
             </ul>
           </div>
         </aside>

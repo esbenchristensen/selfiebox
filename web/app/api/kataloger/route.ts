@@ -3,13 +3,13 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 // selfi.dk/api/kataloger: every sales catalogue on the site, for the list on admin.selfi.dk/admin/kataloger.
-// A catalogue is a customer page built on components/katalog/Viewer (/erhverv/<slug>, /events/smukfest),
+// A catalogue is a customer page built on components/katalog/Viewer (/erhverv/<slug>),
 // so a new page shows up in admin with the next deploy, with no list to keep up to date.
 // Built once per deploy from the source files; title and description come from the page's metadata.
 
 export const dynamic = "force-static";
 
-const SECTIONS = ["erhverv", "events"];
+const SECTIONS = ["erhverv"];
 
 type Entry = { slug: string; path: string; title: string; description: string | null; updated: string | null };
 
