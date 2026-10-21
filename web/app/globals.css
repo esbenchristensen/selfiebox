@@ -34,6 +34,10 @@
   --radius-pill: 999px;
 
   --ease: cubic-bezier(0.2, 0, 0, 1);
+  /* Én skrift: Instrument Sans. De tre navne bliver, så ældre regler virker, men peger på den samme. */
+  --font-display: var(--font-sans);
+  --font-body: var(--font-sans);
+  --font-mono: var(--font-sans);
   --gutter: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
   color-scheme: dark;
@@ -96,7 +100,7 @@ p { margin: 0; }
 
 .wrap { max-width: 1160px; margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter-r); }
 .section { padding-block: var(--space-9); }
-.label { font-family: var(--font-mono), ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+.label { font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
 .lede { font-size: 20px; line-height: 1.5; color: var(--ink-muted); max-width: 46ch; }
 .h-xl { font-size: clamp(48px, 9vw, 112px); line-height: 0.95; letter-spacing: -0.04em; }
 .h-l { font-size: clamp(36px, 5.5vw, 64px); line-height: 1; letter-spacing: -0.035em; }

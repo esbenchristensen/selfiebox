@@ -52,6 +52,12 @@ export default function Privatliv() {
             <td>Når brugeren lukkes, logs efter 12 måneder</td>
           </tr>
           <tr>
+            <td>I, der bruger chatten</td>
+            <td>Det, I skriver i chatten, bookingnummer og e-mail ved verificering, siden I skrev fra, og en pseudonymiseret IP-adresse</td>
+            <td>At svare, slå jeres booking op og lade en medarbejder tage over (litra b og f). Svarene laves af en AI-model hos OpenAI; teksten sendes dertil uden at blive gemt eller brugt til træning</td>
+            <td>90 dage efter sidste besked. En log over ændringer af bookinger (hvad, hvornår, hvem) gemmes sammen med bookingen</td>
+          </tr>
+          <tr>
             <td>Besøgende på selfi.dk</td>
             <td>IP-adresse, browser, tidspunkt og side i hostingudbyderens tekniske logs</td>
             <td>At levere siden og stoppe angreb og misbrug (litra f)</td>
@@ -64,7 +70,7 @@ export default function Privatliv() {
       <h2>Hvem vi deler med</h2>
       <p>
         Vi sælger aldrig oplysninger. Vi bruger leverandører, der behandler oplysninger for os efter databehandleraftaler: Vercel Inc.
-        (hosting af hjemmesiden og kontrolpanelet, USA), MongoDB Inc. (database, servere i EU), samt vores e-mail-, besked- og regnskabsværktøjer.
+        (hosting af hjemmesiden og kontrolpanelet, USA), MongoDB Inc. (database, servere i EU), OpenAI (AI-svar i chatten, USA, uden lagring eller træning), Twilio (sms til os, når en chat sendes videre), samt vores e-mail-, besked- og regnskabsværktøjer.
         Overførsler til USA sker efter EU-USA-dataprivatlivsrammen og EU-Kommissionens standardkontraktbestemmelser. Revisor og myndigheder
         får oplysninger, når loven kræver det.
       </p>
