@@ -11,7 +11,7 @@ export const RENTAL_BOX: Venue = {
   casing: "#1d201d",
   ring: { idle: ["#fff3e3", "#22d36b", "#ffffff"], glow: "#22d36b" },
   frame: { bg: "base", ink: "base", caption: "Skål for festen" },
-  photo: "print-wedding",
+  photo: "boks-bryllup",
   parts: [],
   unit: "gen2",
 };
