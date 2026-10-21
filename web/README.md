@@ -36,6 +36,14 @@ npm run lint       # typecheck
 - **Temaer i 3D:** designene til Smukfest, Roskilde, Nibe, Fårup, LEGOLAND og Aalborg Zoo er konceptdesigns uden aftale med stederne. Få en tilladelse, eller skift dem ud med rigtige kunder, før siden bruges i markedsføring.
 - **Juridisk:** cookie- og privatlivstekst mangler, hvis der tilføjes analyse eller tracking.
 
+## Udlejning til private (/lej)
+
+selfi.dk/lej er landingssiden for B2C-udlejning. Kunden vælger tema, printer, billedtype og levering, så datoer i kalenderen, og betaler i Stripe Checkout. Bookingerne ligger i MongoDB (database `selfiebox`, samlingerne `rentals`, `rental_settings` og `rental_blocks`) og styres i admin.selfi.dk under Udlejning, hvor også priser, antal bokse og printere og reglerne for forsendelse ligger.
+
+- `lib/udlejning/core.ts`: priser og ledighed. En kopi ligger i selfiebox-platform (`web/src/lib/udlejning.ts`), så hold dem ens.
+- `/api/udlejning/ledighed`, `/api/udlejning/checkout`, `/api/udlejning/annuller` og `/api/stripe/webhook`.
+- Miljøvariabler i Vercel: `MONGODB_URI`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (fra webhooket i Stripe til `https://www.selfi.dk/api/stripe/webhook`), valgfrit `MONGODB_DB` (standard `selfiebox`), `SITE_URL` (standard `https://www.selfi.dk`) og `BOOKING_WEBHOOK_URL` til en besked, når en booking er betalt (ellers bruges `CONTACT_WEBHOOK_URL`).
+
 ## Kataloger
 
 Et salgskatalog er kundens side på `selfi.dk/erhverv/<slug>` (Smukfest ligger på `/events/smukfest`): en `page.tsx`, der viser A4-siderne med `components/katalog/Viewer` og `components/katalog/katalog.css`, plus kundens egen CSS i samme mappe. Siderne er skjult for Google og står ikke i menuen eller sitemap. Der er kun den ene version: de gamle MongoDB-kopier på `/kataloger/<slug>` sender videre til erhvervssiden (`next.config.ts`).
