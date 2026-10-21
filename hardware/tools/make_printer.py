@@ -3,12 +3,12 @@
 
 Usage:  python3 hardware/tools/make_printer.py [out dir]      (default: hardware/stl/printer/selfi-printer-v1)
 CAD:    hardware/cad/selfi_printer_v1.scad
-Needs:  openscad, xvfb-run (renders), trimesh, numpy, networkx, cairosvg, Pillow
+Needs:  openscad, node + Playwright + three (web/node_modules) for the renders, trimesh, numpy, networkx, cairosvg, Pillow
 Output (every file starts with the version):
   <v>_<part>.stl                 print-ready, in print orientation, on z = 0
   <v>_kappe_flerfarvet.3mf       hood + white and green logo as one multi-part object (AMS), also for kappe-laas
   <v>_3d.glb + <v>_parts.json    the admin 3D viewer (one node per part, explode offsets in glTF axes)
-  <v>_*.png                      renders straight from the CAD and the drawing sheets (printer_sheet.py)
+  <v>_*.png                      renders of the 3D model (render_glb.mjs) and the drawing sheets (printer_sheet.py)
   <v>_printfiler.zip             print files, guide, shopping list and pictures
 Write PRINTGUIDE_<v>.md and <v>_indkoebsliste.xlsx (make_printer_bom.py) before running, so the zip holds them.
 """
@@ -71,14 +71,6 @@ def scad(view, out, **defs):
     subprocess.run(args, check=True, capture_output=True)
 
 
-def render(out, view="all", cam="0,0,0,62,0,-38,0", size="1600,1200", **defs):
-    args = ["xvfb-run", "-a", "openscad", "-D", f'VIEW="{view}"', f"--imgsize={size}", f"--camera={cam}",
-            "--viewall", "--autocenter", "--colorscheme=Tomorrow", "-o", str(out), str(SCAD)]
-    for k, v in defs.items():
-        args[3:3] = ["-D", f"{k}={v}"]
-    subprocess.run(args, check=True, capture_output=True)
-
-
 def material(hexc):
     c = [int(hexc[i:i + 2], 16) / 255 for i in (1, 3, 5)] + [1.0]
     return trimesh.visual.material.PBRMaterial(baseColorFactor=c, metallicFactor=0.0, roughnessFactor=0.55)
@@ -125,13 +117,20 @@ def main():
     scene.export(OUT / f"{VER}_3d.glb")
     (OUT / f"{VER}_parts.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1) + "\n")
 
-    # renders straight from the CAD
-    render(OUT / f"{VER}_forfra.png", cam="0,0,0,72,0,-28,0")
-    render(OUT / f"{VER}_bagfra.png", cam="0,0,0,66,0,152,0")
-    render(OUT / f"{VER}_b2b-laas.png", cam="0,0,0,64,0,58,0", LOCK="true")
-    render(OUT / f"{VER}_eksplosion.png", cam="0,0,0,68,0,-34,0", EX="1")
-    render(OUT / f"{VER}_vaeg.png", cam="0,0,0,74,0,-52,0", LOCK="true", MOUNT='"vaeg"')
-    render(OUT / f"{VER}_vaeg_eksplosion.png", cam="0,0,0,70,0,-140,0", LOCK="true", MOUNT='"vaeg"', EX="1")
+    # renders of the 3D model with three.js, so they look like the admin viewer (OpenSCAD's renderer makes the logo almost black)
+    views = [
+        {"out": "forfra", "az": -30, "el": 14, "hide": ["B2B", "Skruer"]},
+        {"out": "bagfra", "az": 150, "el": 16, "hide": ["B2B", "Skruer"]},
+        {"out": "b2b-laas", "az": 60, "el": 14, "hide": ["konsol", "vaegplade", "skruer_vaeg"]},
+        {"out": "eksplosion", "az": -34, "el": 16, "explode": 1, "hide": ["B2B", "Skruer"]},
+        {"out": "vaeg", "az": -48, "el": 12},
+        {"out": "vaeg_eksplosion", "az": -40, "el": 12, "explode": 1},
+    ]
+    for v in views:
+        v["out"] = str(OUT / f"{VER}_{v['out']}.png")
+    (tmp / "views.json").write_text(json.dumps(views))
+    subprocess.run(["node", str(Path(__file__).with_name("render_glb.mjs")), str(OUT / f"{VER}_3d.glb"),
+                    str(OUT / f"{VER}_parts.json"), str(tmp / "views.json")], check=True)
 
     # drawing sheets from projections and sections
     for v in ("d_front", "d_side", "d_top", "d_cut", "d_cut_lock"):
