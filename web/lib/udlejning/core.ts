@@ -11,12 +11,23 @@ import { addDays, nights, type DayKey, type Range } from "../dates";
 export type Delivery = "post"; // always by post with dao; there is no pickup
 export type PhotoType = "strip" | "polaroid";
 
+// The fixed rental periods, as on the other Danish rental sites. Days around a period cost perExtraDay each.
+export type Period = "day" | "weekend" | "twoDays" | "week";
+
+export const PERIODS: Record<Period, { name: string; text: string }> = {
+  day: { name: "1 hverdag", text: "Én dag, mandag til torsdag" },
+  weekend: { name: "Weekend", text: "Hele weekenden, fredag til søndag" },
+  twoDays: { name: "2 hverdage", text: "To dage i træk, mandag til torsdag" },
+  week: { name: "1 uge", text: "Op til syv dage i træk" },
+};
+
 export type RentalSettings = {
   open: boolean; // bookings can be paid on selfi.dk
   inventory: { boxes: number; printers: number };
   prices: {
-    byDays: number[]; // kr. inkl. moms for 1, 2, 3 … days
-    perExtraDay: number; // each day after byDays
+    periods: Record<Period, number>; // kr. inkl. moms
+    perExtraDay: number; // each day the period does not cover
+    byDays?: number[]; // the old price per number of days, still written by admin for older selfi.dk builds
     theme: number;
     printer: number;
   };
@@ -37,8 +48,8 @@ export const DEFAULT_SETTINGS: RentalSettings = {
   open: true,
   inventory: { boxes: 1, printers: 1 },
   prices: {
-    byDays: [895, 895, 895, 1045, 1145, 1245, 1395], // en dag og en weekend koster det samme
-    perExtraDay: 150,
+    periods: { day: 895, weekend: 1195, twoDays: 1195, week: 1995 },
+    perExtraDay: 350, // mere end 2 hverdage minus 1 hverdag, så 2 hverdage altid er billigst
     theme: 295,
     printer: 895,
   },
@@ -63,7 +74,10 @@ export function withDefaults(s: Partial<RentalSettings> | null | undefined): Ren
     ...d,
     ...s,
     inventory: { ...d.inventory, ...s.inventory },
-    prices: { ...d.prices, ...s.prices },
+    // Saved before the periods existed: perExtraDay then meant "after byDays", so the period defaults apply.
+    prices: s.prices?.periods
+      ? { ...d.prices, ...s.prices, periods: { ...d.prices.periods, ...s.prices.periods } }
+      : { ...d.prices, theme: s.prices?.theme ?? d.prices.theme, printer: s.prices?.printer ?? d.prices.printer },
     rules: { ...d.rules, ...s.rules },
     themes: s.themes?.length ? s.themes : d.themes,
   };
@@ -88,34 +102,56 @@ export const DELIVERIES: Record<Delivery, { name: string; text: string }> = {
 
 export const kr = (n: number) => `${n.toLocaleString("da-DK")} kr.`;
 
-export function priceForDays(s: RentalSettings, days: number): number {
-  const { byDays, perExtraDay } = s.prices;
-  if (days <= byDays.length) return byDays[Math.max(1, days) - 1];
-  return byDays[byDays.length - 1] + (days - byDays.length) * perExtraDay;
+export type Quote = { amount: number; period: Period; extraDays: number; label: string };
+
+/** The box price for a range: the cheapest period that fits in it, plus perExtraDay for every day it does not
+ *  cover. A weekday is Monday to Thursday; Friday to Sunday is the weekend. A week covers up to seven days, so
+ *  five days never cost more than a week. */
+export function boxQuote(s: RentalSettings, r: Range): Quote {
+  const n = Math.max(1, nights(r));
+  const { periods: p, perExtraDay: x } = s.prices;
+  let weekdays = 0, weekend = 0, runWd = 0, runWe = 0;
+  for (let i = 0; i < n; i++) {
+    const wd = weekday(addDays(r.from, i));
+    runWd = wd <= 3 ? runWd + 1 : 0;
+    runWe = wd >= 4 ? runWe + 1 : 0;
+    weekdays = Math.max(weekdays, runWd);
+    weekend = Math.max(weekend, runWe);
+  }
+  const options: [Period, number][] = [];
+  if (weekend) options.push(["weekend", weekend]);
+  if (weekdays >= 2) options.push(["twoDays", 2]);
+  if (weekdays) options.push(["day", 1]);
+  options.push(["week", Math.min(n, 7)]);
+  let best: Quote | null = null;
+  for (const [period, covers] of options) {
+    const amount = p[period] + (n - covers) * x;
+    if (best && amount >= best.amount) continue;
+    const extra = n - covers;
+    const name = period === "week" && n < 7 ? `1 uge (${n} dage)` : PERIODS[period].name;
+    best = { amount, period, extraDays: extra, label: extra ? `${name} + ${extra} ${extra === 1 ? "ekstra dag" : "ekstra dage"}` : name };
+  }
+  return best!;
 }
+
+export const boxPrice = (s: RentalSettings, r: Range) => boxQuote(s, r).amount;
+
+/** The lowest price a box can be rented for, for "Fra … kr.". */
+export const fromPrice = (s: RentalSettings) => Math.min(...Object.values(s.prices.periods));
 
 export type Line = { id: string; label: string; amount: number };
 
 /** The order lines in kr. inkl. moms. The server recomputes these; the browser only shows them. */
 // Shipping both ways (the return label is always in the box) and insurance are included in the prices.
 export function priceLines(s: RentalSettings, c: Choice): Line[] {
-  const days = nights(c.range);
-  const lines: Line[] = [{ id: "box", label: `Selfi Boks · ${periodLabel(c.range)}`, amount: priceForDays(s, days) }];
+  const q = boxQuote(s, c.range);
+  const lines: Line[] = [{ id: "box", label: `Selfi Boks · ${q.label}`, amount: q.amount }];
   if (c.theme) lines.push({ id: "theme", label: `Tema: ${c.theme}`, amount: s.prices.theme });
   if (c.printer) lines.push({ id: "printer", label: `Printer med ${s.printsIncluded} print (${PHOTO_TYPES[c.photoType].name.toLowerCase()})`, amount: s.prices.printer });
   return lines;
 }
 
 export const total = (lines: Line[]) => lines.reduce((t, l) => t + l.amount, 0);
-
-// "1 dag", "Weekend · 3 dage", "1 uge", "10 dage"
-export function periodLabel(range: Range): string {
-  const n = nights(range);
-  if (n === 1) return "1 dag";
-  if (n % 7 === 0) return n === 7 ? "1 uge" : `${n / 7} uger`;
-  if (n <= 3 && weekday(range.from) >= 4 && weekday(range.to) >= 5) return `Weekend · ${n} dage`;
-  return `${n} dage`;
-}
 
 function weekday(k: DayKey): number {
   const [y, m, d] = k.split("-").map(Number);

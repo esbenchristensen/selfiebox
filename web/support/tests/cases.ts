@@ -39,7 +39,7 @@ const chatIs = (test: (c: SupportChatDoc) => string | null) => async (d: Db, cha
 export const CASES: Case[] = [
   {
     name: "pris-weekend",
-    turns: [{ say: "Hej, hvad koster det at leje boksen en weekend?", must: [/895/], noTools: ["verify_customer", "get_bookings"], judge: "Svaret nævner weekendprisen 895 kr., er kort og i du/I-form, og beder ikke om bookingnummer til et rent prisspørgsmål." }],
+    turns: [{ say: "Hej, hvad koster det at leje boksen en weekend?", must: [/1\.?195/], noTools: ["verify_customer", "get_bookings"], judge: "Svaret nævner weekendprisen 1.195 kr., er kort og i du/I-form, og beder ikke om bookingnummer til et rent prisspørgsmål." }],
   },
   {
     name: "levering",
@@ -149,7 +149,7 @@ export const CASES: Case[] = [
     verified: "anna@example.dk",
     turns: [
       { say: "Kan vi flytte til 28.-29. november?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15") },
-      { say: "Hmm, hvad koster det så?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"), judge: "Svarer at prisen er uændret (1.790 kr. i alt, eller 895 kr. for boksen) og flytter ikke, fordi kunden ikke har sagt ja." },
+      { say: "Hmm, hvad koster det så?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"), judge: "Svarer at prisen er uændret (2.090 kr. i alt, eller 1.195 kr. for boksen) og flytter ikke, fordi kunden ikke har sagt ja." },
     ],
   },
   {

@@ -1,8 +1,8 @@
 "use client";
 
 import { addDays, formatRange, nights, weekday, type DayKey, type Range } from "@/lib/dates";
-import { kr, periodLabel, priceForDays } from "@/lib/udlejning/core";
-import { PRESETS } from "./Booking";
+import { boxPrice, boxQuote, fromPrice, kr } from "@/lib/udlejning/core";
+import { isPeriod, PRESETS } from "./Booking";
 import { Icon } from "./Drawings";
 import { Calendar } from "./Calendar";
 import { useRental } from "./RentalContext";
@@ -36,9 +36,10 @@ export function HeroBooking() {
 
   const r = s.range;
   const days = r ? nights(r) : 0;
-  const price = r ? priceForDays(settings, days) : 0;
+  const quote = r ? boxQuote(settings, r) : null;
+  const price = quote?.amount ?? 0;
   const perDay = r ? Math.round(price / days) : 0;
-  const nextDay = r && days < settings.rules.maxDays ? priceForDays(settings, days + 1) - price : 0;
+  const nextDay = r && days < settings.rules.maxDays ? boxPrice(settings, { from: r.from, to: addDays(r.to, 1) }) - price : 0;
   const hint = loading
     ? "Henter ledige datoer …"
     : !r
@@ -56,9 +57,9 @@ export function HeroBooking() {
         </div>
         <div className="hb-pkgs" aria-label="Genveje">
           {PRESETS.map((p) => (
-            <button key={p.id} type="button" aria-pressed={!!r && days === p.days} onClick={() => preset(p.days, p.id === "weekend")}>
+            <button key={p.period} type="button" aria-pressed={isPeriod(settings, r, p.period)} onClick={() => preset(p.period)}>
               <b>{p.name}</b>
-              <span>{kr(priceForDays(settings, p.days))}</span>
+              <span>{kr(settings.prices.periods[p.period])}</span>
             </button>
           ))}
         </div>
@@ -76,14 +77,14 @@ export function HeroBooking() {
           {r ? (
             <>
               <b>
-                {periodLabel(r)} · {kr(price)}
+                {quote?.label} · {kr(price)}
               </b>
               <span className="muted">{formatRange(r, "short")}</span>
               <span className="muted">{days > 1 ? `${kr(perDay)} pr. dag` : nextDay ? `En dag mere koster ${kr(nextDay)}` : ""}</span>
             </>
           ) : (
             <>
-              <b>Fra {kr(priceForDays(settings, 1))}</b>
+              <b>Fra {kr(fromPrice(settings))}</b>
               <span className="muted">Fragt begge veje og forsikring er med.</span>
             </>
           )}

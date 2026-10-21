@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { faq as erhvervFaq, features } from "../../content";
-import { kr, type RentalSettings } from "../udlejning/core";
+import { kr, PERIODS, type Period, type RentalSettings } from "../udlejning/core";
 import type { SupportChatDoc } from "./db";
 import { dkParts, hoursText, isOpen } from "./hours";
 
@@ -63,10 +63,10 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     lines.push(`Afventende datoforslag (changeId ${c.id}) for ${c.bookingId}: ${c.summary}. Kunden har endnu ikke sagt ja. Kald commit_date_change kun ved et klart ja i kundens seneste besked.`);
   }
   const s = settings;
-  const byDays = s.prices.byDays.map((p, i) => `${i + 1} ${i === 0 ? "dag" : "dage"}: ${kr(p)}`).join(", ");
+  const periods = (Object.keys(PERIODS) as Period[]).map((k) => `${PERIODS[k].name} (${PERIODS[k].text.toLowerCase()}): ${kr(s.prices.periods[k])}`).join(", ");
   lines.push(
     "Aktuelle priser og regler for privat leje (fra admin, inkl. moms):",
-    `- Boks: ${byDays}; derefter ${kr(s.prices.perExtraDay)} pr. ekstra dag. Højst ${s.rules.maxDays} dage online.`,
+    `- Boks, faste perioder: ${periods}. Dage før, efter eller mellem perioderne koster ${kr(s.prices.perExtraDay)} pr. ekstra dag, og kunden får altid den billigste kombination (5-7 dage koster højst en uge). check_availability giver den præcise pris for datoerne. Højst ${s.rules.maxDays} dage online.`,
     `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Det er det eneste tilvalg; temaer findes ikke længere.`,
     `- Første lejedag tidligst ${s.rules.leadDays} dage frem, højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
     `- Online booking er ${s.open ? "åben" : "lukket lige nu (henvis til chatten/eskalér)"}.`,

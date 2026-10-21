@@ -8,7 +8,7 @@ import { randomBytes } from "node:crypto";
 import type { Db } from "mongodb";
 
 import { addDays, formatRange, nights, weekday, type DayKey, type Range } from "../dates";
-import { fits, heldRange, kr, periodLabel, problem, usage, type Block, type Hold, type RentalSettings } from "../udlejning/core";
+import { boxQuote, fits, heldRange, kr, problem, usage, type Block, type Hold, type RentalSettings } from "../udlejning/core";
 import { RELEASED, type RentalDoc, type RentalStatus } from "../udlejning/db";
 import { addMessage, audit, supportCollections, type SupportChatDoc } from "./db";
 import { hoursText, isOpen, replyPromise } from "./hours";
@@ -267,9 +267,9 @@ async function checkAvailability(ctx: ToolContext, a: { from: string; to: string
   const u = usage(ctx.settings, holds, blocks);
   const wrong = problem(ctx.settings, u, { range, theme, printer: !!a.printer, photoType: "strip", delivery: "post" }, ctx.today);
   const days = nights(range);
-  const price = ctx.settings.prices.byDays[Math.min(days, ctx.settings.prices.byDays.length) - 1] + Math.max(0, days - ctx.settings.prices.byDays.length) * ctx.settings.prices.perExtraDay;
+  const quote = boxQuote(ctx.settings, range);
   if (wrong) return { ok: true, available: false, period: formatRange(range), reason: wrong, alternatives: alternatives(ctx, u, range, theme, !!a.printer), instruction: "Foreslå et par af de ledige datoer konkret i stedet for at spørge, hvilke kunden vil have tjekket." };
-  return { ok: true, available: true, period: formatRange(range), label: periodLabel(range), days, boxPrice: kr(price), printerPrice: a.printer ? kr(ctx.settings.prices.printer) : null };
+  return { ok: true, available: true, period: formatRange(range), label: quote.label, days, boxPrice: kr(quote.amount), printerPrice: a.printer ? kr(ctx.settings.prices.printer) : null };
 }
 
 async function proposeDateChange(ctx: ToolContext, a: { bookingNo: string; from: string; to: string }): Promise<Result> {

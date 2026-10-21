@@ -25,7 +25,7 @@ Selfi Boks med gulvstativ, strømforsyning og forsendelseskasse. Ubegrænsede bi
 
 **Tilvalg:** Printer med et antal print (fotostrimmel eller polaroid). Det er det eneste tilvalg; der er ikke længere temaer at vælge imellem (boksen sættes op til festen med overskrift, stemning og tekster på opsætningssiden, uden ekstra pris). De aktuelle priser, antal print og frister står i konteksten til hver samtale ("Aktuelle priser og regler"). Brug altid dem, ikke tal fra hukommelsen.
 
-**Prisen afhænger af antal dage.** En dag og en weekend (fredag til søndag) koster det samme. Lejeperioder over det maksimale antal dage aftales med Esben (eskalér).
+**Prisen følger faste perioder:** 1 hverdag (mandag til torsdag), weekend (fredag til søndag), 2 hverdage og 1 uge. Dage før, efter eller mellem perioderne koster en ekstra dagspris, og kunden får altid den billigste kombination. Brug check_availability til den præcise pris for nogle bestemte datoer. Lejeperioder over det maksimale antal dage aftales med Esben (eskalér).
 
 ### Lejebetingelser for private (det vigtigste)
 

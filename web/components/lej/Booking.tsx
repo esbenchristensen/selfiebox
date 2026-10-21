@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { addDays, formatDay, formatRange, nights } from "@/lib/dates";
+import { addDays, formatDay, formatRange, nights, type Range } from "@/lib/dates";
 import {
   DELIVERIES,
   kr,
   PHOTO_TYPES,
-  periodLabel,
-  priceForDays,
+  boxPrice,
+  boxQuote,
+  fromPrice,
   priceLines,
   total,
+  type Period,
   type PhotoType,
   type RentalSettings,
 } from "@/lib/udlejning/core";
@@ -22,11 +24,19 @@ import { SAVED, STEPS, useRental, type State, type Status } from "./RentalContex
 // (the calendar in the hero is the same step), then the printer and how the print looks, who they are, and Stripe.
 
 const OCCASIONS = ["Bryllup", "Fødselsdag", "Konfirmation", "Firmafest", "Andet"];
-export const PRESETS = [
-  { id: "dag", name: "Dag", days: 1 },
-  { id: "weekend", name: "Weekend", days: 3 },
-  { id: "uge", name: "Uge", days: 7 },
+export const PRESETS: { period: Period; name: string }[] = [
+  { period: "day", name: "1 hverdag" },
+  { period: "weekend", name: "Weekend" },
+  { period: "twoDays", name: "2 hverdage" },
+  { period: "week", name: "1 uge" },
 ];
+
+/** Is the range exactly one of the periods, with no extra days? Lights up its shortcut. */
+export function isPeriod(s: RentalSettings, r: Range | null, period: Period): boolean {
+  if (!r) return false;
+  const q = boxQuote(s, r);
+  return q.period === period && !q.extraDays && (period !== "week" || nights(r) === 7);
+}
 
 export function Booking() {
   const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset, priceFor, loading } = useRental();
@@ -157,16 +167,16 @@ export function Booking() {
               </p>
               <div className="hb-pkgs" aria-label="Genveje">
                 {PRESETS.map((p) => (
-                  <button key={p.id} type="button" aria-pressed={!!s.range && nights(s.range) === p.days} onClick={() => preset(p.days, p.id === "weekend")}>
+                  <button key={p.period} type="button" aria-pressed={isPeriod(settings, s.range, p.period)} onClick={() => preset(p.period)}>
                     <b>{p.name}</b>
-                    <span>{kr(priceForDays(settings, p.days))}</span>
+                    <span>{kr(settings.prices.periods[p.period])}</span>
                   </button>
                 ))}
               </div>
               <Calendar selected={s.range} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(r) => set({ range: r })} priceFor={priceFor} loading={loading} />
               {s.range && (
                 <p className="bk-chosen">
-                  <span className="label">Jeres valg · {periodLabel(s.range)}</span>
+                  <span className="label">Jeres valg · {boxQuote(settings, s.range).label}</span>
                   <b>{formatRange(s.range)}</b>
                   <span className="muted">
                     {`Boksen ligger klar i pakkeshoppen senest ${formatDay(addDays(s.range.from, -1))}, og I sender den retur ${formatDay(addDays(s.range.to, 1))}.`}
@@ -193,7 +203,7 @@ export function Booking() {
                       <b>Boksen</b>
                       <span className="muted">Ubegrænsede billeder på telefonen og jeres eventside.</span>
                     </span>
-                    <strong>{s.range ? kr(priceForDays(settings, nights(s.range))) : ""}</strong>
+                    <strong>{s.range ? kr(boxPrice(settings, s.range)) : ""}</strong>
                   </span>
                 </label>
                 <label className={`bk-pick-card${printerBlocked ? " is-off" : ""}`}>
@@ -292,7 +302,7 @@ export function Booking() {
                 </div>
                 <div>
                   <dt>Datoer</dt>
-                  <dd>{formatRange(s.range)} ({periodLabel(s.range)})</dd>
+                  <dd>{formatRange(s.range)} ({boxQuote(settings, s.range).label})</dd>
                   <button type="button" onClick={() => move(0)}>Ret</button>
                 </div>
                 <div>
@@ -337,7 +347,7 @@ export function Booking() {
             <div className="bk-sum-what">
               <span className="bk-thumb" aria-hidden="true" />
               <div>
-                <b>Selfi Boks{s.range ? ` · ${periodLabel(s.range)}` : ""}</b>
+                <b>Selfi Boks{s.range ? ` · ${boxQuote(settings, s.range).label}` : ""}</b>
                 <span className="muted">{s.range ? formatRange(s.range) : "Vælg datoer"}</span>
               </div>
             </div>
@@ -367,7 +377,7 @@ export function Booking() {
       <div className="bk-bar">
         <div>
           <b>{s.range ? formatRange(s.range, "short") : "Vælg datoer"}</b>
-          <span className="muted">{s.range ? kr(sum) : `Fra ${kr(priceForDays(settings, 1))}`}</span>
+          <span className="muted">{s.range ? kr(sum) : `Fra ${kr(fromPrice(settings))}`}</span>
         </div>
         <button type="button" className="btn btn-primary" onClick={next} disabled={status.kind === "sending"}>
           {step === STEPS.length - 1 ? "Betal" : "Fortsæt"}
