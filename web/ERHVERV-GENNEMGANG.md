@@ -52,7 +52,7 @@ Vurderet som en barejer og en marketingchef, der ikke kender os. "Gør" er plane
 |---|---|---|
 | M1 | **Ingen pris.** FAQ'en svarer "Book en snak". Alle danske konkurrenter med fast installation viser månedspris (Lightbooth 2.499 kr., Nordic Activation 3.920 kr.). NN/g: når prisen er skjult, går brugerne til konkurrenten; vis i det mindste eksempler | Prisafsnit med "fra X kr./md. ekskl. moms" som tydelig pladsholder, hvad der er med, hvad der er tilvalg, og binding/opsigelse som pladsholdere. FAQ-svaret skrives om, så det siger, hvad prisen afhænger af, og hvad der aldrig koster ekstra |
 | M2 | **Intet bevis.** Ingen kunder, citater, tal eller cases. Showroomet viser Carlsberg, Tuborg, Red Bull, LEGOLAND, Smukfest, Roskilde, Nibe, Fårup, Zoo og Airtox med teksten "Konceptdesigns til intern brug. Stederne og mærkerne er ikke kunder" på en offentlig side | En ejer, der ser kendte logoer og en ansvarsfraskrivelse, tænker "de har ingen kunder og bruger andres logoer". Hero og showroom viser i stedet to neutrale designs og "jeres logo her". Bevisafsnit med tydelige pladsholdere: logoer, tre citater med navn, titel og sted, tal fra et rigtigt sted. Se også beslutning B3 |
-| M3 | Ingen "hvem står bag". NN/g: mennesker og en adresse bygger tillid, især når der ingen kunder er | Kort afsnit "Hvem I taler med": stifter med foto (pladsholder), by, og at boksen er udviklet og printet i Danmark |
+| M3 | Ingen "hvem står bag". NN/g: mennesker og en adresse bygger tillid, især når der ingen kunder er | Kort afsnit "Hvem I taler med": stiftere med foto (pladsholder), by, og at boksen er udviklet og printet i Danmark |
 | M4 | FAQ mangler det, ejeren faktisk spørger om: binding, opsigelse, internet, strøm, tyveri, hvem ejer billederne, GDPR-ansvar, flere bokse og kæder, print, hvor lang tid fra ja til boksen hænger, hvad der sker, hvis vi lukker boksen ned igen | Ny FAQ på 14 spørgsmål. Svar, der ikke er besluttet, står som pladsholder |
 | M5 | Gæstelisten er vores stærkeste juridiske kant (særskilt ja, Forbrugerombudsmandens natklubsag), men står kun som et punkt i Care-FAQ'en | Eget kort afsnit: "En gæsteliste, I må bruge" med sagen som kilde, og hvad boksen gør anderledes |
 | M6 | Intet om, hvad stedet skal have klar (en væg, en stikkontakt, wifi). Movebooth og Lightbooth siger det | Tre linjer i "Sådan kommer vi i gang" |
@@ -130,7 +130,7 @@ Bredt, før jeg vælger. Mærket A (gør nu), B (gør, når vi har data eller en
 **Bevis**
 - A: Bevisstribe med pladsholdere: "[Logo] [Logo] [Logo]", "[X] steder", "[X] billeder i [måned]".
 - A: Tre citater som pladsholdere med navn, titel, sted, og ét med et forbehold.
-- A: "Hvem står bag" med stifter, by og "udviklet og printet i Danmark".
+- A: "Hvem står bag" med stiftere, by og "udviklet og printet i Danmark".
 - B: Én rigtig case på en underside (sted, antal bokse, tal for billeder, SMS'er, genbesøg) med foto.
 - B: Trustpilot eller Google-anmeldelser fra steder, når de findes.
 - C: "Som set i"-presse. Findes ikke.
@@ -190,7 +190,7 @@ Bredt, før jeg vælger. Mærket A (gør nu), B (gør, når vi har data eller en
 10. **Aktiviteter.** Seks kort (uændret indhold, kortere tekst), link til /funktioner.
 11. **Se filmen.** Som i dag, længere nede.
 12. **Det siger stederne** (pladsholder): tre citater og én case.
-13. **Hvem står bag.** Stifter, by, udviklet og printet i Danmark (foto som pladsholder).
+13. **Hvem står bag.** Stiftere, by, udviklet og printet i Danmark (foto som pladsholder).
 14. **Spørgsmål og svar.** 14 spørgsmål.
 15. **Book en snak.** Formular med fire felter, telefon, e-mail, svartid (pladsholder). Lille link til privat leje nederst.
 
@@ -211,7 +211,7 @@ Pladsholderne på siden er mærket `[PLADSHOLDER: …]` i teksten og med en gul 
 7. **Andres logoer på siden** (beslutning B3): fjern Carlsberg, Tuborg, Red Bull, LEGOLAND, Smukfest, Roskilde, Nibe, Fårup, Zoo og Airtox fra den offentlige side, eller få lov. Jeg fjerner dem i udkastet og beholder filerne, så de kan slås til igen.
 8. **Tre citater** med navn, titel og sted, og gerne ét med et forbehold. Og **tal fra ét rigtigt sted** (billeder pr. aften, andel der skriver nummer, andel der siger ja til tilbud).
 9. **Kundelogoer** (med tilladelse, vilkår § 11).
-10. **Rigtige fotos**: boksen på en væg hos et sted, en gæst foran den, et print i hånden. OG-billede. Foto af stifteren.
+10. **Rigtige fotos**: boksen på en væg hos et sted, en gæst foran den, et print i hånden. OG-billede. Foto af stifterne.
 11. **`CONTACT_WEBHOOK_URL`** sat i Vercel, ellers virker formularen ikke.
 12. **Filmens speak** rettes ("Selfi Boks", "fire mikrofoner", "kårer aftenens største smil") og genrenderes.
 13. **Lysringens farve, kåring på tværs af aftenen, eksport af gæstelisten**: når de er bygget, kan teksterne skærpes igen.
@@ -228,7 +228,7 @@ Siden ligger i `app/erhverv/page.tsx`, de nye afsnit i `components/erhverv/`, pl
 | F5 | Telefon og e-mail i hero, service, "hvem I taler med", kontakt og footer (pladsholdere) |
 | M1 | Prisafsnit: 1.495 kr./md. ekskl. moms, 2.495 kr. i opstart, 3 måneders binding, pris for design aftales. Hvad der er med, og tilvalg. FAQ-svaret skrevet om. Pris i title, beskrivelse og strukturerede data |
 | M2 | Bevisstribe med seks opdigtede steder og tre tal, tre opdigtede citater (ét med forbehold) og én opdigtet case med tal. Alt markeret. Showroomets konceptdesigns bliver, markeret som pladsholder |
-| M3 | "Hvem I taler med": stifter, by (pladsholder), printet i Danmark, telefon og e-mail |
+| M3 | "Hvem I taler med": stiftere, by (pladsholder), printet i Danmark, telefon og e-mail |
 | M4 | 14 spørgsmål i FAQ'en, de ubesluttede svar hentes fra pladsholderfilen |
 | M5 | Afsnittet "En gæsteliste, I må sende til": positivt, fire ting listen giver. Ingen sager eller bøder på siden (Esben, 21. okt.) |
 | M6 | "Det skal I have klar": væg, stikkontakt, wifi, i "Sådan kommer vi i gang" |
