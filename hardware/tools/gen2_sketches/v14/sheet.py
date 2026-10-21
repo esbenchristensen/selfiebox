@@ -107,8 +107,8 @@ Fronten alene vil stadig være to dele, der kun mødes ved kameraet
 (det er det, der gør lysringen hel). Stivheden kommer, når bagrammen
 klikkes på, og det kan nu gøres uden skal.
 
-Kameratappe: 2 diagonale tappe Ø1,9 med spids styrer printet;
-de 2 andre huller sidder bare på afstandsstykker. Ingen kniv.
+Kameratappe (v15): alle 4 tappe er med, Ø1,9 med spids (v13 havde
+Ø2,0, og nogle printede for tykke). v14 havde kun 2.
 Hjørner: CAD regnede med R3 + 1,2 mm luft og skar indervæggen
 op i de nederste hjørner. Glasset er R5, så væggen kan være hel.
 
@@ -120,4 +120,5 @@ bagud gennem sin egen slids i bagrammen i hullet mellem de to
 ender, så de krydser ikke. I v13 løb højre ledningshul sammen med
 kablets slids; i v14 er ledningshullerne flyttet 4 mm ud.'''
 fig.text(0.015,0.565,txt,fontsize=9.6,va='top',family='DejaVu Sans',linespacing=1.35)
-fig.savefig('/tmp/claude-0/sk/halo-gen2-v14_skitse_rettelser.png',dpi=110,facecolor='white')
+import sys
+fig.savefig(sys.argv[1] if len(sys.argv)>1 else '/tmp/claude-0/sk/halo-gen2-v14_skitse_rettelser.png',dpi=110,facecolor='white')
