@@ -106,7 +106,10 @@ STRIP_WIRE_X = [-25, 25];                 // feed holes at both strip ends (powe
 CH_IN = SLOT_W/2 + DIFF_FLANGE;           // 8.2: cavity half-width
 module ring_centre2d() translate([0, (RING_Z0 + RING_Z1)/2]) sq2d(MASTER[0], MASTER[1]);
 module ring_band2d(a, b) difference() { offset(r = b) ring_centre2d(); offset(r = a) ring_centre2d(); }
-module glass_keep2d() translate([VIEW_X, GC]) offset(r = TD10_R + 1.2) square([GW - 2*TD10_R, GH - 2*TD10_R], center = true);
+// v14: the glass corners are R5 (RP-010276 drawing; v2-v13 used R3 + 1.2, which cut the inner wall open at the
+// bottom corners). Real corners leave 0.24 mm to the wall there, so the keep-out only shaves the wall locally.
+DSP_R = 5;  KEEP_C = 0.5;
+module glass_keep2d() translate([VIEW_X, GC]) offset(r = DSP_R + KEEP_C) square([GW - 2*DSP_R, GH - 2*DSP_R], center = true);
 module cam_block2d() translate([-CAM_GAP/2, RING_Z1 - CH_HALF - 1]) square([CAM_GAP, 2*CH_HALF + 2]);
 module ch_walls2d() difference() { ring_band2d(-CH_HALF, CH_HALF); glass_keep2d(); }
 module ch_cavity2d() difference() { ring_band2d(-CH_IN, CH_IN); offset(r = RIB_T) glass_keep2d(); cam_block2d(); }
@@ -571,13 +574,18 @@ LAND3 = 1.0;                              // flat land from the window bevel to 
 GROOVE3 = [3.2, 0.6];                     // groove width, depth; [C] foam tape 3 x 1 mm, squeezed to 0.6 (40 %)
 WIN3_BEVEL = [1.6, 0.6];                  // window grows 1.6 at the face, 0.6 at the glass (as v2-v11)
 module groove3_2d(g) translate([VIEW_X, GC]) offset(r = WIN3_BEVEL[1] + g) square([TD10_VIEW[0] + 1, TD10_VIEW[1] + 1], center = true);
-module pocket3_2d() translate([VIEW_X, GC]) offset(r = TD10_R + GLASS_C3) square([GW - 2*TD10_R, GH - 2*TD10_R], center = true);
+module pocket3_2d() translate([VIEW_X, GC]) offset(r = DSP_R + GLASS_C3) square([GW - 2*DSP_R, GH - 2*DSP_R], center = true);
 // [A] Touch Display 2 10" (RP-010276 physical spec): panel 7.05 deep incl. the 1.1 cover lens,
 // four M2.5 tabs 3 deep at 22.54 from the sides, 46.42 from the top and 41.68 from the bottom edge;
-// Pi stand-offs 8.5 high on a 49 x 58 pattern, 6.87 below the centre. [M] up = the drawing's up,
-// so the frame's tab holes are slots (+/-2.4) and fit either way round.
+// Pi stand-offs 8.5 high on a 49 x 58 pattern, 6.87 below the centre. [M] up = the drawing's up.
+// v14: turned the other way round, each tab moves 4.74 mm (v13's +/-2.4 slots missed it by 2.3), so the frame's
+// slots and bosses now span both positions and the cross bars sit on their mid point (+/-80 from the glass centre).
 DSP_PANEL = 7.05;  DSP_TAB3 = [8, 12, 3];  DSP_TAB_X = 166.9/2 - 22.54;  DSP_TAB_Z = [248.1/2 - 46.42, -(248.1/2 - 41.68)];
 DSP_PI_DZ = -6.87;  DSP_SO = [5, 8.5];
+DSP_BOTH = false;                         // Esben (21 Oct): the plate notches face down, away from the camera, as drawn
+DSP_SLOT_X = 0.3;                         // v14: the holes are 0.3 wider each way across (3.5 mm): v13's 2.9 left 0.2 per side for
+                                          // 121.8 mm between the holes, less than the print shrinks, and the screws missed
+DSP_XB_Z = DSP_BOTH ? [for (z = DSP_TAB_Z) sign(z)*(abs(DSP_TAB_Z[0]) + abs(DSP_TAB_Z[1]))/2] : DSP_TAB_Z;   // [80, -80]
 TAB_Y = GLASS_Y3 + DSP_PANEL + DSP_TAB3[2];  // 11.65: back face of the tabs
 PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the lip (v12; v2-v11: the glass land)
 PI_Y3 = GLASS_Y3 + DSP_PANEL + DSP_SO[1];
@@ -610,6 +618,21 @@ module glass_ribs() {
 LOGO_D = 0.8;
 LOGO_Z = ((RING_Z0 + S3) + (GC - (TD10_VIEW[1] + 1)/2 - 1.6))/2;
 module logo_inlay(c) ext_y(0, LOGO_D) translate([0, LOGO_Z]) if (c == "green") logo_green2d(); else if (c == "white") logo_white2d(); else logo_all2d();
+// v14 (Esben 21 Oct): the ring's round ends lie over the camera board (left) and the ribbon (right), and the
+// channel walls stopped 17 mm either side of the lens, so the dark camera bay showed through the diffuser.
+// The walls now follow the ring's ends round, and a 1.2 mm back closes each end 1 mm in front of the board.
+CAP_Y = CAM_PCB_Y - 0.8;  CAP_T = 1.2;
+module cam_caps() intersection() {
+    union() { ext_y(PT - 0.01, CAP_Y) ring3_band(CH_IN, CH_HALF); ext_y(CAP_Y - CAP_T, CAP_Y) ring3_2d(CH_HALF); }
+    ext_y(PT - 1, CAP_Y + 1) cam_keep2d();
+}
+// v14: v13 had 4 pegs Ø2.0 in the board's Ø2.2 holes, which had to be trimmed with a knife. Two diagonal pegs
+// locate the board (Ø1.9 with a cone tip); the other two holes sit on plain stand-offs.
+CAM_PEGS = [0, 3];  CAM_PEG = [1.9, 0.6];   // peg Ø, cone length to Ø1.1
+module cam_peg(h) {
+    cyl_y(CAM_PEG[0], CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5 - CAM_PEG[1], h[0], LENS_Z + h[1]);
+    translate([h[0], CAM_PCB_Y + CAM_PCB[2] + 1.5 - CAM_PEG[1] - 0.01, LENS_Z + h[1]]) rotate([-90, 0, 0]) cylinder(d1 = CAM_PEG[0], d2 = 1.1, h = CAM_PEG[1], $fn = 24);
+}
 module front3() union() {
     difference() {
         union() {
@@ -618,8 +641,9 @@ module front3() union() {
             ext_y(PT - 0.01, SKIRT + 0.01) difference() { rr(W, H, R); translate([0, WALL + FIT + TONGUE_T]) rr(W - 2*(WALL + FIT + TONGUE_T), H - 2*(WALL + FIT + TONGUE_T), R - WALL - TONGUE_T); }
             ext_y(PT - 0.01, CH_BACK) difference() { ring_band2d(-CH_HALF, CH_HALF); ring_band2d(-CH_IN, CH_IN); glass_keep2d(); cam_keep2d(); }
             for (j = J2) cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
-            for (h = CAM_HOLES_ROT) { cyl_y(4.6, PT - 0.01, CAM_PCB_Y, h[0], LENS_Z + h[1]); cyl_y(2.0, CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5, h[0], LENS_Z + h[1]); }
-            cam_shroud(); joint_rib(); snap_ledges();
+            for (h = CAM_HOLES_ROT) cyl_y(4.6, PT - 0.01, CAM_PCB_Y, h[0], LENS_Z + h[1]);
+            for (i = CAM_PEGS) cam_peg(CAM_HOLES_ROT[i]);
+            cam_shroud(); joint_rib(); cam_caps();
         }
         hull() { ext_y(-1, 0) window2d(WIN3_BEVEL[0]); ext_y(-1, GLASS_Y3 + 0.01) window2d(WIN3_BEVEL[1]); }
         ext_y(GLASS_Y3, PT + 0.01) pocket3_2d();                           // v12: thin lip over the glass
@@ -632,6 +656,8 @@ module front3() union() {
         translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]), d2 = CAM_HOLE, h = CAM_CONE[0] + 0.02);
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
         for (j = J2) cyl_y(INS_M3_D, CH_BACK - 11, CH_BACK + 1, j[0], j[1]);
+        snap_windows();
+        translate([0, 0, LENS_Z]) ext_y(PT, CAM_PCB_Y) square(CAM_HOLDER + 0.8, center = true);   // the caps keep clear of the lens holder
     }
     glass_ribs();
 }
@@ -647,37 +673,52 @@ module ring3() {
 }
 // v6 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v5_skitse_snaplaase-front.png):
 // the light-ring slot leaves the inner plate (window + logo) hanging on the bridge at the camera only.
-// 6 printed snap locks hold it from behind, no new screws or parts: an arm on the frame reaches
-// forward along the plate side of the inner channel wall, behind the display glass, and its barb
-// catches a ledge on the wall. 2 per side between the glass ribs and the cross bars, 2 at the bottom.
-// Lock profile in (u, y): u = distance in from the wall face (r = -CH_HALF) towards the plate.
+// v14 (Esben 21 Oct, after the v13 quick print): v6's 0.9 mm ledges held too little and would lose more to
+// acetone and wear, and the outer frame was only held by the 4 front screws through the shell. Now the
+// barbs catch in windows through the channel walls (the white reflector and the strip wall close them from
+// the channel side, so no light gets through), 8 on the inner wall and 6 on the outer wall. Each inner arm
+// runs on down past its window and ends in a 45 deg spring toe on the black edge of the display glass
+// (outside the metal back), so front, display and frame hold together with no shell and no screws.
+// Lock profile in (u, y): u = distance out from the wall face, away from the wall (the wall is u -1.6..0).
 SNAP = true;
-SNAP_W = 10;                              // along the wall
-SNAP_LEDGE = [0.9, 14.5, 16.5];           // front: ledge depth (u), catch face y, end of the flat face (then 45 deg)
-SNAP_ARM = [1.2, 1.8, 13];                // frame: arm face u (= glass edge), thickness, tip y
-SNAP_BARB = [0.1, 0.1];                   // barb reaches u 0.1; 0.1 play to the ledge: no constant pull against PRELOAD
-SNAP_PAD = [6, 18];                       // frame tab under the arm root: u depth, width
-SNAP_SLOT = [1.2, 8];                     // release slot through the tab, between wall and arm: u, width
-// [face point x, z], inward normal; locks 1-2 left, 3-4 right, 5-6 bottom (the sketch's numbering)
+LK_W = 12;                                // along the wall
+LK_ARM = [0.3, 2.0];                      // arm: face u (air to the wall), thickness
+// window y0, y1 and barb engagement: inner windows sit lower (a longer arm), the outer ones clear the tongue (y 6-11)
+LK_IN = [9.5, 12.5, 1.2];  LK_OUT = [12.5, 15.5, 1.0];
+LK_TOE = [6.5, 1.0, 6, 0.2];              // inner toe: arm end y, leaf thickness, width, preload on the glass
+LK_PAD = [5, 2.8, 18];                    // frame tab under the arm root: u depth (inner, outer: stays 1.2 off the shell wall), width
+LK_SLOT = [1.6, 8];                       // release slot through the frame, wall side of the arm: u, width
+// [face point x, z], normal pointing away from the wall
 SNAPS = [for (sx = [-1, 1], z = [110, 190]) [[sx*(RING_X - CH_HALF), z], [-sx, 0]],
-         for (sx = [-1, 1]) [[sx*60, RING_Z0 + CH_HALF], [0, 1]]];
+         for (sx = [-1, 1]) [[sx*60, RING_Z0 + CH_HALF], [0, 1]],
+         for (sx = [-1, 1]) [[sx*60, RING_Z1 - CH_HALF], [0, -1]]];
+SNAPS_OUT = [for (sx = [-1, 1], z = [110, 190]) [[sx*(RING_X + CH_HALF), z], [sx, 0]],
+             for (sx = [-1, 1]) [[sx*75, RING_Z0 - CH_HALF], [0, -1]]];
 module snap_place(s) multmatrix([[s[1][0], 0, -s[1][1], s[0][0]], [0, 1, 0, 0], [s[1][1], 0, s[1][0], s[0][1]], [0, 0, 0, 1]]) children();
 // extrude a (u, y) profile along the wall, w wide, centred
 module snap_ext(w) translate([0, 0, -w/2]) linear_extrude(w) children();
-module snap_ledges() if (SNAP) for (s = SNAPS) snap_place(s) snap_ext(SNAP_W)
-    polygon([[-0.6, SNAP_LEDGE[1]], [SNAP_LEDGE[0], SNAP_LEDGE[1]], [SNAP_LEDGE[0], SNAP_LEDGE[2]], [-0.6, SNAP_LEDGE[2] + SNAP_LEDGE[0] + 0.6]]);
-module snap_arms() if (SNAP) for (s = SNAPS) snap_place(s) {
-    a0 = SNAP_ARM[0];  a1 = a0 + SNAP_ARM[1];  yc = SNAP_LEDGE[1] - SNAP_BARB[1];  ub = SNAP_BARB[0];
-    snap_ext(SNAP_W) polygon([[a0, SNAP_ARM[2]], [a0, yc - 0.25 - (a0 - ub)], [ub, yc - 0.25], [ub, yc], [a0, yc], [a0, CH_BACK + 0.01],
-                              [a1, CH_BACK + 0.01], [a1, SNAP_ARM[2]]]);   // barb: square catch face, 45 deg lead-in
-    snap_ext(SNAP_PAD[1]) translate([-0.5, CH_BACK]) square([SNAP_PAD[0] + 0.5, FR_T]);
+module snap_window(k) snap_ext(LK_W + 0.6) translate([-RIB_T - 0.2, k[0]]) square([RIB_T + 0.21, k[1] - k[0]]);
+module snap_windows() if (SNAP) { for (s = SNAPS) snap_place(s) snap_window(LK_IN); for (s = SNAPS_OUT) snap_place(s) snap_window(LK_OUT); }
+// barb: square catch face 0.1 short of the window's back edge, 45 deg lead-in, tip only inside the window
+function lk_barb(k) = let(a0 = LK_ARM[0], e = k[2], yc = k[1] - 0.1, yt = k[0] + 0.1 + e) [[a0, yt - e - a0], [-e, yt], [-e, yc], [a0, yc]];
+module snap_arm(k, toe) {
+    a0 = LK_ARM[0];  a1 = a0 + LK_ARM[1];  y0 = toe ? LK_TOE[0] : lk_barb(k)[0][1];
+    snap_ext(LK_W) { polygon(lk_barb(k)); translate([a0, y0]) square([LK_ARM[1], CH_BACK + 0.01 - y0]); }
+    snap_ext(LK_PAD[2]) translate([-RIB_T - 0.5, CH_BACK]) square([RIB_T + 0.5 + LK_PAD[toe ? 0 : 1], FR_T]);
+    if (toe) {   // 45 deg leaf from the arm end down onto the glass edge, LK_TOE[3] interference
+        l = LK_TOE[0] - (GLASS_Y3 + TD10_GLASS_T - LK_TOE[3]);  h = LK_TOE[1]*sqrt(2);
+        snap_ext(LK_TOE[2]) polygon([[a1 - h, LK_TOE[0] + 0.01], [a1, LK_TOE[0] + 0.01], [a1 + l, LK_TOE[0] - l], [a1 - h + l, LK_TOE[0] - l]]);
+    }
 }
-module snap_slots() if (SNAP) for (s = SNAPS) snap_place(s) snap_ext(SNAP_SLOT[1]) translate([0, CH_BACK - 0.01]) square([SNAP_SLOT[0], FR_T + 1.02]);
+module snap_arms() if (SNAP) { for (s = SNAPS) snap_place(s) snap_arm(LK_IN, true); for (s = SNAPS_OUT) snap_place(s) snap_arm(LK_OUT, false); }
+module snap_slots() if (SNAP) for (s = concat(SNAPS, SNAPS_OUT)) snap_place(s) snap_ext(LK_SLOT[1]) translate([LK_ARM[0] - LK_SLOT[0], CH_BACK - 0.01]) square([LK_SLOT[0], FR_T + 1.02]);
 function refl_r(y) = REFL[0][1] + (y - REFL[0][0])*(REFL[1][1] - REFL[0][1])/(REFL[1][0] - REFL[0][0]);
 REFL_STEP = 0.5;
 CAM_RIB = [9.3, 17.5, 6.5];               // ribbon slot: x start (connector edge at 9.53), width (z), depth (x)
+STRIP_LEAD_X = CAM_KEEP[0] + 2.5;         // v14: 19.5 (v13: 15.5 ran into the ribbon slot on the right)
 module frame3() {
     tabs = [for (sx = [-1, 1], z = DSP_TAB_Z) [sx*DSP_TAB_X, GC + z]];
+    tabs2 = [for (sx = [-1, 1], i = [0, 1]) [sx*DSP_TAB_X, GC + DSP_TAB_Z[i], DSP_BOTH ? GC - DSP_TAB_Z[1 - i] : GC + DSP_TAB_Z[i]]];   // v14: both ways round (if DSP_BOTH)
     difference() {
         union() {
             ext_y(CH_BACK, FR_BACK) {
@@ -700,24 +741,24 @@ module frame3() {
             // cross bars at the display tabs, with bosses down to the tabs
             // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
             // in v2 they were loose pieces in the print
-            for (z = DSP_TAB_Z) ext_y(XB3_Y, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
-            for (z = DSP_TAB_Z) ext_y(CH_BACK, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF + 1), 16], center = true);
-            for (t = tabs) cyl_y(7, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0], t[1]);
+            for (z = DSP_XB_Z) ext_y(XB3_Y, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
+            for (z = DSP_XB_Z) ext_y(CH_BACK, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF + 1), 16], center = true);
+            for (t = tabs2) hull() for (z = [t[1], t[2]]) cyl_y(7, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0], z);
             // tubes that press the camera board onto its pegs
             for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
             snap_arms();
         }
         snap_slots();
-        for (t = tabs) {
-            hull() for (dz = [-2.4, 2.4]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0], t[1] + dz);
-            hull() for (dz = [-2.4, 2.4]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0], t[1] + dz);   // head 2 mm above the tab
+        for (t = tabs2) {
+            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [-0.4, 0.4] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
+            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [0] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0] + dx, z + dz);   // head 2 mm above the tab
         }
         for (h = CAM_HOLES_ROT) cyl_y(2.4, CAM_PCB_Y, CAM_PCB_Y + CAM_PCB[2] + 2, h[0], LENS_Z + h[1]);
         // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
-        for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*(CAM_KEEP[0] - 1.5), RING_Z1 + 4);   // strip leads, straight out of the clips
+        for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
     }
 }
 // 90 deg countersink, wide end (d1) at y0, narrowing towards -y to d2: for a screw driven in from the back
