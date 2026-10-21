@@ -272,7 +272,7 @@ export const CASES: Case[] = [
   {
     name: "flere-bookinger",
     verified: "ditte@example.dk",
-    turns: [{ say: "Hvad har jeg egentlig booket hos jer?", tools: ["get_bookings"], must: [/\b11\.[^\n]*december/, /1\. maj/], judge: "Lister begge bookinger (julefrokost 11.–12. december med polaroid-printer og tema, og 1. maj) kort." }],
+    turns: [{ say: "Hvad har jeg egentlig booket hos jer?", tools: ["get_bookings"], must: [/\b11\.[^\n]*december/, /1\. maj/], judge: "Lister begge bookinger (julefrokost 11.–12. december med polaroid-printer, og 1. maj) kort." }],
   },
   {
     name: "opsaetningslink",

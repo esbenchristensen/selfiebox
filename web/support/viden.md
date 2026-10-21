@@ -9,7 +9,7 @@ Firmaet drives af Esben Christensen, stifter. Det er ham, der tager over, når e
 
 ### Privat leje: sådan foregår det
 
-1. **Book:** Kunden vælger datoer i kalenderen på selfi.dk, vælger om printeren skal med (og printtype: fotostrimmel eller polaroid), evt. et tema, skriver navn, e-mail, telefon og adresse, og betaler hele beløbet med Stripe. Kalenderen viser kun ledige dage. Datoerne holdes i 30 minutter, mens der betales.
+1. **Book:** Kunden vælger datoer i kalenderen på selfi.dk, vælger om printeren skal med (og printtype: fotostrimmel eller polaroid), skriver navn, e-mail, telefon og adresse, og betaler hele beløbet med Stripe. Kalenderen viser kun ledige dage. Datoerne holdes i 30 minutter, mens der betales.
 2. **Bookingnummer:** Ser sådan ud: SB-271021-K4QX. Står i kvitteringen og på siden efter betalingen. Kvitteringen sendes af Stripe til den e-mail, kunden skrev.
 3. **Opsætning:** Efter betalingen får kunden et link til at sætte boksen op til festen (overskrift, stemning, tekster) og se den live. Linket kan bruges frem til festen. Linket er personligt og gives kun til den verificerede kunde.
 4. **Levering:** Vi sender boksen med dao til den pakkeshop, der ligger nærmest kundens adresse, så den er fremme senest dagen før første lejedag. Kunden får sms eller mail fra dao, når pakken kan hentes. Vi sender ikke direkte til døren, og der er ingen afhentning hos os.
@@ -23,7 +23,7 @@ Firmaet drives af Esben Christensen, stifter. Det er ham, der tager over, når e
 
 Selfi Boks med gulvstativ, strømforsyning og forsendelseskasse. Ubegrænsede billeder, boomerangs og fotostriber. Festens egen side med alle billeder (åben i mindst 3 måneder). Fragt begge veje. Forsikring. Opsætning til festen. Der er ikke noget depositum, og der kommer ikke noget oveni prisen.
 
-**Tilvalg:** Printer med et antal print (fotostrimmel eller polaroid). Tema (fx Bryllup, Fødselsdag, Julefrokost) kræver lidt længere frist, så boksen kan gøres klar. De aktuelle priser, antal print, temaer og frister står i konteksten til hver samtale ("Aktuelle priser og regler"). Brug altid dem, ikke tal fra hukommelsen.
+**Tilvalg:** Printer med et antal print (fotostrimmel eller polaroid). Det er det eneste tilvalg; der er ikke længere temaer at vælge imellem (boksen sættes op til festen med overskrift, stemning og tekster på opsætningssiden, uden ekstra pris). De aktuelle priser, antal print og frister står i konteksten til hver samtale ("Aktuelle priser og regler"). Brug altid dem, ikke tal fra hukommelsen.
 
 **Prisen afhænger af antal dage.** En dag og en weekend (fredag til søndag) koster det samme. Lejeperioder over det maksimale antal dage aftales med Esben (eskalér).
 
@@ -50,7 +50,7 @@ Selfi Boks med gulvstativ, strømforsyning og forsendelseskasse. Ubegrænsede bi
 
 ### Spørgsmål, private kunder tit stiller
 
-- **Hvor sent kan vi booke?** Første lejedag skal ligge mindst det antal dage frem, der står i reglerne (leadDays), så boksen kan nå frem med posten. Med tema lidt længere (themeLeadDays). Man kan booke op til 12 måneder frem.
+- **Hvor sent kan vi booke?** Første lejedag skal ligge mindst det antal dage frem, der står i reglerne (leadDays), så boksen kan nå frem med posten. Man kan booke op til 12 måneder frem.
 - **Skal vi selv stille den op?** Ja, det tager fem minutter.
 - **Hvor mange billeder?** Ubegrænset. Printeren har det antal print med, som står i reglerne (printsIncluded).
 - **Kan gæsterne få billederne?** Ja, på telefonen med det samme, og alle billeder ligger på festens side.

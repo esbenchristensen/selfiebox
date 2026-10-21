@@ -130,7 +130,13 @@ export function ChatWidget() {
       const reply = tmp + 1;
       setMsgs((cur) => [...cur, { seq: reply, role: "assistant", text: "", at: now, name: NAME, sources: null, pending: true }]);
       await readStream(r, {
-        delta: (d) => setMsgs((cur) => cur.map((m) => (m.seq === reply ? { ...m, text: m.text + d.text } : m))),
+        // The customer's message gets its saved number at once, so it keeps its place above the reply.
+        accepted: (d) => {
+          lastSeq.current = Math.max(lastSeq.current, d.seq);
+          setMsgs((cur) => cur.map((m) => (m.seq === tmp ? { ...m, seq: d.seq, pending: false } : m)));
+        },
+        // The reply is shown when it is complete; until then the bubble says "Skriver…".
+        delta: () => undefined,
         status: (d) => setStatus(d.text),
         sources: (d) => setMsgs((cur) => cur.map((m) => (m.seq === reply ? { ...m, sources: d.sources } : m))),
         done: (d) => {
@@ -280,7 +286,7 @@ function Bubble({ m }: { m: Msg }) {
     <div className={`sc-msg ${mine ? "is-me" : m.role === "human" ? "is-human" : "is-ai"}`}>
       {!mine && <span className="sc-who">{m.role === "human" ? m.name ?? "Esben" : NAME}</span>}
       <div className="sc-bubble">
-        {m.text ? <Rich text={m.text} /> : <span className="sc-dots" aria-label="Skriver"><i /><i /><i /></span>}
+        {m.text ? <Rich text={m.text} /> : <span className="sc-typing" role="status">Skriver<span className="sc-dots" aria-hidden="true"><i /><i /><i /></span></span>}
       </div>
       {m.sources && m.sources.length > 0 && (
         <ul className="sc-sources">
@@ -333,6 +339,7 @@ function Inline({ text }: { text: string }) {
 }
 
 type Handlers = {
+  accepted: (d: { seq: number }) => void;
   delta: (d: { text: string }) => void;
   status: (d: { text: string }) => void;
   sources: (d: { sources: { url: string; title: string }[] }) => void;
