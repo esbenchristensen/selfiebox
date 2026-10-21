@@ -67,7 +67,7 @@
  },
  {
   "node": "pi",
-  "label": "Raspberry Pi Zero 2 W (printserver på wifi)",
+  "label": "Raspberry Pi Zero 2 W (printserver på wifi, strøm fra printerens 5 V-udgang)",
   "color": "#2e9e5b",
   "group": "Elektronik",
   "explode": [
@@ -77,19 +77,8 @@
   ]
  },
  {
-  "node": "psu",
-  "label": "5 V-forsyning til Pi'en (Mean Well GST25E05)",
-  "color": "#8b5cf6",
-  "group": "Elektronik",
-  "explode": [
-   0,
-   60,
-   -60
-  ]
- },
- {
   "node": "inlet",
-  "label": "Strømindgang C14 (panelkabel, snap-in)",
+  "label": "Strømindgang C14 (panelkabel, snap-in, videre til printerens eget C14-stik)",
   "color": "#e11d48",
   "group": "Elektronik",
   "explode": [

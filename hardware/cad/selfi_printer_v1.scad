@@ -5,12 +5,12 @@
 //   hylde (B2B shelf/counter): base screwed to the shelf from inside, hood locked with a cam lock
 //   vaeg  (B2B wall): base screwed onto a printed console that hangs on a wall cleat, hood locked
 // Inside: the printer on the base, and in the rear bay a Pi Zero 2 W (CUPS + Gutenprint print server on
-// wifi) and a 5 V supply. One mains cable in at the back. Sketches: /mnt/project-files/selfi-printer/v1/.
+// wifi), powered from the printer's own 5 V 2 A USB output. One mains cable in at the back. Sketches: /mnt/project-files/selfi-printer/v1/.
 //
 // Frame: x right (seen from the front), y back (front face at y = 0), z up (bottom of the base at z = 0).
 // Usage: openscad -D 'VIEW="kappe"' -D 'PRINT=true' -o kappe.stl hardware/cad/selfi_printer_v1.scad
 // Views: printed parts (kappe, kappe_laas, sokkel, bakke, konsol, vaegplade, logo_hvid, logo_groen),
-//        bought parts for the 3D model (c_printer, c_pi, c_psu, c_inlet, c_lock, s_*), assembly "all".
+//        bought parts for the 3D model (c_printer, c_pi, c_inlet, c_lock, s_*), assembly "all".
 
 include <logo_selfi.scad>
 
@@ -21,24 +21,28 @@ MOUNT = "bord";       // assembly: bord | hylde | vaeg
 $fn = 64;
 
 // ---------- measures (mm) ----------
-PW = 208; PH = 198; PD = 240;      // DNP QW410 W x H x D (DNP EU product sheet); measure the real one before printing
+PW = 208; PH = 198; PD = 240;      // DNP QW410 W x H x D (DNP brochure and user guide); measure the real one before printing
+// QW410 (user guide p. 12 and photos): top door opens upwards (lever at the front), paper output high on the
+// front with the trash box below it, rear: C14 inlet + power switch low, USB-B + 5 V 2 A USB out at mid height,
+// fan high up, vents on the side. 5-35 C, natural convection.
 WALL  = 3.2;                       // hood wall, 8 perimeters of 0.4
 CLR   = 4.0;                       // printer to hood, sides and top
 CLR_F = 8.0;                       // printer to hood front (paper exit)
-BAY   = 40.0;                      // rear bay: Pi Zero, 5 V supply, cables
+BAY   = 40.0;                      // rear bay: Pi Zero, angled C13 and USB plugs, cables
 BASE  = 12.0;                      // base slab
 W = 222.5;                         // = gen 2 width (PW + 2 (CLR + WALL) = 222.4)
 H = 220.0;
 D = WALL + CLR_F + PD + BAY + WALL;   // 294.4
 PY0 = WALL + CLR_F;                // printer front
-SLOT_Z = 58; SLOT_W = 124; SLOT_H = 8;   // paper exit (4.5" roll = 114.3 wide); height to be measured
+SLOT_Z = 147; SLOT_W = 124; SLOT_H = 8;  // paper exit (4.5" roll = 114.3 wide); about 135 over the printer's
+                                         // bottom, read off DNP's photo: measure before printing
 LIP_H = 9; LIP_T = 2.4; LIP_GAP = 0.3;   // base lip inside the hood
 INLET = [28, 20];                  // C14 snap-in panel inlet cut-out (W x H)
 INLET_X = -60; INLET_Z = 30;       // centre of the inlet, seen from the back on the left of the bay
 LOCK_Y = D - 24; LOCK_Z = 62;      // cam lock in the right side wall, in the rear bay
 LOCK_D = 19.2; LOCK_FLAT = 17.0;   // 19 mm cam lock with two flats
 LOGO_S = 3.3;                      // logo 27.5 x 10 -> 91 x 33
-LOGO_Z = 150; LOGO_D = 0.8;        // inlay 0.8 deep (4 layers) in the front
+LOGO_Z = 72; LOGO_D = 0.8;         // inlay 0.8 deep (4 layers) in the front, under the tray
 TRAY = [150, 72, 16];              // catch tray W x D x lip
 SCREWS = [[-55, 120], [55, 120]];  // base to shelf/console, under the printer (x, y)
 CON_T = 12; CON_H = 170;           // console shelf thickness, height below the shelf
@@ -82,6 +86,8 @@ module kappe(lock = false) difference() {
   translate([INLET_X - (INLET[0] + 12) / 2, D - WALL - 1, -1]) cube([INLET[0] + 12, WALL + 2, INLET_Z + INLET[1] / 2 + 6 + 1]);
   // vents at the top of the back wall (warm air out)
   for (i = [-4:4]) translate([i * 18 - 5, D - WALL - 1, H - 46]) cube([10, WALL + 2, 22]);
+  // vents in both sides, high at the rear, by the printer's own side vents and fan
+  for (sx = [-1, 1]) for (i = [0:5]) translate([sx * W / 2 - 10, D - BAY - 96 + i * 18, H - 80]) cube([20, 10, 36]);
   // detent grooves in the front and back wall (blind, 0.8 deep)
   detent_groove(WALL, 1); detent_groove(D - WALL, -1);
   if (lock) translate([W / 2 - 20, LOCK_Y, LOCK_Z]) rotate([0, 90, 0]) intersection() {
@@ -129,10 +135,6 @@ module sokkel() difference() {
     // Pi Zero 2 W: two slotted posts, the board stands on its long edge
     for (x = [-2, 66]) translate([x, D - WALL - 30, BASE]) difference() {
       cube([6, 12, 24]); translate([2, 3.5, 4]) cube([2.2, 5, 30]);   // 1.6 board + play
-    }
-    // 5 V supply (Mean Well GST25E05, 92 x 50 x 32): cradle, the supply stands on its side
-    translate([-24, D - WALL - 42, BASE]) difference() {
-      cube([98, 38, 10]); translate([2, 2, 2]) cube([94, 34, 10]);
     }
     // lock catch: the cam turns down behind this tooth
     if (true) translate([W / 2 - WALL - 24, LOCK_Y - 10, BASE]) difference() {
@@ -220,7 +222,6 @@ module c_printer() translate([-PW / 2, PY0, BASE]) difference() {
   translate([-1 + PW / 2 - 60, -1, SLOT_Z - BASE + 1]) cube([120, 8, 6]);   // its own paper exit
 }
 module c_pi() translate([0, D - WALL - 24, BASE + 4]) cube([65, 1.6, 30]);
-module c_psu() translate([-22, D - WALL - 40, BASE + 2]) cube([92, 32, 50]);
 module c_inlet() translate([INLET_X - 16, D - WALL - 16, INLET_Z - 12]) cube([32, 16, 24]);
 module c_lock() translate([W / 2 - 10 - WALL - 14, LOCK_Y, LOCK_Z]) rotate([0, 90, 0]) {
   cylinder(d = 18.8, h = 14 + 10 + WALL, $fn = 32); translate([0, 0, 14 + 10 + WALL]) cylinder(d = 24, h = 2);
@@ -252,7 +253,6 @@ if (VIEW == "logo_hvid")  place(VIEW) logo("hvid");
 if (VIEW == "logo_groen") place(VIEW) logo("groen");
 if (VIEW == "c_printer")  c_printer();
 if (VIEW == "c_pi")       c_pi();
-if (VIEW == "c_psu")      c_psu();
 if (VIEW == "c_inlet")    c_inlet();
 if (VIEW == "c_lock")     c_lock();
 if (VIEW == "s_base")     s_base();
@@ -265,7 +265,7 @@ module asm(lock, mount) {
   color("#2b2b2f") sokkel();
   translate([0, -110 * e, 0]) color("#1d1d20") bakke();
   translate([0, 0, 130 * e]) color("#d9d9d6") c_printer();
-  translate([0, 60 * e, 60 * e]) { color("#2e9e5b") c_pi(); color("#8b5cf6") c_psu(); }
+  translate([0, 60 * e, 60 * e]) color("#2e9e5b") c_pi();
   color("#e11d48") c_inlet();
   if (mount == "vaeg") translate([0, 0, -110 * e]) { color("#3a3a3f") konsol(); translate([0, 110 * e, 0]) color("#4a4a50") vaegplade(); }
 }
@@ -276,5 +276,5 @@ SIDE = [[0, 1, 0, 0], [0, 0, 1, 0], [1, 0, 0, 0], [0, 0, 0, 1]];   // (x, y, z) 
 if (VIEW == "d_front") projection() rotate([-90, 0, 0]) body(MOUNT);
 if (VIEW == "d_side")  projection() multmatrix(SIDE) body(MOUNT);
 if (VIEW == "d_top")   projection() body(MOUNT);
-if (VIEW == "d_cut")   projection(cut = true) multmatrix(SIDE) union() { body(MOUNT); c_printer(); c_pi(); c_psu(); }   // section at x = 0
+if (VIEW == "d_cut")   projection(cut = true) multmatrix(SIDE) union() { body(MOUNT); c_printer(); c_pi(); }   // section at x = 0
 if (VIEW == "d_cut_lock") projection(cut = true) rotate([-90, 0, 0]) translate([0, -LOCK_Y, 0]) union() { kappe_full(true); sokkel(); c_lock(); }   // section through the lock, seen from the front
