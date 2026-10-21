@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { BoxViewer } from "./BoxViewer";
 import { OutlinePoster } from "./Outline";
+import { Ph } from "./Placeholder";
 import { SHOWROOM as venues } from "./three/showroom";
 
 const Showroom3D = dynamic(() => import("./three/Showroom3D"), { ssr: false, loading: () => null });
@@ -48,7 +49,7 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
         </h2>
         <p className="lede">{lede}</p>
       </div>
-      <div ref={ref} className={`showroom-stage viewer${ready ? " is-ready" : ""}`} role="img" aria-label={`Selfi Boks i 3D med designet til ${venues[focus].name}`}>
+      <div ref={ref} className={`showroom-stage viewer${ready ? " is-ready" : ""}`} role="img" aria-label={`Selfi i 3D med designet til ${venues[focus].name}`}>
         <div className="viewer-poster" aria-hidden="true">
           <OutlinePoster />
         </div>
@@ -69,7 +70,11 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
             </button>
           ))}
         </div>
-        <p className="fine showroom-note">Konceptdesigns til intern brug. Stederne og mærkerne er ikke kunder hos Selfi, og logoer og navne tilhører dem.</p>
+        <p className="fine showroom-note">
+          <Ph note="konceptdesigns med andres logoer; skiftes til rigtige kunders designs, eller der indhentes tilladelse, før siden udgives">
+            Konceptdesigns. Stederne og mærkerne er ikke kunder hos Selfi, og logoer og navne tilhører dem.
+          </Ph>
+        </p>
       </div>
     </section>
   );
@@ -82,13 +87,25 @@ export function HeroBox() {
   const paused = useRef(false);
   const touched = useRef(false);
   const swipe = useRef<{ x: number; y: number; t: number } | null>(null);
+  // Phones get the line drawing and fetch three.js and the models only when asked: the hero is the first
+  // thing on the page, and the 3D costs about a megabyte before the first design shows.
+  const [small, setSmall] = useState(false);
+  const [wants3d, setWants3d] = useState(false);
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const mq = window.matchMedia("(max-width: 700px)");
+    const sync = () => setSmall(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  const live = !small || wants3d;
+  useEffect(() => {
+    if (!live || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => {
       if (!paused.current && !touched.current && document.visibilityState === "visible") setI((n) => (n + 1) % venues.length);
     }, 4600);
     return () => clearInterval(id);
-  }, []);
+  }, [live]);
   const go = (n: number) => {
     touched.current = true;
     setI((n + venues.length) % venues.length);
@@ -110,7 +127,18 @@ export function HeroBox() {
         if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && e.timeStamp - s.t < 800) go(i + (dx < 0 ? 1 : -1));
       }}
     >
-      <BoxViewer design={{ venue }} variant="venue" label={`Selfi Boks i 3D, her med et design til ${venue.name}`} />
+      {live ? (
+        <BoxViewer design={{ venue }} variant="venue" label={`Selfi i 3D, her med et design til ${venue.name}`} preload={[venues[(i + 1) % venues.length]]} />
+      ) : (
+        <div className="viewer hero-box-still">
+          <div className="viewer-poster" aria-hidden="true">
+            <OutlinePoster />
+          </div>
+          <button type="button" className="btn btn-secondary hero-box-3d" onClick={() => setWants3d(true)}>
+            Se boksen i 3D
+          </button>
+        </div>
+      )}
       <div className="hero-box-cap" style={{ "--bg": venue.palette.base } as React.CSSProperties}>
         <a href="#temaer" className="hero-box-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}

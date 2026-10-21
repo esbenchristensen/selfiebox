@@ -1,45 +1,69 @@
 import type { Metadata } from "next";
 import { Care } from "@/components/Care";
 import { Contact } from "@/components/Contact";
-import { ContentMachine } from "@/components/ContentMachine";
 import { Explainer } from "@/components/Explainer";
-import { Features } from "@/components/Features";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { JsonLd } from "@/components/JsonLd";
-import { Moments } from "@/components/Moments";
 import { Nav } from "@/components/Nav";
-import { Quality } from "@/components/Quality";
-import { Activities, Faq, PhotoStrip } from "@/components/Sections";
-import { Story } from "@/components/Story";
+import { Ph } from "@/components/Placeholder";
+import { Activities, Faq } from "@/components/Sections";
 import { HeroBox, Showroom } from "@/components/ThemeStudio";
-import { Venues } from "@/components/Venues";
+import { Cases } from "@/components/erhverv/Cases";
+import { GuestFlow } from "@/components/erhverv/GuestFlow";
+import { GuestList } from "@/components/erhverv/GuestList";
+import { Outcomes } from "@/components/erhverv/Outcomes";
+import { Pricing } from "@/components/erhverv/Pricing";
+import { Proof } from "@/components/erhverv/Proof";
+import { Quotes } from "@/components/erhverv/Quotes";
+import { Start } from "@/components/erhverv/Start";
+import { StickyCta } from "@/components/erhverv/StickyCta";
+import { Team } from "@/components/erhverv/Team";
 import { faq } from "@/content";
+import { company } from "@/lib/company";
+import { contact, pricing } from "@/lib/erhverv/placeholder";
 
-// selfi.dk/erhverv: fotobokse designed for each place. Venues, clubs, bars, hotels, festivals, parks and
-// anywhere else guests gather. Sold through a conversation, so the one action is "Book en snak".
-// The front page is the rental for private parties; the customer pages live under /erhverv/<sted>.
+// selfi.dk/erhverv: the box for places with guests, sold through a conversation. The page follows the
+// questions an owner asks, in the order they ask them: what is it and what do we get (hero, proof,
+// outcomes), how does it work for a guest, what does it look like for us (design, cases), what does it
+// cost, what if it breaks (service), may we use the guest list, how do we start, what keeps guests busy,
+// the film, what other places say, who we are, questions, and then the one action: book a call.
+// Facts that are not decided or not true yet come from lib/erhverv/placeholder.ts and are marked.
+// The front page is the rental for private parties; the customer catalogues live under /erhverv/<sted>.
+
+const TITLE = "Fotoboks til bar, klub og hotel i jeres eget design | Selfi";
+const DESCRIPTION = `Selfi hænger på væggen i jeres design, sender billedet på SMS med jeres navn på og samler en gæsteliste, I må bruge. Fra ${pricing.fromPerMonth} kr./md. med fuld service.`;
 
 export const metadata: Metadata = {
-  title: "Fotobokse i jeres eget design til venues, klubber og festivaler | Selfi",
-  description:
-    "Selfi Boks designet til jeres sted og en contentmaskine, der laver autentiske billeder og videoer af jeres gæster hver aften. Aktiviteter, gæsteliste og fuld service.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/erhverv" },
   openGraph: {
-    title: "Fotobokse i jeres eget design | Selfi",
-    description: "En fotoboks bygget til jeres sted, der giver omtale hver dag og får gæsterne til at komme igen.",
+    title: "Fotoboks i jeres eget design til barer, klubber og hoteller | Selfi",
+    description: DESCRIPTION,
     url: "/erhverv",
-    images: [{ url: "/photos/sted-festival.jpg", width: 1600, height: 1195, alt: "Gæster ved Selfi Boks på en festival i skoven" }],
+    images: [{ url: "/photos/klub.jpg", width: 1600, height: 1195, alt: "Selfi på en betonsøjle i en natklub" }],
   },
 };
 
 const jsonLd = [
   {
     "@context": "https://schema.org",
+    "@type": "Organization",
+    name: company.legalName || company.name,
+    url: "https://www.selfi.dk",
+    email: company.email || contact.email,
+    telephone: company.phone || contact.phone,
+    address: { "@type": "PostalAddress", addressLocality: company.postcode || contact.city, addressCountry: "DK" },
+  },
+  {
+    "@context": "https://schema.org",
     "@type": "Service",
-    name: "Fotobokse i eget design til venues, klubber og festivaler",
-    serviceType: "Fotobokse i stedets eget design med aktiviteter og fuld service",
-    provider: { "@type": "Organization", name: "Selfi", url: "https://selfi.dk" },
+    name: "Fotoboks i eget design til barer, klubber, hoteller og festivaler",
+    serviceType: "Fotoboks på abonnement med eget design, gæsteliste og fuld service",
+    areaServed: "DK",
+    provider: { "@type": "Organization", name: "Selfi", url: "https://www.selfi.dk" },
+    offers: { "@type": "Offer", price: pricing.fromPerMonth, priceCurrency: "DKK", priceSpecification: { "@type": "UnitPriceSpecification", price: pricing.fromPerMonth, priceCurrency: "DKK", unitText: "måned pr. boks, ekskl. moms" } },
   },
   {
     "@context": "https://schema.org",
@@ -54,108 +78,73 @@ export default function Erhverv() {
       <JsonLd data={jsonLd} />
       <Nav
         links={[
-          { label: "Design", href: "#temaer" },
-          { label: "Content", href: "#content" },
-          { label: "Se filmen", href: "#film" },
-          { label: "Aktiviteter", href: "#aktiviteter" },
+          { label: "Det får I", href: "#faar" },
+          { label: "Design", href: "#design" },
+          { label: "Pris", href: "#pris" },
           { label: "Service", href: "#service" },
+          { label: "Eksempler", href: "#cases" },
           { label: "Spørgsmål", href: "#faq" },
-          { label: "Lej til en fest", href: "/" },
         ]}
+        extra={[{ label: "Lej til en privat fest", href: "/" }]}
       />
       <main>
         <Hero
-          label="Til venues, klubber og festivaler"
-          title="En fotoboks bygget til jeres sted."
-          lede="Selfi Boks får jeres form, farver og logo og laver autentiske billeder og videoer af jeres gæster hver aften, klar til jeres egne kanaler. Til barer, natklubber, sportsklubber, hoteller, festivaler, parker og alle andre steder, hvor gæster samles. I hænger dem selv op, og vi passer og bytter dem."
-          primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
-          secondary={{ label: "Se designene", href: "#temaer" }}
+          label="Til barer, klubber, hoteller og festivaler"
+          title="En fotoboks i jeres design, der får gæsterne til at komme igen."
+          lede="Selfi hænger på væggen i jeres form og farver, tager billeder og video af gæsterne og sender dem på SMS med jeres navn på. Siger gæsten ja, har I et nummer, I må sende tilbud til."
+          points={
+            <>
+              <ul className="hero-points">
+                <li>Top, sider og kabinet printet til jeres sted</li>
+                <li>En gæsteliste med samtykke, I må sende til</li>
+                <li>Vi overvåger, opdaterer og bytter boksen. I holder åbent</li>
+              </ul>
+              <p className="hero-contact muted">
+                Ring på{" "}
+                <Ph note="telefonnummer mangler">
+                  <a href={contact.phoneHref}>{contact.phone}</a>
+                </Ph>
+                , eller book en snak på 20 minutter.
+              </p>
+            </>
+          }
+          primary={{ label: "Book en snak", href: "#kontakt" }}
+          secondary={{ label: "Se prisen", href: "#pris" }}
           visual={<HeroBox />}
         />
+        <Proof />
+        <Outcomes />
+        <GuestFlow />
         <Showroom
-          title="Bygget til jeres univers."
-          lede="Top, sider, kabinet, lys og skærm i jeres farver og med jeres figurer og logo. Vi printer delene selv, så formen kan være lige det, stedet er."
+          title="Boksen i jeres form og farver."
+          lede="Top, sider og kabinet printes i den form, stedet kalder på: et halstørklæde, en lysmast, en figur. Skærmen og rammen på hvert foto får jeres farver og logo. Vi printer delene selv."
         />
-        <ContentMachine />
-        <Quality />
+        <Cases />
+        <Pricing />
+        <Care />
+        <GuestList />
+        <Start />
+        <Activities
+          title="Giv gæsterne en grund til at tage ét billede til."
+          lede="Titler, missioner og guldtid holder gang i hver boks. Med flere bokse kan I lave skattejagt og rundture forbi de steder, I gerne vil vise frem. Alt styres fra kontrolpanelet."
+        />
         <Explainer
           film="erhverv"
           label="Se filmen"
-          title="Content, aktiviteter og jeres navn på hvert foto."
-          lede="Se, hvad boksen kan for jeres sted: nyt content hver aften, videoer og videohilsner, missioner, titler og konkurrencer, en gæsteliste med samtykke og fuld service."
-          alt="Film: Selfi Boks i jeres eget design som contentmaskine med billeder, videoer og videohilsner, missioner, titler, konkurrence, deling, gæsteliste og fuld service"
+          title="Se boksen på to minutter."
+          lede="Design, billeder, video, aktiviteter, gæsteliste og service, fortalt på to minutter."
+          alt="Film: Selfi i jeres eget design med billeder, videoer og videohilsner, missioner, titler, konkurrence, deling, gæsteliste og fuld service"
         />
-        <Features
-          title="Alt, boksen kan for jer."
-          lede="Fra designet af boksen til gæstelisten bagefter. Vælg en funktion og se, hvordan andre steder bruger den."
-        />
-        <Venues
-          label="Hvor den passer"
-          title="Fra natklubben til festivalpladsen."
-          lede="Boksen er lidt større end et A4-ark. Den hænger på væggen med tyverilås eller står på en stander, så den passer ind i et værtshus fra 1950, på en søjle i en natklub og i et telt på en festival."
-          items={[
-            { src: "sted-festival", name: "Festivalen", text: "Flere bokse i festivalens univers sender publikum rundt på pladsen.", alt: "Gæster ved Selfi Boks på en festival i skoven", pos: "50% 50%" },
-            { src: "klub", name: "Natklubben", text: "Lysringen kan ses over dansegulvet og skaber kø af sig selv.", alt: "Selfi Boks fotoboks på en betonsøjle i en natklub", pos: "50% 40%" },
-            { src: "sted-vaertshus", name: "Baren", text: "Fredagens gæster på billede, med jeres navn i rammen.", alt: "Selfi Boks fotoboks på murstensvæggen i et værtshus", pos: "60% 45%" },
-            { src: "sted-hotel", name: "Hotellet", text: "Et minde fra opholdet med hotellets navn i rammen.", alt: "Selfi Boks fotoboks på væggen i en hotelbar", pos: "30% 50%" },
-            { src: "reception", name: "Messer og konferencer", text: "Deltagerne på billede med jeres navn og jeres sponsorer.", alt: "Gæster til en reception bruger Selfi Boks fotoboks", pos: "75% 50%" },
-          ]}
-        />
-        <Moments
-          label="Det, gæsterne får"
-          title="Et billede, de tager med hjem, med jeres navn på."
-          lede="Mobilerne tager hundrede billeder i løbet af en aften. Selfi Boks tager dem, folk faktisk gemmer og deler, og hvert eneste bærer jeres navn."
-          items={[
-            {
-              kind: "photo",
-              src: "/photos/sted-vaertshus.jpg",
-              alt: "Venner på et værtshus griner foran Selfi Boks på murstensvæggen",
-              pos: "60% 45%",
-              title: "Den samler folk",
-              text: "Lysringen kan ses fra den anden ende af lokalet. Folk stiller sig i kø, griner af hinanden og bliver lidt længere.",
-            },
-            {
-              kind: "photo",
-              src: "/photos/sted-festival.jpg",
-              alt: "Gæster foran Selfi Boks på en festival",
-              title: "Jeres univers på billedet",
-              text: "Boksen, skærmen og rammen er i jeres design, så alle kan se, hvor billedet er taget.",
-            },
-            {
-              kind: "phone",
-              src: "/photos/print-club.jpg",
-              caption: "Fredag · Kælderbaren",
-              user: "maja.k",
-              post: "Bedste fredag i lang tid",
-              title: "Delt samme aften",
-              text: "Gæsterne får billedet på SMS med det samme. Når de deler, ser deres venner, hvor de var.",
-            },
-          ]}
-        />
-        <Story
-          steps={[
-            { n: "01", title: "Lysringen trækker folk til", text: "Når ingen bruger boksen, pulserer ringen langsomt i jeres farver. Den kan ses fra den anden ende af lokalet." },
-            { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Intet personale skal forklare noget." },
-            { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, og 12 MP-kameraet med autofokus tager billedet, så alle ansigter står skarpt, også i en mørk bar eller et telt om aftenen." },
-            { n: "04", title: "Billedet med hjem, og nummeret til jer", text: "Billedet kommer på SMS med jeres ramme. Siger gæsten ja, lander nummeret på jeres gæsteliste." },
-          ]}
-        />
-        <Activities
-          title="Giv gæsterne en grund til at blive."
-          lede="Konkurrencer, titler og missioner holder gang i hver boks. Med flere bokse kan I lave skattejagt og rundture forbi de steder, I gerne vil vise frem."
-        />
-        <Care />
-        <PhotoStrip
-          prints={[
-            ["print-bar", "Fredag · Bodegaen"],
-            ["print-club", "Lørdag · Klubben"],
-            ["print-office", "Firmafesten"],
-          ]}
-        />
-        <Faq title="Spørgsmål fra venues, klubber og festivaler." items={faq} />
-        <Contact topic="forside" />
+        <Quotes />
+        <Team />
+        <Faq title="Det, ejere spørger om, før de siger ja." items={faq} />
+        <Contact topic="erhverv" />
+        <p className="wrap fine b2c-link">
+          Holder I en enkelt fest og vil leje en boks til en dag? <a href="/">Se Selfi til private fester</a>.
+        </p>
       </main>
       <Footer />
+      <StickyCta />
     </>
   );
 }

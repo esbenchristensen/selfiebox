@@ -87,7 +87,7 @@ export function OutlineStand({ className }: { className?: string }) {
   const d: P = [24, -13];
   const pole = x + w / 2 + d[0] / 2;
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 440 540" role="img" aria-label="Tegning af Selfi Boks på en stander med strømkabel til stikkontakten">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 440 540" role="img" aria-label="Tegning af Selfi på en stander med strømkabel til stikkontakten">
       {/* Stand and cable, behind the box */}
       <path d={`M${pole} ${y + h - 10} V472 M${pole} 472 L${pole - 70} 520 M${pole} 472 L${pole + 64} 518 M${pole} 472 L${pole + 6} 508`} />
       <path d={`M${pole - 6} 300 h12 M${pole - 6} 410 h12`} />
@@ -112,7 +112,7 @@ export function OutlineWall({ className }: { className?: string }) {
   const d: P = [22, -12];
   const my = y + h + 6;
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 460 560" role="img" aria-label="Tegning af Selfi Boks på væggen med fotomodul, der printer et billede">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 460 560" role="img" aria-label="Tegning af Selfi på væggen med fotomodul, der printer et billede">
       {/* Wall and floor */}
       <path className="o-faint" d="M24 30 V490 L436 520 M24 490 L-10 540" />
       {Array.from({ length: 6 }, (_, i) => (
@@ -156,7 +156,7 @@ export function OutlineExploded({ className }: { className?: string }) {
   ];
   const [x0, y0] = at(0), [x1, y1] = at(1), [x2, y2] = at(2), [x3, y3] = at(3), [x4, y4] = at(4);
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 560 520" role="img" aria-label="Selfi Boks skilt ad: robust og tyverisikret, hurtig, stor touchskærm, professionelt studielys og billeder i høj kvalitet">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 560 520" role="img" aria-label="Selfi skilt ad: robust og tyverisikret, hurtig, stor touchskærm, professionelt studielys og billeder i høj kvalitet">
       {/* Back cover with keyholes and the power socket */}
       <Slab x={x0} y={y0} w={w} h={h} r={28} d={t} />
       <path d={`M${x0 + w / 2 - 40} ${y0 + 40} v14 M${x0 + w / 2 + 40} ${y0 + 40} v14`} />

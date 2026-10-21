@@ -10,7 +10,7 @@ const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 // Site-wide defaults only. Each page sets its own title, description, canonical and share image,
 // because the private page and the venue page target different searches and different people.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://selfi.dk"),
+  metadataBase: new URL("https://www.selfi.dk"),
   openGraph: { siteName: "Selfi", locale: "da_DK", type: "website" },
 };
 

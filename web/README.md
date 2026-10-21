@@ -18,7 +18,9 @@ npm run lint       # typecheck
 |---|---|
 | `content.ts` | Funktionerne (menu og sider), aktiviteter, contentregneren og FAQ |
 | `app/globals.css` | Tokens (farver, afstande, radier) og al styling |
-| `app/page.tsx` | Forsiden: fotobokse i eget design og contentmaskinen. Tekster, billeder og rækkefølge |
+| `app/page.tsx` | Forsiden: leje til private fester (se nedenfor) |
+| `app/erhverv/page.tsx` | Erhvervssiden: rækkefølge og tekster. Nye sektioner ligger i `components/erhverv/` |
+| `lib/erhverv/placeholder.ts` | Alt på erhvervssiden, der er opdigtet eller ikke besluttet (pris, binding, telefon, citater, tal). Markeres gult på siden, indtil `PLACEHOLDERS_VISIBLE` sættes til false. Se `ERHVERV-GENNEMGANG.md` |
 | `app/funktioner/` | Oversigten og én side pr. funktion, bygget fra `features` i `content.ts` |
 | `components/Nav.tsx` | Headeren med Funktioner-megamenuen |
 | `components/` | Én fil pr. sektion. Sektionerne tager deres tekst fra siden |
@@ -46,7 +48,7 @@ Forsiden selfi.dk er landingssiden for B2C-udlejning (/lej sender dertil, og erh
 
 ## Kataloger
 
-Et salgskatalog er kundens side på `selfi.dk/erhverv/<slug>` (Smukfest ligger på `/events/smukfest`): en `page.tsx`, der viser A4-siderne med `components/katalog/Viewer` og `components/katalog/katalog.css`, plus kundens egen CSS i samme mappe. Siderne er skjult for Google og står ikke i menuen eller sitemap. Der er kun den ene version: de gamle MongoDB-kopier på `/kataloger/<slug>` sender videre til erhvervssiden (`next.config.ts`).
+Et salgskatalog er kundens side på `selfi.dk/erhverv/<slug>` (Smukfest ligger på `/erhverv/smukfest`; `/events/<slug>` sender videre dertil): en `page.tsx`, der viser A4-siderne med `components/katalog/Viewer` og `components/katalog/katalog.css`, plus kundens egen CSS i samme mappe. Siderne er skjult for Google og står ikke i menuen eller sitemap. Der er kun den ene version: de gamle MongoDB-kopier på `/kataloger/<slug>` sender videre til erhvervssiden (`next.config.ts`).
 
 `selfi.dk/api/kataloger` lister alle sider, der bruger katalog-vieweren, med titel og beskrivelse fra sidens metadata. Admin (`admin.selfi.dk/admin/kataloger`) viser den liste, så et nyt katalog dukker op der ved næste deploy uden flere skridt. Katalogerne bruger kundens logo og kræver deres accept. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
 
