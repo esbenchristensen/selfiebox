@@ -34,7 +34,7 @@ export default async function Tak({ searchParams }: { searchParams: Promise<{ id
   const r = await load(id, t);
   return (
     <>
-      <Nav links={[]} cta={{ label: "Tilbage til siden", href: "/lej" }} />
+      <Nav links={[]} cta={{ label: "Tilbage til forsiden", href: "/" }} mega={false} />
       <main>
         <section className="section">
           <div className="wrap lej-done" role="status">

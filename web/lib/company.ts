@@ -19,5 +19,5 @@ export const companyAddress = [company.street, company.postcode, company.street 
   .join(", ");
 
 // Where people reach us when no e-mail is set: the contact form.
-export const contactHref = company.email ? `mailto:${company.email}` : "/#kontakt";
+export const contactHref = company.email ? `mailto:${company.email}` : "/erhverv#kontakt";
 export const contactText = company.email || "kontaktformularen på selfi.dk";

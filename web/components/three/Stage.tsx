@@ -11,7 +11,8 @@ import type { BoxTheme } from "./themes";
 export type StageProps = {
   // A venue design (topper, wings, casing) or a private party theme (plain box, print beside it).
   design: { venue: Venue } | { theme: BoxTheme };
-  variant: "venue" | "private";
+  // "box": a venue design with no topper or wings (the rental box), framed tight so the box is shown large.
+  variant: "venue" | "private" | "box";
   // Designs to fetch ahead of time so a switch does not wait for the network. Defaults to the venues.
   preload?: Venue[];
   onReady?: () => void;
@@ -40,7 +41,7 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
     // Fit the whole design: height for tall frames, width for wide ones.
-    const [hgt, wid, cx, cy] = variant === "venue" ? [6.3, 4.5, 0, 0.42] : [3.6, 4.4, 0.35, 0];
+    const [hgt, wid, cx, cy] = variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : [3.6, 4.4, 0.35, 0];
     const fov = (cam.fov * Math.PI) / 180;
     const byH = hgt / 2 / Math.tan(fov / 2);
     const byW = wid / 2 / Math.tan(fov / 2) / aspect;
@@ -131,7 +132,7 @@ function Ready({ onReady }: { onReady?: () => void }) {
 
 export default function Stage({ design, variant, onReady, preload = VENUES }: StageProps) {
   useEffect(() => {
-    if (variant === "venue") preload.forEach((v) => preloadVenue(v));
+    if (variant !== "private") preload.forEach((v) => preloadVenue(v));
   }, [variant, preload]);
   const glowColor = "venue" in design ? design.venue.ring.glow : "#fff3e3";
   const reduced = useReducedMotion();

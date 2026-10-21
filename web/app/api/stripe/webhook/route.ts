@@ -97,7 +97,7 @@ async function notify(b: RentalDoc) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        source: "selfi.dk/lej",
+        source: "selfi.dk",
         ref: b._id,
         status: b.status,
         conflict: !!b.conflict,

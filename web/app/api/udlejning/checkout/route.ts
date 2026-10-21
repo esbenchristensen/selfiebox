@@ -127,7 +127,7 @@ export async function POST(req: Request) {
         payment_intent_data: { description: `Selfi udlejning ${doc._id}`, metadata: { booking: doc._id } },
         line_items: lines.map((l) => ({ quantity: 1, price_data: { currency: "dkk", unit_amount: l.amount * 100, product_data: { name: l.label } } })),
         success_url: `${back}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${site()}/lej?annulleret=${doc._id}&t=${doc.token}#book`,
+        cancel_url: `${site()}/?annulleret=${doc._id}&t=${doc.token}#book`,
         expires_at: Math.floor(expiresAt.getTime() / 1000) + 60,
       },
       `checkout-${doc._id}`,

@@ -8,10 +8,10 @@ export function Footer() {
       <div className="wrap footer-inner">
         <Logo size={22} />
         <nav className="footer-links" aria-label="Sider">
-          <a href="/">Fotobokse i jeres eget design</a>
+          <a href="/">Lej en fotoboks til festen</a>
+          <a href="/erhverv">Fotobokse til steder og virksomheder</a>
           <a href="/funktioner">Funktioner</a>
-          <a href="/lej">Lej en fotoboks til festen</a>
-          <a href="/#kontakt">Book en snak</a>
+          <a href="/erhverv#kontakt">Book en snak</a>
           <a href="/dokumentation">Dokumentation</a>
           <a href="/vilkaar">Handelsbetingelser</a>
           <a href="/privatliv">Privatliv</a>

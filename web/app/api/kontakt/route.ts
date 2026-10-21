@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   }
 
   const data = {
-    type: "erhverv",
+    type: body.type === "privat" ? "privat" : "erhverv",
     topic: clean(body.topic, 80),
     name: clean(body.name, 200),
     email: clean(body.email, 200),

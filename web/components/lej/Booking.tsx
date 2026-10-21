@@ -1,77 +1,38 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { addDays, formatDay, formatRange, nights, type DayKey, type Range } from "@/lib/dates";
+import { useEffect, useState } from "react";
+import { addDays, formatDay, formatRange, nights } from "@/lib/dates";
 import {
-  bookingWindow,
   DELIVERIES,
-  fits,
   kr,
   PHOTO_TYPES,
   periodLabel,
   priceForDays,
   priceLines,
   total,
-  type Delivery,
   type PhotoType,
   type RentalSettings,
-  type Usage,
 } from "@/lib/udlejning/core";
 import { Calendar } from "./Calendar";
+import { DrawPolaroid, DrawStrip } from "./Drawings";
+import { SAVED, STEPS, useRental, type State, type Status } from "./RentalContext";
 
-// The booking on selfi.dk/lej: what the customer wants first (theme, printer, photo type, delivery), because
-// that decides which days are free, then the dates, then who they are, then Stripe. Prices and free days come
-// from /api/udlejning/ledighed, which reads what is set in admin.selfi.dk → Udlejning.
+// The booking on selfi.dk: the dates first, because "is our day free?" is the first question everyone has
+// (the calendar in the hero is the same step), then the printer and how the print looks, who they are, and Stripe.
 
-const STEPS = ["Pakke", "Datoer", "Kontakt", "Betal"] as const;
 const OCCASIONS = ["Bryllup", "Fødselsdag", "Konfirmation", "Firmafest", "Andet"];
-const SAVED = "selfi:lej";
-
-type Data = { settings: RentalSettings; usage: Usage; today: DayKey };
-type Status = { kind: "idle" } | { kind: "sending" } | { kind: "error"; message: string };
-type State = {
-  theme: string | null;
-  printer: boolean;
-  photoType: PhotoType;
-  delivery: Delivery;
-  range: Range | null;
-  contact: { name: string; email: string; phone: string; occasion: string; message: string };
-  address: { street: string; zip: string; city: string };
-};
-
-const EMPTY: State = {
-  theme: null,
-  printer: false,
-  photoType: "polaroid",
-  delivery: "post",
-  range: null,
-  contact: { name: "", email: "", phone: "", occasion: "", message: "" },
-  address: { street: "", zip: "", city: "" },
-};
+export const PRESETS = [
+  { id: "dag", name: "Dag", days: 1 },
+  { id: "weekend", name: "Weekend", days: 3 },
+  { id: "uge", name: "Uge", days: 7 },
+];
 
 export function Booking() {
-  const [data, setData] = useState<Data | null>(null);
-  const [loadError, setLoadError] = useState(false);
-  const [s, setS] = useState<State>(EMPTY);
-  const [step, setStep] = useState(0);
-  const [done, setDone] = useState(0);
+  const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset } = useRental();
   const [touched, setTouched] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [notice, setNotice] = useState<string | null>(null);
-  const set = (patch: Partial<State>) => setS((x) => ({ ...x, ...patch }));
-
-  const load = useCallback(() => {
-    setLoadError(false);
-    return fetch("/api/udlejning/ledighed", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d: Data) => setData(d))
-      .catch(() => setLoadError(true));
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
 
   // Back from Stripe without paying: release the dates at once and bring the choices back.
   useEffect(() => {
@@ -82,30 +43,19 @@ export function Booking() {
     try {
       const saved = JSON.parse(sessionStorage.getItem(SAVED) ?? "null") as State | null;
       if (saved) {
-        setS(saved);
-        setStep(3);
-        setDone(3);
+        setAll(saved);
+        reach(3);
+        go(3, false);
       }
     } catch {}
     fetch("/api/udlejning/annuller", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, t }) })
       .finally(() => load());
     setNotice("Betalingen blev afbrudt, så intet er trukket. Jeres valg er gemt herunder, og I kan prøve igen.");
     history.replaceState(null, "", `${location.pathname}#book`);
-  }, [load]);
+    document.getElementById("book")?.scrollIntoView({ block: "start" });
+  }, [load, setAll, reach, go]);
 
   const settings = data?.settings;
-  const win = useMemo(() => (data ? bookingWindow(data.settings, data.today, !!s.theme) : null), [data, s.theme]);
-  const canBook = useCallback(
-    (r: Range) =>
-      !!data && !!win && r.from >= win.minDay && r.to <= win.maxDay && nights(r) <= data.settings.rules.maxDays && fits(data.settings, data.usage, r, s.delivery, s.printer),
-    [data, win, s.delivery, s.printer],
-  );
-
-  // A change of theme, printer or delivery can make the chosen dates impossible: drop them.
-  useEffect(() => {
-    if (s.range && data && !canBook(s.range)) set({ range: null });
-  }, [canBook, s.range, data]);
-
   const choice = s.range ? { range: s.range, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery } : null;
   const lines = settings && choice ? priceLines(settings, choice) : [];
   const sum = total(lines);
@@ -113,18 +63,17 @@ export function Booking() {
   const emailOk = /^\S+@\S+\.\S+$/.test(s.contact.email);
   const addressOk = (!!s.address.street.trim() && /^\d{4}$/.test(s.address.zip.trim()) && !!s.address.city.trim());
   const contactOk = !!s.contact.name.trim() && emailOk && s.contact.phone.replace(/\D/g, "").length >= 8 && !!s.contact.occasion && addressOk;
-  const valid = [!!settings && (!s.theme || settings.themes.includes(s.theme)), !!s.range, contactOk, accepted];
+  const valid = [!!s.range, !!settings, contactOk, accepted];
 
-  const go = (to: number) => {
-    setStep(to);
+  const move = (to: number) => {
     setTouched(false);
-    document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    go(to);
   };
   const next = () => {
     if (!valid[step]) return setTouched(true);
     if (step < STEPS.length - 1) {
-      setDone((d) => Math.max(d, step + 1));
-      go(step + 1);
+      reach(step + 1);
+      move(step + 1);
     } else pay();
   };
 
@@ -144,7 +93,7 @@ export function Booking() {
         if (body.taken) {
           await load();
           set({ range: null });
-          setStep(1);
+          move(0);
         }
         throw new Error(body.error ?? "Betalingen kunne ikke startes. Prøv igen om lidt.");
       }
@@ -175,25 +124,8 @@ export function Booking() {
     );
   }
 
-  const presets = [
-    { id: "dag", name: "Dag", days: 1 },
-    { id: "weekend", name: "Weekend", days: 3 },
-    { id: "uge", name: "Uge", days: 7 },
-  ];
-  // A preset from the chosen first day, or the first date it fits. A weekend runs Friday to Sunday.
-  const preset = (days: number, weekend: boolean) => {
-    const at = (from: DayKey): Range => {
-      if (!weekend) return { from, to: addDays(from, days - 1) };
-      const [y, m, d] = from.split("-").map(Number);
-      const wd = (new Date(y, m - 1, d).getDay() + 6) % 7;
-      const fri = addDays(from, 4 - wd + (wd > 4 ? 7 : 0));
-      return { from: fri, to: addDays(fri, 2) };
-    };
-    for (let k = s.range?.from ?? win.minDay; k <= win.maxDay; k = addDays(k, weekend ? 7 : 1)) {
-      const r = at(k);
-      if (canBook(r)) return set({ range: r });
-    }
-  };
+  // Add-ons that do not fit the chosen days are shown, but cannot be switched on.
+  const printerBlocked = !!s.range && !s.printer && !canBookWith(s.range, !!s.theme, true);
 
   return (
     <div className="bk">
@@ -205,7 +137,7 @@ export function Booking() {
       <ol className="bk-steps" aria-label="Booking">
         {STEPS.map((label, i) => (
           <li key={label} data-s={i < step ? "done" : undefined} aria-current={i === step ? "step" : undefined}>
-            <button type="button" disabled={i > done} onClick={() => go(i)}>
+            <button type="button" disabled={i > done} onClick={() => move(i)}>
               <span className="n">{i + 1}</span>
               {label}
             </button>
@@ -217,78 +149,6 @@ export function Booking() {
         <div className="bk-main">
           {step === 0 && (
             <fieldset className="bk-fs">
-              <legend className="h-m">Hvad skal I have med?</legend>
-              <ul className="bk-incl">
-                <li><span>Selfi Boks med studielys og stativ</span><span>Med</span></li>
-                <li><span>Ubegrænset antal billeder på skærm og telefon</span><span>Med</span></li>
-                <li><span>Jeres egen eventside med alle festens billeder</span><span>Med</span></li>
-                <li><span>Fragt begge veje og forsikring</span><span>Med</span></li>
-              </ul>
-
-              <div className="bk-list">
-                <div className="bk-row">
-                  <div>
-                    <b>Tema på boksen</b>
-                    <span className="muted">Boksen, skærmen og rammen på hvert billede i festens farver.</span>
-                  </div>
-                  <span className="bk-price">{kr(settings.prices.theme)}</span>
-                  <button type="button" className="switch" role="switch" aria-checked={!!s.theme} aria-label="Tema på boksen"
-                    onClick={() => set({ theme: s.theme ? null : settings.themes[0] })} />
-                </div>
-                {s.theme && (
-                  <div className="bk-row bk-row--sub">
-                    <div className="chips" role="radiogroup" aria-label="Vælg tema">
-                      {settings.themes.map((t) => (
-                        <button key={t} type="button" role="radio" aria-checked={s.theme === t} onClick={() => set({ theme: t })}>{t}</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div className="bk-row">
-                  <div>
-                    <b>Printer</b>
-                    <span className="muted">Gæsterne får billedet printet med hjem. {settings.printsIncluded} print er med, og printeren kommer i sin egen kasse.</span>
-                  </div>
-                  <span className="bk-price">{kr(settings.prices.printer)}</span>
-                  <button type="button" className="switch" role="switch" aria-checked={s.printer} aria-label="Printer"
-                    onClick={() => set({ printer: !s.printer })} />
-                </div>
-              </div>
-
-              <div className="field">
-                <span className="field-label" id="bk-type">Billedtype</span>
-                <div className="bk-cards bk-cards--2" role="radiogroup" aria-labelledby="bk-type">
-                  {(Object.keys(PHOTO_TYPES) as PhotoType[]).map((p) => (
-                    <label className="bk-card" key={p}>
-                      <input type="radio" name="photoType" checked={s.photoType === p} onChange={() => set({ photoType: p })} />
-                      <span className="bk-card-body">
-                        <span className={`bk-pic bk-pic--${p}`} aria-hidden="true"><i /><i /><i /></span>
-                        <b>{PHOTO_TYPES[p].name}</b>
-                        <span className="muted">{PHOTO_TYPES[p].text}</span>
-                      </span>
-                    </label>
-                  ))}
-                </div>
-                <p className="fine">Billedtypen gælder billederne på telefonen og eventsiden, og printet, hvis I tager printeren med.</p>
-              </div>
-
-              <div className="field">
-                <span className="field-label">Levering</span>
-                <div className="bk-list">
-                  <div className="bk-row">
-                    <div>
-                      <b>{DELIVERIES.post.name}</b>
-                      <span className="muted">{DELIVERIES.post.text}</span>
-                    </div>
-                    <span className="bk-price">Med i prisen</span>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-          )}
-
-          {step === 1 && (
-            <fieldset className="bk-fs">
               <legend className="h-m">Hvornår er festen?</legend>
               <p className="muted">
                 Tryk på første dag og derefter på sidste dag. Jo flere dage, jo billigere pr. dag: 1 dag {kr(priceForDays(settings, 1))},
@@ -296,7 +156,7 @@ export function Booking() {
                 {s.printer ? " Kalenderen viser de dage, hvor både boks og printer er ledige." : ""}
               </p>
               <div className="hb-pkgs" aria-label="Genveje">
-                {presets.map((p) => (
+                {PRESETS.map((p) => (
                   <button key={p.id} type="button" aria-pressed={!!s.range && nights(s.range) === p.days} onClick={() => preset(p.days, p.id === "weekend")}>
                     <b>{p.name}</b>
                     <span>{kr(priceForDays(settings, p.days))}</span>
@@ -315,8 +175,66 @@ export function Booking() {
               )}
               {err(!s.range, "Vælg datoer i kalenderen.")}
               <p className="fine">
-                Skal I bruge boksen i mere end {settings.rules.maxDays} dage, eller er jeres dato optaget? <a href="/#kontakt">Skriv til os</a>.
+                Skal I bruge boksen i mere end {settings.rules.maxDays} dage, eller er jeres dato optaget? <a href="#kontakt">Skriv til os</a>.
               </p>
+            </fieldset>
+          )}
+
+          {step === 1 && (
+            <fieldset className="bk-fs">
+              <legend className="h-m">Hvad skal I have med?</legend>
+              <ul className="bk-incl">
+                <li><span>Selfi Boks med studielys og stativ</span><span>Med</span></li>
+                <li><span>Ubegrænset antal billeder på skærm og telefon</span><span>Med</span></li>
+                <li><span>Jeres egen eventside med alle festens billeder</span><span>Med</span></li>
+                <li><span>Fragt begge veje og forsikring</span><span>Med</span></li>
+              </ul>
+
+              <div className="bk-list">
+                <div className="bk-row">
+                  <div>
+                    <b>Printer</b>
+                    <span className="muted">Gæsterne får billedet printet med hjem. {settings.printsIncluded} print er med, og printeren kommer i sin egen kasse.</span>
+                  </div>
+                  <span className="bk-price">{kr(settings.prices.printer)}</span>
+                  <button type="button" className="switch" role="switch" aria-checked={s.printer} aria-label="Printer" disabled={printerBlocked}
+                    onClick={() => set({ printer: !s.printer })} />
+                  {printerBlocked && <span className="bk-why">Printeren er udlejet de dage. Vælg andre datoer, hvis I vil have printer med.</span>}
+                </div>
+                {s.printer && (
+                  <div className="bk-row bk-row--sub">
+                    <div className="field">
+                      <span className="field-label" id="bk-type">Hvordan skal printet se ud?</span>
+                      <div className="bk-cards bk-cards--2" role="radiogroup" aria-labelledby="bk-type">
+                        {(Object.keys(PHOTO_TYPES) as PhotoType[]).map((p) => (
+                          <label className="bk-card" key={p}>
+                            <input type="radio" name="photoType" checked={s.photoType === p} onChange={() => set({ photoType: p })} />
+                            <span className="bk-card-body">
+                              <span className="bk-art" aria-hidden="true">{p === "strip" ? <DrawStrip /> : <DrawPolaroid />}</span>
+                              <b>{PHOTO_TYPES[p].name}</b>
+                              <span className="muted">{PHOTO_TYPES[p].text}</span>
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <p className="fine">Uden printer får gæsterne stadig alle billeder på telefonen og jeres eventside.</p>
+
+              <div className="field">
+                <span className="field-label">Levering</span>
+                <div className="bk-list">
+                  <div className="bk-row">
+                    <div>
+                      <b>{DELIVERIES.post.name}</b>
+                      <span className="muted">{DELIVERIES.post.text}</span>
+                    </div>
+                    <span className="bk-price">Med i prisen</span>
+                  </div>
+                </div>
+              </div>
             </fieldset>
           )}
 
@@ -372,14 +290,14 @@ export function Booking() {
                 <div>
                   <dt>Pakke</dt>
                   <dd>
-                    {[s.theme ? `Tema: ${s.theme}` : "Uden tema", s.printer ? "med printer" : "uden printer", PHOTO_TYPES[s.photoType].name.toLowerCase()].join(", ")}
+                    {s.printer ? `Selfi Boks med printer, print som ${PHOTO_TYPES[s.photoType].name.toLowerCase()}` : "Selfi Boks uden printer"}
                   </dd>
-                  <button type="button" onClick={() => go(0)}>Ret</button>
+                  <button type="button" onClick={() => move(1)}>Ret</button>
                 </div>
                 <div>
                   <dt>Datoer</dt>
                   <dd>{formatRange(s.range)} ({periodLabel(s.range)})</dd>
-                  <button type="button" onClick={() => go(1)}>Ret</button>
+                  <button type="button" onClick={() => move(0)}>Ret</button>
                 </div>
                 <div>
                   <dt>Levering</dt>
@@ -387,12 +305,12 @@ export function Booking() {
                     {DELIVERIES[s.delivery].name}
                     {`, pakkeshop nær ${s.address.street}, ${s.address.zip} ${s.address.city}`}
                   </dd>
-                  <button type="button" onClick={() => go(0)}>Ret</button>
+                  <button type="button" onClick={() => move(1)}>Ret</button>
                 </div>
                 <div>
                   <dt>Kontakt</dt>
                   <dd>{s.contact.name}, {s.contact.email}, {s.contact.phone} · {s.contact.occasion}</dd>
-                  <button type="button" onClick={() => go(2)}>Ret</button>
+                  <button type="button" onClick={() => move(2)}>Ret</button>
                 </div>
               </dl>
               <label className="check">
@@ -409,10 +327,10 @@ export function Booking() {
 
           <div className="bk-actions">
             {step > 0 && (
-              <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}>Tilbage</button>
+              <button type="button" className="btn btn-secondary" onClick={() => move(step - 1)}>Tilbage</button>
             )}
             <button type="button" className="btn btn-primary" onClick={next} disabled={status.kind === "sending"}>
-              {status.kind === "sending" ? "Åbner betaling …" : ["Vælg datoer", "Fortsæt til kontakt", "Gennemse booking", `Betal ${s.range ? kr(sum) : ""}`][step]}
+              {status.kind === "sending" ? "Åbner betaling …" : ["Vælg tilvalg", "Fortsæt til kontakt", "Gennemse booking", `Betal ${s.range ? kr(sum) : ""}`][step]}
             </button>
           </div>
         </div>
@@ -460,7 +378,6 @@ export function Booking() {
 /** The summary before dates are picked: the add-ons chosen so far, with the box price still open. */
 function preview(settings: RentalSettings, s: State): { id: string; label: string; amount: number | null }[] {
   const out: { id: string; label: string; amount: number | null }[] = [{ id: "box", label: "Selfi Boks", amount: null }];
-  if (s.theme) out.push({ id: "theme", label: `Tema: ${s.theme}`, amount: settings.prices.theme });
   if (s.printer) out.push({ id: "printer", label: `Printer med ${settings.printsIncluded} print`, amount: settings.prices.printer });
   return out;
 }

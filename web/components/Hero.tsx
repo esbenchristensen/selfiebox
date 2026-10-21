@@ -14,6 +14,7 @@ export function Hero({
   image,
   visual,
   aside,
+  points,
 }: {
   label: string;
   title: string;
@@ -23,6 +24,7 @@ export function Hero({
   image?: { src: string; alt: string; pos?: string };
   visual?: ReactNode;
   aside?: ReactNode;
+  points?: ReactNode; // short promises under the lede, e.g. what is always included
 }) {
   return (
     <section className={`hero${aside ? " hero--aside" : ""}`} aria-labelledby="hero-title">
@@ -33,6 +35,7 @@ export function Hero({
             {title}
           </h1>
           <p className="lede">{lede}</p>
+          {points}
           <div className="btn-row">
             {primary && (
               <a className="btn btn-primary" href={primary.href}>
