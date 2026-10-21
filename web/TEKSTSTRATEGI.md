@@ -21,7 +21,7 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 | Billedet med hjem | Instax Square-print (fotomodul), QR-kode, SMS-link, eventside |
 | Får folk til at blive | Titler, missioner, skattejagt, rundtur, konkurrence, guldtid |
 | Kører uden personale | Kontrolpanel på nettet: tema, tekster, priser, aktiviteter |
-| Billig | Privat fra 495 kr./dag, 750 kr./weekend. Erhverv 995 kr./md. ekskl. moms |
+| Billig | Privat fra 695 kr./dag, 895 kr./weekend. Erhverv 995 kr./md. ekskl. moms |
 | Gæsteliste | Gæsten skriver nummer for at få billedet på SMS og kan sige ja til tilbud |
 | Fuld service (erhverv) | Stedet hænger selv boksen op efter monteringsguiden (Selfi monterer ikke, besluttet 19. okt. 2026). Vi overvåger (boksen melder sig til fleet, alarmer i admin), opdaterer (signerede releases, trinvis udrulning), døgnsupport, ny boks ved fejl uden regning. Besluttet oktober 2026 |
 
@@ -36,7 +36,7 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 |---|---|---|---|
 | Målgruppe | Privatfester | Natklubber, barer, hoteller, centre | Begge |
 | Hovedbudskab | "Verdensklasse underholdning til din fest", alt inkluderet | En fotoboks, der bygger en database af gæster | Alle med på billedet, og gæsterne kommer igen |
-| Pris | ca. 1.200–1.500 kr. | Abonnement | 495 kr./dag, 995 kr./md. |
+| Pris | ca. 1.200–1.500 kr. | Abonnement | 695 kr./dag, 995 kr./md. |
 | Styrker | 4,9 på Trustpilot med tusindvis af anmeldelser, rekvisitter og aktivitetskort, gratis datoflyt, GLS-levering | Lightbooth Manager med automatiske SMS'er (fødselsdag, opfølgning efter weekenden), statistik | Lysring, vægmontering, Instax-print, spil, temaer, pris |
 | Svagheder | Legende tone med mange emojis. Ikke til faste steder | Gæstedata bruges til markedsføring via vilkårene. Det er en juridisk risiko for stederne | Ingen anmeldelser endnu |
 
@@ -50,7 +50,7 @@ Teksterne var skrevet som slogans, der kun giver mening, når man allerede kende
 
 - **Konkret før kreativt.** Skriv hvad, ikke hvordan det føles. "Ringen skifter til hvidt studielys" i stedet for "Lyset klarer resten".
 - **Overskrifter skal kunne stå alene.** Mange læser kun overskrifterne. Hver overskrift skal sige noget sandt om produktet.
-- **Tal og fakta.** 495 kr., 6,6 cm, under et minut. Tal skaber tillid.
+- **Tal og fakta.** 695 kr., 6,6 cm, under et minut. Tal skaber tillid.
 - **"I" og "jeres".** Vi taler til værten, ikke til gæsten.
 - **Varm og tør, ikke fjollet.** Ingen emojis, ingen udråbstegn, ingen "verdensklasse". Humor må gerne komme fra situationerne ("Kollegerne viser en side, man ikke ser til morgenmødet").
 - **Lov aldrig mere, end boksen kan.** Se tabellen over beviser.

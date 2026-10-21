@@ -14,6 +14,7 @@ import {
   type RentalSettings,
 } from "@/lib/udlejning/core";
 import { Calendar } from "./Calendar";
+import { OutlinePrinter } from "../Outline";
 import { DrawPolaroid, DrawStrip } from "./Drawings";
 import { SAVED, STEPS, useRental, type State, type Status } from "./RentalContext";
 
@@ -192,7 +193,10 @@ export function Booking() {
               </ul>
 
               <div className="bk-list">
-                <div className="bk-row">
+                <div className="bk-row bk-row--printer">
+                  <span className="bk-row-art" aria-hidden="true">
+                    <OutlinePrinter poster />
+                  </span>
                   <div>
                     <b>Printer</b>
                     <span className="muted">Gæsterne får billedet printet med hjem. {settings.printsIncluded} print er med, og printeren kommer i sin egen kasse.</span>

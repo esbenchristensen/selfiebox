@@ -16,7 +16,7 @@
 | **PartyVikings** | 1.049 kr. (nedsat fra 1.599 kr.) for 1–3 dage | Mikrofon til videohilsen 399 kr., fragt 42 kr. under 599 kr. | GLS | Trustpilot »Fremragende«, e-mærket, +250.000 kunder (hele webshoppen) |
 | **360kamera.dk** | 999 kr. (360°-boks) | Depositum 1.000 kr. | Kører selv ud | Ingen |
 
-**Selfi:** 495 kr. pr. dag, 750 kr. for weekend, 1.250 kr. for en uge. Printer 695 kr. med 100 print er det eneste tilvalg. Ubegrænsede billeder, navne og dato på billedet, eventside, fragt begge veje og forsikring er med. Intet depositum.
+**Selfi:** 695 kr. pr. dag, 895 kr. for weekend, 1.495 kr. for en uge (sat 21. okt. 2026: lige under de billigste konkurrenters »fra«-priser, men med alt inkluderet og uden sæsontillæg). Printer 895 kr. med 100 print er det eneste tilvalg. Ubegrænsede billeder, navne og dato på billedet, eventside, fragt begge veje og forsikring er med. Intet depositum.
 
 ## Det, de andre gør godt, og som vi har taget med
 

@@ -207,7 +207,8 @@
 .lej-band { background: var(--surface-sunk); border-block: 1px solid var(--line); }
 .lej-box { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-7); align-items: center; }
 .lej-box-copy { margin-bottom: 0; }
-.lej-box3d { position: relative; aspect-ratio: 1 / 1; border-radius: var(--radius-box); overflow: hidden; background: radial-gradient(80% 65% at 50% 42%, var(--surface-raised), var(--surface)); border: 1px solid var(--line); }
+/* No frame around the 3D: the box and the printer stand on the page itself. */
+.lej-box3d { position: relative; aspect-ratio: 1 / 1; }
 .lej-box3d-hint { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); pointer-events: none; }
 .lej-specs { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
 .lej-specs li { display: flex; gap: var(--space-3); align-items: flex-start; }
@@ -384,4 +385,33 @@
 @media (max-width: 640px) {
   .reviews, .occ { grid-template-columns: minmax(0, 1fr); }
   .lej-price .btn { width: 100%; }
+}
+
+/* Printer: copy and print types on the left, the printer in 3D on the right */
+.lej-printer { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--space-7); align-items: center; }
+.lej-printer-copy { margin-bottom: 0; }
+.lej-prints { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.lej-prints li { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-4); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line); }
+.lej-prints li > span:last-child { display: flex; flex-direction: column; gap: 2px; font-size: 15px; }
+.lej-prints b { font: 600 18px/1.2 var(--font-display), sans-serif; color: var(--ink); }
+.lej-prints-art { flex: none; width: 56px; height: 84px; display: flex; justify-content: center; }
+.lej-prints-art .outline { height: 84px; width: auto; }
+.lej-printer-price { display: flex; justify-content: space-between; align-items: center; gap: var(--space-5); flex-wrap: wrap; margin-top: var(--space-2); padding: var(--space-5); border-radius: var(--radius-l); background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--green) 14%, transparent), transparent 60%), var(--surface-raised); border: 1px solid var(--line); }
+.lej-printer-price > div { display: flex; flex-direction: column; gap: 4px; max-width: 46ch; }
+.lej-printer-price b { font: 600 22px/1.2 var(--font-display), sans-serif; letter-spacing: -0.01em; }
+.lej-printer-price .muted { font-size: 15px; }
+.lej-printer-price .btn { white-space: nowrap; }
+.lej-printer3d { aspect-ratio: 1 / 1; }
+.bk-row--printer { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+.bk-row-art { width: 56px; height: 64px; display: flex; align-items: center; }
+.bk-row-art .outline { height: 64px; width: auto; }
+@media (max-width: 900px) {
+  .lej-printer { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .lej-printer3d { aspect-ratio: 4 / 3; max-width: 520px; margin: 0 auto; width: 100%; }
+  .lej-printer-price .btn { width: 100%; }
+}
+@media (max-width: 640px) {
+  .lej-prints { grid-template-columns: minmax(0, 1fr); }
+  .bk-row--printer { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .bk-row-art { display: none; }
 }

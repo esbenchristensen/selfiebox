@@ -37,10 +37,10 @@ export const DEFAULT_SETTINGS: RentalSettings = {
   open: true,
   inventory: { boxes: 1, printers: 1 },
   prices: {
-    byDays: [495, 625, 750, 875, 995, 1125, 1250],
-    perExtraDay: 100,
+    byDays: [695, 795, 895, 1045, 1195, 1345, 1495],
+    perExtraDay: 150,
     theme: 295,
-    printer: 695,
+    printer: 895,
   },
   printsIncluded: 100,
   themes: ["Bryllup", "Fødselsdag", "Julefrokost"],

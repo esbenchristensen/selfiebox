@@ -14,6 +14,7 @@ import { DrawBook, DrawParcel, DrawParty, DrawPolaroid, DrawReturn, DrawSetup, D
 import { HeroBooking } from "@/components/lej/HeroBooking";
 import { Occasions } from "@/components/lej/Occasions";
 import { Personal } from "@/components/lej/Personal";
+import { PrinterViewer } from "@/components/lej/PrinterViewer";
 import { RentalProvider } from "@/components/lej/RentalContext";
 import { Example, Reviews, Stars } from "@/components/lej/Reviews";
 import { StickyCta } from "@/components/lej/StickyCta";
@@ -29,18 +30,22 @@ import "./lej/lej.css";
 // then the booking, questions and contact. Places and businesses have /erhverv.
 // Prices and free days come from admin.selfi.dk → Udlejning. Social proof comes from lib/udlejning/proof.ts.
 
-export const metadata: Metadata = {
-  title: "Lej en fotoboks fra 495 kr. Alt er med i prisen | Selfi",
-  description:
-    "Fotoboks til bryllup, konfirmation, fødselsdag og firmafest fra 495 kr. Ubegrænsede billeder, fragt begge veje og forsikring er med. Se ledige datoer og book online.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Lej en fotoboks til festen. Alt er med i prisen | Selfi",
-    description: "Fotoboksen, der får alle med på billedet. Fra 495 kr. med ubegrænsede billeder, fragt og forsikring. Se ledige datoer og book online.",
-    url: "/",
-    images: [{ url: "/photos/sted-bryllup.jpg", width: 1600, height: 1195, alt: "Brudepar og venner foran Selfi Boks til et bryllup i en lade" }],
-  },
-};
+// The title and description carry the day price, so they follow the price set in admin.
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await settings();
+  const from = kr(priceForDays(s, 1));
+  return {
+    title: `Lej en fotoboks fra ${from} Alt er med i prisen | Selfi`,
+    description: `Fotoboks til bryllup, konfirmation, fødselsdag og firmafest fra ${from} Ubegrænsede billeder, fragt begge veje og forsikring er med. Se ledige datoer og book online.`,
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: "Lej en fotoboks til festen. Alt er med i prisen | Selfi",
+      description: `Fotoboksen, der får alle med på billedet. Fra ${from} med ubegrænsede billeder, fragt og forsikring. Se ledige datoer og book online.`,
+      url: "/",
+      images: [{ url: "/photos/sted-bryllup.jpg", width: 1600, height: 1195, alt: "Brudepar og venner foran Selfi Boks til et bryllup i en lade" }],
+    },
+  };
+}
 
 async function settings(): Promise<RentalSettings> {
   await connection();
@@ -294,36 +299,45 @@ export default async function Home() {
         </section>
 
         <section id="billeder" className="section" aria-labelledby="billeder-title">
-          <div className="wrap">
-            <div className="sec-head">
+          <div className="wrap lej-printer">
+            <div className="sec-head lej-printer-copy">
               <span className="label">Det eneste tilvalg · printer</span>
               <h2 id="billeder-title" className="h-l">Billedet med hjem på papir.</h2>
-              <p className="lede">Billederne kommer altid på telefonen og jeres eventside. Tager I printeren med, får gæsterne dem også printet, og I vælger, hvordan printet skal se ud.</p>
-            </div>
-            <div className="lej-photos">
-              <div className="lej-photo">
-                <div className="lej-photo-art">
-                  <DrawStrip />
+              <p className="lede">
+                Billederne kommer altid på telefonen og jeres eventside. Tager I printeren med, får gæsterne dem også printet på få sekunder, og I vælger,
+                hvordan printet skal se ud.
+              </p>
+              <ul className="lej-prints">
+                <li>
+                  <span className="lej-prints-art" aria-hidden="true">
+                    <DrawStrip />
+                  </span>
+                  <span>
+                    <b>Fotostrimmel</b>
+                    <span className="muted">Tre billeder under hinanden, som i en klassisk fotoautomat. Til fjollede serier.</span>
+                  </span>
+                </li>
+                <li>
+                  <span className="lej-prints-art" aria-hidden="true">
+                    <DrawPolaroid />
+                  </span>
+                  <span>
+                    <b>Polaroid</b>
+                    <span className="muted">Ét billede med hvid kant og plads til en hilsen. Til gæstebogen eller køleskabet.</span>
+                  </span>
+                </li>
+              </ul>
+              <div className="lej-printer-price">
+                <div>
+                  <b>{kr(s.prices.printer)} med {s.printsIncluded} print</b>
+                  <span className="muted">Printeren står ved siden af boksen og kommer i sin egen kasse sammen med den. Papir til {s.printsIncluded} print er med.</span>
                 </div>
-                <b>Fotostrimmel</b>
-                <span className="muted">Tre billeder under hinanden, som i en klassisk fotoautomat. Til fjollede serier.</span>
-              </div>
-              <div className="lej-photo">
-                <div className="lej-photo-art">
-                  <DrawPolaroid />
-                </div>
-                <b>Polaroid</b>
-                <span className="muted">Ét billede med hvid kant og plads til en hilsen. Til gæstebogen eller køleskabet.</span>
-              </div>
-              <div className="lej-photo lej-photo--print">
-                <span className="label">Printer</span>
-                <b>{kr(s.prices.printer)} med {s.printsIncluded} print</b>
-                <span className="muted">Printeren står ved siden af boksen og printer på få sekunder. Den kommer i sin egen kasse sammen med boksen.</span>
                 <a className="btn btn-secondary" href="#datoer">
                   Se om printeren er ledig
                 </a>
               </div>
             </div>
+            <PrinterViewer />
           </div>
         </section>
 
