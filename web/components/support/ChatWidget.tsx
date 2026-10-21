@@ -113,7 +113,13 @@ export function ChatWidget() {
     setBusy(true);
     const now = new Date().toISOString();
     const tmp = 1e9 + Date.now();
-    setMsgs((cur) => [...cur, { seq: tmp, role: "customer", text: t, at: now, name: null, sources: null, pending: true }]);
+    const reply = tmp + 1;
+    // Both bubbles at once: the customer's text and "Skriver…", so nothing feels dead while the server works.
+    setMsgs((cur) => [
+      ...cur,
+      { seq: tmp, role: "customer", text: t, at: now, name: null, sources: null, pending: true },
+      { seq: reply, role: "assistant", text: "", at: now, name: NAME, sources: null, pending: true },
+    ]);
     scroll();
     try {
       const r = await fetch("/api/support/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: t, page: location.pathname }) });
@@ -122,13 +128,13 @@ export function ChatWidget() {
         throw new Error(b.error ?? "Beskeden blev ikke sendt. Prøv igen.");
       }
       if (r.headers.get("content-type")?.includes("application/json")) {
+        // A human has the chat: no reply from Sif, so the "Skriver…" bubble goes away again.
         const b = (await r.json()) as { chat: Chat };
+        setMsgs((cur) => cur.filter((m) => m.seq !== reply));
         setChat(b.chat);
         await poll();
         return;
       }
-      const reply = tmp + 1;
-      setMsgs((cur) => [...cur, { seq: reply, role: "assistant", text: "", at: now, name: NAME, sources: null, pending: true }]);
       await readStream(r, {
         // The customer's message gets its saved number at once, so it keeps its place above the reply.
         accepted: (d) => {
