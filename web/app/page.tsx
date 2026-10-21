@@ -256,8 +256,8 @@ export default async function Home() {
             },
             {
               kind: "photo",
-              src: "/photos/fest-fodselsdag.jpg",
-              alt: "En fødselar på 60 med børnebørn foran Selfi Boks i et forsamlingshus",
+              src: "/photos/fest-fodselsdag-have.jpg",
+              alt: "En fødselar på 50 med familie og venner foran Selfi Boks i en have",
               title: "Alle generationer er med",
               text: "Et tryk på skærmen og en nedtælling fra 3. Det kan alle finde ud af, fra børnebørnene til fødselaren.",
             },
