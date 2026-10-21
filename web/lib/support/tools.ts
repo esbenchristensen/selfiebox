@@ -59,14 +59,14 @@ export const TOOL_DEFINITIONS = [
   {
     type: "function" as const,
     name: "verify_customer",
-    description: "Verificerer kunden med bookingnummer (fx SB-271021-K4QX) og den e-mail, bookingen er lavet med. Skal lykkes, før noget om en booking kan vises eller ændres. Giver kundens navn og alle kundens bookinger.",
+    description: "Verificerer kunden med bookingnummer (fx SB-271021-K4QX) og den e-mail, bookingen er lavet med. Skal lykkes, før noget om en booking kan vises eller ændres. Svarer med kundens navn og alle kundens bookinger med fulde detaljer (status, datoer, afsendelse, sporing, pris, opsætningslink), så get_bookings ikke behøves bagefter.",
     strict: true,
     parameters: obj({ bookingNo: { type: "string", description: "Bookingnummeret, som kunden skrev det" }, email: { type: "string", description: "E-mailen, som kunden skrev den" } }, ["bookingNo", "email"]),
   },
   {
     type: "function" as const,
     name: "get_bookings",
-    description: "Den verificerede kundes bookinger med status, datoer, tilvalg, pris, adresse, sporingsnumre, frister og link til opsætning. Kun for en verificeret kunde.",
+    description: "Henter den verificerede kundes bookinger igen (status, datoer, tilvalg, pris, sporingsnumre, frister, opsætningslink). Kun nødvendig senere i samtalen, fx efter en ændring eller når der er gået tid; verify_customer har allerede givet detaljerne.",
     strict: true,
     parameters: obj({}, []),
   },
@@ -227,19 +227,15 @@ async function verifyCustomer(ctx: ToolContext, a: { bookingNo: string; email: s
       : { ok: false, attemptsLeft: MAX_VERIFY - attempts, message: "Bookingnummer og e-mail passer ikke sammen. Sig ikke, hvilken af de to der er forkert. Bed kunden tjekke begge dele i kvitteringen fra Stripe." };
   }
   const all = await ctx.d
-    .collection<RentalDoc>("rentals")
-    .find({ "contact.email": { $regex: `^${email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" }, status: { $nin: ["pending", "expired"] } }, { projection: { _id: 1, from: 1, status: 1, contact: 1 } })
+    .collection<RentalWithTracking>("rentals")
+    .find({ "contact.email": { $regex: `^${email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" }, status: { $nin: ["pending", "expired"] } })
     .sort({ from: 1 })
     .toArray();
   const customer = { email, name: r!.contact.name, bookings: all.map((b) => b._id), verifiedAt: ctx.now };
   await setChat(ctx, { customer });
   await audit(ctx.d, { chatId: chat._id, actor: "customer", actorName: customer.name, action: "verify", bookingId: id, note: `Verificeret med bookingnummer og e-mail. Bookinger: ${customer.bookings.join(", ")}` });
-  return {
-    ok: true,
-    name: customer.name,
-    bookings: all.map((b) => ({ bookingNo: b._id, from: b.from, status: b.status, statusLabel: STATUS_LABEL[b.status] })),
-    message: "Kunden er verificeret. Brug get_bookings for detaljer.",
-  };
+  // The details come along at once, so the model can answer without a second round trip.
+  return { ok: true, name: customer.name, today: ctx.today, bookings: all.map((b) => bookingView(b, ctx)), message: "Kunden er verificeret. Svar ud fra bookingerne her; get_bookings er ikke nødvendig." };
 }
 
 async function getBookings(ctx: ToolContext): Promise<Result> {

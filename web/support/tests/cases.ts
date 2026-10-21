@@ -54,7 +54,8 @@ export const CASES: Case[] = [
     turns: [
       {
         say: "Hej, hvornår bliver vores boks sendt? Booking SB-261001-ANNA, mail anna@example.dk",
-        tools: ["verify_customer", "get_bookings"],
+        tools: ["verify_customer"],
+        noTools: ["get_bookings"],
         must: [/12\. november|torsdag 12|12\.11/i],
         judge: "Svarer med afsendelsesdagen (torsdag 12. november) og at boksen er i pakkeshoppen senest dagen før festen 14. november. Bruger ikke status-koder som 'paid'.",
       },
