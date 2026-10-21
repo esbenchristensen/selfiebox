@@ -1,5 +1,7 @@
 # Selfi Halo gen 2, version v14: printguide
 
+> **Erstattet af halo-gen2-v15 (21. okt. 2026), må ikke printes.** v14-fronten har kun 2 kameratappe; v15 har alle 4.
+
 **Version:** halo-gen2-v14 (21. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v14_`. Den erstatter halo-gen2-v13, som ikke må printes; **fronten og bagrammen er nye**. Skal, logo, lysring, vægbeslag og printerprop er de samme som i v13. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; printermodulet kommer i en senere version.

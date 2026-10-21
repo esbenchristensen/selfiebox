@@ -626,9 +626,9 @@ module cam_caps() intersection() {
     union() { ext_y(PT - 0.01, CAP_Y) ring3_band(CH_IN, CH_HALF); ext_y(CAP_Y - CAP_T, CAP_Y) ring3_2d(CH_HALF); }
     ext_y(PT - 1, CAP_Y + 1) cam_keep2d();
 }
-// v14: v13 had 4 pegs Ø2.0 in the board's Ø2.2 holes, which had to be trimmed with a knife. Two diagonal pegs
-// locate the board (Ø1.9 with a cone tip); the other two holes sit on plain stand-offs.
-CAM_PEGS = [0, 3];  CAM_PEG = [1.9, 0.6];   // peg Ø, cone length to Ø1.1
+// v13 had 4 pegs Ø2.0 in the board's Ø2.2 holes; some printed a little fat and had to be trimmed with a knife.
+// v14 kept only 2. v15 (Esben 21 Oct): all 4 are back, Ø1.9 with a cone tip.
+CAM_PEGS = [0, 1, 2, 3];  CAM_PEG = [1.9, 0.6];   // peg Ø, cone length to Ø1.1
 module cam_peg(h) {
     cyl_y(CAM_PEG[0], CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5 - CAM_PEG[1], h[0], LENS_Z + h[1]);
     translate([h[0], CAM_PCB_Y + CAM_PCB[2] + 1.5 - CAM_PEG[1] - 0.01, LENS_Z + h[1]]) rotate([-90, 0, 0]) cylinder(d1 = CAM_PEG[0], d2 = 1.1, h = CAM_PEG[1], $fn = 24);
