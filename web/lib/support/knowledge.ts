@@ -49,7 +49,7 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     `Siden, kunden skriver fra: ${chat.page || "selfi.dk"}.`,
   ];
   if (chat.customer) {
-    lines.push(`Kunden er verificeret som ${chat.customer.name} (${chat.customer.email}). Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Brug get_bookings for detaljer.`);
+    lines.push(`Kunden er verificeret som ${chat.customer.name} (${chat.customer.email}). Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i verify_customer-svaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
   } else if (chat.verifyLockedAt) {
     lines.push("Kunden er IKKE verificeret, og verificeringen er låst efter for mange forsøg. Eskalér, hvis kunden vil have hjælp med en booking.");
   } else {
