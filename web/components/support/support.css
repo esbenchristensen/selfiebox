@@ -12,8 +12,10 @@
 .sc-fab.is-open { background: var(--surface-raised); color: var(--ink); border-color: var(--line-strong); }
 .sc-fab-icon svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .sc-badge { position: absolute; top: -6px; right: -4px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--radius-pill); background: var(--danger); color: #fff; font-size: 12px; line-height: 20px; text-align: center; }
-/* Den faste pris-bjælke på telefonen ligger nederst; knappen rykker op over den. */
-body:has(.sticky-cta.is-on) .sc-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+/* Den faste pris-bjælke findes kun på telefonen (samme grænse som i lej.css); dér rykker knappen op over den. */
+@media (max-width: 900px) {
+  body:has(.sticky-cta.is-on) .sc-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}
 
 .sc-panel {
   position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: calc(max(20px, env(safe-area-inset-bottom, 0px)) + 64px); z-index: 41;
@@ -68,6 +70,7 @@ body:has(.sticky-cta.is-on) .sc-fab { bottom: calc(84px + env(safe-area-inset-bo
 .sc-chips button:hover { border-color: var(--ink); background: var(--surface-sunk); }
 .sc-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-muted); padding-left: 4px; }
 .sc-status i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: sc-pulse 1s infinite var(--ease); }
+.sc-typing { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); }
 .sc-dots { display: inline-flex; gap: 4px; padding: 4px 0; }
 .sc-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-muted); animation: sc-pulse 1.1s infinite var(--ease); }
 .sc-dots i:nth-child(2) { animation-delay: 0.18s; }

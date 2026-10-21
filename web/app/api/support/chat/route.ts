@@ -70,7 +70,7 @@ export async function POST(req: Request) {
   if (burst >= PER_CHAT_10MIN) return NextResponse.json({ error: "Tag en kort pause. Du kan skrive igen om et par minutter." }, { status: 429, headers });
 
   if (!chat.summary) await chats.updateOne({ _id: chat._id }, { $set: { summary: text.slice(0, 120) } });
-  await addMessage(d, chat, { role: "customer", text });
+  const saved = await addMessage(d, chat, { role: "customer", text });
 
   if (chat.status === "human") {
     // A colleague has the chat: the message is saved for them, the assistant stays quiet.
@@ -82,8 +82,9 @@ export async function POST(req: Request) {
   const chatRef = chat;
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      const send = (e: TurnEvent | { type: "state"; chat: ReturnType<typeof publicView> }) => controller.enqueue(encoder.encode(`event: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`));
+      const send = (e: TurnEvent | { type: "state"; chat: ReturnType<typeof publicView> } | { type: "accepted"; seq: number }) => controller.enqueue(encoder.encode(`event: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`));
       try {
+        send({ type: "accepted", seq: saved.seq });
         await runTurn(d, chatRef, send);
         const fresh = await chats.findOne({ _id: chatRef._id });
         if (fresh) send({ type: "state", chat: publicView(fresh) });

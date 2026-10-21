@@ -56,7 +56,7 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     lines.push(`Kunden er IKKE verificeret. Før noget om en booking: bed om bookingnummer og e-mail og kald verify_customer. Forsøg brugt: ${chat.verifyAttempts} af 5.`);
   }
   if (chat.status === "waiting_human" && chat.escalation) {
-    lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Eskalér ikke igen, medmindre der kommer noget nyt; hjælp videre med det, du må.`);
+    lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så Esben får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
   }
   if (chat.pendingChange) {
     const c = chat.pendingChange;
@@ -67,8 +67,8 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
   lines.push(
     "Aktuelle priser og regler for privat leje (fra admin, inkl. moms):",
     `- Boks: ${byDays}; derefter ${kr(s.prices.perExtraDay)} pr. ekstra dag. Højst ${s.rules.maxDays} dage online.`,
-    `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Tema: ${kr(s.prices.theme)} (${s.themes.join(", ")}).`,
-    `- Første lejedag tidligst ${s.rules.leadDays} dage frem (med tema ${s.rules.themeLeadDays}), højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
+    `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Det er det eneste tilvalg; temaer findes ikke længere.`,
+    `- Første lejedag tidligst ${s.rules.leadDays} dage frem, højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
     `- Online booking er ${s.open ? "åben" : "lukket lige nu (henvis til chatten/eskalér)"}.`,
   );
   return lines.join("\n");

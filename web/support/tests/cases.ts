@@ -199,7 +199,7 @@ export const CASES: Case[] = [
         say: "Vi bliver desværre nødt til at aflyse julefrokosten den 11. december. Kan vi få pengene tilbage?",
         tools: ["escalate"],
         must: [/Esben/],
-        judge: "Siger at kunden er inden for afbestillingsfristen (fredag 27. november, eller 14 dage før) og får hele beløbet tilbage inden for 5 hverdage, at sagen er sendt til Esben, som står for refusionen, og hvornår han svarer. Lover ikke selv at udføre refusionen. Det er nok at nævne enten datoen eller 14 dage.",
+        judge: "Siger at kunden er inden for afbestillingsfristen (fredag 27. november, eller 14 dage før) og får hele beløbet tilbage (de 5 hverdage behøver ikke nævnes), at sagen er sendt til Esben, som står for refusionen, og hvornår han svarer. Lover ikke selv at udføre refusionen. Det er nok at nævne enten datoen eller 14 dage.",
       },
     ],
   },
@@ -272,7 +272,7 @@ export const CASES: Case[] = [
   {
     name: "flere-bookinger",
     verified: "ditte@example.dk",
-    turns: [{ say: "Hvad har jeg egentlig booket hos jer?", tools: ["get_bookings"], must: [/\b11\.[^\n]*december/, /1\. maj/], judge: "Lister begge bookinger (julefrokost 11.–12. december med polaroid-printer og tema, og 1. maj) kort." }],
+    turns: [{ say: "Hvad har jeg egentlig booket hos jer?", tools: ["get_bookings"], must: [/\b11\.[^\n]*december/, /1\. maj/], judge: "Lister begge bookinger (julefrokost 11.–12. december med polaroid-printer, og 1. maj) kort." }],
   },
   {
     name: "opsaetningslink",

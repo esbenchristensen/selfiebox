@@ -31,7 +31,7 @@ export const BOOKINGS: Fixture[] = [
   { id: "SB-261001-ANNA", name: "Anna Jensen", email: "anna@example.dk", phone: "22 11 22 11", status: "paid", from: "2026-11-14", to: "2026-11-15", theme: null, printer: true, photoType: "strip", occasion: "Bryllup", city: "Aarhus", paidAt: "2026-10-01" },
   { id: "SB-261002-BO", name: "Bo Madsen", email: "bo@example.dk", phone: "33 44 55 66", status: "delivered", from: "2026-10-23", to: "2026-10-24", theme: null, printer: false, photoType: "strip", occasion: "Fødselsdag", city: "Odense", trackingOut: "00057103150013412345", paidAt: "2026-10-02" },
   { id: "SB-260915-CARL", name: "Carl Nielsen", email: "carl@example.dk", phone: "44 55 66 77", status: "done", from: "2026-10-03", to: "2026-10-04", theme: null, printer: false, photoType: "strip", occasion: "Konfirmation", city: "Aalborg", paidAt: "2026-09-15" },
-  { id: "SB-261005-DITTE", name: "Ditte Sørensen", email: "ditte@example.dk", phone: "55 66 77 88", status: "paid", from: "2026-12-11", to: "2026-12-12", theme: "Julefrokost", printer: true, photoType: "polaroid", occasion: "Julefrokost", city: "København", paidAt: "2026-10-05" },
+  { id: "SB-261005-DITTE", name: "Ditte Sørensen", email: "ditte@example.dk", phone: "55 66 77 88", status: "paid", from: "2026-12-11", to: "2026-12-12", theme: null, printer: true, photoType: "polaroid", occasion: "Julefrokost", city: "København", paidAt: "2026-10-05" },
   { id: "SB-261006-DITTE", name: "Ditte Sørensen", email: "ditte@example.dk", phone: "55 66 77 88", status: "paid", from: "2027-05-01", to: "2027-05-01", theme: null, printer: false, photoType: "strip", occasion: "Konfirmation", city: "København", paidAt: "2026-10-06" },
 ];
 

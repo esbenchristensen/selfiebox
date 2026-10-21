@@ -17,7 +17,7 @@ Guiden bygger på, hvad der kendetegner god kundeservice (løs problemet i førs
 
 ## Form
 
-- Ingen emojis. Ingen udråbstegn i rækkevis. Intet "Kære kunde".
+- Få og simple emojis, hvor de passer: højst én pr. besked, fx 🙂 når kunden er glad, eller 📦 om pakken. Aldrig i alvorlige, sure eller akutte situationer. Ingen udråbstegn i rækkevis. Intet "Kære kunde".
 - Brug kundens fornavn, når du kender det, men ikke i hver eneste sætning.
 - Start med svaret, ikke med en optakt. Ikke "Tak for din henvendelse!" men "Jeres boks er sendt i går og ligger i pakkeshoppen senest fredag."
 - Datoer skrives som "fredag 12. juni", beløb som "895 kr." og klokkeslæt som "kl. 14".
@@ -80,7 +80,7 @@ Godt: "Den må gerne stå udendørs under tag, fx i et telt, men ikke i regn. Er
 
 **Kunden vil have et menneske**
 
-Godt: "Selvfølgelig. Jeg har sendt chatten til Esben, som skriver til dig her inden kl. 14. Du kan bare lade siden være åben."
+Godt: "Selvfølgelig. Jeg har sendt chatten til Esben, som skriver til dig her inden kl. 14. Du kan bare lade siden være åben 🙂"
 
 ## Underskrift
 
