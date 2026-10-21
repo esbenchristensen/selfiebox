@@ -29,7 +29,7 @@ export const PRESETS = [
 ];
 
 export function Booking() {
-  const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset } = useRental();
+  const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset, priceFor } = useRental();
   const [touched, setTouched] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -152,8 +152,8 @@ export function Booking() {
             <fieldset className="bk-fs">
               <legend className="h-m">Hvornår er festen?</legend>
               <p className="muted">
-                Tryk på første dag og derefter på sidste dag. En dag og en weekend koster det samme, {kr(priceForDays(settings, 3))}, og en uge {kr(priceForDays(settings, 7))}.
-                {s.printer ? " Kalenderen viser de dage, hvor både boks og printer er ledige." : ""}
+                Tryk på første dag og derefter på sidste dag. Prisen under hver dag er den samlede pris{s.printer ? " med printer" : ""}, og den følger med, når I vælger flere dage.
+                {s.printer ? " Kalenderen viser kun de dage, hvor både boks og printer er ledige." : ""}
               </p>
               <div className="hb-pkgs" aria-label="Genveje">
                 {PRESETS.map((p) => (
@@ -163,7 +163,7 @@ export function Booking() {
                   </button>
                 ))}
               </div>
-              <Calendar selected={s.range} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(r) => set({ range: r })} />
+              <Calendar selected={s.range} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(r) => set({ range: r })} priceFor={priceFor} />
               {s.range && (
                 <p className="bk-chosen">
                   <span className="label">Jeres valg · {periodLabel(s.range)}</span>

@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { addDays, nights, type DayKey, type Range } from "@/lib/dates";
-import { bookingWindow, fits, type Delivery, type PhotoType, type RentalSettings, type Usage } from "@/lib/udlejning/core";
+import { bookingWindow, fits, priceLines, total, type Delivery, type PhotoType, type RentalSettings, type Usage } from "@/lib/udlejning/core";
 
 // One booking shared by the whole front page: the calendar in the hero, the theme picker in 3D and the
 // booking flow under #book all read and change the same choice. Free days and prices come from
@@ -51,6 +51,8 @@ type Ctx = {
   canBookWith: (r: Range, theme: boolean, printer: boolean) => boolean;
   /** Jump to the first free run of `days` days from the chosen first day; a weekend runs Friday to Sunday. */
   preset: (days: number, weekend: boolean) => void;
+  /** The total for these days with the theme and printer chosen so far, for the price in each calendar cell. */
+  priceFor: (r: Range) => number | null;
 };
 
 const RentalCtx = createContext<Ctx | null>(null);
@@ -122,6 +124,11 @@ export function RentalProvider({ children }: { children: ReactNode }) {
     [win, s.range, canBook, set],
   );
 
-  const value: Ctx = { data, loadError, load, s, set, setAll: setS, step, done, go, reach, win, canBook, canBookWith, preset };
+  const priceFor = useCallback(
+    (r: Range) => (data ? total(priceLines(data.settings, { range: r, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery })) : null),
+    [data, s.theme, s.printer, s.photoType, s.delivery],
+  );
+
+  const value: Ctx = { data, loadError, load, s, set, setAll: setS, step, done, go, reach, win, canBook, canBookWith, preset, priceFor };
   return <RentalCtx.Provider value={value}>{children}</RentalCtx.Provider>;
 }

@@ -11,11 +11,13 @@ type Props = {
   maxDay: DayKey;
   onPick: (range: Range) => void;
   single?: boolean; // one month at a time, for narrow places like the hero
+  /** The total for a range with the add-ons chosen so far, shown in every cell: for one day, or from the picked first day to this one. */
+  priceFor?: (range: Range) => number | null;
 };
 
 // Free date picking: the first tap picks a day, a tap on a later day stretches it into a range.
 // Any tap after a finished range starts over.
-export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: Props) {
+export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, priceFor }: Props) {
   const start = fromKey(selected?.from ?? minDay);
   const [cursor, setCursor] = useState({ y: start.getFullYear(), m: start.getMonth() });
   const [hover, setHover] = useState<Range | null>(null);
@@ -95,6 +97,7 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: 
                   const ok = !past && !booked;
                   const busy = ok && seasonOf(k);
                   const r = rangeFor(k);
+                  const price = ok && priceFor ? priceFor(r) : null;
                   const on = inShown(k);
                   const cls = [
                     "cal-day",
@@ -115,14 +118,17 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: 
                       className={cls}
                       disabled={!ok}
                       aria-pressed={!!selected && k >= selected.from && k <= selected.to}
-                      aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : busy ? `, travl periode: ${busy.name.toLowerCase()}` : ""}`}
+                      aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : busy ? `, travl periode: ${busy.name.toLowerCase()}` : ""}${price != null ? `, ${price.toLocaleString("da-DK")} kr.` : ""}`}
                       onPointerEnter={(e) => ok && e.pointerType === "mouse" && setHover(r)}
                       onClick={() => {
                         setHover(null);
                         onPick(r);
                       }}
                     >
-                      <span>{fromKey(k).getDate()}</span>
+                      <span>
+                        {fromKey(k).getDate()}
+                        {price != null && <small>{price.toLocaleString("da-DK")}</small>}
+                      </span>
                     </button>
                   );
                 })}

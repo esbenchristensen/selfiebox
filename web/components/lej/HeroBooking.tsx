@@ -9,7 +9,7 @@ import { useRental } from "./RentalContext";
 // The first step of the booking, above the fold: is our day free, and what does it cost? "Vælg tilvalg"
 // hands the dates to the booking flow under #book, which opens at the add-ons.
 export function HeroBooking() {
-  const { data, loadError, load, s, set, win, canBook, preset, go, reach } = useRental();
+  const { data, loadError, load, s, set, win, canBook, preset, go, reach, priceFor } = useRental();
   const settings = data?.settings;
 
   if (loadError) {
@@ -27,7 +27,7 @@ export function HeroBooking() {
   if (!settings || !win) {
     return (
       <div className="hb hb--loading" id="datoer" aria-busy="true">
-        <span className="label">Ledige datoer</span>
+        <b>Hvornår er festen?</b>
         <p className="muted">Henter kalenderen …</p>
       </div>
     );
@@ -50,10 +50,6 @@ export function HeroBooking() {
       <div className="hb-head">
         <div className="hb-title">
           <b>Hvornår er festen?</b>
-          <span className="hb-live">
-            <i aria-hidden="true" />
-            Live ledighed
-          </span>
         </div>
         <div className="hb-pkgs" aria-label="Genveje">
           {PRESETS.map((p) => (
@@ -71,7 +67,7 @@ export function HeroBooking() {
           </button>
         )}
       </div>
-      <Calendar single selected={r} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(x) => set({ range: x })} />
+      <Calendar single selected={r} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(x) => set({ range: x })} priceFor={priceFor} />
       <div className="hb-foot">
         <div aria-live="polite">
           {r ? (
@@ -101,14 +97,7 @@ export function HeroBooking() {
           {r ? "Fortsæt til booking" : "Vælg datoer først"}
         </button>
       </div>
-      <div className="hb-pay">
-        <span className="pills" aria-label="Betalingsmåder">
-          <span>Kort</span>
-          <span>MobilePay</span>
-          <span>Apple Pay</span>
-        </span>
-        <span>I betaler først i kassen · Flyt datoen gratis, indtil boksen er sendt</span>
-      </div>
+      <p className="hb-pay">Betal med kort, MobilePay eller Apple Pay, først i kassen. Flyt datoen gratis, indtil boksen er sendt.</p>
     </div>
   );
 }

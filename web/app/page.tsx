@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Lej en fotoboks til festen. Alt er med i prisen | Selfi",
       description: `Fotoboksen, der får alle med på billedet. Fra ${from} med ubegrænsede billeder, fragt og forsikring. Se ledige datoer og book online.`,
       url: "/",
-      images: [{ url: "/photos/fest-bryllup.jpg", width: 1200, height: 896, alt: "Fire bryllupsgæster griner foran Selfi Boks i en lade" }],
+      images: [{ url: "/photos/fest-bryllup.jpg", width: 1200, height: 896, alt: "Brudeparret og to venner griner foran Selfi Boks, mens den tæller ned" }],
     },
   };
 }
@@ -169,7 +169,7 @@ export default async function Home() {
         ]}
         cta={{ label: "Se ledige datoer", href: "#datoer" }}
       />
-      <main>
+      <main className="lej">
         <Hero
           label="Fotoboks til leje · Sendes i hele Danmark"
           title="Lej en fotoboks, der får alle med på billedet."
@@ -177,18 +177,9 @@ export default async function Home() {
           points={
             <>
               <ul className="lej-points">
-                <li>
-                  <Icon name="shield" />
-                  Alt er med i prisen. Ingen tilkøb, intet depositum
-                </li>
-                <li>
-                  <Icon name="clock" />
-                  Klar på fem minutter, kun en stikkontakt
-                </li>
-                <li>
-                  <Icon name="truck" />
-                  Flyt datoen gratis, indtil boksen er sendt
-                </li>
+                <li>Alt er med i prisen. Ingen tilkøb, intet depositum.</li>
+                <li>Klar på fem minutter. Den skal kun i en stikkontakt.</li>
+                <li>Flyt datoen gratis, indtil boksen er sendt.</li>
               </ul>
               <a className="lej-trust" href="#anmeldelser">
                 <Stars n={PROOF.rating} />
@@ -256,8 +247,8 @@ export default async function Home() {
             },
             {
               kind: "photo",
-              src: "/photos/fest-fodselsdag-have.jpg",
-              alt: "En fødselar på 50 med familie og venner foran Selfi Boks i en have",
+              src: "/photos/fest-fodselsdag.jpg",
+              alt: "En fødselar på 60 med datter og børnebørn foran Selfi Boks i et forsamlingshus",
               title: "Alle generationer er med",
               text: "Et tryk på skærmen og en nedtælling fra 3. Det kan alle finde ud af, fra børnebørnene til fødselaren.",
             },

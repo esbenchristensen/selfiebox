@@ -3,9 +3,9 @@ import { kr } from "@/lib/udlejning/core";
 
 // The parties people rent a box for, in the words they search with. Each card sends them to the calendar.
 const OCCASIONS: { name: string; text: string; photo: string; alt: string }[] = [
-  { name: "Bryllup", photo: "fest-bryllup", alt: "Bryllupsgæster foran Selfi Boks i en lade", text: "Alle gæster på billede med jeres navne og datoen. Det bliver den gæstebog, der faktisk bliver kigget i." },
-  { name: "Konfirmation", photo: "fest-konfirmation", alt: "Konfirmand og veninder foran Selfi Boks i et festtelt", text: "Konfirmanden og vennerne går i boksen igen og igen, og familien har billederne på telefonen samme aften." },
-  { name: "Rund fødselsdag", photo: "fest-fodselsdag", alt: "Fødselar med børnebørn foran Selfi Boks", text: "Fra børnebørnene til fødselaren: et tryk, en nedtælling, og alle er med." },
+  { name: "Bryllup", photo: "fest-bryllup", alt: "Brudeparret og venner foran Selfi Boks i en gammel sal", text: "Alle gæster på billede med jeres navne og datoen. Det bliver den gæstebog, der faktisk bliver kigget i." },
+  { name: "Konfirmation", photo: "fest-konfirmation", alt: "Konfirmand med venner og lillesøster foran Selfi Boks", text: "Konfirmanden og vennerne går i boksen igen og igen, og familien har billederne på telefonen samme aften." },
+  { name: "Rund fødselsdag", photo: "fest-fodselsdag-have", alt: "Fødselar på 50 med familien foran Selfi Boks i haven", text: "Fra børnebørnene til fødselaren: et tryk, en nedtælling, og alle er med." },
   { name: "Firmafest og julefrokost", photo: "fest-julefrokost", alt: "Kolleger med nissehuer foran Selfi Boks til julefrokost", text: "Kollegerne viser en side, man ikke ser til morgenmødet. Kvitteringen fra betalingen kan bruges som bilag." },
   { name: "Studenterfest", photo: "fest-studenter", alt: "Studenter med huer foran Selfi Boks", text: "Billederne fra den aften, I kommer til at tale om de næste 20 år, i godt lys og med alle på." },
   { name: "Barnedåb og jubilæum", photo: "fest-barnedaab", alt: "Familie med dåbsbarn foran Selfi Boks", text: "En rolig boks i hjørnet, der samler familien, mens kagen bliver skåret." },
