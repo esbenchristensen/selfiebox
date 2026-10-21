@@ -468,7 +468,7 @@
 .cal-day { height: 54px; font-size: 15px; }
 .cal-day span { width: 100%; max-width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; line-height: 1; }
 .cal-day small { font-size: 10.5px; font-weight: 500; letter-spacing: 0; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
-.cal-day:disabled small { display: none; }
+.cal-day:disabled small:not(.sk) { display: none; }
 .cal-day.is-start span small, .cal-day.is-end span small { color: inherit; opacity: 0.8; }
 .cal-day.is-preview.is-start span small, .cal-day.is-preview.is-end span small { color: var(--ink-muted); }
 .cal-day:not(:disabled):not(.is-in):hover span { background: var(--surface-raised); box-shadow: inset 0 0 0 2px var(--ink); }
@@ -494,8 +494,8 @@
 .lej .lej-journey-n { font-size: 13px; font-weight: 500; }
 .lej .pers-date { font-size: 10px; letter-spacing: 0.02em; }
 .lej .hb-pay { display: block; margin: 0; font-size: 13px; color: var(--ink-muted); }
-.lej .lej-points li { display: list-item; list-style: none; padding-left: 0; font-size: 16px; }
-.lej .bk-sum-incl li::before { display: none; }
+.lej .lej-points { gap: 12px; }
+.lej .lej-points li { display: flex; align-items: center; gap: 12px; font-size: 16px; }
 .lej .bk-sum-incl { gap: 4px; }
 @media (max-width: 900px) {
   .lej .cmp-us::before, .lej .cmp-them::before { font-family: var(--font-body), sans-serif; letter-spacing: 0; text-transform: none; font-size: 12px; font-weight: 500; }
@@ -544,3 +544,18 @@
   .lej .lej-addons { margin-top: var(--space-4); }
   .lej .rev-sum { margin-bottom: var(--space-4); }
 }
+
+/* Icons back in the lists: the three promises, the payment line, the summary, the thank-you page */
+.lej .hb-pay { display: flex; align-items: flex-start; gap: 8px; }
+.lej .hb-pay .lej-icon { width: 18px; height: 18px; margin-top: 1px; }
+.lej .bk-sum-incl li { display: flex; gap: 8px; align-items: center; }
+.lej .bk-sum-incl .lej-icon { width: 18px; height: 18px; flex: none; }
+.lej-done .tak-check { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--green) 18%, transparent); }
+.lej-done .tak-check .lej-icon { width: 30px; height: 30px; stroke-width: 2.2; }
+
+/* The calendar while the free days load: dates and prices of the page are there, each day waits with a bar */
+.cal-day.is-loading:disabled { opacity: 1; cursor: progress; color: var(--ink); }
+.cal-day.is-loading span { background: var(--surface-sunk); }
+.cal-day small.sk { display: block; width: 22px; height: 6px; margin-top: 2px; border-radius: 3px; background: linear-gradient(90deg, var(--line) 25%, var(--line-strong) 50%, var(--line) 75%); background-size: 300% 100%; animation: sk-slide 1.3s linear infinite; opacity: 0.7; }
+@keyframes sk-slide { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.lej .bk-sum-incl li::before { display: none; }

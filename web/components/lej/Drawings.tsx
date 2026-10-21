@@ -164,6 +164,11 @@ export const ICONS = {
   chat: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5",
   frame: "M4 4h16v16H4zM8 8h8v6H8zM8 17h8",
   clock: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 7v5l3 2",
+  tag: "M3 12V4h8l9 9-8 8zM7.5 8.5h.01",
+  undo: "M4 12a8 8 0 1 0 2.6-5.9M4 4v5h5",
+  check: "M4.5 12.5l5 5L19.5 7",
+  lock: "M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3M12 15v2",
+  calendar: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4",
 } as const;
 
 export function Icon({ name }: { name: keyof typeof ICONS }) {

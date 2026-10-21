@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
+import { Icon } from "@/components/lej/Drawings";
 import { formatRange } from "@/lib/dates";
 import { DELIVERIES, kr, PHOTO_TYPES } from "@/lib/udlejning/core";
 import { db, type RentalDoc } from "@/lib/udlejning/db";
@@ -49,6 +50,11 @@ export default async function Tak({ searchParams }: { searchParams: Promise<{ id
               </>
             ) : (
               <>
+                {r.paid && (
+                  <span className="tak-check" aria-hidden="true">
+                    <Icon name="check" />
+                  </span>
+                )}
                 <span className="label">Booking {r.b._id}</span>
                 <h1 className="h-l">{r.paid ? `Tak, ${r.b.contact.name.split(" ")[0]}. Boksen er jeres.` : "Betalingen er ikke gået igennem endnu."}</h1>
                 <p className="lede">
