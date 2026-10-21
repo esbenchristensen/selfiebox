@@ -582,7 +582,9 @@ module pocket3_2d() translate([VIEW_X, GC]) offset(r = DSP_R + GLASS_C3) square(
 // slots and bosses now span both positions and the cross bars sit on their mid point (+/-80 from the glass centre).
 DSP_PANEL = 7.05;  DSP_TAB3 = [8, 12, 3];  DSP_TAB_X = 166.9/2 - 22.54;  DSP_TAB_Z = [248.1/2 - 46.42, -(248.1/2 - 41.68)];
 DSP_PI_DZ = -6.87;  DSP_SO = [5, 8.5];
-DSP_BOTH = false;                         // waits for Esben (21 Oct): which way his display's plate notches faced
+DSP_BOTH = false;                         // Esben (21 Oct): the plate notches face down, away from the camera, as drawn
+DSP_SLOT_X = 0.3;                         // v14: the holes are 0.3 wider each way across (3.5 mm): v13's 2.9 left 0.2 per side for
+                                          // 121.8 mm between the holes, less than the print shrinks, and the screws missed
 DSP_XB_Z = DSP_BOTH ? [for (z = DSP_TAB_Z) sign(z)*(abs(DSP_TAB_Z[0]) + abs(DSP_TAB_Z[1]))/2] : DSP_TAB_Z;   // [80, -80]
 TAB_Y = GLASS_Y3 + DSP_PANEL + DSP_TAB3[2];  // 11.65: back face of the tabs
 PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the lip (v12; v2-v11: the glass land)
@@ -748,8 +750,8 @@ module frame3() {
         }
         snap_slots();
         for (t = tabs2) {
-            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [-0.4, 0.4] : [-2.4, 2.4]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0], z + dz);
-            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [0] : [-2.4, 2.4]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0], z + dz);   // head 2 mm above the tab
+            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [-0.4, 0.4] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
+            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [0] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0] + dx, z + dz);   // head 2 mm above the tab
         }
         for (h = CAM_HOLES_ROT) cyl_y(2.4, CAM_PCB_Y, CAM_PCB_Y + CAM_PCB[2] + 2, h[0], LENS_Z + h[1]);
         // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),

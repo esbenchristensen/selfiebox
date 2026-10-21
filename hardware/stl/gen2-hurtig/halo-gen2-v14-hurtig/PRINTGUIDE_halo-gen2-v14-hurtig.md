@@ -45,13 +45,14 @@ Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til 
 | `halo-gen2-v14-hurtig_proeve-stoedsensor.stl` | 34 × 41 × 15 | – | Stødsensoren (LIS3DH) i sin bakke (tilvalg). |
 | `halo-gen2-v14-hurtig_proeve-mikrofonstrip.stl` | 126 × 13 × 64 | – | Mikrofonkortet i lommen i bunden med Seeed-logoet nedad: pindene gennem hullerne, kortet fladt på de 4 ringe, kablet fladt ud bagtil (tilvalg). |
 | `halo-gen2-v14-hurtig_proeve-kamera_front.stl` | 83 × 37 × 28 | – | Kameraet på frontens tappe, linsen midt i hullet, bagrammens rør trykker printet ned, kamerakablet gennem slidsen og de tre klikstik i deres lommer. Front og bagramme lægges sammen. |
-| `halo-gen2-v14-hurtig_proeve-kamera_bagramme.stl` | 83 × 27 × 28 | – |  |
+| `halo-gen2-v14-hurtig_proeve-kamera_bagramme.stl` | 83 × 27 × 27 | – |  |
 | `halo-gen2-v14-hurtig_proeve-hjoerne_skal.stl` | 65 × 65 × 64 | – | Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue (3,0 × 15) skruet i bagfra. Er skyggefugen mellem skal og front jævn? |
 | `halo-gen2-v14-hurtig_proeve-hjoerne_front.stl` | 65 × 65 × 28 | – |  |
 | `halo-gen2-v14-hurtig_proeve-hjoerne_bagramme.stl` | 58 × 61 × 29 | – |  |
 | `halo-gen2-v14-hurtig_proeve-hjoerne_lysring.stl` | 57 × 56 × 5 | – |  |
 | `halo-gen2-v14-hurtig_proeve-laas_front.stl` | 42 × 42 × 28 | – | v14: en sidelås (venstre side, nederste par): vinduet i indervæggen og i ydervæggen og bagrammens 2 arme. Klikker begge arme, kan de vippes fri med en lille skruetrækker, og ligger fjedertåen ned på et stykke glas eller plastik (1,1 mm) i frontens skærmlomme? |
 | `halo-gen2-v14-hurtig_proeve-laas_bagramme.stl` | 29 × 42 × 29 | – |  |
+| `halo-gen2-v14-hurtig_proeve-skaermhuller.stl` | 144 × 16 × 20 | – | v14: bagrammens nederste tværbjælke med begge skærmhuller (3,5 mm på tværs). Læg den på skærmens bagside og skru begge M2,5-skruer i de to nederste beslag. Går begge i uden at skulle tvinges? |
 | `halo-gen2-v14-hurtig_proeve-skaerm-lysring.stl` | 222 × 306 × 7 | – | De nederste 7 mm af fronten: den 1,6 mm tynde kant foran skærmen, rillen med skumbåndet, skærmglasset mellem de 8 ribber, lysringen i slidsen (skyggefuge 0,15 mm) og kamerahullet. Klæb båndet i rillen, læg skærmen i og tryk den ned: ligger glasset helt ind mod kanten hele vejen rundt? Lysringen printes hel. |
 
 ## Indstillinger (Bambu Studio)

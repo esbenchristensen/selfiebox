@@ -73,6 +73,9 @@ COUPONS = [
      "v14: en sidelås (venstre side, nederste par): vinduet i indervæggen og i ydervæggen og bagrammens 2 arme. "
      "Klikker begge arme, kan de vippes fri med en lille skruetrækker, og ligger fjedertåen ned på et stykke glas "
      "eller plastik (1,1 mm) i frontens skærmlomme?"),
+    ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
+     "v14: bagrammens nederste tværbjælke med begge skærmhuller (3,5 mm på tværs). Læg den på skærmens bagside og "
+     "skru begge M2,5-skruer i de to nederste beslag. Går begge i uden at skulle tvinges?"),
     ("skaerm-lysring", ["front"], None, 0, 7.0,
      "De nederste 7 mm af fronten: den 1,6 mm tynde kant foran skærmen, rillen med skumbåndet, skærmglasset mellem "
      "de 8 ribber, lysringen i slidsen (skyggefuge 0,15 mm) og kamerahullet. Klæb båndet i rillen, læg skærmen i og "

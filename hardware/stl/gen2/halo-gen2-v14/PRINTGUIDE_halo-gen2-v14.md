@@ -18,7 +18,7 @@ Rettelser efter Esbens hurtigprint af v13 (21. okt. 2026). Skitse: `gen2-gennemg
 - **LED-ledningernes huller** i bagrammen er flyttet fra 15,5 til 19,5 mm fra midten. I v13 løb det højre hul sammen med kamerakablets slids.
 - LED-båndene går ikke bag kameraet: hvert bånd er ét stykke rundt om alle 4 hjørner, men starter og slutter ved klikstikkene 17 mm fra linsen. Kamerakablet går ud til højre og bagud gennem sin egen slids imellem.
 - Snittegning: `halo-gen2-v14_snit_rettelser.png` (samme som skitsen, taget direkte fra CAD).
-- Skærmens 4 skruehuller i bagrammen er de samme som i v13 (afventer Esbens tjek af, hvilken vej skærmpladens 2 små hak vendte).
+- **Skærmens 4 skruehuller i bagrammen er bredere på tværs:** 3,5 mm i stedet for 2,9 (og hullet til skruehovedet 6,2 i stedet for 5,6). Placeringen er tjekket mod Raspberry Pi-tegningen og Esbens foto og er rigtig (121,8 mm mellem hullerne på tværs, 160 mm på langs, skærmpladens 2 små hak nedad, væk fra kameraet). I v13 var der kun 0,2 mm luft pr. side på tværs, mindre end printet krymper over 12 cm, så skruerne ramte ved siden af. Hullerne er stadig aflange på langs (±2,4 mm). Hurtigsættet har en prøve, `proeve-skaermhuller`, med begge nederste huller.
 
 ## Hvad var nyt i v13
 
@@ -266,6 +266,7 @@ Købedele, der skal skrues: 4 frontskruer, 8 M2,5-skruer (følger med skærmen) 
 
 - Kamera: sidder linsen midt i hullet, og er der ingen sort kant i billedets hjørner? Går kamerakablet gennem slidsen uden skarpe knæk?
 - Lysring: er skyggefugen jævn, og rasler ringen ikke, når boksen er samlet?
+- Skærmhuller (nyt i v14): går alle 4 M2,5-skruer i skærmens beslag uden at bagrammen skal skubbes eller vrides?
 - Skærm: sidder den helt fast uden slør? Ellers kan bagrammens knaster gøres 0,2 mm længere i CAD.
 - Skærm og kant (nyt i v12): ligger glasset helt ind mod frontens kant hele vejen rundt, også i hjørnerne, når skumbåndet er i? Er der en sprække ved vinduet, er båndet for hårdt eller for tykt. Er kanten foran glasset plan, uden at rillen kan ses forfra (der er 1 mm plast foran rillen)?
 - Spild (nyt i v12): hæld en spiseske vand på glasset, mens boksen hænger, og se efter, om noget kommer ind bag fronten.
