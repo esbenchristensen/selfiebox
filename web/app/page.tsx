@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { connection } from "next/server";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
@@ -42,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Lej en fotoboks til festen. Alt er med i prisen | Selfi",
       description: `Fotoboksen, der får alle med på billedet. Fra ${from} med ubegrænsede billeder, fragt og forsikring. Se ledige datoer og book online.`,
       url: "/",
-      images: [{ url: "/photos/sted-bryllup.jpg", width: 1600, height: 1195, alt: "Brudepar og venner foran Selfi Boks til et bryllup i en lade" }],
+      images: [{ url: "/photos/fest-bryllup.jpg", width: 1200, height: 896, alt: "Fire bryllupsgæster griner foran Selfi Boks i en lade" }],
     },
   };
 }
@@ -206,10 +207,10 @@ export default async function Home() {
 
         <PhotoStrip
           prints={[
-            ["print-wedding", "Sofie & Mads · 14.6.2026"],
-            ["print-birthday", "Karsten 60 · 9.5.2026"],
-            ["print-office", "Julefrokost · 12.12.2025"],
-            ["print-club", "Studenterfest · 26.6.2026"],
+            ["boks-bryllup", "Sofie & Mads · 14.6.2026"],
+            ["boks-fodselsdag", "Karsten 60 · 9.5.2026"],
+            ["boks-julefrokost", "Julefrokost · 12.12.2025"],
+            ["boks-studenter", "Studenterfest · 26.6.2026"],
           ]}
         />
 
@@ -232,6 +233,10 @@ export default async function Home() {
                 </li>
               ))}
             </ol>
+            <figure className="lej-wide">
+              <Image src="/photos/fest-opsaetning.jpg" alt="En kvinde sætter Selfi Boks på gulvstativet i en stue, med kassen åben på gulvet" width={1200} height={896} sizes="(max-width: 900px) 90vw, 1160px" />
+              <figcaption className="muted">Ud af kassen, på stativet og i stikkontakten. Fem minutter, så står den.</figcaption>
+            </figure>
           </div>
         </section>
 
@@ -244,22 +249,21 @@ export default async function Home() {
           items={[
             {
               kind: "photo",
-              src: "/photos/sted-gymnasie.jpg",
-              alt: "Unge til en fest griner foran Selfi Boks",
-              pos: "40% 50%",
+              src: "/photos/fest-studenter.jpg",
+              alt: "Fem studenter med huer griner foran Selfi Boks til en studenterfest",
               title: "Den samler gæsterne",
               text: "Lyset kan ses fra den anden ende af salen. Folk stiller sig i kø, griner af hinanden og ender på billede med en, de ikke kendte før festen.",
             },
             {
               kind: "photo",
-              src: "/photos/print-birthday.jpg",
-              alt: "Tre gæster til en 60-års fødselsdag smiler på et foto fra Selfi Boks",
+              src: "/photos/fest-fodselsdag.jpg",
+              alt: "En fødselar på 60 med børnebørn foran Selfi Boks i et forsamlingshus",
               title: "Alle generationer er med",
               text: "Et tryk på skærmen og en nedtælling fra 3. Det kan alle finde ud af, fra børnebørnene til fødselaren.",
             },
             {
               kind: "phone",
-              src: "/photos/print-wedding.jpg",
+              src: "/photos/boks-bryllup.jpg",
               caption: "Sofie & Mads · 14.6.2026",
               user: "sofie.l",
               post: "Sikke en dag",

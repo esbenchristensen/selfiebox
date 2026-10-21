@@ -315,7 +315,7 @@
 .pers-names { font: 500 clamp(12px, 1.3vw, 15px)/1.2 var(--font-body), sans-serif; color: #f2c48d; }
 .pers-btn { margin: 10px auto 0; padding: 7px 14px; border-radius: var(--radius-pill); background: #e07a4f; color: #fff4e6; font: 500 11px/1 var(--font-body), sans-serif; }
 .pers-print { position: absolute; right: 8%; bottom: 8%; width: 34%; background: #fbfaf6; padding: 5% 5% 12%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); transform: rotate(5deg); }
-.pers-print-photo { display: block; aspect-ratio: 1; background: #222 url(/photos/print-wedding.jpg) center / cover; }
+.pers-print-photo { display: block; aspect-ratio: 1; background: #222 url(/photos/boks-bryllup.jpg) center / cover; }
 .pers-print-cap { position: absolute; left: 6%; right: 6%; bottom: 4%; font: 400 8px/1 var(--font-mono), monospace; letter-spacing: 0.06em; text-transform: uppercase; color: #3a3a3a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pers-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-5); }
 .pers-list li { display: flex; gap: var(--space-3); align-items: flex-start; padding-top: var(--space-3); border-top: 1px solid var(--line); }
@@ -415,3 +415,41 @@
   .bk-row--printer { grid-template-columns: minmax(0, 1fr) auto auto; }
   .bk-row-art { display: none; }
 }
+
+/* Booking: one decision per step in a narrow column, the summary beside it */
+.bk-main { max-width: 620px; }
+.bk-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.bk-pick-card { position: relative; cursor: pointer; }
+.bk-pick-card input { position: absolute; opacity: 0; pointer-events: none; }
+.bk-pick-body { display: flex; flex-direction: column; gap: var(--space-3); height: 100%; padding: var(--space-5); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line-strong); transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
+.bk-pick-card input:checked + .bk-pick-body { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.bk-pick-card input:focus-visible + .bk-pick-body { outline: 2px solid var(--ink); outline-offset: 3px; }
+.bk-pick-card.is-off { cursor: default; }
+.bk-pick-card.is-off .bk-pick-body { opacity: 0.55; }
+.bk-pick-art { height: 92px; display: flex; align-items: flex-end; }
+.bk-pick-art .outline { height: 92px; width: auto; }
+.bk-pick-text { display: flex; flex-direction: column; gap: 2px; }
+.bk-pick-text b { font: 600 19px/1.2 var(--font-display), sans-serif; }
+.bk-pick-text .muted { font-size: 14px; }
+.bk-pick-body > strong { margin-top: auto; font: 500 20px/1.2 var(--font-display), sans-serif; font-variant-numeric: tabular-nums; }
+.bk-pick--small .bk-pick-body { flex-direction: row; align-items: center; padding: var(--space-4); }
+.bk-pick--small .bk-pick-art, .bk-pick--small .bk-pick-art .outline { height: 64px; }
+.bk-sum-incl { list-style: none; margin: 0; padding: var(--space-3) 0 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-muted); }
+.bk-sum-incl li { display: flex; gap: 8px; align-items: center; }
+.bk-sum-incl li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex: none; }
+@media (max-width: 640px) {
+  .bk-pick { grid-template-columns: minmax(0, 1fr); }
+  .bk-pick-body { flex-direction: row; align-items: center; }
+  .bk-pick-art, .bk-pick-art .outline { height: 72px; }
+  .bk-pick-body > strong { margin-top: 0; margin-left: auto; white-space: nowrap; }
+}
+
+/* Occasion cards with a photo from that kind of party */
+.occ-photo { position: relative; aspect-ratio: 4 / 3; margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) var(--space-2); border-radius: var(--radius-l) var(--radius-l) 0 0; overflow: hidden; background: var(--surface-sunk); }
+.occ a { overflow: hidden; }
+
+/* A wide photo under the steps */
+.lej-wide { margin: var(--space-7) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.lej-wide img { width: 100%; height: auto; aspect-ratio: 16 / 8; object-fit: cover; object-position: 50% 60%; border-radius: var(--radius-box); }
+.lej-wide figcaption { font-size: 15px; }
+@media (max-width: 900px) { .lej-wide img { aspect-ratio: 4 / 3; border-radius: var(--radius-l); } }

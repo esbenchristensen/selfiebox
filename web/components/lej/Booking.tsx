@@ -14,7 +14,7 @@ import {
   type RentalSettings,
 } from "@/lib/udlejning/core";
 import { Calendar } from "./Calendar";
-import { OutlinePrinter } from "../Outline";
+import { OutlinePrinter, OutlineStand } from "../Outline";
 import { DrawPolaroid, DrawStrip } from "./Drawings";
 import { SAVED, STEPS, useRental, type State, type Status } from "./RentalContext";
 
@@ -183,63 +183,55 @@ export function Booking() {
 
           {step === 1 && (
             <fieldset className="bk-fs">
-              <legend className="h-m">Hvad skal I have med?</legend>
-              <ul className="bk-incl">
-                <li><span>Selfi Boks med studielys og stativ</span><span>Med</span></li>
-                <li><span>Ubegrænset antal billeder på skærm og telefon</span><span>Med</span></li>
-                <li><span>Jeres egen eventside med alle festens billeder</span><span>Med</span></li>
-                <li><span>Jeres navne og datoen på hvert billede, sat op til jeres fest</span><span>Med</span></li>
-                <li><span>Fragt begge veje og forsikring, uden depositum</span><span>Med</span></li>
-              </ul>
-
-              <div className="bk-list">
-                <div className="bk-row bk-row--printer">
-                  <span className="bk-row-art" aria-hidden="true">
-                    <OutlinePrinter poster />
+              <legend className="h-m">Med eller uden printer?</legend>
+              <p className="muted">Alt andet er med i prisen. Printeren er det eneste valg, og I kan ændre det helt frem til betalingen.</p>
+              <div className="bk-pick" role="radiogroup" aria-label="Pakke">
+                <label className="bk-pick-card">
+                  <input type="radio" name="pakke" checked={!s.printer} onChange={() => set({ printer: false })} />
+                  <span className="bk-pick-body">
+                    <span className="bk-pick-art" aria-hidden="true"><OutlineStand /></span>
+                    <span className="bk-pick-text">
+                      <b>Boksen</b>
+                      <span className="muted">Ubegrænsede billeder på telefonen og jeres eventside.</span>
+                    </span>
+                    <strong>{s.range ? kr(priceForDays(settings, nights(s.range))) : ""}</strong>
                   </span>
-                  <div>
-                    <b>Printer</b>
-                    <span className="muted">Gæsterne får billedet printet med hjem. {settings.printsIncluded} print er med, og printeren kommer i sin egen kasse.</span>
-                  </div>
-                  <span className="bk-price">{kr(settings.prices.printer)}</span>
-                  <button type="button" className="switch" role="switch" aria-checked={s.printer} aria-label="Printer" disabled={printerBlocked}
-                    onClick={() => set({ printer: !s.printer })} />
-                  {printerBlocked && <span className="bk-why">Printeren er udlejet de dage. Vælg andre datoer, hvis I vil have printer med.</span>}
-                </div>
-                {s.printer && (
-                  <div className="bk-row bk-row--sub">
-                    <div className="field">
-                      <span className="field-label" id="bk-type">Hvordan skal printet se ud?</span>
-                      <div className="bk-cards bk-cards--2" role="radiogroup" aria-labelledby="bk-type">
-                        {(Object.keys(PHOTO_TYPES) as PhotoType[]).map((p) => (
-                          <label className="bk-card" key={p}>
-                            <input type="radio" name="photoType" checked={s.photoType === p} onChange={() => set({ photoType: p })} />
-                            <span className="bk-card-body">
-                              <span className="bk-art" aria-hidden="true">{p === "strip" ? <DrawStrip /> : <DrawPolaroid />}</span>
-                              <b>{PHOTO_TYPES[p].name}</b>
-                              <span className="muted">{PHOTO_TYPES[p].text}</span>
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </label>
+                <label className={`bk-pick-card${printerBlocked ? " is-off" : ""}`}>
+                  <input type="radio" name="pakke" checked={s.printer} disabled={printerBlocked} onChange={() => set({ printer: true })} />
+                  <span className="bk-pick-body">
+                    <span className="bk-pick-art" aria-hidden="true"><OutlinePrinter poster /></span>
+                    <span className="bk-pick-text">
+                      <b>Boksen og printer</b>
+                      <span className="muted">
+                        {printerBlocked
+                          ? "Printeren er udlejet de dage. Vælg andre datoer, hvis I vil have den med."
+                          : `Som boksen, og ${settings.printsIncluded} print, så gæsterne har billedet med hjem.`}
+                      </span>
+                    </span>
+                    <strong>+ {kr(settings.prices.printer)}</strong>
+                  </span>
+                </label>
               </div>
-              <p className="fine">Printeren er det eneste tilvalg. Uden den får gæsterne stadig alle billeder på telefonen og jeres eventside.</p>
-
-              <div className="field">
-                <span className="field-label">Levering</span>
-                <div className="bk-list">
-                  <div className="bk-row">
-                    <div>
-                      <b>{DELIVERIES.post.name}</b>
-                      <span className="muted">{DELIVERIES.post.text}</span>
-                    </div>
-                    <span className="bk-price">Med i prisen</span>
+              {s.printer && (
+                <div className="field">
+                  <span className="field-label" id="bk-type">Hvordan skal printet se ud?</span>
+                  <div className="bk-pick bk-pick--small" role="radiogroup" aria-labelledby="bk-type">
+                    {(Object.keys(PHOTO_TYPES) as PhotoType[]).map((p) => (
+                      <label className="bk-pick-card" key={p}>
+                        <input type="radio" name="photoType" checked={s.photoType === p} onChange={() => set({ photoType: p })} />
+                        <span className="bk-pick-body">
+                          <span className="bk-pick-art" aria-hidden="true">{p === "strip" ? <DrawStrip /> : <DrawPolaroid />}</span>
+                          <span className="bk-pick-text">
+                            <b>{PHOTO_TYPES[p].name}</b>
+                            <span className="muted">{PHOTO_TYPES[p].text}</span>
+                          </span>
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
             </fieldset>
           )}
 
@@ -362,7 +354,13 @@ export function Booking() {
               <span>I alt inkl. moms</span>
               <b>{s.range ? kr(sum) : "Vælg datoer"}</b>
             </div>
-            <p className="fine">Fragt begge veje og forsikring er med i prisen.</p>
+            <ul className="bk-sum-incl" aria-label="Med i prisen">
+              <li>Ubegrænsede billeder</li>
+              <li>Jeres egen eventside</li>
+              <li>Jeres navne og datoen på billedet</li>
+              <li>Fragt begge veje til pakkeshop</li>
+              <li>Forsikring, uden depositum</li>
+            </ul>
           </div>
         </aside>
       </div>
