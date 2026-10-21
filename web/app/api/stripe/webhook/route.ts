@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, getHolds, getSettings, type RentalDoc, type RentalStatus } from "@/lib/udlejning/db";
 import { fits, usage } from "@/lib/udlejning/core";
+import { autoMail } from "@/lib/udlejning/mails";
 import { verifyWebhook, type CheckoutSession } from "@/lib/udlejning/stripe";
 
 // selfi.dk/api/stripe/webhook: Stripe tells us here when a booking is paid, when Checkout expired unpaid
@@ -57,6 +58,8 @@ export async function POST(req: Request) {
         { $set: { ...stripeInfo, status: "paid", expiresAt: null, conflict, updatedAt: new Date() }, $push: { history: log("paid", conflict ? "Betalt, men datoerne var taget imens" : "Betalt") } },
       );
       await notify({ ...booking, status: "paid", conflict });
+      // When the dates were taken meanwhile, admin writes to the customer instead (the "konflikt" mail).
+      if (!conflict) await autoMail(d, "bekraeftelse", { ...booking, status: "paid" }, { by: "stripe" });
       break;
     }
     case "checkout.session.async_payment_failed":
@@ -64,10 +67,15 @@ export async function POST(req: Request) {
       const s = event.data.object as unknown as CheckoutSession;
       const id = s.metadata?.booking ?? s.client_reference_id;
       if (!id) break;
-      await rentals.updateOne(
+      const res = await rentals.updateOne(
         { _id: id, status: "pending" },
         { $set: { status: "expired", expiresAt: null, "stripe.paymentStatus": s.payment_status, updatedAt: new Date() }, $push: { history: log("expired", event.type === "checkout.session.expired" ? "Ikke betalt i tide" : "Betalingen fejlede") } },
       );
+      // Not when the customer pressed "back" on the Stripe page: the booking is already expired then.
+      if (res.modifiedCount) {
+        const b = await rentals.findOne({ _id: id });
+        if (b) await autoMail(d, "ikke_gennemfoert", b, { by: "stripe" });
+      }
       break;
     }
     case "charge.refunded": {
@@ -81,6 +89,12 @@ export async function POST(req: Request) {
         );
       } else {
         await rentals.updateOne({ "stripe.paymentIntent": c.payment_intent }, { $set: { "stripe.refunded": c.amount_refunded / 100, updatedAt: new Date() } });
+      }
+      const b = await rentals.findOne({ "stripe.paymentIntent": c.payment_intent });
+      // An admin who cancels with a refund already told the customer in the cancellation mail.
+      const told = b && (await d.collection("rental_mails").findOne({ rental: b._id, kind: "annulleret", at: { $gt: new Date(Date.now() - 6 * 36e5) } }));
+      if (b && !told) {
+        await autoMail(d, "refunderet", b, { by: "stripe", key: `${b._id}:refunderet:${c.amount_refunded}`, extra: { refund: c.amount_refunded / 100 } });
       }
       break;
     }
