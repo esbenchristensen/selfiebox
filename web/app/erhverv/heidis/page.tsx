@@ -181,7 +181,7 @@ export default function HeidisKatalog() {
             <div><b>1</b><h3>Tryk</h3><p>Lysringen kalder. Et tryk på skærmen starter.</p></div>
             <div><b>2</b><h3>Vælg</h3><p>Foto, GIF, video eller ugens skål.</p></div>
             <div><b>3</b><h3>Sig »Prost!«</h3><p>Ringen tæller ned og giver studielys, også midt på dansegulvet.</p></div>
-            <div><b>4</b><h3>Del</h3><p>En QR-kode sender billedet til telefonen med jeres ramme.</p></div>
+            <div><b>4</b><h3>Del</h3><p>Billedet kommer på SMS med jeres ramme.</p></div>
           </div>
           <Folio n={3} />
         </Page>

@@ -126,7 +126,7 @@ export default function Home() {
               user: "maja.k",
               post: "Bedste fredag i lang tid",
               title: "Delt samme aften",
-              text: "Gæsterne scanner en QR-kode eller får billedet på SMS. Når de deler, ser deres venner, hvor de var.",
+              text: "Gæsterne får billedet på SMS med det samme. Når de deler, ser deres venner, hvor de var.",
             },
           ]}
         />
@@ -135,7 +135,7 @@ export default function Home() {
             { n: "01", title: "Lysringen trækker folk til", text: "Når ingen bruger boksen, pulserer ringen langsomt i jeres farver. Den kan ses fra den anden ende af lokalet." },
             { n: "02", title: "Tryk og stil jer op", text: "Et tryk på skærmen, og ringen tæller ned fra 3. Intet personale skal forklare noget." },
             { n: "03", title: "Godt lys på alle", text: "Ringen skifter til hvidt studielys, og 12 MP-kameraet med autofokus tager billedet, så alle ansigter står skarpt, også i en mørk bar eller et telt om aftenen." },
-            { n: "04", title: "Billedet med hjem, og nummeret til jer", text: "Billedet kommer via QR-kode eller SMS med jeres ramme. Siger gæsten ja, lander nummeret på jeres gæsteliste." },
+            { n: "04", title: "Billedet med hjem, og nummeret til jer", text: "Billedet kommer på SMS med jeres ramme. Siger gæsten ja, lander nummeret på jeres gæsteliste." },
           ]}
         />
         <Activities

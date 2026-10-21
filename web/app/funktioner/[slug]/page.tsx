@@ -9,6 +9,7 @@ import { Hero } from "@/components/Hero";
 import { JsonLd } from "@/components/JsonLd";
 import { Nav } from "@/components/Nav";
 import { Faq } from "@/components/Sections";
+import { Soon } from "@/components/Soon";
 import { featureBySlug, featureGroups, features } from "@/content";
 
 // selfi.dk/funktioner/<slug>: one page per function, all from `features` in content.ts.
@@ -65,7 +66,7 @@ export default async function FeaturePage({ params }: Props) {
       />
       <main>
         <Hero
-          label={`Funktioner · ${group.name}`}
+          label={`Funktioner · ${group.name}${f.soon ? " · Kommer snart" : ""}`}
           title={f.title}
           lede={f.lede}
           primary={{ label: "Book en uforpligtende snak", href: "#kontakt" }}
@@ -83,9 +84,9 @@ export default async function FeaturePage({ params }: Props) {
               </h2>
             </div>
             <div className="gains">
-              {f.points.map(([title, text]) => (
+              {f.points.map(([title, text, soon]) => (
                 <div className="gain" key={title}>
-                  <h3>{title}</h3>
+                  <h3>{title}{soon && <Soon />}</h3>
                   <p>{text}</p>
                 </div>
               ))}
@@ -107,9 +108,9 @@ export default async function FeaturePage({ params }: Props) {
               </h2>
             </div>
             <div className="gains">
-              {f.uses.map(([place, text]) => (
+              {f.uses.map(([place, text, soon]) => (
                 <div className="gain" key={place}>
-                  <h3>{place}</h3>
+                  <h3>{place}{soon && <Soon />}</h3>
                   <p>{text}</p>
                 </div>
               ))}

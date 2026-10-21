@@ -178,7 +178,7 @@ export default function SmukfestKatalog() {
             <div><b>1</b><h3>Tryk</h3><p>Lysringen kalder. Et tryk på skærmen starter.</p></div>
             <div><b>2</b><h3>Vælg</h3><p>Foto, videohilsen eller dagens spørgsmål.</p></div>
             <div><b>3</b><h3>3-2-1</h3><p>Ringen tæller ned og giver studielys på ansigterne.</p></div>
-            <div><b>4</b><h3>Del</h3><p>En QR-kode sender det til telefonen med Smukfests ramme.</p></div>
+            <div><b>4</b><h3>Del</h3><p>Billedet kommer på SMS med Smukfests ramme.</p></div>
           </div>
           <Folio n={3} />
         </Page>

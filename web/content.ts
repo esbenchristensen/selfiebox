@@ -64,10 +64,14 @@ export type Feature = {
   lede: string;
   seo: { title: string; description: string };
   photo: { src: string; alt: string; pos?: string };
-  points: [string, string][]; // what it does, three or four
-  uses: [string, string][]; // how different places use it
+  points: Line[]; // what it does, three or four
+  uses: Line[]; // how different places use it
   faq: Faq[];
+  soon?: true; // the whole function is not built yet: "Kommer snart" on cards, menu and page
 };
+
+// [title, text] or [title, text, true] when that part is not built yet ("Kommer snart").
+export type Line = [string, string] | [string, string, true];
 
 export const features: Feature[] = [
   {
@@ -147,6 +151,7 @@ export const features: Feature[] = [
       ["Omtale, I ikke betaler for", "Gæsterne deler billederne samme aften, og hvert billede bærer jeres navn."],
       ["Plads til sponsorer", "Rammen designes frit, så en sponsor kan komme med på hvert billede, fx ved en scene eller en kamp."],
       ["Skift når I vil", "Ramme og tekst skifter I i kontrolpanelet, fx til en bestemt aften eller en kampagne."],
+      ["Sponsor efter plan", "Rammen skifter selv sponsor efter en plan, fx én pr. dag eller i en aftalt time.", true],
     ],
     uses: [
       ["Festivalen", "Festivalens navn og hovedsponsoren i rammen. Sponsoren får synlighed på tusindvis af delte billeder."],
@@ -154,26 +159,26 @@ export const features: Feature[] = [
       ["Hotellet", "Hotellets navn i rammen, så minderne fra opholdet viser vej tilbage."],
     ],
     faq: [
-      { q: "Kan vi have flere sponsorer?", a: "Ja. Rammen kan skifte mellem sponsorer, fx én pr. dag, pr. område eller pr. boks." },
+      { q: "Kan vi have flere sponsorer?", a: "Ja. Hver boks kan have sin egen ramme, fx én sponsor pr. område. En ramme, der skifter sponsor efter en plan, fx én pr. dag, kommer snart." },
       { q: "Hvem laver rammen?", a: "Vi laver den sammen med jer ud fra jeres logo og farver, og I kan selv rette tekster i kontrolpanelet bagefter." },
     ],
   },
   {
     slug: "deling",
     group: "content",
-    name: "Deling via QR og SMS",
+    name: "Deling via SMS",
     short: "Billedet på telefonen med det samme.",
     icon: "M17 24 L31 15 M17 24 L31 33 M11 24 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M29 13 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M29 35 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0",
     title: "Billedet på telefonen, før gæsterne går videre.",
-    lede: "Efter hvert billede viser skærmen en QR-kode, og gæsten kan også få billedet på SMS. Så ligger det klar til at blive delt, mens stemningen stadig er der.",
+    lede: "Gæsten skriver sit nummer på skærmen og får linket til billedet på SMS med det samme. Så ligger det klar til at blive delt, mens stemningen stadig er der.",
     seo: {
-      title: "Fotoboks med deling via QR-kode og SMS | Selfi",
-      description: "Gæsterne får billedet fra Selfi Boks på telefonen via QR-kode eller SMS og deler det samme aften, med jeres navn i rammen.",
+      title: "Fotoboks med deling via SMS | Selfi",
+      description: "Gæsterne får billedet fra Selfi Boks på telefonen via SMS og deler det samme aften, med jeres navn i rammen.",
     },
     photo: { src: "/photos/klub.jpg", alt: "Selfi Boks på en betonsøjle i en natklub med venner på skærmen", pos: "50% 40%" },
     points: [
-      ["QR-kode", "Gæsten scanner koden på skærmen og har billedet på få sekunder. Ingen app."],
-      ["SMS", "Vil gæsten hellere have et link på SMS, skriver de deres nummer. Siger de ja, lander nummeret på jeres gæsteliste."],
+      ["SMS", "Gæsten skriver sit nummer og har linket på få sekunder. Siger de ja til at høre fra jer, lander nummeret på jeres gæsteliste."],
+      ["Ingen app", "Linket åbner billedet direkte i browseren på telefonen, klar til at gemme og dele."],
       ["Klar til deling", "Billedet er i et format, der passer til stories og feeds, med jeres ramme på."],
     ],
     uses: [
@@ -182,7 +187,7 @@ export const features: Feature[] = [
       ["Firmaeventet", "Deltagerne får billedet med det samme og deler det på LinkedIn med firmaets navn på."],
     ],
     faq: [
-      { q: "Skal gæsterne hente en app?", a: "Nej. QR-koden åbner billedet direkte i browseren på telefonen." },
+      { q: "Skal gæsterne hente en app?", a: "Nej. Linket på SMS åbner billedet direkte i browseren på telefonen." },
     ],
   },
   {
@@ -256,7 +261,8 @@ export const features: Feature[] = [
     photo: { src: "/photos/sted-bodega.jpg", alt: "Selfi Boks fotoboks på væggen i en bodega", pos: "50% 45%" },
     points: [
       ["Samtykke fra start", "Gæsten siger selv ja til at høre fra jer. Nej betyder bare billedet og intet andet."],
-      ["Klar til brug", "Listen ligger i kontrolpanelet og kan hentes ud til jeres SMS- eller nyhedsbrevsværktøj."],
+      ["Klar til brug", "Listen ligger i kontrolpanelet, og I sender SMS til den derfra."],
+      ["Eksport", "Hent listen ud til jeres eget SMS- eller nyhedsbrevsværktøj.", true],
       ["Sikker opbevaring", "Numre og billeder opbevares sikkert og bruges kun til det, gæsten har sagt ja til."],
     ],
     uses: [
@@ -266,7 +272,7 @@ export const features: Feature[] = [
     ],
     faq: [
       { q: "Er det lovligt at sende SMS til gæsterne?", a: "Ja, når gæsten selv har sagt ja til at modtage markedsføring fra jer. Boksen spørger om det, og kun dem, der har sagt ja, kommer på listen." },
-      { q: "Ejer vi listen?", a: "Ja. Det er jeres gæster og jeres liste, og I kan hente den ud, når I vil." },
+      { q: "Ejer vi listen?", a: "Ja. Det er jeres gæster og jeres liste. Eksport til jeres egne værktøjer kommer snart." },
     ],
   },
   {
@@ -298,18 +304,18 @@ export const features: Feature[] = [
     slug: "missioner",
     group: "aktiviteter",
     name: "Missioner",
-    short: "Små opgaver, som kameraet tjekker.",
+    short: "Små opgaver, der får gæsterne til at mødes.",
     icon: "M19 7 H29 A9 9 0 0 1 38 16 V32 A9 9 0 0 1 29 41 H19 A9 9 0 0 1 10 32 V16 A9 9 0 0 1 19 7 Z M18 24 l4 4 8-9",
     title: "Små missioner, der får gæsterne til at mødes.",
-    lede: "Skærmen giver gæsterne små opgaver, fx at tage et billede med en, de ikke kender, eller at få fem personer med på billedet. Kameraet tjekker, om de klarede den.",
+    lede: "Skærmen giver gæsterne små opgaver, fx at tage et billede med en, de ikke kender, eller at få fem personer med på billedet.",
     seo: {
       title: "Missioner i fotoboksen, der får gæsterne til at mødes | Selfi",
-      description: "Selfi Boks giver gæsterne små missioner, som kameraet tjekker. En nem måde at få liv i lokalet og gæsterne til at blive.",
+      description: "Selfi Boks giver gæsterne små missioner. En nem måde at få liv i lokalet og gæsterne til at blive.",
     },
     photo: { src: "/photos/sted-vaertshus.jpg", alt: "Venner på et værtshus griner foran Selfi Boks", pos: "60% 45%" },
     points: [
       ["Jeres missioner", "Vælg fra vores liste eller skriv jeres egne, der passer til stedet."],
-      ["Kameraet tjekker", "Boksen ser, om missionen er klaret, og viser det på billedet."],
+      ["Kameraet tjekker", "Boksen ser, om missionen er klaret, og viser det på billedet.", true],
       ["En grund til at blive", "Der er altid en mission mere at klare."],
     ],
     uses: [
@@ -338,11 +344,11 @@ export const features: Feature[] = [
       ["Flere delinger", "Gæsterne deler deres billede for at få stemmer, og jeres navn følger med."],
     ],
     uses: [
-      ["Baren", "Månedens bedste billede vinder en bordreservation med en flaske."],
-      ["Klubben", "Sæsonens bedste fanbillede vinder en signeret trøje."],
+      ["Baren", "Aftenens bedste billede vinder en flaske til bordet."],
+      ["Klubben", "Sæsonens bedste fanbillede vinder en signeret trøje.", true],
       ["Festivalen", "Dagens bedste billede vinder billetter til næste år."],
     ],
-    faq: [{ q: "Hvor længe kører en konkurrence?", a: "Så længe I vil, en aften, en weekend eller en hel sæson." }],
+    faq: [{ q: "Hvor længe kører en konkurrence?", a: "En aften ad gangen, og I bestemmer, hvornår vinderen kåres. Konkurrencer over en weekend eller en hel sæson kommer snart." }],
   },
   {
     slug: "guldtid",
@@ -401,27 +407,28 @@ export const features: Feature[] = [
     short: "Et stempel ved hver boks på ruten.",
     icon: "M15 11 H33 A8 8 0 0 1 41 19 V29 A8 8 0 0 1 33 37 H15 A8 8 0 0 1 7 29 V19 A8 8 0 0 1 15 11 Z M12.5 24 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0 M20.5 24 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0 M28.5 24 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0",
     title: "En rundtur med et stempel ved hver boks.",
-    lede: "Gæsterne samler et stempel ved hver boks på ruten. Fuldt kort giver en præmie. Det virker på en barrunde i byen, på en festival og på tværs af flere steder i samme kæde.",
+    lede: "Gæsterne samler et stempel ved hver boks på ruten. Fuldt kort giver en præmie. Det virker på en festival, i en park og overalt, hvor der står flere bokse.",
     seo: {
-      title: "Rundtur med fotobokse: barrunde, festival og kæder | Selfi",
-      description: "Gæsterne samler et stempel ved hver Selfi Boks på ruten og vinder en præmie. Til barrunder, festivaler og kæder med flere steder.",
+      title: "Rundtur med fotobokse: festival, park og flere bokse | Selfi",
+      description: "Gæsterne samler et stempel ved hver Selfi Boks på ruten og vinder en præmie. Til festivaler, parker og steder med flere bokse.",
     },
     photo: { src: "/photos/sted-hotel.jpg", alt: "Selfi Boks på væggen i en hotelbar", pos: "30% 50%" },
     points: [
       ["Et stempel pr. boks", "Hvert billede ved en boks på ruten giver et stempel."],
-      ["Flere steder sammen", "Barer i samme gade eller en kæde kan dele ruten og sende gæsterne videre til hinanden."],
+      ["Flere steder sammen", "Barer i samme gade eller en kæde kan dele ruten og sende gæsterne videre til hinanden.", true],
       ["Præmie ved fuldt kort", "I bestemmer præmien og hvor den hentes."],
     ],
     uses: [
-      ["Barrunden", "Fem barer i samme gade deler en rute, og fuldt kort giver en drink på den sidste."],
+      ["Barrunden", "Fem barer i samme gade deler en rute, og fuldt kort giver en drink på den sidste.", true],
       ["Festivalen", "Et stempel ved hver scene sender publikum rundt på hele pladsen."],
-      ["Hotelkæden", "Et stempel på hvert hotel i kæden giver en overnatning."],
+      ["Hotelkæden", "Et stempel på hvert hotel i kæden giver en overnatning.", true],
     ],
     faq: [{ q: "Skal alle bokse på ruten være ens?", a: "Nej. Hver boks kan have sit eget design, så længe de er på samme rute." }],
   },
   {
     slug: "printede-fotos",
     group: "drift",
+    soon: true,
     name: "Printede fotos",
     short: "Et ægte foto i hånden, også mod betaling.",
     icon: "M11 7 H37 V41 H11 Z M15 11 H33 V30 H15 Z",
@@ -435,7 +442,7 @@ export const features: Feature[] = [
     points: [
       ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere, med jeres navn i rammen."],
       ["Betaling pr. foto", `I sætter prisen pr. foto. Alt over ${business.costPerPhoto} kr. pr. foto går til jer.`],
-      ["Kun når I vil", "Printet er et tilvalg. Den digitale udgave kommer altid via QR-kode eller SMS."],
+      ["Kun når I vil", "Printet er et tilvalg. Den digitale udgave kommer altid på SMS."],
     ],
     uses: [
       ["Baren", "Gæsterne betaler for et print, og baren tjener på hvert foto."],
@@ -451,20 +458,20 @@ export const features: Feature[] = [
     short: "Tema, tekster og aktiviteter fra nettet.",
     icon: "M10 14 H38 M10 24 H38 M10 34 H38 M28 11 V17 M17 21 V27 M32 31 V37",
     title: "Styr boksen fra et kontrolpanel på nettet.",
-    lede: "Tema, tekster, priser og aktiviteter styrer I fra et kontrolpanel på nettet. Her finder I også gæstelisten, billederne og videoerne. Vil I ikke selv, gør vi det for jer.",
+    lede: "Tema, tekster og aktiviteter styrer I fra et kontrolpanel på nettet. Her finder I også gæstelisten, billederne og videoerne. Vil I ikke selv, gør vi det for jer.",
     seo: {
       title: "Kontrolpanel til jeres fotobokse | Selfi",
-      description: "Styr tema, tekster, priser og aktiviteter i jeres Selfi Bokse fra et kontrolpanel på nettet, og find gæsteliste, billeder og videoer.",
+      description: "Styr tema, tekster og aktiviteter i jeres Selfi Bokse fra et kontrolpanel på nettet, og find gæsteliste, billeder og videoer.",
     },
     photo: { src: "/photos/sted-hotel.jpg", alt: "Selfi Boks på væggen i en hotelbar", pos: "30% 50%" },
     points: [
       ["Alle bokse ét sted", "Har I flere bokse, styrer I dem samlet eller hver for sig."],
       ["Skift på sekunder", "Ny ramme, nyt spørgsmål eller guldtid i aften. Det slår igennem med det samme."],
-      ["Gæsteliste og billeder", "Hent gæstelisten, billederne og videoerne ud, når I skal bruge dem."],
+      ["Gæsteliste og billeder", "Hent billederne og videoerne ud, når I skal bruge dem, og send SMS til gæstelisten."],
     ],
     uses: [
       ["Kæden", "Hovedkontoret sætter kampagnen i alle bokse, og hvert sted retter sine egne tekster."],
-      ["Festivalen", "Dagens program og sponsor skifter i rammen hver morgen."],
+      ["Festivalen", "Dagens program og sponsor skifter i rammen hver morgen.", true],
       ["Baren", "Guldtid slås til en stille tirsdag med et par tryk på telefonen."],
     ],
     faq: [{ q: "Skal vi bruge kontrolpanelet?", a: "Nej. Boksen kører af sig selv, og vi hjælper gerne med ændringer. Kontrolpanelet er der, når I vil gøre det selv." }],
@@ -505,7 +512,7 @@ export type ActivityId = "titler" | "missioner" | "skattejagt" | "rundtur" | "ko
 
 export const activities: { id: ActivityId; name: string; text: string }[] = [
   { id: "titler", name: "Titler", text: "Boksen kårer aftenens største smil og største gruppe og stempler titlen på billedet." },
-  { id: "missioner", name: "Missioner", text: "Små opgaver på skærmen, fx at tage et billede med en, man ikke kender. Kameraet tjekker, om I klarede den." },
+  { id: "missioner", name: "Missioner", text: "Små opgaver på skærmen, fx at tage et billede med en, man ikke kender." },
   { id: "skattejagt", name: "Skattejagt", text: "Gæsterne følger spor fra boks til boks gennem en lille historie. Kræver flere bokse." },
   { id: "rundtur", name: "Rundtur", text: "Gæsterne samler et stempel ved hver boks på ruten, fx på en barrunde eller en festival." },
   { id: "konkurrence", name: "Konkurrence", text: "Gæsterne stemmer på aftenens bedste billede, og vinderen får en præmie." },
