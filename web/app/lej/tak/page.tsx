@@ -29,6 +29,9 @@ async function load(id?: string, t?: string): Promise<{ b: RentalDoc; paid: bool
   }
 }
 
+// The customer's setup portal (theme, texts, timeline, live preview) lives on the platform: foto.selfi.dk/opsaet.
+const SETUP_URL = process.env.SELFI_SETUP_URL ?? "https://foto.selfi.dk/opsaet";
+
 export default async function Tak({ searchParams }: { searchParams: Promise<{ id?: string; t?: string }> }) {
   const { id, t } = await searchParams;
   const r = await load(id, t);
@@ -53,6 +56,14 @@ export default async function Tak({ searchParams }: { searchParams: Promise<{ id
                     ? `Vi har reserveret ${formatRange({ from: r.b.from, to: r.b.to })} til jer. Kvitteringen kommer på ${r.b.contact.email}, og vi skriver, når boksen er sendt.`
                     : "Det kan tage et øjeblik. Genindlæs siden om lidt, eller skriv til os, hvis I er blevet trukket."}
                 </p>
+                {r.paid && t && (
+                  <div className="bk-sum">
+                    <span className="label">Næste skridt</span>
+                    <p>Sæt boksen op til jeres fest nu: overskrift, stemning og tekster til aftenen. I kan se boksen live og tage et testbillede med jeres eget kamera, før den kommer.</p>
+                    <a className="btn btn-primary" href={`${SETUP_URL}/${encodeURIComponent(r.b._id)}?t=${encodeURIComponent(t)}`}>Sæt boksen op</a>
+                    <p className="fine">Gem linket. I kan rette opsætningen helt frem til festen.</p>
+                  </div>
+                )}
                 <div className="bk-sum">
                   <span className="label">Jeres booking</span>
                   <div className="bk-sum-lines">
