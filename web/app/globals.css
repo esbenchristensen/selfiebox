@@ -368,6 +368,8 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 /* ---------- Business: guests first, earnings as an add-on ---------- */
 .gains { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--space-7); margin-bottom: var(--space-8); }
 .gain { padding: var(--space-5) 0; border-top: 1px solid var(--line); }
+/* "Kommer snart": promised, not built yet. Sits after a heading or a function name. */
+.soon { display: inline-block; margin-left: 10px; padding: 3px 9px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); color: var(--ink-muted); font: 500 11px/1.4 var(--font-mono), ui-monospace, Menlo, monospace; letter-spacing: 0.08em; text-transform: uppercase; vertical-align: middle; white-space: nowrap; }
 .gain h3 { font-size: 19px; letter-spacing: -0.01em; margin-bottom: 6px; }
 .gain p { color: var(--ink-muted); font-size: 16px; }
 .addon-earn { border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--surface-raised); }

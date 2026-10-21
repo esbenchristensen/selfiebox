@@ -171,7 +171,7 @@ export default function AaBKatalog() {
             <div><b>1</b><h3>Tryk</h3><p>Lysringen kalder. Et tryk på skærmen starter.</p></div>
             <div><b>2</b><h3>Vælg</h3><p>Foto, videohilsen eller dagens spørgsmål.</p></div>
             <div><b>3</b><h3>3-2-1 AaB</h3><p>Ringen tæller ned og giver studielys, også i aftenkampe.</p></div>
-            <div><b>4</b><h3>Del</h3><p>En QR-kode sender det til telefonen med AaB-rammen.</p></div>
+            <div><b>4</b><h3>Del</h3><p>Billedet kommer på SMS med AaB-rammen.</p></div>
           </div>
           <Folio n={3} />
         </Page>

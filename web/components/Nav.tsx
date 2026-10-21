@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FeatureIcon } from "./FeatureIcon";
 import { Logo } from "./Logo";
 import { featureGroups, features } from "@/content";
+import { Soon } from "./Soon";
 
 type Link = { label: string; href: string };
 
@@ -93,7 +94,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
                       <a href={`/funktioner/${f.slug}`} onClick={() => setOpen(false)}>
                         <FeatureIcon d={f.icon} />
                         <span>
-                          <b>{f.name}</b>
+                          <b>{f.name}{f.soon && <Soon />}</b>
                           <span className="muted">{f.short}</span>
                         </span>
                       </a>
