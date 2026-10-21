@@ -14,7 +14,7 @@ export function Team() {
             Boksen er tegnet, printet og samlet i Danmark.
           </h2>
           <p className="lede">
-            Selfi er startet af {contact.founder}. Elektronikken, kabinettet og softwaren er udviklet her, delene printes på vores egne printere i{" "}
+            Selfi er startet af {contact.founders}. Elektronikken, kabinettet og softwaren er udviklet her, delene printes på vores egne printere i{" "}
             <Ph note="by er ikke bekræftet">{contact.city}</Ph>, og det er os selv, der svarer, når I ringer.
           </p>
           <p className="muted">
@@ -30,7 +30,7 @@ export function Team() {
           </p>
         </div>
         <div className="team-art">
-          <Ph block note="foto af stifteren med boksen mangler; stregtegningen står her, indtil det findes">
+          <Ph block note="foto af stifterne med boksen mangler; stregtegningen står her, indtil det findes">
             <OutlineExploded />
           </Ph>
         </div>

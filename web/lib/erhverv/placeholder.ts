@@ -14,7 +14,7 @@ export const contact = {
   email: "kontakt@selfi.dk",
   hours: "alle dage kl. 10–22, og døgnet rundt for kunder",
   replyWithin: "én arbejdsdag",
-  founder: "Esben Christensen",
+  founders: "Esben Christensen og Kasper Knudsen",
   city: "Aalborg",
 };
 
