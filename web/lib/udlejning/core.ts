@@ -19,7 +19,6 @@ export type RentalSettings = {
     perExtraDay: number; // each day after byDays
     theme: number;
     printer: number;
-    shippingPerParcel: number; // dao pakkeshop both ways, per parcel. The printer is its own parcel.
   };
   printsIncluded: number;
   themes: string[];
@@ -45,7 +44,6 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     perExtraDay: 100,
     theme: 295,
     printer: 695,
-    shippingPerParcel: 99,
   },
   printsIncluded: 100,
   themes: ["Bryllup", "Fødselsdag", "Julefrokost"],
@@ -91,7 +89,7 @@ export const PHOTO_TYPES: Record<PhotoType, { name: string; text: string }> = {
 };
 
 export const DELIVERIES: Record<Delivery, { name: string; text: string }> = {
-  post: { name: "Med posten", text: "Vi sender boksen til jeres nærmeste dao-pakkeshop, så den er der dagen før. Returlabel ligger i kassen." },
+  post: { name: "Med posten", text: "Vi sender boksen til jeres nærmeste dao-pakkeshop, så den er der dagen før. Returfragten er betalt, og labelen ligger i kassen." },
   afhent: { name: "Afhent selv", text: "" },
 };
 
@@ -106,15 +104,12 @@ export function priceForDays(s: RentalSettings, days: number): number {
 export type Line = { id: string; label: string; amount: number };
 
 /** The order lines in kr. inkl. moms. The server recomputes these; the browser only shows them. */
+// Shipping both ways (the return label is always in the box) and insurance are included in the prices.
 export function priceLines(s: RentalSettings, c: Choice): Line[] {
   const days = nights(c.range);
   const lines: Line[] = [{ id: "box", label: `Selfi Boks · ${periodLabel(c.range)}`, amount: priceForDays(s, days) }];
   if (c.theme) lines.push({ id: "theme", label: `Tema: ${c.theme}`, amount: s.prices.theme });
   if (c.printer) lines.push({ id: "printer", label: `Printer med ${s.printsIncluded} print (${PHOTO_TYPES[c.photoType].name.toLowerCase()})`, amount: s.prices.printer });
-  if (c.delivery === "post") {
-    const parcels = c.printer ? 2 : 1;
-    lines.push({ id: "shipping", label: `Fragt tur-retur · ${parcels} ${parcels === 1 ? "kasse" : "kasser"}`, amount: parcels * s.prices.shippingPerParcel });
-  }
   return lines;
 }
 

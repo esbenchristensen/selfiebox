@@ -222,6 +222,7 @@ export function Booking() {
                 <li><span>Selfi Boks med studielys og stativ</span><span>Med</span></li>
                 <li><span>Ubegrænset antal billeder på skærm og telefon</span><span>Med</span></li>
                 <li><span>Jeres egen eventside med alle festens billeder</span><span>Med</span></li>
+                <li><span>Fragt begge veje og forsikring</span><span>Med</span></li>
               </ul>
 
               <div className="bk-list">
@@ -282,7 +283,7 @@ export function Booking() {
                         <span className="muted">{d === "afhent" ? settings.pickupText : DELIVERIES[d].text}</span>
                       </span>
                       <span className="bk-price">
-                        {d === "post" ? kr(settings.prices.shippingPerParcel * (s.printer ? 2 : 1)) : "Gratis"}
+                        {d === "post" ? "Med i prisen" : "Gratis"}
                       </span>
                     </label>
                   ))}
@@ -449,6 +450,7 @@ export function Booking() {
               <span>I alt inkl. moms</span>
               <b>{s.range ? kr(sum) : "Vælg datoer"}</b>
             </div>
+            <p className="fine">{s.delivery === "post" ? "Fragt begge veje og forsikring er med i prisen." : "Forsikring er med i prisen."}</p>
           </div>
         </aside>
       </div>
@@ -471,6 +473,5 @@ function preview(settings: RentalSettings, s: State): { id: string; label: strin
   const out: { id: string; label: string; amount: number | null }[] = [{ id: "box", label: "Selfi Boks", amount: null }];
   if (s.theme) out.push({ id: "theme", label: `Tema: ${s.theme}`, amount: settings.prices.theme });
   if (s.printer) out.push({ id: "printer", label: `Printer med ${settings.printsIncluded} print`, amount: settings.prices.printer });
-  if (s.delivery === "post") out.push({ id: "shipping", label: "Fragt tur-retur", amount: settings.prices.shippingPerParcel * (s.printer ? 2 : 1) });
   return out;
 }

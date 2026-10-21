@@ -42,7 +42,7 @@ export default async function Lej() {
   const faq = [
     {
       q: "Hvad koster det at leje en fotoboks?",
-      a: `I vælger selv datoerne. En dag koster ${kr(priceForDays(s, 1))}, en weekend ${kr(priceForDays(s, 3))} og en uge ${kr(priceForDays(s, 7))}, inkl. moms. Tema koster ${kr(s.prices.theme)}, printer med ${s.printsIncluded} print ${kr(s.prices.printer)}, og fragt med dao ${kr(s.prices.shippingPerParcel)} pr. kasse tur-retur. I ser den samlede pris, før I betaler.`,
+      a: `I vælger selv datoerne. En dag koster ${kr(priceForDays(s, 1))}, en weekend ${kr(priceForDays(s, 3))} og en uge ${kr(priceForDays(s, 7))}, inkl. moms. Tema koster ${kr(s.prices.theme)}, og printer med ${s.printsIncluded} print koster ${kr(s.prices.printer)} Fragt med dao begge veje og forsikring er altid med i prisen, og I ser den samlede pris, før I betaler.`,
     },
     {
       q: "Hvordan får vi boksen?",
@@ -151,7 +151,7 @@ export default async function Lej() {
             <div className="sec-head">
               <span className="label">Priser</span>
               <h2 id="priser-title" className="h-l">Jo flere dage, jo billigere pr. dag.</h2>
-              <p className="lede">Ubegrænsede billeder, stativ og jeres egen eventside er altid med. Alle priser er inkl. moms.</p>
+              <p className="lede">Ubegrænsede billeder, stativ, jeres egen eventside, fragt begge veje og forsikring er altid med. Alle priser er inkl. moms.</p>
             </div>
             <div className="lej-prices">
               {[
@@ -169,7 +169,7 @@ export default async function Lej() {
             <ul className="lej-addons">
               <li><b>Tema · {kr(s.prices.theme)}</b><span>{s.themes.join(", ")}: boksen, skærmen og rammen på hvert billede i festens farver.</span></li>
               <li><b>Printer · {kr(s.prices.printer)}</b><span>{s.printsIncluded} print som fotostrimmel eller polaroid, så gæsterne har billedet med hjem.</span></li>
-              <li><b>Fragt · {kr(s.prices.shippingPerParcel)} pr. kasse</b><span>Med dao til og fra jeres pakkeshop. Printeren er en kasse for sig. Afhentning er gratis.</span></li>
+              <li><b>Fragt og forsikring · Med i prisen</b><span>Med dao til og fra jeres pakkeshop. Returfragten er betalt, og labelen ligger i kassen.</span></li>
             </ul>
           </div>
         </section>
