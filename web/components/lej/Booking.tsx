@@ -187,7 +187,8 @@ export function Booking() {
                 <li><span>Selfi Boks med studielys og stativ</span><span>Med</span></li>
                 <li><span>Ubegrænset antal billeder på skærm og telefon</span><span>Med</span></li>
                 <li><span>Jeres egen eventside med alle festens billeder</span><span>Med</span></li>
-                <li><span>Fragt begge veje og forsikring</span><span>Med</span></li>
+                <li><span>Jeres navne og datoen på hvert billede, sat op til jeres fest</span><span>Med</span></li>
+                <li><span>Fragt begge veje og forsikring, uden depositum</span><span>Med</span></li>
               </ul>
 
               <div className="bk-list">
@@ -221,7 +222,7 @@ export function Booking() {
                   </div>
                 )}
               </div>
-              <p className="fine">Uden printer får gæsterne stadig alle billeder på telefonen og jeres eventside.</p>
+              <p className="fine">Printeren er det eneste tilvalg. Uden den får gæsterne stadig alle billeder på telefonen og jeres eventside.</p>
 
               <div className="field">
                 <span className="field-label">Levering</span>
@@ -316,12 +317,12 @@ export function Booking() {
               <label className="check">
                 <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
                 <span>
-                  Jeg har læst <a href="/vilkaar" target="_blank">lejebetingelserne</a> og passer på boksen, mens den er hos os. Bookingen er bindende, når den er betalt.
+                  Jeg har læst <a href="/lejebetingelser" target="_blank">lejebetingelserne</a> og passer på boksen, mens den er hos os. Bookingen er bindende, når den er betalt, og datoen kan flyttes gratis, indtil boksen er sendt.
                 </span>
               </label>
               {err(!accepted, "Sæt flueben for at gå videre til betaling.")}
               {status.kind === "error" && <p className="err" role="alert">{status.message}</p>}
-              <p className="fine">I betaler sikkert hos Stripe. Datoerne holdes til jer i 30 minutter, mens I betaler.</p>
+              <p className="fine">I betaler sikkert hos Stripe med kort, MobilePay eller Apple Pay. Datoerne holdes til jer i 30 minutter, mens I betaler.</p>
             </fieldset>
           )}
 
@@ -330,7 +331,7 @@ export function Booking() {
               <button type="button" className="btn btn-secondary" onClick={() => move(step - 1)}>Tilbage</button>
             )}
             <button type="button" className="btn btn-primary" onClick={next} disabled={status.kind === "sending"}>
-              {status.kind === "sending" ? "Åbner betaling …" : ["Vælg tilvalg", "Fortsæt til kontakt", "Gennemse booking", `Betal ${s.range ? kr(sum) : ""}`][step]}
+              {status.kind === "sending" ? "Åbner betaling …" : ["Fortsæt", "Fortsæt til kontakt", "Gennemse booking", `Betal ${s.range ? kr(sum) : ""}`][step]}
             </button>
           </div>
         </div>

@@ -264,3 +264,124 @@
   .lej-box { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
   .lej-box3d { aspect-ratio: 4 / 5; }
 }
+
+/* ---------- Forsiden, oktober 2026: tillid, sammenligning, jeres fest, anmeldelser, anledninger ---------- */
+#hvorfor, #jeres, #anmeldelser, #anledninger { scroll-margin-top: 80px; }
+
+/* Stars and the small "example" mark on placeholder numbers */
+.stars { display: inline-flex; gap: 2px; }
+.stars svg { width: 18px; height: 18px; fill: var(--line-strong); }
+.stars svg.on { fill: var(--green-ink); }
+.tag-ex { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); color: var(--ink-muted); font: 500 10px/1.4 var(--font-mono), ui-monospace, Menlo, monospace; letter-spacing: 0.08em; text-transform: uppercase; vertical-align: middle; white-space: nowrap; }
+
+/* Trust line under the hero points */
+.lej-trust { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; text-decoration: none; color: var(--ink); font-size: 15px; }
+.lej-trust b { font: 600 18px/1 var(--font-display), sans-serif; }
+.lej-trust:hover .muted { color: var(--ink); }
+
+/* Payment and "pay later" line under the calendar */
+.hb-pay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: var(--ink-muted); }
+.hb-pay .pills { display: inline-flex; gap: 4px; }
+.hb-pay .pills span { padding: 3px 8px; border-radius: var(--radius-pill); border: 1px solid var(--line); font: 500 11px/1.4 var(--font-mono), monospace; letter-spacing: 0.04em; color: var(--ink); }
+.hb-next { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.hb-next:hover { text-decoration-color: var(--ink); }
+.hb-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+.hb-next i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
+
+/* Comparison: Selfi against the other rental sites */
+.cmp { border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--surface-raised); overflow: hidden; }
+.cmp-head, .cmp-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); padding: 14px var(--space-5); align-items: start; }
+.cmp-head { font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); border-bottom: 1px solid var(--line-strong); }
+.cmp-row { border-top: 1px solid var(--line); }
+.cmp-row:first-of-type { border-top: 0; }
+.cmp-what { font-weight: 500; }
+.cmp-us { display: flex; gap: 10px; align-items: flex-start; color: var(--ink); }
+.cmp-head .cmp-us { color: var(--green-ink); }
+.cmp-us i { flex: none; width: 18px; height: 18px; margin-top: 3px; border-radius: 50%; background: var(--green); position: relative; }
+.cmp-us i::after { content: ""; position: absolute; left: 6px; top: 3px; width: 4px; height: 8px; border: solid var(--on-green); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.cmp-them { color: var(--ink-muted); }
+.cmp-note { margin-top: var(--space-4); max-width: 80ch; }
+
+/* Your party: the box with the host's headline, and a print beside it */
+.pers { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-8); align-items: center; }
+.pers-copy { margin-bottom: 0; }
+.pers-visual { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-box); border: 1px solid var(--line); background: radial-gradient(80% 65% at 50% 42%, var(--surface-raised), var(--surface-sunk)); display: grid; place-items: center; overflow: hidden; }
+.pers-box { width: min(58%, 300px); aspect-ratio: 234 / 306; border-radius: 10%; background: #0a0a0a; position: relative; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55); }
+.pers-box::before { content: ""; position: absolute; inset: 5%; border-radius: 9%; border: 9px solid #fff3e3; box-shadow: 0 0 34px rgba(255, 243, 227, 0.45), inset 0 0 20px rgba(255, 243, 227, 0.25); }
+.pers-screen { position: absolute; inset: 14%; border-radius: 6px; background: #2b1d16; color: #fff4e6; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 12px; text-align: center; overflow: hidden; }
+.pers-date { font: 400 9px/1 var(--font-mono), monospace; letter-spacing: 0.1em; text-transform: uppercase; color: #f2c48d; }
+.pers-screen b { font: 700 clamp(14px, 1.7vw, 20px)/1.1 var(--font-display), sans-serif; letter-spacing: -0.02em; }
+.pers-names { font: 500 clamp(12px, 1.3vw, 15px)/1.2 var(--font-body), sans-serif; color: #f2c48d; }
+.pers-btn { margin: 10px auto 0; padding: 7px 14px; border-radius: var(--radius-pill); background: #e07a4f; color: #fff4e6; font: 500 11px/1 var(--font-body), sans-serif; }
+.pers-print { position: absolute; right: 8%; bottom: 8%; width: 34%; background: #fbfaf6; padding: 5% 5% 12%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); transform: rotate(5deg); }
+.pers-print-photo { display: block; aspect-ratio: 1; background: #222 url(/photos/print-wedding.jpg) center / cover; }
+.pers-print-cap { position: absolute; left: 6%; right: 6%; bottom: 4%; font: 400 8px/1 var(--font-mono), monospace; letter-spacing: 0.06em; text-transform: uppercase; color: #3a3a3a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pers-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-5); }
+.pers-list li { display: flex; gap: var(--space-3); align-items: flex-start; padding-top: var(--space-3); border-top: 1px solid var(--line); }
+.pers-list li > span { display: flex; flex-direction: column; gap: 2px; color: var(--ink-muted); font-size: 15px; }
+.pers-list b { color: var(--ink); font-weight: 500; font-size: 16px; }
+
+/* Reviews */
+.rev-sum { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6); }
+.rev-sum > b { font: 500 clamp(44px, 6vw, 64px)/1 var(--font-display), sans-serif; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.rev-sum > div { display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.rev-sum .stars svg { width: 22px; height: 22px; }
+.rev-sum a { color: var(--ink); }
+.reviews { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.review { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line); }
+.review p { font-size: 16px; line-height: 1.5; }
+.review-who { display: flex; flex-direction: column; gap: 2px; margin-top: auto; font-size: 14px; }
+.review-who b { font-weight: 500; font-size: 15px; }
+.review .tag-ex { align-self: flex-start; margin: 0; }
+.rev-note { margin-top: var(--space-5); }
+
+/* Occasions */
+.occ { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.occ a { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: var(--space-5); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line); text-decoration: none; color: var(--ink); transition: border-color 200ms var(--ease), transform 160ms var(--ease); }
+.occ a:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.occ b { font: 600 22px/1.15 var(--font-display), sans-serif; letter-spacing: -0.02em; }
+.occ .muted { font-size: 15px; }
+.occ-foot { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); margin-top: auto; padding-top: var(--space-4); font-size: 14px; color: var(--ink-muted); }
+.occ-go { color: var(--green-ink); font-weight: 500; }
+
+/* Prices: the weekend is the one most people pick */
+.lej-price { position: relative; }
+.lej-price--best { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.lej-price-tag { position: absolute; top: -12px; left: var(--space-5); background: var(--green); color: var(--on-green); border-color: var(--green); }
+.lej-price .btn { align-self: flex-start; margin-top: var(--space-3); }
+.lej-incl { margin-top: var(--space-6); }
+.lej-incl li { flex-direction: row; align-items: center; gap: 10px; padding-top: var(--space-3); }
+.lej-incl .lej-icon { width: 24px; height: 24px; margin: 0; }
+
+/* Sticky call to action on phones */
+.sticky-cta { display: none; }
+@media (max-width: 900px) {
+  .sticky-cta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: 12px var(--gutter-r) calc(12px + env(safe-area-inset-bottom, 0px)) var(--gutter); background: color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--line); transform: translateY(110%); transition: transform 250ms var(--ease); }
+  .sticky-cta.is-on { transform: translateY(0); }
+  .sticky-cta b { display: block; font-weight: 500; font-size: 15px; }
+  .sticky-cta .muted { font-size: 13px; }
+  .sticky-cta .btn { white-space: nowrap; }
+}
+
+@media (max-width: 1080px) {
+  .reviews, .occ { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .pers { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .pers-visual { aspect-ratio: 4 / 3; max-width: 520px; }
+  .pers-list { grid-template-columns: minmax(0, 1fr); }
+  .cmp-head { display: none; }
+  .cmp-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: var(--space-4); }
+  .cmp-what { grid-column: 1 / -1; }
+  .cmp-us::before, .cmp-them::before { display: block; font: 400 10px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px; }
+  .cmp-us { display: block; }
+  .cmp-us i { display: none; }
+  .cmp-us::before { content: "Selfi"; color: var(--green-ink); }
+  .cmp-them::before { content: "Typisk hos andre"; }
+  .cmp-us, .cmp-them { font-size: 15px; }
+  .lej-incl li { padding-top: var(--space-3); }
+}
+@media (max-width: 640px) {
+  .reviews, .occ { grid-template-columns: minmax(0, 1fr); }
+  .lej-price .btn { width: 100%; }
+}

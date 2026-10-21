@@ -1,6 +1,6 @@
 "use client";
 
-import { formatRange, nights } from "@/lib/dates";
+import { addDays, formatRange, nights, weekday, type DayKey, type Range } from "@/lib/dates";
 import { kr, periodLabel, priceForDays } from "@/lib/udlejning/core";
 import { PRESETS } from "./Booking";
 import { Calendar } from "./Calendar";
@@ -43,6 +43,7 @@ export function HeroBooking() {
     : r.from === r.to
       ? "Tryk på en senere dag for at tage flere dage med."
       : "Tryk på en ny dag for at starte forfra.";
+  const nextWeekend = firstFreeWeekend(win.minDay, win.maxDay, canBook);
 
   return (
     <div className="hb" id="datoer">
@@ -63,6 +64,12 @@ export function HeroBooking() {
           ))}
         </div>
         <p className="muted hb-hint">{hint}</p>
+        {nextWeekend && !r && (
+          <button type="button" className="hb-next" onClick={() => set({ range: nextWeekend })}>
+            <i aria-hidden="true" />
+            Næste ledige weekend: {formatRange(nextWeekend, "short")}
+          </button>
+        )}
       </div>
       <Calendar single selected={r} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(x) => set({ range: x })} />
       <div className="hb-foot">
@@ -91,9 +98,28 @@ export function HeroBooking() {
             go(1);
           }}
         >
-          Vælg tilvalg
+          {r ? "Fortsæt til booking" : "Vælg datoer først"}
         </button>
+      </div>
+      <div className="hb-pay">
+        <span className="pills" aria-label="Betalingsmåder">
+          <span>Kort</span>
+          <span>MobilePay</span>
+          <span>Apple Pay</span>
+        </span>
+        <span>I betaler først i kassen · Flyt datoen gratis, indtil boksen er sendt</span>
       </div>
     </div>
   );
+}
+
+/** The first Friday-to-Sunday run from `minDay` that the calendar can book, or null within the window. */
+function firstFreeWeekend(minDay: DayKey, maxDay: DayKey, canBook: (r: Range) => boolean): Range | null {
+  const wd = weekday(minDay);
+  let fri = addDays(minDay, (4 - wd + 7) % 7);
+  for (; fri <= maxDay; fri = addDays(fri, 7)) {
+    const r = { from: fri, to: addDays(fri, 2) };
+    if (r.to <= maxDay && canBook(r)) return r;
+  }
+  return null;
 }

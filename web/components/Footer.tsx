@@ -13,7 +13,8 @@ export function Footer() {
           <a href="/funktioner">Funktioner</a>
           <a href="/erhverv#kontakt">Book en snak</a>
           <a href="/dokumentation">Dokumentation</a>
-          <a href="/vilkaar">Handelsbetingelser</a>
+          <a href="/lejebetingelser">Lejebetingelser</a>
+          <a href="/vilkaar">Handelsbetingelser for erhverv</a>
           <a href="/privatliv">Privatliv</a>
           <a href="/cookies">Cookies</a>
         </nav>
