@@ -244,9 +244,11 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       {venue && (
         <>
           {venue.unit !== "gen2" && <group position={[0, UNIT_H, 0]}>{part("joint_spacer", mats.body)}</group>}
-          <Suspense fallback={null}>
-            <Parts venue={venue} attach={attach} />
-          </Suspense>
+          {venue.parts.length > 0 && (
+            <Suspense fallback={null}>
+              <Parts venue={venue} attach={attach} />
+            </Suspense>
+          )}
         </>
       )}
 
@@ -261,7 +263,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
 }
 
 export function preloadVenue(v: Venue) {
-  useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
+  if (v.parts.length) useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
   useTexture.preload(`/models/${v.id}/screen.png`);
   useTexture.preload(`/models/${v.id}/print.png`);
   useTexture.preload(`/photos/${v.photo}.jpg`);

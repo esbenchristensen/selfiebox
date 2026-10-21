@@ -449,7 +449,7 @@ export default function AirtoxDominanceKatalog() {
           <div className="kat-contact">
             <span className="kat-kicker">Jeres kontakt</span>
             <b>Holdet bag Selfi</b>
-            <a href="/#kontakt">selfi.dk · Book en snak</a>
+            <a href="/erhverv#kontakt">selfi.dk · Book en snak</a>
           </div>
           <div className="kat-push" style={{ marginBottom: 140 }}>
             <Lockup size={40} />

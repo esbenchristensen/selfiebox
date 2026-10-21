@@ -38,7 +38,7 @@ npm run lint       # typecheck
 
 ## Udlejning til private (/lej)
 
-selfi.dk/lej er landingssiden for B2C-udlejning. Kunden vælger tema, printer, billedtype og levering, så datoer i kalenderen, og betaler i Stripe Checkout. Bookingerne ligger i MongoDB (database `selfiebox`, samlingerne `rentals`, `rental_settings` og `rental_blocks`) og styres i admin.selfi.dk under Udlejning, hvor også priser, antal bokse og printere og reglerne for forsendelse ligger.
+selfi.dk (forsiden) er landingssiden for B2C-udlejning. Kunden vælger tema, printer, billedtype og levering, så datoer i kalenderen, og betaler i Stripe Checkout. Bookingerne ligger i MongoDB (database `selfiebox`, samlingerne `rentals`, `rental_settings` og `rental_blocks`) og styres i admin.selfi.dk under Udlejning, hvor også priser, antal bokse og printere og reglerne for forsendelse ligger.
 
 - `lib/udlejning/core.ts`: priser og ledighed. En kopi ligger i selfiebox-platform (`web/src/lib/udlejning.ts`), så hold dem ens.
 - `/api/udlejning/ledighed`, `/api/udlejning/checkout`, `/api/udlejning/annuller` og `/api/stripe/webhook`.

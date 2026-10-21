@@ -1,15 +1,17 @@
 // Line drawings of the box: an ink outline with green details. Drawn in code from the real
-// proportions (234 × 306 × 66 mm), so they stay sharp at any size and follow the light/dark theme.
+// proportions of gen 2 (222,5 × 306 × 70 mm), so they stay sharp at any size and follow the light/dark theme.
 
 type P = [number, number];
 
-function rr(x: number, y: number, w: number, h: number, r: number) {
+export const BOX_W = 222.5; // mm; the height is 306
+
+export function rr(x: number, y: number, w: number, h: number, r: number) {
   return `M${x + r} ${y} H${x + w - r} A${r} ${r} 0 0 1 ${x + w} ${y + r} V${y + h - r} A${r} ${r} 0 0 1 ${x + w - r} ${y + h} H${x + r} A${r} ${r} 0 0 1 ${x} ${y + h - r} V${y + r} A${r} ${r} 0 0 1 ${x + r} ${y} Z`;
 }
 
 // A rounded slab seen at an angle: the back face shifted by `d`, joined to the front at the two corners
 // where the outline turns, and the front face filled so it hides the lines behind it.
-function Slab({ x, y, w, h, r, d, fill = "var(--surface)" }: { x: number; y: number; w: number; h: number; r: number; d: P; fill?: string }) {
+export function Slab({ x, y, w, h, r, d, fill = "var(--surface)" }: { x: number; y: number; w: number; h: number; r: number; d: P; fill?: string }) {
   const len = Math.hypot(d[0], d[1]);
   const n: P = [-d[1] / len, d[0] / len]; // perpendicular to the depth direction
   const a: P = [x + r - Math.abs(n[0]) * r, y + r - Math.abs(n[1]) * r];
@@ -23,7 +25,7 @@ function Slab({ x, y, w, h, r, d, fill = "var(--surface)" }: { x: number; y: num
   );
 }
 
-function Sparkle({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
+export function Sparkle({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
   const k = s * 0.22;
   return (
     <path
@@ -34,9 +36,9 @@ function Sparkle({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
 }
 
 // The front of the box: ring, camera notch with a green lens, and a screen with the Selfi smile.
-function Front({ x, y, w, screen = "smile" }: { x: number; y: number; w: number; screen?: "smile" | "count" }) {
-  const h = w * (306 / 234);
-  const s = w / 234;
+export function Front({ x, y, w, screen = "smile" }: { x: number; y: number; w: number; screen?: "smile" | "count" }) {
+  const h = w * (306 / BOX_W);
+  const s = w / BOX_W;
   const ri = 11 * s, rb = 7 * s;
   const sx = x + 37 * s, sy = y + 40 * s, sw = w - 74 * s, sh = h - 80 * s;
   const cx = x + w / 2;
@@ -64,8 +66,8 @@ function Front({ x, y, w, screen = "smile" }: { x: number; y: number; w: number;
 }
 
 // Short dashes of light around the ring.
-function Rays({ x, y, w, n = 10, len = 16, gap = 14 }: { x: number; y: number; w: number; n?: number; len?: number; gap?: number }) {
-  const h = w * (306 / 234);
+export function Rays({ x, y, w, n = 10, len = 16, gap = 14 }: { x: number; y: number; w: number; n?: number; len?: number; gap?: number }) {
+  const h = w * (306 / BOX_W);
   const cx = x + w / 2, cy = y + h / 2;
   const rays = Array.from({ length: n }, (_, i) => {
     const a = (i / n) * Math.PI * 2 + 0.3;
@@ -73,14 +75,15 @@ function Rays({ x, y, w, n = 10, len = 16, gap = 14 }: { x: number; y: number; w
     // Point on the outline in this direction, roughly: scale to the box edge.
     const k = Math.min((w / 2 + gap) / Math.abs(ex || 1e-6), (h / 2 + gap) / Math.abs(ey || 1e-6));
     const px = cx + ex * k, py = cy + ey * k;
-    return `M${px} ${py} l${ex * len} ${ey * len}`;
+    // Rounded, so the server and the browser write the same path (their cos/sin can differ in the last digits).
+    return `M${px.toFixed(2)} ${py.toFixed(2)} l${(ex * len).toFixed(2)} ${(ey * len).toFixed(2)}`;
   });
   return <path className="o-green" d={rays.join(" ")} />;
 }
 
 export function OutlineStand({ className }: { className?: string }) {
   const x = 120, y = 54, w = 180;
-  const h = w * (306 / 234);
+  const h = w * (306 / BOX_W);
   const d: P = [24, -13];
   const pole = x + w / 2 + d[0] / 2;
   return (
@@ -105,7 +108,7 @@ export function OutlineStand({ className }: { className?: string }) {
 
 export function OutlineWall({ className }: { className?: string }) {
   const x = 140, y = 50, w = 168;
-  const h = w * (306 / 234);
+  const h = w * (306 / BOX_W);
   const d: P = [22, -12];
   const my = y + h + 6;
   return (
@@ -138,12 +141,12 @@ export function OutlineWall({ className }: { className?: string }) {
 
 // The box pulled apart into its layers, from the back cover to the front.
 export function OutlineExploded({ className }: { className?: string }) {
-  const w = 170, h = w * (306 / 234);
+  const w = 170, h = w * (306 / BOX_W);
   const step: P = [66, -34];
   const t: P = [9, -5];
   const base: P = [40, 230];
   const at = (i: number): P => [base[0] + step[0] * (4 - i), base[1] + step[1] * (4 - i)];
-  const s = w / 234;
+  const s = w / BOX_W;
   const labels: [number, string][] = [
     [0, "Robust og tyverisikret"],
     [1, "Hurtig og altid opdateret"],
@@ -203,7 +206,7 @@ export function OutlinePoster() {
   const x = 110, y = 70, w = 200;
   return (
     <svg className="outline" viewBox="0 0 420 480" aria-hidden="true">
-      <Slab x={x} y={y} w={w} h={w * (306 / 234)} r={30} d={[24, -13]} />
+      <Slab x={x} y={y} w={w} h={w * (306 / BOX_W)} r={30} d={[24, -13]} />
       <Front x={x} y={y} w={w} />
       <Rays x={x} y={y} w={w} n={12} len={14} gap={22} />
     </svg>

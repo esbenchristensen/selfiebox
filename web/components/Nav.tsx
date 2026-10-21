@@ -10,9 +10,9 @@ type Link = { label: string; href: string };
 
 const HOVER_CLOSE_MS = 180;
 
-// The same header on every page: section links, the "Funktioner" mega menu and one call to action.
+// The same header on every page: section links, the "Funktioner" mega menu (business pages) and one call to action.
 // The menu opens on hover with a mouse and on tap or click everywhere else; Escape and a click outside close it.
-export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }: { links: Link[]; cta?: Link }) {
+export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" }, mega = true }: { links: Link[]; cta?: Link; mega?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLElement>(null);
@@ -65,6 +65,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
           ))}
         </nav>
         <div className="nav-end">
+          {mega && (
           <div className="mega-wrap" onPointerEnter={hoverOpen} onPointerLeave={hoverClose}>
             <button type="button" className="nav-mega" aria-expanded={open} aria-controls="mega" onClick={() => {
                 if (byHover.current) byHover.current = false;
@@ -76,11 +77,13 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
               </svg>
             </button>
           </div>
+          )}
           <a className="btn btn-primary" href={cta.href}>
             {cta.label}
           </a>
         </div>
       </div>
+      {mega && (
       <div id="mega" className="mega" hidden={!open} onPointerEnter={hoverOpen} onPointerLeave={hoverClose}>
         <div className="wrap mega-inner">
           {featureGroups.map((g) => (
@@ -108,6 +111,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
           </a>
         </div>
       </div>
+      )}
     </header>
   );
 }

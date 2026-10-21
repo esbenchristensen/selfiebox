@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { OutlineWall } from "./Outline";
+import { OutlineStand, OutlineWall } from "./Outline";
 
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "error"; message: string };
 
 // Places buy through a conversation, so this form is how they get in touch. `topic` tells us which page they wrote from.
-export function Contact({ topic }: { topic?: string }) {
+// `privat` is the short version for people renting a box for a party, who book themselves and only write with questions.
+export function Contact({ topic, kind = "erhverv" }: { topic?: string; kind?: "erhverv" | "privat" }) {
+  const privat = kind === "privat";
   const [state, setState] = useState<State>({ kind: "idle" });
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -17,7 +19,7 @@ export function Contact({ topic }: { topic?: string }) {
       const res = await fetch("/api/kontakt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, type: "erhverv", topic }),
+        body: JSON.stringify({ ...data, type: kind, topic }),
       });
       const body = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) throw new Error(body.error ?? "Beskeden blev ikke sendt. Prøv igen om lidt.");
@@ -33,14 +35,14 @@ export function Contact({ topic }: { topic?: string }) {
         <div className="sec-head" style={{ marginBottom: 0 }}>
           <span className="label">Kontakt</span>
           <h2 id="contact-title" className="h-l">
-            Fortæl os om jeres sted.
+            {privat ? "Spørgsmål til jeres fest?" : "Fortæl os om jeres sted."}
           </h2>
           <p className="lede">
-            Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om design, antal bokse og aktiviteter.
+            {privat
+              ? "Er jeres dato optaget, skal I bruge boksen i mere end to uger, eller vil I bare høre om noget? Skriv, så vender vi tilbage."
+              : "Skriv et par linjer om stedet, så vender vi tilbage og aftaler en snak om design, antal bokse og aktiviteter."}
           </p>
-          <div className="contact-art">
-            <OutlineWall />
-          </div>
+          <div className="contact-art">{privat ? <OutlineStand /> : <OutlineWall />}</div>
         </div>
 
         {state.kind === "sent" ? (
@@ -67,8 +69,19 @@ export function Contact({ topic }: { topic?: string }) {
               <input className="input" id="f-email" name="email" type="email" autoComplete="email" required />
             </div>
             <div className="field full">
-              <label htmlFor="f-place">Sted eller firma</label>
-              <input className="input" id="f-place" name="place" autoComplete="organization" required />
+              {privat ? (
+                <>
+                  <label htmlFor="f-place">
+                    Hvornår og hvad fejrer I? <small>(valgfri)</small>
+                  </label>
+                  <input className="input" id="f-place" name="place" placeholder="Fx bryllup 14. juni" />
+                </>
+              ) : (
+                <>
+                  <label htmlFor="f-place">Sted eller firma</label>
+                  <input className="input" id="f-place" name="place" autoComplete="organization" required />
+                </>
+              )}
             </div>
             <div className="field full">
               <label htmlFor="f-msg">
