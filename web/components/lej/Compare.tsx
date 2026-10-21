@@ -4,18 +4,18 @@ import { kr, priceForDays, type RentalSettings } from "@/lib/udlejning/core";
 // same things. The figures for "andre" come from the rental sites' own pages (October 2026), see the note
 // under the table. Rows read: what · Selfi · typically elsewhere.
 
-type Row = { what: string; us: string; others: string; usGood?: boolean };
+type Row = { what: string; us: string; others: string; usGood?: boolean; minor?: boolean }; // minor rows are left out on phones
 
 export function Compare({ s }: { s: RentalSettings }) {
   const rows: Row[] = [
     { what: "Boksen én dag", us: kr(priceForDays(s, 1)), others: "895–1.645 kr.", usGood: true },
     { what: "Weekend, fredag til søndag", us: kr(priceForDays(s, 3)), others: "999–1.500 kr.", usGood: true },
-    { what: "Ubegrænsede billeder", us: "Med", others: "Med", usGood: true },
+    { what: "Ubegrænsede billeder", us: "Med", others: "Med", usGood: true, minor: true },
     { what: "Rekvisitter", us: "Digitale på skærmen: hatte, briller og kroner, der følger ansigtet", others: "En kasse med fysiske rekvisitter, ofte som tilkøb", usGood: true },
     { what: "Spørgsmål og opgaver til gæsterne", us: "På skærmen, og de skifter i løbet af aftenen", others: "Papirkort som tilkøb, eller slet ikke", usGood: true },
     { what: "Jeres navne og datoen på billedet", us: "Med", others: "Logo mod tilkøb", usGood: true },
     { what: "Eventside med alle festens billeder", us: "Med", others: "99–349 kr.", usGood: true },
-    { what: "Fragt begge veje", us: "Med", others: "Med hos de fleste", usGood: true },
+    { what: "Fragt begge veje", us: "Med", others: "Med hos de fleste", usGood: true, minor: true },
     { what: "Forsikring", us: "Med, uden depositum", others: "Med, eller depositum på op til 1.000 kr.", usGood: true },
     { what: `Printer med ${s.printsIncluded} print`, us: kr(s.prices.printer), others: "Fra 2.000 kr.", usGood: true },
     { what: "Flyt datoen", us: "Gratis, indtil boksen er sendt", others: "Forskelligt fra sted til sted", usGood: true },
@@ -39,7 +39,7 @@ export function Compare({ s }: { s: RentalSettings }) {
             <span role="columnheader">Typisk hos andre</span>
           </div>
           {rows.map((r) => (
-            <div className="cmp-row" role="row" key={r.what}>
+            <div className={`cmp-row${r.minor ? " cmp-row--minor" : ""}`} role="row" key={r.what}>
               <span role="cell" className="cmp-what">{r.what}</span>
               <span role="cell" className={`cmp-us${r.usGood ? " is-good" : ""}`}>
                 <i aria-hidden="true" />
