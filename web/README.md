@@ -46,6 +46,10 @@ Forsiden selfi.dk er landingssiden for B2C-udlejning (/lej sender dertil, og erh
 - `/api/udlejning/ledighed`, `/api/udlejning/checkout`, `/api/udlejning/annuller` og `/api/stripe/webhook`.
 - Miljøvariabler i Vercel: `MONGODB_URI`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (fra webhooket i Stripe til `https://www.selfi.dk/api/stripe/webhook`), valgfrit `MONGODB_DB` (standard `selfiebox`), `SITE_URL` (standard `https://www.selfi.dk`) og `BOOKING_WEBHOOK_URL` til en besked, når en booking er betalt (ellers bruges `CONTACT_WEBHOOK_URL`).
 
+## Supportchatten (Sif)
+
+Knappen "Spørg os" nederst til højre på alle sider er en AI-supportchat (OpenAI Responses API), der slår kundens bookinger op efter verificering med bookingnummer og e-mail, flytter datoer efter et klart ja, søger på nettet og sender sagen videre til Esben med SMS, når den ikke må svare. Esben overtager fra admin.selfi.dk → Support. Prompt, stilguide og vidensbase ligger som tekstfiler i `support/`, testsættet i `support/tests/`. Alt om opsætning, sikkerhed, miljøvariabler og tests står i [`support/README.md`](support/README.md).
+
 ## Kataloger
 
 Et salgskatalog er kundens side på `selfi.dk/erhverv/<slug>` (Smukfest ligger på `/erhverv/smukfest`; `/events/<slug>` sender videre dertil): en `page.tsx`, der viser A4-siderne med `components/katalog/Viewer` og `components/katalog/katalog.css`, plus kundens egen CSS i samme mappe. Siderne er skjult for Google og står ikke i menuen eller sitemap. Der er kun den ene version: de gamle MongoDB-kopier på `/kataloger/<slug>` sender videre til erhvervssiden (`next.config.ts`).
