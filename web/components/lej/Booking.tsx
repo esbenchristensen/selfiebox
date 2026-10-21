@@ -152,8 +152,7 @@ export function Booking() {
             <fieldset className="bk-fs">
               <legend className="h-m">Hvornår er festen?</legend>
               <p className="muted">
-                Tryk på første dag og derefter på sidste dag. Jo flere dage, jo billigere pr. dag: 1 dag {kr(priceForDays(settings, 1))},
-                weekend {kr(priceForDays(settings, 3))} og en uge {kr(priceForDays(settings, 7))}
+                Tryk på første dag og derefter på sidste dag. En dag og en weekend koster det samme, {kr(priceForDays(settings, 3))}, og en uge {kr(priceForDays(settings, 7))}.
                 {s.printer ? " Kalenderen viser de dage, hvor både boks og printer er ledige." : ""}
               </p>
               <div className="hb-pkgs" aria-label="Genveje">

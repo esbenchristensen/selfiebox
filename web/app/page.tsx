@@ -65,7 +65,7 @@ export default async function Home() {
   const faq = [
     {
       q: "Hvad koster det at leje en fotoboks?",
-      a: `I vælger selv datoerne. En dag koster ${kr(priceForDays(s, 1))}, en weekend fra fredag til søndag ${kr(priceForDays(s, 3))} og en uge ${kr(priceForDays(s, 7))}, alt inkl. moms. Det eneste tilvalg er printeren med ${s.printsIncluded} print, som koster ${kr(s.prices.printer)} Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
+      a: `I vælger selv datoerne. En dag og en weekend fra fredag til søndag koster det samme, ${kr(priceForDays(s, 3))}, og en uge ${kr(priceForDays(s, 7))}, alt inkl. moms. Det eneste tilvalg er printeren med ${s.printsIncluded} print, som koster ${kr(s.prices.printer)} Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
     },
     {
       q: "Hvor sent kan vi booke?",
@@ -349,13 +349,13 @@ export default async function Home() {
           <div className="wrap">
             <div className="sec-head">
               <span className="label">Priser</span>
-              <h2 id="priser-title" className="h-l">Jo flere dage, jo billigere pr. dag.</h2>
+              <h2 id="priser-title" className="h-l">En dag eller en hel weekend. Samme pris.</h2>
               <p className="lede">Alle priser er inkl. moms, og der kommer ikke noget oveni. Ingen tilkøb, intet depositum, ingen gebyrer.</p>
             </div>
             <div className="lej-prices">
               {[
                 { name: "Dag", days: 1, text: "Én dag og aften" },
-                { name: "Weekend", days: 3, text: "Fredag til søndag", best: true },
+                { name: "Weekend", days: 3, text: "Fredag til søndag, samme pris som én dag", best: true },
                 { name: "Uge", days: 7, text: "Syv dage i træk" },
               ].map((p) => (
                 <div className={`lej-price${p.best ? " lej-price--best" : ""}`} key={p.name}>
@@ -363,7 +363,7 @@ export default async function Home() {
                   <b>{p.name}</b>
                   <span className="muted">{p.text}</span>
                   <strong>{kr(priceForDays(s, p.days))}</strong>
-                  <span className="muted">{p.days > 1 ? `${kr(Math.round(priceForDays(s, p.days) / p.days))} pr. dag` : "Til én fest"}</span>
+                  <span className="muted">{p.days > 1 ? `${kr(Math.round(priceForDays(s, p.days) / p.days))} pr. dag` : "Hent dagen før, aflever dagen efter"}</span>
                   <a className="btn btn-secondary" href="#datoer">Se ledige datoer</a>
                 </div>
               ))}

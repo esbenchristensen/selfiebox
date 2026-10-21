@@ -9,7 +9,7 @@ export const RENTAL_BOX: Venue = {
   place: "Til leje",
   palette: { base: "#1d201d" },
   casing: "#1d201d",
-  ring: { idle: ["#fff3e3", "#22d36b", "#ffffff"], glow: "#22d36b" },
+  ring: { idle: ["#fff3e3", "#22d36b", "#ffffff"], glow: "#fff3e3" }, // warm white: no coloured glow on the page behind the box
   frame: { bg: "base", ink: "base", caption: "Skål for festen" },
   photo: "boks-bryllup",
   parts: [],
