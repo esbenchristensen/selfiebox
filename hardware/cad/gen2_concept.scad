@@ -585,6 +585,11 @@ DSP_PI_DZ = -6.87;  DSP_SO = [5, 8.5];
 DSP_BOTH = false;                         // Esben (21 Oct): the plate notches face down, away from the camera, as drawn
 DSP_SLOT_X = 0.3;                         // v14: the holes are 0.3 wider each way across (3.5 mm): v13's 2.9 left 0.2 per side for
                                           // 121.8 mm between the holes, less than the print shrinks, and the screws missed
+// v16: up to v15 there was a Ø7 tower round a Ø5.6 head well that was slotted ±2.4 mm lengthwise, so the well cut the tower
+// away (0.4 mm slivers left): the bar hung 12 mm above the bracket. Now the tower wraps the well with 1.8 mm walls,
+// the slot is ±0.8 lengthwise (the bracket positions are checked; 0.8 covers the shrink over 160 mm) and the floor
+// under the screw head is 1.6 mm, so an M2.5 x 3-4 screw reaches the bracket (x 5 would touch the display's back).
+DSP_SLOT_Z = DSP_BOTH ? 0.4 : 0.8;  DSP_BOSS = 9.2;  DSP_FLOOR = 1.6;
 DSP_XB_Z = DSP_BOTH ? [for (z = DSP_TAB_Z) sign(z)*(abs(DSP_TAB_Z[0]) + abs(DSP_TAB_Z[1]))/2] : DSP_TAB_Z;   // [80, -80]
 TAB_Y = GLASS_Y3 + DSP_PANEL + DSP_TAB3[2];  // 11.65: back face of the tabs
 PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the lip (v12; v2-v11: the glass land)
@@ -743,15 +748,15 @@ module frame3() {
             // in v2 they were loose pieces in the print
             for (z = DSP_XB_Z) ext_y(XB3_Y, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
             for (z = DSP_XB_Z) ext_y(CH_BACK, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF + 1), 16], center = true);
-            for (t = tabs2) hull() for (z = [t[1], t[2]]) cyl_y(7, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0], z);
+            for (t = tabs2) hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(DSP_BOSS, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0] + dx, z + dz);
             // tubes that press the camera board onto its pegs
             for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
             snap_arms();
         }
         snap_slots();
         for (t = tabs2) {
-            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [-0.4, 0.4] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
-            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [0] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0] + dx, z + dz);   // head 2 mm above the tab
+            hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
+            hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + DSP_FLOOR - PRELOAD, FR_BACK + 1, t[0] + dx, z + dz);   // screw head well
         }
         for (h = CAM_HOLES_ROT) cyl_y(2.4, CAM_PCB_Y, CAM_PCB_Y + CAM_PCB[2] + 2, h[0], LENS_Z + h[1]);
         // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),
@@ -893,7 +898,7 @@ if (VIEW == "c_wled")      translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLE
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
 if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [6, 2.3], j[0], FR_BACK + 2, j[1], -1);
-if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 5, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + 2.0, GC + z, -1);
+if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 4, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + DSP_FLOOR - PRELOAD, GC + z, -1);   // v16: M2.5 x 4, head on the 1.6 mm floor
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
 if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
 if (VIEW == "p_frame3")    translate([0, 0, FR_BACK]) rotate([-90, 0, 0]) frame3();      // flat back down
