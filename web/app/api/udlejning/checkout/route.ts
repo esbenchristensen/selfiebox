@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   const range = (body.range ?? {}) as { from?: unknown; to?: unknown };
   const from = str(range.from, 10);
   const to = str(range.to, 10);
-  const delivery = (body.delivery === "afhent" ? "afhent" : body.delivery === "post" ? "post" : null) as Delivery | null;
+  const delivery: Delivery = "post";
   const photoType = (body.photoType === "polaroid" ? "polaroid" : body.photoType === "strip" ? "strip" : null) as PhotoType | null;
   const contact = (body.contact ?? {}) as Record<string, unknown>;
   const address = (body.address ?? {}) as Record<string, unknown>;

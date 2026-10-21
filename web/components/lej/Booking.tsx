@@ -111,7 +111,7 @@ export function Booking() {
   const sum = total(lines);
 
   const emailOk = /^\S+@\S+\.\S+$/.test(s.contact.email);
-  const addressOk = s.delivery !== "post" || (!!s.address.street.trim() && /^\d{4}$/.test(s.address.zip.trim()) && !!s.address.city.trim());
+  const addressOk = (!!s.address.street.trim() && /^\d{4}$/.test(s.address.zip.trim()) && !!s.address.city.trim());
   const contactOk = !!s.contact.name.trim() && emailOk && s.contact.phone.replace(/\D/g, "").length >= 8 && !!s.contact.occasion && addressOk;
   const valid = [!!settings && (!s.theme || settings.themes.includes(s.theme)), !!s.range, contactOk, accepted];
 
@@ -137,7 +137,7 @@ export function Booking() {
       const res = await fetch("/api/udlejning/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...s, address: s.delivery === "post" ? s.address : null, accepted }),
+        body: JSON.stringify({ ...s, accepted }),
       });
       const body = (await res.json().catch(() => ({}))) as { url?: string; error?: string; taken?: boolean };
       if (!res.ok || !body.url) {
@@ -273,20 +273,15 @@ export function Booking() {
               </div>
 
               <div className="field">
-                <span className="field-label" id="bk-del">Levering</span>
-                <div className="bk-options" role="radiogroup" aria-labelledby="bk-del">
-                  {(Object.keys(DELIVERIES) as Delivery[]).map((d) => (
-                    <label className="bk-option" key={d}>
-                      <input type="radio" name="delivery" checked={s.delivery === d} onChange={() => set({ delivery: d })} />
-                      <span>
-                        <b>{DELIVERIES[d].name}</b>
-                        <span className="muted">{d === "afhent" ? settings.pickupText : DELIVERIES[d].text}</span>
-                      </span>
-                      <span className="bk-price">
-                        {d === "post" ? "Med i prisen" : "Gratis"}
-                      </span>
-                    </label>
-                  ))}
+                <span className="field-label">Levering</span>
+                <div className="bk-list">
+                  <div className="bk-row">
+                    <div>
+                      <b>{DELIVERIES.post.name}</b>
+                      <span className="muted">{DELIVERIES.post.text}</span>
+                    </div>
+                    <span className="bk-price">Med i prisen</span>
+                  </div>
                 </div>
               </div>
             </fieldset>
@@ -314,9 +309,7 @@ export function Booking() {
                   <span className="label">Jeres valg · {periodLabel(s.range)}</span>
                   <b>{formatRange(s.range)}</b>
                   <span className="muted">
-                    {s.delivery === "post"
-                      ? `Boksen ligger klar i pakkeshoppen senest ${formatDay(addDays(s.range.from, -1))}, og I sender den retur ${formatDay(addDays(s.range.to, 1))}.`
-                      : "Vi aftaler tidspunkt for afhentning og aflevering på mail."}
+                    {`Boksen ligger klar i pakkeshoppen senest ${formatDay(addDays(s.range.from, -1))}, og I sender den retur ${formatDay(addDays(s.range.to, 1))}.`}
                   </span>
                 </p>
               )}
@@ -343,8 +336,6 @@ export function Booking() {
                   <label htmlFor="bk-email">E-mail</label>
                   <input className="input" id="bk-email" type="email" autoComplete="email" value={s.contact.email} onChange={(e) => set({ contact: { ...s.contact, email: e.target.value } })} />
                 </div>
-                {s.delivery === "post" && (
-                  <>
                     <div className="field full">
                       <label htmlFor="bk-street">Adresse <small>(vi sender til den nærmeste dao-pakkeshop)</small></label>
                       <input className="input" id="bk-street" autoComplete="street-address" value={s.address.street} onChange={(e) => set({ address: { ...s.address, street: e.target.value } })} />
@@ -357,8 +348,6 @@ export function Booking() {
                       <label htmlFor="bk-city">By</label>
                       <input className="input" id="bk-city" autoComplete="address-level2" value={s.address.city} onChange={(e) => set({ address: { ...s.address, city: e.target.value } })} />
                     </div>
-                  </>
-                )}
                 <div className="field full">
                   <span className="field-label" id="bk-occ">Anledning</span>
                   <div className="chips" role="radiogroup" aria-labelledby="bk-occ">
@@ -372,7 +361,7 @@ export function Booking() {
                   <textarea className="input" id="bk-msg" rows={3} placeholder="Fx navne til rammen på billedet eller andet, vi skal vide" value={s.contact.message} onChange={(e) => set({ contact: { ...s.contact, message: e.target.value } })} />
                 </div>
               </div>
-              {err(!contactOk, s.delivery === "post" && !addressOk ? "Skriv adresse, et postnummer på fire cifre og by." : "Skriv navn, telefon og en gyldig e-mail, og vælg anledning.")}
+              {err(!contactOk, !addressOk ? "Skriv adresse, et postnummer på fire cifre og by." : "Skriv navn, telefon og en gyldig e-mail, og vælg anledning.")}
             </fieldset>
           )}
 
@@ -396,7 +385,7 @@ export function Booking() {
                   <dt>Levering</dt>
                   <dd>
                     {DELIVERIES[s.delivery].name}
-                    {s.delivery === "post" && `, pakkeshop nær ${s.address.street}, ${s.address.zip} ${s.address.city}`}
+                    {`, pakkeshop nær ${s.address.street}, ${s.address.zip} ${s.address.city}`}
                   </dd>
                   <button type="button" onClick={() => go(0)}>Ret</button>
                 </div>
@@ -450,7 +439,7 @@ export function Booking() {
               <span>I alt inkl. moms</span>
               <b>{s.range ? kr(sum) : "Vælg datoer"}</b>
             </div>
-            <p className="fine">{s.delivery === "post" ? "Fragt begge veje og forsikring er med i prisen." : "Forsikring er med i prisen."}</p>
+            <p className="fine">Fragt begge veje og forsikring er med i prisen.</p>
           </div>
         </aside>
       </div>

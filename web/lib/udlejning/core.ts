@@ -8,7 +8,7 @@
 
 import { addDays, nights, type DayKey, type Range } from "../dates";
 
-export type Delivery = "post" | "afhent";
+export type Delivery = "post"; // always by post with dao; there is no pickup
 export type PhotoType = "strip" | "polaroid";
 
 export type RentalSettings = {
@@ -29,11 +29,8 @@ export type RentalSettings = {
     maxDays: number;
     shipDaysBefore: number; // with the post: the box leaves us this many days before the first day
     returnDaysAfter: number; // and is back this many days after the last day
-    pickupDaysBefore: number; // picked up by the customer
-    pickupDaysAfter: number;
     prepDays: number; // check, clean and charge before the next booking
   };
-  pickupText: string;
 };
 
 export const DEFAULT_SETTINGS: RentalSettings = {
@@ -54,11 +51,8 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     maxDays: 14,
     shipDaysBefore: 2,
     returnDaysAfter: 3,
-    pickupDaysBefore: 0,
-    pickupDaysAfter: 1,
     prepDays: 1,
   },
-  pickupText: "Hent og aflever boksen hos os efter aftale.",
 };
 
 /** Settings from the database laid over the defaults, so a missing field never breaks the page. */
@@ -90,7 +84,6 @@ export const PHOTO_TYPES: Record<PhotoType, { name: string; text: string }> = {
 
 export const DELIVERIES: Record<Delivery, { name: string; text: string }> = {
   post: { name: "Med posten", text: "Vi sender boksen til jeres nærmeste dao-pakkeshop, så den er der dagen før. Returfragten er betalt, og labelen ligger i kassen." },
-  afhent: { name: "Afhent selv", text: "" },
 };
 
 export const kr = (n: number) => `${n.toLocaleString("da-DK")} kr.`;
@@ -132,8 +125,9 @@ function weekday(k: DayKey): number {
 /** The days a booking holds its box and printer, including transport and the check afterwards. */
 export function heldRange(s: RentalSettings, r: Range, delivery: Delivery): Range {
   const R = s.rules;
-  const before = delivery === "post" ? R.shipDaysBefore : R.pickupDaysBefore;
-  const after = (delivery === "post" ? R.returnDaysAfter : R.pickupDaysAfter) + R.prepDays;
+  void delivery;
+  const before = R.shipDaysBefore;
+  const after = R.returnDaysAfter + R.prepDays;
   return { from: addDays(r.from, -before), to: addDays(r.to, after) };
 }
 

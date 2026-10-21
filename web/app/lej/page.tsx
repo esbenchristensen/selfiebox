@@ -46,7 +46,7 @@ export default async function Lej() {
     },
     {
       q: "Hvordan får vi boksen?",
-      a: "Vi sender den med dao til jeres nærmeste pakkeshop, så den er der senest dagen før festen. Dagen efter lægger I den i kassen igen, sætter returlabelen på og afleverer den i en pakkeshop. I kan også hente den selv efter aftale.",
+      a: "Vi sender den med dao til jeres nærmeste pakkeshop, så den er der senest dagen før festen. Dagen efter lægger I den i kassen igen, sætter returlabelen på og afleverer den i en pakkeshop.",
     },
     {
       q: "Skal vi selv stille den op?",
