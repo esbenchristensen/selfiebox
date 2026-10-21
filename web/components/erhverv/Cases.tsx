@@ -1,13 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { BoxViewer } from "@/components/BoxViewer";
 import { Ph } from "@/components/Placeholder";
+import type { Venue } from "@/components/three/HaloBox";
+import bars from "@/components/three/bars.json";
+import venues from "@/components/three/venues.json";
+
+// Plain JSON, so this component does not pull three.js in; BoxViewer fetches it when the box scrolls near.
+const DESIGNS = [...(venues as Venue[]), ...(bars as Venue[])];
+const designOf = (id: string) => DESIGNS.find((v) => v.id === id)!;
 
 // How the box is set up for each kind of place: boxes, placement, design, activities and what the place
 // gets. One tab per kind. These are examples of a setup, not customers; the first real cases replace them.
 
 type Case = {
   id: string;
+  box: string; // a design from venues.json or bars.json that shows what the box looks like for this kind of place
   name: string;
   intro: string;
   boxes: string;
@@ -21,6 +30,7 @@ type Case = {
 const cases: Case[] = [
   {
     id: "bar",
+    box: "flying_hirsch",
     name: "Baren og bodegaen",
     intro: "Ét sted, én boks, og de samme gæster hver uge. Boksen skal give dem noget at samles om og jer en grund til at skrive til dem.",
     boxes: "1 boks",
@@ -32,6 +42,7 @@ const cases: Case[] = [
   },
   {
     id: "natklub",
+    box: "heidis",
     name: "Natklubben",
     intro: "Mange gæster, højt tempo og en kø, der skal holdes i gang. Boksen skal kunne ses over dansegulvet og give en grund til at blive til kl. 3.",
     boxes: "2 bokse",
@@ -43,6 +54,7 @@ const cases: Case[] = [
   },
   {
     id: "klub",
+    box: "aab",
     name: "Sportsklubben",
     intro: "Kampdag er en fest, og fansene vil vise, at de var der. Boksen giver billedet klubbens farver og dagens dato.",
     boxes: "2–3 bokse",
@@ -54,6 +66,7 @@ const cases: Case[] = [
   },
   {
     id: "hotel",
+    box: "tuborg",
     name: "Hotellet",
     intro: "Gæsterne er der én nat eller én fest. Boksen giver dem et minde med hotellets navn på og jer et nummer til næste sæson.",
     boxes: "1 boks",
@@ -65,6 +78,7 @@ const cases: Case[] = [
   },
   {
     id: "bio",
+    box: "palads",
     name: "Biografen",
     intro: "Hver premiere er en aften, folk vil vise frem. Boksen får en ny ramme til hver film, og den ramme kan nogen betale for.",
     boxes: "1–2 bokse",
@@ -76,6 +90,7 @@ const cases: Case[] = [
   },
   {
     id: "festival",
+    box: "smukfest",
     name: "Festivalen",
     intro: "Tusindvis af gæster på en plads, der skal bruges hele vejen rundt. Flere bokse sender publikum forbi scener og sponsorer.",
     boxes: "4–8 bokse",
@@ -87,6 +102,7 @@ const cases: Case[] = [
   },
   {
     id: "park",
+    box: "legoland",
     name: "Forlystelsesparken og zoo",
     intro: "Familier på en hel dag med mange stop. Boksene bliver en del af parkens univers og en rute gennem den.",
     boxes: "3–6 bokse",
@@ -120,6 +136,10 @@ export function Cases() {
             ))}
           </div>
           <div id="case-panel" role="tabpanel" aria-labelledby={`case-tab-${c.id}`} className="case">
+            <div className="case-box hero-box">
+              <BoxViewer design={{ venue: designOf(c.box) }} variant="venue" label={`Selfi i et design til ${c.name.toLowerCase()}, her ${designOf(c.box).name}`} preload={[]} />
+              <span className="case-box-cap">Eksempel: {designOf(c.box).name}</span>
+            </div>
             <Ph block note="eksempel på en opsætning, ikke en kunde">
               <h3 className="h-m">{c.name}</h3>
               <p className="case-intro">{c.intro}</p>

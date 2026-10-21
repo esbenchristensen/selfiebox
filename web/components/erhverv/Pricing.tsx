@@ -38,17 +38,13 @@ export function Pricing() {
             <span className="label">Pr. boks</span>
             <p className="price-big">
               <span className="price-from">fra</span>
-              <Ph note="prisen er ikke besluttet; 995 kr. er tallet fra tekststrategien">{n(pricing.fromPerMonth)}</Ph>
+              <Ph note="pris pr. måned">{n(pricing.fromPerMonth)}</Ph>
               <sup>kr./md.</sup>
             </p>
-            <p className="muted">Ekskl. moms. Den præcise pris afhænger af designet og antallet af bokse og står i tilbuddet, før I siger ja.</p>
+            <p className="muted">Ekskl. moms. Opstart {n(pricing.setupFee)} kr. én gang. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja.</p>
             <ul className="price-terms">
-              <li>
-                <Ph note="opstartspris er ikke besluttet">{pricing.setupFee}</Ph>
-              </li>
-              <li>
-                <Ph note="binding og opsigelse er ikke besluttet">{pricing.term}</Ph>
-              </li>
+              <li>Opstart {n(pricing.setupFee)} kr.</li>
+              <li>{pricing.term}</li>
               <li>Faktura hver måned, ingen regninger ved siden af</li>
             </ul>
             <a className="btn btn-primary" href="#kontakt">
@@ -71,8 +67,8 @@ export function Pricing() {
               <li>
                 <Ph note="pris på 4G er ikke besluttet">{pricing.fourG}</Ph>
               </li>
-              <li>{pricing.print}</li>
               <li>{pricing.design}</li>
+              <li>{pricing.print}</li>
             </ul>
           </div>
         </div>

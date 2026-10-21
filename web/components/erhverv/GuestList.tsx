@@ -1,11 +1,11 @@
-// The guest list the place may actually use: what the law requires, what the box does about it.
-// Our sharpest edge against Lightbooth, so it gets its own short section instead of a line in the FAQ.
+// The guest list the place may actually use. The box asks the guest for a yes, so the list is the place's
+// own to send to. Short and positive; the rules are handled, not lectured.
 
 const does = [
-  ["Et særskilt ja", "Gæsten siger selv ja til tilbud, efter nummeret er skrevet. Det er ikke sat på forhånd, og det er ikke et krav for at få billedet."],
-  ["Hvert ja gemmes", "Med tidspunkt, boks og den tekst, gæsten så. Så kan I vise det, hvis nogen spørger."],
-  ["Afmelding i hver SMS", "Gæsten kan melde sig fra med ét svar, og nummeret ryger af listen med det samme."],
-  ["Slettes af sig selv", "Numre, der kun er brugt til at sende billedet, slettes efter 30 dage. Numre uden brug i to år slettes."],
+  ["Et ja fra gæsten", "Gæsten skriver sit nummer for at få billedet og kan samtidig sige ja til at høre fra jer. Dem, der siger ja, kommer på listen."],
+  ["Klar i kontrolpanelet", "Listen vokser af sig selv, hver aften I har åbent. I sender et tilbud eller en invitation derfra, når I vil."],
+  ["Holder sig selv ren", "Hver SMS har en afmelding, og numre uden brug i to år slettes. Listen er altid jeres egne, aktive gæster."],
+  ["Dokumenteret", "Hvert ja gemmes med tidspunkt og tekst. Hvis nogen spørger, kan I vise det."],
 ] as const;
 
 export function GuestList() {
@@ -18,16 +18,8 @@ export function GuestList() {
             En gæsteliste, I må sende til.
           </h2>
           <p className="lede">
-            En natklub i København fik en bøde på 25.000 kr. for at sende SMS'er til gæster, der kun havde skrevet sig på gæstelisten. Reglen er den samme i dag: I må kun sende tilbud til dem, der har sagt ja til det. Derfor beder boksen om det ja, hver gang.
+            Fredagens gæster er de nemmeste at få tilbage næste fredag. Boksen spørger gæsten, om I må skrive, og dem, der siger ja, lander på en liste, I kan sende til med det samme: et tilbud, en invitation til en fest, nyt på kortet.
           </p>
-          <a
-            className="fine"
-            href="https://forbrugerombudsmanden.dk/find-sager/sager/markedsfoeringsloven/sager-efter-markedsfoeringsloven/spam/natklub-idoemt-en-boede-paa-25000-kr"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Sagen hos Forbrugerombudsmanden →
-          </a>
         </div>
         <ul className="guestlist-does">
           {does.map(([title, text]) => (

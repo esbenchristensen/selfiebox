@@ -531,11 +531,11 @@ export const activities: { id: ActivityId; name: string; text: string }[] = [
 export const faq: Faq[] = [
   {
     q: "Hvad koster det?",
-    a: `Fra ${pricing.fromPerMonth} kr. om måneden pr. boks ekskl. moms. Prisen afhænger af designet og antallet af bokse og står i tilbuddet, før I siger ja. Design, vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G, print og ekstra designs er tilvalg og står for sig.`,
+    a: `${pricing.fromPerMonth.toLocaleString("da-DK")} kr. om måneden pr. boks ekskl. moms og ${pricing.setupFee.toLocaleString("da-DK")} kr. i opstart. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja. Vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G og print er tilvalg.`,
   },
   {
     q: "Er der binding?",
-    a: `${pricing.term}. Når aftalen slutter, henter vi boksen, og I får gæstelisten og de godkendte billeder med jer.`,
+    a: `${pricing.term}. Når aftalen slutter, henter vi boksen, og I beholder gæstelisten og de godkendte billeder.`,
   },
   {
     q: "Hvor lang tid går der, fra vi siger ja, til boksen hænger?",
@@ -563,7 +563,7 @@ export const faq: Faq[] = [
   },
   {
     q: "Må vi sende SMS til gæsterne?",
-    a: "Ja, til dem der har sagt ja til det. Boksen beder om et særskilt ja, når gæsten skriver sit nummer, og kun de numre kommer på gæstelisten. Hver SMS har en afmelding. Det er det, markedsføringsloven kræver.",
+    a: "Ja. Boksen spørger gæsten, når nummeret er skrevet, og dem, der siger ja, kommer på gæstelisten. Så er listen jeres at bruge til tilbud og invitationer. Hver SMS har en afmelding, så listen holder sig selv ren.",
   },
   {
     q: "Må vi bruge billederne og videoerne i vores egen markedsføring?",

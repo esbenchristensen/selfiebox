@@ -768,3 +768,13 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
   .quote .ph-mark--block { padding: var(--space-4); }
   .quote blockquote { font-size: 17px; }
 }
+
+/* Cases: the box in a matching design beside the example */
+.cases { grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr); }
+.case { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--space-6); align-items: start; }
+.case-box { aspect-ratio: 4 / 5; }
+.case-box-cap { position: absolute; left: var(--space-4); bottom: var(--space-4); font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 243, 227, 0.7); }
+@media (max-width: 900px) {
+  .case { grid-template-columns: minmax(0, 1fr); }
+  .case-box { max-width: 360px; }
+}

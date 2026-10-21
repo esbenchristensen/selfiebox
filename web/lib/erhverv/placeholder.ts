@@ -5,7 +5,7 @@
 //
 // Prioriteret liste over det, der mangler, står i ERHVERV-GENNEMGANG.md, afsnit 6.
 
-export const PLACEHOLDERS_VISIBLE = true;
+export const PLACEHOLDERS_VISIBLE = false;
 
 // Kontakt. Rigtige felter hører hjemme i lib/company.ts (de bruges også i vilkår og CE-erklæring).
 export const contact = {
@@ -18,14 +18,14 @@ export const contact = {
   city: "Aalborg",
 };
 
-// Pris og vilkår. 995 kr. er tallet fra TEKSTSTRATEGI.md; resten er ikke besluttet.
+// Pris og vilkår. Besluttet af Esben 21. okt. 2026: 1.495 kr./md., 2.495 kr. i opstart, 3 måneders binding, design aftales.
 export const pricing = {
-  fromPerMonth: 995, // kr. pr. måned pr. boks, ekskl. moms
-  setupFee: "Ingen opstartspris",
-  term: "3 måneders binding, derefter 1 måneds opsigelse",
+  fromPerMonth: 1495, // kr. pr. måned pr. boks, ekskl. moms
+  setupFee: 2495, // kr. ekskl. moms, én gang
+  term: "3 måneders binding",
   fourG: "4G-modul: 149 kr./md.",
   print: "Printmodul med betaling pr. foto: kommer snart",
-  design: "Ekstra designs (fx til jul eller en sponsor): pris efter aftale",
+  design: "Pris for design aftales",
 };
 
 // Tid fra ja til boksen hænger.

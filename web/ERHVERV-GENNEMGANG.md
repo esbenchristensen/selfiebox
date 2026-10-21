@@ -1,6 +1,6 @@
 # Gennemgang af selfi.dk/erhverv
 
-> **Status 21. oktober 2026, aften:** A-listen er bygget på `/erhverv` (afsnit 7 nederst siger, hvad der er gjort ved hvert punkt). Alt, vi ikke har, er opdigtet eller sat som pladsholder i `lib/erhverv/placeholder.ts` og markeret gult på siden, fordi siden endnu kun er til os selv. `/events` er fjernet, og Smukfest-kataloget ligger på `/erhverv/smukfest`.
+> **Status 21. oktober 2026, aften:** A-listen er bygget på `/erhverv` (afsnit 7 nederst siger, hvad der er gjort ved hvert punkt). Alt, vi ikke har, er opdigtet i `lib/erhverv/placeholder.ts`; den gule markering er slået fra (`PLACEHOLDERS_VISIBLE = false`), så siden kan ses, som den kommer til at se ud. Besluttet af Esben samme aften: 1.495 kr./md., 2.495 kr. i opstart, 3 måneders binding, pris for design aftales. `/events` er fjernet, og Smukfest-kataloget ligger på `/erhverv/smukfest`. Siden nævner ingen bøder eller sager: tonen er positiv.
 
 *21. oktober 2026. Grundlag: koden i `web/`, `TEKSTSTRATEGI.md`, `SIDESTRUKTUR.md`, `KONKURRENTER.md`, handelsbetingelser og databehandleraftale, GDPR-kravene (`hardware/dokumentation/selfi-gdpr-v1_*`), `docs/funktioner.md` i platform-repoet (hvad der er bygget), kundekatalogerne, markedslisten, brandpakken, siden set på mobil (375 px) og computer (1440 px), og den udgivne side på www.selfi.dk/erhverv.*
 
@@ -226,14 +226,14 @@ Siden ligger i `app/erhverv/page.tsx`, de nye afsnit i `components/erhverv/`, pl
 | F1–F3 | Ny H1 og lede, tre punkter og telefon i heroen. "Venues", "Content is king" og "Content" i menuen er væk |
 | F4 | Menu-knap på mobil med sidens afsnit, Funktioner og linket til privat. Fast "Book en snak"-bjælke i bunden på mobil med telefonnummer |
 | F5 | Telefon og e-mail i hero, service, "hvem I taler med", kontakt og footer (pladsholdere) |
-| M1 | Prisafsnit: "fra 995 kr./md." (pladsholder), hvad der er med, tilvalg, opstartspris og binding (pladsholdere). FAQ-svaret skrevet om. Pris i title, beskrivelse og strukturerede data |
+| M1 | Prisafsnit: 1.495 kr./md. ekskl. moms, 2.495 kr. i opstart, 3 måneders binding, pris for design aftales. Hvad der er med, og tilvalg. FAQ-svaret skrevet om. Pris i title, beskrivelse og strukturerede data |
 | M2 | Bevisstribe med seks opdigtede steder og tre tal, tre opdigtede citater (ét med forbehold) og én opdigtet case med tal. Alt markeret. Showroomets konceptdesigns bliver, markeret som pladsholder |
 | M3 | "Hvem I taler med": stifter, by (pladsholder), printet i Danmark, telefon og e-mail |
 | M4 | 14 spørgsmål i FAQ'en, de ubesluttede svar hentes fra pladsholderfilen |
-| M5 | Afsnittet "En gæsteliste, I må sende til" med Forbrugerombudsmandens sag og fire ting, boksen gør |
+| M5 | Afsnittet "En gæsteliste, I må sende til": positivt, fire ting listen giver. Ingen sager eller bøder på siden (Esben, 21. okt.) |
 | M6 | "Det skal I have klar": væg, stikkontakt, wifi, i "Sådan kommer vi i gang" |
 | M7 | "Pladsen i rammen kan I også sælge til et bryggeri eller en sponsor" i "Det får I" |
-| Cases | Nyt afsnit "Sådan kan det sættes op" med en fane pr. slags sted: bar/bodega, natklub, sportsklub, hotel, biograf, festival, forlystelsespark/zoo. Hver med bokse, placering, design, aktiviteter, gæsteliste og "det får de". Eksempler, ikke kunder, markeret |
+| Cases | Nyt afsnit "Sådan kan det sættes op" med en fane pr. slags sted: bar/bodega, natklub, sportsklub, hotel, biograf, festival, forlystelsespark/zoo. Hver med boksen i 3D i et design, der passer (Flying Hirsch, Heidi's, AaB, Tuborg, Palads, Smukfest, LEGOLAND), bokse, placering, design, aktiviteter, gæsteliste og "det får de" |
 | L1–L3 | "Video i HD, stående" (900 × 1600), mikrofonmodul som tilvalg, "største smil" som titel på billedet, kåring på tværs af aftenen mærket "kommer snart". Rettet i `content.ts`, så funktionssiderne følger med |
 | L4 | Lysringens farve er ude af teksterne og står som "kommer snart" på eget design |
 | L5 | "Går en boks i stykker, sender vi en ny. Fejl og slitage koster jer ikke noget. Tyveri og hærværk aftaler vi i tilbuddet" |
