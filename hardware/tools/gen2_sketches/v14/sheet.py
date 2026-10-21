@@ -30,7 +30,7 @@ def disp_side(ax):   # glass + metal back seen in section z=110, left side
     ax.text(-82.6,0.35,'glas 1,1 (sort kant 11,8)',fontsize=7.5,color='#123')
 fig=plt.figure(figsize=(21,15),dpi=110)
 fig.text(0.02,0.975,'halo-gen2-v14 – skitse: rettelser efter v13-hurtigprint (til godkendelse)',fontsize=17,fontweight='bold',va='top')
-fig.text(0.02,0.952,'Alle snit er taget direkte fra CAD (v13-printfilerne og v14-udkastet). Mål i mm. Mørk = front, hvid = bagramme, creme = lysring, grå = skal, blå = skærmglas.',fontsize=10.5,va='top',color='#444')
+fig.text(0.02,0.952,'Alle snit er taget direkte fra CAD (v13- og v14-printfilerne). Mål i mm. Mørk = front, hvid = bagramme, creme = lysring, grå = skal, blå = skærmglas.',fontsize=10.5,va='top',color='#444')
 # --- A/B lock section
 axA=fig.add_axes([0.01,0.60,0.30,0.32]); panel(axA,'z110','13',(-112,-68),(-1.5,33),'A  v13: snaplås i snit (side, z 110)',disp_side)
 call(axA,1,(-84.4,15.5),(-80,21),'');
@@ -73,12 +73,11 @@ axI.add_patch(Rectangle((-71.68,-124.05+7.5),143.36,228.73,fc=C['mod'],ec='k'))
 for sx in (-1,1):
     for z in (77.63,-82.37):
         axI.add_patch(Rectangle((sx*60.91-4,z-6),8,12,fc='#ddd',ec='k',lw=0.8)); axI.add_patch(Circle((sx*60.91,z),1.4,fc='k'))
-        axI.add_patch(Circle((sx*60.91,z+(4.74 if z>0 else 4.74)),1.4,fc='none',ec='#c03030',lw=1.2,ls='--'))
     for z in (29-6.87,-29-6.87): axI.add_patch(Circle((sx*24.5,z),1.4,fc='none',ec='k'))
-# v14 slot outlines
+# v14 holes: 3.5 across, slotted +-2.4 lengthwise
 for sx in (-1,1):
-    for zc in (80,-80):
-        axI.add_patch(FancyBboxPatch((sx*60.91-1.45,zc-2.37-1.85),2.9,4.74+3.7,boxstyle='round,pad=0',fc='none',ec='#2a8a4a',lw=2))
+    for zc in (77.63,-82.37):
+        axI.add_patch(FancyBboxPatch((sx*60.91-1.75,zc-2.4-1.45),3.5,4.8+2.9,boxstyle='round,pad=0',fc='none',ec='#2a8a4a',lw=2))
 axI.set_xlim(-92,92); axI.set_ylim(-135,135)
 axI.text(-83,128,'top (11,86 til metalpladen)',fontsize=8.5); axI.text(-83,-133,'bund: 2 små hak i pladekanten (7,5 til glaskant)',fontsize=8.5)
 for t,y in [('Beslag (sort prik): 121,8 mm imellem (22,54 fra glaskant),',62),('160 mm imellem, 46,42 fra top og 41,68 fra bund.',54),
@@ -87,7 +86,7 @@ for t,y in [('Beslag (sort prik): 121,8 mm imellem (22,54 fra glaskant),',62),('
             ('v14 (grøn): langhul og tryktårn dækker',-4),('begge veje, skruerne finder altid hullet.',-12),
             ('Midterhullerne (49 × 58) er til Pi\'en.',-26)]:
     axI.text(88,y,t,fontsize=8.5,ha='left') if False else None
-fig.text(0.505,0.50,'Beslag (sort prik): 121,8 mm imellem,\n22,54 fra glaskanten; 160 mm imellem,\n46,42 fra top og 41,68 fra bund.\n\nv13 har netop de mål, men hullerne\ner kun ±2,4 mm lange, så skærmen\npasser kun med de 2 hak i bunden.\n\nVendt om (rød stiplet) flytter hvert\nbeslag 4,74 mm, og v13 rammer\n2,3 mm ved siden af.\n\nv14 (grøn): langhul + tryktårn\ndækker begge veje.\n\nMidterhullerne (49 × 58) er Pi\'ens.',fontsize=9,va='top')
+fig.text(0.505,0.50,'Beslag (sort prik): 121,8 mm imellem,\n22,54 fra glaskanten; 160 mm imellem,\n46,42 fra top og 41,68 fra bund.\nPladens 2 hak vender nedad, væk fra\nkameraet (Esben 21. okt.).\n\nPlaceringen i v13 var rigtig, men\nhullerne (2,9 mm) gav kun 0,2 mm luft\npr. side på tværs, mindre end printet\nkrymper over 12 cm.\n\nv14 (grøn): 3,5 mm på tværs, stadig\naflange ±2,4 mm på langs; hoved 6,2.\n\nMidterhullerne (49 × 58) er Pi\'ens.',fontsize=9,va='top')
 # --- text block
 txt='''Hvad v14 ændrer (kun front og bagramme er nye; skal, lysring, låg og beslag som v13)
 
