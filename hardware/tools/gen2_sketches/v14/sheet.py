@@ -51,7 +51,7 @@ def glass_front(ax):
     from matplotlib.patches import FancyBboxPatch
     ax.add_patch(FancyBboxPatch((-83.45+5,27.8+5),166.9-10,248.1-10,boxstyle='round,pad=5',fc='none',ec=C['glass'],lw=1.6,ls='--',zorder=5))
 axC=fig.add_axes([0.64,0.75,0.17,0.19]); panel(axC,'y10','13',(-93,-71),(21,41),'C  v13: nederste hjørne (snit 10)',glass_front)
-axC.text(-92.5,21.5,'R3 + 1,2 fri skar\nvæggen op i hjørnet',fontsize=8.5,color='#b03030')
+axC.text(-92.5,21.5,'skåret ud i filen (ikke printfejl):\nfrizone R3 + 1,2 mm fjernede\nvæggen; skærmen passer alligevel',fontsize=8.5,color='#b03030')
 axD=fig.add_axes([0.82,0.75,0.17,0.19]); panel(axD,'y10','14',(-93,-71),(21,41),'D  v14: glas R5 (tegning)',glass_front)
 axD.text(-92.5,21.5,'væggen er hel; 0,24 luft\ntil glassets hjørne',fontsize=8.5)
 fig.text(0.645,0.735,'stiplet blå = skærmglassets kant (R5 iflg. Raspberry Pi-tegningen)',fontsize=8.5,color='#335')
