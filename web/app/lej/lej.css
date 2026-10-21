@@ -53,7 +53,7 @@
 .cal-day.is-end { border-radius: 0 22px 22px 0; }
 .cal-day.is-start.is-end { border-radius: 22px; }
 .cal-day.is-start span, .cal-day.is-end span { background: var(--seg-on); color: var(--seg-on-ink); font-weight: 500; }
-.cal-day.is-preview.is-start span, .cal-day.is-preview.is-end span { background: var(--line-strong); color: var(--ink); }
+.cal-day.is-preview.is-start span, .cal-day.is-preview.is-end span { background: var(--surface-raised); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
 .cal-legend { display: flex; gap: var(--space-5); margin-top: var(--space-4); font-size: 13px; color: var(--ink-muted); flex-wrap: wrap; }
 .cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .cal-legend i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
@@ -462,3 +462,41 @@
 .cal-season { display: flex; gap: 8px; align-items: flex-start; margin: calc(-1 * var(--space-2)) 0 var(--space-3); font-size: 13px; line-height: 1.4; color: var(--ink-muted); max-width: 46ch; }
 .cal-season i { flex: none; width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: #e0a12b; }
 .hb .cal-season { margin-top: 0; }
+
+/* ---------- Calendar cells: day and running total, rounded squares, outline on hover ---------- */
+.cal-grid { row-gap: 6px; column-gap: 4px; }
+.cal-day { height: 54px; font-size: 15px; }
+.cal-day span { width: 100%; max-width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; line-height: 1; }
+.cal-day small { font-size: 10.5px; font-weight: 500; letter-spacing: 0; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.cal-day:disabled small { display: none; }
+.cal-day.is-start span small, .cal-day.is-end span small { color: inherit; opacity: 0.8; }
+.cal-day.is-preview.is-start span small, .cal-day.is-preview.is-end span small { color: var(--ink-muted); }
+.cal-day:not(:disabled):not(.is-in):hover span { background: var(--surface-raised); box-shadow: inset 0 0 0 2px var(--ink); }
+.cal-day.is-busy:not(.is-in):hover span { background: var(--surface-raised); }
+.cal-day.is-in { background: color-mix(in srgb, var(--green) 14%, transparent); }
+.cal-day.is-preview { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.cal-day.is-start { border-radius: 14px 0 0 14px; }
+.cal-day.is-end { border-radius: 0 14px 14px 0; }
+.cal-day.is-start.is-end { border-radius: 14px; }
+.cal-day.is-busy::after { top: 4px; right: 6px; }
+.cal-day:focus-visible span { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (max-width: 420px) { .cal-day { height: 50px; } .cal-day span { height: 48px; border-radius: 10px; } .cal-day small { font-size: 10px; } }
+
+/* ---------- No monospace, no small caps on the rental page: plain sentence-case text ---------- */
+.lej .label, .lej .cal-dow, .lej .hb-pay, .lej .lej-box3d-hint, .lej .tag-ex, .lej .bk-price, .lej .bk-steps .n, .lej .cmp-head, .lej .lej-journey-n, .lej .pers-date, .lej .bk-incl li span:last-child, .lej .hb-live { font-family: var(--font-body), sans-serif; letter-spacing: 0; text-transform: none; }
+.lej .label { font-size: 15px; font-weight: 500; color: var(--green-ink); }
+.lej .cal-dow { font-size: 12px; font-weight: 500; text-transform: none; }
+.lej .lej-box3d-hint { font-size: 13px; }
+.lej .tag-ex { font-size: 11px; font-weight: 500; padding: 2px 8px; }
+.lej .bk-price { font-size: 14px; }
+.lej .bk-steps .n { font-size: 13px; }
+.lej .cmp-head { font-size: 13px; font-weight: 500; }
+.lej .lej-journey-n { font-size: 13px; font-weight: 500; }
+.lej .pers-date { font-size: 10px; letter-spacing: 0.02em; }
+.lej .hb-pay { display: block; margin: 0; font-size: 13px; color: var(--ink-muted); }
+.lej .lej-points li { display: list-item; list-style: none; padding-left: 0; font-size: 16px; }
+.lej .bk-sum-incl li::before { display: none; }
+.lej .bk-sum-incl { gap: 4px; }
+@media (max-width: 900px) {
+  .lej .cmp-us::before, .lej .cmp-them::before { font-family: var(--font-body), sans-serif; letter-spacing: 0; text-transform: none; font-size: 12px; font-weight: 500; }
+}
