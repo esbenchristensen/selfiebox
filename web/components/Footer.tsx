@@ -10,6 +10,7 @@ export function Footer() {
         <nav className="footer-links" aria-label="Sider">
           <a href="/">Fotobokse i jeres eget design</a>
           <a href="/funktioner">Funktioner</a>
+          <a href="/lej">Lej en fotoboks til festen</a>
           <a href="/#kontakt">Book en snak</a>
           <a href="/dokumentation">Dokumentation</a>
           <a href="/vilkaar">Handelsbetingelser</a>
