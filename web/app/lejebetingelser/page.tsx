@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 // them, and have the text read by an adviser before the first paying customer. /vilkaar is for businesses.
 const DEDUCTIBLE = "1.000 kr."; // (*) selvrisiko ved skade
 const CANCEL_DAYS = 14; // (*) afbestilling uden beregning senest så mange dage før første lejedag
-const LATE_FEE = "695 kr."; // (*) pr. påbegyndt dag ved for sen retur, svarer til dagsprisen
+const LATE_FEE = "895 kr."; // (*) pr. påbegyndt dag ved for sen retur, svarer til dagsprisen
 
 export default function Lejebetingelser() {
   return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { fromKey, monthGrid, MONTHS, type DayKey, type Range, WEEKDAYS_SHORT } from "@/lib/dates";
+import { seasonOf, seasonsIn } from "@/lib/udlejning/seasons";
 
 type Props = {
   selected: Range | null;
@@ -73,6 +74,12 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: 
             <h4 className="cal-title">
               {MONTHS[m]} {y}
             </h4>
+            {seasonsIn(y, m).length > 0 && (
+              <p className="cal-season">
+                <i aria-hidden="true" />
+                {seasonsIn(y, m).map((x, i) => (i ? x.name.toLowerCase() : x.name)).join(" og ")}: {seasonsIn(y, m)[0].hint}
+              </p>
+            )}
             <div className="cal-grid" role="grid" aria-label={`${MONTHS[m]} ${y}`}>
               {WEEKDAYS_SHORT.map((w) => (
                 <span className="cal-dow" key={w} role="columnheader">
@@ -86,12 +93,14 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: 
                   const past = k < minDay || k > maxDay;
                   const booked = !past && !canBook({ from: k, to: k });
                   const ok = !past && !booked;
+                  const busy = ok && seasonOf(k);
                   const r = rangeFor(k);
                   const on = inShown(k);
                   const cls = [
                     "cal-day",
                     past && "is-past",
                     booked && "is-booked",
+                    busy && "is-busy",
                     on && "is-in",
                     on && k === shown!.from && "is-start",
                     on && k === shown!.to && "is-end",
@@ -106,7 +115,7 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: 
                       className={cls}
                       disabled={!ok}
                       aria-pressed={!!selected && k >= selected.from && k <= selected.to}
-                      aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : ""}`}
+                      aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : busy ? `, travl periode: ${busy.name.toLowerCase()}` : ""}`}
                       onPointerEnter={(e) => ok && e.pointerType === "mouse" && setHover(r)}
                       onClick={() => {
                         setHover(null);
@@ -125,6 +134,10 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single }: 
         <span>
           <i className="lg-free" />
           Ledig
+        </span>
+        <span>
+          <i className="lg-busy" />
+          Travl periode
         </span>
         <span>
           <i className="lg-booked" />

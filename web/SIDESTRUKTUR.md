@@ -14,7 +14,7 @@ Selfi sælger ét produkt, men to forretninger: **en leje til én fest** og **et
 | Udløser | En fest med en dato | Et ønske om flere gæster, mere omsætning, noget at tale om |
 | Det vil de have | Minder, alle med på billedet, nemt og billigt | Omtale, gæster der bliver og kommer igen, en gæsteliste |
 | Det frygter de | At den ikke virker på dagen, levering, skjulte priser | Binding, personaletid, tyveri, bøder for SMS-markedsføring |
-| Pris | 695 / 895 / 1.495 kr. **inkl. moms** pr. leje | 995 kr./md. **ekskl. moms** pr. boks |
+| Pris | 895 / 895 / 1.395 kr. **inkl. moms** pr. leje | 995 kr./md. **ekskl. moms** pr. boks |
 | Beslutning | Én person, få dage, ofte på mobilen om aftenen | Ejer, ofte efter en snak eller demo, uger |
 | Konvertering | Selvbetjening: kalender og booking | Samtale: "Book en snak" |
 | Søger på | "lej fotoboks", "fotoboks til bryllup", "photo booth leje" | "fotoboks til bar", "photo booth natklub", sjældent; mest via opsøgende salg |
