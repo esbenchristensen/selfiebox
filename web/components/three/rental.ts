@@ -19,6 +19,10 @@ export const RENTAL_BOX: Venue = {
 // The same box on its floor stand in the hero, taking a photo at a birthday: theme, countdown, flash, photo.
 export const RENTAL_STAND: Venue = { ...RENTAL_BOX, shoot: { screen: "fodselsdag", photo: "boks-fodselsdag" } };
 
-// The /erhverv hero: the same plain box, with the camera's live view on the screen: friends in a Danish nightclub
-// getting ready for the photo (made with Gemini, public/photos/skaerm-natklub.jpg).
-export const PLAIN_CLUB_BOX: Venue = { ...RENTAL_BOX, screen: "/photos/skaerm-natklub.jpg" };
+// The /erhverv hero: the same plain box, with the camera's live view on the screen: guests getting ready for the
+// photo in the places we sell to, a nightclub, an ice hockey arena, Tivoli and a festival (made with Gemini,
+// public/photos/skaerm-*.jpg). They take turns on the screen.
+export const PLAIN_CLUB_BOX: Venue = {
+  ...RENTAL_BOX,
+  screen: ["natklub", "sport", "tivoli", "festival"].map((s) => `/photos/skaerm-${s}.jpg`),
+};

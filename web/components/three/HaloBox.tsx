@@ -28,8 +28,9 @@ export type Venue = {
   // The box taking a photo, over and over: a party theme on the screen (an OCCASIONS id), a countdown with a green
   // ring filling up round the edge, a flash, and then the photo (/photos/<photo>.jpg) on the screen.
   shoot?: { screen: string; photo: string };
-  // A still image on the screen instead of the theme's start screen (/models/<id>/screen.png), 5:8.
-  screen?: string;
+  // Still images on the screen instead of the theme's start screen (/models/<id>/screen.png), 5:8. With more
+  // than one they take turns, a slow cross-fade every few seconds.
+  screen?: string[];
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -47,6 +48,9 @@ const PRIVATE_CASING = "#0b0b0d";
 // A photo, in seconds: waiting, the countdown (one second a number), then the photo on the screen after the flash.
 export const SHOOT = { idle: 1.2, count: 3, photo: 4.4 };
 export const SHOOT_LOOP = SHOOT.idle + SHOOT.count + SHOOT.photo;
+// Venue.screen with several images: seconds each is shown, and the cross-fade into the next.
+const SCREEN_HOLD = 4.5;
+const SCREEN_FADE = 0.9;
 const WARM = new THREE.Color("#fff3e3");
 const WHITE = new THREE.Color("#ffffff");
 const GREEN = new THREE.Color("#22d36b"); // a touch warm, so the burst shows on the light page
@@ -184,8 +188,11 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   }, [casing, ring, shoot, countOn, fill]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
 
-  const screenMap = useTexture(venue ? (venue.screen ?? `/models/${shoot?.screen ?? venue.id}/screen.png`) : "/models/smukfest/screen.png");
-  screenMap.colorSpace = THREE.SRGBColorSpace;
+  const screens = useTexture(venue ? (venue.screen ?? [`/models/${shoot?.screen ?? venue.id}/screen.png`]) : ["/models/smukfest/screen.png"]);
+  screens.forEach((x) => (x.colorSpace = THREE.SRGBColorSpace));
+  const screenMap = screens[0];
+  const screenBase = useRef<THREE.MeshBasicMaterial>(null);
+  const screenNext = useRef<THREE.MeshBasicMaterial>(null);
   const privateScreen = useMemo(() => (theme ? screenTexture(theme) : null), [theme]);
   useEffect(() => () => privateScreen?.dispose(), [privateScreen]);
 
@@ -229,6 +236,12 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   const tmp = useMemo(() => new THREE.Color(), []);
   useFrame((state) => {
     const t = state.clock.elapsedTime;
+    if (screens.length > 1 && screenBase.current && screenNext.current) {
+      const k = Math.floor(t / SCREEN_HOLD), into = t - k * SCREEN_HOLD;
+      screenBase.current.map = screens[k % screens.length];
+      screenNext.current.map = screens[(k + 1) % screens.length];
+      screenNext.current.opacity = Math.max(0, Math.min(1, (into - (SCREEN_HOLD - SCREEN_FADE)) / SCREEN_FADE));
+    }
     attach.current = motion ? ease((t - bornAt - 0.15) / 0.9) : 1;
     // Slow wave through the theme's idle colours, like the ring does when nobody is using it.
     const n = ring.length;
@@ -309,8 +322,14 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
         <planeGeometry args={[SCREEN.w, SCREEN.h]} />
         {/* Pulled towards the camera in the depth buffer: the glass is a fraction of a millimetre behind the picture,
             and seen from a distance (the box on its stand) the two would fight and flicker. */}
-        <meshBasicMaterial map={privateScreen ?? screenMap} toneMapped={false} polygonOffset polygonOffsetFactor={-4} polygonOffsetUnits={-4} />
+        <meshBasicMaterial ref={screenBase} map={privateScreen ?? screenMap} toneMapped={false} polygonOffset polygonOffsetFactor={-4} polygonOffsetUnits={-4} />
       </mesh>
+      {screens.length > 1 && (
+        <mesh position={[0, SCREEN.y, venue?.unit === "gen2" ? SCREEN_Z_GEN2 : SCREEN.z]}>
+          <planeGeometry args={[SCREEN.w, SCREEN.h]} />
+          <meshBasicMaterial ref={screenNext} map={screens[1]} transparent opacity={0} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={-6} polygonOffsetUnits={-6} />
+        </mesh>
+      )}
       {shootTex && (
         <>
           {/* Countdown and photo over the theme, then the flash over everything on the screen */}
@@ -364,7 +383,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
 
 export function preloadVenue(v: Venue) {
   if (v.parts.length) useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
-  useTexture.preload(v.screen ?? `/models/${v.shoot?.screen ?? v.id}/screen.png`);
+  (v.screen ?? [`/models/${v.shoot?.screen ?? v.id}/screen.png`]).forEach((src) => useTexture.preload(src));
   useTexture.preload(`/models/${v.id}/print.png`);
   useTexture.preload(`/photos/${v.photo}.jpg`);
 }
