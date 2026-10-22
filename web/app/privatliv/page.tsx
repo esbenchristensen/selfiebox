@@ -35,8 +35,8 @@ export default function Privatliv() {
         <tbody>
           <tr>
             <td>I, der skriver til os</td>
-            <td>Navn, e-mail, telefon, sted og besked fra kontaktformularen</td>
-            <td>At svare og lave et tilbud. Legitim interesse og skridt før en aftale (GDPR art. 6, stk. 1, litra b og f)</td>
+            <td>Navn, e-mail, telefon, sted og besked fra kontaktformularen. Ved et designudkast også virksomhed, hjemmeside, branche og antal steder, og det, vi læser på jeres offentlige hjemmeside</td>
+            <td>At svare og lave et tilbud og et designudkast. Udkastet skrives med hjælp fra en AI-model hos OpenAI og gennemgås af en medarbejder, før I får det. Legitim interesse og skridt før en aftale (GDPR art. 6, stk. 1, litra b og f)</td>
             <td>12 måneder efter sidste kontakt, hvis I ikke bliver kunde</td>
           </tr>
           <tr>
@@ -53,8 +53,8 @@ export default function Privatliv() {
           </tr>
           <tr>
             <td>I, der bruger chatten</td>
-            <td>Det, I skriver i chatten, bookingnummer og e-mail ved verificering, siden I skrev fra, og en pseudonymiseret IP-adresse</td>
-            <td>At svare, slå jeres booking op og lade en medarbejder tage over (litra b og f). Svarene laves af en AI-model hos OpenAI; teksten sendes dertil uden at blive gemt eller brugt til træning</td>
+            <td>Navn, e-mail og telefon, I skriver, før chatten starter, det, I skriver i chatten, bookingnummer eller en engangskode på sms ved verificering, siden I skrev fra, og en pseudonymiseret IP-adresse</td>
+            <td>At svare, lade en medarbejder tage over og, når I selv spørger til en ordre, slå jeres booking op, efter I har bekræftet, at det er jeres (litra b og f). Svarene laves af en AI-model hos OpenAI; teksten sendes dertil uden at blive gemt eller brugt til træning</td>
             <td>90 dage efter sidste besked. En log over ændringer af bookinger (hvad, hvornår, hvem) gemmes sammen med bookingen</td>
           </tr>
           <tr>
@@ -70,7 +70,7 @@ export default function Privatliv() {
       <h2>Hvem vi deler med</h2>
       <p>
         Vi sælger aldrig oplysninger. Vi bruger leverandører, der behandler oplysninger for os efter databehandleraftaler: Vercel Inc.
-        (hosting af hjemmesiden og kontrolpanelet, USA), MongoDB Inc. (database, servere i EU), OpenAI (AI-svar i chatten, USA, uden lagring eller træning), Twilio (sms til os, når en chat sendes videre), samt vores e-mail-, besked- og regnskabsværktøjer.
+        (hosting af hjemmesiden og kontrolpanelet, USA), MongoDB Inc. (database, servere i EU), OpenAI (AI-svar i chatten, USA, uden lagring eller træning), Twilio (sms til os, når en chat sendes videre eller I beder om et designudkast, og engangskoder til jer i chatten), Resend (e-mails), samt vores e-mail-, besked- og regnskabsværktøjer.
         Overførsler til USA sker efter EU-USA-dataprivatlivsrammen og EU-Kommissionens standardkontraktbestemmelser. Revisor og myndigheder
         får oplysninger, når loven kræver det.
       </p>
