@@ -10,7 +10,7 @@ AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder
 | `support/stilguide.md` | Tonen: de otte regler, form, sure kunder, nej, eksempler på gode og dårlige svar. |
 | `support/viden.md` | Vidensbasen: forløbet for privat leje, lejebetingelser, første hjælp, erhverv. Priser og regler kommer live fra admin (rental_settings), ikke herfra. |
 | `lib/support/knowledge.ts` | Samler de tre filer plus FAQ og funktioner fra `content.ts` til modellens instruktioner, og laver kontekstbeskeden pr. tur (dato, åbningstid, verificering, priser). |
-| `lib/support/tools.ts` | Værktøjerne: `verify_customer`, `get_bookings`, `check_availability`, `propose_date_change`, `commit_date_change`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
+| `lib/support/tools.ts` | Værktøjerne: `verify_customer`, `send_sms_code`, `verify_sms_code`, `register_business_lead` (designudkast, se `lib/erhverv/leads.ts`), `get_bookings`, `check_availability`, `propose_date_change`, `commit_date_change`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
 | `lib/support/agent.ts` | Én tur: OpenAI Responses API med streaming og function calling, værktøjsløkke, logning. |
 | `lib/support/db.ts` | Collections `support_chats`, `support_messages` (TTL 90 dage) og `support_audit` (gemmes). Samme typer i selfiebox-platform `web/src/lib/types.ts`. |
 | `lib/support/session.ts` | Cookie med chat-id og hemmelig token. |
@@ -27,7 +27,9 @@ Admin-siden ligger i selfiebox-platform: `web/src/app/admin/(panel)/support/` (l
 
 ## Sikkerhed
 
-- **Verificering** med bookingnummer + e-mail (`verify_customer`), højst 5 forsøg pr. chat. Før det kender modellen ingen bookinger.
+- **Kontaktoplysninger først:** widget'en beder om navn, e-mail og telefon, før første besked (`parseContact` i `session.ts`, gemt på `support_chats.contact`). De bruges ikke til opslag, før kunden selv spørger til en ordre.
+- **Verificering** (GDPR) med bookingnummer, der skal være lavet med den oplyste e-mail eller det oplyste telefonnummer (`verify_customer`), eller med en 6-cifret engangskode på SMS til det oplyste nummer (`send_sms_code` + `verify_sms_code`: 10 min., højst 3 koder, hash i databasen). Efter en SMS-kode er kundens bookinger dem, der er lavet med det telefonnummer. Højst 5 forkerte forsøg pr. chat i alt. Før det kender modellen ingen bookinger.
+- **Erhverv:** Sif taler også med steder og kan bestille et gratis designudkast (`register_business_lead`), som havner i Leads i admin, præcis som formularen på /erhverv.
 - **Afgrænsning i backend:** alle opslag og ændringer går gennem `myRental()` i `tools.ts`, som kun accepterer bookingnumre fra `chat.customer.bookings`. Prompten kan ikke udvide det.
 - **Ændringer kræver ja:** `propose_date_change` gemmer et forslag; `commit_date_change` afvises, medmindre kunden har skrevet en ny besked efter forslaget (og inden en time). Alt logges i bookingens `history` og i `support_audit` med tid og aktør.
 - **Penge, klager, jura, skade:** aldrig i chatten; `escalate`.
@@ -43,6 +45,9 @@ SUPPORT_MODEL         gpt-6.1-sol (standard). gpt-6-luna er billigere, gpt-6-ast
 SUPPORT_RETENTION_DAYS 90
 TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM   samme konto som platformen (fleet/.env)
 SUPPORT_SMS_TO        +45… det nummer, der får eskaleringer
+LEADS_SMS_TO          +45… det nummer, der får nye leads (standard SUPPORT_SMS_TO)
+LEADS_MAIL_TO         den adresse, der får nye leads på mail (standard company.email)
+RESEND_API_KEY        bekræftelsen til leadet (fra booking@mail.selfi.dk)
 ADMIN_URL             https://admin.selfi.dk (linket i SMS'en)
 ```
 
