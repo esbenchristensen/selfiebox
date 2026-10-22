@@ -267,8 +267,8 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
           label: "Sådan foregår det",
           items: [
             { title: `Vi sender boksen ${shortDay(shipDay(b, c.shipDaysBefore))}`, text: `Til den dao-pakkeshop, der ligger nærmest ${v.adresse}. Den er fremme senest dagen før, og dao giver jer besked.` },
-            { title: "I henter og stiller op", text: `Sæt boksen på stativet, og sæt strøm til. Den starter selv.${b.printer ? " Printeren kommer i sin egen kasse og finder selv boksen." : ""}` },
-            { title: `Retur senest ${shortDay(returnBy(b.to))}`, text: "Pak boksen i kassen, sæt returlabelen på, og aflever den i en dao-pakkeshop. Fragten er betalt." },
+            { title: "I henter og tester", text: `Sæt strøm til boksen, så snart I har hentet den, og se, at den starter. Virker den ikke, så skriv til os med det samme, så vi kan nå at sende en ny.${b.printer ? " Printeren kommer i sin egen kasse og finder selv boksen." : ""}` },
+            { title: `Retur senest ${shortDay(returnBy(b.to))}`, text: "Pak boksen i kassen, sæt returlabelen på, og aflever den i en dao-pakkeshop. Fragten er betalt. Gem kvitteringen fra pakkeshoppen." },
           ],
         },
         { type: "note", label: "Bindende booking", text: "Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, og den kan ikke afbestilles. I kan flytte den til ledige datoer uden for højsæson, så længe boksen ikke er sendt. Lejebetingelserne står på selfi.dk/lejebetingelser." },
