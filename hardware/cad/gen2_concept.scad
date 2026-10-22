@@ -660,13 +660,19 @@ W3_NOSE = [P3(2.4, W3_GRIP), P3(3.5, W3_GRIP), P3(3.5, -0.3), P3(2.4, -0.3)];   
 W3_CLIP = [[16, 9.6, 4.3], 6.55, 2.72];   // clip [l, w, h], centre s, bottom d (0.5 mm short of the inner wall); right side, 1.6 proud
 // r range of a convex (y, r) polygon at y
 function xr(p, y) = let(r = [for (i = [0:len(p) - 1]) let(a = p[i], b = p[(i + 1) % len(p)]) if ((a[0] - y)*(b[0] - y) <= 0 && a[0] != b[0]) a[1] + (y - a[0])*(b[1] - a[1])/(b[0] - a[0])]) [min(r), max(r)];
-// the polygon swept round the ring in y slices (the print's own direction); grow > 0 takes the wider end of each slice
-module sweep3(p, step = 0.2, grow = 0) {
-    ys = [for (q = p) q[0]];  y0 = min(ys);  y1 = max(ys);  n = ceil((y1 - y0)/step);
-    for (i = [0:n - 1]) let(a = y0 + i*(y1 - y0)/n, b = y0 + (i + 1)*(y1 - y0)/n,
-                            ra = xr(p, min(a + 0.001, y1)), rb = xr(p, max(b - 0.001, y0)), m = xr(p, (a + b)/2),
-                            r = grow > 0 ? [min(ra[0], rb[0]), max(ra[1], rb[1])] : m)
-        ext_y(a - (grow > 0 ? 0.01 : 0), b + 0.01) ring_band2d(r[0], r[1]);
+// a smooth slope round the ring: everything inside the ring centre line offset r, going linearly from r0 at y0 to r1 at y1
+// (the centre line is convex, so the hull of the two end slices is exactly that; v18 first draft and v2-v17 used 0.2-0.5 mm stairs)
+module rfill(y0, y1, r0, r1) hull() { ext_y(y0, y0 + 0.001) offset(r = r0) ring_centre2d(); ext_y(y1 - 0.001, y1) offset(r = r1) ring_centre2d(); }
+function qsort(v) = len(v) <= 1 ? v : let(p = v[0]) concat(qsort([for (x = v) if (x < p) x]), [p], qsort([for (x = v) if (x > p) x]));
+// the convex polygon swept round the ring, smooth: between each pair of its corners (in y) the outer and inner edges are straight
+function lerp_at(y, ya, ra, yb, rb) = ra + (y - ya)*(rb - ra)/(yb - ya);
+module sweep3(p) {
+    ys = qsort([for (q = p) q[0]]);  e = 1e-4;
+    for (i = [0:len(ys) - 2]) let(a = ys[i], b = ys[i + 1], ra = xr(p, a + e), rb = xr(p, b - e))
+        if (b - a > 0.002) difference() {
+            rfill(a, b, lerp_at(a, a + e, ra[1], b - e, rb[1]), lerp_at(b, a + e, ra[1], b - e, rb[1]));
+            rfill(a - 0.01, b + 0.01, lerp_at(a - 0.01, a + e, ra[0], b - e, rb[0]), lerp_at(b + 0.01, a + e, ra[0], b - e, rb[0]));
+        }
 }
 module w3_clip_box(g) translate([CAM_KEEP[0] + W3_CLIP[0][0]/2, 0, RING_Z1]) {
     c = P3(W3_CLIP[1], W3_CLIP[2] - W3_CLIP[0][2]/2);
@@ -788,7 +794,7 @@ module ring3() {
     // v18: wedge on the inner flange, down onto the reflector pocket's floor, with a lip over strip 3's front edge
     // (prints: the ring lies face down, so every face of it looks up or is steeper than 45 deg)
     difference() {
-        union() { sweep3(W3_WEDGE, 0.2); sweep3(W3_NOSE, 0.2); }
+        union() { sweep3(W3_WEDGE); sweep3(W3_NOSE); }
         ext_y(0, 20) { cam_keep2d(); translate([CAM_KEEP[0] - 0.01, RING_Z1 - CAM_KEEP[1]]) square([W3_CLIP[0][0] + 1.5, 2*CAM_KEEP[1]]); }
     }
 }
@@ -852,10 +858,13 @@ module frame3() {
                 union() {
                     // the last step runs into the floor, so the reflector is one piece with the frame (v2 left a 0.24 mm gap)
                     difference() {   // v18: pocket for white strip 3 in the front of the reflector
-                        for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - 0.01]) ext_y(y, min(y + REFL_STEP, FLOOR3) + 0.01) ring_band2d(-FL3, min(4.4, refl_r(min(y + REFL_STEP, FLOOR3))));
-                        sweep3(W3_POCKET, 0.2, 1);
+                        difference() {   // v18: one smooth slope (v2-v17: 0.5 mm stairs)
+                            union() { rfill(REFL[0][0], REFL[1][0], REFL[0][1], REFL[1][1]); ext_y(REFL[1][0] - 0.01, FLOOR3 + 0.01) offset(r = REFL[1][1]) ring_centre2d(); }
+                            ext_y(REFL[0][0] - 1, FLOOR3 + 1) offset(r = -FL3) ring_centre2d();
+                        }
+                        sweep3(W3_POCKET);
                     }
-                    sweep3(W3_LIP, 0.2);
+                    sweep3(W3_LIP);
                     ext_y(REFL[0][0], CH_BACK + 0.01) ring_band2d(STRIP_T3[1], FL3);
                     ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
                     // v18: lanes: a step in front of white 1, a stem + forward lip behind white 1 and white 2
@@ -905,8 +914,8 @@ module placed_strips3(kind) {
         ext_y(s[0] + (s[1] - s[0] - 4.7)/2, s[1] - (s[1] - s[0] - 4.7)/2) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
     if (kind == "w") difference() {   // v18: strip 3 in the reflector, clip on the right
         let(c = (W3[0] + W3[1])/2) union() {
-            sweep3([P3(W3[0], W3[3] - T_EDGE), P3(W3[1], W3[3] - T_EDGE), P3(W3[1], W3[3]), P3(W3[0], W3[3])], 0.25);
-            sweep3([P3(c - 2.35, W3[2]), P3(c + 2.35, W3[2]), P3(c + 2.35, W3[3]), P3(c - 2.35, W3[3])], 0.25);
+            sweep3([P3(W3[0], W3[3] - T_EDGE), P3(W3[1], W3[3] - T_EDGE), P3(W3[1], W3[3]), P3(W3[0], W3[3])]);
+            sweep3([P3(c - 2.35, W3[2]), P3(c + 2.35, W3[2]), P3(c + 2.35, W3[3]), P3(c - 2.35, W3[3])]);
         }
         ext_y(0, 20) strip_cut2d([0, 0, 0, 0, 34, 17]);
     }

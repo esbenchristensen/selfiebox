@@ -19,6 +19,7 @@ Esben 22. okt. 2026: LED-strips uden klister, og en 3. hvid strip. Skitser: `gen
   - **Klikstikket til hvid 3** sidder i højre side ved kameraet, i reflektoren under stikket til hvid 2. Det kan ikke synke helt ned og stikker ca. 1,6 mm op over den skrå flade de sidste 16 mm. Ledningen går bagud gennem et nyt hul i reflektoren (x = 21, 4,5 mm inden for ringens midterlinje). Hvid 3 stopper 34 mm fra kameraet i venstre side.
 - **Klikstikkene** sidder nu ud for de nye baner. RGB-stikket går 0,5 mm ind i bagrammens bagplade, så der er en lomme til det.
 - **Ledningsdiagram:** 3 hvide strips. Strip 2 og 3 får + gennem en ny Wago (W6, 221-413) fra W1, og W5 (hvid −) bliver en 221-414. Under billedet bruger de 3 hvide strips ca. 30 W (1,3 A ved 24 V).
+- **Glatte skrå flader** (Esben 22. okt. 2026). Den skrå reflektor var tegnet i trin på 0,5 mm fra v2 til v17, og printeren kopierede trinnene. Nu er reflektoren, lommen til hvid 3, læben og lysringens kile helt glatte.
 - Hurtigsættet har en ny prøve, `proeve-lyskanal`: nederste venstre hjørne af bagramme og lysring med ca. 10 cm strip-bane, så banerne, lommen og kilen kan prøves med rigtige strips.
 
 ## Hvad var nyt i v17
