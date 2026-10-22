@@ -107,7 +107,7 @@ r = await call(ctx, "register_business_lead", { company: "Bodega Hjørnet", webs
 assert.equal(r.ok, true);
 const lead = await d.collection("leads").findOne({ "inbound.contact.email": "mads@bodegahjoernet.dk" });
 assert.ok(lead);
-assert.equal((lead.draft as { status: string }).status, "generating");
+assert.equal((lead.draft as { status: string }).status, "open");
 ok("designudkast fra chatten lander på leadlisten med frist");
 
 const id = await saveContactRequest(d, { type: "erhverv", topic: "erhverv", name: "Mette", email: "mette@barhjornet.dk", phone: "22 33 44 55", place: "Bar Hjørnet, Aarhus", message: "Ring gerne" }, "ip-test", now);

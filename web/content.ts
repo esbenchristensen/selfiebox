@@ -531,11 +531,7 @@ export const activities: { id: ActivityId; name: string; text: string }[] = [
 export const faq: Faq[] = [
   {
     q: "Hvad koster det?",
-    a: `${pricing.fromPerMonth.toLocaleString("da-DK")} kr. om måneden pr. boks ekskl. moms og ${pricing.setupFee.toLocaleString("da-DK")} kr. i opstart. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja. Vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G og print er tilvalg.`,
-  },
-  {
-    q: "Er der binding?",
-    a: `${pricing.term}. Når aftalen slutter, henter vi boksen, og I beholder gæstelisten og de godkendte billeder.`,
+    a: `${pricing.fromPerMonth.toLocaleString("da-DK")} kr. om måneden pr. boks ekskl. moms. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja. Vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G og print er tilvalg.`,
   },
   {
     q: "Hvor lang tid går der, fra vi siger ja, til boksen hænger?",

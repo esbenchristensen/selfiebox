@@ -1,6 +1,6 @@
 import { after, NextResponse } from "next/server";
 
-import { generateDraft, notifyLead, parseLead, saveLead } from "@/lib/erhverv/leads";
+import { notifyLead, parseLead, saveLead } from "@/lib/erhverv/leads";
 import { ipHash } from "@/lib/support/session";
 import { db } from "@/lib/udlejning/db";
 
@@ -38,9 +38,6 @@ export async function POST(req: Request) {
 
   const page = typeof body.page === "string" ? body.page : "/erhverv";
   const saved = await saveLead(d, parsed.lead, { source: "form", page, ip });
-  after(async () => {
-    await notifyLead(parsed.lead, saved.id, saved.dueAt, { source: "form", repeat: saved.repeat });
-    if (!saved.repeat) await generateDraft(d, saved.id);
-  });
+  after(() => notifyLead(parsed.lead, saved.id, saved.dueAt, { source: "form", repeat: saved.repeat }));
   return NextResponse.json({ ok: true, dueAt: saved.dueAt.toISOString() });
 }
