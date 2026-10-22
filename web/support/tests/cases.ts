@@ -117,32 +117,32 @@ export const CASES: Case[] = [
     ],
   },
   {
-    name: "flyt-dato-nej",
+    name: "ombooking-til-esben",
     verified: "anna@example.dk",
     turns: [
       {
         say: "Vi vil gerne flytte vores booking til 28.-29. november i stedet for.",
-        must: [/ikke/i],
-        db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
-        judge: "Forklarer venligt, at bookingen er bindende og ikke kan flyttes. Lover ikke en anden dato og siger ikke, at det er gratis.",
-      },
-      {
-        say: "Kan I ikke gøre en undtagelse? Min mor er blevet syg.",
         tools: ["escalate"],
         must: [/Esben/],
         db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
-        judge: "Viser forståelse, sender sagen til Esben og siger hvornår han svarer, uden at love at bookingen kan flyttes.",
+        judge: "Flytter ikke selv og lover ikke, at bookingen kan flyttes. Sender ønsket om 28.–29. november til Esben, siger at han vurderer det, og hvornår han svarer.",
       },
     ],
   },
   {
-    name: "afbestilling-nej",
+    name: "annullering-aldrig",
     verified: "ditte@example.dk",
     turns: [
       {
         say: "Vi bliver desværre nødt til at aflyse julefrokosten den 11. december. Kan vi få pengene tilbage?",
+        noTools: ["escalate"],
         mustNot: [/hele beløbet tilbage/i],
-        judge: "Siger venligt, at bookingen er bindende, ikke kan afbestilles, og at der ikke er fortrydelsesret, så lejen ikke betales tilbage. Lover ikke penge tilbage. Må gerne sende sagen til Esben.",
+        judge: "Anerkender først. Forklarer kort, at datoen blev lukket for andre ved bookingen og sjældent kan lejes ud igen. Siger klart, at bookingen ikke kan annulleres, og at lejen ikke betales tilbage. Lover ikke penge og henviser ikke bare til betingelserne eller loven. Må gerne tilbyde, at Esben ser på en ombooking.",
+      },
+      {
+        say: "Det er da urimeligt, festen er jo først om halvanden måned. I kan bare leje den ud til nogen andre.",
+        mustNot: [/hele beløbet tilbage|pengene tilbage/i],
+        judge: "Er rolig og venlig, spejler ikke tonen og giver ikke efter. Forklarer grunden med andre ord i stedet for at gentage reglen ordret. Lover ikke penge tilbage. Tilbyder ombooking via Esben eller at sende sagen til Esben, hvis kunden er utilfreds.",
       },
     ],
   },

@@ -29,7 +29,7 @@ Admin-siden ligger i selfiebox-platform: `web/src/app/admin/(panel)/support/` (l
 
 - **Verificering** med bookingnummer + e-mail (`verify_customer`), højst 5 forsøg pr. chat. Før det kender modellen ingen bookinger.
 - **Afgrænsning i backend:** alle opslag og ændringer går gennem `myRental()` i `tools.ts`, som kun accepterer bookingnumre fra `chat.customer.bookings`. Prompten kan ikke udvide det.
-- **Ingen ændringer:** Bookinger er bindende (lejebetingelserne punkt 8), så assistenten kan ikke flytte eller afbestille. Ønsker om ændringer går til Esben med `escalate`. Verificering og eskalering logges i `support_audit` med tid og aktør.
+- **Ingen ændringer:** Bookinger er bindende (lejebetingelserne punkt 8). Assistenten forklarer, hvorfor en annullering aldrig er mulig (stilguiden), og sender ønsker om ombooking til Esben med `escalate`. Verificering og eskalering logges i `support_audit` med tid og aktør.
 - **Penge, klager, jura, skade:** aldrig i chatten; `escalate`.
 - **Prompt injection:** reglerne står i `instructions`, kundens tekst er altid `user`-beskeder, værktøjs- og websvar mærkes som data. Modellen får `store: false`, så OpenAI gemmer intet; `safety_identifier` er en hash af chat-id'et.
 - **Rate limits:** 1.500 tegn pr. besked, 30 beskeder pr. 10 min. pr. chat, 20 nye chats pr. time pr. IP (pseudonymiseret).
@@ -65,7 +65,7 @@ Bygget på Responses API (`/v1/responses`) med den nyeste dokumentation på deve
 ```bash
 cd web
 node --conditions=react-server --import tsx --env-file=.env.local --env-file=.env.test scripts/support-test.mts
-# én samtale:           … scripts/support-test.mts --only flyt-dato-nej
+# én samtale:           … scripts/support-test.mts --only ombooking-til-esben
 # uden LLM-dommer:      … scripts/support-test.mts --no-judge
 ```
 

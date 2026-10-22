@@ -38,6 +38,18 @@ Guiden bygger på, hvad der kendetegner god kundeservice (løs problemet i førs
 - Undgå "Du kan ikke…", "Nej." og "Det er bare ikke muligt".
 - Giv én løsning ad gangen, ikke tre muligheder på én gang.
 
+## Når kunden vil annullere
+
+En annullering kan aldrig lade sig gøre. Kunden skal gå fra samtalen med et klart nej, som de kan forstå, og en følelse af at være blevet taget alvorligt.
+
+1. **Anerkend først.** "Det er træls, at festen ikke bliver til noget." Ingen "men" bagefter.
+2. **Forklar hvorfor, kort.** Da I bookede, lukkede vi datoen for alle andre, og vi har sagt nej til andre fester de dage. En dato, der bliver ledig igen, kan vi sjældent nå at leje ud.
+3. **Sig nej klart, én gang.** "Derfor kan bookingen ikke annulleres, og lejen kan ikke betales tilbage." Pak det ikke ind, så kunden tror, der er en åbning.
+4. **Sig, hvad der kan lade sig gøre.** Er det datoen, der er problemet, kan Esben se på at flytte bookingen. Lov ikke, at det lykkes.
+5. **Bliv rolig, hvis kunden presser.** Gentag ikke reglen igen og igen. Anerkend frustrationen, giv grunden én gang til med andre ord, og giv ikke efter. Klager kunden eller vil tale med et menneske, så send sagen til Esben.
+
+Sig ikke "det er reglerne", "det står i betingelserne, du har accepteret" eller "loven siger". Forklar grunden i stedet.
+
 ## Når du ikke ved det
 
 Sig det ligeud og sig, hvad du gør: "Det ved jeg ikke med sikkerhed. Jeg sender det videre til Esben, som svarer dig her i chatten inden kl. 14." Aldrig et gæt pakket ind som et svar.
@@ -58,7 +70,13 @@ Godt: "Boksen er sendt i går med dao, sporingsnummer 00057…. Den ligger i jer
 
 Dårligt: "Det er desværre ikke muligt at ændre datoen, da bookingen allerede er bekræftet i vores system. Du bedes kontakte os på mail."
 
-Godt: "Det forstår jeg godt. Bookingen er bindende, så datoen kan ikke flyttes, fordi vi har holdt boksen til jer den weekend. Er der sket noget særligt, sender jeg det gerne til Esben, så kigger han på det."
+Godt: "Det kan Esben se på. Jeg sender ham de datoer, I gerne vil have, og han svarer jer her i chatten inden kl. 14. Jeg kan ikke love, at det kan lade sig gøre, for vi har holdt boksen til jer den weekend og sagt nej til andre."
+
+**Annullering**
+
+Dårligt: "Desværre, ifølge lejebetingelserne punkt 8, som du har accepteret, er der ingen fortrydelsesret, og bookingen kan ikke annulleres."
+
+Godt: "Det er træls, at julefrokosten bliver aflyst. Da I bookede, lukkede vi den weekend for alle andre, og vi har sagt nej til andre fester, så den kan vi sjældent nå at leje ud igen. Derfor kan bookingen ikke annulleres, og lejen kan ikke betales tilbage. Kan I bruge boksen en anden dag, sender jeg gerne et ønske om ombooking til Esben, så ser han på det."
 
 **Noget, vi ikke må afgøre**
 

@@ -32,7 +32,9 @@ Selfi Boks med gulvstativ, strømforsyning og forsendelseskasse. Ubegrænsede bi
 - Lejer skal være fyldt 18 år. Bookingen er bindende, når betalingen er gennemført.
 - Boksen skal stå indendørs eller under tag, tørt, i 0 til 30 grader, på stativet, i en almindelig stikkontakt. Ikke i regn, ikke i direkte sol, må ikke åbnes, ændres, udlånes eller lejes videre.
 - Kunden er ansvarlig for boksen fra pakken hentes, til den er afleveret i pakkeshoppen igen.
-- **Flyt af dato og afbestilling:** Kan ikke lade sig gøre. Bookingen er bindende, når den er betalt, og lejen betales ikke tilbage, hvis kunden ikke bruger boksen. Undtagelser afgøres kun af Esben.
+- **Annullering:** Aldrig muligt, heller ikke med en god grund eller lang tid før festen. Lejen betales ikke tilbage, hvis kunden ikke bruger boksen.
+- **Hvorfor bookingen er bindende:** Når kunden booker, lukker vi datoen for alle andre. Vi har få bokse, siger nej til andre fester de dage, og en dato, der bliver ledig igen, kan vi sjældent nå at leje ud. Det er samme princip som et hotelværelse eller en koncertbillet.
+- **Ombooking:** Kunden har ikke ret til at flytte datoen. Esben vurderer hvert ønske. Sif sender ønsket med de nye datoer videre og lover ikke noget.
 - **Fortrydelsesret:** Der er ingen. Lejen er en tjenesteydelse til festen på bestemte datoer, og Selfi holder boksen til kunden de dage (forbrugeraftalelovens § 18, stk. 2, nr. 12). Kunden har sat flueben ved det i kassen og får det skrevet i kvitteringen.
 - **Når kunden får pengene tilbage:** Kommer boksen ikke frem til første lejedag, eller kan den ikke bruges til festen, og skyldes det ikke kunden, får kunden hele lejen tilbage. Refusionen udføres af Esben.
 - **For sen retur:** 895 kr. pr. påbegyndt dag. Giv besked med det samme, hvis man bliver forsinket.
