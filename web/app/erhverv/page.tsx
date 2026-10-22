@@ -10,6 +10,7 @@ import { Ph } from "@/components/Placeholder";
 import { Activities, Faq } from "@/components/Sections";
 import { HeroBox, Showroom } from "@/components/ThemeStudio";
 import { Cases } from "@/components/erhverv/Cases";
+import { DesignLead } from "@/components/erhverv/DesignLead";
 import { GuestFlow } from "@/components/erhverv/GuestFlow";
 import { GuestList } from "@/components/erhverv/GuestList";
 import { Outcomes } from "@/components/erhverv/Outcomes";
@@ -86,6 +87,7 @@ export default function Erhverv() {
           { label: "Spørgsmål", href: "#faq" },
         ]}
         extra={[{ label: "Lej til en privat fest", href: "/" }]}
+        cta={{ label: "Gratis designudkast", href: "#udkast" }}
       />
       <main>
         <Hero
@@ -108,11 +110,12 @@ export default function Erhverv() {
               </p>
             </>
           }
-          primary={{ label: "Book en snak", href: "#kontakt" }}
-          secondary={{ label: "Se prisen", href: "#pris" }}
+          primary={{ label: "Få designudkast på 24 timer", href: "#udkast" }}
+          secondary={{ label: "Book en snak", href: "#kontakt" }}
           visual={<HeroBox />}
         />
         <Proof />
+        <DesignLead />
         <Outcomes />
         <GuestFlow />
         <Showroom

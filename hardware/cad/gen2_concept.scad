@@ -45,7 +45,10 @@ GLOW = false;
 RAIL_T = 4;                                 // rail ring as deep as the cross bars: flat back, prints back-down with the spring bumps on top
 // underside services at y = D/2 + 11.5 (85 deep: 54). Written out, not via a new variable: these override
 // halo.scad's values, and OpenSCAD evaluates an override where the first assignment stands.
-IF_SCREW = [[-70, D/2 + 11.5], [70, D/2 + 11.5]];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-20, 38];   // v11: the power column has the middle; cable cap and dowels step aside. v13: x -22 -> -20, the wider collar clears the vent hood
+IF_SCREW = [];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-20, 38];  IF_CABLE_D = 0;   // v11: the power column has the middle; cable cap and dowels step aside. v13: x -22 -> -20, the wider collar clears the vent hood
+// v19 (Esben 22 Oct): no printer under the box. The cable hole (IF_CABLE_D 0), its cap and the module's 2 screw
+// pilots (IF_SCREW was ±70) are gone; the dowel holes stay for the floor stand bracket.
+PRN_PORT = false;
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
 POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 175], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
@@ -288,7 +291,7 @@ module vent_hoods() for (sx = [-1, 1]) {
 // Every opening is 2.5 mm wide: no fingers, and a poked wire meets only 12 V parts.
 VENT_SL = [2.5, 28];  VENT_XS = [for (i = [0:6]) 30 + 5*i];   // underside: 2 x 7 slots, 7.5 cm2 (85 deep: 9.8)
 // v11: the left field gives its two inner slots to the printer cable cap and gets full-length slots back
-function vent_xs(sx) = sx > 0 ? VENT_XS : [for (i = [2:6]) 30 + 5*i];
+function vent_xs(sx) = sx > 0 || !PRN_PORT ? VENT_XS : [for (i = [2:6]) 30 + 5*i];   // v19: full again
 // 70 deep, the hoods sit between the frame (y 31.7, it reaches down to z 7) and the back wall. The left
 // field had shorter slots until v10 (lock boss, then the power column); in v11 both run full length: [left, right] slot length.
 VENT_Y0 = 33.5;  VENT_L = [D - BACK_T - 1.5 - 4 - VENT_Y0, D - BACK_T - 1.5 - 4 - VENT_Y0];
@@ -347,7 +350,7 @@ module services_cut() {
     bottom_vents();
     if (BACK_EXH) { for (x = EXH_XS) louvre(x, EXH_Z[0], EXH_Z[1]); for (x = EXH_C) louvre(x, EXH_CZ[0], EXH_CZ[1]); }
     // bayonet entry notches next to the pass-through
-    translate([IF_CABLE[0], IF_CABLE[1], 0]) {
+    if (PRN_PORT) translate([IF_CABLE[0], IF_CABLE[1], 0]) {
         cyl_z(CAP_CB, -1, CAP_FL[1], 0, 0);                                                         // shoulder: the flange stops here, flush
         for (a = CAP_ANG) sector(0, CAP_NOTCH[0], a - CAP_ENTRY - CAP_NOTCH[1], a - CAP_ENTRY + CAP_NOTCH[1], -1, WALL + 1);
     }
@@ -359,7 +362,7 @@ module services_cut() {
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
 module services_add() {
     vent_hoods();
-    cap_seat();
+    if (PRN_PORT) cap_seat();
     // floor boss under the lock screw head
     difference() {
         cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], LOCK_X, LOCK_SY);
@@ -435,7 +438,7 @@ module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // socket mouth down
     cyl_z(4, -60, 1.01, 0, 0);                                       // lead, straight down
 }
 module placed_services() {
-    translate([IF_CABLE[0], IF_CABLE[1], 0]) color([0.11, 0.11, 0.12]) cable_cap();
+    if (PRN_PORT) translate([IF_CABLE[0], IF_CABLE[1], 0]) color([0.11, 0.11, 0.12]) cable_cap();
     // socket (mouth down) in its column and the PSU's straight plug from below
     color([0.2, 0.2, 0.2]) power_inlet();
     // speaker

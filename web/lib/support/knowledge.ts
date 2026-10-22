@@ -50,15 +50,21 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     `Dags dato: ${p.day}, kl. ${p.time} (dansk tid). Menneskelig support svarer ${hoursText()}. Lige nu er der ${isOpen(now) ? "åbent" : "lukket"}.`,
     `Siden, kunden skriver fra: ${chat.page || "selfi.dk"}.`,
   ];
+  if (chat.contact) {
+    lines.push(`Kunden skrev sig ind som ${chat.contact.name}. E-mail og telefon er gemt og bruges af værktøjerne (verificering, SMS-kode, designudkast, eskalering). Tiltal kunden ved fornavn. Gentag ikke e-mail eller telefonnummer, og brug dem ikke til at slå noget op, før kunden selv spørger til en ordre eller noget personligt.`);
+  }
   if (chat.customer) {
-    lines.push(`Kunden er verificeret som ${chat.customer.name} (${chat.customer.email}). Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i verify_customer-svaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
+    lines.push(`Kunden er verificeret (${chat.customer.via === "sms" ? "med SMS-kode" : "med bookingnummer"}) som ${chat.customer.name || chat.contact?.name || "kunden"}. Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i værktøjssvaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
   } else if (chat.verifyLockedAt) {
     lines.push("Kunden er IKKE verificeret, og verificeringen er låst efter for mange forsøg. Eskalér, hvis kunden vil have hjælp med en booking.");
+  } else if (chat.smsCode && chat.smsCode.expiresAt > now) {
+    lines.push(`Kunden er IKKE verificeret endnu. Der er sendt en SMS-kode til nummeret, der slutter på ${chat.smsCode.to.slice(-2)}; når kunden skriver koden, kald verify_sms_code. Forsøg brugt: ${chat.verifyAttempts} af 5.`);
   } else {
-    lines.push(`Kunden er IKKE verificeret. Før noget om en booking: bed om bookingnummer og e-mail og kald verify_customer. Forsøg brugt: ${chat.verifyAttempts} af 5.`);
+    lines.push(`Kunden er IKKE verificeret. Spørger kunden til en ordre eller noget personligt: bed om bookingnummeret (ordrenummeret) og kald verify_customer. Har kunden det ikke, så tilbyd en kode på SMS (send_sms_code). Forsøg brugt: ${chat.verifyAttempts} af 5.`);
   }
+  if (chat.lead) lines.push(`Kunden har allerede bestilt et designudkast i denne chat (lead ${chat.lead.id}). Bestil ikke igen, medmindre det er til et andet sted.`);
   if (chat.status === "waiting_human" && chat.escalation) {
-    lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så Esben får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
+    lines.push(`Sagen er sendt videre til en kollega kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}), som svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så kollegaen får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
   }
   if (chat.pendingChange) {
     const c = chat.pendingChange;
