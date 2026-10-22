@@ -171,24 +171,8 @@
 }
 
 /* Front page (rental) — hero calendar, journey, themes, photos, included */
-#datoer, #boksen, #billeder, #med, #kontakt { scroll-margin-top: 80px; }
-.hb { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-5); border-radius: var(--radius-box); background: var(--surface-raised); border: 1px solid var(--line); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.35); }
-.hb--loading { min-height: 520px; }
-.hb-head { display: flex; flex-direction: column; gap: var(--space-3); }
-.hb-title { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
-.hb-title b { font: 600 20px/1.2 var(--font-display), sans-serif; letter-spacing: -0.01em; }
-.hb-live { display: inline-flex; align-items: center; gap: 6px; font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
-.hb-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 25%, transparent); }
-.hb-hint { font-size: 14px; margin: 0; }
-.hb .cal { padding: 0; border: 0; background: transparent; }
-.hb .cal-nav { top: 0; right: 0; }
-.hb .cal-title { margin-bottom: var(--space-2); }
-.hb .cal-legend { margin-top: var(--space-3); }
+#book, #boksen, #billeder, #med, #kontakt { scroll-margin-top: 80px; }
 .cal--single .cal-months { grid-template-columns: minmax(0, 1fr); }
-.hb-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); border-top: 1px solid var(--line); padding-top: var(--space-4); }
-.hb-foot > div { display: flex; flex-direction: column; gap: 2px; font-size: 14px; min-width: 0; }
-.hb-foot b { font: 500 18px/1.2 var(--font-display), sans-serif; }
-.hb-foot .btn { white-space: nowrap; }
 /* Free days stand out, so "is our day free?" is answered at a glance. */
 .cal-day:not(:disabled):not(.is-in) span { background: color-mix(in srgb, var(--green) 12%, transparent); font-weight: 500; }
 .cal-day:not(:disabled):not(.is-in):hover span { background: color-mix(in srgb, var(--green) 26%, transparent); }
@@ -258,9 +242,6 @@
   .lej-journey li { display: grid; grid-template-columns: 112px minmax(0, 1fr); column-gap: var(--space-4); align-items: start; }
   .lej-journey-art { grid-row: 1 / span 3; margin-bottom: 0; padding: 6px; }
   .lej-incl { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
-  .hb { padding: var(--space-4); border-radius: var(--radius-l); }
-  .hb-foot { flex-wrap: wrap; }
-  .hb-foot .btn { flex: 1 1 100%; }
 }
 .bk-art { display: flex; height: 96px; margin-bottom: 6px; }
 .bk-art .outline { height: 96px; width: auto; }
@@ -284,13 +265,6 @@
 .lej-trust:hover .muted { color: var(--ink); }
 
 /* Payment and "pay later" line under the calendar */
-.hb-pay { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: var(--ink-muted); }
-.hb-pay .pills { display: inline-flex; gap: 4px; }
-.hb-pay .pills span { padding: 3px 8px; border-radius: var(--radius-pill); border: 1px solid var(--line); font: 500 11px/1.4 var(--font-mono), monospace; letter-spacing: 0.04em; color: var(--ink); }
-.hb-next { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
-.hb-next:hover { text-decoration-color: var(--ink); }
-.hb-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
-.hb-next i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
 
 /* Comparison: Selfi against the other rental sites */
 .cmp { border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--surface-raised); overflow: hidden; }
@@ -464,7 +438,6 @@
 .lg-busy { background: color-mix(in srgb, #f2b94b 30%, transparent); border-color: transparent !important; }
 .cal-season { display: flex; gap: 8px; align-items: flex-start; margin: calc(-1 * var(--space-2)) 0 var(--space-3); font-size: 13px; line-height: 1.4; color: var(--ink-muted); max-width: 46ch; }
 .cal-season i { flex: none; width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: #e0a12b; }
-.hb .cal-season { margin-top: 0; }
 
 /* ---------- Calendar cells: day and running total, rounded squares, outline on hover ---------- */
 .cal-grid { row-gap: 6px; column-gap: 4px; }
@@ -486,7 +459,7 @@
 @media (max-width: 420px) { .cal-day { height: 50px; } .cal-day span { height: 48px; border-radius: 10px; } .cal-day small { font-size: 10px; } }
 
 /* ---------- No monospace, no small caps on the rental page: plain sentence-case text ---------- */
-.lej .label, .lej .cal-dow, .lej .hb-pay, .lej .lej-box3d-hint, .lej .tag-ex, .lej .bk-price, .lej .bk-steps .n, .lej .cmp-head, .lej .lej-journey-n, .lej .pers-date, .lej .bk-incl li span:last-child, .lej .hb-live { font-family: var(--font-body), sans-serif; letter-spacing: 0; text-transform: none; }
+.lej .label, .lej .cal-dow, .lej .lej-box3d-hint, .lej .tag-ex, .lej .bk-price, .lej .bk-steps .n, .lej .cmp-head, .lej .lej-journey-n, .lej .pers-date, .lej .bk-incl li span:last-child { font-family: var(--font-body), sans-serif; letter-spacing: 0; text-transform: none; }
 .lej .label { font-size: 15px; font-weight: 500; color: var(--green-ink); }
 .lej .cal-dow { font-size: 12px; font-weight: 500; text-transform: none; }
 .lej .lej-box3d-hint { font-size: 13px; }
@@ -496,7 +469,6 @@
 .lej .cmp-head { font-size: 13px; font-weight: 500; }
 .lej .lej-journey-n { font-size: 13px; font-weight: 500; }
 .lej .pers-date { font-size: 10px; letter-spacing: 0.02em; }
-.lej .hb-pay { display: block; margin: 0; font-size: 13px; color: var(--ink-muted); }
 .lej .lej-points { gap: 12px; }
 .lej .lej-points li { display: flex; align-items: center; gap: 12px; font-size: 16px; }
 .lej .bk-sum-incl { gap: 4px; }
@@ -549,8 +521,6 @@
 }
 
 /* Icons back in the lists: the three promises, the payment line, the summary, the thank-you page */
-.lej .hb-pay { display: flex; align-items: flex-start; gap: 8px; }
-.lej .hb-pay .lej-icon { width: 18px; height: 18px; margin-top: 1px; }
 .lej .bk-sum-incl li { display: flex; gap: 8px; align-items: center; }
 .lej .bk-sum-incl .lej-icon { width: 18px; height: 18px; flex: none; }
 .lej-done .tak-check { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--green) 18%, transparent); }
@@ -571,10 +541,6 @@
 .lej-stand .viewer { position: absolute; inset: 0; }
 .lej-stand .stage-canvas canvas { cursor: default; }
 .lej-stand .viewer-poster { padding: 18% 22%; }
-.lej-dates-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: var(--space-7); align-items: start; }
-.lej-dates-grid .sec-head { position: sticky; top: 120px; }
 @media (max-width: 900px) {
-  .lej-dates-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-  .lej-dates-grid .sec-head { position: static; }
   .lej-stand { aspect-ratio: 4 / 5; max-height: 72vh; }
 }

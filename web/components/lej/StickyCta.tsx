@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-// On phones: a bar at the bottom with the price and one button to the calendar. It appears once the page
-// has scrolled past the hero and hides again while the calendar or the booking is on screen.
+// On phones: a bar at the bottom with the price and one button to the booking. It appears once the page
+// has scrolled past the hero and hides again while the booking is on screen.
 export function StickyCta({ from }: { from: string }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const targets = ["datoer", "book"].map((id) => document.getElementById(id)).filter((x): x is HTMLElement => !!x);
+    const targets = ["book"].map((id) => document.getElementById(id)).filter((x): x is HTMLElement => !!x);
     if (!targets.length) return;
     const seen = new Map<Element, boolean>();
     const io = new IntersectionObserver(
@@ -37,7 +37,7 @@ export function StickyCta({ from }: { from: string }) {
         <b>Fra {from}</b>
         <span className="muted">Alt er med i prisen</span>
       </div>
-      <a className="btn btn-primary" href="#datoer" tabIndex={show ? 0 : -1}>
+      <a className="btn btn-primary" href="#book" tabIndex={show ? 0 : -1}>
         Se ledige datoer
       </a>
     </div>
