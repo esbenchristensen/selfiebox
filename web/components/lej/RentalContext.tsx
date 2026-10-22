@@ -17,6 +17,8 @@ export type State = {
   theme: string | null;
   printer: boolean;
   photoType: PhotoType;
+  flex: boolean;
+  keep: boolean;
   delivery: Delivery;
   range: Range | null;
   contact: { name: string; email: string; phone: string; occasion: string; message: string };
@@ -27,6 +29,8 @@ export const EMPTY: State = {
   theme: null,
   printer: false,
   photoType: "polaroid",
+  flex: false,
+  keep: false,
   delivery: "post",
   range: null,
   contact: { name: "", email: "", phone: "", occasion: "", message: "" },
@@ -135,8 +139,8 @@ export function RentalProvider({ children, initial }: { children: ReactNode; ini
   );
 
   const priceFor = useCallback(
-    (r: Range) => (data ? total(priceLines(data.settings, { range: r, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery })) : null),
-    [data, s.theme, s.printer, s.photoType, s.delivery],
+    (r: Range) => (data ? total(priceLines(data.settings, { range: r, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery, flex: s.flex, keep: s.keep })) : null),
+    [data, s.theme, s.printer, s.photoType, s.delivery, s.flex, s.keep],
   );
 
   const value: Ctx = { data, loadError, load, s, set, setAll: setS, step, done, go, reach, win, canBook, canBookWith, preset, priceFor, loading: !loaded && !loadError };

@@ -158,6 +158,8 @@ function bookingView(r: RentalWithTracking, ctx: ToolContext): Result {
     paidAt: paid ? paid.at.toISOString().slice(0, 10) : null,
     shipping: { carrier: "dao", shipsOn: held.from, trackingOut: r.trackingOut ?? null, trackingBack: r.trackingBack ?? null, returnBy: returnBy(r.to) },
     canMoveDates: r.status === "paid" || r.status === "packed",
+    flex: r.flex ? { canCancelUntil: addDays(r.from, -ctx.settings.rules.flexDays) } : null,
+    photosKept: r.keep ? "2 år" : "3 måneder",
     setupUrl: ["pending", "expired"].includes(r.status) ? null : `${ctx.setupUrl}/${encodeURIComponent(r._id)}?t=${encodeURIComponent(r.token)}`,
     history: r.history.map((h) => `${h.at.toISOString().slice(0, 16).replace("T", " ")}: ${STATUS_LABEL[h.status]}`),
   };

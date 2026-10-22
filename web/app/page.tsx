@@ -66,7 +66,7 @@ export default async function Home() {
   const faq = [
     {
       q: "Hvad koster det at leje en fotoboks?",
-      a: `I vælger selv datoerne. En hverdag koster ${kr(P.day)}, en hel weekend fra fredag til søndag ${kr(P.weekend)}, to hverdage ${kr(P.twoDays)} og en uge ${kr(P.week)}, alt inkl. moms. Har I brug for en dag mere end perioden, koster hver ekstra dag ${kr(s.prices.perExtraDay)} Det eneste tilvalg er printeren med ${s.printsIncluded} print, som koster ${kr(s.prices.printer)} Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
+      a: `I vælger selv datoerne. En hverdag koster ${kr(P.day)}, en hel weekend fra fredag til søndag ${kr(P.weekend)}, to hverdage ${kr(P.twoDays)} og en uge ${kr(P.week)}, alt inkl. moms. Har I brug for en dag mere end perioden, koster hver ekstra dag ${kr(s.prices.perExtraDay)} Printeren med ${s.printsIncluded} print koster ${kr(s.prices.printer)} Vil I have det, kan I også tilvælge billederne gemt i 2 år (${kr(s.prices.keep)}) og fleksibel afbestilling (${kr(s.prices.flex)}). Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
     },
     {
       q: "Hvor sent kan vi booke?",
@@ -180,7 +180,7 @@ export default async function Home() {
               <ul className="lej-points">
                 <li>
                   <Icon name="tag" />
-                  Alt er med i prisen. Ingen tilkøb, intet depositum.
+                  Alt er med i prisen. Intet depositum.
                 </li>
                 <li>
                   <Icon name="clock" />
@@ -307,7 +307,7 @@ export default async function Home() {
         <section id="billeder" className="section" aria-labelledby="billeder-title">
           <div className="wrap lej-printer">
             <div className="sec-head lej-printer-copy">
-              <span className="label">Det eneste tilvalg · printer</span>
+              <span className="label">Tilvalg · printer</span>
               <h2 id="billeder-title" className="h-l">Billedet med hjem på papir.</h2>
               <p className="lede">
                 Billederne kommer altid på telefonen og jeres eventside. Tager I printeren med, får gæsterne dem også printet på få sekunder, og I vælger,
@@ -352,7 +352,7 @@ export default async function Home() {
             <div className="sec-head">
               <span className="label">Priser</span>
               <h2 id="priser-title" className="h-l">Faste perioder. Alt er med.</h2>
-              <p className="lede">Alle priser er inkl. moms, og der kommer ikke noget oveni. Ingen tilkøb, intet depositum, ingen gebyrer.</p>
+              <p className="lede">Alle priser er inkl. moms, og der kommer ikke noget oveni. Intet depositum og ingen gebyrer.</p>
             </div>
             <div className="lej-prices">
               {([
@@ -383,7 +383,7 @@ export default async function Home() {
             <ul className="lej-addons">
               <li>
                 <b>Printer · {kr(s.prices.printer)}</b>
-                <span>{s.printsIncluded} print som fotostrimmel eller polaroid, så gæsterne har billedet med hjem. Det eneste tilvalg.</span>
+                <span>{s.printsIncluded} print som fotostrimmel eller polaroid, så gæsterne har billedet med hjem.</span>
               </li>
               <li>
                 <b>Flere end {R.maxDays} dage</b>

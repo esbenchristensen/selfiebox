@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { faq as erhvervFaq, features } from "../../content";
-import { kr, PERIODS, type Period, type RentalSettings } from "../udlejning/core";
+import { GALLERY_MONTHS, KEEP_YEARS, kr, PERIODS, type Period, type RentalSettings } from "../udlejning/core";
 import type { SupportChatDoc } from "./db";
 import { dkParts, hoursText, isOpen } from "./hours";
 
@@ -69,7 +69,8 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
   lines.push(
     "Aktuelle priser og regler for privat leje (fra admin, inkl. moms):",
     `- Boks, faste perioder: ${periods}. Dage før, efter eller mellem perioderne koster ${kr(s.prices.perExtraDay)} pr. ekstra dag, og kunden får altid den billigste kombination (5-7 dage koster højst en uge). check_availability giver den præcise pris for datoerne. Højst ${s.rules.maxDays} dage online.`,
-    `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Det er det eneste tilvalg; temaer findes ikke længere.`,
+    `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Temaer findes ikke længere.`,
+    `- Tilvalg: Billederne gemt i ${KEEP_YEARS} år (${kr(s.prices.keep)}, ellers er eventsiden åben i ${GALLERY_MONTHS} måneder). Fleksibel afbestilling (${kr(s.prices.flex)}): bookingen kan afbestilles senest ${s.rules.flexDays} dage før første lejedag, og lejen betales tilbage, men ikke prisen for tilvalget. Tilvalg kan kun vælges ved booking.`,
     `- Højsæson: fredag til søndag i ${s.rules.peakMonths.map((m) => MONTH_NAMES[m - 1]).join(", ")}. En booking kan flyttes til datoer uden for højsæson, aldrig ind i højsæson.`,
     `- Første lejedag tidligst ${s.rules.leadDays} dage frem, højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
     `- Online booking er ${s.open ? "åben" : "lukket lige nu (henvis til chatten/eskalér)"}.`,

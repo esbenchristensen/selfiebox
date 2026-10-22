@@ -24,6 +24,7 @@ type Fixture = {
   occasion: string;
   city: string;
   trackingOut?: string;
+  flex?: boolean;
   paidAt: string;
 };
 
@@ -32,13 +33,13 @@ export const BOOKINGS: Fixture[] = [
   { id: "SB-261002-BO", name: "Bo Madsen", email: "bo@example.dk", phone: "33 44 55 66", status: "delivered", from: "2026-10-23", to: "2026-10-24", theme: null, printer: false, photoType: "strip", occasion: "Fødselsdag", city: "Odense", trackingOut: "00057103150013412345", paidAt: "2026-10-02" },
   { id: "SB-260915-CARL", name: "Carl Nielsen", email: "carl@example.dk", phone: "44 55 66 77", status: "done", from: "2026-10-03", to: "2026-10-04", theme: null, printer: false, photoType: "strip", occasion: "Konfirmation", city: "Aalborg", paidAt: "2026-09-15" },
   { id: "SB-261005-DITTE", name: "Ditte Sørensen", email: "ditte@example.dk", phone: "55 66 77 88", status: "paid", from: "2026-12-11", to: "2026-12-12", theme: null, printer: true, photoType: "polaroid", occasion: "Julefrokost", city: "København", paidAt: "2026-10-05" },
-  { id: "SB-261006-DITTE", name: "Ditte Sørensen", email: "ditte@example.dk", phone: "55 66 77 88", status: "paid", from: "2027-05-01", to: "2027-05-01", theme: null, printer: false, photoType: "strip", occasion: "Konfirmation", city: "København", paidAt: "2026-10-06" },
+  { id: "SB-261006-DITTE", name: "Ditte Sørensen", email: "ditte@example.dk", phone: "55 66 77 88", status: "paid", from: "2027-05-01", to: "2027-05-01", theme: null, printer: false, photoType: "strip", occasion: "Konfirmation", city: "København", flex: true, paidAt: "2026-10-06" },
 ];
 
 export const BLOCKS = [{ _id: "service-nov", from: "2026-11-20", to: "2026-11-22", boxes: 1, printers: 1, note: "Service" }];
 
 export function rentalDoc(f: Fixture): RentalDoc & { trackingOut?: string } {
-  const choice: Choice = { range: { from: f.from, to: f.to }, theme: f.theme, printer: f.printer, photoType: f.photoType, delivery: "post" };
+  const choice: Choice = { range: { from: f.from, to: f.to }, theme: f.theme, printer: f.printer, photoType: f.photoType, delivery: "post", flex: f.flex };
   const lines = priceLines(SETTINGS, choice);
   const paid = new Date(`${f.paidAt}T10:00:00Z`);
   const history: RentalDoc["history"] = [{ at: paid, status: "pending", by: "kunde" }, { at: new Date(paid.getTime() + 300_000), status: "paid", by: "stripe", note: "Betalt" }];
@@ -68,6 +69,7 @@ export function rentalDoc(f: Fixture): RentalDoc & { trackingOut?: string } {
     createdAt: paid,
     updatedAt: paid,
     ...(f.trackingOut ? { trackingOut: f.trackingOut } : {}),
+    ...(f.flex ? { flex: true } : {}),
   };
 }
 

@@ -222,6 +222,18 @@ export const CASES: Case[] = [
     ],
   },
   {
+    name: "fleksibel-afbestilling",
+    verified: "ditte@example.dk",
+    turns: [
+      {
+        say: "Vi har fået en anden løsning til konfirmationen 1. maj. Vi købte jo fleksibel afbestilling, så vi vil gerne afbestille den.",
+        tools: ["escalate"],
+        db: unchanged("SB-261006-DITTE", "2027-05-01", "2027-05-01"),
+        judge: "Bekræfter, at bookingen har Fleksibel afbestilling, og at fristen ikke er overskredet. Siger, at Esben betaler lejen tilbage, men ikke prisen for tilvalget. Lover ikke selv, at pengene allerede er sendt, og blander ikke julefrokosten i december ind i det.",
+      },
+    ],
+  },
+  {
     name: "boks-virker-ikke-akut",
     verified: "bo@example.dk",
     turns: [

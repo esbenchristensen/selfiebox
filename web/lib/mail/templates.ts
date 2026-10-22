@@ -38,6 +38,8 @@ export type MailBooking = {
   days: number;
   printer: boolean;
   photoType: "strip" | "polaroid";
+  flex?: boolean; // Fleksibel afbestilling
+  keep?: boolean; // the photos kept for 2 years
   address: { street: string; zip: string; city: string } | null;
   contact: { name: string; email: string; phone: string };
   lines: { id: string; label: string; amount: number }[];
@@ -51,6 +53,7 @@ export type MailBooking = {
 export type MailContext = {
   booking: MailBooking;
   shipDaysBefore: number; // from the rental settings
+  flexDays?: number; // Fleksibel afbestilling: days before the first day, from the rental settings (14)
   site: string; // https://www.selfi.dk
   portal: string; // https://foto.selfi.dk (setup portal and photo portal)
   phone?: string; // Selfi's phone, when set in company.ts
@@ -271,7 +274,7 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
             { title: `Retur senest ${shortDay(returnBy(b.to))}`, text: "Pak boksen i kassen, sæt returlabelen på, og aflever den i en dao-pakkeshop. Fragten er betalt. Gem kvitteringen fra pakkeshoppen." },
           ],
         },
-        { type: "note", label: "Bindende booking", text: "Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, og den kan ikke afbestilles. I kan flytte den til ledige datoer uden for højsæson, så længe boksen ikke er sendt. Lejebetingelserne står på selfi.dk/lejebetingelser." },
+        { type: "note", label: "Bindende booking", text: `Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, og ${b.flex ? `med Fleksibel afbestilling kan den kun afbestilles senest ${shortDay(addDays(b.from, -(c.flexDays ?? 14)))}.` : "den kan ikke afbestilles."} I kan flytte den til ledige datoer uden for højsæson, så længe boksen ikke er sendt. Lejebetingelserne står på selfi.dk/lejebetingelser.` },
         { type: "code", label: "Bookingnummer", value: b._id },
       );
       break;

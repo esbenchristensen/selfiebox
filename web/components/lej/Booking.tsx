@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { addDays, formatDay, formatRange, nights, weekday, type DayKey, type Range } from "@/lib/dates";
 import {
+  ADDONS,
   DELIVERIES,
   kr,
   PHOTO_TYPES,
@@ -82,7 +83,7 @@ export function Booking() {
   }, [load, setAll, reach, go]);
 
   const settings = data?.settings;
-  const choice = s.range ? { range: s.range, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery } : null;
+  const choice = s.range ? { range: s.range, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery, flex: s.flex, keep: s.keep } : null;
   const lines = settings && choice ? priceLines(settings, choice) : [];
   const sum = total(lines);
 
@@ -229,7 +230,7 @@ export function Booking() {
           {step === 1 && (
             <fieldset className="bk-fs">
               <legend className="h-m">Med eller uden printer?</legend>
-              <p className="muted">Alt andet er med i prisen. Printeren er det eneste valg, og I kan ændre det helt frem til betalingen.</p>
+              <p className="muted">Alt andet er med i prisen. Printeren og tilvalgene kan I ændre helt frem til betalingen.</p>
               <div className="bk-pick" role="radiogroup" aria-label="Pakke">
                 <label className="bk-pick-card">
                   <input type="radio" name="pakke" checked={!s.printer} onChange={() => set({ printer: false })} />
@@ -277,6 +278,22 @@ export function Booking() {
                   </div>
                 </div>
               )}
+              <div className="field">
+                <span className="field-label">Tilvalg</span>
+                {(["keep", "flex"] as const).map((k) => {
+                  const a = ADDONS[k](settings);
+                  return (
+                    <label className="check" key={k}>
+                      <input type="checkbox" checked={!!s[k]} onChange={(e) => set({ [k]: e.target.checked })} />
+                      <span>
+                        <b>{a.name}</b> + {kr(settings.prices[k])}
+                        <br />
+                        <span className="muted">{a.text}</span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
             </fieldset>
           )}
 
@@ -358,7 +375,7 @@ export function Booking() {
               <label className="check">
                 <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
                 <span>
-                  Jeg har læst <a href="/lejebetingelser" target="_blank">lejebetingelserne</a> og passer på boksen, mens den er hos os. Jeg ved, at bookingen er bindende, når den er betalt: der er ingen fortrydelsesret, og den kan ikke afbestilles.
+                  Jeg har læst <a href="/lejebetingelser" target="_blank">lejebetingelserne</a> og passer på boksen, mens den er hos os. Jeg ved, at bookingen er bindende, når den er betalt: der er ingen fortrydelsesret, og {s.flex ? `den kan kun afbestilles senest ${settings.rules.flexDays} dage før første lejedag (Fleksibel afbestilling).` : "den kan ikke afbestilles."}
                 </span>
               </label>
               {err(!accepted, "Sæt flueben for at gå videre til betaling.")}
@@ -427,5 +444,7 @@ export function Booking() {
 function preview(settings: RentalSettings, s: State): { id: string; label: string; amount: number | null }[] {
   const out: { id: string; label: string; amount: number | null }[] = [{ id: "box", label: "Selfi Boks", amount: null }];
   if (s.printer) out.push({ id: "printer", label: `Printer med ${settings.printsIncluded} print`, amount: settings.prices.printer });
+  if (s.keep) out.push({ id: "keep", label: ADDONS.keep().name, amount: settings.prices.keep });
+  if (s.flex) out.push({ id: "flex", label: ADDONS.flex(settings).name, amount: settings.prices.flex });
   return out;
 }
