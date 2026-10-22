@@ -641,7 +641,7 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 .cases-tabs { display: flex; flex-direction: column; gap: 2px; }
 .cases-tabs button { all: unset; box-sizing: border-box; cursor: pointer; padding: 12px 14px; border-radius: var(--radius-m); font: 500 17px/1.2 var(--font-body), sans-serif; color: var(--ink-muted); transition: background 150ms var(--ease), color 150ms var(--ease); }
 .cases-tabs button:hover { color: var(--ink); }
-.cases-tabs button[aria-selected="true"] { background: var(--surface-raised); color: var(--ink); box-shadow: inset 3px 0 0 var(--green); }
+.cases-tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; }
 .cases-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .case { border: 1px solid var(--line); border-radius: var(--radius-l); padding: var(--space-6); background: var(--surface-raised); }
 .case .ph-mark--block { padding: 0; outline-offset: 10px; }
@@ -747,7 +747,7 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
   .quotes { grid-template-columns: minmax(0, 1fr); }
   .cases-tabs { flex-direction: row; flex-wrap: wrap; gap: 6px; }
   .cases-tabs button { padding: 9px 12px; font-size: 15px; border: 1px solid var(--line); border-radius: var(--radius-pill); }
-  .cases-tabs button[aria-selected="true"] { box-shadow: none; border-color: var(--ink); }
+  .cases-tabs button[aria-selected="true"] { border-color: var(--ink); }
   .case-rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .team-art { max-width: 420px; margin: 0 auto; }
   .sticky-cta { display: flex; }
