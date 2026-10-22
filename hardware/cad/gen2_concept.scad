@@ -511,7 +511,7 @@ PSU5 = [60, 128, 25];  PSU5_P = [12, 16];                     // x, z (bottom-le
 // v17: the controller stands up on the back wall left of the power column, base plate against the wall, output end (4 terminals + USB-C) up.
 // Local frame of the holder: u across (0 = left edge of the base plate seen from the front), v up (0 = bottom end of the case), w out of the wall.
 WLED_B = [45.7, 99.74 - 2*5.9, 17.26];    // [M] widest 45.7 (45.48 across the base plate itself), case length (99.74 over both arms minus 2 x [C] 5.9), height
-WLED_TOPW = 44.92;                        // [M] the lid is narrower than the base plate
+WLED_TOPW = 44.7;                         // [M] top 44.7 against 45.7 at the bottom: the case tapers
 WLED_ARM = [5.9, 2.0, 11.6, 3.5, 4.5];    // [C] arms (from the photos): length past the case, thickness, tip width, slot width, slot depth from the tip. No screws in them (Esben 22 Oct)
 // [u0, u1] where the arm leaves the case ([M] 24.12 / 20.43 from the opposite edge), u of the slot centre ([M] 11.2 from the near edge, 34.8 from the far one), end (-1 bottom, 1 top)
 WLED_ARMS = [[24.12, 45.7, 45.7 - 11.2, -1], [45.7 - 20.43 - 21.3, 45.7 - 20.43, 11.2, 1]];
@@ -540,7 +540,7 @@ module wled_arm2d(a) {   // arm outline in u, v (base on the case end, tip outwa
     polygon([[a[0], v0], [a[1], v0], [a[2] + WLED_ARM[2]/2, t], [a[2] - WLED_ARM[2]/2, t]]);
 }
 module wled_holder() wled_frame() {
-    B = WLED_B; c = WLED_C[0]; wt = 1.6; hw = WLED_FL + B[2] + 1.3;
+    B = WLED_B; c = WLED_C[0]; wt = 1.6; hw = WLED_FL + B[2] + 1.8;
     difference() {
         union() {
             translate([-c, 0, 0]) cube([B[0] + 2*c, B[1], WLED_FL]);                                   // floor under the case
@@ -552,9 +552,9 @@ module wled_holder() wled_frame() {
                     cube([WLED_ARM[2] + 2, wt, WLED_FL + WLED_ARM[1] + 0.8]);
             }
             for (su = [-c - wt, B[0] + c]) translate([su, 0, 0]) cube([wt, B[1], hw]);                 // long walls
-            // snap lips: catch 0.1 over the lid, 1.4 in (the lid edge is 0.64 in from the wall), ramp on top
+            // snap lips: catch 0.1 over the lid, 2.0 in (the top edge is 0.75 in from the wall, so 1.25 over it), ramp on top
             for (sd = [0, 1], v = [B[1]*0.15, B[1]*0.7]) translate([sd ? B[0] + c : -c, v, WLED_FL + B[2] + 0.1]) hull() {
-                translate([sd ? -1.4 : 0, 0, 0]) cube([1.4, 10, 0.01]); translate([sd ? -0.01 : 0, 0, 1.1]) cube([0.01, 10, 0.1]); }
+                translate([sd ? -2.0 : 0, 0, 0]) cube([2.0, 10, 0.01]); translate([sd ? -0.01 : 0, 0, 1.6]) cube([0.01, 10, 0.1]); }
         }
         translate([6, 8, -1]) cube([B[0] - 12, B[1] - 16, WLED_FL + 2]);                              // open floor: less print, air
     }
