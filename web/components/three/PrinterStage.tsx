@@ -13,7 +13,7 @@ import * as THREE from "three";
 const MODEL = "/models/selfi-printer-v1.glb";
 const MM = 0.01;
 // The tray is left out too: a print leaving the slot shows what the printer does better.
-const HIDDEN = new Set(["konsol", "vaegplade", "skruer_vaeg", "skruer_sokkel", "laas", "pi", "inlet", "printer", "bakke"]);
+export const HIDDEN = new Set(["konsol", "vaegplade", "skruer_vaeg", "skruer_sokkel", "laas", "pi", "inlet", "printer", "bakke"]);
 // Same casing as the rental box (components/three/rental.ts), so the two look like one product.
 const CASING = "#1d201d";
 const PRINT_PHOTO = "/photos/boks-bryllup.jpg";
@@ -57,6 +57,15 @@ function Frame() {
   return null;
 }
 
+// Our own materials, as HaloBox does for the box: graphite casing, warm white and green logo.
+export function printerMaterial(name: string) {
+  return name === "logo_hvid"
+    ? new THREE.MeshStandardMaterial({ color: "#fff3e3", roughness: 0.5, emissive: "#fff3e3", emissiveIntensity: 0.25 })
+    : name === "logo_groen"
+      ? new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.5, emissive: "#22d36b", emissiveIntensity: 0.4 })
+      : new THREE.MeshStandardMaterial({ color: CASING, roughness: 0.82, metalness: 0.02 });
+}
+
 function Printer({ motion, progress }: { motion: boolean; progress: MutableRefObject<number> }) {
   const { scene } = useGLTF(MODEL, false, true);
   const group = useRef<THREE.Group>(null);
@@ -67,13 +76,7 @@ function Printer({ motion, progress }: { motion: boolean; progress: MutableRefOb
       if (!m.isMesh) return;
       m.castShadow = true;
       m.receiveShadow = true;
-      // Our own materials, as HaloBox does for the box: graphite casing, warm white and green logo.
-      m.material =
-        o.name === "logo_hvid"
-          ? new THREE.MeshStandardMaterial({ color: "#fff3e3", roughness: 0.5, emissive: "#fff3e3", emissiveIntensity: 0.25 })
-          : o.name === "logo_groen"
-            ? new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.5, emissive: "#22d36b", emissiveIntensity: 0.4 })
-            : new THREE.MeshStandardMaterial({ color: CASING, roughness: 0.82, metalness: 0.02 });
+      m.material = printerMaterial(o.name);
     });
     return scene;
   }, [scene]);

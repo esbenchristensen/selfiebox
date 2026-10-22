@@ -4,8 +4,9 @@ import { ContactShadows, Environment, Lightformer, PresentationControls } from "
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { startTransition, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { HaloBox, preloadVenue, VENUES, type Venue } from "./HaloBox";
+import { HaloBox, preloadVenue, SHOOT, SHOOT_LOOP, VENUES, type Venue } from "./HaloBox";
 import { radialTexture } from "./textures";
+import { StandPrinter } from "./StandPrinter";
 import { FLOOR_Y, SOCKET, Tripod } from "./Tripod";
 import type { BoxTheme } from "./themes";
 
@@ -48,7 +49,7 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
     const aspect = size.width / size.height;
     // Fit the whole design: height for tall frames, width for wide ones.
     const [hgt, wid, cx, cy] =
-      variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : variant === "stand" ? [17, 9.5, 0, -0.55] : [3.6, 4.4, 0.35, 0];
+      variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : variant === "stand" ? [17.4, 11.4, 1.1, -0.35] : [3.6, 4.4, 0.35, 0];
     const fov = (cam.fov * Math.PI) / 180;
     const byH = hgt / 2 / Math.tan(fov / 2);
     const byW = wid / 2 / Math.tan(fov / 2) / aspect;
@@ -111,6 +112,10 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
             <HaloBox venue={shown.venue} module={false} motion={motion} bornAt={bornAt} />
           </group>
           <Tripod casing={shown.venue.casing} />
+          <FrontLight motion={motion} />
+          {shown.venue.shoot && (
+            <StandPrinter photo={shown.venue.shoot.photo} motion={motion} position={[SOCKET.x + 460, FLOOR_Y, SOCKET.z - 150]} turn={-0.35} />
+          )}
         </group>
       </group>
     );
@@ -123,6 +128,26 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
         <HaloBox theme={shown.theme} module={false} motion={motion} bornAt={bornAt} />
       )}
     </group>
+  );
+}
+
+// The light from the box's ring falls forward, onto the tripod, the printer and the floor in front: soft while it
+// waits, a burst at the flash (HaloBox's photo loop), never a glow on the wall behind.
+function FrontLight({ motion }: { motion: boolean }) {
+  const light = useRef<THREE.SpotLight>(null);
+  const target = useMemo(() => new THREE.Object3D(), []);
+  useFrame((state) => {
+    const l = light.current;
+    if (!l) return;
+    const after = motion ? (state.clock.elapsedTime % SHOOT_LOOP) - SHOOT.idle - SHOOT.count : -1;
+    const flash = after >= 0 ? Math.exp(-after * 4.5) : 0;
+    l.intensity = 6 + flash * 90;
+  });
+  return (
+    <>
+      <primitive object={target} position={[0, FLOOR_Y, 1400]} />
+      <spotLight ref={light} position={[0, 153, 30]} target={target} angle={0.75} penumbra={0.9} decay={0} distance={0} color="#fff3e3" />
+    </>
   );
 }
 
@@ -190,7 +215,7 @@ export default function Stage({ design, variant, onReady, preload = VENUES }: St
           <Lightformer form="rect" intensity={1.2} position={[6, 0, 2]} rotation-y={-Math.PI / 2.4} scale={[6, 4, 1]} color="#dfefff" />
           <Lightformer form="ring" intensity={1.5} position={[0, 0, -6]} scale={6} color={glowColor} />
         </Environment>
-        <WallGlow color={glowColor} />
+        {variant !== "stand" && <WallGlow color={glowColor} />}
         <Suspense fallback={null}>
           <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
             <Spinner design={design} variant={variant} motion={!reduced} />
