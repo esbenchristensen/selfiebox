@@ -16,6 +16,7 @@ export type PublicChat = {
   takenBy: string | null;
   escalation: { at: string; urgent: boolean; replyBy: string } | null;
   customer: { name: string; bookings: string[] } | null;
+  contact: { name: string; email: string; phone: string } | null; // the person's own details, shown back to them
   open: boolean;
   hours: string;
 };
@@ -41,7 +42,7 @@ export async function loadChat(d: Db, req: Request): Promise<SupportChatDoc | nu
 
 export const ipHash = (req: Request) => createHash("sha256").update(req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "lokal").digest("hex").slice(0, 24);
 
-export async function createChat(d: Db, req: Request, page: string, model: string): Promise<SupportChatDoc> {
+export async function createChat(d: Db, req: Request, page: string, model: string, contact: SupportChatDoc["contact"] = null): Promise<SupportChatDoc> {
   const { chats } = await supportCollections(d);
   const now = new Date();
   const chat: SupportChatDoc = {
@@ -59,8 +60,12 @@ export async function createChat(d: Db, req: Request, page: string, model: strin
     summary: "",
     messages: 0,
     unread: 0,
+    contact,
     customer: null,
     verifyAttempts: 0,
+    smsCode: null,
+    smsSends: 0,
+    designRequest: null,
     verifyLockedAt: null,
     takenBy: null,
     escalation: null,
@@ -84,6 +89,7 @@ export function publicView(chat: SupportChatDoc): PublicChat {
     takenBy: chat.takenBy?.name ?? null,
     escalation: chat.escalation ? { at: chat.escalation.at.toISOString(), urgent: chat.escalation.urgent, replyBy: chat.escalation.replyBy } : null,
     customer: chat.customer ? { name: chat.customer.name, bookings: chat.customer.bookings } : null,
+    contact: chat.contact ? { name: chat.contact.name, email: chat.contact.email, phone: chat.contact.phone } : null,
     open: isOpen(),
     hours: hoursText(),
   };

@@ -1,57 +1,40 @@
 import { NextResponse } from "next/server";
 
-// Forwards contact requests to CONTACT_WEBHOOK_URL (e.g. a Slack, Zapier or Make webhook).
-// Set it in Vercel's environment variables. Without it the form tells the visitor it is not set up yet.
+import { inboundProblem, parseInbound, recentInbound, saveInbound, type InboundKind } from "@/lib/erhverv/leads";
+import { ipHash } from "@/lib/support/session";
+import { db } from "@/lib/udlejning/db";
 
-type Payload = {
-  type?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  place?: string;
-  topic?: string;
-  message?: string;
-};
+// The forms on selfi.dk: "designudkast på 24 timer" (kind "design") and "book en snak" on /erhverv, and the
+// short question form for private parties. Saved in MongoDB, put on admin's lead list and sent to Esben on
+// SMS (lib/erhverv/leads.ts). CONTACT_WEBHOOK_URL is optional and gets a copy.
 
-const clean = (v: unknown, max = 2000) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+export const dynamic = "force-dynamic";
+
+const PER_IP_HOUR = 6;
 
 export async function POST(req: Request) {
-  let body: Payload;
+  let body: Record<string, unknown>;
   try {
-    body = (await req.json()) as Payload;
+    body = (await req.json()) as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: "Beskeden kunne ikke læses. Prøv igen." }, { status: 400 });
   }
+  // A hidden field people never see; bots fill it in.
+  if (typeof body.company_url === "string" && body.company_url) return NextResponse.json({ ok: true });
 
-  const data = {
-    type: body.type === "privat" ? "privat" : "erhverv",
-    topic: clean(body.topic, 80),
-    name: clean(body.name, 200),
-    email: clean(body.email, 200),
-    phone: clean(body.phone, 40),
-    place: clean(body.place, 200),
-    message: clean(body.message),
-  };
+  const kind: InboundKind = body.type === "privat" ? "privat" : body.type === "design" ? "design" : "meeting";
+  const r = parseInbound(body, kind, "form");
+  const problem = inboundProblem(r);
+  if (problem) return NextResponse.json({ error: problem }, { status: 400 });
 
-  if (!data.name || !/^\S+@\S+\.\S+$/.test(data.email)) {
-    return NextResponse.json({ error: "Skriv jeres navn og en gyldig e-mail." }, { status: 400 });
+  try {
+    const d = await db();
+    const ip = ipHash(req);
+    if ((await recentInbound(d, ip)) >= PER_IP_HOUR) return NextResponse.json({ error: "Der er sendt mange beskeder herfra. Prøv igen om lidt, eller ring til os." }, { status: 429 });
+    const saved = await saveInbound(d, r, { ipHash: ip });
+    return NextResponse.json({ ok: true, id: saved._id });
+  } catch (e) {
+    console.error("kontakt", e);
+    return NextResponse.json({ error: "Beskeden blev ikke sendt. Prøv igen om lidt, eller skriv i chatten nederst til højre." }, { status: 502 });
   }
-
-  const hook = process.env.CONTACT_WEBHOOK_URL;
-  if (!hook) {
-    return NextResponse.json(
-      { error: "Formularen er ikke sat op endnu. Prøv igen senere." },
-      { status: 503 },
-    );
-  }
-
-  const res = await fetch(hook, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ source: "selfi.dk", ...data, at: new Date().toISOString() }),
-  });
-  if (!res.ok) {
-    return NextResponse.json({ error: "Beskeden blev ikke sendt. Prøv igen om lidt." }, { status: 502 });
-  }
-  return NextResponse.json({ ok: true });
 }

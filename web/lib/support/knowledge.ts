@@ -48,12 +48,17 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     `Dags dato: ${p.day}, kl. ${p.time} (dansk tid). Menneskelig support svarer ${hoursText()}. Lige nu er der ${isOpen(now) ? "åbent" : "lukket"}.`,
     `Siden, kunden skriver fra: ${chat.page || "selfi.dk"}.`,
   ];
+  const c = chat.contact;
+  if (c) lines.push(`Kunden har før chatten oplyst: ${c.name}, ${c.email}, ${c.phone}. Det er ikke verificeret og åbner ingen ordrer; brug navnet, og spørg ikke om oplysningerne igen.`);
+  if ((chat.page || "").startsWith("/erhverv")) lines.push("Kunden skriver fra erhvervssiden og er sandsynligvis et sted (bar, klub, hotel, festival, brand). Hjælp som sælger for erhverv, og tilbyd designudkastet på 24 timer (request_design), når det passer.");
+  if (chat.designRequest) lines.push(`Designudkast er bestilt i denne chat (${chat.designRequest.id}, ${chat.designRequest.company}). Bestil ikke igen.`);
   if (chat.customer) {
-    lines.push(`Kunden er verificeret som ${chat.customer.name} (${chat.customer.email}). Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i verify_customer-svaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
+    lines.push(`Kunden er verificeret (${chat.customer.via === "sms" ? "SMS-kode" : "ordrenummer"}) som ${chat.customer.name}. Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i svaret fra verificeringen tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
   } else if (chat.verifyLockedAt) {
-    lines.push("Kunden er IKKE verificeret, og verificeringen er låst efter for mange forsøg. Eskalér, hvis kunden vil have hjælp med en booking.");
+    lines.push("Kunden er IKKE verificeret, og verificeringen er låst efter for mange forsøg. Eskalér, hvis kunden vil have hjælp med en ordre.");
   } else {
-    lines.push(`Kunden er IKKE verificeret. Før noget om en booking: bed om bookingnummer og e-mail og kald verify_customer. Forsøg brugt: ${chat.verifyAttempts} af 5.`);
+    const code = chat.smsCode && chat.smsCode.expiresAt > now ? ` En SMS-kode er sendt kl. ${dkParts(chat.smsCode.sentAt).time} og venter på at blive skrevet.` : "";
+    lines.push(`Kunden er IKKE verificeret. Først når kunden spørger om en ordre eller noget personligt: bed om ordrenummeret (verify_order), eller tilbyd en kode på SMS (send_sms_code), hvis kunden ikke har det. Forsøg brugt: ${chat.verifyAttempts} af 5.${code}`);
   }
   if (chat.status === "waiting_human" && chat.escalation) {
     lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så Esben får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);

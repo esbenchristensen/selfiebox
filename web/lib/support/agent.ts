@@ -15,7 +15,7 @@ import type { Response as OpenAIResponse, ResponseInputItem } from "openai/resou
 import { getSettings, todayDK } from "../udlejning/db";
 import { addMessage, supportCollections, type SupportChatDoc, type SupportMessageDoc } from "./db";
 import { ASSISTANT_NAME, dynamicContext, instructions } from "./knowledge";
-import { sendSupportSms, type SmsSender } from "./sms";
+import { sendSupportSms, type SmsSender, type SmsTo } from "./sms";
 import { runTool, TOOL_DEFINITIONS, TOOL_LABELS, WEB_SEARCH_TOOL, type ToolContext } from "./tools";
 
 export const MODEL = process.env.SUPPORT_MODEL || "gpt-6.1-sol";
@@ -32,6 +32,7 @@ export type TurnEvent =
 
 export type TurnOptions = {
   sms?: SmsSender;
+  smsTo?: SmsTo;
   client?: OpenAI;
   now?: () => Date;
 };
@@ -81,6 +82,7 @@ export async function runTurn(d: Db, chat: SupportChatDoc, emit: (e: TurnEvent) 
     today: todayDK(),
     now,
     sms: opts.sms ?? sendSupportSms,
+    smsTo: opts.smsTo,
     adminUrl: (process.env.ADMIN_URL || "https://admin.selfi.dk").replace(/\/$/, ""),
     setupUrl: process.env.SELFI_SETUP_URL ?? "https://foto.selfi.dk/opsaet",
   };

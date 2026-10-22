@@ -10,12 +10,14 @@ AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder
 | `support/stilguide.md` | Tonen: de otte regler, form, sure kunder, nej, eksempler på gode og dårlige svar. |
 | `support/viden.md` | Vidensbasen: forløbet for privat leje, lejebetingelser, første hjælp, erhverv. Priser og regler kommer live fra admin (rental_settings), ikke herfra. |
 | `lib/support/knowledge.ts` | Samler de tre filer plus FAQ og funktioner fra `content.ts` til modellens instruktioner, og laver kontekstbeskeden pr. tur (dato, åbningstid, verificering, priser). |
-| `lib/support/tools.ts` | Værktøjerne: `verify_customer`, `get_bookings`, `check_availability`, `propose_date_change`, `commit_date_change`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
+| `lib/support/tools.ts` | Værktøjerne: `verify_order`, `send_sms_code`, `verify_sms_code`, `request_design`, `get_bookings`, `check_availability`, `propose_date_change`, `commit_date_change`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
 | `lib/support/agent.ts` | Én tur: OpenAI Responses API med streaming og function calling, værktøjsløkke, logning. |
 | `lib/support/db.ts` | Collections `support_chats`, `support_messages` (TTL 90 dage) og `support_audit` (gemmes). Samme typer i selfiebox-platform `web/src/lib/types.ts`. |
 | `lib/support/session.ts` | Cookie med chat-id og hemmelig token. |
 | `lib/support/hours.ts` | Åbningstid (alle dage 10–22) og hvornår Esben realistisk svarer. |
-| `lib/support/sms.ts` | SMS til Esben gennem Twilio ved eskalering. |
+| `lib/support/sms.ts` | SMS gennem Twilio: til Esben ved eskalering og designbestilling, og engangskoden til kunden. |
+| `lib/support/verify.ts` | Kontaktoplysninger, telefonnumre, opslag på e-mail/telefon og SMS-koder. |
+| `app/api/support/start/route.ts` | Navn, e-mail og telefon før chatten. |
 | `app/api/support/chat/route.ts` | GET (hent beskeder), POST (ny besked, svar som SSE), DELETE (ny samtale). |
 | `app/api/support/human/route.ts` | "Tal med et menneske" uden om modellen. |
 | `components/support/ChatWidget.tsx` + `support.css` | Widget'en på alle sider (lagt ind i `app/layout.tsx`). |
@@ -27,7 +29,9 @@ Admin-siden ligger i selfiebox-platform: `web/src/app/admin/(panel)/support/` (l
 
 ## Sikkerhed
 
-- **Verificering** med bookingnummer + e-mail (`verify_customer`), højst 5 forsøg pr. chat. Før det kender modellen ingen bookinger.
+- **Kontakt først:** widget'en beder om navn, e-mail og telefon (`POST /api/support/start`), før der kan skrives. Det åbner ingenting i sig selv.
+- **Verificering** (`lib/support/verify.ts`), kun når kunden spørger om en ordre eller noget personligt: ordrenummer, der passer med den oplyste e-mail eller telefon (`verify_order`), eller en 6-cifret kode på SMS til det oplyste nummer (`send_sms_code` + `verify_sms_code`). Koden gemmes som hash, gælder 10 min, 5 gæt pr. kode, højst 3 koder pr. chat og 3 pr. nummer i timen (`support_sms_codes`), og højst 5 forkerte forsøg pr. chat i alt. Før det kender modellen ingen bookinger.
+- **Erhverv:** `request_design` bestiller et gratis designudkast på 24 timer med kontaktpersonen fra chatten; det gemmes i `inbound_requests`, lægges på leadlisten (`leads`) og sendes til Esben på SMS (`lib/erhverv/leads.ts`, samme vej som formularen på /erhverv#udkast).
 - **Afgrænsning i backend:** alle opslag og ændringer går gennem `myRental()` i `tools.ts`, som kun accepterer bookingnumre fra `chat.customer.bookings`. Prompten kan ikke udvide det.
 - **Ændringer kræver ja:** `propose_date_change` gemmer et forslag; `commit_date_change` afvises, medmindre kunden har skrevet en ny besked efter forslaget (og inden en time). Alt logges i bookingens `history` og i `support_audit` med tid og aktør.
 - **Penge, klager, jura, skade:** aldrig i chatten; `escalate`.

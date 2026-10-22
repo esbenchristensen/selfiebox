@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { contact } from "@/lib/erhverv/placeholder";
 
-// On phones: a bar at the bottom with the phone number and one button to the contact form. It appears once
+// On phones: a bar at the bottom with the phone number and one button to the design offer (#udkast). It appears once
 // the hero has scrolled away and hides while the form is on screen.
 export function StickyCta() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById("kontakt");
+    const target = document.getElementById("udkast");
     if (!target) return;
     let formVisible = false;
     const update = () => setShow(!formVisible && window.scrollY > 600);
@@ -34,8 +34,8 @@ export function StickyCta() {
         <b>{contact.phone}</b>
         <span className="muted">Ring, eller book en snak</span>
       </a>
-      <a className="btn btn-primary" href="#kontakt" tabIndex={show ? 0 : -1}>
-        Book en snak
+      <a className="btn btn-primary" href="#udkast" tabIndex={show ? 0 : -1}>
+        Gratis designudkast
       </a>
     </div>
   );

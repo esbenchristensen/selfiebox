@@ -35,8 +35,8 @@ export default function Privatliv() {
         <tbody>
           <tr>
             <td>I, der skriver til os</td>
-            <td>Navn, e-mail, telefon, sted og besked fra kontaktformularen</td>
-            <td>At svare og lave et tilbud. Legitim interesse og skridt før en aftale (GDPR art. 6, stk. 1, litra b og f)</td>
+            <td>Navn, e-mail, telefon, sted, hjemmeside og besked fra kontaktformularen, formularen til designudkast eller chatten</td>
+            <td>At svare, lave et designudkast og et tilbud. Legitim interesse og skridt før en aftale (GDPR art. 6, stk. 1, litra b og f)</td>
             <td>12 måneder efter sidste kontakt, hvis I ikke bliver kunde</td>
           </tr>
           <tr>
@@ -53,7 +53,7 @@ export default function Privatliv() {
           </tr>
           <tr>
             <td>I, der bruger chatten</td>
-            <td>Det, I skriver i chatten, bookingnummer og e-mail ved verificering, siden I skrev fra, og en pseudonymiseret IP-adresse</td>
+            <td>Navn, e-mail og telefon, som I skriver, før chatten starter, det, I skriver i chatten, ordrenummer eller en engangskode på sms ved verificering, siden I skrev fra, og en pseudonymiseret IP-adresse. Vi slår først jeres ordre op, når I selv spørger til den og har verificeret jer</td>
             <td>At svare, slå jeres booking op og lade en medarbejder tage over (litra b og f). Svarene laves af en AI-model hos OpenAI; teksten sendes dertil uden at blive gemt eller brugt til træning</td>
             <td>90 dage efter sidste besked. En log over ændringer af bookinger (hvad, hvornår, hvem) gemmes sammen med bookingen</td>
           </tr>
@@ -70,7 +70,7 @@ export default function Privatliv() {
       <h2>Hvem vi deler med</h2>
       <p>
         Vi sælger aldrig oplysninger. Vi bruger leverandører, der behandler oplysninger for os efter databehandleraftaler: Vercel Inc.
-        (hosting af hjemmesiden og kontrolpanelet, USA), MongoDB Inc. (database, servere i EU), OpenAI (AI-svar i chatten, USA, uden lagring eller træning), Twilio (sms til os, når en chat sendes videre), samt vores e-mail-, besked- og regnskabsværktøjer.
+        (hosting af hjemmesiden og kontrolpanelet, USA), MongoDB Inc. (database, servere i EU), OpenAI (AI-svar i chatten, USA, uden lagring eller træning), Twilio (sms til os, når en chat sendes videre, og engangskoder til jer i chatten), samt vores e-mail-, besked- og regnskabsværktøjer.
         Overførsler til USA sker efter EU-USA-dataprivatlivsrammen og EU-Kommissionens standardkontraktbestemmelser. Revisor og myndigheder
         får oplysninger, når loven kræver det.
       </p>

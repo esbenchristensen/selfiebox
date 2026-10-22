@@ -10,6 +10,7 @@ import { Ph } from "@/components/Placeholder";
 import { Activities, Faq } from "@/components/Sections";
 import { HeroBox, Showroom } from "@/components/ThemeStudio";
 import { Cases } from "@/components/erhverv/Cases";
+import { DesignOffer } from "@/components/erhverv/DesignOffer";
 import { GuestFlow } from "@/components/erhverv/GuestFlow";
 import { GuestList } from "@/components/erhverv/GuestList";
 import { Outcomes } from "@/components/erhverv/Outcomes";
@@ -27,7 +28,8 @@ import { contact, pricing } from "@/lib/erhverv/placeholder";
 // questions an owner asks, in the order they ask them: what is it and what do we get (hero, proof,
 // outcomes), how does it work for a guest, what does it look like for us (design, cases), what does it
 // cost, what if it breaks (service), may we use the guest list, how do we start, what keeps guests busy,
-// the film, what other places say, who we are, questions, and then the one action: book a call.
+// the film, what other places say, who we are, questions, and then the one action: book a call. The lead machine is the design offer (#udkast): name, website and a
+// contact person, and they get a design proposal and a software proposal within 24 hours.
 // Facts that are not decided or not true yet come from lib/erhverv/placeholder.ts and are marked.
 // The front page is the rental for private parties; the customer catalogues live under /erhverv/<sted>.
 
@@ -80,6 +82,7 @@ export default function Erhverv() {
         links={[
           { label: "Det får I", href: "#faar" },
           { label: "Design", href: "#design" },
+          { label: "Gratis udkast", href: "#udkast" },
           { label: "Pris", href: "#pris" },
           { label: "Service", href: "#service" },
           { label: "Eksempler", href: "#cases" },
@@ -108,8 +111,8 @@ export default function Erhverv() {
               </p>
             </>
           }
-          primary={{ label: "Book en snak", href: "#kontakt" }}
-          secondary={{ label: "Se prisen", href: "#pris" }}
+          primary={{ label: "Få et designudkast på 24 timer", href: "#udkast" }}
+          secondary={{ label: "Book en snak", href: "#kontakt" }}
           visual={<HeroBox />}
         />
         <Proof />
@@ -119,6 +122,7 @@ export default function Erhverv() {
           title="Boksen i jeres form og farver."
           lede="Top, sider og kabinet printes i den form, stedet kalder på: et halstørklæde, en lysmast, en figur. Skærmen og rammen på hvert foto får jeres farver og logo. Vi printer delene selv."
         />
+        <DesignOffer />
         <Cases />
         <Pricing />
         <Care />

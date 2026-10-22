@@ -1,6 +1,7 @@
 // The assistant's tools. Every tool runs here, in the backend, and only ever reads or changes the bookings
 // of the customer who verified in this chat (chat.customer.bookings): the model cannot widen that, whatever
-// it is told. Changes to a booking go through a proposal (propose_date_change) that the customer must answer
+// it is told. Verification (lib/support/verify.ts) is an order number that matches the e-mail or phone the
+// person gave before the chat, or an SMS code to that phone. Changes to a booking go through a proposal (propose_date_change) that the customer must answer
 // before commit_date_change is allowed, and every change is written to the rental's history and to
 // support_audit with time and actor.
 
@@ -10,9 +11,25 @@ import type { Db } from "mongodb";
 import { addDays, formatRange, nights, weekday, type DayKey, type Range } from "../dates";
 import { boxQuote, fits, heldRange, kr, problem, usage, type Block, type Hold, type RentalSettings } from "../udlejning/core";
 import { RELEASED, type RentalDoc, type RentalStatus } from "../udlejning/db";
+import { inboundProblem, saveInbound } from "../erhverv/leads";
+import { PLACE_TYPES } from "../erhverv/places";
 import { addMessage, audit, supportCollections, type SupportChatDoc } from "./db";
 import { hoursText, isOpen, replyPromise } from "./hours";
-import type { SmsSender } from "./sms";
+import { sendSms, type SmsSender, type SmsTo } from "./sms";
+import {
+  bookingsFor,
+  codeMatches,
+  logSend,
+  maskPhone,
+  MAX_CODE_TRIES,
+  MAX_SENDS_PER_CHAT,
+  MAX_SENDS_PER_PHONE_HOUR,
+  newCode,
+  recentSends,
+  sameEmail,
+  samePhone,
+  CODE_MINUTES,
+} from "./verify";
 
 export type ToolContext = {
   d: Db;
@@ -21,6 +38,7 @@ export type ToolContext = {
   today: DayKey;
   now: Date;
   sms: SmsSender;
+  smsTo?: SmsTo; // SMS to the customer (the code); tests pass a fake
   adminUrl: string;
   setupUrl: string;
 };
@@ -44,7 +62,10 @@ export const STATUS_LABEL: Record<RentalStatus, string> = {
 
 /** The labels the widget shows while a tool runs. */
 export const TOOL_LABELS: Record<string, string> = {
-  verify_customer: "Tjekker bookingen…",
+  verify_order: "Tjekker ordrenummeret…",
+  send_sms_code: "Sender en kode på SMS…",
+  verify_sms_code: "Tjekker koden…",
+  request_design: "Bestiller jeres designudkast…",
   get_bookings: "Slår jeres bookinger op…",
   check_availability: "Tjekker ledige datoer…",
   propose_date_change: "Regner på de nye datoer…",
@@ -58,15 +79,45 @@ const obj = (properties: Record<string, unknown>, required: string[]) => ({ type
 export const TOOL_DEFINITIONS = [
   {
     type: "function" as const,
-    name: "verify_customer",
-    description: "Verificerer kunden med bookingnummer (fx SB-271021-K4QX) og den e-mail, bookingen er lavet med. Skal lykkes, før noget om en booking kan vises eller ændres. Svarer med kundens navn og alle kundens bookinger med fulde detaljer (status, datoer, afsendelse, sporing, pris, opsætningslink), så get_bookings ikke behøves bagefter.",
+    name: "verify_order",
+    description: "Åbner kundens ordrer med et ordrenummer (fx SB-271021-K4QX), som kunden selv har skrevet. Ordren skal være lavet med den e-mail eller det telefonnummer, kunden oplyste før chatten; det tjekker systemet. Kald den KUN, når kunden spørger om en ordre/booking eller noget personligt. Svarer med kundens bookinger med fulde detaljer, så get_bookings ikke behøves bagefter.",
     strict: true,
-    parameters: obj({ bookingNo: { type: "string", description: "Bookingnummeret, som kunden skrev det" }, email: { type: "string", description: "E-mailen, som kunden skrev den" } }, ["bookingNo", "email"]),
+    parameters: obj({ bookingNo: { type: "string", description: "Ordrenummeret, som kunden skrev det" } }, ["bookingNo"]),
+  },
+  {
+    type: "function" as const,
+    name: "send_sms_code",
+    description: "Sender en 6-cifret engangskode på SMS til det telefonnummer, kunden oplyste før chatten. Brug den, når kunden spørger om en ordre eller noget personligt og ikke har (eller ikke kan finde) ordrenummeret, eller ordrenummeret ikke passede. Spørg kunden først, om du må sende koden. Koden gælder i 10 minutter.",
+    strict: true,
+    parameters: obj({}, []),
+  },
+  {
+    type: "function" as const,
+    name: "verify_sms_code",
+    description: "Tjekker den kode, kunden har skrevet fra SMS'en. Passer den, åbnes de bookinger, der er lavet med det telefonnummer.",
+    strict: true,
+    parameters: obj({ code: { type: "string", description: "Koden, som kunden skrev den" } }, ["code"]),
+  },
+  {
+    type: "function" as const,
+    name: "request_design",
+    description: "Bestiller et gratis designudkast til et sted (erhverv): et design af boksen i stedets udtryk plus et forslag til software (aktiviteter, deling, gæsteliste), sendt inden for 24 timer. Kontaktpersonen er den, der skriver (navn, e-mail og telefon er allerede oplyst). Kræver virksomhedens navn og hjemmeside; spørg efter dem, hvis de mangler. Gentag ikke bestillingen, hvis den allerede er sendt.",
+    strict: true,
+    parameters: obj(
+      {
+        company: { type: "string", description: "Virksomhedens eller stedets navn" },
+        website: { type: "string", description: "Hjemmeside, fx bodega.dk" },
+        placeType: { type: "string", enum: PLACE_TYPES, description: "Slags sted" },
+        city: { type: ["string", "null"], description: "By, hvis kunden har nævnt den, ellers null" },
+        notes: { type: "string", description: "Det, kunden har fortalt om stedet, gæsterne, placering og ønsker (kort, på dansk). Tom streng hvis intet." },
+      },
+      ["company", "website", "placeType", "city", "notes"],
+    ),
   },
   {
     type: "function" as const,
     name: "get_bookings",
-    description: "Henter den verificerede kundes bookinger igen (status, datoer, tilvalg, pris, sporingsnumre, frister, opsætningslink). Kun nødvendig senere i samtalen, fx efter en ændring eller når der er gået tid; verify_customer har allerede givet detaljerne.",
+    description: "Henter den verificerede kundes bookinger igen (status, datoer, tilvalg, pris, sporingsnumre, frister, opsætningslink). Kun nødvendig senere i samtalen, fx efter en ændring eller når der er gået tid; verify_order/verify_sms_code har allerede givet detaljerne.",
     strict: true,
     parameters: obj({}, []),
   },
@@ -109,7 +160,7 @@ export const TOOL_DEFINITIONS = [
         reason: { type: "string", enum: ["wants_human", "unhappy", "complaint", "money", "damage_or_theft", "legal", "change_not_allowed", "verification_locked", "box_not_working", "business_offer", "unknown_answer", "other"] },
         summary: { type: "string", description: "Kort resumé på dansk til SMS'en: hvem, hvilken booking, hvad kunden vil have. Højst 200 tegn." },
         urgent: { type: "boolean", description: "true kun når boksen ikke virker under en fest, der er i gang nu eller i dag" },
-        phone: { type: ["string", "null"], description: "Kundens telefonnummer, hvis kunden har skrevet det i chatten, ellers null" },
+        phone: { type: ["string", "null"], description: "Et andet telefonnummer, hvis kunden har bedt om at blive ringet op på et andet end det oplyste, ellers null" },
       },
       ["reason", "summary", "urgent", "phone"],
     ),
@@ -210,45 +261,127 @@ async function setChat(ctx: ToolContext, set: Partial<SupportChatDoc>): Promise<
 
 // ---------- the tools ----------
 
-async function verifyCustomer(ctx: ToolContext, a: { bookingNo: string; email: string }): Promise<Result> {
+const contactOf = (chat: SupportChatDoc) => chat.contact ?? null;
+
+/** Opens the bookings for the verified identifiers and writes the verification on the chat and the audit log. */
+async function openBookings(ctx: ToolContext, keys: { email: string | null; phone: string | null }, via: "order" | "sms", note: string, bookingId: string | null): Promise<Result> {
+  const all = await bookingsFor<RentalWithTracking>(ctx.d, keys);
+  const contact = contactOf(ctx.chat);
+  const name = all.find((b) => b._id === bookingId)?.contact.name ?? all[0]?.contact.name ?? contact?.name ?? "";
+  const customer = { email: keys.email ?? contact?.email ?? "", name, bookings: all.map((b) => b._id), verifiedAt: ctx.now, via, keys };
+  await setChat(ctx, { customer, smsCode: null });
+  await audit(ctx.d, { chatId: ctx.chat._id, actor: "customer", actorName: name || "kunde", action: "verify", bookingId, note: `${note}. Bookinger: ${customer.bookings.join(", ") || "ingen"}` });
+  if (!all.length) return { ok: true, verified: true, bookings: [], message: "Kunden er verificeret, men der er ingen betalte bookinger på det telefonnummer. Sig det, og spørg om ordren kan være lavet med et andet nummer eller en anden e-mail (så kan kunden skrive ordrenummeret)." };
+  return { ok: true, verified: true, name, today: ctx.today, bookings: all.map((b) => bookingView(b, ctx)), message: "Kunden er verificeret. Svar ud fra bookingerne her; get_bookings er ikke nødvendig." };
+}
+
+async function failAttempt(ctx: ToolContext, bookingId: string | null, what: string): Promise<{ locked: boolean; left: number }> {
+  const attempts = ctx.chat.verifyAttempts + 1;
+  const locked = attempts >= MAX_VERIFY;
+  await setChat(ctx, { verifyAttempts: attempts, verifyLockedAt: locked ? ctx.now : null });
+  await audit(ctx.d, { chatId: ctx.chat._id, actor: "customer", actorName: contactOf(ctx.chat)?.name ?? "kunde", action: locked ? "verify_locked" : "verify_failed", bookingId, note: `${what}. Forsøg ${attempts} af ${MAX_VERIFY}` });
+  return { locked, left: MAX_VERIFY - attempts };
+}
+
+const LOCKED: Result = { ok: false, locked: true, message: "Verificeringen er låst i denne chat efter for mange forkerte forsøg. Eskalér, så Esben kan hjælpe kunden." };
+
+async function verifyOrder(ctx: ToolContext, a: { bookingNo: string }): Promise<Result> {
   const chat = ctx.chat;
-  if (chat.verifyLockedAt) return { ok: false, locked: true, message: "Verificeringen er låst efter for mange forsøg. Eskalér, så Esben kan hjælpe." };
+  const contact = contactOf(chat);
+  if (!contact) return { ok: false, message: "Kunden har ikke oplyst kontaktoplysninger. Bed kunden starte en ny samtale." };
+  if (chat.verifyLockedAt) return LOCKED;
   const id = String(a.bookingNo ?? "").trim().toUpperCase().replace(/\s+/g, "");
-  const email = String(a.email ?? "").trim().toLowerCase();
   const r = await ctx.d.collection<RentalDoc>("rentals").findOne({ _id: id }, { projection: { contact: 1, status: 1 } });
-  const match = !!r && r.contact.email.trim().toLowerCase() === email && r.status !== "pending" && r.status !== "expired";
-  if (!match) {
-    const attempts = chat.verifyAttempts + 1;
-    const locked = attempts >= MAX_VERIFY;
-    await setChat(ctx, { verifyAttempts: attempts, verifyLockedAt: locked ? ctx.now : null });
-    await audit(ctx.d, { chatId: chat._id, actor: "customer", actorName: "kunde", action: locked ? "verify_locked" : "verify_failed", bookingId: id || null, note: `Forsøg ${attempts} af ${MAX_VERIFY}` });
-    return locked
-      ? { ok: false, locked: true, message: "For mange forkerte forsøg. Verificeringen er låst i denne chat. Eskalér, så Esben kan hjælpe kunden." }
-      : { ok: false, attemptsLeft: MAX_VERIFY - attempts, message: "Bookingnummer og e-mail passer ikke sammen. Sig ikke, hvilken af de to der er forkert. Bed kunden tjekke begge dele i kvitteringen fra Stripe." };
+  const paid = !!r && r.status !== "pending" && r.status !== "expired";
+  const emailOk = paid && sameEmail(r!.contact.email, contact.email);
+  const phoneOk = paid && samePhone(r!.contact.phone, contact.phone);
+  if (!emailOk && !phoneOk) {
+    const f = await failAttempt(ctx, id || null, "Ordrenummer passede ikke med oplyst e-mail/telefon");
+    if (f.locked) return LOCKED;
+    return {
+      ok: false,
+      attemptsLeft: f.left,
+      message: "Ordrenummeret passer ikke med den e-mail og det telefonnummer, kunden oplyste. Sig ikke, om ordren findes, eller hvad der er forkert. Bed kunden tjekke nummeret i kvitteringen, og tilbyd en kode på SMS til det oplyste nummer (send_sms_code) i stedet.",
+    };
   }
-  const all = await ctx.d
-    .collection<RentalWithTracking>("rentals")
-    .find({ "contact.email": { $regex: `^${email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" }, status: { $nin: ["pending", "expired"] } })
-    .sort({ from: 1 })
-    .toArray();
-  const customer = { email, name: r!.contact.name, bookings: all.map((b) => b._id), verifiedAt: ctx.now };
-  await setChat(ctx, { customer });
-  await audit(ctx.d, { chatId: chat._id, actor: "customer", actorName: customer.name, action: "verify", bookingId: id, note: `Verificeret med bookingnummer og e-mail. Bookinger: ${customer.bookings.join(", ")}` });
-  // The details come along at once, so the model can answer without a second round trip.
-  return { ok: true, name: customer.name, today: ctx.today, bookings: all.map((b) => bookingView(b, ctx)), message: "Kunden er verificeret. Svar ud fra bookingerne her; get_bookings er ikke nødvendig." };
+  return openBookings(ctx, { email: emailOk ? contact.email : null, phone: phoneOk ? contact.phone : null }, "order", `Verificeret med ordrenummer, der passer med oplyst ${[emailOk && "e-mail", phoneOk && "telefon"].filter(Boolean).join(" og ")}`, id);
+}
+
+async function sendSmsCode(ctx: ToolContext): Promise<Result> {
+  const chat = ctx.chat;
+  const contact = contactOf(chat);
+  if (!contact) return { ok: false, message: "Kunden har ikke oplyst et telefonnummer. Bed kunden starte en ny samtale." };
+  if (chat.verifyLockedAt) return LOCKED;
+  if (chat.customer?.keys?.phone) return { ok: false, message: "Kunden er allerede verificeret med telefonen." };
+  const sends = chat.smsSends ?? 0;
+  if (sends >= MAX_SENDS_PER_CHAT) return { ok: false, reason: "too_many", message: "Der er sendt det højeste antal koder i denne chat. Eskalér, så Esben kan hjælpe." };
+  if (chat.smsCode && ctx.now.getTime() - chat.smsCode.sentAt.getTime() < 60_000) return { ok: false, reason: "wait", message: "Der blev sendt en kode for under et minut siden. Bed kunden vente lidt og tjekke sine SMS'er." };
+  if ((await recentSends(ctx.d, contact.phone, ctx.now)) >= MAX_SENDS_PER_PHONE_HOUR) return { ok: false, reason: "too_many", message: "Der er sendt for mange koder til det nummer den sidste time. Bed kunden prøve igen senere, eller eskalér." };
+  const { code, stored } = newCode(chat._id, ctx.now);
+  const sent = await (ctx.smsTo ?? sendSms)(contact.phone, `Din kode til Selfi-chatten er ${code}. Den gælder i ${CODE_MINUTES} minutter. Giv den kun til chatten på selfi.dk.`);
+  await audit(ctx.d, { chatId: chat._id, actor: "ai", actorName: "Sif", action: sent ? "sms_code_sent" : "sms_code_failed", bookingId: null, note: `Kode til ${maskPhone(contact.phone)}` });
+  if (!sent) return { ok: false, reason: "sms_failed", message: "SMS'en kunne ikke sendes lige nu. Bed kunden skrive ordrenummeret i stedet, eller eskalér." };
+  await logSend(ctx.d, contact.phone, chat._id, ctx.now);
+  await setChat(ctx, { smsCode: stored, smsSends: sends + 1 });
+  return { ok: true, sentTo: maskPhone(contact.phone), validMinutes: CODE_MINUTES, message: `Koden er sendt til nummeret, der ender på ${contact.phone.slice(-4)}. Bed kunden skrive den 6-cifrede kode her i chatten.` };
+}
+
+async function verifySmsCode(ctx: ToolContext, a: { code: string }): Promise<Result> {
+  const chat = ctx.chat;
+  const contact = contactOf(chat);
+  const c = chat.smsCode;
+  if (!contact || !c) return { ok: false, message: "Der er ikke sendt nogen kode i denne chat. Tilbyd at sende en med send_sms_code." };
+  if (chat.verifyLockedAt) return LOCKED;
+  if (ctx.now > c.expiresAt) {
+    await setChat(ctx, { smsCode: null });
+    return { ok: false, reason: "expired", message: "Koden er udløbet. Tilbyd at sende en ny." };
+  }
+  if (!codeMatches(chat._id, c, a.code)) {
+    const tries = c.tries + 1;
+    await setChat(ctx, { smsCode: tries >= MAX_CODE_TRIES ? null : { ...c, tries } });
+    const f = await failAttempt(ctx, null, "Forkert SMS-kode");
+    if (f.locked) return LOCKED;
+    return tries >= MAX_CODE_TRIES
+      ? { ok: false, reason: "expired", message: "Koden er brugt for mange gange forkert og gælder ikke længere. Tilbyd en ny kode." }
+      : { ok: false, attemptsLeft: Math.min(MAX_CODE_TRIES - tries, f.left), message: "Koden passer ikke. Bed kunden tjekke SMS'en og skrive koden igen." };
+  }
+  return openBookings(ctx, { email: null, phone: contact.phone }, "sms", `Verificeret med SMS-kode til ${maskPhone(contact.phone)}`, null);
+}
+
+async function requestDesign(ctx: ToolContext, a: { company: string; website: string; placeType: string; city: string | null; notes: string }): Promise<Result> {
+  const chat = ctx.chat;
+  const contact = contactOf(chat);
+  if (!contact) return { ok: false, message: "Kunden har ikke oplyst kontaktoplysninger." };
+  if (chat.designRequest) return { ok: true, already: true, message: `Designudkastet til ${chat.designRequest.company} er allerede bestilt i denne chat. Bekræft det bare igen.` };
+  const r = {
+    kind: "design" as const,
+    source: "chat" as const,
+    company: String(a.company ?? "").trim().slice(0, 200),
+    website: String(a.website ?? "").trim().slice(0, 300),
+    placeType: String(a.placeType ?? "").slice(0, 80),
+    city: String(a.city ?? "").trim().slice(0, 80),
+    name: contact.name,
+    email: contact.email,
+    phone: contact.phone,
+    message: String(a.notes ?? "").trim().slice(0, 2000),
+    page: chat.page,
+  };
+  const problem = inboundProblem(r);
+  if (problem) return { ok: false, message: `Mangler: ${problem} Spørg kunden.` };
+  const saved = await saveInbound(ctx.d, r, { ipHash: chat.ipHash, chatId: chat._id, adminUrl: ctx.adminUrl, sms: ctx.sms, now: ctx.now });
+  await setChat(ctx, { designRequest: { id: saved._id, company: r.company, at: ctx.now } });
+  await audit(ctx.d, { chatId: chat._id, actor: "ai", actorName: "Sif", action: "design_request", bookingId: null, note: `${saved._id}: ${r.company} (${r.website})` });
+  return { ok: true, requestId: saved._id, sendTo: contact.email, message: `Bestilt. Sig til kunden, at designudkastet og forslaget til software kommer på ${contact.email} inden for 24 timer, og at Esben ringer på det oplyste nummer, hvis han har spørgsmål.` };
 }
 
 async function getBookings(ctx: ToolContext): Promise<Result> {
-  if (!ctx.chat.customer) return { ok: false, message: "Kunden er ikke verificeret. Bed om bookingnummer og e-mail først." };
-  // New bookings made with the same e-mail since the verification belong to the customer too.
-  const email = ctx.chat.customer.email;
-  const rentals = await ctx.d
-    .collection<RentalWithTracking>("rentals")
-    .find({ "contact.email": { $regex: `^${email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" }, status: { $nin: ["pending", "expired"] } })
-    .sort({ from: 1 })
-    .toArray();
+  const c = ctx.chat.customer;
+  if (!c) return { ok: false, message: "Kunden er ikke verificeret. Bed om ordrenummeret, eller tilbyd en kode på SMS." };
+  // New bookings made with the same verified e-mail or phone since the verification belong to the customer too.
+  const keys = c.keys ?? { email: c.email, phone: null };
+  const rentals = await bookingsFor<RentalWithTracking>(ctx.d, keys);
   const ids = rentals.map((r) => r._id);
-  if (ids.join() !== ctx.chat.customer.bookings.join()) await setChat(ctx, { customer: { ...ctx.chat.customer, bookings: ids } });
+  if (ids.join() !== c.bookings.join()) await setChat(ctx, { customer: { ...c, bookings: ids } });
   return { ok: true, today: ctx.today, bookings: rentals.map((r) => bookingView(r, ctx)) };
 }
 
@@ -343,15 +476,16 @@ async function escalate(ctx: ToolContext, a: { reason: string; summary: string; 
   const chat = ctx.chat;
   const urgent = !!a.urgent;
   const promise = replyPromise(urgent, ctx.now);
-  const who = chat.customer ? `${chat.customer.name}, ${chat.customer.bookings.join("/")}` : "ikke verificeret";
+  const c = chat.contact;
+  const who = [chat.customer ? `${chat.customer.name}, ${chat.customer.bookings.join("/") || "ingen bookinger"}` : c ? `${c.name}, ikke verificeret` : "ikke verificeret", c ? `tlf. ${c.phone}` : null].filter(Boolean).join(", ");
   const summary = String(a.summary ?? "").trim().slice(0, 200) || "Kunden vil have et menneske";
-  const text = `Selfi-chat${urgent ? " AKUT" : ""}: ${summary} (${who}${a.phone ? `, tlf. ${a.phone}` : ""}) ${ctx.adminUrl}/admin/support/${chat._id}`;
+  const text = `Selfi-chat${urgent ? " AKUT" : ""}: ${summary} (${who}${a.phone ? `, ring på ${a.phone}` : ""}) ${ctx.adminUrl}/admin/support/${chat._id}`;
   const smsSent = await ctx.sms(text);
   const escalation = { at: ctx.now, reason: a.reason, summary, urgent, smsSent, by, replyBy: promise.text };
   await setChat(ctx, { escalation, status: chat.status === "human" ? "human" : "waiting_human", unread: chat.unread + 1 });
   await audit(ctx.d, { chatId: chat._id, actor: by, actorName: by === "ai" ? "Sif" : chat.customer?.name ?? "kunde", action: "escalate", bookingId: chat.customer?.bookings[0] ?? null, note: `${a.reason}${urgent ? " (akut)" : ""}: ${summary}. SMS ${smsSent ? "sendt" : "ikke sendt"}` });
   await addMessage(ctx.d, chat, { role: "system", text: `Sendt videre til Esben${urgent ? " som akut" : ""}. Han svarer ${promise.text}.`, tool: { name: "escalate", label: "Sendt til Esben", ok: smsSent } });
-  return { ok: true, replyBy: promise.text, open: isOpen(ctx.now), hours: hoursText(), smsSent, message: `Sig til kunden, at Esben tager over og svarer her i chatten ${promise.text}.${urgent && !a.phone && !chat.customer?.bookings.length ? " Bed om et telefonnummer." : ""}` };
+  return { ok: true, replyBy: promise.text, open: isOpen(ctx.now), hours: hoursText(), smsSent, message: `Sig til kunden, at Esben tager over og svarer her i chatten ${promise.text}.${urgent ? " Han har kundens telefonnummer og kan ringe." : ""}` };
 }
 
 export const escalateByCustomer = (ctx: ToolContext) => escalate(ctx, { reason: "wants_human", summary: "Kunden trykkede på 'Tal med et menneske'", urgent: false, phone: null }, "customer");
@@ -366,8 +500,14 @@ export async function runTool(ctx: ToolContext, name: string, rawArgs: string): 
   }
   try {
     switch (name) {
-      case "verify_customer":
-        return await verifyCustomer(ctx, args as { bookingNo: string; email: string });
+      case "verify_order":
+        return await verifyOrder(ctx, args as { bookingNo: string });
+      case "send_sms_code":
+        return await sendSmsCode(ctx);
+      case "verify_sms_code":
+        return await verifySmsCode(ctx, args as { code: string });
+      case "request_design":
+        return await requestDesign(ctx, args as { company: string; website: string; placeType: string; city: string | null; notes: string });
       case "get_bookings":
         return await getBookings(ctx);
       case "check_availability":

@@ -30,8 +30,15 @@ export type SupportChatDoc = {
   summary: string; // the first customer message, for the list in admin
   messages: number;
   unread: number; // customer messages since a human last looked, for the badge in admin
-  customer: { email: string; name: string; bookings: string[]; verifiedAt: Date } | null;
+  // What the person typed in the widget before the first message. Unlocks nothing on its own (lib/support/verify.ts).
+  contact?: { name: string; email: string; phone: string; at: Date } | null;
+  // Set once an order number matched the contact details, or the SMS code was right. `keys` are the verified
+  // identifiers; the bookings with that e-mail or phone are the only ones the assistant can see.
+  customer: { email: string; name: string; bookings: string[]; verifiedAt: Date; via?: "order" | "sms"; keys?: { email: string | null; phone: string | null } } | null;
   verifyAttempts: number;
+  smsCode?: { hash: string; sentAt: Date; expiresAt: Date; tries: number } | null;
+  smsSends?: number;
+  designRequest?: { id: string; company: string; at: Date } | null;
   verifyLockedAt: Date | null;
   takenBy: { id: string; name: string; at: Date } | null;
   escalation: { at: Date; reason: string; summary: string; urgent: boolean; smsSent: boolean; by: "ai" | "customer"; replyBy: string } | null;
@@ -58,7 +65,7 @@ export type SupportAuditDoc = {
   chatId: string;
   actor: "ai" | "human" | "customer" | "system";
   actorName: string;
-  action: "verify" | "verify_failed" | "verify_locked" | "date_change_proposed" | "date_change" | "escalate" | "takeover" | "give_back" | "close";
+  action: "contact" | "verify" | "verify_failed" | "verify_locked" | "sms_code_sent" | "sms_code_failed" | "design_request" | "date_change_proposed" | "date_change" | "escalate" | "takeover" | "give_back" | "close";
   bookingId: string | null;
   before?: unknown;
   after?: unknown;

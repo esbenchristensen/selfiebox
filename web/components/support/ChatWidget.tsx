@@ -7,6 +7,8 @@ import "./support.css";
 // The support chat on every page of selfi.dk: a button bottom right, a panel with the conversation.
 // Sif (the AI) answers at once and streams the reply; when Esben takes over in admin, his messages arrive
 // through polling and the assistant stays quiet. The chat is tied to an httpOnly cookie set by the API.
+// Before the first message the person writes name, e-mail and phone (POST /api/support/start). On /erhverv
+// the greeting and the suggestions are for places; everywhere else for private rentals.
 
 type Role = "customer" | "assistant" | "human" | "system";
 type Msg = { seq: number; role: Role; text: string; at: string; name: string | null; sources: { url: string; title: string }[] | null; pending?: boolean };
@@ -16,13 +18,29 @@ type Chat = {
   takenBy: string | null;
   escalation: { at: string; urgent: boolean; replyBy: string } | null;
   customer: { name: string; bookings: string[] } | null;
+  contact: { name: string; email: string; phone: string } | null;
   open: boolean;
   hours: string;
 };
 
 const NAME = "Sif";
-const INTRO = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om jeres booking, levering, priser eller boksen. Skal jeg kigge på en booking, så skriv bookingnummer og den e-mail, I bookede med.";
+const INTRO = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om jeres booking, levering, priser eller boksen.";
+const INTRO_B2B = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om boksen til jeres sted: design, funktioner, pris og opsætning. Jeg kan også bestille et gratis designudkast til jer på 24 timer.";
 const CHIPS = ["Hvor er vores boks?", "Vi vil flytte datoen", "Hvad koster det?", "Hvordan sender vi den retur?"];
+const CHIPS_B2B = ["Hvad kan boksen gøre for os?", "Få et gratis designudkast", "Hvad koster det?", "Hvordan kommer den op at hænge?"];
+const SAVED = "selfi_chat_contact";
+
+type Contact = { name: string; email: string; phone: string };
+
+function savedContact(): Contact {
+  try {
+    const c = JSON.parse(localStorage.getItem(SAVED) ?? "null") as Contact | null;
+    if (c && typeof c.name === "string") return c;
+  } catch {
+    // Storage can be blocked; the form just starts empty.
+  }
+  return { name: "", email: "", phone: "" };
+}
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -35,6 +53,8 @@ export function ChatWidget() {
   const [error, setError] = useState<string | null>(null);
   const [unseen, setUnseen] = useState(0);
   const [menu, setMenu] = useState(false);
+  const [b2b, setB2b] = useState(false);
+  const [form, setForm] = useState<Contact>({ name: "", email: "", phone: "" });
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const lastSeq = useRef(0);
@@ -78,6 +98,11 @@ export function ChatWidget() {
       setLoaded(true);
     }
   }, [merge]);
+
+  useEffect(() => {
+    setB2b(location.pathname.startsWith("/erhverv"));
+    setForm(savedContact());
+  }, []);
 
   // Load the conversation when the panel opens; poll while it is open, faster while a human is on it.
   useEffect(() => {
@@ -124,7 +149,15 @@ export function ChatWidget() {
     try {
       const r = await fetch("/api/support/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: t, page: location.pathname }) });
       if (!r.ok) {
-        const b = (await r.json().catch(() => ({}))) as { error?: string };
+        const b = (await r.json().catch(() => ({}))) as { error?: string; needContact?: boolean };
+        if (b.needContact) {
+          // The chat was closed or started before the contact step: ask for the details, keep the text.
+          setChat(null);
+          setMsgs([]);
+          lastSeq.current = 0;
+          setDraft(t);
+          return;
+        }
         throw new Error(b.error ?? "Beskeden blev ikke sendt. Prøv igen.");
       }
       if (r.headers.get("content-type")?.includes("application/json")) {
@@ -164,6 +197,30 @@ export function ChatWidget() {
     }
   }
 
+  async function start(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (busy) return;
+    setError(null);
+    setBusy(true);
+    try {
+      const r = await fetch("/api/support/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, page: location.pathname }) });
+      const b = (await r.json().catch(() => ({}))) as { chat?: Chat; error?: string };
+      if (!r.ok || !b.chat) throw new Error(b.error ?? "Det gik ikke. Prøv igen om lidt.");
+      try {
+        localStorage.setItem(SAVED, JSON.stringify(form));
+      } catch {
+        // Not remembered; nothing else changes.
+      }
+      setChat(b.chat);
+      await poll();
+      requestAnimationFrame(() => inputRef.current?.focus());
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function askHuman() {
     setMenu(false);
     setBusy(true);
@@ -189,6 +246,7 @@ export function ChatWidget() {
     inputRef.current?.focus();
   }
 
+  const needContact = loaded && (!chat || !chat.contact || chat.status === "closed");
   const human = chat?.status === "human";
   const waiting = chat?.status === "waiting_human";
   const closed = chat?.status === "closed";
@@ -221,7 +279,7 @@ export function ChatWidget() {
             </button>
             {menu && (
               <div className="sc-menu-list" role="menu">
-                {!human && !waiting && <button type="button" role="menuitem" onClick={askHuman}>Tal med et menneske</button>}
+                {!human && !waiting && !needContact && <button type="button" role="menuitem" onClick={askHuman}>Tal med et menneske</button>}
                 <button type="button" role="menuitem" onClick={restart}>Ny samtale</button>
                 <a role="menuitem" href="/privatliv">Sådan behandler vi chatten</a>
               </div>
@@ -233,10 +291,29 @@ export function ChatWidget() {
         </header>
 
         <div className="sc-list" ref={listRef}>
-          <Bubble m={{ seq: 0, role: "assistant", text: INTRO, at: "", name: NAME, sources: null }} />
-          {loaded && msgs.length === 0 && !closed && (
+          <Bubble m={{ seq: 0, role: "assistant", text: b2b ? INTRO_B2B : INTRO, at: "", name: NAME, sources: null }} />
+          {needContact && (
+            <form className="sc-start" onSubmit={start}>
+              <p>Skriv lige, hvem du er, før vi går i gang. Så kan Esben også fange dig, hvis han skal tage over.</p>
+              <label>
+                <span>Navn</span>
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" required maxLength={120} />
+              </label>
+              <label>
+                <span>E-mail</span>
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" required maxLength={200} />
+              </label>
+              <label>
+                <span>Telefon</span>
+                <input type="tel" inputMode="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} autoComplete="tel" required maxLength={30} placeholder="12 34 56 78" />
+              </label>
+              <button type="submit" className="sc-start-go" disabled={busy}>{busy ? "Starter …" : "Start chatten"}</button>
+              <small>Vi slår først din ordre op, når du spørger til den og har bekræftet, at det er dig. <a href="/privatliv">Sådan behandler vi chatten</a>.</small>
+            </form>
+          )}
+          {!needContact && loaded && msgs.length === 0 && (
             <div className="sc-chips">
-              {CHIPS.map((c) => (
+              {(b2b ? CHIPS_B2B : CHIPS).map((c) => (
                 <button key={c} type="button" onClick={() => void send(c)}>{c}</button>
               ))}
             </div>
@@ -246,11 +323,12 @@ export function ChatWidget() {
             <div className="sc-status" role="status"><i /> {status}</div>
           )}
           {error && <p className="sc-error" role="alert">{error}</p>}
-          {closed && <p className="sc-note">Samtalen er afsluttet. Skriv igen, så starter en ny.</p>}
+          {closed && <p className="sc-note">Samtalen er afsluttet. Start en ny ovenfor.</p>}
         </div>
 
         <form
           className="sc-compose"
+          hidden={needContact}
           onSubmit={(e) => {
             e.preventDefault();
             void send(draft);
@@ -275,7 +353,7 @@ export function ChatWidget() {
               }
             }}
           />
-          <button type="submit" className="sc-send" disabled={busy || !draft.trim()} aria-label="Send">
+          <button type="submit" className="sc-send" disabled={busy || needContact || !draft.trim()} aria-label="Send">
             <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
           </button>
         </form>

@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 
 import { MODEL, runTurn, type TurnEvent } from "@/lib/support/agent";
 import { addMessage, supportCollections, type SupportMessageDoc } from "@/lib/support/db";
-import { cookieFor, createChat, ipHash, loadChat, publicView } from "@/lib/support/session";
+import { cookieFor, loadChat, publicView } from "@/lib/support/session";
 import { db } from "@/lib/udlejning/db";
 
 // The chat widget's one endpoint.
 //   GET  ?after=<seq>   the chat's state and the messages after seq (the widget polls this)
-//   POST { text, page } a message from the customer; the reply streams back as server-sent events,
+//   POST { text, page } a message from the customer (the chat must have been started with contact details
+//                       through /api/support/start); the reply streams back as server-sent events,
 //                       or, when a human has taken over, a JSON { human: true } and the human answers later
 //   DELETE              forget the cookie, so the next message starts a new conversation
 // Verification, data scope and changes are enforced in lib/support/tools.ts, not here and not in the prompt.
@@ -17,7 +18,6 @@ export const maxDuration = 60;
 
 const MAX_TEXT = 1500;
 const PER_CHAT_10MIN = 30;
-const NEW_CHATS_PER_HOUR = 20;
 
 const SHOWN: SupportMessageDoc["role"][] = ["customer", "assistant", "human", "system"];
 
@@ -40,14 +40,13 @@ export async function DELETE() {
 }
 
 export async function POST(req: Request) {
-  let body: { text?: unknown; page?: unknown };
+  let body: { text?: unknown };
   try {
     body = (await req.json()) as typeof body;
   } catch {
     return NextResponse.json({ error: "Beskeden kunne ikke læses." }, { status: 400 });
   }
   const text = typeof body.text === "string" ? body.text.trim().slice(0, MAX_TEXT) : "";
-  const page = typeof body.page === "string" ? body.page : "";
   if (!text) return NextResponse.json({ error: "Skriv en besked." }, { status: 400 });
 
   let d;
@@ -58,13 +57,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Chatten er ikke åben lige nu. Prøv igen om lidt." }, { status: 503 });
   }
   const { chats, messages } = await supportCollections(d);
-  let chat = await loadChat(d, req);
+  const chat = await loadChat(d, req);
   const headers = new Headers({ "cache-control": "no-store" });
-  if (!chat || chat.status === "closed") {
-    const recent = await chats.countDocuments({ ipHash: ipHash(req), createdAt: { $gt: new Date(Date.now() - 3600_000) } });
-    if (recent >= NEW_CHATS_PER_HOUR) return NextResponse.json({ error: "Der er startet for mange samtaler herfra. Prøv igen om lidt." }, { status: 429 });
-    chat = await createChat(d, req, page, MODEL);
-    headers.set("set-cookie", cookieFor(chat));
+  // Name, e-mail and phone come first (POST /api/support/start); without them there is nothing to write in.
+  if (!chat || chat.status === "closed" || !chat.contact) {
+    return NextResponse.json({ error: "Skriv dit navn, din e-mail og dit telefonnummer først.", needContact: true }, { status: 409 });
   }
   const burst = await messages.countDocuments({ chatId: chat._id, role: "customer", at: { $gt: new Date(Date.now() - 600_000) } });
   if (burst >= PER_CHAT_10MIN) return NextResponse.json({ error: "Tag en kort pause. Du kan skrive igen om et par minutter." }, { status: 429, headers });

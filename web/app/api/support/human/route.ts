@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { MODEL } from "@/lib/support/agent";
 import { addMessage, supportCollections } from "@/lib/support/db";
-import { cookieFor, createChat, loadChat, publicView } from "@/lib/support/session";
+import { loadChat, publicView } from "@/lib/support/session";
 import { sendSupportSms } from "@/lib/support/sms";
 import { escalateByCustomer } from "@/lib/support/tools";
 import { db, getSettings, todayDK } from "@/lib/udlejning/db";
@@ -13,11 +12,10 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const d = await db();
-  let chat = await loadChat(d, req);
+  const chat = await loadChat(d, req);
   const headers = new Headers({ "cache-control": "no-store" });
-  if (!chat || chat.status === "closed") {
-    chat = await createChat(d, req, "", MODEL);
-    headers.set("set-cookie", cookieFor(chat));
+  if (!chat || chat.status === "closed" || !chat.contact) {
+    return NextResponse.json({ error: "Skriv dit navn, din e-mail og dit telefonnummer først.", needContact: true }, { status: 409 });
   }
   if (chat.status === "open") {
     const now = new Date();
