@@ -1,0 +1,145 @@
+[
+ {
+  "node": "kappe",
+  "label": "Kappe (sort ASA): sadeltag 30°, luftlameller og nøglelås i venstre ende",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   -10,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "logo_hvid",
+  "label": "Logo, hvidt (indlagt i kappen)",
+  "color": "#f5f5f4",
+  "group": "Kabinet",
+  "explode": [
+   -10,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "logo_groen",
+  "label": "Logo, grønne prikker",
+  "color": "#22d36b",
+  "group": "Kabinet",
+  "explode": [
+   -10,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "laas",
+  "label": "Kamlås Ø19 med nøgle (låser kappen til soklen)",
+  "color": "#c3c7cf",
+  "group": "Kabinet",
+  "explode": [
+   -60,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "sokkel",
+  "label": "Sokkel: printerramme, låseholder, Pi-holder og strømindgang (mørk ASA)",
+  "color": "#2b2b2f",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "udgang",
+  "label": "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme og skærm (sort ASA)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   150,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "led",
+  "label": "RGB-LED-strip WS2812B, 9 LED (5 V fra Pi'en, lyser ned ad rutsjebanen)",
+  "color": "#22d36b",
+  "group": "Elektronik",
+  "explode": [
+   150,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "print",
+  "label": "Et 4×6-print i lommen",
+  "color": "#ffffff",
+  "group": "Elektronik",
+  "explode": [
+   150,
+   0,
+   140
+  ]
+ },
+ {
+  "node": "printer",
+  "label": "DNP QW410 drejet 90° (papirudgangen mod højre ende)",
+  "color": "#d9d9d6",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   150,
+   0
+  ]
+ },
+ {
+  "node": "pi",
+  "label": "Raspberry Pi Zero 2 W (printserver på wifi, styrer LED'en)",
+  "color": "#2e9e5b",
+  "group": "Elektronik",
+  "explode": [
+   -60,
+   60,
+   0
+  ]
+ },
+ {
+  "node": "inlet",
+  "label": "Strømindgang C14 (panelkabel, snap-in)",
+  "color": "#e11d48",
+  "group": "Elektronik",
+  "explode": [
+   -40,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "skruer_sokkel",
+  "label": "2 skruer, sokkel til bord/hylde (B2B, SPUN+ 4,0 × 30)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -60,
+   0
+  ]
+ },
+ {
+  "node": "skruer_link",
+  "label": "2 skruer, sokkel til udgangsmodul (3,5 × 10 til plast)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   80,
+   -40,
+   0
+  ]
+ }
+]

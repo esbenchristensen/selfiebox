@@ -2,8 +2,9 @@
 """Drawing sheets of the Selfi printer straight from the CAD: OpenSCAD projections and sections -> one PNG per sheet.
 
 Usage: python3 hardware/tools/printer_sheet.py <svg dir> <out dir> <version>
-The svg dir holds the views from selfi_printer_v1.scad (d_front, d_side, d_top, d_cut, d_cut_lock, d_side_vaeg, d_cut_vaeg),
-as make_printer.py exports them. Measures in mm.
+The svg dir holds the views from the version's CAD (selfi_printer_v<N>.scad) as make_printer.py exports them:
+v1 d_front, d_side, d_top, d_cut, d_cut_lock, d_side_vaeg, d_cut_vaeg; v2 d_front, d_end, d_top, d_cut_end, d_cut_long,
+d_cut_lock. Measures in mm.
 """
 import base64
 import re
@@ -58,52 +59,96 @@ def sheet(name, title, sub, body, w=2400, h=1500):
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">'
            f'<rect width="{w}" height="{h}" fill="{PAPER}"/>'
            + text(50, 60, title, 30, font_weight="bold") + text(50, 92, sub, 16, fill="#5c615b")
-           + text(w - 50, h - 30, f"{VER} · mål i mm · CAD: hardware/cad/selfi_printer_v1.scad", 13, fill=GREY, text_anchor="end")
+           + text(w - 50, h - 30, f"{VER} · mål i mm · CAD: hardware/cad/{VER.replace('-', '_')}.scad", 13, fill=GREY, text_anchor="end")
            + "".join(body) + "</svg>")
     cairosvg.svg2png(bytestring=svg.encode(), write_to=str(OUT / f"{VER}_{name}.png"))
 
 
-W, H, D = 222.5, 220.0, 294.4
-SLOT_Z, LOGO_Z = 147, 72                          # as in the CAD
+def sheets_v1():
+    W, H, D = 222.5, 220.0, 294.4
+    SLOT_Z, LOGO_Z = 147, 72                          # as in the CAD
+
+    # sheet 1: the unit on a table (B2C) and its section
+    b = []
+    fx, fy = 120 + W / 2 * S, 170 + H * S              # front view: origin = centre bottom
+    g, _ = place("d_front", fx, fy); b += [text(120, 150, "Forfra", 18, font_weight="bold"), g]
+    # details the silhouette does not show: exit slot, tray slots and the logo inlay
+    b += [f'<rect x="{fx - 62 * S}" y="{fy - (SLOT_Z + 8) * S}" width="{124 * S}" height="{8 * S}" rx="3" fill="{INK}"/>']
+    b += [f'<rect x="{fx + (x - 8) * S}" y="{fy - (SLOT_Z - 12) * S}" width="{16 * S}" height="{4 * S}" fill="none" stroke="{INK}" stroke-width="1.2"/>' for x in (-50, 50)]
+    b += [f'<image href="data:image/png;base64,{LOGO}" x="{fx - 45.4 * S}" y="{fy - (LOGO_Z + 16.5) * S}" width="{90.8 * S}" height="{33 * S}"/>']
+    b += [dim_h(fx - W / 2 * S, fx + W / 2 * S, fy + 30, f"{W:g}"), dim_v(fx - W / 2 * S - 22, fy - H * S, fy, f"{H:g}")]
+    b += [note(fx + W / 2 * S + 14, fy - LOGO_Z * S, "logo indlagt 0,8"), note(fx + W / 2 * S + 14, fy - (SLOT_Z + 4) * S, "papirudgang 124 × 8"),
+          note(fx + W / 2 * S + 14, fy - (SLOT_Z - 12) * S, "2 slidser til bakken"), note(fx + W / 2 * S + 14, fy - 12 * S, "fuge kappe / sokkel"),
+          note(fx + W / 2 * S + 14, fy - (SLOT_Z + 22) * S, f"højde {SLOT_Z:g}: måles på printeren")]
+    sx, sy = 880 + 72 * S, 170 + H * S                 # side view: origin = front bottom
+    g, _ = place("d_side", sx, sy); b += [text(880, 150, "Fra højre", 18, font_weight="bold"), g]
+    b += [dim_h(sx, sx + D * S, sy + 30, f"{D:g}"), dim_h(sx - 72 * S, sx, sy + 30, "bakke 72")]
+    tx, ty = 120 + W / 2 * S, 720 + D * S              # top view: origin = centre front
+    g, _ = place("d_top", tx, ty); b += [text(120, 700, "Oppefra", 18, font_weight="bold"), g]
+    b += [note(tx + W / 2 * S + 14, ty - (D - 40) * S, "udluftning bagpå og i siderne")]
+    cx, cy = 880 + 72 * S, 720 + H * S                 # section at x = 0
+    g, _ = place("d_cut", cx, cy, fill="#e9eae6"); b += [text(880, 700, "Snit midt (x = 0)", 18, font_weight="bold"), g]
+    for s_, y_ in (("kappe 3,2 ASA, top ned på pladen", 210), ("DNP QW410 · 208 × 198 × 240", 120), ("sokkel 12 + kant 9 med klik", 14),
+                   ("bagrum 40: Pi Zero 2 W (5 V fra printeren) + C14-indgang", 60)):
+        b.append(note(cx + D * S + 20, cy - y_ * S, s_))
+    lx, ly = 1960, 170 + H * S                         # section through the cam lock (B2B)
+    g, _ = place("d_cut_lock", lx, ly, fill="#e9eae6"); b += [text(1720, 150, "Snit gennem låsen (B2B)", 18, font_weight="bold"), g]
+    b += [note(1720, ly + 40, "Ø19-skabslås i 10 mm boss, kammen"), note(1720, ly + 60, "drejer ned bag tanden på soklen")]
+    sheet("tegning", "Selfi printer v1 · tegning", "DNP QW410 i printet ASA-kabinet · samme bredde og hjørne som gen 2 · kappen løftes af for papirskift", b, h=1560)
+
+    # sheet 2: on the wall (B2B)
+    b = []
+    sx, sy = 160 + 72 * S, 230 + (H + 10) * S
+    g, vb = place("d_side_vaeg", sx, sy); b += [text(120, 150, "Væg, fra højre", 18, font_weight="bold"), g]
+    b += [dim_v(sx + (D + 22) * S + 40, sy - H * S, sy + 170 * S, "390"), note(sx - 60 * S, sy + 200 * S, "kabel ned ad væggen i skinne · min. 120 fri over kappen")]
+    cx, cy = 1120 + 72 * S, 230 + (H + 10) * S
+    g, _ = place("d_cut_vaeg", cx, cy, fill="#e9eae6"); b += [text(1080, 150, "Snit midt, væg", 18, font_weight="bold"), g]
+    for s_, y_ in (("sokkel i konsollen: 2 × SPUN+ 4,0 × 30", -6),
+                   ("konsol: hylde 12 + 2 massive knægte 14", -60), ("vægplade, 45° skinne, 4 skruer + dybler", -110),
+                   ("pin-Torx-skrue låser konsollen", -150)):
+        b.append(note(cx + (D + 42) * S, cy - y_ * S, s_))
+    sheet("tegning_vaeg", "Selfi printer v1 · vægmontering (B2B)", "Samme kappe og sokkel; konsollen hægtes på vægpladen og låses. Stedet monterer selv efter guiden.", b, h=1400)
+
+
+def sheets_v2():
+    L, D, TOP, HE, PM = 476.0, 222.5, 277.6, 217.2, 287.2
+    OP_X, OP_W, OP_Z0, OP_Z1, LOGO_Z, SLOT_Z = (287.7 + 476) / 2, 170, 31, 85, 120, 147
+    b = []
+    # row 1: front, right end, section through the exit chamber
+    fx, fy = 120, 190 + TOP * S
+    g, _ = place("d_front", fx, fy); b += [text(120, 150, "Forfra (gæstens side)", 18, font_weight="bold"), g]
+    b += [f'<rect x="{fx + (OP_X - OP_W / 2) * S}" y="{fy - OP_Z1 * S}" width="{OP_W * S}" height="{(OP_Z1 - OP_Z0) * S}" rx="{8 * S}" fill="{INK}"/>']
+    b += [f'<image href="data:image/png;base64,{LOGO}" x="{fx + (PM / 2 - 49.5) * S}" y="{fy - (LOGO_Z + 18) * S}" width="{99 * S}" height="{36 * S}"/>']
+    b += [dim_h(fx, fx + L * S, fy + 30, f"{L:g}"), dim_h(fx, fx + PM * S, fy + 62, "kappe + sokkel 287"),
+          dim_h(fx + PM * S, fx + L * S, fy + 62, "udgangsmodul 189"),
+          dim_v(fx - 22, fy - HE * S, fy, f"{HE:g}"), dim_v(fx - 52, fy - TOP * S, fy, f"{TOP:g}")]
+    b += [note(fx + (OP_X - OP_W / 2) * S, fy - OP_Z1 * S - 10, f"udtagslomme {OP_W} × {OP_Z1 - OP_Z0}, stoplæbe med 3 dræn")]
+    ex, ey = 1150, 190 + TOP * S
+    g, _ = place("d_end", ex, ey); b += [text(1150, 150, "Fra højre ende", 18, font_weight="bold"), g]
+    b += [dim_h(ex, ex + D * S, ey + 30, f"{D:g}"), note(ex + D * S + 14, ey - (TOP - 6) * S, "rund ryg R25"), note(ex + D * S + 14, ey - (HE + 30) * S, "sadeltag 30°")]
+    cx, cy = 1700, 190 + TOP * S
+    g, _ = place("d_cut_end", cx, cy, fill="#e9eae6"); b += [text(1700, 150, "Snit gennem udgangsrummet", 18, font_weight="bold"), g]
+    b += [f'<rect x="{cx + (D / 2 - 62) * S}" y="{cy - (SLOT_Z + 6) * S}" width="{124 * S}" height="{6 * S}" fill="none" stroke="{GREEN}" stroke-width="1.4" stroke-dasharray="5 4"/>']
+    for s_, z_ in (("printerens papirudgang (bag snittet), 135 over printerens bund: mål", SLOT_Z + 8),
+                   ("RGB-LED i skinne på bagvæggen", 128), ("rutsjebane 30°", 86), ("skærm 54°, 48 mm spalte", 106),
+                   ("lommebund falder 4 mm udad + stoplæbe", 34)):
+        b.append(note(cx + D * S + 16, cy - z_ * S, s_))
+    # row 2: top, long section, section through the lock
+    tx, ty = 120, 880 + D * S
+    g, _ = place("d_top", tx, ty); b += [text(120, 860, "Oppefra", 18, font_weight="bold"), g]
+    b += [note(tx, ty + 28, "ingen åbninger i toppen · skyggefugen ved 287 har en 8 mm studs bagved")]
+    lx, ly = 1130, 880 + TOP * S
+    g, _ = place("d_cut_long", lx, ly, fill="#e9eae6"); b += [text(1130, 860, "Snit langs midten", 18, font_weight="bold"), g]
+    for s_, x_, z_ in (("DNP QW410 drejet 90°, 208 × 198 × 240", 60, 240), ("Pi Zero 2 W", 20, 210), ("frit papirrum 190", 300, 240)):
+        b.append(note(lx + x_ * S, ly - z_ * S, s_))
+    kx, ky = 2160, 880 + TOP * S
+    g, _ = place("d_cut_lock", kx, ky, fill="#e9eae6"); b += [text(2160, 860, "Snit gennem låsen", 18, font_weight="bold"), g]
+    for i, s_ in enumerate(("Kamlåsen i venstre ende låser kappen:", "kammen drejer op under taget på", "låseholderen i soklen, så kappen hverken",
+                            "kan løftes eller skubbes. Låst op: skub", "kappen 10 mm til venstre og løft den af.")):
+        b.append(text(2160, ky + 40 + i * 20, s_, 13, fill=GREEN))
+    sheet("tegning", "Selfi printer v2 · tegning", "Hærværkssikret: DNP QW410 drejet 90°, papiret kører frit i et lukket rum, printet rutsjer ned i en lomme foran · sadeltag · nøglelås",
+          b, w=2700, h=1680)
+
+
 LOGO = base64.b64encode(cairosvg.svg2png(url=str(Path(__file__).resolve().parents[2] / "marketing/brandpakke/01_logo/svg/selfi-logo-groen.svg"), output_width=700)).decode()
-
-# sheet 1: the unit on a table (B2C) and its section
-b = []
-fx, fy = 120 + W / 2 * S, 170 + H * S              # front view: origin = centre bottom
-g, _ = place("d_front", fx, fy); b += [text(120, 150, "Forfra", 18, font_weight="bold"), g]
-# details the silhouette does not show: exit slot, tray slots and the logo inlay
-b += [f'<rect x="{fx - 62 * S}" y="{fy - (SLOT_Z + 8) * S}" width="{124 * S}" height="{8 * S}" rx="3" fill="{INK}"/>']
-b += [f'<rect x="{fx + (x - 8) * S}" y="{fy - (SLOT_Z - 12) * S}" width="{16 * S}" height="{4 * S}" fill="none" stroke="{INK}" stroke-width="1.2"/>' for x in (-50, 50)]
-b += [f'<image href="data:image/png;base64,{LOGO}" x="{fx - 45.4 * S}" y="{fy - (LOGO_Z + 16.5) * S}" width="{90.8 * S}" height="{33 * S}"/>']
-b += [dim_h(fx - W / 2 * S, fx + W / 2 * S, fy + 30, f"{W:g}"), dim_v(fx - W / 2 * S - 22, fy - H * S, fy, f"{H:g}")]
-b += [note(fx + W / 2 * S + 14, fy - LOGO_Z * S, "logo indlagt 0,8"), note(fx + W / 2 * S + 14, fy - (SLOT_Z + 4) * S, "papirudgang 124 × 8"),
-      note(fx + W / 2 * S + 14, fy - (SLOT_Z - 12) * S, "2 slidser til bakken"), note(fx + W / 2 * S + 14, fy - 12 * S, "fuge kappe / sokkel"),
-      note(fx + W / 2 * S + 14, fy - (SLOT_Z + 22) * S, f"højde {SLOT_Z:g}: måles på printeren")]
-sx, sy = 880 + 72 * S, 170 + H * S                 # side view: origin = front bottom
-g, _ = place("d_side", sx, sy); b += [text(880, 150, "Fra højre", 18, font_weight="bold"), g]
-b += [dim_h(sx, sx + D * S, sy + 30, f"{D:g}"), dim_h(sx - 72 * S, sx, sy + 30, "bakke 72")]
-tx, ty = 120 + W / 2 * S, 720 + D * S              # top view: origin = centre front
-g, _ = place("d_top", tx, ty); b += [text(120, 700, "Oppefra", 18, font_weight="bold"), g]
-b += [note(tx + W / 2 * S + 14, ty - (D - 40) * S, "udluftning bagpå og i siderne")]
-cx, cy = 880 + 72 * S, 720 + H * S                 # section at x = 0
-g, _ = place("d_cut", cx, cy, fill="#e9eae6"); b += [text(880, 700, "Snit midt (x = 0)", 18, font_weight="bold"), g]
-for s_, y_ in (("kappe 3,2 ASA, top ned på pladen", 210), ("DNP QW410 · 208 × 198 × 240", 120), ("sokkel 12 + kant 9 med klik", 14),
-               ("bagrum 40: Pi Zero 2 W (5 V fra printeren) + C14-indgang", 60)):
-    b.append(note(cx + D * S + 20, cy - y_ * S, s_))
-lx, ly = 1960, 170 + H * S                         # section through the cam lock (B2B)
-g, _ = place("d_cut_lock", lx, ly, fill="#e9eae6"); b += [text(1720, 150, "Snit gennem låsen (B2B)", 18, font_weight="bold"), g]
-b += [note(1720, ly + 40, "Ø19-skabslås i 10 mm boss, kammen"), note(1720, ly + 60, "drejer ned bag tanden på soklen")]
-sheet("tegning", "Selfi printer v1 · tegning", "DNP QW410 i printet ASA-kabinet · samme bredde og hjørne som gen 2 · kappen løftes af for papirskift", b, h=1560)
-
-# sheet 2: on the wall (B2B)
-b = []
-sx, sy = 160 + 72 * S, 230 + (H + 10) * S
-g, vb = place("d_side_vaeg", sx, sy); b += [text(120, 150, "Væg, fra højre", 18, font_weight="bold"), g]
-b += [dim_v(sx + (D + 22) * S + 40, sy - H * S, sy + 170 * S, "390"), note(sx - 60 * S, sy + 200 * S, "kabel ned ad væggen i skinne · min. 120 fri over kappen")]
-cx, cy = 1120 + 72 * S, 230 + (H + 10) * S
-g, _ = place("d_cut_vaeg", cx, cy, fill="#e9eae6"); b += [text(1080, 150, "Snit midt, væg", 18, font_weight="bold"), g]
-for s_, y_ in (("sokkel i konsollen: 2 × SPUN+ 4,0 × 30", -6),
-               ("konsol: hylde 12 + 2 massive knægte 14", -60), ("vægplade, 45° skinne, 4 skruer + dybler", -110),
-               ("pin-Torx-skrue låser konsollen", -150)):
-    b.append(note(cx + (D + 42) * S, cy - y_ * S, s_))
-sheet("tegning_vaeg", "Selfi printer v1 · vægmontering (B2B)", "Samme kappe og sokkel; konsollen hægtes på vægpladen og låses. Stedet monterer selv efter guiden.", b, h=1400)
+{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2}[VER]()
