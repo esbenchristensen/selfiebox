@@ -569,6 +569,7 @@
   position: relative; aspect-ratio: 3 / 4; max-height: 760px; margin-inline: auto;
 }
 .lej-stand .viewer { position: absolute; inset: 0; }
+.lej-stand .stage-canvas canvas { cursor: default; }
 .lej-stand .viewer-poster { padding: 18% 22%; }
 .lej-dates-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: var(--space-7); align-items: start; }
 .lej-dates-grid .sec-head { position: sticky; top: 120px; }

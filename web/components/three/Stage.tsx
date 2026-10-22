@@ -29,6 +29,7 @@ const MM = 0.01;
 // The stand turns about the tripod's column. Scene units: floor at STAND_FLOOR, box centred a little above the middle.
 const STAND_TOP = 306;
 const STAND_FLOOR = -((STAND_TOP - FLOOR_Y) / 2) * MM;
+const STAND_TURN = -0.22;
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -99,7 +100,8 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
       }
       if (p >= 1) spin.current = null;
     }
-    g.rotation.y = idle + turn;
+    // The stand holds still at one chosen angle: a little from the left, so the printer and the depth show.
+    g.rotation.y = variant === "stand" ? STAND_TURN : idle + turn;
     g.position.y = motion && variant !== "stand" ? Math.sin(t * 0.9) * 0.05 : 0;
   });
 
@@ -217,7 +219,7 @@ export default function Stage({ design, variant, onReady, preload = VENUES }: St
         </Environment>
         {variant !== "stand" && <WallGlow color={glowColor} />}
         <Suspense fallback={null}>
-          <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
+          <PresentationControls enabled={variant !== "stand"} global={false} cursor={variant !== "stand"} snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
             <Spinner design={design} variant={variant} motion={!reduced} />
           </PresentationControls>
           {variant === "stand" ? (
