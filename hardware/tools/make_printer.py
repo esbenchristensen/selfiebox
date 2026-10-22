@@ -94,7 +94,7 @@ VERSIONS = {
             ("logo_hvid", "logo_hvid", "Logo, hvidt (indlagt i kappen)", "#f5f5f4", "Kabinet", [-10, 300, 0]),
             ("logo_groen", "logo_groen", "Logo, grønne prikker", "#22d36b", "Kabinet", [-10, 300, 0]),
             ("laas", "c_lock", "Kamlås Ø19 med nøgle (låser kappen til soklen)", "#c3c7cf", "Kabinet", [-60, 300, 0]),
-            ("sokkel", "sokkel", "Sokkel: printerramme, låseholder, Pi-holder og strømindgang (mørk ASA)", "#2b2b2f", "Kabinet", [0, 0, 0]),
+            ("sokkel", "sokkel", "Sokkel: printerramme, låseholder, Pi-holder og strømindgang (sort ASA)", "#1d1d20", "Kabinet", [0, 0, 0]),
             ("udgang", "udgang", "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme og skærm (sort ASA)", "#1d1d20", "Kabinet", [150, 0, 0]),
             ("led", "c_led", "RGB-LED-strip WS2812B, 9 LED (5 V fra Pi'en, lyser ned ad rutsjebanen)", "#22d36b", "Elektronik", [150, 0, 0]),
             ("print", "c_print", "Et 4×6-print i lommen", "#ffffff", "Elektronik", [150, 0, 140]),
@@ -146,7 +146,8 @@ def scad(cfg, view, out, **defs):
 
 
 def material(hexc):
-    c = [int(hexc[i:i + 2], 16) / 255 for i in (1, 3, 5)] + [1.0]
+    # glTF base colours are linear: convert from sRGB, or the black hood comes out mid grey
+    c = [((v / 255 + 0.055) / 1.055) ** 2.4 if v > 10 else v / 255 / 12.92 for v in (int(hexc[i:i + 2], 16) for i in (1, 3, 5))] + [1.0]
     return trimesh.visual.material.PBRMaterial(baseColorFactor=c, metallicFactor=0.0, roughnessFactor=0.55)
 
 

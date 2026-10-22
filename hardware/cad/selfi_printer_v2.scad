@@ -244,7 +244,7 @@ module asm() {
   e = EX;
   translate([-SLIDE * e, 0, 300 * e]) { color("#1d1d20") kappe(); color("#f5f5f4") logo("hvid"); color("#22d36b") logo("groen");
     color("#c3c7cf") c_lock(); }
-  color("#2b2b2f") sokkel();
+  color("#1d1d20") sokkel();
   translate([140 * e, 0, 0]) { color("#1d1d20") udgang(); color("#22d36b") c_led(); color("#ffffff") c_print(); }
   translate([0, 0, 150 * e]) color("#d9d9d6") c_printer();
   translate([-60 * e, 0, 60 * e]) color("#2e9e5b") c_pi();

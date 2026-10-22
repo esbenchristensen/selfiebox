@@ -45,8 +45,8 @@
  },
  {
   "node": "sokkel",
-  "label": "Sokkel: printerramme, låseholder, Pi-holder og strømindgang (mørk ASA)",
-  "color": "#2b2b2f",
+  "label": "Sokkel: printerramme, låseholder, Pi-holder og strømindgang (sort ASA)",
+  "color": "#1d1d20",
   "group": "Kabinet",
   "explode": [
    0,
