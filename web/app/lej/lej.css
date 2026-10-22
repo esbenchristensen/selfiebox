@@ -566,13 +566,11 @@
 /* ---------- Hero: the box on its floor stand (oktober 2026), the calendar right under the hero ---------- */
 .lej .hero .h-xl { font-size: clamp(42px, 5vw, 72px); }
 .lej-stand {
-  position: relative; aspect-ratio: 3 / 4; max-height: 760px; margin-inline: auto; border-radius: var(--radius-box); overflow: hidden;
-  /* A soft studio backdrop: warm light behind the box, a floor that fades into the page */
+  position: relative; aspect-ratio: 3 / 4; max-height: 760px; margin-inline: auto;
+  /* No frame: a soft warm light behind the box and a hint of green on the floor, both fading into the page */
   background:
-    radial-gradient(60% 42% at 50% 30%, rgba(255, 243, 227, 0.95), rgba(255, 243, 227, 0) 70%),
-    radial-gradient(80% 30% at 50% 100%, rgba(34, 211, 107, 0.16), rgba(34, 211, 107, 0) 70%),
-    linear-gradient(180deg, #ecefe8 0%, #e4e8e0 62%, #dde2d8 100%);
-  border: 1px solid var(--line);
+    radial-gradient(50% 36% at 50% 28%, rgba(255, 243, 227, 0.9), rgba(255, 243, 227, 0) 100%),
+    radial-gradient(46% 12% at 50% 94%, rgba(34, 211, 107, 0.14), rgba(34, 211, 107, 0) 100%);
 }
 .lej-stand .viewer { position: absolute; inset: 0; }
 .lej-stand .viewer-poster { padding: 18% 22%; }

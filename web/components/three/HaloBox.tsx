@@ -25,6 +25,7 @@ export type Venue = {
   photo: string;
   parts: string[];
   unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 85 deep) instead of rev G
+  screen?: string; // another design's screen under /models/<screen>/, e.g. a party theme on the plain rental box
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -150,7 +151,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   }, [casing, ring]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
 
-  const screenMap = useTexture(venue ? `/models/${venue.id}/screen.png` : "/models/smukfest/screen.png");
+  const screenMap = useTexture(venue ? `/models/${venue.screen ?? venue.id}/screen.png` : "/models/smukfest/screen.png");
   screenMap.colorSpace = THREE.SRGBColorSpace;
   const privateScreen = useMemo(() => (theme ? screenTexture(theme) : null), [theme]);
   useEffect(() => () => privateScreen?.dispose(), [privateScreen]);
@@ -223,7 +224,9 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       {part("logo_green", mats.logoGreen)}
       <mesh position={[0, SCREEN.y, venue?.unit === "gen2" ? SCREEN_Z_GEN2 : SCREEN.z]}>
         <planeGeometry args={[SCREEN.w, SCREEN.h]} />
-        <meshBasicMaterial map={privateScreen ?? screenMap} toneMapped={false} />
+        {/* Pulled towards the camera in the depth buffer: the glass is a fraction of a millimetre behind the picture,
+            and seen from a distance (the box on its stand) the two would fight and flicker. */}
+        <meshBasicMaterial map={privateScreen ?? screenMap} toneMapped={false} polygonOffset polygonOffsetFactor={-4} polygonOffsetUnits={-4} />
       </mesh>
       <mesh position={[0, UNIT_H / 2, 2]} scale={1 / MM} renderOrder={2}>
         <planeGeometry args={[2.0 + 0.8, 2.86 + 0.8]} />
@@ -264,7 +267,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
 
 export function preloadVenue(v: Venue) {
   if (v.parts.length) useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
-  useTexture.preload(`/models/${v.id}/screen.png`);
+  useTexture.preload(`/models/${v.screen ?? v.id}/screen.png`);
   useTexture.preload(`/models/${v.id}/print.png`);
   useTexture.preload(`/photos/${v.photo}.jpg`);
 }
