@@ -6,13 +6,15 @@ import { startTransition, Suspense, useEffect, useMemo, useRef, useState } from 
 import * as THREE from "three";
 import { HaloBox, preloadVenue, VENUES, type Venue } from "./HaloBox";
 import { radialTexture } from "./textures";
+import { FLOOR_Y, SOCKET, Tripod } from "./Tripod";
 import type { BoxTheme } from "./themes";
 
 export type StageProps = {
   // A venue design (topper, wings, casing) or a private party theme (plain box, print beside it).
   design: { venue: Venue } | { theme: BoxTheme };
   // "box": a venue design with no topper or wings (the rental box), framed tight so the box is shown large.
-  variant: "venue" | "private" | "box";
+  // "stand": the rental box on the floor tripod it goes out with, standing on the floor.
+  variant: "venue" | "private" | "box" | "stand";
   // Designs to fetch ahead of time so a switch does not wait for the network. Defaults to the venues.
   preload?: Venue[];
   onReady?: () => void;
@@ -22,6 +24,10 @@ type Design = StageProps["design"];
 const idOf = (d: Design) => ("venue" in d ? d.venue.id : d.theme.id);
 
 const SPIN = 1.1; // seconds for a full turn when the design changes
+const MM = 0.01;
+// The stand turns about the tripod's column. Scene units: floor at STAND_FLOOR, box centred a little above the middle.
+const STAND_TOP = 306;
+const STAND_FLOOR = -((STAND_TOP - FLOOR_Y) / 2) * MM;
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -41,11 +47,13 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
     // Fit the whole design: height for tall frames, width for wide ones.
-    const [hgt, wid, cx, cy] = variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : [3.6, 4.4, 0.35, 0];
+    const [hgt, wid, cx, cy] =
+      variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : variant === "stand" ? [17, 9.5, 0, -0.55] : [3.6, 4.4, 0.35, 0];
     const fov = (cam.fov * Math.PI) / 180;
     const byH = hgt / 2 / Math.tan(fov / 2);
     const byW = wid / 2 / Math.tan(fov / 2) / aspect;
-    cam.position.set(cx, cy + 0.15, Math.max(byH, byW) * 1.06);
+    // The stand is seen from about eye height, a little above its middle, like a guest walking up to it.
+    cam.position.set(cx, cy + (variant === "stand" ? 3.2 : 0.15), Math.max(byH, byW) * 1.06);
     cam.lookAt(cx, cy, 0);
     cam.updateProjectionMatrix();
   }, [camera, size, variant]);
@@ -91,8 +99,21 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
       if (p >= 1) spin.current = null;
     }
     g.rotation.y = idle + turn;
-    g.position.y = motion ? Math.sin(t * 0.9) * 0.05 : 0;
+    g.position.y = motion && variant !== "stand" ? Math.sin(t * 0.9) * 0.05 : 0;
   });
+
+  if (variant === "stand" && "venue" in shown)
+    return (
+      <group ref={group}>
+        {/* Unit coordinates, floor at STAND_FLOOR, the tripod's column on the turning axis */}
+        <group scale={MM} position={[-SOCKET.x * MM, STAND_FLOOR - FLOOR_Y * MM, -SOCKET.z * MM]}>
+          <group scale={1 / MM} position={[0, 153, 0]}>
+            <HaloBox venue={shown.venue} module={false} motion={motion} bornAt={bornAt} />
+          </group>
+          <Tripod casing={shown.venue.casing} />
+        </group>
+      </group>
+    );
 
   return (
     <group ref={group}>
@@ -174,7 +195,11 @@ export default function Stage({ design, variant, onReady, preload = VENUES }: St
           <PresentationControls global={false} cursor snap speed={1.4} polar={[-0.25, 0.3]} azimuth={[-0.9, 0.9]} damping={0.25}>
             <Spinner design={design} variant={variant} motion={!reduced} />
           </PresentationControls>
-          <ContactShadows position={[0, -1.75, 0]} opacity={0.4} scale={8} blur={2.8} far={4} resolution={512} frames={reduced ? 1 : Infinity} />
+          {variant === "stand" ? (
+            <ContactShadows position={[0, STAND_FLOOR + 0.01, 0]} opacity={0.75} scale={12} blur={1.6} far={3} resolution={512} frames={reduced ? 1 : Infinity} />
+          ) : (
+            <ContactShadows position={[0, -1.75, 0]} opacity={0.4} scale={8} blur={2.8} far={4} resolution={512} frames={reduced ? 1 : Infinity} />
+          )}
           <Ready onReady={onReady} />
         </Suspense>
       </Canvas>
