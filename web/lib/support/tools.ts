@@ -262,7 +262,7 @@ async function failVerify(ctx: ToolContext, action: "verify_failed", bookingId: 
   return { locked, left: MAX_VERIFY - attempts };
 }
 
-const LOCKED = { ok: false, locked: true, message: "Verificeringen er låst efter for mange forsøg. Eskalér, så Esben kan hjælpe." };
+const LOCKED = { ok: false, locked: true, message: "Verificeringen er låst efter for mange forsøg. Eskalér, så en kollega kan hjælpe." };
 
 async function verifyCustomer(ctx: ToolContext, a: { bookingNo: string }): Promise<Result> {
   const chat = ctx.chat;
@@ -280,7 +280,7 @@ async function verifyCustomer(ctx: ToolContext, a: { bookingNo: string }): Promi
   if (!match) {
     const f = await failVerify(ctx, "verify_failed", id || null, "Bookingnummer passede ikke med kundens e-mail/telefon");
     return f.locked
-      ? { ok: false, locked: true, message: "For mange forkerte forsøg. Verificeringen er låst i denne chat. Eskalér, så Esben kan hjælpe kunden." }
+      ? { ok: false, locked: true, message: "For mange forkerte forsøg. Verificeringen er låst i denne chat. Eskalér, så en kollega kan hjælpe kunden." }
       : { ok: false, attemptsLeft: f.left, message: "Bookingnummeret passer ikke med den e-mail eller det telefonnummer, kunden har oplyst. Sig ikke, om bookingnummeret findes. Bed kunden tjekke nummeret i kvitteringen, eller tilbyd at sende en kode på SMS til det oplyste nummer (send_sms_code)." };
   }
   const email = r!.contact.email.trim().toLowerCase();
@@ -302,7 +302,7 @@ async function sendSmsCode(ctx: ToolContext): Promise<Result> {
   if (chat.customer) return { ok: false, message: "Kunden er allerede verificeret." };
   if (!chat.contact?.phone) return { ok: false, message: "Kunden har ikke oplyst et telefonnummer. Bed om det." };
   const prev = chat.smsCode;
-  if (prev && prev.sends >= MAX_CODE_SENDS) return { ok: false, message: "Der er sendt koder for mange gange i denne chat. Eskalér, så Esben kan hjælpe." };
+  if (prev && prev.sends >= MAX_CODE_SENDS) return { ok: false, message: "Der er sendt koder for mange gange i denne chat. Eskalér, så en kollega kan hjælpe." };
   if (prev && ctx.now.getTime() - prev.sentAt.getTime() < 60_000) return { ok: false, message: "Der blev sendt en kode for under et minut siden. Bed kunden vente lidt og tjekke sine beskeder." };
   const to = normalizePhone(chat.contact.phone);
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
