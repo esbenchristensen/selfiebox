@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { addDays, formatDay, formatRange, nights, type Range } from "@/lib/dates";
+import { addDays, formatDay, formatRange, nights, weekday, type DayKey, type Range } from "@/lib/dates";
 import {
   DELIVERIES,
   kr,
@@ -38,9 +38,24 @@ export function isPeriod(s: RentalSettings, r: Range | null, period: Period): bo
   return q.period === period && !q.extraDays && (period !== "week" || nights(r) === 7);
 }
 
+/** The period a tap on this day picks once a shortcut is chosen: a weekday or two from Monday to Thursday, the
+ * weekend the day falls in (or the coming one from a weekday), a week from the day. Null where it can't be had. */
+export function periodAt(period: Period, k: DayKey): Range | null {
+  const wd = weekday(k);
+  if (period === "week") return { from: k, to: addDays(k, 6) };
+  if (period === "weekend") {
+    const fri = addDays(k, 4 - wd);
+    return { from: fri, to: addDays(fri, 2) };
+  }
+  const len = period === "day" ? 1 : 2;
+  return wd + len - 1 <= 3 ? { from: k, to: addDays(k, len - 1) } : null;
+}
+
 export function Booking() {
   const { data, loadError, load, s, set, setAll, step, done, go, reach, win, canBook, canBookWith, preset, priceFor, loading } = useRental();
   const [touched, setTouched] = useState(false);
+  // The shortcut chosen, if any: the calendar then picks that period at the tapped day. Tapping it again frees the calendar.
+  const [mode, setMode] = useState<Period | null>(null);
   const [accepted, setAccepted] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [notice, setNotice] = useState<string | null>(null);
@@ -162,18 +177,39 @@ export function Booking() {
             <fieldset className="bk-fs">
               <legend className="h-m">Hvornår er festen?</legend>
               <p className="muted">
-                Tryk på første dag og derefter på sidste dag. Prisen under hver dag er den samlede pris{s.printer ? " med printer" : ""}, og den følger med, når I vælger flere dage.
+                {mode
+                  ? `Tryk på en dag, så vælger vi ${{ day: "den hverdag", twoDays: "to hverdage fra den dag", weekend: "weekenden fra fredag til søndag", week: "en uge fra den dag" }[mode]}. Tryk på ${PRESETS.find((p) => p.period === mode)!.name.toLowerCase()} igen for at vælge frit.`
+                  : "Vælg en periode, eller tryk på første dag og derefter på sidste dag."}{" "}
+                Prisen under hver dag er den samlede pris{s.printer ? " med printer" : ""}.
                 {s.printer ? " Kalenderen viser kun de dage, hvor både boks og printer er ledige." : ""}
               </p>
               <div className="hb-pkgs" aria-label="Genveje">
                 {PRESETS.map((p) => (
-                  <button key={p.period} type="button" aria-pressed={isPeriod(settings, s.range, p.period)} onClick={() => preset(p.period)}>
+                  <button
+                    key={p.period}
+                    type="button"
+                    aria-pressed={mode ? mode === p.period : isPeriod(settings, s.range, p.period)}
+                    onClick={() => {
+                      if (mode === p.period) return setMode(null);
+                      setMode(p.period);
+                      preset(p.period);
+                    }}
+                  >
                     <b>{p.name}</b>
                     <span>{kr(settings.prices.periods[p.period])}</span>
                   </button>
                 ))}
               </div>
-              <Calendar selected={s.range} canBook={canBook} minDay={win.minDay} maxDay={win.maxDay} onPick={(r) => set({ range: r })} priceFor={priceFor} loading={loading} />
+              <Calendar
+                selected={s.range}
+                canBook={canBook}
+                minDay={win.minDay}
+                maxDay={win.maxDay}
+                onPick={(r) => set({ range: r })}
+                priceFor={priceFor}
+                loading={loading}
+                snap={mode ? (k: DayKey) => periodAt(mode, k) : null}
+              />
               {s.range && (
                 <p className="bk-chosen">
                   <span className="label">Jeres valg · {boxQuote(settings, s.range).label}</span>
