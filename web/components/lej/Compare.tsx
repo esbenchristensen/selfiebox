@@ -1,4 +1,4 @@
-import { kr, priceForDays, type RentalSettings } from "@/lib/udlejning/core";
+import { kr, type RentalSettings } from "@/lib/udlejning/core";
 
 // Why Selfi: one price with everything in it, against what the other Danish rental sites charge for the
 // same things. The figures for "andre" come from the rental sites' own pages (October 2026), see the note
@@ -8,8 +8,8 @@ type Row = { what: string; us: string; others: string; usGood?: boolean; minor?:
 
 export function Compare({ s }: { s: RentalSettings }) {
   const rows: Row[] = [
-    { what: "Boksen én dag", us: kr(priceForDays(s, 1)), others: "895–1.645 kr.", usGood: true },
-    { what: "Weekend, fredag til søndag", us: kr(priceForDays(s, 3)), others: "999–1.500 kr.", usGood: true },
+    { what: "Boksen én hverdag", us: kr(s.prices.periods.day), others: "895–1.645 kr.", usGood: true },
+    { what: "Weekend, fredag til søndag", us: kr(s.prices.periods.weekend), others: "999–1.500 kr.", usGood: true },
     { what: "Ubegrænsede billeder", us: "Med", others: "Med", usGood: true, minor: true },
     { what: "Rekvisitter", us: "Digitale på skærmen: hatte, briller og kroner, der følger ansigtet", others: "En kasse med fysiske rekvisitter, ofte som tilkøb", usGood: true },
     { what: "Spørgsmål og opgaver til gæsterne", us: "På skærmen, og de skifter i løbet af aftenen", others: "Papirkort som tilkøb, eller slet ikke", usGood: true },

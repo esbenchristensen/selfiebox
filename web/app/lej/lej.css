@@ -131,7 +131,8 @@
 }
 
 /* Shortcuts above the calendar */
-.hb-pkgs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.hb-pkgs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.lej-extra { margin: var(--space-4) 0 0; max-width: 64ch; }
 .hb-pkgs button { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: var(--radius-l); border: 1px solid var(--line-strong); transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
 .hb-pkgs button b { font: 600 16px/1.2 var(--font-display), sans-serif; }
 .hb-pkgs button span { font-size: 13px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
@@ -145,7 +146,7 @@
 .bk-notice { margin: 0; padding: var(--space-4) var(--space-5); border-radius: var(--radius-l); border: 1px solid var(--line-strong); background: var(--surface-raised); }
 
 /* Landing page */
-.lej-prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+.lej-prices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
 .lej-price { display: flex; flex-direction: column; gap: 6px; padding: var(--space-5); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line); }
 .lej-price b { font: 600 22px/1.1 var(--font-display), sans-serif; letter-spacing: -0.02em; }
 .lej-price strong { font: 500 clamp(32px, 4vw, 44px)/1 var(--font-display), sans-serif; letter-spacing: -0.03em; color: var(--green-ink); font-variant-numeric: tabular-nums; }
@@ -159,11 +160,13 @@
 .lej-steps span { color: var(--ink-muted); font-size: 15px; }
 .lej-done { max-width: 680px; display: flex; flex-direction: column; gap: var(--space-5); }
 @media (max-width: 900px) {
-  .lej-prices, .lej-addons { grid-template-columns: minmax(0, 1fr); }
+  .lej-prices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lej-addons { grid-template-columns: minmax(0, 1fr); }
   .lej-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 520px) {
   .bk-cards--2 { grid-template-columns: minmax(0, 1fr); }
+  .lej-prices { grid-template-columns: minmax(0, 1fr); }
   .lej-steps { grid-template-columns: minmax(0, 1fr); }
 }
 

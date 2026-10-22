@@ -19,7 +19,7 @@ import { PrinterViewer } from "@/components/lej/PrinterViewer";
 import { RentalProvider } from "@/components/lej/RentalContext";
 import { Example, Reviews, Stars } from "@/components/lej/Reviews";
 import { StickyCta } from "@/components/lej/StickyCta";
-import { DEFAULT_SETTINGS, kr, priceForDays, type RentalSettings } from "@/lib/udlejning/core";
+import { DEFAULT_SETTINGS, fromPrice, kr, PERIODS, type Period, type RentalSettings } from "@/lib/udlejning/core";
 import { db, getSettings, todayDK } from "@/lib/udlejning/db";
 import { PROOF, ratingText } from "@/lib/udlejning/proof";
 import "./lej/lej.css";
@@ -34,7 +34,7 @@ import "./lej/lej.css";
 // The title and description carry the day price, so they follow the price set in admin.
 export async function generateMetadata(): Promise<Metadata> {
   const s = await settings();
-  const from = kr(priceForDays(s, 1));
+  const from = kr(fromPrice(s));
   return {
     title: `Lej en fotoboks fra ${from} Alt er med i prisen | Selfi`,
     description: `Fotoboks til bryllup, konfirmation, fødselsdag og firmafest fra ${from} Ubegrænsede billeder, fragt begge veje og forsikring er med. Se ledige datoer og book online.`,
@@ -59,13 +59,14 @@ async function settings(): Promise<RentalSettings> {
 
 export default async function Home() {
   const s = await settings();
-  const from = priceForDays(s, 1);
+  const from = fromPrice(s);
+  const P = s.prices.periods;
   const R = s.rules;
 
   const faq = [
     {
       q: "Hvad koster det at leje en fotoboks?",
-      a: `I vælger selv datoerne. En dag og en weekend fra fredag til søndag koster det samme, ${kr(priceForDays(s, 3))}, og en uge ${kr(priceForDays(s, 7))}, alt inkl. moms. Det eneste tilvalg er printeren med ${s.printsIncluded} print, som koster ${kr(s.prices.printer)} Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
+      a: `I vælger selv datoerne. En hverdag koster ${kr(P.day)}, en hel weekend fra fredag til søndag ${kr(P.weekend)}, to hverdage ${kr(P.twoDays)} og en uge ${kr(P.week)}, alt inkl. moms. Har I brug for en dag mere end perioden, koster hver ekstra dag ${kr(s.prices.perExtraDay)} Det eneste tilvalg er printeren med ${s.printsIncluded} print, som koster ${kr(s.prices.printer)} Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
     },
     {
       q: "Hvor sent kan vi booke?",
@@ -129,7 +130,7 @@ export default async function Home() {
       serviceType: "Udlejning af fotoboks til fester",
       areaServed: "DK",
       provider: { "@type": "Organization", name: "Selfi", url: "https://selfi.dk" },
-      offers: [1, 3, 7].map((d) => ({ "@type": "Offer", name: d === 1 ? "1 dag" : d === 3 ? "Weekend" : "1 uge", price: priceForDays(s, d), priceCurrency: "DKK" })),
+      offers: (Object.keys(PERIODS) as Period[]).map((k) => ({ "@type": "Offer", name: PERIODS[k].name, price: P[k], priceCurrency: "DKK" })),
       // aggregateRating is only sent with real reviews: see lib/udlejning/proof.ts.
       ...(PROOF.placeholder ? {} : { aggregateRating: { "@type": "AggregateRating", ratingValue: PROOF.rating, reviewCount: PROOF.reviewCount } }),
     },
@@ -349,25 +350,27 @@ export default async function Home() {
           <div className="wrap">
             <div className="sec-head">
               <span className="label">Priser</span>
-              <h2 id="priser-title" className="h-l">En dag eller en hel weekend. Samme pris.</h2>
+              <h2 id="priser-title" className="h-l">Faste perioder. Alt er med.</h2>
               <p className="lede">Alle priser er inkl. moms, og der kommer ikke noget oveni. Ingen tilkøb, intet depositum, ingen gebyrer.</p>
             </div>
             <div className="lej-prices">
-              {[
-                { name: "Dag", days: 1, text: "Én dag og aften" },
-                { name: "Weekend", days: 3, text: "Fredag til søndag, samme pris som én dag", best: true },
-                { name: "Uge", days: 7, text: "Syv dage i træk" },
-              ].map((p) => (
-                <div className={`lej-price${p.best ? " lej-price--best" : ""}`} key={p.name}>
-                  {p.best && <span className="tag lej-price-tag">Anbefalet</span>}
-                  <b>{p.name}</b>
-                  <span className="muted">{p.text}</span>
-                  <strong>{kr(priceForDays(s, p.days))}</strong>
-                  <span className="muted">{p.days > 1 ? `${kr(Math.round(priceForDays(s, p.days) / p.days))} pr. dag` : "Hent dagen før, aflever dagen efter"}</span>
+              {([
+                ["day", "Hent dagen før, aflever dagen efter"],
+                ["weekend", `${kr(Math.round(P.weekend / 3))} pr. dag`],
+                ["twoDays", `${kr(Math.round(P.twoDays / 2))} pr. dag`],
+                ["week", `${kr(Math.round(P.week / 7))} pr. dag`],
+              ] as [Period, string][]).map(([k, note]) => (
+                <div className={`lej-price${k === "weekend" ? " lej-price--best" : ""}`} key={k}>
+                  {k === "weekend" && <span className="tag lej-price-tag">Mest populær</span>}
+                  <b>{PERIODS[k].name}</b>
+                  <span className="muted">{PERIODS[k].text}</span>
+                  <strong>{kr(P[k])}</strong>
+                  <span className="muted">{note}</span>
                   <a className="btn btn-secondary" href="#datoer">Se ledige datoer</a>
                 </div>
               ))}
             </div>
+            <p className="lej-extra muted">Skal I bruge boksen en dag mere end perioden, koster hver ekstra dag {kr(s.prices.perExtraDay)} Kalenderen regner altid den billigste pris ud, og fem til syv dage koster aldrig mere end en uge.</p>
             <ul className="lej-incl">
               {included.map((x) => (
                 <li key={x.title}>
