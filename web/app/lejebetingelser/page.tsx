@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // Consumer terms for renting a box for one party, booked on selfi.dk. UDKAST: the figures marked with
 // (*) are decisions, not law: the deductible and the late-return fee. Decide them, and have the text read
 // by an adviser before the first paying customer. /vilkaar is for businesses.
-// Point 8 has no withdrawal right and no free move or cancellation, relying on forbrugeraftalelovens § 18,
+// Point 8 has no withdrawal right and no cancellation, and moves only to dates outside high season, relying on forbrugeraftalelovens § 18,
 // stk. 2, nr. 12. That only holds if the customer is told before paying (checkout) and in the receipt.
 const DEDUCTIBLE = "1.000 kr."; // (*) selvrisiko ved skade
 const LATE_FEE = "895 kr."; // (*) pr. påbegyndt dag ved for sen retur, svarer til dagsprisen
@@ -78,10 +78,11 @@ export default function Lejebetingelser() {
         <li>Almindelig brug og almindelig slitage koster ikke noget.</li>
       </ul>
 
-      <h2>8. Ingen fortrydelsesret, afbestilling eller flytning</h2>
+      <h2>8. Ingen fortrydelsesret eller afbestilling</h2>
       <ul>
         <li>Der er ikke fortrydelsesret. Lejen er en tjenesteydelse til jeres fest på de datoer, I har valgt, og vi holder boksen til jer de dage. Derfor gælder den almindelige fortrydelsesret på 14 dage ved køb på nettet ikke (forbrugeraftalelovens § 18, stk. 2, nr. 12).</li>
-        <li>Bookingen kan ikke afbestilles eller flyttes til andre datoer, når den er betalt. Bruger I ikke boksen, får I ikke lejen tilbage.</li>
+        <li>Bookingen kan ikke afbestilles, når den er betalt. Bruger I ikke boksen, får I ikke lejen tilbage.</li>
+        <li>Så længe boksen ikke er sendt, kan I flytte bookingen til andre ledige datoer med samme antal dage uden for højsæson. Højsæson er fredag til søndag i april til september og i december. Ind i højsæson kan en booking ikke flyttes, fordi de dage ville være blevet lejet ud alligevel.</li>
         <li>Det ændrer ikke punkt 4 og 9: kommer boksen ikke frem, eller kan den ikke bruges, og skyldes det ikke jer, får I hele lejen tilbage.</li>
       </ul>
 

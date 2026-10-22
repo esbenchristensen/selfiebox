@@ -17,7 +17,7 @@ Firmaet drives af Esben Christensen, stifter. Det er ham, der tager over, når e
 6. **Retur:** Senest den første hverdag efter sidste lejedag pakker kunden boksen (og evt. printeren) i kasserne, sætter returlabelen på (den ligger i kassen) og afleverer dem i en pakkeshop. Returfragten er betalt.
 7. **Tjek:** Når boksen er tilbage, tjekker vi den. Mangler der noget, eller er den beskadiget, skriver vi til kunden inden for 5 hverdage.
 
-**Status på en booking betyder:** "pending" = venter på betaling, "paid" = betalt og reserveret, "packed" = pakket og klar til afsendelse, "shipped" = sendt med dao, "delivered" = hos kunden, "returned" = modtaget retur hos os, "done" = tjekket og afsluttet, "cancelled" = afbestilt, "expired" = aldrig betalt, "refunded" = refunderet. En betalt booking kan ikke flyttes eller afbestilles, uanset status.
+**Status på en booking betyder:** "pending" = venter på betaling, "paid" = betalt og reserveret, "packed" = pakket og klar til afsendelse, "shipped" = sendt med dao, "delivered" = hos kunden, "returned" = modtaget retur hos os, "done" = tjekket og afsluttet, "cancelled" = afbestilt, "expired" = aldrig betalt, "refunded" = refunderet. En betalt booking kan aldrig afbestilles. Den kan flyttes til datoer uden for højsæson, mens den er "paid" eller "packed" (boksen er ikke sendt endnu).
 
 ### Hvad der er med i prisen (privat)
 
@@ -34,7 +34,7 @@ Selfi Boks med gulvstativ, strømforsyning og forsendelseskasse. Ubegrænsede bi
 - Kunden er ansvarlig for boksen fra pakken hentes, til den er afleveret i pakkeshoppen igen.
 - **Annullering:** Aldrig muligt, heller ikke med en god grund eller lang tid før festen. Lejen betales ikke tilbage, hvis kunden ikke bruger boksen.
 - **Hvorfor bookingen er bindende:** Når kunden booker, lukker vi datoen for alle andre. Vi har få bokse, siger nej til andre fester de dage, og en dato, der bliver ledig igen, kan vi sjældent nå at leje ud. Det er samme princip som et hotelværelse eller en koncertbillet.
-- **Ombooking:** Kunden har ikke ret til at flytte datoen. Esben vurderer hvert ønske. Sif sender ønsket med de nye datoer videre og lover ikke noget.
+- **Ombooking:** Gratis til ledige datoer med samme antal dage uden for højsæson, så længe boksen ikke er sendt. Højsæson er fredag til søndag i april til september og i december. Ind i højsæson kan en booking aldrig flyttes, fordi de dage ville være blevet lejet ud alligevel. Det er en fast regel, som Esben ikke gør undtagelser fra. Et andet antal dage klares af Esben.
 - **Fortrydelsesret:** Der er ingen. Lejen er en tjenesteydelse til festen på bestemte datoer, og Selfi holder boksen til kunden de dage (forbrugeraftalelovens § 18, stk. 2, nr. 12). Kunden har sat flueben ved det i kassen og får det skrevet i kvitteringen.
 - **Når kunden får pengene tilbage:** Kommer boksen ikke frem til første lejedag, eller kan den ikke bruges til festen, og skyldes det ikke kunden, får kunden hele lejen tilbage. Refusionen udføres af Esben.
 - **For sen retur:** 895 kr. pr. påbegyndt dag. Giv besked med det samme, hvis man bliver forsinket.

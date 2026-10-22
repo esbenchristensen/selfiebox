@@ -6,7 +6,7 @@
 // returnDaysAfter + prepDays after the last day. A day is free when fewer boxes (printers) are held than
 // we own, minus what is blocked in admin (service, B2B use).
 
-import { addDays, nights, type DayKey, type Range } from "../dates";
+import { addDays, daysIn, nights, type DayKey, type Range } from "../dates";
 
 export type Delivery = "post"; // always by post with dao; there is no pickup
 export type PhotoType = "strip" | "polaroid";
@@ -41,6 +41,7 @@ export type RentalSettings = {
     shipDaysBefore: number; // with the post: the box leaves us this many days before the first day
     returnDaysAfter: number; // and is back this many days after the last day
     prepDays: number; // check, clean and charge before the next booking
+    peakMonths: number[]; // 1-12: friday to sunday in these months is high season, which a booking cannot be moved to
   };
 };
 
@@ -63,6 +64,7 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     shipDaysBefore: 2,
     returnDaysAfter: 3,
     prepDays: 1,
+    peakMonths: [4, 5, 6, 7, 8, 9, 12], // konfirmationer, bryllupper, sommerfester, julefrokoster
   },
 };
 
@@ -156,6 +158,12 @@ export const total = (lines: Line[]) => lines.reduce((t, l) => t + l.amount, 0);
 function weekday(k: DayKey): number {
   const [y, m, d] = k.split("-").map(Number);
   return (new Date(y, m - 1, d).getDay() + 6) % 7;
+}
+
+/** The high-season days in a range: friday to sunday in the peak months. A booking can be moved to other
+ * dates, but not into these, because they would have been rented out anyway (/lejebetingelser point 8). */
+export function peakDays(s: RentalSettings, r: Range): DayKey[] {
+  return daysIn(r).filter((k) => weekday(k) >= 4 && s.rules.peakMonths.includes(Number(k.slice(5, 7))));
 }
 
 /** The days a booking holds its box and printer, including transport and the check afterwards. */

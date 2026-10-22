@@ -358,7 +358,7 @@ export function Booking() {
               <label className="check">
                 <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
                 <span>
-                  Jeg har læst <a href="/lejebetingelser" target="_blank">lejebetingelserne</a> og passer på boksen, mens den er hos os. Jeg ved, at bookingen er bindende, når den er betalt: der er ingen fortrydelsesret, og den kan ikke afbestilles eller flyttes til andre datoer.
+                  Jeg har læst <a href="/lejebetingelser" target="_blank">lejebetingelserne</a> og passer på boksen, mens den er hos os. Jeg ved, at bookingen er bindende, når den er betalt: der er ingen fortrydelsesret, og den kan ikke afbestilles.
                 </span>
               </label>
               {err(!accepted, "Sæt flueben for at gå videre til betaling.")}

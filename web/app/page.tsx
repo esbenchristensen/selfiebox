@@ -102,7 +102,7 @@ export default async function Home() {
     },
     {
       q: "Kan vi flytte datoen eller afbestille?",
-      a: "Nej. Vi holder boksen til jer på de datoer, I vælger, så bookingen er bindende, når den er betalt. Den kan ikke flyttes eller afbestilles, og der er ingen fortrydelsesret. Kommer boksen ikke frem, eller virker den ikke, og skyldes det ikke jer, får I hele lejen tilbage. Det hele står i lejebetingelserne.",
+      a: "Afbestille kan I ikke. Vi holder boksen til jer på de datoer, I vælger, så bookingen er bindende, når den er betalt, og der er ingen fortrydelsesret. Flytte kan I, så længe boksen ikke er sendt, til ledige datoer uden for højsæson (fredag til søndag i april til september og december). Kommer boksen ikke frem, eller virker den ikke, og skyldes det ikke jer, får I hele lejen tilbage. Det hele står i lejebetingelserne.",
     },
     {
       q: "Hvad hvis noget går i stykker?",

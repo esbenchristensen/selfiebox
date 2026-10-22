@@ -271,7 +271,7 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
             { title: `Retur senest ${shortDay(returnBy(b.to))}`, text: "Pak boksen i kassen, sæt returlabelen på, og aflever den i en dao-pakkeshop. Fragten er betalt." },
           ],
         },
-        { type: "note", label: "Bindende booking", text: "Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, og den kan ikke afbestilles eller flyttes. Lejebetingelserne står på selfi.dk/lejebetingelser." },
+        { type: "note", label: "Bindende booking", text: "Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, og den kan ikke afbestilles. I kan flytte den til ledige datoer uden for højsæson, så længe boksen ikke er sendt. Lejebetingelserne står på selfi.dk/lejebetingelser." },
         { type: "code", label: "Bookingnummer", value: b._id },
       );
       break;

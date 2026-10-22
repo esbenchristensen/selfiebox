@@ -41,6 +41,8 @@ function generatedKnowledge(): string {
   return out.join("\n");
 }
 
+const MONTH_NAMES = ["januar","februar","marts","april","maj","juni","juli","august","september","oktober","november","december"];
+
 /** The developer message that changes per turn: date, hours, verification, prices and rules. */
 export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, now = new Date()): string {
   const p = dkParts(now);
@@ -58,12 +60,17 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
   if (chat.status === "waiting_human" && chat.escalation) {
     lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så Esben får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
   }
+  if (chat.pendingChange) {
+    const c = chat.pendingChange;
+    lines.push(`Afventende datoforslag (changeId ${c.id}) for ${c.bookingId}: ${c.summary}. Kunden har endnu ikke sagt ja. Kald commit_date_change kun ved et klart ja i kundens seneste besked.`);
+  }
   const s = settings;
   const periods = (Object.keys(PERIODS) as Period[]).map((k) => `${PERIODS[k].name} (${PERIODS[k].text.toLowerCase()}): ${kr(s.prices.periods[k])}`).join(", ");
   lines.push(
     "Aktuelle priser og regler for privat leje (fra admin, inkl. moms):",
     `- Boks, faste perioder: ${periods}. Dage før, efter eller mellem perioderne koster ${kr(s.prices.perExtraDay)} pr. ekstra dag, og kunden får altid den billigste kombination (5-7 dage koster højst en uge). check_availability giver den præcise pris for datoerne. Højst ${s.rules.maxDays} dage online.`,
     `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Det er det eneste tilvalg; temaer findes ikke længere.`,
+    `- Højsæson: fredag til søndag i ${s.rules.peakMonths.map((m) => MONTH_NAMES[m - 1]).join(", ")}. En booking kan flyttes til datoer uden for højsæson, aldrig ind i højsæson.`,
     `- Første lejedag tidligst ${s.rules.leadDays} dage frem, højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
     `- Online booking er ${s.open ? "åben" : "lukket lige nu (henvis til chatten/eskalér)"}.`,
   );
