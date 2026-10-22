@@ -57,13 +57,19 @@ import math
 U, N = (0.906, 0.4234), (0.4234, -0.906)          # along the reflector (front -> back), into its material
 def P(s, d): return (4.2 + U[0] * s + N[0] * d, -6.0 + U[1] * s + N[1] * d)
 FL = 27.4
+T_EDGE = 0.5                                       # [A] strip thickness at the dark edge (same as gen2_concept.scad)
+LIP0, LIP1 = 6.9 - T_EDGE - 0.6, 6.9 - T_EDGE - 0.1
+GRIP = 2.6 - T_EDGE - 0.1                          # strip 3: lip and nose reach down to 0.1 above its thin edge
 def stem(F, y0):
-    poly([(y0, 6.9), (y0 + 0.6, 6.9), (y0 + 0.6, 4.35), (y0 - 1.1, 4.35), (y0 - 1.25, 4.55), (y0 - 1.1, 4.8), (y0, 4.8)], F, WHT, NEW, 1.4)
+    poly([(y0, 6.9), (y0 + 0.6, 6.9), (y0 + 0.6, LIP0), (y0 - 1.1, LIP0), (y0 - 1.1, LIP1), (y0, LIP1)], F, WHT, NEW, 1.4)
+def wstrip(F, y0, y1, w=1.4):                      # white COB: thin board, full 2.0 over the 3.7 stripe + 0.5 each side
+    m = (y1 - y0 - 4.7) / 2
+    poly([(y0, 6.9), (y1, 6.9), (y1, 6.9 - T_EDGE), (y1 - m, 6.9 - T_EDGE), (y1 - m, 4.9), (y0 + m, 4.9), (y0 + m, 6.9 - T_EDGE), (y0, 6.9 - T_EDGE)], F, WCOB, WCS, w)
 def v18(F, pocket):
     refl = [(4.2, -8.1), (4.2, -6.0)] + pocket + [(26.45, 4.4), (FL, 4.4), (FL, -8.1)]
     channel(F, FL, refl)
-    rect(4.2, 4.6, 4.5, 6.9, F, WHT, NEW, 1.4); stem(F, 12.8); stem(F, 21.6)
-    rect(4.7, 12.7, 4.9, 6.9, F, WCOB, WCS, 1.4); rect(13.5, 21.5, 4.9, 6.9, F, WCOB, WCS, 1.4)
+    rect(4.2, 4.6, LIP0, 6.9, F, WHT, NEW, 1.4); stem(F, 12.8); stem(F, 21.6)
+    wstrip(F, 4.7, 12.7); wstrip(F, 13.5, 21.5)
     rect(22.3, 27.3, 4.7, 6.9, F, "url(#rgb)", "#334155", 1.3)
 S0, S1 = 2.5, 10.6                                  # strip 3 along the slope
 t(60, 56, "Selfi Halo gen 2 · v18-forslag: 3. hvid strip nedsænket i reflektoren", 26, w=700)
@@ -74,29 +80,32 @@ box(40, 110, 1000, 640)
 t(60, 140, "A  Snit hele vejen rundt (undtagen ved klikstikket)", 18, w=600)
 s = 20; X0, Y0 = 110, 410
 FA = lambda p: (X0 + p[0] * s, Y0 - p[1] * s)
-pocket = [P(S0 - 0.1, 0), P(S0 - 0.1, 2.7), P(S1 + 0.1, 2.7), P(S1 + 0.1, 0.5), P(S1 - 1.0, 0.5), P(S1 - 1.2, 0.25), P(S1 - 1.0, 0)]
-v18(FA, pocket)
-poly([P(S0, 0.6), P(S1, 0.6), P(S1, 2.6), P(S0, 2.6)], FA, WCOB, WCS, 1.6)
-poly([P(S0 + 2.2, 0.6), P(S1 - 2.2, 0.6), P(S1 - 2.2, 0.85), P(S0 + 2.2, 0.85)], FA, "#f59e0b", "none", 0)
-poly([P(S1 + 0.1, 0.5), P(S1 - 1.0, 0.5), P(S1 - 1.2, 0.25), P(S1 - 1.0, 0), P(S1 + 0.1, 0)], FA, WHT, NEW, 1.8)          # back lip
-nose = [(4.2, -5.65), P(0, 0), P(S0 - 0.1, 0), P(S0 + 0.05, 0.55), P(S0 + 1.0, 0.55), P(S0 + 1.3, 0.0), P(S0 + 1.0, -0.6), P(0.6, -0.6)]
-poly(nose, FA, NAT, NEW, 1.8)                                                                                          # light-ring nose
+# the pocket floor runs forward to the inner wall (as in gen2_concept.scad); the ring's wedge fills the space in front
+YFW = P(0, 2.7)[0] + (-8.1 - P(0, 2.7)[1]) / 0.4234 * 0.906
+channel(FA, FL, [(YFW, -8.1), P(10.7, 2.7), P(10.7, 0), (26.45, 4.4), (FL, 4.4), (FL, -8.1)])
+rect(4.2, 4.6, LIP0, 6.9, FA, WHT, NEW, 1.4); stem(FA, 12.8); stem(FA, 21.6)
+wstrip(FA, 4.7, 12.7); wstrip(FA, 13.5, 21.5); rect(22.3, 27.3, 4.7, 6.9, FA, "url(#rgb)", "#334155", 1.3)
+poly([P(S0, 2.6), P(S1, 2.6), P(S1, 2.1), P(8.9, 2.1), P(8.9, 0.6), P(4.2, 0.6), P(4.2, 2.1), P(S0, 2.1)], FA, WCOB, WCS, 1.6)
+poly([P(4.7, 0.6), P(8.4, 0.6), P(8.4, 0.85), P(4.7, 0.85)], FA, "#f59e0b", "none", 0)
+poly([P(9.6, -0.3), P(10.75, -0.3), P(10.75, GRIP), P(9.6, GRIP)], FA, WHT, NEW, 1.8)                                    # back lip
+nose = [(4.2, -8.1), (YFW, -8.1), P(2.45, 2.7), P(2.45, GRIP), P(3.5, GRIP), P(3.5, -0.3), P(0.2, -0.3), (4.2, -5.65)]
+poly(nose, FA, NAT, NEW, 1.8)                                                                                          # light-ring wedge + nose
 c = P((S0 + S1) / 2, 0.3); n = (-N[0], -N[1])
 for k in (-2.5, 0, 2.5):
     a = P((S0 + S1) / 2 + k, 0.5)
     line([a, (a[0] + n[0] * 9 - U[0] * 3.5, a[1] + n[1] * 9 - U[1] * 3.5)], FA, "#d97706", 1.2, arrow=True)
 LX = X0 + 33 * s
-rows = [(P(S1 - 0.5, 0.2), "Læbe over bagkanten (peger fremad: kan printes)", NEW),
-        (P(S0 + 0.6, -0.3), "Næse på lysringen holder forkanten", NEW),
-        (P(5.0, 1.6), "Hvid COB 8 mm (3), 0,6 under fladen", WCS),
-        (P(S0 + 0.5, 2.6), "Lomme 2,7 dyb, 0,7 mm tilbage mod indervæggen", "#2563eb"),
+rows = [(P(10.2, 0.5), "Læbe over bagkanten, 1,0 mm (peger fremad: kan printes)", NEW),
+        (P(3.0, 0.5), "Næse på lysringen holder forkanten, 1,0 mm", NEW),
+        (P(6.5, 1.6), "Hvid COB 8 mm (3), 0,6 under fladen", WCS),
+        ((5.0, -7.4), "Kile på lysringen fylder lommen foran strippen", NEW),
         ((14.5, -2.5), "Reflektoren bag lommen uændret", WST),
         ((8.7, 5.9), "Hvid 1 og 2 i kantspor (v18)", WCS), ((24.8, 5.8), "RGB i tæt bane (v18)", "#7c3aed")]
 for i, (p, s_, col) in enumerate(sorted(rows, key=lambda r: FA(r[0])[1])): lead(FA, p, LX, 175 + 30 * i, s_, col, 13)
-notes = ["Lommen ligger forrest på den skrå flade (5,5 til 13 mm inde), hvor reflektoren er tykkest i forhold til strippen.",
-         "Forkanten kan ikke få en læbe i bagrammen (den ville hænge i luften i printet). I stedet får lysringen en lille næse",
-         "bagud. Ringen printes med fronten ned, så næsen kan printes. Når bagrammen sættes på, glider næsen ned over",
-         "forkanten og trykker strippen ned i lommen. Næsen rører kun den kant, der ikke lyser (2,2 mm).",
+notes = ["Lommen ligger forrest på den skrå flade. Dens bund går helt frem til indervæggen, så intet hænger i luften i printet.",
+         "Forkanten kan ikke få en læbe i bagrammen. I stedet har lysringen en kile med en næse bagud. Ringen printes med fronten",
+         "ned, så den kan printes. Når bagrammen sættes på, trykker næsen strippen ned i lommen. Læbe og næse ligger 0,1 mm over",
+         "strippens tynde kant (0,5 mm antaget) og rører kun den kant, der ikke lyser. Alle skrå flader er glatte.",
          "Strip 3 lyser mest ud mod stripvæggen og ca. 25° frem. Lyset rammer de hvide strips og væggen og kommer frem gennem ringen."]
 for i, line_ in enumerate(notes): t(60, 652 + 20 * i, line_, 13, "#444")
 

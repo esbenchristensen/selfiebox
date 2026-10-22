@@ -47,6 +47,13 @@ def channel(F, floor, refl):
     rect(4.2, floor + 0.01, 6.9, 8.1, F, WHT, WST)
     poly(ring, F, NAT, NST, 1.3)
 
+T_EDGE = 0.5                               # [A] strip thickness at the dark edge (same as gen2_concept.scad)
+LIP0, LIP1 = 6.9 - T_EDGE - 0.6, 6.9 - T_EDGE - 0.1
+def wstrip(y0, y1, F, w):                  # white COB: thin board, full 2.0 only over the 3.7 stripe + 0.5 each side
+    m = (y1 - y0 - 4.7) / 2
+    poly([(y0, 6.9), (y1, 6.9), (y1, 6.9 - T_EDGE), (y1 - m, 6.9 - T_EDGE), (y1 - m, 4.9), (y0 + m, 4.9), (y0 + m, 6.9 - T_EDGE), (y0, 6.9 - T_EDGE)], F, WCOB, WCS, w)
+    rect(y0 + 2.2, y1 - 2.2, 4.9, 5.2, F, "#f59e0b", "none", 0, 0.9)
+
 def rays(F, ys, top):
     for y in ys:
         col = "#7c3aed" if y > 22 else "#d97706"
@@ -78,11 +85,11 @@ FL = 27.4
 refl2 = [(4.2, -8.1), (4.2, -6.0), (26.45, 4.4), (FL, 4.4), (FL, -8.1)]
 channel(F2, FL, refl2)
 def stem(y0, col_fill=WHT):   # stem 0.6 wide, lip forward over the strip in front of it
-    pts = [(y0, 6.9), (y0 + 0.6, 6.9), (y0 + 0.6, 4.35), (y0 - 1.1, 4.35), (y0 - 1.25, 4.55), (y0 - 1.1, 4.8), (y0, 4.8)]
+    pts = [(y0, 6.9), (y0 + 0.6, 6.9), (y0 + 0.6, LIP0), (y0 - 1.1, LIP0), (y0 - 1.1, LIP1), (y0, LIP1)]
     poly(pts, F2, col_fill, NEW, 1.6)
-rect(4.2, 4.6, 4.5, 6.9, F2, WHT, NEW, 1.6)                                    # front step
+rect(4.2, 4.6, LIP0, 6.9, F2, WHT, NEW, 1.6)                                   # front step
 stem(12.8); stem(21.6)
-rect(4.7, 12.7, 4.9, 6.9, F2, WCOB, WCS, 1.5); rect(13.5, 21.5, 4.9, 6.9, F2, WCOB, WCS, 1.5)
+wstrip(4.7, 12.7, F2, 1.5); wstrip(13.5, 21.5, F2, 1.5)
 rect(22.3, 27.3, 4.7, 6.9, F2, "url(#rgb)", "#334155", 1.4)
 rays(F2, (6.5, 10.5, 15, 19, 24), 4.8)
 dim((26.45, -9.2), (27.4, -9.2), F2, "+0,95", (0, 18))
@@ -114,17 +121,15 @@ s = 52; X0, Y0 = 120 - 9.6 * 52, 712 + 8.3 * 52
 F3 = lambda p: (X0 + p[0] * s, Y0 - p[1] * s)
 o.append('<clipPath id="c3"><rect x="60" y="695" width="580" height="340"/></clipPath><g clip-path="url(#c3)">')
 rect(9.6, 16.4, 6.9, 8.1, F3, WHT, WST)
-rect(9.6, 12.7, 4.9, 6.9, F3, WCOB, WCS, 2); rect(13.5, 16.4, 4.9, 6.9, F3, WCOB, WCS, 2)
-rect(9.6, 10.55, 4.9, 5.2, F3, "#f59e0b", "none", 0, 0.9); rect(15.65, 16.4, 4.9, 5.2, F3, "#f59e0b", "none", 0, 0.9)
-poly([(12.8, 6.9), (13.4, 6.9), (13.4, 4.35), (11.7, 4.35), (11.55, 4.55), (11.7, 4.8), (12.8, 4.8)], F3, WHT, NEW, 2.2)
+wstrip(4.7, 12.7, F3, 2); wstrip(13.5, 21.5, F3, 2)
+poly([(12.8, 6.9), (13.4, 6.9), (13.4, LIP0), (11.7, LIP0), (11.7, LIP1), (12.8, LIP1)], F3, WHT, NEW, 2.2)
 o.append('</g>')
-dim((11.7, 4.0), (12.7, 4.0), F3, "1,0", (0, 18))
-dim((12.8, 4.0), (13.4, 4.0), F3, "0,6", (6, 18))
+dim((11.7, 5.4), (12.7, 5.4), F3, "1,0", (0, -8))
+dim((12.8, 5.4), (13.4, 5.4), F3, "0,6", (6, -8))
+dim((14.2, LIP0), (14.2, 6.9), F3, "1,1", (24, 5))
 dim((10.55, 3.3), (12.7, 3.3), F3, "2,2 uden lys", (-112, 5), "#b45309")
 dim((13.4, 8.25), (13.5, 8.25), F3, "0,1", (22, 5))
-dim((14.6, 4.35), (14.6, 4.9), F3, "", (0, 0))
-t(F3((14.6, 4.6))[0] + 10, F3((14.6, 4.6))[1] + 5, "0,1 luft over strippen", 13, "#2563eb", 600)
-t(70, 1000, "Spor: bagkant ind under læben (1,0 mm). Den gule stribe (lysfladen, 3,7 af 8,1) er fri.", 13, "#444")
+t(70, 1000, "Bagkanten går ind under læben (1,0 mm), 0,1 mm over den tynde kant (0,5 mm antaget). Stammen står 1,1 mm ud.", 13, "#444")
 t(70, 1024, "Målt af Esben 22. okt.: hvid 8,1 bred, gul stribe 3,7 i midten. RGB lyser i hele bredden.", 13, "#b45309", 600)
 
 # ---------- 4: assembly ----------
@@ -133,13 +138,13 @@ t(700, 850, "4  Montering (ved bordet, bagrammen ligger på bagsiden)", 18, w=60
 def mini(x0, y0, step):
     s = 11; F = lambda p: (x0 + (p[0] - 11) * s, y0 - (p[1] - 2) * s)
     rect(11.5, 24, 6.9, 8.1, F, WHT, WST)
-    poly([(21.6, 6.9), (22.2, 6.9), (22.2, 4.35), (21.2, 4.35), (21.05, 4.55), (21.2, 4.8), (21.6, 4.8)], F, WHT, NEW, 1.4)
-    poly([(12.2, 6.9), (12.8, 6.9), (12.8, 4.35), (12.2, 4.35)], F, WHT, NEW, 1.4)
+    poly([(21.6, 6.9), (22.2, 6.9), (22.2, LIP0), (20.5, LIP0), (20.5, LIP1), (21.6, LIP1)], F, WHT, NEW, 1.4)
+    poly([(12.2, 6.9), (12.8, 6.9), (12.8, LIP0), (12.2, LIP0)], F, WHT, NEW, 1.4)
     if step == 1:
         poly([(13.9, 3.0), (21.3, 4.8), (20.9, 6.75), (13.5, 4.95)], F, WCOB, WCS, 1.4)
         garrow((15, 2.3), (18.5, 3.1), F)
     else:
-        rect(13.5, 21.5, 4.9, 6.9, F, WCOB, WCS, 1.4)
+        wstrip(13.5, 21.5, F, 1.4)
         if step == 2: garrow((14.3, 1.6), (14.3, 4.5), F)
         else: t(F((17.5, 2.5))[0], F((17.5, 2.5))[1], "↔ langs banen", 14, NEW, 700, "middle")
 for i, (tx, sub) in enumerate((("1. Vip strippen, skub bagkanten ind under læben", "(en printet spatel hjælper ved RGB-banen)"),
