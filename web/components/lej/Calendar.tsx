@@ -15,11 +15,14 @@ type Props = {
   priceFor?: (range: Range) => number | null;
   /** The free days are still being fetched: the dates show, every day waits with a bar where its price will be. */
   loading?: boolean;
+  /** A chosen period: a tap picks the whole period at that day instead of a free range; null where it can't start. */
+  snap?: ((day: DayKey) => Range | null) | null;
 };
 
 // Free date picking: the first tap picks a day, a tap on a later day stretches it into a range.
 // Any tap after a finished range starts over.
-export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, priceFor, loading }: Props) {
+// With `snap`, every tap picks the chosen period at that day instead.
+export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, priceFor, loading, snap }: Props) {
   const start = fromKey(selected?.from ?? minDay);
   const [cursor, setCursor] = useState({ y: start.getFullYear(), m: start.getMonth() });
   const [hover, setHover] = useState<Range | null>(null);
@@ -50,8 +53,9 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
       return { y: c.y + Math.floor(m / 12), m: ((m % 12) + 12) % 12 };
     });
 
-  // The range a tap on this day gives: stretch a single picked day forward, otherwise start over.
-  const rangeFor = (k: DayKey): Range => {
+  // The range a tap on this day gives: the chosen period, or stretch a single picked day forward, otherwise start over.
+  const rangeFor = (k: DayKey): Range | null => {
+    if (snap) return snap(k);
     if (selected && selected.from === selected.to && k > selected.from) {
       const r = { from: selected.from, to: k };
       if (canBook(r)) return r;
@@ -97,15 +101,19 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
                   const past = k < minDay || k > maxDay;
                   const pending = !!loading && !past;
                   const booked = !past && !pending && !canBook({ from: k, to: k });
-                  const ok = !past && !booked && !pending;
-                  const busy = ok && seasonOf(k);
                   const r = rangeFor(k);
-                  const price = ok && priceFor ? priceFor(r) : null;
+                  // Free, but the chosen period can't be had from this day (a weekend tapped on a Tuesday is fine, a
+                  // weekday on a Saturday is not, nor a period that runs into a booked day).
+                  const off = !past && !booked && !pending && (!r || !canBook(r));
+                  const ok = !past && !booked && !pending && !off;
+                  const busy = ok && seasonOf(k);
+                  const price = ok && r && priceFor ? priceFor(r) : null;
                   const on = inShown(k);
                   const cls = [
                     "cal-day",
                     past && "is-past",
                     booked && "is-booked",
+                    off && "is-off",
                     pending && "is-loading",
                     busy && "is-busy",
                     on && "is-in",
@@ -123,10 +131,10 @@ export function Calendar({ selected, canBook, minDay, maxDay, onPick, single, pr
                       disabled={!ok}
                       aria-pressed={!!selected && k >= selected.from && k <= selected.to}
                       aria-label={`${fromKey(k).getDate()}. ${MONTHS[m]}${booked ? ", optaget" : busy ? `, travl periode: ${busy.name.toLowerCase()}` : ""}${price != null ? `, ${price.toLocaleString("da-DK")} kr.` : ""}${pending ? ", henter ledighed" : ""}`}
-                      onPointerEnter={(e) => ok && e.pointerType === "mouse" && setHover(r)}
+                      onPointerEnter={(e) => ok && r && e.pointerType === "mouse" && setHover(r)}
                       onClick={() => {
                         setHover(null);
-                        onPick(r);
+                        if (r) onPick(r);
                       }}
                     >
                       <span>
