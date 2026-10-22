@@ -1,5 +1,7 @@
 # Selfi Halo gen 2, version v16: printguide
 
+> **Erstattet af halo-gen2-v17 (22. okt. 2026), må ikke printes.** WLED-styringens bakke i v16-skallen er tegnet efter forkerte mål (45,3 mm indvendig, styringen er 45,7 bred og har arme i enderne); v17 har en ny holder efter Esbens mål.
+
 **Version:** halo-gen2-v16 (21. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v16_`. Den erstatter halo-gen2-v15, som ikke må printes; **kun bagrammen er ny**. Front, skal, logo, lysring, vægbeslag og printerprop er de samme som i v15. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; printermodulet kommer i en senere version.

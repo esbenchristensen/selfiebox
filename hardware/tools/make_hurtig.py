@@ -45,7 +45,7 @@ CORNER = ((-200, -200), (-46, -88))
 #           "+m" = up to the top of the listed nodes in print orientation + m mm
 COUPONS = [
     ("stroem-ledstyring", ["skal"], ["stroem", "ledstyring"], 8, "+6",
-     "5 V-forsyningen og WLED-styringen klikkes i deres bakker. Sidder de fast, også når stykket vendes?"),
+     "5 V-forsyningen og WLED-styringen klikkes i deres bakker. v17: WLED-styringen med udgangen opad; går den ned, klikker kanterne over låget, og står den fast på langs mellem de 2 stop ved armspidserne? Sidder begge fast, også når stykket vendes?"),
     ("daemper", ["skal"], ["daemper"], 8, "+6",
      "Dæmperen (DFR0457) i bakken på venstre væg. Er der plads til skrueklemmen?"),
     ("stroemindgang", ["skal"], ["stik"], 8, "+6",

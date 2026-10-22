@@ -40,7 +40,7 @@ PARTS = [
     ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
     ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
-    ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto WLED)", "#127a49", "Elektronik", [0, 0, -90]),
+    ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto GL-C-016WL-D, målt: 45,7 × 87,9 × 17,26 + 2 arme)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (DFRobot DFR0457)",       "#0f766e", "Elektronik", [-90, 0, 0]),
     ("stik",          "c_jack",        "Strømindgang i bunden, i midten: hunstik TRU DC-13F + GST-stik nedefra",                  "#e11d48", "Elektronik", [0, 0, -90]),
     ("modem4g",       "c_4g",          "4G-modem med GPS",                "#2563eb", "Tilvalg",    [0, 0, -90]),
@@ -59,11 +59,11 @@ PARTS = [
 # and the display back, clear of the boards; each cable belongs to the component it serves.
 CABLES = [
     ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(0, 60, 77.5), (0, 59, 84), (0, 56, 140), (8, 48, 149), (60, 48, 149), (66, 52, 146)]),
-    ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(66, 52, 146), (58, 46, 152), (-6, 46, 152), (-6, 48, 134), (-20, 52, 128), (-34, 56, 123)]),
+    ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(66, 52, 146), (58, 46, 152), (-6, 46, 152), (-64, 60, 140), (-64, 70, 40), (-56, 72, 22), (-49, 72, 24)]),   # v17: input at the bottom end
     ("daemper",    "24 V → dæmper",                  2.0, [(66, 52, 146), (60, 44, 154), (-45, 44, 154), (-85, 46, 122), (-100, 55, 104)]),
     ("stroem",     "5 V → Pi",                       2.2, [(66, 52, 146), (60, 46, 152), (40, 36.4, 146), (32, 36.4, 135), (25, 35.9, 120)]),
     ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 45, 165), (-98, 45, 120), (-100, 55, 104)]),
-    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (45, 50, 205), (-15, 50, 140), (-28, 56, 124)]),
+    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (45, 50, 205), (-15, 50, 140), (-30, 60, 132), (-40, 72, 118), (-40, 72, 115)]),   # v17: output at the top end
     ("modem4g",    "4G: USB → Pi",                   2.6, [(-56, 72, 190), (-32, 52, 170), (-18, 41.9, 118)]),
     ("lydkerne",   "Mikrofon-kerne: USB → Pi",       2.6, [(30, 52, 162), (24, 41.9, 150), (20, 36.4, 140), (18, 35.9, 118)]),
     ("mikrofoner", "Mikrofonstrip → kerne",          1.2, [(-0.7, 22.2, 3.6), (-0.7, 33, 3.6), (-0.7, 33.5, 12), (1, 39, 15), (3, 39, 138), (5, 47, 143), (5, 52, 145.5)]),

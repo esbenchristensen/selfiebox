@@ -503,11 +503,22 @@ module placed_printers() {
 // No soldering (Esben 19 Oct): only finished modules with screw or lever terminals, joined with Wago clamps.
 // [A] Mean Well RSD-60G-5, 24 V -> 5 V 12 A, 128 x 60 x 25 incl. flanges (reichelt / Mean Well datasheet),
 //     screw terminals on the right-hand end; lies flat on the back wall under the Pi.
-// [A] Gledopto GL-C-016WL-D WLED controller 108 x 45 x 18 (Gledopto manual; no drawing, terminals at both short ends): flat on the back wall above the PSU
+// [M] Gledopto GL-C-016WL-D WLED controller, measured by Esben 22 Oct (calipers, v17): see WLED_B below. Until v16 the CAD had 108 x 45 x 18 from the manual,
+//     and the tray (45.3 inside) was too narrow for the 45.48 base plate.
 // (the right wall is taken by the mic board higher up).
 // [A] DFRobot Gravity MOSFET DFR0457 (white strips) 44 x 32, 4 x Ø3.1 on 20 x 25; height not published (~16): on the left side wall.
 PSU5 = [60, 128, 25];  PSU5_P = [12, 16];                     // x, z (bottom-left), on the back wall; v11: stands up right of the power column, terminals at the top
-WLED = [45, 108, 18];  WLED_P = [-57, 16];                    // x, z (bottom-left), on the back wall; v11: stands up left of the power column
+// v17: the controller stands up on the back wall left of the power column, base plate against the wall, output end (4 terminals + USB-C) up.
+// Local frame of the holder: u across (0 = left edge of the base plate seen from the front), v up (0 = bottom end of the case), w out of the wall.
+WLED_B = [45.7, 99.74 - 2*5.9, 17.26];    // [M] widest 45.7 (45.48 across the base plate itself), case length (99.74 over both arms minus 2 x [C] 5.9), height
+WLED_TOPW = 44.92;                        // [M] the lid is narrower than the base plate
+WLED_ARM = [5.9, 2.0, 11.6, 3.5, 4.5];    // [C] arms (from the photos): length past the case, thickness, tip width, slot width, slot depth from the tip. No screws in them (Esben 22 Oct)
+// [u0, u1] where the arm leaves the case ([M] 24.12 / 20.43 from the opposite edge), u of the slot centre ([M] 11.2 from the near edge, 34.8 from the far one), end (-1 bottom, 1 top)
+WLED_ARMS = [[24.12, 45.7, 45.7 - 11.2, -1], [45.7 - 20.43 - 21.3, 45.7 - 20.43, 11.2, 1]];
+WLED_C = [0.25, 0.3];                     // clearance: per side across, at each arm tip
+WLED_FL = 1.2;                            // floor, as the v2-v16 trays
+WLED_X0 = -34.5 - WLED_B[0]/2;  WLED_Z0 = 70 - WLED_B[1]/2;   // same centre as the v11-v16 tray
+WLED = [WLED_B[0], WLED_B[1], WLED_B[2]];  WLED_P = [WLED_X0, WLED_Z0];
 MOSF = [44, 32, 16];   MOSF_P = [34.5, 64];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
 module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
     difference() {
@@ -520,15 +531,52 @@ module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls
     for (sy = [0, 1], x = [sz[0]*0.2, sz[0]*0.7]) translate([x, sy > 0 ? sz[1] + 0.3 : -1.6, hgt - 0.01]) hull() {
         cube([8, 1.6, 0.01]); translate([0, sy > 0 ? -0.6 : 0.6, 1.2]) cube([8, 1.6, 0.01]); }
 }
+// v17: holder for the measured WLED controller. Long walls with snap lips over the narrower lid, an open floor, the floor carried out under
+// both arms, and a low stop just past each arm tip so it cannot slide along. No screws (Esben 22 Oct); the case ends stay free for the terminals.
+module wled_frame() translate([WLED_X0, D - BACK_T, WLED_Z0]) multmatrix([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]) children();
+function wled_tip(e) = e < 0 ? -WLED_ARM[0] : WLED_B[1] + WLED_ARM[0];
+module wled_arm2d(a) {   // arm outline in u, v (base on the case end, tip outwards)
+    v0 = a[3] < 0 ? 0 : WLED_B[1];  t = wled_tip(a[3]);
+    polygon([[a[0], v0], [a[1], v0], [a[2] + WLED_ARM[2]/2, t], [a[2] - WLED_ARM[2]/2, t]]);
+}
+module wled_holder() wled_frame() {
+    B = WLED_B; c = WLED_C[0]; wt = 1.6; hw = WLED_FL + B[2] + 1.3;
+    difference() {
+        union() {
+            translate([-c, 0, 0]) cube([B[0] + 2*c, B[1], WLED_FL]);                                   // floor under the case
+            for (a = WLED_ARMS) {
+                v0 = a[3] < 0 ? -WLED_ARM[0] - WLED_C[1] : B[1];
+                translate([max(-c, a[0] - 1), v0, 0]) cube([min(B[0] + c, a[1] + 1) - max(-c, a[0] - 1), WLED_ARM[0] + WLED_C[1], WLED_FL]);   // pad under the arm
+                // stop past the tip: 0.8 above the arm, so the wires into the terminals pass over it
+                translate([a[2] - WLED_ARM[2]/2 - 1, a[3] < 0 ? -WLED_ARM[0] - WLED_C[1] - wt : B[1] + WLED_ARM[0] + WLED_C[1], 0])
+                    cube([WLED_ARM[2] + 2, wt, WLED_FL + WLED_ARM[1] + 0.8]);
+            }
+            for (su = [-c - wt, B[0] + c]) translate([su, 0, 0]) cube([wt, B[1], hw]);                 // long walls
+            // snap lips: catch 0.1 over the lid, 1.4 in (the lid edge is 0.64 in from the wall), ramp on top
+            for (sd = [0, 1], v = [B[1]*0.15, B[1]*0.7]) translate([sd ? B[0] + c : -c, v, WLED_FL + B[2] + 0.1]) hull() {
+                translate([sd ? -1.4 : 0, 0, 0]) cube([1.4, 10, 0.01]); translate([sd ? -0.01 : 0, 0, 1.1]) cube([0.01, 10, 0.1]); }
+        }
+        translate([6, 8, -1]) cube([B[0] - 12, B[1] - 16, WLED_FL + 2]);                              // open floor: less print, air
+    }
+}
+module placed_wled() wled_frame() translate([0, 0, WLED_FL]) {   // the controller: base plate, case with the narrower lid, the 2 arms
+    B = WLED_B;
+    hull() { cube([B[0], B[1], 0.01]); translate([(B[0] - WLED_TOPW)/2, 0, B[2] - 0.01]) cube([WLED_TOPW, B[1], 0.01]); }
+    for (a = WLED_ARMS) linear_extrude(WLED_ARM[1]) difference() {
+        wled_arm2d(a);
+        translate([a[2] - WLED_ARM[3]/2, a[3] < 0 ? wled_tip(-1) - 1 : wled_tip(1) - WLED_ARM[4] + WLED_ARM[3]/2]) square([WLED_ARM[3], WLED_ARM[4] - WLED_ARM[3]/2 + 1]);
+        translate([a[2], wled_tip(a[3]) - a[3]*(WLED_ARM[4] - WLED_ARM[3]/2)]) circle(d = WLED_ARM[3], $fn = 20);
+    }
+}
 module power_holders() {
     // v11: both stand up; the trays turn with them, so the low end stops stay at the terminal ends (top and bottom)
     translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU5[2] + 1.5);
-    translate([WLED_P[0] + WLED[0], D - BACK_T + 0.01, WLED_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([WLED[1], WLED[0], WLED[2]], WLED[2] + 1.5);
+    wled_holder();
     translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], MOSF[2] + 1.5);
 }
 module placed_power3() {
     color([0.75, 0.76, 0.78]) translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
-    color([0.9, 0.9, 0.92]) translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
+    color([0.9, 0.9, 0.92]) placed_wled();
     color([0.1, 0.3, 0.6]) translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 }
 
@@ -894,7 +942,8 @@ if (VIEW == "c_fan")        translate([0, PI_Y3, GC + DSP_PI_DZ]) translate([0, 
     for (a = [0:30:330]) rotate([0, 0, a]) translate([6, -1, 0]) cube([10.5, 2, 1.6]);
 }
 if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
-if (VIEW == "c_wled")      translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
+if (VIEW == "c_wled")      placed_wled();
+if (VIEW == "x_wled_holder") intersection() { shell3(); wled_frame() translate([-10, -15, -5]) cube([WLED_B[0] + 20, WLED_B[1] + 30, 40]); }
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
 if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [6, 2.3], j[0], FR_BACK + 2, j[1], -1);
