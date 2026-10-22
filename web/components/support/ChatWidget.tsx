@@ -22,7 +22,7 @@ type Chat = {
 
 const NAME = "Sif";
 const INTRO = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om jeres booking, levering, priser eller boksen. Skal jeg kigge på en booking, så skriv bookingnummer og den e-mail, I bookede med.";
-const CHIPS = ["Hvor er vores boks?", "Vi vil flytte datoen", "Hvad koster det?", "Hvordan sender vi den retur?"];
+const CHIPS = ["Hvor er vores boks?", "Hvordan stiller vi den op?", "Hvad koster det?", "Hvordan sender vi den retur?"];
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false);

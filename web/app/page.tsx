@@ -102,7 +102,7 @@ export default async function Home() {
     },
     {
       q: "Kan vi flytte datoen eller afbestille?",
-      a: "I kan flytte til en anden ledig dato uden beregning, så længe boksen ikke er sendt. Afbestiller I senest 14 dage før første lejedag, får I hele beløbet retur. Senere end det beholder vi lejen, men I kan stadig flytte datoen. Det hele står i lejebetingelserne.",
+      a: "Nej. Vi holder boksen til jer på de datoer, I vælger, så bookingen er bindende, når den er betalt. Den kan ikke flyttes eller afbestilles, og der er ingen fortrydelsesret. Kommer boksen ikke frem, eller virker den ikke, og skyldes det ikke jer, får I hele lejen tilbage. Det hele står i lejebetingelserne.",
     },
     {
       q: "Hvad hvis noget går i stykker?",
@@ -185,10 +185,6 @@ export default async function Home() {
                 <li>
                   <Icon name="clock" />
                   Klar på fem minutter. Den skal kun i en stikkontakt.
-                </li>
-                <li>
-                  <Icon name="undo" />
-                  Flyt datoen gratis, indtil boksen er sendt.
                 </li>
               </ul>
               <a className="lej-trust" href="#anmeldelser">

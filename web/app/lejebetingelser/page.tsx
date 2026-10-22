@@ -4,15 +4,16 @@ import { company, companyAddress, contactHref, contactText } from "@/lib/company
 
 export const metadata: Metadata = {
   title: "Lejebetingelser for private | Selfi",
-  description: "Betingelser for leje af Selfi Boks til bryllup, fødselsdag, konfirmation og firmafest: booking, levering, retur, forsikring, ombooking og afbestilling.",
+  description: "Betingelser for leje af Selfi Boks til bryllup, fødselsdag, konfirmation og firmafest: booking, levering, retur, forsikring og afbestilling.",
   alternates: { canonical: "/lejebetingelser" },
 };
 
 // Consumer terms for renting a box for one party, booked on selfi.dk. UDKAST: the figures marked with
-// (*) are decisions, not law: the deductible, the cancellation deadline and the late-return fee. Decide
-// them, and have the text read by an adviser before the first paying customer. /vilkaar is for businesses.
+// (*) are decisions, not law: the deductible and the late-return fee. Decide them, and have the text read
+// by an adviser before the first paying customer. /vilkaar is for businesses.
+// Point 8 has no withdrawal right and no free move or cancellation, relying on forbrugeraftalelovens § 18,
+// stk. 2, nr. 12. That only holds if the customer is told before paying (checkout) and in the receipt.
 const DEDUCTIBLE = "1.000 kr."; // (*) selvrisiko ved skade
-const CANCEL_DAYS = 14; // (*) afbestilling uden beregning senest så mange dage før første lejedag
 const LATE_FEE = "895 kr."; // (*) pr. påbegyndt dag ved for sen retur, svarer til dagsprisen
 
 export default function Lejebetingelser() {
@@ -21,7 +22,7 @@ export default function Lejebetingelser() {
       label="Lejebetingelser"
       title="Lejebetingelser for private"
       lede="Gælder, når I lejer Selfi Boks til en fest gennem selfi.dk. De er skrevet, så de kan læses på fem minutter. Har I et spørgsmål, som ikke er besvaret her, så skriv til os."
-      updated="21. oktober 2026 (version 1)"
+      updated="22. oktober 2026 (version 2)"
     >
       <h2>1. Hvem aftalen er mellem</h2>
       <p>
@@ -43,7 +44,7 @@ export default function Lejebetingelser() {
       <h2>3. Booking og betaling</h2>
       <ul>
         <li>Alle priser er i danske kroner og inkl. moms. Den samlede pris står i kalenderen og i kassen, før I betaler. Der kommer ikke noget oveni.</li>
-        <li>I betaler hele beløbet med det samme gennem Stripe. Bookingen er bindende, når betalingen er gennemført, og I får en kvittering på mail.</li>
+        <li>I betaler hele beløbet med det samme gennem Stripe, fordi vi holder en boks til jer på de datoer, I har valgt. Bookingen er bindende, når betalingen er gennemført, og I får en kvittering på mail.</li>
         <li>Mens I betaler, holdes datoerne til jer i 30 minutter. Bliver betalingen ikke gennemført, bliver datoerne ledige igen.</li>
         <li>Der er ikke noget depositum.</li>
       </ul>
@@ -77,12 +78,11 @@ export default function Lejebetingelser() {
         <li>Almindelig brug og almindelig slitage koster ikke noget.</li>
       </ul>
 
-      <h2>8. Flyt datoen eller afbestil</h2>
+      <h2>8. Ingen fortrydelsesret, afbestilling eller flytning</h2>
       <ul>
-        <li>I kan flytte til en anden ledig dato uden beregning, så længe boksen ikke er sendt. Skriv til os med jeres bookingnummer.</li>
-        <li>Afbestiller I senest {CANCEL_DAYS} dage før første lejedag, får I hele beløbet tilbage inden for 5 hverdage.</li>
-        <li>Afbestiller I senere end {CANCEL_DAYS} dage før, beholder vi lejen, men I kan stadig flytte datoen til en anden ledig dag inden for 12 måneder, så længe boksen ikke er sendt.</li>
-        <li>Fortrydelsesret: Lejen er en tjenesteydelse til en bestemt dato, og derfor gælder den almindelige fortrydelsesret på 14 dage ikke (forbrugeraftalelovens § 18, stk. 2, nr. 12). I stedet gælder reglerne ovenfor, som i de fleste tilfælde stiller jer bedre.</li>
+        <li>Der er ikke fortrydelsesret. Lejen er en tjenesteydelse til jeres fest på de datoer, I har valgt, og vi holder boksen til jer de dage. Derfor gælder den almindelige fortrydelsesret på 14 dage ved køb på nettet ikke (forbrugeraftalelovens § 18, stk. 2, nr. 12).</li>
+        <li>Bookingen kan ikke afbestilles eller flyttes til andre datoer, når den er betalt. Bruger I ikke boksen, får I ikke lejen tilbage.</li>
+        <li>Det ændrer ikke punkt 4 og 9: kommer boksen ikke frem, eller kan den ikke bruges, og skyldes det ikke jer, får I hele lejen tilbage.</li>
       </ul>
 
       <h2>9. Hvis boksen ikke virker</h2>

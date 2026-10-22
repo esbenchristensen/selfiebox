@@ -18,7 +18,6 @@ export function Compare({ s }: { s: RentalSettings }) {
     { what: "Fragt begge veje", us: "Med", others: "Med hos de fleste", usGood: true, minor: true },
     { what: "Forsikring", us: "Med, uden depositum", others: "Med, eller depositum på op til 1.000 kr.", usGood: true },
     { what: `Printer med ${s.printsIncluded} print`, us: kr(s.prices.printer), others: "Fra 2.000 kr.", usGood: true },
-    { what: "Flyt datoen", us: "Gratis, indtil boksen er sendt", others: "Forskelligt fra sted til sted", usGood: true },
   ];
 
   return (

@@ -1,6 +1,6 @@
 # Supportchatten (Sif)
 
-AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder: slå kundens bookinger op, svare på priser, vilkår og datoer, flytte datoer efter et klart ja, søge på nettet, og sende sagen videre til Esben med en SMS, når den ikke må eller kan svare. Esben overtager fra admin.selfi.dk → Support.
+AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder: slå kundens bookinger op, svare på priser, vilkår og datoer, søge på nettet, og sende sagen videre til Esben med en SMS, når den ikke må eller kan svare. Esben overtager fra admin.selfi.dk → Support.
 
 ## Filer
 
@@ -10,7 +10,7 @@ AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder
 | `support/stilguide.md` | Tonen: de otte regler, form, sure kunder, nej, eksempler på gode og dårlige svar. |
 | `support/viden.md` | Vidensbasen: forløbet for privat leje, lejebetingelser, første hjælp, erhverv. Priser og regler kommer live fra admin (rental_settings), ikke herfra. |
 | `lib/support/knowledge.ts` | Samler de tre filer plus FAQ og funktioner fra `content.ts` til modellens instruktioner, og laver kontekstbeskeden pr. tur (dato, åbningstid, verificering, priser). |
-| `lib/support/tools.ts` | Værktøjerne: `verify_customer`, `get_bookings`, `check_availability`, `propose_date_change`, `commit_date_change`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
+| `lib/support/tools.ts` | Værktøjerne: `verify_customer`, `get_bookings`, `check_availability`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
 | `lib/support/agent.ts` | Én tur: OpenAI Responses API med streaming og function calling, værktøjsløkke, logning. |
 | `lib/support/db.ts` | Collections `support_chats`, `support_messages` (TTL 90 dage) og `support_audit` (gemmes). Samme typer i selfiebox-platform `web/src/lib/types.ts`. |
 | `lib/support/session.ts` | Cookie med chat-id og hemmelig token. |
@@ -29,7 +29,7 @@ Admin-siden ligger i selfiebox-platform: `web/src/app/admin/(panel)/support/` (l
 
 - **Verificering** med bookingnummer + e-mail (`verify_customer`), højst 5 forsøg pr. chat. Før det kender modellen ingen bookinger.
 - **Afgrænsning i backend:** alle opslag og ændringer går gennem `myRental()` i `tools.ts`, som kun accepterer bookingnumre fra `chat.customer.bookings`. Prompten kan ikke udvide det.
-- **Ændringer kræver ja:** `propose_date_change` gemmer et forslag; `commit_date_change` afvises, medmindre kunden har skrevet en ny besked efter forslaget (og inden en time). Alt logges i bookingens `history` og i `support_audit` med tid og aktør.
+- **Ingen ændringer:** Bookinger er bindende (lejebetingelserne punkt 8), så assistenten kan ikke flytte eller afbestille. Ønsker om ændringer går til Esben med `escalate`. Verificering og eskalering logges i `support_audit` med tid og aktør.
 - **Penge, klager, jura, skade:** aldrig i chatten; `escalate`.
 - **Prompt injection:** reglerne står i `instructions`, kundens tekst er altid `user`-beskeder, værktøjs- og websvar mærkes som data. Modellen får `store: false`, så OpenAI gemmer intet; `safety_identifier` er en hash af chat-id'et.
 - **Rate limits:** 1.500 tegn pr. besked, 30 beskeder pr. 10 min. pr. chat, 20 nye chats pr. time pr. IP (pseudonymiseret).
@@ -65,7 +65,7 @@ Bygget på Responses API (`/v1/responses`) med den nyeste dokumentation på deve
 ```bash
 cd web
 node --conditions=react-server --import tsx --env-file=.env.local --env-file=.env.test scripts/support-test.mts
-# én samtale:           … scripts/support-test.mts --only flyt-dato-ok
+# én samtale:           … scripts/support-test.mts --only flyt-dato-nej
 # uden LLM-dommer:      … scripts/support-test.mts --no-judge
 ```
 

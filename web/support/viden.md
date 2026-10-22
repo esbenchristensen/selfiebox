@@ -17,7 +17,7 @@ Firmaet drives af Esben Christensen, stifter. Det er ham, der tager over, når e
 6. **Retur:** Senest den første hverdag efter sidste lejedag pakker kunden boksen (og evt. printeren) i kasserne, sætter returlabelen på (den ligger i kassen) og afleverer dem i en pakkeshop. Returfragten er betalt.
 7. **Tjek:** Når boksen er tilbage, tjekker vi den. Mangler der noget, eller er den beskadiget, skriver vi til kunden inden for 5 hverdage.
 
-**Status på en booking betyder:** "pending" = venter på betaling, "paid" = betalt og reserveret, "packed" = pakket og klar til afsendelse, "shipped" = sendt med dao, "delivered" = hos kunden, "returned" = modtaget retur hos os, "done" = tjekket og afsluttet, "cancelled" = afbestilt, "expired" = aldrig betalt, "refunded" = refunderet. Datoer kan kun flyttes, mens bookingen er "paid" eller "packed" (boksen er ikke sendt endnu).
+**Status på en booking betyder:** "pending" = venter på betaling, "paid" = betalt og reserveret, "packed" = pakket og klar til afsendelse, "shipped" = sendt med dao, "delivered" = hos kunden, "returned" = modtaget retur hos os, "done" = tjekket og afsluttet, "cancelled" = afbestilt, "expired" = aldrig betalt, "refunded" = refunderet. En betalt booking kan ikke flyttes eller afbestilles, uanset status.
 
 ### Hvad der er med i prisen (privat)
 
@@ -32,8 +32,9 @@ Selfi Boks med gulvstativ, strømforsyning og forsendelseskasse. Ubegrænsede bi
 - Lejer skal være fyldt 18 år. Bookingen er bindende, når betalingen er gennemført.
 - Boksen skal stå indendørs eller under tag, tørt, i 0 til 30 grader, på stativet, i en almindelig stikkontakt. Ikke i regn, ikke i direkte sol, må ikke åbnes, ændres, udlånes eller lejes videre.
 - Kunden er ansvarlig for boksen fra pakken hentes, til den er afleveret i pakkeshoppen igen.
-- **Flyt af dato:** Kunden kan flytte til en anden ledig dato uden beregning, så længe boksen ikke er sendt. Samme antal dage = samme pris. Flere eller færre dage ændrer prisen og klares af Esben.
-- **Afbestilling:** Senest 14 dage før første lejedag: hele beløbet tilbage inden for 5 hverdage. Senere end 14 dage før: lejen beholdes, men datoen kan stadig flyttes til en ledig dag inden for 12 måneder, så længe boksen ikke er sendt. Den almindelige 14-dages fortrydelsesret gælder ikke (tjenesteydelse til en bestemt dato, forbrugeraftalelovens § 18, stk. 2, nr. 12). Selve refusionen udføres af Esben.
+- **Flyt af dato og afbestilling:** Kan ikke lade sig gøre. Bookingen er bindende, når den er betalt, og lejen betales ikke tilbage, hvis kunden ikke bruger boksen. Undtagelser afgøres kun af Esben.
+- **Fortrydelsesret:** Der er ingen. Lejen er en tjenesteydelse til festen på bestemte datoer, og Selfi holder boksen til kunden de dage (forbrugeraftalelovens § 18, stk. 2, nr. 12). Kunden har sat flueben ved det i kassen og får det skrevet i kvitteringen.
+- **Når kunden får pengene tilbage:** Kommer boksen ikke frem til første lejedag, eller kan den ikke bruges til festen, og skyldes det ikke kunden, får kunden hele lejen tilbage. Refusionen udføres af Esben.
 - **For sen retur:** 895 kr. pr. påbegyndt dag. Giv besked med det samme, hvis man bliver forsinket.
 - **Skader og forsikring:** Boksen er forsikret, mens den er hos kunden (med i prisen). Ved et uheld betaler kunden højst en selvrisiko på 1.000 kr. Forsikringen dækker ikke skader med vilje eller ved grov uagtsomhed (regn, tabt fra højde, brugt mod brugsanvisningen) og ikke tyveri eller bortkomst; der betales kostpris, højst 9.500 kr. for boksen og 4.500 kr. for printeren. Almindelig slitage koster ikke noget. Alle sager om skade, tyveri og selvrisiko afgøres af Esben.
 - **Hvis boksen ikke virker:** Virker den ikke på festen, skal kunden skrive eller ringe med det samme, så hjælper vi (akut: eskalér). Kan boksen ikke bruges, og skyldes det ikke kunden, får kunden hele lejen tilbage (afgøres af Esben). Udfald i strøm eller wifi er ikke en fejl ved boksen. Vi erstatter ikke udgifter ud over lejen.

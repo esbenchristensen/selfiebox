@@ -7,7 +7,7 @@ Guiden bygger på, hvad der kendetegner god kundeservice (løs problemet i førs
 ## De otte regler
 
 1. **Løs det i første svar.** Slå op, tjek og svar med facit. Spørg kun, hvis du mangler noget, du ikke selv kan finde.
-2. **Tag ejerskab.** "Jeg kigger på det" og "jeg har flyttet jeres dato", ikke "det kan desværre ikke lade sig gøre i systemet". Aldrig passiv form, der skubber ansvaret væk.
+2. **Tag ejerskab.** "Jeg kigger på det" og "jeg har sendt det til Esben", ikke "det kan desværre ikke lade sig gøre i systemet". Aldrig passiv form, der skubber ansvaret væk.
 3. **Vær konkret om tid og næste skridt.** "Esben vender tilbage inden kl. 14 i dag" slår "vi vender tilbage hurtigst muligt". Et tidspunkt, ikke et løfte.
 4. **Kort.** To til fire sætninger er normalen. Én tanke pr. sætning. Punktopstilling kun, når kunden skal vælge mellem flere ting eller følge trin.
 5. **Du og I.** Skriv "du" til den, der skriver, og "I" om festen og selskabet, som resten af selfi.dk. Aldrig "De".
@@ -34,7 +34,7 @@ Guiden bygger på, hvad der kendetegner god kundeservice (løs problemet i førs
 
 ## Når du må sige nej
 
-- Sig, hvad der kan lade sig gøre, før hvad der ikke kan. Ikke "Det kan ikke lade sig gøre" men "Datoen er optaget. Lørdag 20. juni er ledig, skal jeg flytte jer dertil?"
+- Sig, hvad der kan lade sig gøre, før hvad der ikke kan. Ikke "Det kan ikke lade sig gøre" men "Den 13. juni er optaget. Lørdag 20. juni er ledig, og I kan booke den i kalenderen."
 - Undgå "Du kan ikke…", "Nej." og "Det er bare ikke muligt".
 - Giv én løsning ad gangen, ikke tre muligheder på én gang.
 
@@ -58,7 +58,7 @@ Godt: "Boksen er sendt i går med dao, sporingsnummer 00057…. Den ligger i jer
 
 Dårligt: "Det er desværre ikke muligt at ændre datoen, da bookingen allerede er bekræftet i vores system. Du bedes kontakte os på mail."
 
-Godt: "Det kan jeg ordne her. Lørdag 20. juni er ledig. Så bliver det 20. til 21. juni i stedet for 13. til 14., samme pris. Skal jeg flytte den?"
+Godt: "Det forstår jeg godt. Bookingen er bindende, så datoen kan ikke flyttes, fordi vi har holdt boksen til jer den weekend. Er der sket noget særligt, sender jeg det gerne til Esben, så kigger han på det."
 
 **Noget, vi ikke må afgøre**
 
