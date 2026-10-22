@@ -179,6 +179,15 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 .hero--aside .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); align-items: start; }
 .hero--aside .hero-copy { padding-top: var(--space-7); }
 .hero--aside .h-xl { font-size: clamp(42px, 5vw, 72px); }
+/* Split hero (a price is given): wide screens keep the copy beside the visual; phones get heading, price and button,
+   then the visual, then the rest of the copy (see components/Hero.tsx) */
+.hero--split .hero-grid { grid-template-areas: "head visual" "body visual"; grid-template-rows: auto auto; row-gap: var(--space-5); align-items: start; }
+.hero--split .hero-head { grid-area: head; align-self: end; }
+.hero--split .hero-body { grid-area: body; }
+.hero--split .hero-visual { grid-area: visual; align-self: center; }
+.hero-quick { display: none; }
+.hero-price { margin: 0; font-size: 18px; color: var(--ink-muted); }
+.hero-price b { color: var(--ink); font-weight: 600; }
 
 /* Explainer film: 16:9 on desktop, 4:5 on phones (components/Explainer.tsx picks the file) */
 .film { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-box); overflow: hidden; background: #0e0f0e; border: 1px solid var(--line); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.6); }
@@ -328,6 +337,13 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
   .hero-media { max-width: 440px; margin: 0 auto; }
   .hero--aside .hero-grid { grid-template-columns: minmax(0, 1fr); }
   .hero--aside .hero-copy { padding-top: 0; }
+  .hero--split { padding-top: var(--space-6); }
+  .hero--split .hero-grid { grid-template-areas: "head" "visual" "body"; row-gap: var(--space-5); }
+  .hero--split .hero-head { gap: var(--space-3); }
+  .hero--split .h-xl { font-size: clamp(36px, 10vw, 52px); }
+  .hero--split .hero-quick { display: flex; flex-direction: column; gap: var(--space-4); width: 100%; margin-top: var(--space-2); }
+  .hero--split .hero-quick .btn { width: 100%; justify-content: center; }
+  .hero--split .hero-body .btn-row .btn-primary { display: none; }
   .hero-aside { width: 100%; max-width: 480px; margin: 0 auto; }
   .story-stage { position: relative; top: 0; height: auto; padding-block: var(--space-6) 180px; }
   .story-step { min-height: auto; padding-block: var(--space-5); opacity: 1; }

@@ -43,7 +43,7 @@ const WINDOW = { y: 26, w: 84 };
 const PRINT = { w: 72, h: 86 };
 const PRIVATE_CASING = "#0b0b0d";
 // A photo, in seconds: waiting, the countdown (one second a number), then the photo on the screen after the flash.
-export const SHOOT = { idle: 3.2, count: 3, photo: 4.4 };
+export const SHOOT = { idle: 1.2, count: 3, photo: 4.4 };
 export const SHOOT_LOOP = SHOOT.idle + SHOOT.count + SHOOT.photo;
 const WARM = new THREE.Color("#fff3e3");
 const WHITE = new THREE.Color("#ffffff");
@@ -157,6 +157,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       // The countdown on the RGB strip: green fills the ring clockwise from the camera at the top (where the strip
       // starts), uFill of the way round, with a soft head; the rest of the strip is off. The real strip is
       // WS2812B COB at 160 LED/m, about 134 LEDs one by one through WLED, so the box can do the same.
+      // The green is Selfi green #22d36b in linear light, as the shader works in.
       light.customProgramCacheKey = () => "ring-fill";
       light.onBeforeCompile = (sh) => {
         sh.uniforms.uCount = countOn;
@@ -168,7 +169,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
           .replace("#include <common>", "#include <common>\nvarying vec3 vRing;\nuniform float uCount;\nuniform float uFill;")
           .replace(
             "#include <emissivemap_fragment>",
-            `#include <emissivemap_fragment>\nfloat round_ = fract(atan(vRing.x, vRing.y - ${(UNIT_H / 2).toFixed(1)}) / 6.2831853);\nfloat lit = 1.0 - smoothstep(uFill - 0.012, uFill + 0.012, round_);\ntotalEmissiveRadiance = mix(totalEmissiveRadiance, vec3(0.133, 0.827, 0.42) * 2.4 * lit, uCount);`,
+            `#include <emissivemap_fragment>\nfloat round_ = fract(atan(vRing.x, vRing.y - ${(UNIT_H / 2).toFixed(1)}) / 6.2831853);\nfloat lit = 1.0 - smoothstep(uFill - 0.012, uFill + 0.012, round_);\ntotalEmissiveRadiance = mix(totalEmissiveRadiance, vec3(0.0116, 0.659, 0.148) * 1.5 * lit, uCount);`,
           );
       };
     }
@@ -262,7 +263,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
       mats.light.emissive.copy(tmp);
       mats.light.emissiveIntensity = 1.6 + flash * 9;
       // The diffuser's own white (lit by the room) would wash out the green and the dark part, so it dims meanwhile
-      mats.light.color.setScalar(1 - on * 0.85);
+      mats.light.color.setScalar(1 - on * 0.96);
       if (overlay.current) {
         if (map && overlay.current.map !== map) overlay.current.map = map;
         overlay.current.opacity = show;

@@ -204,6 +204,11 @@ export default async function Home() {
           }
           primary={{ label: "Se ledige datoer", href: "#datoer" }}
           secondary={{ label: "Se priser", href: "#priser" }}
+          price={
+            <>
+              <b>Fra {kr(from)}</b> · alt er med i prisen
+            </>
+          }
           visual={<BoxStand />}
         />
 
