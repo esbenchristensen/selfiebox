@@ -183,9 +183,9 @@ module placed_electronics() {
 // snap trays like the Pololu cradles: no screws; the mic strip hangs in two hook clips
 module electronics_holders() {
     for (q = [[HAT4G_P, HAT4G], [IMU_P, IMU]])
-        translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) pololu_cradle([q[1][0], q[1][1], q[1][2]], q[1][2] + 1.5);
+        translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) cradle2([q[1][0], q[1][1], q[1][2]], BOARD_LIP);
     difference() {   // v9: the bottom lip opens 20 mm for the FPC socket (17.5 long, 2 over the edge)
-        translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) pololu_cradle(MCORE, MCORE[2] + 1.5);
+        translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) cradle2(MCORE, BOARD_LIP);
         translate([MCORE_P[0] + MCORE[0]/2 - 10, D - BACK_T - MCORE[2] - 3, MCORE_P[1] - 3]) cube([20, MCORE[2] + 2.2, 5]);
     }
     if (MIC_FLOOR) for (sx = [-1, 1]) cyl_z(MIC_PEG[0], WALL - MIC_POCKET[2] - 0.01, MIC_PEG[3], sx*MIC_PEG[1], MSTRIP_Y);   // v9: up to 0.6 under the front, so the board cannot lift off
@@ -195,7 +195,7 @@ module electronics_holders() {
         translate([-1, 4, -1]) cube([10, MSTRIP[1] - 4, 3]);
     }
     // reed module tray just above the lock tongue (reed glass at the bottom edge): lifting the box off the cleat moves the magnet away
-    translate([REED_P[0], D - BACK_T + 0.01, REED_P[1]]) rotate([90, 0, 0]) pololu_cradle([REED[0], REED[1], REED[2]], REED[2] + 1.5);
+    translate([REED_P[0], D - BACK_T + 0.01, REED_P[1]]) rotate([90, 0, 0]) cradle2([REED[0], REED[1], REED[2]], BOARD_LIP);
 }
 
 // ------------------------------------------------------------ wall lock ----
@@ -373,9 +373,10 @@ module services_add() {
                        translate([-SPK[0]/2 - 0.3, -SPK[1]/2 - 0.3, -1]) cube([SPK[0] + 0.6, SPK[1] + 0.6, SPK_FL + 4]);
                        for (sx = [-1, 1]) translate([sx*(SPK[0]/2 + 0.9) - 2, -SPK[1]/2 - 3, SPK_FL]) cube([4, SPK[1] + 6, 3]); }
         for (sx = [-1, 1], sz = [-1, 1]) translate([sx*SPK_EAR[0]/2, sz*SPK_EAR[1]/2, 0]) cylinder(d = 2.7, h = SPK_FL - 0.3, $fn = 16);
-        for (sz = [-1, 1]) translate([-5, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
-            cube([10, 1.5, SPK_FL + 0.3]);
-            translate([0, 0, SPK_FL + 0.3]) hull() { cube([10, 1.5, 0.01]); translate([0, sz > 0 ? -0.8 : 0, 1]) cube([10, 2.3, 0.01]); }
+        // v17: hooks with a flat catch 1.2 over the flange (until v16 a slope 0.3 above it, 0.8 in at the top)
+        for (sz = [-1, 1]) translate([-6, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
+            cube([12, 1.5, SPK_FL + 2.0]);
+            translate([0, sz > 0 ? 0 : 1.5, SPK_FL + 0.1]) snap_lip(12, 1.2, 1.6, sz > 0 ? 1 : 0);
         }
     }
 }
@@ -503,32 +504,104 @@ module placed_printers() {
 // No soldering (Esben 19 Oct): only finished modules with screw or lever terminals, joined with Wago clamps.
 // [A] Mean Well RSD-60G-5, 24 V -> 5 V 12 A, 128 x 60 x 25 incl. flanges (reichelt / Mean Well datasheet),
 //     screw terminals on the right-hand end; lies flat on the back wall under the Pi.
-// [A] Gledopto GL-C-016WL-D WLED controller 108 x 45 x 18 (Gledopto manual; no drawing, terminals at both short ends): flat on the back wall above the PSU
+// [M] Gledopto GL-C-016WL-D WLED controller, measured by Esben 22 Oct (calipers, v17): see WLED_B below. Until v16 the CAD had 108 x 45 x 18 from the manual,
+//     and the tray (45.3 inside) was too narrow for the 45.48 base plate.
 // (the right wall is taken by the mic board higher up).
 // [A] DFRobot Gravity MOSFET DFR0457 (white strips) 44 x 32, 4 x Ø3.1 on 20 x 25; height not published (~16): on the left side wall.
 PSU5 = [60, 128, 25];  PSU5_P = [12, 16];                     // x, z (bottom-left), on the back wall; v11: stands up right of the power column, terminals at the top
-WLED = [45, 108, 18];  WLED_P = [-57, 16];                    // x, z (bottom-left), on the back wall; v11: stands up left of the power column
+// v17: the controller stands up on the back wall left of the power column, base plate against the wall, output end (4 terminals + USB-C) up.
+// Local frame of the holder: u across (0 = left edge of the base plate seen from the front), v up (0 = bottom end of the case), w out of the wall.
+WLED_B = [45.7, 99.74 - 2*5.9, 17.26];    // [M] widest 45.7 (45.48 across the base plate itself), case length (99.74 over both arms minus 2 x [C] 5.9), height
+WLED_TOPW = 44.7;                         // [M] top 44.7 against 45.7 at the bottom: the case tapers
+WLED_ARM = [5.9, 2.0, 11.6, 3.5, 4.5];    // [C] arms (from the photos): length past the case, thickness, tip width, slot width, slot depth from the tip. No screws in them (Esben 22 Oct)
+// [u0, u1] where the arm leaves the case ([M] 24.12 / 20.43 from the opposite edge), u of the slot centre ([M] 11.2 from the near edge, 34.8 from the far one), end (-1 bottom, 1 top)
+WLED_ARMS = [[24.12, 45.7, 45.7 - 11.2, -1], [45.7 - 20.43 - 21.3, 45.7 - 20.43, 11.2, 1]];
+WLED_C = [0.25, 0.3];                     // clearance: per side across, at each arm tip
+WLED_FL = 1.2;                            // floor, as the v2-v16 trays
+WLED_X0 = -34.5 - WLED_B[0]/2;  WLED_Z0 = 70 - WLED_B[1]/2;   // same centre as the v11-v16 tray
+WLED = [WLED_B[0], WLED_B[1], WLED_B[2]];  WLED_P = [WLED_X0, WLED_Z0];
+PSU_LIP = [1.6, 20, 3, 2.0];  BOARD_LIP = [1.2, 12, 2, 1.6];   // v17: snap lips [in, length, per side, ramp]
 MOSF = [44, 32, 16];   MOSF_P = [34.5, 64];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
-module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+// v17 (Esben 22 Oct: the teeth were too small, above all for the 5 V supply): every tray lip now has a flat catch 0.1 over the part's
+// top edge and a ramp above it. Until v16 the lips started 0.3 above the part and leaned in only 0.6 at their top, so a sloped face was
+// all that held the part. lip = [in, length, count per side, ramp height]
+module snap_lip(len, inw, rh, side) translate([0, 0, 0]) rotate([90, 0, 90]) linear_extrude(len)   // profile in (y, z), y inwards
+    polygon(side > 0 ? [[0, 0], [-inw, 0], [0, rh]] : [[0, 0], [inw, 0], [0, rh]]);
+module lips_along(sz, t, lip, fl = 1.2, at = []) {   // lips on both long walls (along x) of an inner box sz[0] x sz[1] + 0.3
+    for (sy = [0, 1], i = [0 : lip[2] - 1]) {
+        x = len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2;
+        translate([x, sy > 0 ? sz[1] + 0.3 : 0, fl + t + 0.1]) snap_lip(lip[1], lip[0], lip[3], sy);
+    }
+}
+module wall_tray(sz, lip, wt = 1.6, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+    hgt = 1.2 + sz[2] + 0.1 + lip[3] + 0.3;
+    difference() {
+        translate([-wt, -wt, 0]) cube([sz[0] + 0.3 + 2*wt, sz[1] + 0.3 + 2*wt, hgt]);
+        translate([0, 0, 1.2]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
+        translate([6, 6, -1]) cube([sz[0] - 12, sz[1] - 12, 3]);                   // open floor: less print, air
+        translate([-wt - 1, -wt - 1, end_h]) cube([sz[0] + 2*wt + 2.3, sz[1] + 2*wt + 2.3, hgt]);   // ends cut down ...
+    }
+    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) cube([sz[0] + 0.3, wt, hgt]);   // ... long walls stay full height
+    lips_along(sz, sz[2], lip);
+}
+// v17: cradle for the small boards (4G, mic core, IMU, reed): walls all round, a finger notch in the middle of each long wall and a lip
+// on each side of it. The Pololu cradle from gen 1 (until v16) had 2 lips, both at one end.
+module cradle2(sz, lip) {
+    hgt = 1.2 + sz[2] + 0.1 + lip[3] + 0.3;  notch = sz[0] >= 30;  ll = min(lip[1], (sz[0] - 10)/2 - 3);
     difference() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
         translate([0, 0, 1.2]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
-        translate([6, 6, -1]) cube([sz[0] - 12, sz[1] - 12, 3]);                   // open floor: less print, air
-        translate([-2, -2, end_h]) cube([sz[0] + 4.3, sz[1] + 4.3, hgt]) ;          // ends cut down ...
+        if (notch) translate([sz[0]/2 - 5, -3, 1.2 + sz[2]/2]) cube([10, sz[1] + 6, hgt]);   // finger notches
     }
-    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -1.6, 0]) cube([sz[0] + 0.3, 1.6, hgt]);   // ... long walls stay full height
-    for (sy = [0, 1], x = [sz[0]*0.2, sz[0]*0.7]) translate([x, sy > 0 ? sz[1] + 0.3 : -1.6, hgt - 0.01]) hull() {
-        cube([8, 1.6, 0.01]); translate([0, sy > 0 ? -0.6 : 0.6, 1.2]) cube([8, 1.6, 0.01]); }
+    if (notch) lips_along(sz, sz[2], [lip[0], ll, 2, lip[3]], at = [sz[0]/2 - 6.5 - ll, sz[0]/2 + 6.8]);
+    else lips_along(sz, sz[2], [lip[0], sz[0] - 4, 1, lip[3]]);   // small board: one long lip per side
+}
+// v17: holder for the measured WLED controller. Long walls with snap lips over the narrower lid, an open floor, the floor carried out under
+// both arms, and a low stop just past each arm tip so it cannot slide along. No screws (Esben 22 Oct); the case ends stay free for the terminals.
+module wled_frame() translate([WLED_X0, D - BACK_T, WLED_Z0]) multmatrix([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]) children();
+function wled_tip(e) = e < 0 ? -WLED_ARM[0] : WLED_B[1] + WLED_ARM[0];
+module wled_arm2d(a) {   // arm outline in u, v (base on the case end, tip outwards)
+    v0 = a[3] < 0 ? 0 : WLED_B[1];  t = wled_tip(a[3]);
+    polygon([[a[0], v0], [a[1], v0], [a[2] + WLED_ARM[2]/2, t], [a[2] - WLED_ARM[2]/2, t]]);
+}
+module wled_holder() wled_frame() {
+    B = WLED_B; c = WLED_C[0]; wt = 1.6; hw = WLED_FL + B[2] + 1.8;
+    difference() {
+        union() {
+            translate([-c, 0, 0]) cube([B[0] + 2*c, B[1], WLED_FL]);                                   // floor under the case
+            for (a = WLED_ARMS) {
+                v0 = a[3] < 0 ? -WLED_ARM[0] - WLED_C[1] : B[1];
+                translate([max(-c, a[0] - 1), v0, 0]) cube([min(B[0] + c, a[1] + 1) - max(-c, a[0] - 1), WLED_ARM[0] + WLED_C[1], WLED_FL]);   // pad under the arm
+                // stop past the tip: 0.8 above the arm, so the wires into the terminals pass over it
+                translate([a[2] - WLED_ARM[2]/2 - 1, a[3] < 0 ? -WLED_ARM[0] - WLED_C[1] - wt : B[1] + WLED_ARM[0] + WLED_C[1], 0])
+                    cube([WLED_ARM[2] + 2, wt, WLED_FL + WLED_ARM[1] + 0.8]);
+            }
+            for (su = [-c - wt, B[0] + c]) translate([su, 0, 0]) cube([wt, B[1], hw]);                 // long walls
+            // snap lips: catch 0.1 over the lid, 2.0 in (the top edge is 0.75 in from the wall, so 1.25 over it), ramp on top
+            for (sd = [0, 1], v = [B[1]*0.15, B[1]*0.7]) translate([sd ? B[0] + c : -c, v, WLED_FL + B[2] + 0.1]) hull() {
+                translate([sd ? -2.0 : 0, 0, 0]) cube([2.0, 10, 0.01]); translate([sd ? -0.01 : 0, 0, 1.6]) cube([0.01, 10, 0.1]); }
+        }
+        translate([6, 8, -1]) cube([B[0] - 12, B[1] - 16, WLED_FL + 2]);                              // open floor: less print, air
+    }
+}
+module placed_wled() wled_frame() translate([0, 0, WLED_FL]) {   // the controller: base plate, case with the narrower lid, the 2 arms
+    B = WLED_B;
+    hull() { cube([B[0], B[1], 0.01]); translate([(B[0] - WLED_TOPW)/2, 0, B[2] - 0.01]) cube([WLED_TOPW, B[1], 0.01]); }
+    for (a = WLED_ARMS) linear_extrude(WLED_ARM[1]) difference() {
+        wled_arm2d(a);
+        translate([a[2] - WLED_ARM[3]/2, a[3] < 0 ? wled_tip(-1) - 1 : wled_tip(1) - WLED_ARM[4] + WLED_ARM[3]/2]) square([WLED_ARM[3], WLED_ARM[4] - WLED_ARM[3]/2 + 1]);
+        translate([a[2], wled_tip(a[3]) - a[3]*(WLED_ARM[4] - WLED_ARM[3]/2)]) circle(d = WLED_ARM[3], $fn = 20);
+    }
 }
 module power_holders() {
     // v11: both stand up; the trays turn with them, so the low end stops stay at the terminal ends (top and bottom)
-    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU5[2] + 1.5);
-    translate([WLED_P[0] + WLED[0], D - BACK_T + 0.01, WLED_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([WLED[1], WLED[0], WLED[2]], WLED[2] + 1.5);
-    translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], MOSF[2] + 1.5);
+    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU_LIP, 2.2);   // v17: 3 lips 20 long, 1.6 in, per side
+    wled_holder();
+    translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], [1.2, 10, 2, 1.6]);
 }
 module placed_power3() {
     color([0.75, 0.76, 0.78]) translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
-    color([0.9, 0.9, 0.92]) translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
+    color([0.9, 0.9, 0.92]) placed_wled();
     color([0.1, 0.3, 0.6]) translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 }
 
@@ -550,18 +623,61 @@ RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
 CAM_END = CAM_HOLE/2 + 4 + S3;            // slot end centres, 4 mm black round the camera hole
 CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
 REFL = [[4.2, -6.0], [26.45, 4.4]];       // reflector line (y, r): from the ring flange to the floor
-FLOOR3 = 26.45;
+FLOOR3 = 27.4;                            // v18: 0.95 deeper (v2-v17: 26.45) for the strip lanes; the reflector stops at r 4.4 as before
 // [y0, y1, kind, thickness, end |x| left, end |x| right] (strip ends next to the camera)
 // [C] white: Ledproff COB Ra95 24 V, 8 x 2 mm; RGB: Ledprodukter WS2812b COB 5 V, 5 x 2.2 mm (dimension sheet)
 // Each strip is fed from ONE end. The clip connectors are wider than the strips (white 9.6, RGB 6.8,
 // up to 4.4 high), so they cannot sit side by side: white 1 and RGB take their clips at the left end,
 // white 2 at the right end, and the strip next to a clip stops 17 mm further out.
 CLIP_L = 17;                              // clip zone along the strip, from the camera keep-out
-STRIPS3 = [[5.1, 13.1, "w", 2.0, 17, 34], [13.15, 21.15, "w", 2.0, 34, 17], [21.2, 26.2, "rgb", 2.2, 17, 34]];
+// v18 (Esben 22 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v18_skitse_led-fastholdelse.png): no adhesive. Each strip has
+// its own lane on the strip wall; its back edge goes in under a lip, its front edge presses down against the wall. The frame
+// prints back down, so a lip can only point forward. [M] Esben: white 8.1 wide with a 3.7 yellow (lit) stripe in the middle,
+// so 2.2 is dark each side and the lips take 1.0 of it; the RGB strip is lit right across, so it gets no lip (snug lane, reflector 0.3 above).
+STRIPS3 = [[4.7, 12.7, "w", 2.0, 17, 34], [13.5, 21.5, "w", 2.0, 34, 17], [22.3, 27.3, "rgb", 2.2, 17, 34]];
 STRIP_T3 = [4.7, 6.9];                    // strip wall face at r 6.9; thickest strip reaches r 4.7
+// The white strip is thinner out at the dark edge than over the yellow stripe. The stems and lips only reach over that thin
+// edge, so a stem stands at most ~1.1 out from the wall (a flat shelf in the print; 2.5 in the first v18 draft was too much).
+T_EDGE = 0.5;                             // [A] white strip thickness at the dark edge, until Esben has measured it
+LANE_STEMS = [12.8, 21.6];                // stem front faces: 0.6 wide, lip 1.1 forward over the strip in front
+LANE_LIP = [STRIP_T3[1] - T_EDGE - 0.6, STRIP_T3[1] - T_EDGE - 0.1];   // lip r: 0.5 thick, 0.1 clear of the edge
 // [C] Ledproff low-profile start clip 8 mm COB: 9.6 wide (retailer), ~15.5 x 4.3 (comparable LinearLux, unconfirmed)
 // [C] Ledprodukter MiniClip 5 mm 3-pole: 16.53 x 6.8 x 4.4 (retailer table)
-CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.15, [16, 9.6, 4.3]], [-1, 23.7, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
+CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.5, [16, 9.6, 4.3]], [-1, 24.8, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
+// v18 (Esben 22 Oct, sketch halo-gen2-v18_skitse_3-hvid-i-reflektor.png, light sim variant C): a third white strip recessed
+// in the front of the sloping reflector. (s, d) = along the reflector from its front end, and depth into it.
+// The pocket floor runs forward to the inner wall (a front wall over the strip would hang in the air in the print).
+// The light ring fills the space in front of the strip with a wedge that sits on that floor (it clamps the ring's inner
+// flange, as the reflector's front face did) and has a lip over the strip's front edge. The frame has a lip over its back edge.
+U3 = [0.906, 0.4234];  N3 = [0.4234, -0.906];
+function P3(s, d) = [REFL[0][0] + U3[0]*s + N3[0]*d, REFL[0][1] + U3[1]*s + N3[1]*d];
+W3 = [2.5, 10.6, 0.6, 2.6];               // strip 3: s0, s1, d face, d back (8.1 x 2.0)
+W3_GRIP = W3[3] - T_EDGE - 0.1;           // lip and nose reach down to 0.1 above the strip's thin edge
+W3_POCKET = [[REFL[0][0] - 0.01, -FL3 - 0.01], [P3(0, 2.7)[0] + (-FL3 - P3(0, 2.7)[1])/0.4234*0.906 + 0.0, -FL3 - 0.01], P3(10.7, 2.7), P3(10.7, -0.6), [REFL[0][0] - 0.01, -5.4]];
+W3_LIP = [P3(9.6, -0.3), P3(10.75, -0.3), P3(10.75, W3_GRIP), P3(9.6, W3_GRIP)];
+W3_WEDGE = [[PT + 1, -FL3], [P3(0, 2.7)[0] + (-FL3 - P3(0, 2.7)[1])/0.4234*0.906, -FL3], P3(2.45, 2.7), P3(2.45, -0.3), P3(0.2, -0.3), [PT + 1, -RF3 + RW3]];
+W3_NOSE = [P3(2.4, W3_GRIP), P3(3.5, W3_GRIP), P3(3.5, -0.3), P3(2.4, -0.3)];   // 1.0 over the dark edge, like the frame lips
+W3_CLIP = [[16, 9.6, 4.3], 6.55, 2.72];   // clip [l, w, h], centre s, bottom d (0.5 mm short of the inner wall); right side, 1.6 proud
+// r range of a convex (y, r) polygon at y
+function xr(p, y) = let(r = [for (i = [0:len(p) - 1]) let(a = p[i], b = p[(i + 1) % len(p)]) if ((a[0] - y)*(b[0] - y) <= 0 && a[0] != b[0]) a[1] + (y - a[0])*(b[1] - a[1])/(b[0] - a[0])]) [min(r), max(r)];
+// a smooth slope round the ring: everything inside the ring centre line offset r, going linearly from r0 at y0 to r1 at y1
+// (the centre line is convex, so the hull of the two end slices is exactly that; v18 first draft and v2-v17 used 0.2-0.5 mm stairs)
+module rfill(y0, y1, r0, r1) hull() { ext_y(y0, y0 + 0.001) offset(r = r0) ring_centre2d(); ext_y(y1 - 0.001, y1) offset(r = r1) ring_centre2d(); }
+function qsort(v) = len(v) <= 1 ? v : let(p = v[0]) concat(qsort([for (x = v) if (x < p) x]), [p], qsort([for (x = v) if (x > p) x]));
+// the convex polygon swept round the ring, smooth: between each pair of its corners (in y) the outer and inner edges are straight
+function lerp_at(y, ya, ra, yb, rb) = ra + (y - ya)*(rb - ra)/(yb - ya);
+module sweep3(p) {
+    ys = qsort([for (q = p) q[0]]);  e = 1e-4;
+    for (i = [0:len(ys) - 2]) let(a = ys[i], b = ys[i + 1], ra = xr(p, a + e), rb = xr(p, b - e))
+        if (b - a > 0.002) difference() {
+            rfill(a, b, lerp_at(a, a + e, ra[1], b - e, rb[1]), lerp_at(b, a + e, ra[1], b - e, rb[1]));
+            rfill(a - 0.01, b + 0.01, lerp_at(a - 0.01, a + e, ra[0], b - e, rb[0]), lerp_at(b + 0.01, a + e, ra[0], b - e, rb[0]));
+        }
+}
+module w3_clip_box(g) translate([CAM_KEEP[0] + W3_CLIP[0][0]/2, 0, RING_Z1]) {
+    c = P3(W3_CLIP[1], W3_CLIP[2] - W3_CLIP[0][2]/2);
+    translate([0, c[0], c[1]]) rotate([atan2(U3[1], U3[0]), 0, 0]) cube([W3_CLIP[0][0] + g, W3_CLIP[0][1] + g, W3_CLIP[0][2] + g], center = true);
+}
 J_R = 11.8;                               // front screws: in the outer wall at the 4 corners
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
 // v12 (Esben 20 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v11_skitse_tyndere-front-og-rille.png):
@@ -585,6 +701,11 @@ DSP_PI_DZ = -6.87;  DSP_SO = [5, 8.5];
 DSP_BOTH = false;                         // Esben (21 Oct): the plate notches face down, away from the camera, as drawn
 DSP_SLOT_X = 0.3;                         // v14: the holes are 0.3 wider each way across (3.5 mm): v13's 2.9 left 0.2 per side for
                                           // 121.8 mm between the holes, less than the print shrinks, and the screws missed
+// v16: up to v15 there was a Ø7 tower round a Ø5.6 head well that was slotted ±2.4 mm lengthwise, so the well cut the tower
+// away (0.4 mm slivers left): the bar hung 12 mm above the bracket. Now the tower wraps the well with 1.8 mm walls,
+// the slot is ±0.8 lengthwise (the bracket positions are checked; 0.8 covers the shrink over 160 mm) and the floor
+// under the screw head is 1.6 mm, so an M2.5 x 3-4 screw reaches the bracket (x 5 would touch the display's back).
+DSP_SLOT_Z = DSP_BOTH ? 0.4 : 0.8;  DSP_BOSS = 9.2;  DSP_FLOOR = 1.6;
 DSP_XB_Z = DSP_BOTH ? [for (z = DSP_TAB_Z) sign(z)*(abs(DSP_TAB_Z[0]) + abs(DSP_TAB_Z[1]))/2] : DSP_TAB_Z;   // [80, -80]
 TAB_Y = GLASS_Y3 + DSP_PANEL + DSP_TAB3[2];  // 11.65: back face of the tabs
 PRELOAD = 0.2;                            // the frame bosses press the display 0.2 mm onto the lip (v12; v2-v11: the glass land)
@@ -670,6 +791,12 @@ module ring3() {
         ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
         translate([-7.4, PT - 2, LENS_Z - 8]) cube([14.8, 4, 16]);       // clear of the camera shroud
     }
+    // v18: wedge on the inner flange, down onto the reflector pocket's floor, with a lip over strip 3's front edge
+    // (prints: the ring lies face down, so every face of it looks up or is steeper than 45 deg)
+    difference() {
+        union() { sweep3(W3_WEDGE); sweep3(W3_NOSE); }
+        ext_y(0, 20) { cam_keep2d(); translate([CAM_KEEP[0] - 0.01, RING_Z1 - CAM_KEEP[1]]) square([W3_CLIP[0][0] + 1.5, 2*CAM_KEEP[1]]); }
+    }
 }
 // v6 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v5_skitse_snaplaase-front.png):
 // the light-ring slot leaves the inner plate (window + logo) hanging on the bridge at the camera only.
@@ -730,11 +857,22 @@ module frame3() {
             difference() {
                 union() {
                     // the last step runs into the floor, so the reflector is one piece with the frame (v2 left a 0.24 mm gap)
-                    for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - 0.01]) ext_y(y, min(y + REFL_STEP, FLOOR3) + 0.01) ring_band2d(-FL3, refl_r(min(y + REFL_STEP, FLOOR3)));
+                    difference() {   // v18: pocket for white strip 3 in the front of the reflector
+                        difference() {   // v18: one smooth slope (v2-v17: 0.5 mm stairs)
+                            union() { rfill(REFL[0][0], REFL[1][0], REFL[0][1], REFL[1][1]); ext_y(REFL[1][0] - 0.01, FLOOR3 + 0.01) offset(r = REFL[1][1]) ring_centre2d(); }
+                            ext_y(REFL[0][0] - 1, FLOOR3 + 1) offset(r = -FL3) ring_centre2d();
+                        }
+                        sweep3(W3_POCKET);
+                    }
+                    sweep3(W3_LIP);
                     ext_y(REFL[0][0], CH_BACK + 0.01) ring_band2d(STRIP_T3[1], FL3);
                     ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
+                    // v18: lanes: a step in front of white 1, a stem + forward lip behind white 1 and white 2
+                    ext_y(REFL[0][0], REFL[0][0] + 0.4) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01);
+                    for (y = LANE_STEMS) { ext_y(y, y + 0.6) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01); ext_y(y - 1.1, y + 0.01) ring_band2d(LANE_LIP[0], LANE_LIP[1]); }
                 }
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
+                w3_clip_box(0.4);
                 for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
                     cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);       // room for the clips
             }
@@ -743,15 +881,18 @@ module frame3() {
             // in v2 they were loose pieces in the print
             for (z = DSP_XB_Z) ext_y(XB3_Y, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF - 0.4), 16], center = true);
             for (z = DSP_XB_Z) ext_y(CH_BACK, FR_BACK) translate([0, GC + z]) square([2*(RING_X - CH_HALF + 1), 16], center = true);
-            for (t = tabs2) hull() for (z = [t[1], t[2]]) cyl_y(7, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0], z);
+            for (t = tabs2) hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(DSP_BOSS, TAB_Y - PRELOAD, XB3_Y + 0.01, t[0] + dx, z + dz);
             // tubes that press the camera board onto its pegs
             for (h = CAM_HOLES_ROT) cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2], CH_BACK + 0.01, h[0], LENS_Z + h[1]);
             snap_arms();
         }
         snap_slots();
+        // v18: the RGB lane ends 0.4 short of the frame plate, so its clip (6.8 wide) runs 0.5 into the plate: room for it there too
+        for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
+            cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);
         for (t = tabs2) {
-            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [-0.4, 0.4] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
-            hull() for (z = [t[1], t[2]], dz = DSP_BOTH ? [0] : [-2.4, 2.4], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + 2.0, FR_BACK + 1, t[0] + dx, z + dz);   // head 2 mm above the tab
+            hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
+            hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + DSP_FLOOR - PRELOAD, FR_BACK + 1, t[0] + dx, z + dz);   // screw head well
         }
         for (h = CAM_HOLES_ROT) cyl_y(2.4, CAM_PCB_Y, CAM_PCB_Y + CAM_PCB[2] + 2, h[0], LENS_Z + h[1]);
         // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),
@@ -759,16 +900,31 @@ module frame3() {
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
+        cyl_y(4, P3(W3_CLIP[1], 0)[0], FR_BACK + 1, STRIP_LEAD_X + 1.5, RING_Z1 - 4.5);           // v18: strip 3's lead, back through the reflector
     }
 }
 // 90 deg countersink, wide end (d1) at y0, narrowing towards -y to d2: for a screw driven in from the back
 module csk_y(d1, d2, y0, x, z) translate([x, y0 + 0.01, z]) rotate([90, 0, 0]) cylinder(d1 = d1, d2 = d2, h = (d1 - d2)/2 + 0.01, $fn = 32);
 module strip_cut2d(s) translate([-s[4], RING_Z1 - CAM_KEEP[1]]) square([s[4] + s[5], 2*CAM_KEEP[1]]);
-module placed_strips3(kind) for (s = STRIPS3) if (s[2] == kind)
-    ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
+module placed_strips3(kind) {
+    // white: T_EDGE thin board full width, full thickness only over the 3.7 yellow stripe (+0.5 each side for the COB dome)
+    for (s = STRIPS3) if (s[2] == kind)
+        ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[1] - (kind == "w" ? T_EDGE : s[3]), STRIP_T3[1]); strip_cut2d(s); }
+    for (s = STRIPS3) if (s[2] == kind && kind == "w")
+        ext_y(s[0] + (s[1] - s[0] - 4.7)/2, s[1] - (s[1] - s[0] - 4.7)/2) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
+    if (kind == "w") difference() {   // v18: strip 3 in the reflector, clip on the right
+        let(c = (W3[0] + W3[1])/2) union() {
+            sweep3([P3(W3[0], W3[3] - T_EDGE), P3(W3[1], W3[3] - T_EDGE), P3(W3[1], W3[3]), P3(W3[0], W3[3])]);
+            sweep3([P3(c - 2.35, W3[2]), P3(c + 2.35, W3[2]), P3(c + 2.35, W3[3]), P3(c - 2.35, W3[3])]);
+        }
+        ext_y(0, 20) strip_cut2d([0, 0, 0, 0, 34, 17]);
+    }
+}
 // clip connectors on the strip ends (on the top run, next to the camera); cable leaves towards the camera
-module placed_clips3() for (c = CLIPS3)
-    translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2]) cube([c[2][0], c[2][1], c[2][2]], center = true);
+module placed_clips3() {
+    for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2]) cube([c[2][0], c[2][1], c[2][2]], center = true);
+    w3_clip_box(0);   // v18: strip 3, 1.6 proud of the reflector
+}
 module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
@@ -889,11 +1045,12 @@ if (VIEW == "c_fan")        translate([0, PI_Y3, GC + DSP_PI_DZ]) translate([0, 
     for (a = [0:30:330]) rotate([0, 0, a]) translate([6, -1, 0]) cube([10.5, 2, 1.6]);
 }
 if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
-if (VIEW == "c_wled")      translate([WLED_P[0], D - BACK_T - 1.2 - WLED[2], WLED_P[1]]) cube([WLED[0], WLED[2], WLED[1]]);
+if (VIEW == "c_wled")      placed_wled();
+if (VIEW == "x_wled_holder") intersection() { shell3(); wled_frame() translate([-10, -15, -5]) cube([WLED_B[0] + 20, WLED_B[1] + 30, 40]); }
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
 if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [6, 2.3], j[0], FR_BACK + 2, j[1], -1);
-if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 5, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + 2.0, GC + z, -1);
+if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 4, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + DSP_FLOOR - PRELOAD, GC + z, -1);   // v16: M2.5 x 4, head on the 1.6 mm floor
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
 if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
 if (VIEW == "p_frame3")    translate([0, 0, FR_BACK]) rotate([-90, 0, 0]) frame3();      // flat back down

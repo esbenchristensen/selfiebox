@@ -45,7 +45,7 @@ CORNER = ((-200, -200), (-46, -88))
 #           "+m" = up to the top of the listed nodes in print orientation + m mm
 COUPONS = [
     ("stroem-ledstyring", ["skal"], ["stroem", "ledstyring"], 8, "+6",
-     "5 V-forsyningen og WLED-styringen klikkes i deres bakker. Sidder de fast, også når stykket vendes?"),
+     "5 V-forsyningen og WLED-styringen klikkes i deres bakker. v17: WLED-styringen med udgangen opad; går den ned, klikker kanterne over låget, og står den fast på langs mellem de 2 stop ved armspidserne? Sidder begge fast, også når stykket vendes?"),
     ("daemper", ["skal"], ["daemper"], 8, "+6",
      "Dæmperen (DFR0457) i bakken på venstre væg. Er der plads til skrueklemmen?"),
     ("stroemindgang", ["skal"], ["stik"], 8, "+6",
@@ -65,7 +65,12 @@ COUPONS = [
      "kablet fladt ud bagtil (tilvalg)."),
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
      "Kameraet på frontens tappe, linsen midt i hullet, bagrammens rør trykker printet ned, "
-     "kamerakablet gennem slidsen og de tre klikstik i deres lommer. Front og bagramme lægges sammen."),
+     "kamerakablet gennem slidsen og de fire klikstik i deres lommer (v18: hvid 3's stik i reflektoren til højre). Front og bagramme lægges sammen."),
+    ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
+     "v18: lyskanalen uden klister, nederste venstre hjørne med ca. 10 cm strip-bane. Hvid 1 og 2: bagkanten ind under læben, "
+     "forkanten trykkes ned mod væggen. RGB i den tætte bane bagerst. Hvid 3 i lommen i den skrå reflektor, bagkanten ind under "
+     "læben. Læg lysringens stykke i, og pres bagrammen på: trykker ringens kile forkanten af hvid 3 ned? Kør en finger langs alle "
+     "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
      "(3,0 × 15) skruet i bagfra. Er skyggefugen mellem skal og front jævn?"),
@@ -74,8 +79,9 @@ COUPONS = [
      "Klikker begge arme, kan de vippes fri med en lille skruetrækker, og ligger fjedertåen ned på et stykke glas "
      "eller plastik (1,1 mm) i frontens skærmlomme?"),
     ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
-     "v14: bagrammens nederste tværbjælke med begge skærmhuller (3,5 mm på tværs). Læg den på skærmens bagside og "
-     "skru begge M2,5-skruer i de to nederste beslag. Går begge i uden at skulle tvinges?"),
+     "v16: bagrammens nederste tværbjælke med de 2 nederste skruetårne (hele tårne, 1,6 mm bund, hul 3,5 mm på tværs). "
+     "Læg den på skærmens bagside: står begge tårne ned på beslagene? Skru en M2,5 × 3-4 mm i hvert med en PH0/PH1. "
+     "Går begge i uden at skulle tvinges, og tager de fat?"),
     ("skaerm-lysring", ["front"], None, 0, 7.0,
      "De nederste 7 mm af fronten: den 1,6 mm tynde kant foran skærmen, rillen med skumbåndet, skærmglasset mellem "
      "de 8 ribber, lysringen i slidsen (skyggefuge 0,15 mm) og kamerahullet. Klæb båndet i rillen, læg skærmen i og "

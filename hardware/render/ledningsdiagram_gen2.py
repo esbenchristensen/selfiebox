@@ -1,7 +1,7 @@
 """Ledningsdiagram for Halo gen 2. Usage: python3 hardware/render/ledningsdiagram_gen2.py out.svg [halo-gen2-vN]"""
 import sys
 VER = sys.argv[2] if len(sys.argv) > 2 else "halo-gen2-v3"
-W, H = 1800, 1270
+W, H = 1800, 1360
 C = dict(v24="#d62828", v5="#e67700", gnd="#222222", sig="#1c7ed6", data="#9c36b5", sw="#868e96")
 out = []
 def box(x, y, w, h, title, sub="", fill="#f5f5f4"):
@@ -73,16 +73,20 @@ wire([(618, w2[2]), (680, w2[2]), (680, 720), (840, 720)], C["gnd"]); lab(830, 7
 wire([(1440, 300), (1170, 300), (1170, 700), (1140, 700)], C["sig"], 3)
 wire([(1440, 330), (1185, 330), (1185, 760), (1140, 760)], C["sig"], 3)
 lab(1195, 700, "GPIO18 (ben 12) → signal, 20 kHz", C["sig"]); lab(1195, 760, "3V3 (ben 1) → VCC · GND (ben 14) → GND", C["sig"])
-w5 = wago(960, 880, 3, "W5 · hvid − ", C["sw"], (1030, 905, "start"))
+w5 = wago(960, 880, 4, "W5 · hvid − ", C["sw"], (1030, 905, "start"))
 wire([(990, 800), (990, 860), (940, 860), (940, w5[0]), (960, w5[0])], C["sw"]); lab(1000, 845, "OUT−", "#555")
-box(1100, 1040, 300, 110, "Hvid strip 1 og 2", "Ledproff COB Ra95 24 V, 8 mm|klikstik, 0,35 mm²", fill="#fffbe6")
+box(1100, 1040, 300, 190, "Hvid strip 1, 2 og 3", "Ledproff COB Ra95 24 V, 8 mm|klikstik, 0,35 mm²|(3 fra v18: i reflektoren)", fill="#fffbe6")
 wire([(1018, w5[1]), (1180, w5[1]), (1180, 1040)], C["sw"]); lab(1190, w5[1]-6, "strip 1 −", "#555")
 wire([(1018, w5[2]), (1140, w5[2]), (1140, 1040)], C["sw"]); lab(1150, w5[2]+18, "strip 2 −", "#555")
+wire([(1018, w5[3]), (1110, w5[3]), (1110, 1040)], C["sw"]); lab(1040, w5[3]+30, "strip 3 −", "#555")
 wire([(618, w1[3]), (640, w1[3]), (640, 1080), (1100, 1080)], C["v24"]); lab(660, 1074, "strip 1 + (direkte fra W1)", C["v24"])
-wire([(618, w1[4]), (620, w1[4]), (620, 1110), (1100, 1110)], C["v24"]); lab(660, 1104, "strip 2 + (direkte fra W1)", C["v24"])
+w6 = wago(880, 1120, 3, "W6 · hvid + ", C["v24"], (870, 1215, "end"))
+wire([(618, w1[4]), (600, w1[4]), (600, 1250), (860, 1250), (860, w6[0]), (880, w6[0])], C["v24"]); lab(610, 1244, "fra W1", C["v24"])
+wire([(938, w6[1]), (1100, w6[1])], C["v24"]); lab(950, w6[1]-6, "strip 2 +", C["v24"])
+wire([(938, w6[2]), (1100, w6[2])], C["v24"]); lab(950, w6[2]-6, "strip 3 +", C["v24"])
 
 # legend + notes
-for i, t in enumerate(["W1 24 V +: 221-415", "W2 GND: 221-415", "W3 5 V +: 221-413", "W4 5 V GND: 221-415", "W5 hvid −: 221-413"]):
+for i, t in enumerate(["W1 24 V +: 221-415", "W2 GND: 221-415", "W3 5 V +: 221-413", "W4 5 V GND: 221-415", "W5 hvid −: 221-414", "W6 hvid +: 221-413"]):
     lab(40, 980 + i*22, t, "#333", size=15)
 lx, ly = 40, 740
 for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip −, dæmpet"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
@@ -90,6 +94,6 @@ for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælle
 for i, t in enumerate(["Skærmen får strøm fra Pi'ens ben 4 (5 V) og 6 (GND) med sit eget kabel.",
                        "Tilvalg (4G, mikrofon) går i Pi'ens USB-A; sensorer tegnes, når de kommer i boksen.",
                        "Mærkningen på dæmperen og styringen gælder: tjek den, før der tændes."]):
-    lab(40, 1190 + i*22, t, "#444", size=15)
+    lab(40, 1285 + i*22, t, "#444", size=15)
 svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="Inter, Helvetica, Arial, sans-serif">' + "".join(out) + "</svg>"
 open(sys.argv[1], "w").write(svg)
