@@ -231,6 +231,60 @@ module wall_cleat2() {
     }
 }
 
+// ------------------------------------------------------------ stand bracket ----
+// selfi-stativbeslag-v1 (Esben 22 Oct): the B2C box on the floor tripod (Sirui Traveler 5AX). The unit is not
+// changed: the bracket is the wall cleat (same bar, same lock tongue, security screw and reed magnet) without wall
+// screw holes, plus a logo panel at the top of the back, a spine and a shelf under the unit. The unit stands on
+// the shelf; the tripod screw is under the unit's centre of gravity (about y 28-32), so the ball head carries
+// no tipping moment. The shelf stays clear of the mic ports (y 18), the vent fields (|x| >= 28.75) and the
+// lock screw (x -82); the power plug goes down through a slot. Two pins in the printer-module dowel holes stop
+// the unit turning on the shelf. A steel 1/4"-20 T-nut (Einschlagmutter, flange up) sits flush in the underside:
+// the quick-release plate clamps the whole shelf against its flange, and the unit's underside closes it in.
+// Printed back face down like the wall cleat, the logo inlaid in the first layers (white + green, AMS).
+ST_SHELF = [24, 20.5, 14];          // half width, front edge (y), thickness under the unit
+ST_NUT = [0, 31];                   // tripod screw axis (x, y)
+TNUT = [8.0, 8.0, 20.0];            // [C] 1/4"-20 T-nut: barrel Ø, barrel length, flange Ø (+0.5 clearance); measure the bought part
+ST_SLOT = [8, 50];                  // power plug slot: half width, front edge (y); open to the plate
+ST_PIN = [5.8, 5];                  // pins in the Ø6.2 x 8 dowel holes: Ø, height
+ST_PANEL = [190, 58, 8, 16];        // logo panel: width, height, corner r, gap to the unit's top (bracket 304 high: fits the H2C bed)
+ST_SPINE = 60;
+ST_LOGO = 130;                      // logo width on the panel
+ST_LOGO_Z = H - ST_PANEL[3] - ST_PANEL[1]/2;
+module st_logo2d(c) mirror([1, 0]) scale(ST_LOGO/LOGO_SIZE[0]) if (c == "green") logo_green2d(); else if (c == "white") logo_white2d(); else logo_all2d();
+module st_logo(c) ext_y(D + GAP_WALL - LOGO_D, D + GAP_WALL) translate([0, ST_LOGO_Z]) st_logo2d(c);   // reads right from behind
+module stand_bracket() {
+    yb = D + GAP_WALL - PLATE_T;  yf = D + GAP_WALL;  zs = -ST_SHELF[2];
+    difference() {
+        union() {
+            // the wall cleat, holes filled by the panel and spine below
+            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); hull() { translate([0, 40]) rrc(60, 20, 6); translate([LOCK_X, LOCK_TZ[0] + 4]) rrc(LOCK_W + 8, 24, 6); } }
+            ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
+            for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
+            translate([LOCK_X - LOCK_W/2, LOCK_Y, LOCK_TZ[0]]) cube([LOCK_W, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
+            translate([LOCK_X - LOCK_W/2, yb + 0.01, LOCK_TZ[0]]) rotate([0, 90, 0]) linear_extrude(LOCK_W) polygon([[0, 0], [-(LOCK_TZ[1] - LOCK_TZ[0]), 0], [0, -6]]);
+            // logo panel and spine
+            ext_y(yb, yf) { translate([0, ST_LOGO_Z]) rrc(ST_PANEL[0], ST_PANEL[1], ST_PANEL[2]); translate([0, (zs + CLEAT_ZC)/2]) rrc(ST_SPINE, CLEAT_ZC - zs, 6); }
+            // shelf under the unit, rounded front corners
+            translate([0, 0, zs]) linear_extrude(ST_SHELF[2]) hull() {
+                for (sx = [-1, 1]) translate([sx*(ST_SHELF[0] - 6), ST_SHELF[1] + 6]) circle(r = 6, $fn = 32);
+                translate([-ST_SPINE/2, yb]) square([ST_SPINE, PLATE_T]);
+            }
+            // gussets in the 14 mm gap behind the unit, beside the plug slot
+            for (sx = [-1, 1]) translate([sx*(ST_SLOT[0] + 9) - 4, D + 0.5, -0.01]) rotate([90, 0, 90]) linear_extrude(8)
+                polygon([[0, 0], [yb - D - 0.5 + 0.01, 0], [yb - D - 0.5 + 0.01, 40]]);
+            for (p = IF_DOWEL) cyl_z(ST_PIN[0], -0.01, ST_PIN[1], p[0], p[1]);
+            for (p = IF_DOWEL) translate([p[0], p[1], ST_PIN[1] - 0.01]) cylinder(d1 = ST_PIN[0], d2 = ST_PIN[0] - 1.6, h = 0.8, $fn = 32);
+        }
+        cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
+        cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit)
+        cyl_z(TNUT[0] + 0.3, zs - 1, 1, ST_NUT[0], ST_NUT[1]);                  // T-nut barrel, flush with the underside
+        cyl_z(TNUT[2], zs + TNUT[1], 1, ST_NUT[0], ST_NUT[1]);                   // flange seat; the unit closes it
+        translate([-ST_SLOT[0], ST_SLOT[1], zs - 1]) cube([2*ST_SLOT[0], yb - ST_SLOT[1] + 0.01, ST_SHELF[2] + 2]);   // power plug
+        translate([0, ST_SLOT[1], zs - 1]) cylinder(r = ST_SLOT[0], h = ST_SHELF[2] + 2, $fn = 32);
+        ext_y(yf - LOGO_D, yf + 1) translate([0, ST_LOGO_Z]) st_logo2d("all");   // pocket for the inlay
+    }
+}
+
 // ------------------------------------------------------- weather, print only ----
 // Rain, sleet and spills from any side under a light roof, with no added parts (Esben 19 Oct):
 // no gaskets, membranes, glass or glue. The shell is one print; the one fixed seam is acetone-welded
@@ -842,6 +896,10 @@ if (VIEW == "x_core")      { placed_pi(); placed_power(); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cap")       cable_cap();
 if (VIEW == "x_cleat")     wall_cleat2();
+if (VIEW == "x_stand")     stand_bracket();
+if (VIEW == "x_stand_logo_w") st_logo("white");
+if (VIEW == "x_stand_logo_g") st_logo("green");
+if (VIEW == "x_tnut")      translate([ST_NUT[0], ST_NUT[1], -ST_SHELF[2]]) { cyl_z(TNUT[0], 0, TNUT[1] + 1.5, 0, 0); cyl_z(TNUT[2] - 0.5, TNUT[1], TNUT[1] + 1.5, 0, 0); }
 if (VIEW == "x_shell_all") shell2();
 if (VIEW == "x_mod_shell") mod_shell();
 if (VIEW == "x_lid")       lid(0);
@@ -911,6 +969,10 @@ if (VIEW == "p_diffuser") translate([0, 0, RING_PROUD]) rotate([90, 0, 0]) diffu
 if (VIEW == "p_rail")     translate([0, 0, RIB_TOP + RAIL_T]) rotate([-90, 0, 0]) led_rail2(); // back down, bumps up
 if (VIEW == "p_shell")    translate([0, 0, D]) rotate([-90, 0, 0]) shell2();              // back down
 if (VIEW == "p_cleat")    translate([0, 0, D + GAP_WALL]) rotate([-90, 0, 0]) wall_cleat2(); // wall face down
+// stand bracket: back face down (logo in the first layers), the shelf stands up
+if (VIEW == "p_stand")        translate([0, 0, D + GAP_WALL]) rotate([-90, 0, 0]) stand_bracket();
+if (VIEW == "p_stand_logo_w") translate([0, 0, D + GAP_WALL]) rotate([-90, 0, 0]) st_logo("white");
+if (VIEW == "p_stand_logo_g") translate([0, 0, D + GAP_WALL]) rotate([-90, 0, 0]) st_logo("green");
 if (VIEW == "p_cap")      cable_cap();                                                  // outer face down
 if (VIEW == "p_shell3")   translate([0, -H/2, D]) rotate([-90, 0, 0]) shell3();          // back down, centred (as the released skal.stl)
 if (VIEW == "main") main_unit();

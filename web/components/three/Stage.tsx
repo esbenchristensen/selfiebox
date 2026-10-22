@@ -116,7 +116,7 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
           <Tripod casing={shown.venue.casing} />
           <FrontLight motion={motion} />
           {shown.venue.shoot && (
-            <StandPrinter photo={shown.venue.shoot.photo} motion={motion} position={[SOCKET.x + 460, FLOOR_Y, SOCKET.z - 150]} turn={-0.35} />
+            <StandPrinter photo={shown.venue.shoot.photo} motion={motion} position={[SOCKET.x + 443.5, FLOOR_Y, SOCKET.z - 229]} turn={-0.35} />
           )}
         </group>
       </group>

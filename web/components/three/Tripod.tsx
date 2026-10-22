@@ -5,15 +5,15 @@ import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 
 // The floor stand the rental box goes out with (B2C, emballage v2): a Sirui Traveler 5AX tripod with its ball head,
-// and the printed stand bracket on top, which is the box's own wall cleat plus a foot with a 1/4"-20 nut
-// (public/models/stand_gen2.glb, made from the CAD by hardware/tools/gen2_unit.py). The box hangs on the bracket's
-// hook exactly as it hangs on the wall. The tripod is bought, so it is drawn here from its catalogue sizes.
+// and the printed stand bracket on top (selfi-stativbeslag-v1, public/models/stand_gen2.glb, made from the CAD by
+// hardware/tools/make_stativbeslag.py): the box's own wall cleat with the Selfi logo on the back and a shelf under the
+// box with a 1/4"-20 T-nut right under its centre of gravity. The tripod is bought, so it is drawn from its catalogue sizes.
 // Millimetres in unit coordinates: x across, y up from the bottom of the box, z out of the front (front at 0).
 
 useGLTF.preload("/models/stand_gen2.glb", false, true);
 
-// Underside of the bracket's nut, where the quick-release plate screws in (gen2_unit.py prints it).
-export const SOCKET = new THREE.Vector3(-16.5, 9.7, -110);
+// Underside of the bracket's shelf at the T-nut, where the quick-release plate screws in (ST_NUT in gen2_concept.scad).
+export const SOCKET = new THREE.Vector3(0, -14, -31);
 // The plate at 128 cm puts the screen's centre at about 144 cm, eye height for most guests.
 export const PLATE_HEIGHT = 1280;
 export const FLOOR_Y = SOCKET.y - PLATE_HEIGHT;
@@ -40,8 +40,8 @@ function buildTripod(metal: THREE.Material, rubber: THREE.Material, head: THREE.
     return m;
   };
 
-  // Ball head: quick-release plate, clamp, ball, base
-  const plate = new THREE.Mesh(new THREE.BoxGeometry(40, 10, 52), head);
+  // Ball head: quick-release plate (across the box, clear of the power plug behind it), clamp, ball, base
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(52, 10, 40), head);
   plate.castShadow = true;
   at(plate, top - 5);
   at(cylinder(24, 18, head), top - 19);
@@ -100,6 +100,8 @@ export function Tripod({ casing }: { casing: string }) {
       // The bracket is printed in the casing colour; the tripod is Sirui's dark titanium aluminium.
       bracket: new THREE.MeshStandardMaterial({ color: casing, roughness: 0.78, side: THREE.DoubleSide }),
       nut: new THREE.MeshStandardMaterial({ color: "#9a9ea2", roughness: 0.35, metalness: 0.9 }),
+      logo_white: new THREE.MeshStandardMaterial({ color: "#f5f5f4", roughness: 0.6 }),
+      logo_green: new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.6 }),
       metal: new THREE.MeshStandardMaterial({ color: "#3a3d40", roughness: 0.38, metalness: 0.65 }),
       head: new THREE.MeshStandardMaterial({ color: "#26282a", roughness: 0.45, metalness: 0.5 }),
       rubber: new THREE.MeshStandardMaterial({ color: "#121313", roughness: 0.92 }),
@@ -114,7 +116,8 @@ export function Tripod({ casing }: { casing: string }) {
     scene.traverse((o) => {
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
-      const copy = new THREE.Mesh(m.geometry, m.name === "nut" ? mats.nut : mats.bracket);
+      const mat = m.name === "nut" ? mats.nut : m.name === "logo_white" ? mats.logo_white : m.name === "logo_green" ? mats.logo_green : mats.bracket;
+      const copy = new THREE.Mesh(m.geometry, mat);
       copy.applyMatrix4(m.matrixWorld);
       copy.castShadow = true;
       g.add(copy);
