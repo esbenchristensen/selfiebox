@@ -1,4 +1,4 @@
-"""Line drawing halo-gen2-v17: holding the LED strips in the light channel without adhesive (proposal + alternatives)."""
+"""Line drawing halo-gen2-v18: holding the LED strips in the light channel without adhesive (proposal + alternatives)."""
 import sys
 import cairosvg
 OUT = sys.argv[1]
@@ -31,8 +31,8 @@ def garrow(p0, p1, f, sw=2.4):
     a, b = f(p0), f(p1)
     o.append(f'<path d="M{a[0]:.1f},{a[1]:.1f}L{b[0]:.1f},{b[1]:.1f}" stroke="#16a34a" stroke-width="{sw}" marker-end="url(#ag)"/>')
 
-t(60, 56, "Selfi Halo gen 2 · v17-forslag: LED-strips holdes uden klister", 26, w=700)
-t(60, 84, "Outline-skitse til godkendelse, kun hovedenheden. Bygger på v16 (gen2_concept.scad). Snit gennem lyskanalen, front til venstre, ydersiden op. Mål i mm. 22. okt. 2026", 14, "#666")
+t(60, 56, "Selfi Halo gen 2 · v18-forslag: LED-strips holdes uden klister", 26, w=700)
+t(60, 84, "Outline-skitse til godkendelse, kun hovedenheden. Bygger på v17 (gen2_concept.scad). Snit gennem lyskanalen, front til venstre, ydersiden op. Mål i mm. 22. okt. 2026", 14, "#666")
 BLK, WHT, WST, NAT, NST, NEW = "#2b2b2f", "#f4f0e6", "#8a8578", "#fffdf8", "#a39e90", "#16a34a"
 WCOB, WCS = "#fff3c4", "#b45309"
 ring = [(-0.5, -6.85), (-0.5, 6.85), (3.2, 6.85), (3.2, 8.1), (4.2, 8.1), (4.2, 5.65), (0.5, 5.65), (0.5, -5.65), (4.2, -5.65), (4.2, -8.1), (3.2, -8.1), (3.2, -6.85)]
@@ -75,14 +75,13 @@ t(700, 140, "2  Forslag A (anbefalet): kantspor i stripvæggen, ingen ekstra del
 s = 18; X0, Y0 = 740, 390
 F2 = lambda p: (X0 + p[0] * s, Y0 - p[1] * s)
 FL = 27.4
-refl2 = [(4.2, -8.1), (4.2, -6.0), (26.45, 4.4), (26.85, 4.4), (27.0, 4.6), (FL, 4.6), (FL, -8.1)]
+refl2 = [(4.2, -8.1), (4.2, -6.0), (26.45, 4.4), (FL, 4.4), (FL, -8.1)]
 channel(F2, FL, refl2)
 def stem(y0, col_fill=WHT):   # stem 0.6 wide, lip forward over the strip in front of it
-    pts = [(y0, 6.9), (y0 + 0.6, 6.9), (y0 + 0.6, 4.35), (y0 - 0.4, 4.35), (y0 - 0.55, 4.55), (y0 - 0.4, 4.8), (y0, 4.8)]
+    pts = [(y0, 6.9), (y0 + 0.6, 6.9), (y0 + 0.6, 4.35), (y0 - 1.1, 4.35), (y0 - 1.25, 4.55), (y0 - 1.1, 4.8), (y0, 4.8)]
     poly(pts, F2, col_fill, NEW, 1.6)
 rect(4.2, 4.6, 4.5, 6.9, F2, WHT, NEW, 1.6)                                    # front step
 stem(12.8); stem(21.6)
-poly([(26.45, 4.4), (26.85, 4.4), (27.0, 4.6), (FL, 4.6), (FL, 4.4)], F2, WHT, NEW, 1.6)
 rect(4.7, 12.7, 4.9, 6.9, F2, WCOB, WCS, 1.5); rect(13.5, 21.5, 4.9, 6.9, F2, WCOB, WCS, 1.5)
 rect(22.3, 27.3, 4.7, 6.9, F2, "url(#rgb)", "#334155", 1.4)
 rays(F2, (6.5, 10.5, 15, 19, 24), 4.8)
@@ -95,37 +94,38 @@ LX, LY = X0 + 32 * s + 20, 190
 rows = [((4.4, 5.6), "Forkant: lille trin", NEW),
         ((12.45, 4.5), "Kantspor 1: læbe over bagkant på hvid 1", NEW),
         ((21.25, 4.5), "Kantspor 2: læbe over bagkant på hvid 2", NEW),
-        ((27.1, 4.5), "Reflektorens bagkant = spor for RGB", NEW),
+        ((25.0, 4.3), "RGB: tæt bane 5,0 under reflektoren, intet over lyset", NEW),
         ((8.7, 5.9), "Hvid COB 8 mm (1)", WCS), ((17.5, 5.9), "Hvid COB 8 mm (2)", WCS), ((24.8, 5.8), "RGB 5 mm", "#7c3aed"),
         ((27.55, 0), "Kanalbund 0,95 mm dybere", "#2563eb"),
         ((14, -2.0), "Reflektor uændret", WST)]
 for i, (p, s_, c) in enumerate(rows): lead(F2, p, LX, LY + 30 * i, s_, c)
 notes = ["Hver strip får sin egen bane. Bagkanten skubbes ind under en læbe, forkanten trykkes ned mod stripvæggen.",
          "Læberne peger alle fremad, så de står på laget under når bagrammen printes med bagsiden ned (ingen support).",
-         "Læben rører kun de yderste 0,3 mm af printpladen, uden for lysfladen: den skygger ikke.",
+         "Hvid: læben griber 1,0 mm ind over kanten, lyset starter først 2,2 mm inde (målt), så den skygger ikke.",
          "Strippen kan altid skubbes frem og tilbage i sin bane og tages ud igen. Intet klister, intet ekstra at købe.",
-         "Inde i hjørnerne vil en strip helst ligge yderst (mod væggen), så sporet skal mest holde den på de lige stykker.",
+         "RGB lyser i hele bredden, så den får ingen læbe: den sidder tæt mellem trin og bund, med reflektoren 0,3 mm over.",
          "Plads: banerne + 2 trin kræver 0,95 mm mere dybde. Bunden flyttes bagud; fronten, skallen og reflektorvinklen er uændrede."]
 for i, n in enumerate(notes): t(700, 660 + 22 * i, n, 13, "#444")
 
 # ---------- 3: detail ----------
 box(40, 650, 620, 400)
 t(60, 680, "3  Detalje: kantspor mellem hvid 1 og hvid 2 (ca. 6:1)", 18, w=600)
-s = 55; X0, Y0 = 130 - 10.6 * 55, 712 + 8.3 * 55
+s = 52; X0, Y0 = 120 - 9.6 * 52, 712 + 8.3 * 52
 F3 = lambda p: (X0 + p[0] * s, Y0 - p[1] * s)
 o.append('<clipPath id="c3"><rect x="60" y="695" width="580" height="340"/></clipPath><g clip-path="url(#c3)">')
-rect(10.6, 16.0, 6.9, 8.1, F3, WHT, WST)
-rect(10.6, 12.7, 4.9, 6.9, F3, WCOB, WCS, 2); rect(13.5, 16.0, 4.9, 6.9, F3, WCOB, WCS, 2)
-rect(10.6, 12.7, 4.9, 5.2, F3, "#fde68a", "none", 0, 0.9); rect(13.5, 16.0, 4.9, 5.2, F3, "#fde68a", "none", 0, 0.9)
-poly([(12.8, 6.9), (13.4, 6.9), (13.4, 4.35), (12.4, 4.35), (12.25, 4.55), (12.4, 4.8), (12.8, 4.8)], F3, WHT, NEW, 2.2)
+rect(9.6, 16.4, 6.9, 8.1, F3, WHT, WST)
+rect(9.6, 12.7, 4.9, 6.9, F3, WCOB, WCS, 2); rect(13.5, 16.4, 4.9, 6.9, F3, WCOB, WCS, 2)
+rect(9.6, 10.55, 4.9, 5.2, F3, "#f59e0b", "none", 0, 0.9); rect(15.65, 16.4, 4.9, 5.2, F3, "#f59e0b", "none", 0, 0.9)
+poly([(12.8, 6.9), (13.4, 6.9), (13.4, 4.35), (11.7, 4.35), (11.55, 4.55), (11.7, 4.8), (12.8, 4.8)], F3, WHT, NEW, 2.2)
 o.append('</g>')
-dim((12.4, 4.0), (12.7, 4.0), F3, "0,3", (-14, 18))
-dim((12.8, 4.0), (13.4, 4.0), F3, "0,6", (14, 18))
+dim((11.7, 4.0), (12.7, 4.0), F3, "1,0", (0, 18))
+dim((12.8, 4.0), (13.4, 4.0), F3, "0,6", (6, 18))
+dim((10.55, 3.6), (12.7, 3.6), F3, "2,2 uden lys", (0, -6), "#b45309")
 dim((13.4, 8.25), (13.5, 8.25), F3, "0,1", (22, 5))
-dim((15.2, 4.35), (15.2, 4.9), F3, "", (0, 0))
-t(F3((15.2, 4.6))[0] + 10, F3((15.2, 4.6))[1] + 5, "0,1 luft over strippen", 13, "#2563eb", 600)
-t(70, 990, "Spor: bagkant ind under læben (0,3 mm over printpladens kant). Lysfladen (gul) er fri.", 13, "#444")
-t(70, 1020, "Skal måles på en rigtig strip: hvor langt fra kanten den gule COB-flade starter (forventet ≥ 0,5).", 13, "#b45309", 600)
+dim((14.6, 4.35), (14.6, 4.9), F3, "", (0, 0))
+t(F3((14.6, 4.6))[0] + 10, F3((14.6, 4.6))[1] + 5, "0,1 luft over strippen", 13, "#2563eb", 600)
+t(70, 1000, "Spor: bagkant ind under læben (1,0 mm). Den gule stribe (lysfladen, 3,7 af 8,1) er fri.", 13, "#444")
+t(70, 1024, "Målt af Esben 22. okt.: hvid 8,1 bred, gul stribe 3,7 i midten. RGB lyser i hele bredden.", 13, "#b45309", 600)
 
 # ---------- 4: assembly ----------
 box(680, 820, 1080, 230)
@@ -186,10 +186,10 @@ alt(1240, "D  Fjedertunger fra reflektoren", "Del af bagrammen, trykker strips u
     ["Ingen ekstra dele"],
     ["Tungerne sidder midt i lyset: skygge", "Står i vejen når strips skal på (som i dag)", "Tynde tunger i ASA knækker let", "Kan ikke printes uden support (peger bagud)"], fins)
 
-t(60, 1800, "Anbefaling: A. Ingen ekstra dele, intet klister, ingen skygge, strips kan rettes til og udskiftes. Kun bagrammen ændres (v17).", 16, NEW, 700)
+t(60, 1800, "Anbefaling: A. Ingen ekstra dele, intet klister, ingen skygge, strips kan rettes til og udskiftes. Kun bagrammen ændres (v18).", 16, NEW, 700)
 t(60, 1828, "Før helprint: et kort prøvestykke af stripvæggen (ca. 60 mm, med et hjørne) i hurtigsættet, så vi kan prøve en rigtig strip i banen.", 14, "#444")
 t(60, 1852, "Varme: banen og læberne er hvid ASA som i dag (tåler ca. 95 °C). Strippen ligger direkte på væggen i stedet for på tape, så varmen går lige så godt væk.", 14, "#444")
-t(60, 1876, "Åbne spørgsmål: hvor bred er den ikke-lysende kant på jeres 8 mm COB og RGB-strip? Og skal B (din kam) tegnes videre i stedet?", 14, "#b45309", 600)
+t(60, 1876, "Hvis RGB alligevel rasler i prøvestykket: en 0,3 mm læbe på RGB tager ca. 6 % af dens bredde (effektlys, ikke fotolys).", 14, "#b45309", 600)
 
 svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" font-family="Inter, DejaVu Sans, sans-serif"><rect width="{W}" height="{H}" fill="#fffdf8"/>' + "".join(o) + "</svg>"
 cairosvg.svg2png(bytestring=svg.encode(), write_to=OUT)
