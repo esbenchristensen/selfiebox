@@ -30,7 +30,8 @@ export type ToolContext = {
 };
 
 const MAX_VERIFY = 5;
-const MAX_CODE_SENDS = 3;
+const MAX_CODE_SENDS = 3; // per chat
+const MAX_CODES_PER_PHONE_HOUR = 3; // per number across all chats, so new chats cannot be used to spam someone
 const CODE_MINUTES = 10;
 const PROPOSAL_MINUTES = 60;
 const CANCEL_DAYS = 14; // same as /lejebetingelser
@@ -305,9 +306,15 @@ async function sendSmsCode(ctx: ToolContext): Promise<Result> {
   if (prev && prev.sends >= MAX_CODE_SENDS) return { ok: false, message: "Der er sendt koder for mange gange i denne chat. Eskalér, så en kollega kan hjælpe." };
   if (prev && ctx.now.getTime() - prev.sentAt.getTime() < 60_000) return { ok: false, message: "Der blev sendt en kode for under et minut siden. Bed kunden vente lidt og tjekke sine beskeder." };
   const to = normalizePhone(chat.contact.phone);
+  const codeLog = ctx.d.collection<{ phone: string; chatId: string; at: Date; expiresAt: Date }>("support_sms_codes");
+  await codeLog.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch(() => undefined);
+  if ((await codeLog.countDocuments({ phone: to, at: { $gt: new Date(ctx.now.getTime() - 3600_000) } })) >= MAX_CODES_PER_PHONE_HOUR) {
+    return { ok: false, message: "Der er sendt for mange koder til det nummer den sidste time. Bed kunden skrive ordrenummeret i stedet, prøve igen senere, eller eskalér." };
+  }
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
   const sent = await (ctx.codeSms ?? (async () => false))(to, `Din kode til Selfis chat er ${code}. Den gælder i ${CODE_MINUTES} minutter. Skriv den kun i chatten på selfi.dk.`);
   if (!sent) return { ok: false, message: "SMS'en kunne ikke sendes lige nu. Bed om bookingnummeret i stedet, eller eskalér." };
+  await codeLog.insertOne({ phone: to, chatId: chat._id, at: ctx.now, expiresAt: new Date(ctx.now.getTime() + 86400_000) });
   const smsCode = { hash: hashCode(chat._id, code), to, sentAt: ctx.now, expiresAt: new Date(ctx.now.getTime() + CODE_MINUTES * 60_000), sends: (prev?.sends ?? 0) + 1, attempts: 0 };
   await setChat(ctx, { smsCode });
   await audit(ctx.d, { chatId: chat._id, actor: "ai", actorName: "Sif", action: "sms_code_sent", bookingId: null, note: `Kode sendt til …${to.slice(-4)} (${smsCode.sends} af ${MAX_CODE_SENDS})` });

@@ -450,3 +450,53 @@ export async function generateDraft(d: Db, id: string): Promise<void> {
     await leads.updateOne({ _id: id }, { $set: { "draft.status": "failed", "draft.site": siteInfo, "draft.error": `Udkastet kunne ikke skrives automatisk (${(e as Error).message.slice(0, 120)}). Skriv det selv.` } });
   }
 }
+
+// ---------- "Book en snak" and questions from private parties ----------
+
+export type ContactRequest = { type: "erhverv" | "privat"; topic: string; name: string; email: string; phone: string; place: string; message: string };
+
+/**
+ * The contact form (components/Contact.tsx). From a place it goes on the lead list (matched on the place's
+ * name, id "web-<navn>") with the request in `requests`; from a private party it is kept in contact_requests.
+ * Either way Selfi gets an SMS and a mail. Never throws on the notices; the request is saved first.
+ */
+export async function saveContactRequest(d: Db, r: ContactRequest, ip: string, now = new Date()): Promise<string> {
+  const phone = r.phone ? normalizePhone(r.phone) : "";
+  let id: string;
+  if (r.type === "erhverv") {
+    id = `web-${slug(r.place || r.name) || randomUUID().slice(0, 8)}`;
+    const inbound: LeadInbound = { at: now, source: "form", page: `/erhverv#kontakt${r.topic ? ` (${r.topic})` : ""}`, company: r.place, website: "", industry: "", locations: "", message: r.message ? `Book en snak: ${r.message}` : "Book en snak", contact: { name: r.name, email: r.email, phone }, ip };
+    await d.collection<LeadDoc>("leads").updateOne(
+      { _id: id },
+      {
+        $set: { updated_at: now },
+        $push: { requests: inbound },
+        $setOnInsert: { name: r.place || r.name, category: "Fra hjemmesiden", city: "", region: "Hjemmesiden", website: "", status: "new", source: "web", priority: 9, fit: 0, yes: 0, value: 0, visitors: 0, season: "", theme: "", why: "", units: { low: 1, high: 1, realistic: 1 }, inbound },
+      },
+      { upsert: true },
+    );
+  } else {
+    id = randomUUID();
+    await d.collection("contact_requests").insertOne({ _id: id as never, ...r, phone, ip, at: now });
+  }
+  const what = r.type === "erhverv" ? `vil booke en snak (${r.place || "sted ikke oplyst"})` : `har et spørgsmål til en privat fest${r.place ? ` (${r.place})` : ""}`;
+  const to = process.env.LEADS_MAIL_TO || company.email || "";
+  await Promise.all([
+    sendSms(process.env.LEADS_SMS_TO || process.env.SUPPORT_SMS_TO || "", `Selfi: ${r.name} ${what}. ${r.email}${phone ? `, ${phone}` : ""}${r.type === "erhverv" ? ` ${admin()}/admin/leads?id=${encodeURIComponent(id)}` : ""}`),
+    to
+      ? resend(to, {
+          subject: `${r.name} ${what}`,
+          preheader: r.message.slice(0, 120) || "Fra kontaktformularen på selfi.dk",
+          label: r.type === "erhverv" ? "BOOK EN SNAK" : "SPØRGSMÅL",
+          heading: `${r.name} ${what}`,
+          blocks: [
+            { type: "summary", label: "KONTAKT", rows: [["Navn", r.name], ["E-mail", r.email], ["Telefon", phone || "–"], [r.type === "erhverv" ? "Sted" : "Fest", r.place || "–"]] },
+            ...(r.message ? [{ type: "note" as const, label: "BESKED", text: r.message }] : []),
+            ...(r.type === "erhverv" ? [{ type: "button" as const, label: "Åbn leadet i admin", href: `${admin()}/admin/leads?id=${encodeURIComponent(id)}` }] : []),
+          ],
+          reason: "Intern besked fra selfi.dk.",
+        }, "contact_internal")
+      : Promise.resolve(false),
+  ]).catch((e) => console.error("contact notice", e));
+  return id;
+}
