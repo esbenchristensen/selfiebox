@@ -62,7 +62,7 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
   }
   if (chat.lead) lines.push(`Kunden har allerede bestilt et designudkast i denne chat (lead ${chat.lead.id}). Bestil ikke igen, medmindre det er til et andet sted.`);
   if (chat.status === "waiting_human" && chat.escalation) {
-    lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så Esben får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
+    lines.push(`Sagen er sendt videre til en kollega kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}), som svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så kollegaen får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
   }
   if (chat.pendingChange) {
     const c = chat.pendingChange;

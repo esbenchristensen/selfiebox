@@ -22,8 +22,9 @@ const NEW_CHATS_PER_HOUR = 20;
 
 const SHOWN: SupportMessageDoc["role"][] = ["customer", "assistant", "human", "system"];
 
+// A colleague's name never leaves the server: the widget shows "Kollega fra Selfi".
 function pub(m: SupportMessageDoc) {
-  return { seq: m.seq, role: m.role, text: m.text, at: m.at.toISOString(), name: m.name ?? null, sources: m.sources ?? null };
+  return { seq: m.seq, role: m.role, text: m.text, at: m.at.toISOString(), name: m.role === "human" ? null : m.name ?? null, sources: m.sources ?? null };
 }
 
 export async function GET(req: Request) {

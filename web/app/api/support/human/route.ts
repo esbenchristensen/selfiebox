@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   if (chat.status === "open") {
     const now = new Date();
     const result = await escalateByCustomer({ d, chat, settings: await getSettings(d), today: todayDK(), now, sms: sendSupportSms, adminUrl: (process.env.ADMIN_URL || "https://admin.selfi.dk").replace(/\/$/, ""), setupUrl: process.env.SELFI_SETUP_URL ?? "https://foto.selfi.dk/opsaet" });
-    await addMessage(d, chat, { role: "assistant", name: "Sif", text: `Selvfølgelig. Jeg har givet Esben besked, og han skriver til dig her i chatten ${result.replyBy as string}. Du kan lade siden være åben, eller kigge forbi igen senere, så ligger svaret her.` });
+    await addMessage(d, chat, { role: "assistant", name: "Sif", text: `Selvfølgelig. Jeg har givet en kollega besked, som skriver til dig her i chatten ${result.replyBy as string}. Du kan lade siden være åben, eller kigge forbi igen senere, så ligger svaret her.` });
   }
   const { chats } = await supportCollections(d);
   const fresh = (await chats.findOne({ _id: chat._id })) ?? chat;

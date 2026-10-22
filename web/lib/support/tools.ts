@@ -58,7 +58,7 @@ export const TOOL_LABELS: Record<string, string> = {
   check_availability: "Tjekker ledige datoer…",
   propose_date_change: "Regner på de nye datoer…",
   commit_date_change: "Flytter bookingen…",
-  escalate: "Sender videre til Esben…",
+  escalate: "Sender videre til en kollega…",
   web_search: "Søger på nettet…",
 };
 
@@ -141,7 +141,7 @@ export const TOOL_DEFINITIONS = [
   {
     type: "function" as const,
     name: "escalate",
-    description: "Sender sagen til et menneske (Esben) med SMS og markerer chatten. Brug ved ønske om et menneske, utilfredshed, klager, penge (refusion, erstatning, kompensation, skade, tyveri), jura, ændringer du ikke selv må lave, låst verificering, akutte problemer med boksen under en fest, tilbud til steder, og når du ikke kan svare sikkert. Svarer med, hvornår kunden kan forvente svar.",
+    description: "Sender sagen til et menneske (en kollega hos Selfi) med SMS og markerer chatten. Brug ved ønske om et menneske, utilfredshed, klager, penge (refusion, erstatning, kompensation, skade, tyveri), jura, ændringer du ikke selv må lave, låst verificering, akutte problemer med boksen under en fest, tilbud til steder, og når du ikke kan svare sikkert. Svarer med, hvornår kunden kan forvente svar.",
     strict: true,
     parameters: obj(
       {
@@ -420,7 +420,7 @@ async function proposeDateChange(ctx: ToolContext, a: { bookingNo: string; from:
   }
   const range: Range = { from: a.from, to: a.to };
   if (nights(range) !== r.days) {
-    return { ok: false, reason: "different_length", message: `Bookingen er på ${r.days} ${r.days === 1 ? "dag" : "dage"}, men de nye datoer er ${nights(range)}. Et andet antal dage ændrer prisen og skal aftales med Esben: eskalér med de ønskede datoer.` };
+    return { ok: false, reason: "different_length", message: `Bookingen er på ${r.days} ${r.days === 1 ? "dag" : "dage"}, men de nye datoer er ${nights(range)}. Et andet antal dage ændrer prisen og skal aftales med en kollega: eskalér med de ønskede datoer.` };
   }
   if (a.from === r.from && a.to === r.to) return { ok: false, message: "Det er de datoer, bookingen allerede har." };
   const { holds, blocks } = await holdsExcluding(ctx.d, range.from, r._id);
@@ -489,8 +489,8 @@ async function escalate(ctx: ToolContext, a: { reason: string; summary: string; 
   const escalation = { at: ctx.now, reason: a.reason, summary, urgent, smsSent, by, replyBy: promise.text };
   await setChat(ctx, { escalation, status: chat.status === "human" ? "human" : "waiting_human", unread: chat.unread + 1 });
   await audit(ctx.d, { chatId: chat._id, actor: by, actorName: by === "ai" ? "Sif" : chat.customer?.name ?? "kunde", action: "escalate", bookingId: chat.customer?.bookings[0] ?? null, note: `${a.reason}${urgent ? " (akut)" : ""}: ${summary}. SMS ${smsSent ? "sendt" : "ikke sendt"}` });
-  await addMessage(ctx.d, chat, { role: "system", text: `Sendt videre til Esben${urgent ? " som akut" : ""}. Han svarer ${promise.text}.`, tool: { name: "escalate", label: "Sendt til Esben", ok: smsSent } });
-  return { ok: true, replyBy: promise.text, open: isOpen(ctx.now), hours: hoursText(), smsSent, message: `Sig til kunden, at Esben tager over og svarer her i chatten ${promise.text}.${urgent && !phone ? " Bed om et telefonnummer." : ""}` };
+  await addMessage(ctx.d, chat, { role: "system", text: `Sendt videre til en kollega${urgent ? " som akut" : ""}, som svarer ${promise.text}.`, tool: { name: "escalate", label: "Sendt til en kollega", ok: smsSent } });
+  return { ok: true, replyBy: promise.text, open: isOpen(ctx.now), hours: hoursText(), smsSent, message: `Sig til kunden, at en kollega tager over og svarer her i chatten ${promise.text}.${urgent && !phone ? " Bed om et telefonnummer." : ""}` };
 }
 
 export const escalateByCustomer = (ctx: ToolContext) => escalate(ctx, { reason: "wants_human", summary: "Kunden trykkede på 'Tal med et menneske'", urgent: false, phone: null }, "customer");

@@ -98,7 +98,7 @@ export function publicView(chat: SupportChatDoc): PublicChat {
   return {
     id: chat._id,
     status: chat.status,
-    takenBy: chat.takenBy?.name ?? null,
+    takenBy: chat.takenBy ? "Kollega" : null, // never the colleague's name in the browser
     escalation: chat.escalation ? { at: chat.escalation.at.toISOString(), urgent: chat.escalation.urgent, replyBy: chat.escalation.replyBy } : null,
     customer: chat.customer ? { name: chat.customer.name, bookings: chat.customer.bookings } : null,
     contact: chat.contact ? { name: chat.contact.name } : null,
