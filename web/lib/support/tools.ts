@@ -13,7 +13,7 @@ import { boxQuote, fits, heldRange, kr, problem, usage, type Block, type Hold, t
 import { RELEASED, type RentalDoc, type RentalStatus } from "../udlejning/db";
 import { addMessage, audit, supportCollections, type SupportChatDoc } from "./db";
 import { hoursText, isOpen, replyPromise } from "./hours";
-import { generateDraft, hostOf, normalizePhone, notifyLead, parseLead, saveLead } from "../erhverv/leads";
+import { hostOf, normalizePhone, notifyLead, parseLead, saveLead } from "../erhverv/leads";
 import type { CodeSender, SmsSender } from "./sms";
 
 export type ToolContext = {
@@ -359,10 +359,7 @@ async function registerBusinessLead(ctx: ToolContext, a: { company: string; webs
   const saved = await saveLead(ctx.d, parsed.lead, { source: "chat", page: chat.page || "chat", chatId: chat._id }, ctx.now);
   await setChat(ctx, { lead: { id: saved.id, at: ctx.now } });
   await audit(ctx.d, { chatId: chat._id, actor: "ai", actorName: "Sif", action: "lead", bookingId: null, note: `Designudkast bestilt til ${parsed.lead.company} (${hostOf(parsed.lead.website)}), lead ${saved.id}` });
-  const job = async () => {
-    await notifyLead(parsed.lead, saved.id, saved.dueAt, { source: "chat", repeat: saved.repeat });
-    if (!saved.repeat) await generateDraft(ctx.d, saved.id);
-  };
+  const job = () => notifyLead(parsed.lead, saved.id, saved.dueAt, { source: "chat", repeat: saved.repeat });
   if (ctx.later) ctx.later(job);
   else void job();
   const due = new Intl.DateTimeFormat("da-DK", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Copenhagen" }).format(saved.dueAt);

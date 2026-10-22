@@ -35,8 +35,8 @@ export default function Privatliv() {
         <tbody>
           <tr>
             <td>I, der skriver til os</td>
-            <td>Navn, e-mail, telefon, sted og besked fra kontaktformularen. Ved et designudkast også virksomhed, hjemmeside, branche og antal steder, og det, vi læser på jeres offentlige hjemmeside</td>
-            <td>At svare og lave et tilbud og et designudkast. Udkastet skrives med hjælp fra en AI-model hos OpenAI og gennemgås af en medarbejder, før I får det. Legitim interesse og skridt før en aftale (GDPR art. 6, stk. 1, litra b og f)</td>
+            <td>Navn, e-mail, telefon, sted og besked fra kontaktformularen. Ved et designudkast også virksomhed, hjemmeside, branche og antal steder</td>
+            <td>At svare og lave et tilbud og et designudkast. Udkastet laves af en medarbejder, som kan bruge AI-værktøjer, og gennemgås, før I får det. Legitim interesse og skridt før en aftale (GDPR art. 6, stk. 1, litra b og f)</td>
             <td>12 måneder efter sidste kontakt, hvis I ikke bliver kunde</td>
           </tr>
           <tr>
