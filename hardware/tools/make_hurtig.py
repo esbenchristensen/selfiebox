@@ -35,7 +35,7 @@ GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 # print file suffix -> node in <version>_3d.glb. The logo inlays (LOGO) are copied as well, as separate colour
 # bodies with the front's origin, and put together with the front in one 3MF; a slicer needs one body per colour.
 PARTS = {"skal": "skal", "front": "front", "bagramme": "ledskinne", "lysring": "lysring",
-         "vaegbeslag": "vaegbeslag", "printerdaeksel": "printerdaeksel"}
+         "vaegbeslag": "vaegbeslag"}   # v19: no printer cap (no printer under the box)
 LOGO = [suffix for suffix, *_ in FRONT_PARTS if suffix != "front"]
 
 # Corner region (glTF x, y; seen from the front, bottom left): one front screw, the shell/front joint and the ring corner.
