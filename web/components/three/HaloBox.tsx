@@ -4,7 +4,7 @@ import { useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { printTexture, ringGlowTexture, screenTexture } from "./textures";
+import { countdownTexture, printTexture, radialTexture, ringGlowTexture, screenTexture, shotTexture } from "./textures";
 import type { BoxTheme } from "./themes";
 import occasions from "./occasions.json";
 import venues from "./venues.json";
@@ -25,7 +25,9 @@ export type Venue = {
   photo: string;
   parts: string[];
   unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 85 deep) instead of rev G
-  screen?: string; // another design's screen under /models/<screen>/, e.g. a party theme on the plain rental box
+  // The box taking a photo, over and over: a party theme on the screen (an OCCASIONS id), a countdown with the RGB
+  // light running round the ring, a flash, and then the photo (/photos/<photo>.jpg) on the screen.
+  shoot?: { screen: string; photo: string };
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -40,6 +42,12 @@ const SCREEN_Z_GEN2 = -1.5;
 const WINDOW = { y: 26, w: 84 };
 const PRINT = { w: 72, h: 86 };
 const PRIVATE_CASING = "#0b0b0d";
+// A photo, in seconds: waiting, the countdown (one second a number), then the photo on the screen after the flash.
+const SHOOT = { idle: 3.2, count: 3, photo: 2.6 };
+const SHOOT_LOOP = SHOOT.idle + SHOOT.count + SHOOT.photo;
+const WARM = new THREE.Color("#fff3e3");
+const WHITE = new THREE.Color("#ffffff");
+const FLASH = new THREE.Color("#ffedc4"); // a touch warm, so the burst shows on the light page
 
 const CASING = ["bezel", "shell_closed", "instax_front", "instax_shell", "joint_spacer"];
 const LIGHT = ["diffuser_ring", "shell_closed_band", "instax_shell_band"];
@@ -136,22 +144,45 @@ function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject
 
 export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0 }: Props) {
   const nodes = useUnit(venue?.unit);
+  const shoot = venue?.shoot;
+  const chase = useMemo(() => ({ value: 0 }), []);
+  const spin = useMemo(() => ({ value: 0 }), []);
   const casing = venue?.casing ?? PRIVATE_CASING;
   const ring = venue?.ring.idle ?? ["#fff3e3"];
 
   const mats = useMemo(() => {
     const body = new THREE.MeshStandardMaterial({ color: casing, roughness: 0.78, metalness: 0 });
     const light = new THREE.MeshStandardMaterial({ color: "#ffffff", emissive: ring[0], emissiveIntensity: 1.6, roughness: 0.4, toneMapped: false });
+    if (shoot) {
+      // RGB running round the ring: hue by the angle around the ring's centre, turned by uSpin, mixed in by uChase.
+      light.customProgramCacheKey = () => "ring-chase";
+      light.onBeforeCompile = (sh) => {
+        sh.uniforms.uChase = chase;
+        sh.uniforms.uSpin = spin;
+        sh.vertexShader = sh.vertexShader
+          .replace("#include <common>", "#include <common>\nvarying vec3 vRing;")
+          .replace("#include <begin_vertex>", "#include <begin_vertex>\nvRing = position;");
+        sh.fragmentShader = sh.fragmentShader
+          .replace(
+            "#include <common>",
+            "#include <common>\nvarying vec3 vRing;\nuniform float uChase;\nuniform float uSpin;\nvec3 hueRgb(float h) { return clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0); }",
+          )
+          .replace(
+            "#include <emissivemap_fragment>",
+            `#include <emissivemap_fragment>\nfloat hue = atan(vRing.y - ${(UNIT_H / 2).toFixed(1)}, vRing.x) / 6.2831853 + uSpin;\nfloat level = max(max(totalEmissiveRadiance.r, totalEmissiveRadiance.g), totalEmissiveRadiance.b);\ntotalEmissiveRadiance = mix(totalEmissiveRadiance, hueRgb(fract(hue)) * level, uChase);`,
+          );
+      };
+    }
     const glass = new THREE.MeshPhysicalMaterial({ color: "#050507", roughness: 0.1, clearcoat: 1 });
     const lens = new THREE.MeshStandardMaterial({ color: "#0a0a0c", roughness: 0.2, metalness: 0.4 });
     // Gen 2: the Selfi logo set into the front under the screen, white with green dots
     const logoWhite = new THREE.MeshStandardMaterial({ color: "#f5f5f4", roughness: 0.6 });
     const logoGreen = new THREE.MeshStandardMaterial({ color: "#22d36b", roughness: 0.6 });
     return { body, light, glass, lens, logoWhite, logoGreen };
-  }, [casing, ring]);
+  }, [casing, ring, shoot, chase, spin]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
 
-  const screenMap = useTexture(venue ? `/models/${venue.screen ?? venue.id}/screen.png` : "/models/smukfest/screen.png");
+  const screenMap = useTexture(venue ? `/models/${shoot?.screen ?? venue.id}/screen.png` : "/models/smukfest/screen.png");
   screenMap.colorSpace = THREE.SRGBColorSpace;
   const privateScreen = useMemo(() => (theme ? screenTexture(theme) : null), [theme]);
   useEffect(() => () => privateScreen?.dispose(), [privateScreen]);
@@ -176,9 +207,24 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   useEffect(() => () => printMap.dispose(), [printMap]);
 
   const glowTex = useMemo(() => ringGlowTexture(2.0, 2.86, 0.22, 0.4), []);
+  const shootTex = useMemo(
+    () => (shoot ? { count: [3, 2, 1].map(countdownTexture), shot: shotTexture(`/photos/${shoot.photo}.jpg`), halo: radialTexture() } : null),
+    [shoot],
+  );
+  useEffect(
+    () => () => {
+      if (shootTex) [...shootTex.count, shootTex.shot, shootTex.halo].forEach((x) => x.dispose());
+    },
+    [shootTex],
+  );
 
   const attach = useRef(1);
   const glow = useRef<THREE.MeshBasicMaterial>(null);
+  const glowMesh = useRef<THREE.Mesh>(null);
+  const overlay = useRef<THREE.MeshBasicMaterial>(null);
+  const flashMat = useRef<THREE.MeshBasicMaterial>(null);
+  const halo = useRef<THREE.MeshBasicMaterial>(null);
+  const haloMesh = useRef<THREE.Mesh>(null);
   const print = useRef<THREE.Group>(null);
   const tmp = useMemo(() => new THREE.Color(), []);
   useFrame((state) => {
@@ -193,6 +239,52 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
     if (glow.current) {
       glow.current.color.copy(tmp);
       glow.current.opacity = 0.45 + (motion ? Math.sin(t * 1.7) * 0.12 : 0);
+    }
+    if (shoot && shootTex) {
+      // Waiting: warm white. Countdown: the RGB runs round the ring and beats on every number. Then the flash:
+      // the ring burns white, the screen and the air around the box light up, and the photo comes up on the screen.
+      const s = motion ? (t - bornAt) % SHOOT_LOOP : 0;
+      const c = s - SHOOT.idle;
+      const after = c - SHOOT.count;
+      let rgb = 0, beat = 0, flash = 0, show = 0;
+      let map: THREE.Texture | null = null;
+      if (c >= 0 && after < 0) {
+        const k = Math.floor(c);
+        beat = 1 - (c - k);
+        rgb = Math.min(1, c * 4);
+        map = shootTex.count[k];
+        show = Math.min(1, (c - k) * 8);
+      } else if (after >= 0) {
+        flash = Math.exp(-after * 4.5);
+        map = shootTex.shot;
+        show = Math.min(1, after * 6) * Math.min(1, (SHOOT.photo - after) * 3);
+      }
+      chase.value = rgb;
+      spin.value = -t * 0.9;
+      tmp.copy(WARM).lerp(WHITE, flash);
+      mats.light.emissive.copy(tmp);
+      mats.light.emissiveIntensity = 1.6 + beat * rgb * 1.4 + flash * 9;
+      // The diffuser's own white (lit by the room) would wash the colours out, so it goes dark while they run
+      mats.light.color.setScalar(1 - rgb * 0.9);
+      if (overlay.current) {
+        if (map && overlay.current.map !== map) overlay.current.map = map;
+        overlay.current.opacity = show;
+      }
+      if (flashMat.current) flashMat.current.opacity = flash * 0.95;
+      if (glow.current) {
+        if (rgb > 0) glow.current.color.setHSL(((spin.value % 1) + 1) % 1, 0.9, 0.6);
+        else glow.current.color.copy(tmp);
+        // Faint while the colours run, so the ring itself shows them; full at the flash
+        glow.current.opacity = 0.5 - rgb * 0.3 + flash;
+      }
+      glowMesh.current?.scale.setScalar((1 + flash * 0.5) / MM);
+      if (halo.current) {
+        // The light on the air behind the box: the running colours during the countdown, a white burst at the flash
+        if (rgb > 0) halo.current.color.setHSL(((spin.value % 1) + 1) % 1, 0.85, 0.62);
+        else halo.current.color.copy(FLASH);
+        halo.current.opacity = rgb * (0.35 + beat * 0.2) + flash;
+      }
+      haloMesh.current?.scale.setScalar((1 + flash * 1.2) / MM);
     }
     const p = print.current;
     if (p) {
@@ -228,9 +320,27 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
             and seen from a distance (the box on its stand) the two would fight and flicker. */}
         <meshBasicMaterial map={privateScreen ?? screenMap} toneMapped={false} polygonOffset polygonOffsetFactor={-4} polygonOffsetUnits={-4} />
       </mesh>
-      <mesh position={[0, UNIT_H / 2, 2]} scale={1 / MM} renderOrder={2}>
+      {shootTex && (
+        <>
+          {/* Countdown and photo over the theme, then the flash over everything on the screen */}
+          <mesh position={[0, SCREEN.y, SCREEN_Z_GEN2]} renderOrder={1}>
+            <planeGeometry args={[SCREEN.w, SCREEN.h]} />
+            <meshBasicMaterial ref={overlay} map={shootTex.count[0]} transparent opacity={0} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={-8} polygonOffsetUnits={-8} />
+          </mesh>
+          <mesh position={[0, SCREEN.y, SCREEN_Z_GEN2]} renderOrder={1}>
+            <planeGeometry args={[SCREEN.w, SCREEN.h]} />
+            <meshBasicMaterial ref={flashMat} color="#ffffff" transparent opacity={0} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={-12} polygonOffsetUnits={-12} />
+          </mesh>
+          <mesh ref={haloMesh} position={[0, UNIT_H / 2, -300]} scale={1 / MM}>
+            <planeGeometry args={[5.6, 6.4]} />
+            <meshBasicMaterial ref={halo} map={shootTex.halo} transparent opacity={0} depthWrite={false} toneMapped={false} />
+          </mesh>
+        </>
+      )}
+      <mesh ref={glowMesh} position={[0, UNIT_H / 2, 2]} scale={1 / MM} renderOrder={2}>
         <planeGeometry args={[2.0 + 0.8, 2.86 + 0.8]} />
-        <meshBasicMaterial ref={glow} map={glowTex} transparent blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+        {/* Added light is lost on a light page, so the shooting box (on the light front page) paints its glow instead */}
+        <meshBasicMaterial ref={glow} map={glowTex} transparent blending={shoot ? THREE.NormalBlending : THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>
 
       {/* Photo module under the unit, on a joint spacer */}
@@ -267,7 +377,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
 
 export function preloadVenue(v: Venue) {
   if (v.parts.length) useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
-  useTexture.preload(`/models/${v.screen ?? v.id}/screen.png`);
+  useTexture.preload(`/models/${v.shoot?.screen ?? v.id}/screen.png`);
   useTexture.preload(`/models/${v.id}/print.png`);
   useTexture.preload(`/photos/${v.photo}.jpg`);
 }

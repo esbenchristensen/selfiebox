@@ -376,3 +376,45 @@ export function radialTexture() {
   tex.colorSpace = THREE.NoColorSpace;
   return tex;
 }
+
+// The countdown on the screen while a photo is being taken: the theme dimmed, a big number in a ring.
+export function countdownTexture(n: number) {
+  return canvasTexture(
+    400,
+    638,
+    (ctx, w, h) => {
+      ctx.fillStyle = "rgba(8, 10, 8, 0.55)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.arc(w / 2, h * 0.46, 128, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = font("display", 190, 700);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(n), w / 2, h * 0.46 + 8);
+      ctx.font = bodyFont(30, 600);
+      ctx.fillText("Smil!", w / 2, h * 0.78);
+    },
+    [fontReady("display")],
+  );
+}
+
+// The photo just taken, shown on the screen after the flash: `src` cropped to fill the screen.
+export function shotTexture(src: string) {
+  return canvasTexture(
+    400,
+    638,
+    (ctx, w, h) => {
+      ctx.fillStyle = "#111311";
+      ctx.fillRect(0, 0, w, h);
+      const img = imageNow(src);
+      if (!img) return;
+      const s = Math.max(w / img.width, h / img.height);
+      ctx.drawImage(img, (w - img.width * s) / 2, (h - img.height * s) / 2, img.width * s, img.height * s);
+    },
+    [imageReady(src)],
+  );
+}
