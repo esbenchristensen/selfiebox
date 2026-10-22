@@ -15,3 +15,6 @@ export const RENTAL_BOX: Venue = {
   parts: [],
   unit: "gen2",
 };
+
+// The same box on its floor stand in the hero, taking a photo at a birthday: theme, countdown, flash, photo.
+export const RENTAL_STAND: Venue = { ...RENTAL_BOX, shoot: { screen: "fodselsdag", photo: "boks-fodselsdag" } };

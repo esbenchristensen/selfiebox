@@ -10,6 +10,7 @@ import { Nav } from "@/components/Nav";
 import { Faq, PhotoStrip } from "@/components/Sections";
 import { Booking } from "@/components/lej/Booking";
 import { Box3D } from "@/components/lej/Box3D";
+import { BoxStand } from "@/components/lej/BoxStand";
 import { Compare } from "@/components/lej/Compare";
 import { DrawBook, DrawParcel, DrawParty, DrawPolaroid, DrawReturn, DrawSetup, DrawStrip, Icon } from "@/components/lej/Drawings";
 import { HeroBooking } from "@/components/lej/HeroBooking";
@@ -25,8 +26,8 @@ import { PROOF, ratingText } from "@/lib/udlejning/proof";
 import "./lej/lej.css";
 
 // selfi.dk: rent a box for one party, booked and paid here. The page follows the questions a host has, in the
-// order they ask them: is our day free and what does it cost (the live calendar in the hero), why this one
-// and not the others (one price, everything in it), how does it work, what does it look like for our party,
+// order they ask them: what is it (the box on its floor stand in the hero), is our day free and what does it
+// cost (the live calendar right under the hero), why this one and not the others (one price, everything in it), how does it work, what does it look like for our party,
 // what do the guests get, the box itself, the printer, prices, what other hosts say, our kind of party,
 // then the booking, questions and contact. Places and businesses have /erhverv.
 // Prices and free days come from admin.selfi.dk → Udlejning. Social proof comes from lib/udlejning/proof.ts.
@@ -203,8 +204,24 @@ export default async function Home() {
           }
           primary={{ label: "Se ledige datoer", href: "#datoer" }}
           secondary={{ label: "Se priser", href: "#priser" }}
-          aside={<HeroBooking />}
+          price={
+            <>
+              <b>Fra {kr(from)}</b> · alt er med i prisen
+            </>
+          }
+          visual={<BoxStand />}
         />
+
+        <section id="datoer" className="section lej-dates" aria-labelledby="datoer-title">
+          <div className="wrap lej-dates-grid">
+            <div className="sec-head">
+              <span className="label">Ledige datoer</span>
+              <h2 id="datoer-title" className="h-l">Er jeres dag ledig?</h2>
+              <p className="lede">Vælg en periode eller tryk på dagene i kalenderen. I ser prisen med det samme, og I betaler først, når I har valgt tilvalg.</p>
+            </div>
+            <HeroBooking />
+          </div>
+        </section>
 
         <PhotoStrip
           prints={[

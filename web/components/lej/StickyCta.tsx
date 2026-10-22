@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-// On phones: a bar at the bottom with the price and one button to the calendar. It appears once the hero
-// (with the calendar) has scrolled out of view and hides again while the calendar or the booking is on screen.
+// On phones: a bar at the bottom with the price and one button to the calendar. It appears once the page
+// has scrolled past the hero and hides again while the calendar or the booking is on screen.
 export function StickyCta({ from }: { from: string }) {
   const [show, setShow] = useState(false);
 

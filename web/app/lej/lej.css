@@ -562,3 +562,19 @@
 .cal-day small.sk { display: block; width: 22px; height: 6px; margin-top: 2px; border-radius: 3px; background: linear-gradient(90deg, var(--line) 25%, var(--line-strong) 50%, var(--line) 75%); background-size: 300% 100%; animation: sk-slide 1.3s linear infinite; opacity: 0.7; }
 @keyframes sk-slide { from { background-position: 100% 0; } to { background-position: -100% 0; } }
 .lej .bk-sum-incl li::before { display: none; }
+
+/* ---------- Hero: the box on its floor stand (oktober 2026), the calendar right under the hero ---------- */
+.lej .hero .h-xl { font-size: clamp(42px, 5vw, 72px); }
+.lej-stand {
+  position: relative; aspect-ratio: 3 / 4; max-height: 760px; margin-inline: auto;
+}
+.lej-stand .viewer { position: absolute; inset: 0; }
+.lej-stand .stage-canvas canvas { cursor: default; }
+.lej-stand .viewer-poster { padding: 18% 22%; }
+.lej-dates-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: var(--space-7); align-items: start; }
+.lej-dates-grid .sec-head { position: sticky; top: 120px; }
+@media (max-width: 900px) {
+  .lej-dates-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .lej-dates-grid .sec-head { position: static; }
+  .lej-stand { aspect-ratio: 4 / 5; max-height: 72vh; }
+}

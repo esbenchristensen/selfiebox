@@ -7,7 +7,7 @@ import { Icon } from "./Drawings";
 import { Calendar } from "./Calendar";
 import { useRental } from "./RentalContext";
 
-// The first step of the booking, above the fold: is our day free, and what does it cost? "Vælg tilvalg"
+// The first step of the booking, right under the hero: is our day free, and what does it cost? "Vælg tilvalg"
 // hands the dates to the booking flow under #book, which opens at the add-ons.
 export function HeroBooking() {
   const { data, loadError, load, s, set, win, canBook, preset, go, reach, priceFor, loading } = useRental();
@@ -15,7 +15,7 @@ export function HeroBooking() {
 
   if (loadError) {
     return (
-      <div className="hb" id="datoer">
+      <div className="hb">
         <b>Kalenderen kunne ikke hentes.</b>
         <p className="muted">Prøv igen om lidt, eller skriv til os, så finder vi en dato sammen.</p>
         <button type="button" className="btn btn-secondary" onClick={load}>
@@ -27,7 +27,7 @@ export function HeroBooking() {
 
   if (!settings || !win) {
     return (
-      <div className="hb hb--loading" id="datoer" aria-busy="true">
+      <div className="hb hb--loading" aria-busy="true">
         <b>Hvornår er festen?</b>
         <p className="muted">Henter kalenderen …</p>
       </div>
@@ -50,7 +50,7 @@ export function HeroBooking() {
   const nextWeekend = firstFreeWeekend(win.minDay, win.maxDay, canBook);
 
   return (
-    <div className="hb" id="datoer" aria-busy={loading}>
+    <div className="hb" aria-busy={loading}>
       <div className="hb-head">
         <div className="hb-title">
           <b>Hvornår er festen?</b>
