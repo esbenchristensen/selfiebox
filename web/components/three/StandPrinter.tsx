@@ -6,15 +6,21 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { SHOOT, SHOOT_LOOP } from "./HaloBox";
 import { HIDDEN, printerMaterial } from "./PrinterStage";
+import { dannebrogTexture, oakTexture } from "./textures";
 
-// The rental printer (selfi-printer-v1, from its CAD export) on a small side table next to the box on its stand,
+// The rental printer (selfi-printer-v1, from its CAD export) on a small oak side table with a Danish table flag, next
+// to the box on its stand,
 // printing the photo the box has just taken: the print slides out of the paper slot after the flash, in step with
 // HaloBox's photo loop. Millimetres in the stand's unit coordinates (see Tripod.tsx).
 
 const MODEL = "/models/selfi-printer-v1.glb";
 const BOTTOM = -110; // underside of the base in the model
 const SLOT = { y: 41, z: 147 }; // the paper slot in the front, as in PrinterStage
-const TABLE = { r: 230, top: 18, h: 620 };
+const TABLE = { r: 240, top: 28, h: 620 };
+const LEGS = { at: 150, splay: 0.14, top: 17, foot: 11 };
+// A Danish table flag: a turned oak foot, a thin pole and a 150 mm Dannebrog, at the back of the table on the box's
+// side, flying towards the box so it stays in the picture.
+const FLAG = { x: -150, z: -110, pole: 380, w: 150, h: 124 };
 // A polaroid-style print with a white frame and a wider foot, as in PrinterStage
 const PRINT = { w: 100, border: 5, photo: 90, foot: 23 };
 const DROOP = 0.5;
@@ -54,11 +60,38 @@ export function StandPrinter({ photo, motion, position, turn }: { photo: string;
   );
 
   const table = useMemo(() => {
-    const top = new THREE.MeshStandardMaterial({ color: "#d8d4cc", roughness: 0.6 });
-    const metal = new THREE.MeshStandardMaterial({ color: "#2a2c2e", roughness: 0.4, metalness: 0.6 });
-    return { top, metal };
+    const grain = oakTexture();
+    const top = new THREE.MeshStandardMaterial({ map: grain, color: "#ffffff", roughness: 0.55 });
+    // Along the legs, the grain runs lengthwise.
+    const upright = grain.clone();
+    upright.center.set(0.5, 0.5);
+    upright.rotation = Math.PI / 2;
+    const leg = new THREE.MeshStandardMaterial({ map: upright, color: "#e6d2b4", roughness: 0.6 });
+    const pole = new THREE.MeshStandardMaterial({ color: "#b8925c", roughness: 0.45, metalness: 0.4 });
+    const flag = new THREE.MeshStandardMaterial({ map: dannebrogTexture(), roughness: 0.85, side: THREE.DoubleSide });
+    return { top, leg, pole, flag };
   }, []);
-  useEffect(() => () => Object.values(table).forEach((m) => m.dispose()), [table]);
+  useEffect(
+    () => () =>
+      Object.values(table).forEach((m) => {
+        m.map?.dispose();
+        m.dispose();
+      }),
+    [table],
+  );
+  // The cloth hangs in a soft, still wave that grows towards the fly end.
+  const cloth = useMemo(() => {
+    const g = new THREE.PlaneGeometry(FLAG.w, FLAG.h, 24, 1);
+    const pos = g.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const u = (pos.getX(i) + FLAG.w / 2) / FLAG.w;
+      pos.setZ(i, Math.sin(u * 5.2) * 9 * u);
+      pos.setY(i, pos.getY(i) - u * u * 6);
+    }
+    g.computeVertexNormals();
+    return g;
+  }, []);
+  useEffect(() => () => cloth.dispose(), [cloth]);
 
   const photoMap = useTexture(`/photos/${photo}.jpg`);
   photoMap.colorSpace = THREE.SRGBColorSpace;
@@ -80,16 +113,41 @@ export function StandPrinter({ photo, motion, position, turn }: { photo: string;
 
   return (
     <group position={position}>
-      {/* Side table: round top on a single column and a foot */}
+      {/* Oak side table: a round top on four splayed, tapered legs */}
       <mesh position={[0, TABLE.h - TABLE.top / 2, 0]} material={table.top} castShadow receiveShadow>
-        <cylinderGeometry args={[TABLE.r, TABLE.r, TABLE.top, 48]} />
+        <cylinderGeometry args={[TABLE.r, TABLE.r, TABLE.top, 64]} />
       </mesh>
-      <mesh position={[0, (TABLE.h - TABLE.top) / 2, 0]} material={table.metal} castShadow>
-        <cylinderGeometry args={[18, 18, TABLE.h - TABLE.top, 20]} />
-      </mesh>
-      <mesh position={[0, 6, 0]} material={table.metal} castShadow receiveShadow>
-        <cylinderGeometry args={[160, 170, 12, 40]} />
-      </mesh>
+      {[0.25, 0.75, 1.25, 1.75].map((a) => {
+        const az = a * Math.PI;
+        const len = (TABLE.h - TABLE.top) / Math.cos(LEGS.splay);
+        return (
+          <group
+            key={a}
+            position={[Math.cos(az) * LEGS.at, TABLE.h - TABLE.top, Math.sin(az) * LEGS.at]}
+            rotation={[-Math.sin(az) * LEGS.splay, 0, Math.cos(az) * LEGS.splay]}
+          >
+            <mesh position={[0, -len / 2, 0]} material={table.leg} castShadow receiveShadow>
+              <cylinderGeometry args={[LEGS.top, LEGS.foot, len, 20]} />
+            </mesh>
+          </group>
+        );
+      })}
+      {/* Danish table flag */}
+      <group position={[FLAG.x, TABLE.h, FLAG.z]}>
+        <mesh position={[0, 9, 0]} material={table.leg} castShadow>
+          <cylinderGeometry args={[22, 28, 18, 32]} />
+        </mesh>
+        <mesh position={[0, FLAG.pole / 2, 0]} material={table.pole} castShadow>
+          <cylinderGeometry args={[2.5, 2.5, FLAG.pole, 12]} />
+        </mesh>
+        <mesh position={[0, FLAG.pole + 4, 0]} material={table.pole}>
+          <sphereGeometry args={[6, 16, 12]} />
+        </mesh>
+        <mesh geometry={cloth} material={table.flag} position={[-FLAG.w / 2 - 2, FLAG.pole - FLAG.h / 2 - 6, 0]}
+          rotation={[0, Math.PI, 0]}
+          castShadow
+        />
+      </group>
       <group position={[0, TABLE.h - BOTTOM, 0]} rotation={[0, turn, 0]}>
         <primitive object={model} />
         <group ref={out} visible={false}>
