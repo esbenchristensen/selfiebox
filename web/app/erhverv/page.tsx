@@ -8,10 +8,11 @@ import { JsonLd } from "@/components/JsonLd";
 import { Nav } from "@/components/Nav";
 import { Ph } from "@/components/Placeholder";
 import { Activities, Faq } from "@/components/Sections";
-import { HeroBox, Showroom } from "@/components/ThemeStudio";
+import { Showroom } from "@/components/ThemeStudio";
 import { Cases } from "@/components/erhverv/Cases";
 import { DesignLead } from "@/components/erhverv/DesignLead";
 import { GuestFlow } from "@/components/erhverv/GuestFlow";
+import { HeroPlainBox } from "@/components/erhverv/HeroPlainBox";
 import { GuestList } from "@/components/erhverv/GuestList";
 import { Outcomes } from "@/components/erhverv/Outcomes";
 import { Pricing } from "@/components/erhverv/Pricing";
@@ -112,7 +113,7 @@ export default function Erhverv() {
           }
           primary={{ label: "Få designudkast på 24 timer", href: "#udkast" }}
           secondary={{ label: "Book en snak", href: "#kontakt" }}
-          visual={<HeroBox />}
+          visual={<HeroPlainBox />}
         />
         <Proof />
         <DesignLead />
