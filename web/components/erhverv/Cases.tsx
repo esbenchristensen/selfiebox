@@ -140,36 +140,39 @@ export function Cases() {
               <BoxViewer design={{ venue: designOf(c.box) }} variant="venue" label={`Selfi i et design til ${c.name.toLowerCase()}, her ${designOf(c.box).name}`} preload={[]} />
               <span className="case-box-cap">Eksempel: {designOf(c.box).name}</span>
             </div>
-            <Ph block note="eksempel på en opsætning, ikke en kunde">
-              <h3 className="h-m">{c.name}</h3>
-              <p className="case-intro">{c.intro}</p>
-              <dl className="case-rows">
-                <div>
-                  <dt>Bokse</dt>
-                  <dd>{c.boxes}</dd>
-                </div>
-                <div>
-                  <dt>Placering</dt>
-                  <dd>{c.placement}</dd>
-                </div>
-                <div>
-                  <dt>Design</dt>
-                  <dd>{c.design}</dd>
-                </div>
-                <div>
-                  <dt>Aktiviteter</dt>
-                  <dd>{c.activities}</dd>
-                </div>
-                <div>
-                  <dt>Gæsteliste</dt>
-                  <dd>{c.list}</dd>
-                </div>
-              </dl>
-              <p className="case-gain">
-                <b>Det får de</b>
-                <span>{c.gain}</span>
-              </p>
-            </Ph>
+            {/* Its own column: with placeholders hidden, Ph renders nothing, so the grid needs a real wrapper. */}
+            <div className="case-body">
+              <Ph block note="eksempel på en opsætning, ikke en kunde">
+                <h3 className="h-m">{c.name}</h3>
+                <p className="case-intro">{c.intro}</p>
+                <dl className="case-rows">
+                  <div>
+                    <dt>Bokse</dt>
+                    <dd>{c.boxes}</dd>
+                  </div>
+                  <div>
+                    <dt>Placering</dt>
+                    <dd>{c.placement}</dd>
+                  </div>
+                  <div>
+                    <dt>Design</dt>
+                    <dd>{c.design}</dd>
+                  </div>
+                  <div>
+                    <dt>Aktiviteter</dt>
+                    <dd>{c.activities}</dd>
+                  </div>
+                  <div>
+                    <dt>Gæsteliste</dt>
+                    <dd>{c.list}</dd>
+                  </div>
+                </dl>
+                <p className="case-gain">
+                  <b>Det får de</b>
+                  <span>{c.gain}</span>
+                </p>
+              </Ph>
+            </div>
           </div>
         </div>
       </div>
