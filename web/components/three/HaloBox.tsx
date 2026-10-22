@@ -28,6 +28,8 @@ export type Venue = {
   // The box taking a photo, over and over: a party theme on the screen (an OCCASIONS id), a countdown with a green
   // ring filling up round the edge, a flash, and then the photo (/photos/<photo>.jpg) on the screen.
   shoot?: { screen: string; photo: string };
+  // A still image on the screen instead of the theme's start screen (/models/<id>/screen.png), 5:8.
+  screen?: string;
 };
 export const VENUES = venues as Venue[];
 export const OCCASIONS = occasions as Venue[];
@@ -182,7 +184,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   }, [casing, ring, shoot, countOn, fill]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
 
-  const screenMap = useTexture(venue ? `/models/${shoot?.screen ?? venue.id}/screen.png` : "/models/smukfest/screen.png");
+  const screenMap = useTexture(venue ? (venue.screen ?? `/models/${shoot?.screen ?? venue.id}/screen.png`) : "/models/smukfest/screen.png");
   screenMap.colorSpace = THREE.SRGBColorSpace;
   const privateScreen = useMemo(() => (theme ? screenTexture(theme) : null), [theme]);
   useEffect(() => () => privateScreen?.dispose(), [privateScreen]);
@@ -362,7 +364,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
 
 export function preloadVenue(v: Venue) {
   if (v.parts.length) useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
-  useTexture.preload(`/models/${v.shoot?.screen ?? v.id}/screen.png`);
+  useTexture.preload(v.screen ?? `/models/${v.shoot?.screen ?? v.id}/screen.png`);
   useTexture.preload(`/models/${v.id}/print.png`);
   useTexture.preload(`/photos/${v.photo}.jpg`);
 }
