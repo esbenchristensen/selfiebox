@@ -183,9 +183,9 @@ module placed_electronics() {
 // snap trays like the Pololu cradles: no screws; the mic strip hangs in two hook clips
 module electronics_holders() {
     for (q = [[HAT4G_P, HAT4G], [IMU_P, IMU]])
-        translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) pololu_cradle([q[1][0], q[1][1], q[1][2]], q[1][2] + 1.5);
+        translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) cradle2([q[1][0], q[1][1], q[1][2]], BOARD_LIP);
     difference() {   // v9: the bottom lip opens 20 mm for the FPC socket (17.5 long, 2 over the edge)
-        translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) pololu_cradle(MCORE, MCORE[2] + 1.5);
+        translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) cradle2(MCORE, BOARD_LIP);
         translate([MCORE_P[0] + MCORE[0]/2 - 10, D - BACK_T - MCORE[2] - 3, MCORE_P[1] - 3]) cube([20, MCORE[2] + 2.2, 5]);
     }
     if (MIC_FLOOR) for (sx = [-1, 1]) cyl_z(MIC_PEG[0], WALL - MIC_POCKET[2] - 0.01, MIC_PEG[3], sx*MIC_PEG[1], MSTRIP_Y);   // v9: up to 0.6 under the front, so the board cannot lift off
@@ -195,7 +195,7 @@ module electronics_holders() {
         translate([-1, 4, -1]) cube([10, MSTRIP[1] - 4, 3]);
     }
     // reed module tray just above the lock tongue (reed glass at the bottom edge): lifting the box off the cleat moves the magnet away
-    translate([REED_P[0], D - BACK_T + 0.01, REED_P[1]]) rotate([90, 0, 0]) pololu_cradle([REED[0], REED[1], REED[2]], REED[2] + 1.5);
+    translate([REED_P[0], D - BACK_T + 0.01, REED_P[1]]) rotate([90, 0, 0]) cradle2([REED[0], REED[1], REED[2]], BOARD_LIP);
 }
 
 // ------------------------------------------------------------ wall lock ----
@@ -373,9 +373,10 @@ module services_add() {
                        translate([-SPK[0]/2 - 0.3, -SPK[1]/2 - 0.3, -1]) cube([SPK[0] + 0.6, SPK[1] + 0.6, SPK_FL + 4]);
                        for (sx = [-1, 1]) translate([sx*(SPK[0]/2 + 0.9) - 2, -SPK[1]/2 - 3, SPK_FL]) cube([4, SPK[1] + 6, 3]); }
         for (sx = [-1, 1], sz = [-1, 1]) translate([sx*SPK_EAR[0]/2, sz*SPK_EAR[1]/2, 0]) cylinder(d = 2.7, h = SPK_FL - 0.3, $fn = 16);
-        for (sz = [-1, 1]) translate([-5, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
-            cube([10, 1.5, SPK_FL + 0.3]);
-            translate([0, 0, SPK_FL + 0.3]) hull() { cube([10, 1.5, 0.01]); translate([0, sz > 0 ? -0.8 : 0, 1]) cube([10, 2.3, 0.01]); }
+        // v17: hooks with a flat catch 1.2 over the flange (until v16 a slope 0.3 above it, 0.8 in at the top)
+        for (sz = [-1, 1]) translate([-6, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
+            cube([12, 1.5, SPK_FL + 2.0]);
+            translate([0, sz > 0 ? 0 : 1.5, SPK_FL + 0.1]) snap_lip(12, 1.2, 1.6, sz > 0 ? 1 : 0);
         }
     }
 }
@@ -519,17 +520,41 @@ WLED_C = [0.25, 0.3];                     // clearance: per side across, at each
 WLED_FL = 1.2;                            // floor, as the v2-v16 trays
 WLED_X0 = -34.5 - WLED_B[0]/2;  WLED_Z0 = 70 - WLED_B[1]/2;   // same centre as the v11-v16 tray
 WLED = [WLED_B[0], WLED_B[1], WLED_B[2]];  WLED_P = [WLED_X0, WLED_Z0];
+PSU_LIP = [1.6, 20, 3, 2.0];  BOARD_LIP = [1.2, 12, 2, 1.6];   // v17: snap lips [in, length, per side, ramp]
 MOSF = [44, 32, 16];   MOSF_P = [34.5, 64];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
-module wall_tray(sz, hgt, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+// v17 (Esben 22 Oct: the teeth were too small, above all for the 5 V supply): every tray lip now has a flat catch 0.1 over the part's
+// top edge and a ramp above it. Until v16 the lips started 0.3 above the part and leaned in only 0.6 at their top, so a sloped face was
+// all that held the part. lip = [in, length, count per side, ramp height]
+module snap_lip(len, inw, rh, side) translate([0, 0, 0]) rotate([90, 0, 90]) linear_extrude(len)   // profile in (y, z), y inwards
+    polygon(side > 0 ? [[0, 0], [-inw, 0], [0, rh]] : [[0, 0], [inw, 0], [0, rh]]);
+module lips_along(sz, t, lip, fl = 1.2, at = []) {   // lips on both long walls (along x) of an inner box sz[0] x sz[1] + 0.3
+    for (sy = [0, 1], i = [0 : lip[2] - 1]) {
+        x = len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2;
+        translate([x, sy > 0 ? sz[1] + 0.3 : 0, fl + t + 0.1]) snap_lip(lip[1], lip[0], lip[3], sy);
+    }
+}
+module wall_tray(sz, lip, wt = 1.6, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+    hgt = 1.2 + sz[2] + 0.1 + lip[3] + 0.3;
+    difference() {
+        translate([-wt, -wt, 0]) cube([sz[0] + 0.3 + 2*wt, sz[1] + 0.3 + 2*wt, hgt]);
+        translate([0, 0, 1.2]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
+        translate([6, 6, -1]) cube([sz[0] - 12, sz[1] - 12, 3]);                   // open floor: less print, air
+        translate([-wt - 1, -wt - 1, end_h]) cube([sz[0] + 2*wt + 2.3, sz[1] + 2*wt + 2.3, hgt]);   // ends cut down ...
+    }
+    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) cube([sz[0] + 0.3, wt, hgt]);   // ... long walls stay full height
+    lips_along(sz, sz[2], lip);
+}
+// v17: cradle for the small boards (4G, mic core, IMU, reed): walls all round, a finger notch in the middle of each long wall and a lip
+// on each side of it. The Pololu cradle from gen 1 (until v16) had 2 lips, both at one end.
+module cradle2(sz, lip) {
+    hgt = 1.2 + sz[2] + 0.1 + lip[3] + 0.3;  notch = sz[0] >= 30;  ll = min(lip[1], (sz[0] - 10)/2 - 3);
     difference() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
         translate([0, 0, 1.2]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
-        translate([6, 6, -1]) cube([sz[0] - 12, sz[1] - 12, 3]);                   // open floor: less print, air
-        translate([-2, -2, end_h]) cube([sz[0] + 4.3, sz[1] + 4.3, hgt]) ;          // ends cut down ...
+        if (notch) translate([sz[0]/2 - 5, -3, 1.2 + sz[2]/2]) cube([10, sz[1] + 6, hgt]);   // finger notches
     }
-    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -1.6, 0]) cube([sz[0] + 0.3, 1.6, hgt]);   // ... long walls stay full height
-    for (sy = [0, 1], x = [sz[0]*0.2, sz[0]*0.7]) translate([x, sy > 0 ? sz[1] + 0.3 : -1.6, hgt - 0.01]) hull() {
-        cube([8, 1.6, 0.01]); translate([0, sy > 0 ? -0.6 : 0.6, 1.2]) cube([8, 1.6, 0.01]); }
+    if (notch) lips_along(sz, sz[2], [lip[0], ll, 2, lip[3]], at = [sz[0]/2 - 6.5 - ll, sz[0]/2 + 6.8]);
+    else lips_along(sz, sz[2], [lip[0], sz[0] - 4, 1, lip[3]]);   // small board: one long lip per side
 }
 // v17: holder for the measured WLED controller. Long walls with snap lips over the narrower lid, an open floor, the floor carried out under
 // both arms, and a low stop just past each arm tip so it cannot slide along. No screws (Esben 22 Oct); the case ends stay free for the terminals.
@@ -570,9 +595,9 @@ module placed_wled() wled_frame() translate([0, 0, WLED_FL]) {   // the controll
 }
 module power_holders() {
     // v11: both stand up; the trays turn with them, so the low end stops stay at the terminal ends (top and bottom)
-    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU5[2] + 1.5);
+    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU_LIP, 2.2);   // v17: 3 lips 20 long, 1.6 in, per side
     wled_holder();
-    translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], MOSF[2] + 1.5);
+    translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], [1.2, 10, 2, 1.6]);
 }
 module placed_power3() {
     color([0.75, 0.76, 0.78]) translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);

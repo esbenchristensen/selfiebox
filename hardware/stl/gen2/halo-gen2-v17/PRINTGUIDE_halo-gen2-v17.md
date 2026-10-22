@@ -11,6 +11,11 @@ Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del p
 - **Styringen står med udgangen (4 klemmer + USB-C) opad** og indgangen (V+ V−) nedad, bundpladen mod bagvæggen. Holderen sidder samme sted som før, til venstre for strømrøret.
 - **Ny holder:** 46,2 mm indvendig (0,25 mm luft pr. side). Klikkanterne går 2,0 mm ind fra væggen. Toppens kant sidder 0,75 mm inde fra væggen, fordi kassen er konisk, så kanterne griber 1,25 mm ind over den. Gulvet (1,2 mm) går ud under begge arme, og et lavt stop ud for hver armspids holder styringen på langs. Stoppet er kun 0,8 mm højere end armen, så ledningerne kan gå ind over det til klemmerne.
 - **Ingen skruer i armene** (Esben 22. okt. 2026). Klikkanterne og de to stop holder styringen.
+- **Kraftigere klikkanter på alle holdere** (Esben 22. okt. 2026: kanterne var for små, især på den tunge 5 V-forsyning). Før startede kanterne 0,3 mm over delen og var kun en skrå kile ud til 0,6 mm. Nu har hver kant en flad fangeflade 0,1 mm over delen med en rampe ovenpå, så delen klikker ned og ikke kan glide op igen (snit `halo-gen2-v17_snit_klikkanter.png`).
+  - 5 V-forsyningen: 3 kanter pr. side, 20 mm lange og 1,6 mm ind, væggene 2,2 mm tykke.
+  - 4G, mikrofon-kerne, IMU og reed-kort: kanter hele vejen langs begge sider (2 pr. side, hvis der er fingergreb), 1,2 mm ind.
+  - Dæmperen: 2 kanter pr. side, 10 mm lange og 1,2 mm ind. Højttalerens kroge: 12 mm lange og 1,2 mm ind.
+  - WLED-styringen: 2,0 mm ind, som beskrevet ovenfor.
 - Hullet midt i gulvet sparer plast og giver luft bag styringen. Styringen bliver ikke varm af betydning, så det er ikke et krav for varmen.
 - Hurtigsættets prøve `proeve-stroem-ledstyring` har den nye holder.
 
@@ -297,7 +302,7 @@ Købedele, der skal skrues: 4 frontskruer, 8 M2,5-skruer (følger med skærmen) 
 - Skærm og kant (nyt i v12): ligger glasset helt ind mod frontens kant hele vejen rundt, også i hjørnerne, når skumbåndet er i? Er der en sprække ved vinduet, er båndet for hårdt eller for tykt. Er kanten foran glasset plan, uden at rillen kan ses forfra (der er 1 mm plast foran rillen)?
 - Spild (nyt i v12): hæld en spiseske vand på glasset, mens boksen hænger, og se efter, om noget kommer ind bag fronten.
 - Lys: tænd begge hvide strips på 100 % og mål lux ved 0,8 m (målet er mindst 250 lux).
-- Bakker: sidder 5 V-forsyning, WLED-styring og dæmper fast, også når boksen vendes?
+- Bakker: sidder 5 V-forsyning, WLED-styring, dæmper og kortene fast, også når boksen vendes og rystes? Kan de tages ud igen med en flad skruetrækker uden at kanterne knækker?
 - WLED-styringen (nyt i v17): går den ned i holderen, klikker kanterne over låget, og står den fast på langs mellem de to stop? Er der for meget slør på langs, så mål kassens længde uden arme; CAD regner med ca. 87,9 mm.
 - Strømindgang: klikker hunstikket fast i røret, og sidder det fast, når stikproppen trækkes ud? Går proppen helt ind? CAD regner med hunstikkets krop ca. 13 × 13 mm (skønnet fra billedet) og proppens greb højst Ø12 og 38 mm (ingen tegning fra Mean Well). Mål begge, før skallen printes, hvis det kan lade sig gøre.
 - Mål dæmperens højde og klikstikkene. Der findes ingen officiel tegning af dem, så CAD bruger forhandlerens mål.

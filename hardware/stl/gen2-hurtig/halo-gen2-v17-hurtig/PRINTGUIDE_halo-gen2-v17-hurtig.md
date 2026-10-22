@@ -34,7 +34,7 @@ Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til 
 
 | Fil | Mål (mm) | Ca. tid | Hvad prøves |
 |---|---|---|---|
-| `halo-gen2-v17-hurtig_proeve-stroem-ledstyring.stl` | 145 × 144 × 31 | – | 5 V-forsyningen og WLED-styringen klikkes i deres bakker. v17: WLED-styringen med udgangen opad; går den ned, klikker kanterne over låget, og står den fast på langs mellem de 2 stop ved armspidserne? Sidder begge fast, også når stykket vendes? |
+| `halo-gen2-v17-hurtig_proeve-stroem-ledstyring.stl` | 145 × 144 × 32 | – | 5 V-forsyningen og WLED-styringen klikkes i deres bakker. v17: WLED-styringen med udgangen opad; går den ned, klikker kanterne over låget, og står den fast på langs mellem de 2 stop ved armspidserne? Sidder begge fast, også når stykket vendes? |
 | `halo-gen2-v17-hurtig_proeve-daemper.stl` | 28 × 60 × 42 | – | Dæmperen (DFR0457) i bakken på venstre væg. Er der plads til skrueklemmen? |
 | `halo-gen2-v17-hurtig_proeve-stroemindgang.stl` | 29 × 86 × 22 | – | Røret i bunden: hunstikket (TRU DC-13F) trykkes ned ovenfra og klikker under de 2 snaplåse, og GST-proppen går helt op i røret nedefra. |
 | `halo-gen2-v17-hurtig_proeve-hoejttaler.stl` | 82 × 47 × 25 | – | Højttaleren (FIT0502) i sin bakke bag gitteret. |
