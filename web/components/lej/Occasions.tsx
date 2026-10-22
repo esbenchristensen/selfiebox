@@ -23,7 +23,7 @@ export function Occasions({ from }: { from: number }) {
         <ul className="occ">
           {OCCASIONS.map((o) => (
             <li key={o.name}>
-              <a href="#datoer">
+              <a href="#book">
                 <span className="occ-photo">
                   <Image src={`/photos/${o.photo}.jpg`} alt={o.alt} fill sizes="(max-width: 640px) 90vw, 30vw" style={{ objectFit: "cover" }} />
                 </span>

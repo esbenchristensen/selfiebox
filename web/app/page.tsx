@@ -13,7 +13,6 @@ import { Box3D } from "@/components/lej/Box3D";
 import { BoxStand } from "@/components/lej/BoxStand";
 import { Compare } from "@/components/lej/Compare";
 import { DrawBook, DrawParcel, DrawParty, DrawPolaroid, DrawReturn, DrawSetup, DrawStrip, Icon } from "@/components/lej/Drawings";
-import { HeroBooking } from "@/components/lej/HeroBooking";
 import { Occasions } from "@/components/lej/Occasions";
 import { Personal } from "@/components/lej/Personal";
 import { PrinterViewer } from "@/components/lej/PrinterViewer";
@@ -27,7 +26,7 @@ import "./lej/lej.css";
 
 // selfi.dk: rent a box for one party, booked and paid here. The page follows the questions a host has, in the
 // order they ask them: what is it (the box on its floor stand in the hero), is our day free and what does it
-// cost (the live calendar right under the hero), why this one and not the others (one price, everything in it), how does it work, what does it look like for our party,
+// cost (the price in the hero, the live calendar in the booking near the bottom), why this one and not the others (one price, everything in it), how does it work, what does it look like for our party,
 // what do the guests get, the box itself, the printer, prices, what other hosts say, our kind of party,
 // then the booking, questions and contact. Places and businesses have /erhverv.
 // Prices and free days come from admin.selfi.dk → Udlejning. Social proof comes from lib/udlejning/proof.ts.
@@ -169,7 +168,7 @@ export default async function Home() {
           { label: "Spørgsmål", href: "#faq" },
           { label: "Erhverv", href: "/erhverv" },
         ]}
-        cta={{ label: "Se ledige datoer", href: "#datoer" }}
+        cta={{ label: "Se ledige datoer", href: "#book" }}
       />
       <main className="lej">
         <Hero
@@ -202,7 +201,7 @@ export default async function Home() {
               </a>
             </>
           }
-          primary={{ label: "Se ledige datoer", href: "#datoer" }}
+          primary={{ label: "Se ledige datoer", href: "#book" }}
           secondary={{ label: "Se priser", href: "#priser" }}
           price={
             <>
@@ -211,17 +210,6 @@ export default async function Home() {
           }
           visual={<BoxStand />}
         />
-
-        <section id="datoer" className="section lej-dates" aria-labelledby="datoer-title">
-          <div className="wrap lej-dates-grid">
-            <div className="sec-head">
-              <span className="label">Ledige datoer</span>
-              <h2 id="datoer-title" className="h-l">Er jeres dag ledig?</h2>
-              <p className="lede">Vælg en periode eller tryk på dagene i kalenderen. I ser prisen med det samme, og I betaler først, når I har valgt tilvalg.</p>
-            </div>
-            <HeroBooking />
-          </div>
-        </section>
 
         <PhotoStrip
           prints={[
@@ -354,7 +342,7 @@ export default async function Home() {
                   <b>{kr(s.prices.printer)} med {s.printsIncluded} print</b>
                   <span className="muted">Printeren står ved siden af boksen og kommer i sin egen kasse sammen med den. Papir til {s.printsIncluded} print er med.</span>
                 </div>
-                <a className="btn btn-secondary" href="#datoer">
+                <a className="btn btn-secondary" href="#book">
                   Se om printeren er ledig
                 </a>
               </div>
@@ -383,7 +371,7 @@ export default async function Home() {
                   <span className="muted">{PERIODS[k].text}</span>
                   <strong>{kr(P[k])}</strong>
                   <span className="muted">{note}</span>
-                  <a className="btn btn-secondary" href="#datoer">Se ledige datoer</a>
+                  <a className="btn btn-secondary" href="#book">Se ledige datoer</a>
                 </div>
               ))}
             </div>
