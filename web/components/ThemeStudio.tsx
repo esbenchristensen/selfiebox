@@ -11,9 +11,11 @@ const Showroom3D = dynamic(() => import("./three/Showroom3D"), { ssr: false, loa
 
 const ADVANCE_MS = 6000;
 
-// Venues: the whole box is designed for the place. All designs on one wall; the visuals do the talking.
+// Venues: the whole box is designed for the place. All designs in one row that goes round and round; the
+// visuals do the talking. focus counts on past the last design, the design shown is focus mod the count.
 export function Showroom({ title, lede }: { title: string; lede: string }) {
   const [focus, setFocus] = useState(0);
+  const swipe = useRef<{ x: number; y: number; t: number } | null>(null);
   const [ready, setReady] = useState(false);
   const [near, setNear] = useState(false);
   const touched = useRef(false);
@@ -30,15 +32,16 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => {
-      if (!touched.current && document.visibilityState === "visible") setFocus((f) => (f + 1) % venues.length);
+      if (!touched.current && document.visibilityState === "visible") setFocus((f) => f + 1);
     }, ADVANCE_MS);
     return () => clearInterval(id);
   }, []);
 
-  const pick = (i: number) => {
+  const pick = (k: number) => {
     touched.current = true;
-    setFocus((i + venues.length) % venues.length);
+    setFocus(k);
   };
+  const venue = venues[((focus % venues.length) + venues.length) % venues.length];
 
   return (
     <section id="temaer" className="showroom" aria-labelledby="showroom-title">
@@ -49,7 +52,18 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
         </h2>
         <p className="lede">{lede}</p>
       </div>
-      <div ref={ref} className={`showroom-stage viewer${ready ? " is-ready" : ""}`} role="img" aria-label={`Selfi i 3D med designet til ${venues[focus].name}`}>
+      <div ref={ref} className={`showroom-stage viewer${ready ? " is-ready" : ""}`} role="img"
+        aria-label={`Selfi i 3D med designet til ${venue.name}`}
+        onPointerDownCapture={(e) => (swipe.current = { x: e.clientX, y: e.clientY, t: e.timeStamp })}
+        onPointerUpCapture={(e) => {
+          const s = swipe.current;
+          swipe.current = null;
+          if (!s) return;
+          const dx = e.clientX - s.x;
+          const dy = e.clientY - s.y;
+          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && e.timeStamp - s.t < 800) pick(focus + (dx < 0 ? 1 : -1));
+        }}
+      >
         <div className="viewer-poster" aria-hidden="true">
           <OutlinePoster />
         </div>
@@ -62,14 +76,6 @@ export function Showroom({ title, lede }: { title: string; lede: string }) {
         </button>
       </div>
       <div className="wrap">
-        <div className="showroom-logos" role="tablist" aria-label="Designs">
-          {venues.map((v, i) => (
-            <button key={v.id} role="tab" aria-selected={i === focus} onClick={() => pick(i)} title={v.name} style={{ "--c": v.ring.glow, "--bg": v.palette.base } as React.CSSProperties}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/models/${v.id}/logo.svg`} alt={v.name} />
-            </button>
-          ))}
-        </div>
         <p className="fine showroom-note">
           <Ph note="konceptdesigns med andres logoer; skiftes til rigtige kunders designs, eller der indhentes tilladelse, før siden udgives">
             Konceptdesigns. Stederne og mærkerne er ikke kunder hos Selfi, og logoer og navne tilhører dem.

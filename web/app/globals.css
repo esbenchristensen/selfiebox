@@ -460,29 +460,18 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 /* Showroom (venues): six designs on one wall */
 .showroom { padding-block: var(--space-9) var(--space-8); }
 .showroom-head { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-6); }
-.showroom-stage { position: relative; height: clamp(520px, 78vh, 820px); background: radial-gradient(70% 80% at 50% 45%, #1f2120, #0b0c0b); overflow: hidden; }
-.showroom-stage .viewer-poster { color-scheme: dark; }
+.showroom-stage { position: relative; height: clamp(520px, 78vh, 820px); background: none; overflow: hidden; touch-action: pan-y; }
 .showroom-stage .viewer-poster .outline { max-width: 420px; }
-.showroom-stage .viewer-poster .outline path, .showroom-stage .viewer-poster .outline circle { stroke: #fff3e3; }
 .showroom-arrow { position: absolute; top: 50%; z-index: 2; width: 48px; height: 48px; margin-top: -24px; border-radius: 50%; border: 1px solid rgba(255, 243, 227, 0.3); background: rgba(14, 15, 14, 0.55); color: #fff3e3; font: 300 30px/1 var(--font-body), sans-serif; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: background 200ms var(--ease); }
 .showroom-arrow:hover { background: rgba(14, 15, 14, 0.85); }
 .showroom-arrow--prev { left: max(16px, calc(50% - 560px)); }
 .showroom-arrow--next { right: max(16px, calc(50% - 560px)); }
-.showroom-logos { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
-.showroom-logos button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 128px; height: 64px; padding: 10px 14px; border-radius: var(--radius-l); background: var(--bg); border: 1px solid var(--line); opacity: 0.55; transition: opacity 250ms var(--ease), border-color 250ms var(--ease), transform 160ms var(--ease); }
-.showroom-logos button:hover { opacity: 0.9; }
-.showroom-logos button:active { transform: scale(0.97); }
-.showroom-logos button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.showroom-logos button[aria-selected="true"] { opacity: 1; border-color: var(--c); box-shadow: inset 0 0 0 1px var(--c); }
-.showroom-logos img { display: block; width: auto; height: auto; max-width: 100%; max-height: 42px; }
-.showroom-note { text-align: center; margin: var(--space-4) auto 0; }
+.showroom-note { text-align: center; margin: var(--space-5) auto 0; }
+.showroom-stage .stage-canvas canvas { cursor: default; }
 .hero-box-cap img { grid-column: 1; grid-row: 1 / span 2; height: 34px; width: auto; max-width: 150px; object-fit: contain; }
 .hero-box-cap { background: color-mix(in srgb, var(--bg, #0e0f0e) 88%, transparent); transition: background 500ms var(--ease); }
 @media (max-width: 600px) {
   .showroom-stage { height: 560px; }
-  .showroom-logos { gap: var(--space-2); }
-  .showroom-logos button { width: calc(33.33% - 6px); height: 52px; padding: 8px 10px; }
-  .showroom-logos img { max-height: 34px; }
   .showroom-arrow { width: 40px; height: 40px; margin-top: -20px; font-size: 26px; }
 }
 .theme-media .viewer { position: absolute; inset: 0; }
@@ -641,7 +630,7 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 .cases-tabs { display: flex; flex-direction: column; gap: 2px; }
 .cases-tabs button { all: unset; box-sizing: border-box; cursor: pointer; padding: 12px 14px; border-radius: var(--radius-m); font: 500 17px/1.2 var(--font-body), sans-serif; color: var(--ink-muted); transition: background 150ms var(--ease), color 150ms var(--ease); }
 .cases-tabs button:hover { color: var(--ink); }
-.cases-tabs button[aria-selected="true"] { background: var(--surface-raised); color: var(--ink); box-shadow: inset 3px 0 0 var(--green); }
+.cases-tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; }
 .cases-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .case { border: 1px solid var(--line); border-radius: var(--radius-l); padding: var(--space-6); background: var(--surface-raised); }
 .case .ph-block { padding: 0; outline-offset: 10px; }
@@ -747,7 +736,7 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
   .quotes { grid-template-columns: minmax(0, 1fr); }
   .cases-tabs { flex-direction: row; flex-wrap: wrap; gap: 6px; }
   .cases-tabs button { padding: 9px 12px; font-size: 15px; border: 1px solid var(--line); border-radius: var(--radius-pill); }
-  .cases-tabs button[aria-selected="true"] { box-shadow: none; border-color: var(--ink); }
+  .cases-tabs button[aria-selected="true"] { border-color: var(--ink); }
   .case-rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .team-art { max-width: 420px; margin: 0 auto; }
   .sticky-cta { display: flex; }
@@ -790,14 +779,19 @@ a.act:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
 }
 
 /* Cases: the box in a matching design beside the example */
-.cases { grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr); }
-.case { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--space-6); align-items: start; }
+.case { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--space-6); align-items: start; }
 .case-box { aspect-ratio: 4 / 5; }
-.case-box-cap { position: absolute; left: var(--space-4); bottom: var(--space-4); font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
-.ph-block { min-width: 0; }
+.case-body, .ph-block { min-width: 0; }
+.case-body .h-m { margin: 0; }
+.case-box-cap { position: absolute; left: 0; right: 0; bottom: var(--space-4); text-align: center; font: 400 11px/1 var(--font-mono), monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+@media (min-width: 901px) {
+  .cases { grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr); }
+  .case-box { position: sticky; top: 96px; }
+}
 @media (max-width: 900px) {
-  .cases, .case { grid-template-columns: minmax(0, 1fr); }
-  .case-box { max-width: 360px; }
+  .cases { grid-template-columns: minmax(0, 1fr); }
+  .case { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .case-box { width: 100%; max-width: 320px; margin-inline: auto; }
 }
 
 /* Lead machine: "Se jeres egen Selfi inden for 24 timer" (components/erhverv/DesignLead.tsx) */
