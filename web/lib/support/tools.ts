@@ -70,7 +70,7 @@ export const TOOL_LABELS: Record<string, string> = {
   check_availability: "Tjekker ledige datoer…",
   propose_date_change: "Regner på de nye datoer…",
   commit_date_change: "Flytter bookingen…",
-  escalate: "Sender videre til Esben…",
+  escalate: "Sender videre til en kollega…",
   web_search: "Søger på nettet…",
 };
 
@@ -153,7 +153,7 @@ export const TOOL_DEFINITIONS = [
   {
     type: "function" as const,
     name: "escalate",
-    description: "Sender sagen til et menneske (Esben) med SMS og markerer chatten. Brug ved ønske om et menneske, utilfredshed, klager, penge (refusion, erstatning, kompensation, skade, tyveri), jura, ændringer du ikke selv må lave, låst verificering, akutte problemer med boksen under en fest, tilbud til steder, og når du ikke kan svare sikkert. Svarer med, hvornår kunden kan forvente svar.",
+    description: "Sender sagen til et menneske (en kollega hos Selfi) med SMS og markerer chatten. Brug ved ønske om et menneske, utilfredshed, klager, penge (refusion, erstatning, kompensation, skade, tyveri), jura, ændringer du ikke selv må lave, låst verificering, akutte problemer med boksen under en fest, tilbud til steder, og når du ikke kan svare sikkert. Svarer med, hvornår kunden kan forvente svar.",
     strict: true,
     parameters: obj(
       {
@@ -283,7 +283,7 @@ async function failAttempt(ctx: ToolContext, bookingId: string | null, what: str
   return { locked, left: MAX_VERIFY - attempts };
 }
 
-const LOCKED: Result = { ok: false, locked: true, message: "Verificeringen er låst i denne chat efter for mange forkerte forsøg. Eskalér, så Esben kan hjælpe kunden." };
+const LOCKED: Result = { ok: false, locked: true, message: "Verificeringen er låst i denne chat efter for mange forkerte forsøg. Eskalér, så en kollega kan hjælpe kunden." };
 
 async function verifyOrder(ctx: ToolContext, a: { bookingNo: string }): Promise<Result> {
   const chat = ctx.chat;
@@ -314,7 +314,7 @@ async function sendSmsCode(ctx: ToolContext): Promise<Result> {
   if (chat.verifyLockedAt) return LOCKED;
   if (chat.customer?.keys?.phone) return { ok: false, message: "Kunden er allerede verificeret med telefonen." };
   const sends = chat.smsSends ?? 0;
-  if (sends >= MAX_SENDS_PER_CHAT) return { ok: false, reason: "too_many", message: "Der er sendt det højeste antal koder i denne chat. Eskalér, så Esben kan hjælpe." };
+  if (sends >= MAX_SENDS_PER_CHAT) return { ok: false, reason: "too_many", message: "Der er sendt det højeste antal koder i denne chat. Eskalér, så en kollega kan hjælpe." };
   if (chat.smsCode && ctx.now.getTime() - chat.smsCode.sentAt.getTime() < 60_000) return { ok: false, reason: "wait", message: "Der blev sendt en kode for under et minut siden. Bed kunden vente lidt og tjekke sine SMS'er." };
   if ((await recentSends(ctx.d, contact.phone, ctx.now)) >= MAX_SENDS_PER_PHONE_HOUR) return { ok: false, reason: "too_many", message: "Der er sendt for mange koder til det nummer den sidste time. Bed kunden prøve igen senere, eller eskalér." };
   const { code, stored } = newCode(chat._id, ctx.now);
@@ -371,7 +371,7 @@ async function requestDesign(ctx: ToolContext, a: { company: string; website: st
   const saved = await saveInbound(ctx.d, r, { ipHash: chat.ipHash, chatId: chat._id, adminUrl: ctx.adminUrl, sms: ctx.sms, now: ctx.now });
   await setChat(ctx, { designRequest: { id: saved._id, company: r.company, at: ctx.now } });
   await audit(ctx.d, { chatId: chat._id, actor: "ai", actorName: "Sif", action: "design_request", bookingId: null, note: `${saved._id}: ${r.company} (${r.website})` });
-  return { ok: true, requestId: saved._id, sendTo: contact.email, message: `Bestilt. Sig til kunden, at designudkastet og forslaget til software kommer på ${contact.email} inden for 24 timer, og at Esben ringer på det oplyste nummer, hvis han har spørgsmål.` };
+  return { ok: true, requestId: saved._id, sendTo: contact.email, message: `Bestilt. Sig til kunden, at designudkastet og forslaget til software kommer på ${contact.email} inden for 24 timer, og at en kollega ringer på det oplyste nummer, hvis der er spørgsmål.` };
 }
 
 async function getBookings(ctx: ToolContext): Promise<Result> {
@@ -415,7 +415,7 @@ async function proposeDateChange(ctx: ToolContext, a: { bookingNo: string; from:
   }
   const range: Range = { from: a.from, to: a.to };
   if (nights(range) !== r.days) {
-    return { ok: false, reason: "different_length", message: `Bookingen er på ${r.days} ${r.days === 1 ? "dag" : "dage"}, men de nye datoer er ${nights(range)}. Et andet antal dage ændrer prisen og skal aftales med Esben: eskalér med de ønskede datoer.` };
+    return { ok: false, reason: "different_length", message: `Bookingen er på ${r.days} ${r.days === 1 ? "dag" : "dage"}, men de nye datoer er ${nights(range)}. Et andet antal dage ændrer prisen og skal aftales med en kollega: eskalér med de ønskede datoer.` };
   }
   if (a.from === r.from && a.to === r.to) return { ok: false, message: "Det er de datoer, bookingen allerede har." };
   const { holds, blocks } = await holdsExcluding(ctx.d, range.from, r._id);
@@ -484,8 +484,8 @@ async function escalate(ctx: ToolContext, a: { reason: string; summary: string; 
   const escalation = { at: ctx.now, reason: a.reason, summary, urgent, smsSent, by, replyBy: promise.text };
   await setChat(ctx, { escalation, status: chat.status === "human" ? "human" : "waiting_human", unread: chat.unread + 1 });
   await audit(ctx.d, { chatId: chat._id, actor: by, actorName: by === "ai" ? "Sif" : chat.customer?.name ?? "kunde", action: "escalate", bookingId: chat.customer?.bookings[0] ?? null, note: `${a.reason}${urgent ? " (akut)" : ""}: ${summary}. SMS ${smsSent ? "sendt" : "ikke sendt"}` });
-  await addMessage(ctx.d, chat, { role: "system", text: `Sendt videre til Esben${urgent ? " som akut" : ""}. Han svarer ${promise.text}.`, tool: { name: "escalate", label: "Sendt til Esben", ok: smsSent } });
-  return { ok: true, replyBy: promise.text, open: isOpen(ctx.now), hours: hoursText(), smsSent, message: `Sig til kunden, at Esben tager over og svarer her i chatten ${promise.text}.${urgent ? " Han har kundens telefonnummer og kan ringe." : ""}` };
+  await addMessage(ctx.d, chat, { role: "system", text: `Sendt videre til en kollega${urgent ? " som akut" : ""}, som svarer ${promise.text}.`, tool: { name: "escalate", label: "Sendt til en kollega", ok: smsSent } });
+  return { ok: true, replyBy: promise.text, open: isOpen(ctx.now), hours: hoursText(), smsSent, message: `Sig til kunden, at en kollega tager over og svarer her i chatten ${promise.text}.${urgent ? " Han har kundens telefonnummer og kan ringe." : ""}` };
 }
 
 export const escalateByCustomer = (ctx: ToolContext) => escalate(ctx, { reason: "wants_human", summary: "Kunden trykkede på 'Tal med et menneske'", urgent: false, phone: null }, "customer");

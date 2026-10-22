@@ -40,7 +40,7 @@ export type TurnOptions = {
 let client: OpenAI | null = null;
 const openai = () => (client ??= new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 60_000, maxRetries: 1 }));
 
-const FALLBACK = "Jeg kunne ikke svare lige nu. Prøv igen om et øjeblik, eller tryk på \"Tal med et menneske\", så tager Esben over.";
+const FALLBACK = "Jeg kunne ikke svare lige nu. Prøv igen om et øjeblik, eller tryk på \"Tal med et menneske\", så tager en kollega over.";
 
 /** The history as model input: customers as user, Sif and humans as assistant, system notes as developer notes. */
 function toInput(messages: SupportMessageDoc[]): ResponseInputItem[] {
@@ -48,7 +48,7 @@ function toInput(messages: SupportMessageDoc[]): ResponseInputItem[] {
   for (const m of messages) {
     if (m.role === "customer") out.push({ role: "user", content: m.text });
     else if (m.role === "assistant") out.push({ role: "assistant", content: m.text });
-    else if (m.role === "human") out.push({ role: "assistant", content: `[${m.name ?? "Esben"} (menneske) skrev]: ${m.text}` });
+    else if (m.role === "human") out.push({ role: "assistant", content: `[En kollega (menneske) skrev]: ${m.text}` });
     else if (m.role === "system") out.push({ role: "developer", content: `[System: ${m.text}]` });
   }
   return out;

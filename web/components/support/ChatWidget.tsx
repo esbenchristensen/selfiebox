@@ -5,7 +5,7 @@ import { Mark } from "../Logo";
 import "./support.css";
 
 // The support chat on every page of selfi.dk: a button bottom right, a panel with the conversation.
-// Sif (the AI) answers at once and streams the reply; when Esben takes over in admin, his messages arrive
+// Sif (the AI) answers at once and streams the reply; when a colleague takes over in admin, their messages arrive
 // through polling and the assistant stays quiet. The chat is tied to an httpOnly cookie set by the API.
 // Before the first message the person writes name, e-mail and phone (POST /api/support/start). On /erhverv
 // the greeting and the suggestions are for places; everywhere else for private rentals.
@@ -24,6 +24,7 @@ type Chat = {
 };
 
 const NAME = "Sif";
+const COLLEAGUE = "Kollega fra Selfi";
 const INTRO = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om jeres booking, levering, priser eller boksen.";
 const INTRO_B2B = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om boksen til jeres sted: design, funktioner, pris og opsætning. Jeg kan også bestille et gratis designudkast til jer på 24 timer.";
 const CHIPS = ["Hvor er vores boks?", "Vi vil flytte datoen", "Hvad koster det?", "Hvordan sender vi den retur?"];
@@ -113,7 +114,7 @@ export function ChatWidget() {
     return () => clearInterval(t);
   }, [open, chat?.status, busy, poll]);
 
-  // Closed panel: keep an eye out for Esben's replies, so the button can show them.
+  // Closed panel: keep an eye out for a colleague's replies, so the button can show them.
   useEffect(() => {
     if (open || !chat || (chat.status !== "human" && chat.status !== "waiting_human")) return;
     const t = setInterval(() => document.visibilityState === "visible" && void poll(), 8000);
@@ -250,7 +251,8 @@ export function ChatWidget() {
   const human = chat?.status === "human";
   const waiting = chat?.status === "waiting_human";
   const closed = chat?.status === "closed";
-  const sub = human ? `${chat?.takenBy ?? "Esben"} skriver med dig` : waiting ? `Esben svarer ${chat?.escalation?.replyBy ?? "snart"}` : "Selfis AI-assistent";
+  // Never the name of the person at Selfi: the customer sees "en kollega" (Esben, 22. okt. 2026).
+  const sub = human ? "En kollega fra Selfi skriver med dig" : waiting ? `En kollega svarer ${chat?.escalation?.replyBy ?? "snart"}` : "Selfis AI-assistent";
 
   return (
     <>
@@ -270,7 +272,7 @@ export function ChatWidget() {
         <header className="sc-head">
           <span className="sc-avatar" aria-hidden="true"><Mark /></span>
           <div className="sc-title">
-            <b>{human ? chat?.takenBy ?? "Esben" : NAME}</b>
+            <b>{human ? COLLEAGUE : NAME}</b>
             <span className={`sc-sub${human ? " is-human" : ""}`}>{sub}</span>
           </div>
           <div className="sc-menu">
@@ -294,7 +296,7 @@ export function ChatWidget() {
           <Bubble m={{ seq: 0, role: "assistant", text: b2b ? INTRO_B2B : INTRO, at: "", name: NAME, sources: null }} />
           {needContact && (
             <form className="sc-start" onSubmit={start}>
-              <p>Skriv lige, hvem du er, før vi går i gang. Så kan Esben også fange dig, hvis han skal tage over.</p>
+              <p>Skriv lige, hvem du er, før vi går i gang. Så kan en kollega også fange dig, hvis der skal et menneske på.</p>
               <label>
                 <span>Navn</span>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" required maxLength={120} />
@@ -339,7 +341,7 @@ export function ChatWidget() {
             value={draft}
             rows={1}
             maxLength={1500}
-            placeholder={human ? `Skriv til ${chat?.takenBy ?? "Esben"}` : `Skriv til ${NAME}`}
+            placeholder={human ? "Skriv til Selfi" : `Skriv til ${NAME}`}
             aria-label="Din besked"
             onChange={(e) => {
               setDraft(e.target.value);
@@ -368,7 +370,7 @@ function Bubble({ m }: { m: Msg }) {
   const mine = m.role === "customer";
   return (
     <div className={`sc-msg ${mine ? "is-me" : m.role === "human" ? "is-human" : "is-ai"}`}>
-      {!mine && <span className="sc-who">{m.role === "human" ? m.name ?? "Esben" : NAME}</span>}
+      {!mine && <span className="sc-who">{m.role === "human" ? COLLEAGUE : NAME}</span>}
       <div className="sc-bubble">
         {m.text ? <Rich text={m.text} /> : <span className="sc-typing" role="status">Skriver<span className="sc-dots" aria-hidden="true"><i /><i /><i /></span></span>}
       </div>

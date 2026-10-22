@@ -121,6 +121,8 @@ function checkTurn(t: Turn, reply: string, tools: string[]): string[] {
   for (const name of t.noTools ?? []) if (tools.includes(name)) f.push(`værktøj ${name} måtte ikke kaldes`);
   for (const re of t.must ?? []) if (!re.test(reply)) f.push(`svaret mangler ${re}`);
   for (const re of t.mustNot ?? []) if (re.test(reply)) f.push(`svaret må ikke matche ${re}`);
+  // Esben, 22. okt. 2026: Sif nævner aldrig navne på folk hos Selfi, kun "en kollega" eller "chefen".
+  if (/\bEsben\b|\bKasper\b/i.test(reply)) f.push("svaret nævner en medarbejders navn");
   return f;
 }
 
