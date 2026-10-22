@@ -65,7 +65,12 @@ COUPONS = [
      "kablet fladt ud bagtil (tilvalg)."),
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
      "Kameraet på frontens tappe, linsen midt i hullet, bagrammens rør trykker printet ned, "
-     "kamerakablet gennem slidsen og de tre klikstik i deres lommer. Front og bagramme lægges sammen."),
+     "kamerakablet gennem slidsen og de fire klikstik i deres lommer (v18: hvid 3's stik i reflektoren til højre). Front og bagramme lægges sammen."),
+    ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
+     "v18: lyskanalen uden klister, nederste venstre hjørne med ca. 10 cm strip-bane. Hvid 1 og 2: bagkanten ind under læben, "
+     "forkanten trykkes ned mod væggen. RGB i den tætte bane bagerst. Hvid 3 i lommen i den skrå reflektor, bagkanten ind under "
+     "læben. Læg lysringens stykke i, og pres bagrammen på: trykker ringens kile forkanten af hvid 3 ned? Kør en finger langs alle "
+     "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
      "(3,0 × 15) skruet i bagfra. Er skyggefugen mellem skal og front jævn?"),

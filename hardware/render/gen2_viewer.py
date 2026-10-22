@@ -20,12 +20,12 @@ DEPTH = float(sys.argv[4]) if len(sys.argv) > 4 else 85.0   # box depth (D in ge
 
 # node, STL view, label, colour, group, explode [x, y, z] in glTF axes (mm at full explode)
 PARTS = [
-    ("lysring",       "x_ring3",       "Lysring (naturfarvet ASA)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
+    ("lysring",       "x_ring3",       "Lysring med kile over hvid 3 (naturfarvet ASA)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
     ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
     ("skumbaand",     "x_tape3",       "Tætningsbånd, blødt skum 3 × 1 mm (i rillen rundt om skærmen)", "#d97706", "Kabinet", [0, 0, 95]),
-    ("ledskinne",     "x_frame3",      "Bagramme med reflektor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
+    ("ledskinne",     "x_frame3",      "Bagramme med reflektor og kantspor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
     ("printerdaeksel", "c_cap",        "Prop til printerhul (drejes 60°, strammer på 3 fjedertunger)", "#3a3a3f", "Kabinet",    [0, -45, -90]),
@@ -33,9 +33,9 @@ PARTS = [
     ("skaerm_billede", "x_dsp_active", "Skærm: aktivt billede 1200 × 1920", "#4f7df0", "Elektronik", [0, 0, 65]),
     ("skaerm_bag",    "x_dsp_back",    "Skærm: bagside med skrueører",    "#8a8d94", "Elektronik", [0, 0, 65]),
     ("kamera",        "x_camera",      "Kamera (Wide)",                   "#9aa3b5", "Elektronik", [0, 0, 120]),
-    ("ledhvid",       "x_strip_w",     "2 × hvid COB-strip Ra95",         "#ffb000", "Elektronik", [0, 0, 60]),
+    ("ledhvid",       "x_strip_w",     "3 × hvid COB-strip Ra95 (2 i kantspor på væggen, 1 i reflektoren)",         "#ffb000", "Elektronik", [0, 0, 60]),
     ("ledrgb",        "x_strip_rgb",   "RGB-strip 5 mm",                  "#a855f7", "Elektronik", [0, 0, 60]),
-    ("klikstik",      "c_clips",       "3 klikstik til strips (ét pr. strip)", "#f5f5f4", "Elektronik", [0, 0, 60]),
+    ("klikstik",      "c_clips",       "4 klikstik til strips (ét pr. strip)", "#f5f5f4", "Elektronik", [0, 0, 60]),
     ("pi",            "c_pi_board",    "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
     ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
     ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),

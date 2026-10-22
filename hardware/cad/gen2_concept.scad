@@ -623,18 +623,55 @@ RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
 CAM_END = CAM_HOLE/2 + 4 + S3;            // slot end centres, 4 mm black round the camera hole
 CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
 REFL = [[4.2, -6.0], [26.45, 4.4]];       // reflector line (y, r): from the ring flange to the floor
-FLOOR3 = 26.45;
+FLOOR3 = 27.4;                            // v18: 0.95 deeper (v2-v17: 26.45) for the strip lanes; the reflector stops at r 4.4 as before
 // [y0, y1, kind, thickness, end |x| left, end |x| right] (strip ends next to the camera)
 // [C] white: Ledproff COB Ra95 24 V, 8 x 2 mm; RGB: Ledprodukter WS2812b COB 5 V, 5 x 2.2 mm (dimension sheet)
 // Each strip is fed from ONE end. The clip connectors are wider than the strips (white 9.6, RGB 6.8,
 // up to 4.4 high), so they cannot sit side by side: white 1 and RGB take their clips at the left end,
 // white 2 at the right end, and the strip next to a clip stops 17 mm further out.
 CLIP_L = 17;                              // clip zone along the strip, from the camera keep-out
-STRIPS3 = [[5.1, 13.1, "w", 2.0, 17, 34], [13.15, 21.15, "w", 2.0, 34, 17], [21.2, 26.2, "rgb", 2.2, 17, 34]];
+// v18 (Esben 22 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v18_skitse_led-fastholdelse.png): no adhesive. Each strip has
+// its own lane on the strip wall; its back edge goes in under a lip, its front edge presses down against the wall. The frame
+// prints back down, so a lip can only point forward. [M] Esben: white 8.1 wide with a 3.7 yellow (lit) stripe in the middle,
+// so 2.2 is dark each side and the lips take 1.0 of it; the RGB strip is lit right across, so it gets no lip (snug lane, reflector 0.3 above).
+STRIPS3 = [[4.7, 12.7, "w", 2.0, 17, 34], [13.5, 21.5, "w", 2.0, 34, 17], [22.3, 27.3, "rgb", 2.2, 17, 34]];
 STRIP_T3 = [4.7, 6.9];                    // strip wall face at r 6.9; thickest strip reaches r 4.7
+// The white strip is thinner out at the dark edge than over the yellow stripe. The stems and lips only reach over that thin
+// edge, so a stem stands at most ~1.1 out from the wall (a flat shelf in the print; 2.5 in the first v18 draft was too much).
+T_EDGE = 0.5;                             // [A] white strip thickness at the dark edge, until Esben has measured it
+LANE_STEMS = [12.8, 21.6];                // stem front faces: 0.6 wide, lip 1.1 forward over the strip in front
+LANE_LIP = [STRIP_T3[1] - T_EDGE - 0.6, STRIP_T3[1] - T_EDGE - 0.1];   // lip r: 0.5 thick, 0.1 clear of the edge
 // [C] Ledproff low-profile start clip 8 mm COB: 9.6 wide (retailer), ~15.5 x 4.3 (comparable LinearLux, unconfirmed)
 // [C] Ledprodukter MiniClip 5 mm 3-pole: 16.53 x 6.8 x 4.4 (retailer table)
-CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.15, [16, 9.6, 4.3]], [-1, 23.7, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
+CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.5, [16, 9.6, 4.3]], [-1, 24.8, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
+// v18 (Esben 22 Oct, sketch halo-gen2-v18_skitse_3-hvid-i-reflektor.png, light sim variant C): a third white strip recessed
+// in the front of the sloping reflector. (s, d) = along the reflector from its front end, and depth into it.
+// The pocket floor runs forward to the inner wall (a front wall over the strip would hang in the air in the print).
+// The light ring fills the space in front of the strip with a wedge that sits on that floor (it clamps the ring's inner
+// flange, as the reflector's front face did) and has a lip over the strip's front edge. The frame has a lip over its back edge.
+U3 = [0.906, 0.4234];  N3 = [0.4234, -0.906];
+function P3(s, d) = [REFL[0][0] + U3[0]*s + N3[0]*d, REFL[0][1] + U3[1]*s + N3[1]*d];
+W3 = [2.5, 10.6, 0.6, 2.6];               // strip 3: s0, s1, d face, d back (8.1 x 2.0)
+W3_GRIP = W3[3] - T_EDGE - 0.1;           // lip and nose reach down to 0.1 above the strip's thin edge
+W3_POCKET = [[REFL[0][0] - 0.01, -FL3 - 0.01], [P3(0, 2.7)[0] + (-FL3 - P3(0, 2.7)[1])/0.4234*0.906 + 0.0, -FL3 - 0.01], P3(10.7, 2.7), P3(10.7, -0.6), [REFL[0][0] - 0.01, -5.4]];
+W3_LIP = [P3(9.6, -0.3), P3(10.75, -0.3), P3(10.75, W3_GRIP), P3(9.6, W3_GRIP)];
+W3_WEDGE = [[PT + 1, -FL3], [P3(0, 2.7)[0] + (-FL3 - P3(0, 2.7)[1])/0.4234*0.906, -FL3], P3(2.45, 2.7), P3(2.45, -0.3), P3(0.2, -0.3), [PT + 1, -RF3 + RW3]];
+W3_NOSE = [P3(2.4, W3_GRIP), P3(3.5, W3_GRIP), P3(3.5, -0.3), P3(2.4, -0.3)];   // 1.0 over the dark edge, like the frame lips
+W3_CLIP = [[16, 9.6, 4.3], 6.55, 2.72];   // clip [l, w, h], centre s, bottom d (0.5 mm short of the inner wall); right side, 1.6 proud
+// r range of a convex (y, r) polygon at y
+function xr(p, y) = let(r = [for (i = [0:len(p) - 1]) let(a = p[i], b = p[(i + 1) % len(p)]) if ((a[0] - y)*(b[0] - y) <= 0 && a[0] != b[0]) a[1] + (y - a[0])*(b[1] - a[1])/(b[0] - a[0])]) [min(r), max(r)];
+// the polygon swept round the ring in y slices (the print's own direction); grow > 0 takes the wider end of each slice
+module sweep3(p, step = 0.2, grow = 0) {
+    ys = [for (q = p) q[0]];  y0 = min(ys);  y1 = max(ys);  n = ceil((y1 - y0)/step);
+    for (i = [0:n - 1]) let(a = y0 + i*(y1 - y0)/n, b = y0 + (i + 1)*(y1 - y0)/n,
+                            ra = xr(p, min(a + 0.001, y1)), rb = xr(p, max(b - 0.001, y0)), m = xr(p, (a + b)/2),
+                            r = grow > 0 ? [min(ra[0], rb[0]), max(ra[1], rb[1])] : m)
+        ext_y(a - (grow > 0 ? 0.01 : 0), b + 0.01) ring_band2d(r[0], r[1]);
+}
+module w3_clip_box(g) translate([CAM_KEEP[0] + W3_CLIP[0][0]/2, 0, RING_Z1]) {
+    c = P3(W3_CLIP[1], W3_CLIP[2] - W3_CLIP[0][2]/2);
+    translate([0, c[0], c[1]]) rotate([atan2(U3[1], U3[0]), 0, 0]) cube([W3_CLIP[0][0] + g, W3_CLIP[0][1] + g, W3_CLIP[0][2] + g], center = true);
+}
 J_R = 11.8;                               // front screws: in the outer wall at the 4 corners
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
 // v12 (Esben 20 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v11_skitse_tyndere-front-og-rille.png):
@@ -748,6 +785,12 @@ module ring3() {
         ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
         translate([-7.4, PT - 2, LENS_Z - 8]) cube([14.8, 4, 16]);       // clear of the camera shroud
     }
+    // v18: wedge on the inner flange, down onto the reflector pocket's floor, with a lip over strip 3's front edge
+    // (prints: the ring lies face down, so every face of it looks up or is steeper than 45 deg)
+    difference() {
+        union() { sweep3(W3_WEDGE, 0.2); sweep3(W3_NOSE, 0.2); }
+        ext_y(0, 20) { cam_keep2d(); translate([CAM_KEEP[0] - 0.01, RING_Z1 - CAM_KEEP[1]]) square([W3_CLIP[0][0] + 1.5, 2*CAM_KEEP[1]]); }
+    }
 }
 // v6 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v5_skitse_snaplaase-front.png):
 // the light-ring slot leaves the inner plate (window + logo) hanging on the bridge at the camera only.
@@ -808,11 +851,19 @@ module frame3() {
             difference() {
                 union() {
                     // the last step runs into the floor, so the reflector is one piece with the frame (v2 left a 0.24 mm gap)
-                    for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - 0.01]) ext_y(y, min(y + REFL_STEP, FLOOR3) + 0.01) ring_band2d(-FL3, refl_r(min(y + REFL_STEP, FLOOR3)));
+                    difference() {   // v18: pocket for white strip 3 in the front of the reflector
+                        for (y = [REFL[0][0] : REFL_STEP : FLOOR3 - 0.01]) ext_y(y, min(y + REFL_STEP, FLOOR3) + 0.01) ring_band2d(-FL3, min(4.4, refl_r(min(y + REFL_STEP, FLOOR3))));
+                        sweep3(W3_POCKET, 0.2, 1);
+                    }
+                    sweep3(W3_LIP, 0.2);
                     ext_y(REFL[0][0], CH_BACK + 0.01) ring_band2d(STRIP_T3[1], FL3);
                     ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
+                    // v18: lanes: a step in front of white 1, a stem + forward lip behind white 1 and white 2
+                    ext_y(REFL[0][0], REFL[0][0] + 0.4) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01);
+                    for (y = LANE_STEMS) { ext_y(y, y + 0.6) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01); ext_y(y - 1.1, y + 0.01) ring_band2d(LANE_LIP[0], LANE_LIP[1]); }
                 }
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
+                w3_clip_box(0.4);
                 for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
                     cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);       // room for the clips
             }
@@ -827,6 +878,9 @@ module frame3() {
             snap_arms();
         }
         snap_slots();
+        // v18: the RGB lane ends 0.4 short of the frame plate, so its clip (6.8 wide) runs 0.5 into the plate: room for it there too
+        for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
+            cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);
         for (t = tabs2) {
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + DSP_FLOOR - PRELOAD, FR_BACK + 1, t[0] + dx, z + dz);   // screw head well
@@ -837,16 +891,31 @@ module frame3() {
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
+        cyl_y(4, P3(W3_CLIP[1], 0)[0], FR_BACK + 1, STRIP_LEAD_X + 1.5, RING_Z1 - 4.5);           // v18: strip 3's lead, back through the reflector
     }
 }
 // 90 deg countersink, wide end (d1) at y0, narrowing towards -y to d2: for a screw driven in from the back
 module csk_y(d1, d2, y0, x, z) translate([x, y0 + 0.01, z]) rotate([90, 0, 0]) cylinder(d1 = d1, d2 = d2, h = (d1 - d2)/2 + 0.01, $fn = 32);
 module strip_cut2d(s) translate([-s[4], RING_Z1 - CAM_KEEP[1]]) square([s[4] + s[5], 2*CAM_KEEP[1]]);
-module placed_strips3(kind) for (s = STRIPS3) if (s[2] == kind)
-    ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
+module placed_strips3(kind) {
+    // white: T_EDGE thin board full width, full thickness only over the 3.7 yellow stripe (+0.5 each side for the COB dome)
+    for (s = STRIPS3) if (s[2] == kind)
+        ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[1] - (kind == "w" ? T_EDGE : s[3]), STRIP_T3[1]); strip_cut2d(s); }
+    for (s = STRIPS3) if (s[2] == kind && kind == "w")
+        ext_y(s[0] + (s[1] - s[0] - 4.7)/2, s[1] - (s[1] - s[0] - 4.7)/2) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
+    if (kind == "w") difference() {   // v18: strip 3 in the reflector, clip on the right
+        let(c = (W3[0] + W3[1])/2) union() {
+            sweep3([P3(W3[0], W3[3] - T_EDGE), P3(W3[1], W3[3] - T_EDGE), P3(W3[1], W3[3]), P3(W3[0], W3[3])], 0.25);
+            sweep3([P3(c - 2.35, W3[2]), P3(c + 2.35, W3[2]), P3(c + 2.35, W3[3]), P3(c - 2.35, W3[3])], 0.25);
+        }
+        ext_y(0, 20) strip_cut2d([0, 0, 0, 0, 34, 17]);
+    }
+}
 // clip connectors on the strip ends (on the top run, next to the camera); cable leaves towards the camera
-module placed_clips3() for (c = CLIPS3)
-    translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2]) cube([c[2][0], c[2][1], c[2][2]], center = true);
+module placed_clips3() {
+    for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2]) cube([c[2][0], c[2][1], c[2][2]], center = true);
+    w3_clip_box(0);   // v18: strip 3, 1.6 proud of the reflector
+}
 module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
