@@ -17,8 +17,9 @@ export const HIDDEN = new Set(["konsol", "vaegplade", "skruer_vaeg", "skruer_sok
 // Same casing as the rental box (components/three/rental.ts), so the two look like one product.
 const CASING = "#1d201d";
 const PRINT_PHOTO = "/photos/boks-bryllup.jpg";
-// The paper slot in the front: 124 × 8 mm (y ≈ 34 mm, the front face at z = 147 mm). The model sits at z = -0.2.
-const SLOT = { y: 34, z: 147 };
+// The paper slot in the front: 124 × 8 mm, centred at y = 41 mm (SLOT_Z in cad/selfi_printer_v1.scad is 147 mm over
+// the base, which is at y = -110 here), the front face at z = 147 mm. The model sits at z = -0.2.
+const SLOT = { y: 41, z: 147 };
 const MODEL_Z = -0.2;
 // A square print with a white frame and a wider foot, like a polaroid.
 const PRINT = { w: 100, border: 5, photo: 90, foot: 23 };

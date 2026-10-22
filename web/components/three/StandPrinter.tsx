@@ -13,7 +13,7 @@ import { HIDDEN, printerMaterial } from "./PrinterStage";
 
 const MODEL = "/models/selfi-printer-v1.glb";
 const BOTTOM = -110; // underside of the base in the model
-const SLOT = { y: 34, z: 147 }; // the paper slot in the front, as in PrinterStage
+const SLOT = { y: 41, z: 147 }; // the paper slot in the front, as in PrinterStage
 const TABLE = { r: 230, top: 18, h: 620 };
 // A polaroid-style print with a white frame and a wider foot, as in PrinterStage
 const PRINT = { w: 100, border: 5, photo: 90, foot: 23 };
