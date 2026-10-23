@@ -27,7 +27,7 @@ for node in list(scene.graph.nodes_geometry):
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
 scad = ROOT / "hardware/cad" / f"{ver.replace('-', '_')}.scad"
 tmp = Path(tempfile.mkdtemp())
-for view in ("konsol", "vaegplade"):
+for view in ("konsol",):   # v4: the hidden L-bracket (no wall cleat)
     subprocess.run(["openscad", "-D", f'VIEW="{view}"', "-o", str(tmp / f"{view}.stl"), str(scad)], check=True, capture_output=True)
     m = trimesh.load(tmp / f"{view}.stl")
     m.apply_transform(M)

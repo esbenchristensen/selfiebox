@@ -177,7 +177,7 @@
  },
  {
   "node": "konsoller",
-  "label": "2 vægkonsoller, hylder 200 brede, 20 mm inde fra hver ende (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra",
+  "label": "2 skjulte L-beslag (B2B væg): hylde 15 under printeren, bagplade bag den, skruet i væggen dér; soklen og udgangsmodulet skrues fast indefra/nedefra",
   "color": "#3a3a3f",
   "group": "B2B væg",
   "explode": [
@@ -187,19 +187,8 @@
   ]
  },
  {
-  "node": "vaegplader",
-  "label": "2 vægskinner med 45° kant (4 skruer + dybler hver)",
-  "color": "#4a4a50",
-  "group": "B2B væg",
-  "explode": [
-   0,
-   -110,
-   -110
-  ]
- },
- {
   "node": "skruer_konsol",
-  "label": "2 skruer op i udgangsmodulet (SPUN+ 4,0 × 20)",
+  "label": "2 skruer op i udgangsmodulet (SPUN+ 4,0 × 25)",
   "color": "#c3c7cf",
   "group": "Skruer",
   "explode": [
@@ -210,13 +199,24 @@
  },
  {
   "node": "skruer_vaeg",
-  "label": "8 skruer + dybler (5 × 50) og 2 sikkerhedsskruer (Torx med pind)",
+  "label": "8 skruer + dybler (5 × 50), skjult bag printeren",
   "color": "#c3c7cf",
   "group": "Skruer",
   "explode": [
    0,
    -110,
    -170
+  ]
+ },
+ {
+  "node": "dyvler",
+  "label": "2 dyvelstifter Ø6 × 16 (stål) samler de 2 L-beslag til én lige vinkel",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -110,
+   0
   ]
  }
 ]

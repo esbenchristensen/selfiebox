@@ -29,9 +29,9 @@
 //
 // Frame: x along the unit (x = 0 at the left end, seen from the guest), y back (front face at y = 0), z up (table at z = 0).
 // Usage: openscad -D 'VIEW="kappe"' -D 'PRINT=true' -o kappe.stl hardware/cad/selfi_printer_v4.scad
-// Views: printed parts (kappe, sokkel, udgang, logo_hvid, logo_groen, tekst_hvid, tekst_groen, konsol, vaegplade), bought parts for the 3D model
-//        (c_printer, c_pi, c_kabel, c_lock, c_led, c_print, s_base, s_link, s_con, s_wall), wall parts (konsol,
-//        vaegplade; konsoller/vaegplader in place), assembly "all", drawing views d_*.
+// Views: printed parts (kappe, sokkel, udgang, logo_hvid, logo_groen, tekst_hvid, tekst_groen, konsol), bought parts for the 3D model
+//        (c_printer, c_pi, c_kabel, c_lock, c_led, c_print, s_base, s_link, s_con, s_wall), wall parts (konsol;
+//        konsoller in place), assembly "all", drawing views d_*.
 
 include <logo_selfi.scad>
 use <../tools/fonts/instrument-sans-semibold.ttf>
@@ -127,23 +127,23 @@ RIB_H = 3; RIB_T = 0.8;
 GRIP_L = [[D / 2 - 38, D / 2 + 38], [16, 38]];          // left: y, z of the opening
 GRIP_R = [[GRIP_L[0][0] + 10, GRIP_L[0][1] + 10], [8, 30]];
 GRIP_D = 20; GRIP_A = 20; GRIP_RAD = 6;                 // depth, the ceiling's angle, corners
-// B2B wall: two identical consoles, each hung on its own printed wall cleat; one under the base, one under the
-// exit module (Esben 23 Oct 2026: it must sit firmly on the wall and on its bracket). Each is a shelf as wide as
-// v3's (200), set 20 in from each end so the pair is symmetric under the printer (Esben 23 Oct 2026), but only
-// 110 high instead of 170
-CW = 200; CON_T = 12; CON_H = 110; // console length, thickness at the screws' bosses, height below the top
-// (v4: the shelf is a 6 mm flange with two windows over two end webs instead of v3's solid 12 mm shelf: 500 N
-// leant on the front edge is 55 Nm per console, about 2.5 MPa in the webs and 750 N on the cleat)
-CON_F = 6;                         // top flange
-CC = CW / 2;                       // the console's middle
-CLEAT_Z = -30;                     // top of the 45 degree hook
-WALL_Z = [-52, -96];               // the wall cleat's screws
-SEC_Z = -74;                       // the security screw
-CON_X = [20, L - 20 - CW];         // the consoles' left ends: 20 in from each end (236 apart);
-                                   // the mains cable drops down left of the left one
-CON_L = [[90, 70], [90, D - 70]];  // left console: pilots for the base's SCREWS (110, y), from above
-CON_R = [[170, 70], [170, D - 70]];// right console: screws up from below into the exit module's bosses (426, y)
-CON_WIN = [[22, 78], [122, 178]];  // windows in the flange (x), between the bosses' rows
+// B2B wall: two identical hidden L-brackets (Esben 23 Oct 2026: no visible brackets). Each is a 15 mm shelf under the
+// printer and a 15 mm back plate standing up behind it, screwed to the wall there, so from the front only the shelf's
+// edge shows. The two are 238 long and meet under the printer's middle, flush with its ends (symmetric); two steel
+// dowel pins in their ends join them into one straight L, so they go on the wall level and in line.
+// Strength: 500 N leant on the front edge + the printer's 80 N is about 60 Nm per bracket: about 7 MPa in the corner.
+// Printed on its end (the L profile on the bed) both legs bend along the layers (ASA about 30 MPa, so a factor of 4
+// or more); the top wall screws (100 above the bottom edge, which bears on the wall) take about 320 N each.
+CW = 238; CON_T = 15; CON_H = 95;  // bracket length, shelf thickness, back plate height above the shelf
+CON_B = 15;                        // back plate thickness: the printer stands this far out from the wall
+CON_FIL = 5;                       // fillet in the inside corner, inside the printer's R10 edge
+CC = CW / 2;                       // the bracket's middle
+WALL_X = [40, CW - 40];            // wall screws (x), countersunk from the printer's side, hidden behind it
+WALL_Z = [20, 80];                 //   and their heights
+CON_X = [0, L - CW];               // the brackets' left ends: flush with both ends of the printer, butted together
+CON_L = [[110, 70], [110, D - 70]];// left bracket: pilots for the base's SCREWS (110, y), from above
+CON_R = [[188, 70], [188, D - 70]];// right bracket: screws up from below into the exit module's bosses (426, y)
+PINS = [[110, -CON_T / 2], [D + CON_B / 2, 60]];  // dowel pins 6 x 16 in both ends (y, z): one in the shelf, one in the plate
 
 // ---------- outline ----------
 // end profile (y, z): a rectangle with R10 edges; inset by d (concentric)
@@ -415,43 +415,39 @@ module udgang() difference() {
   grip_cut(L, -1, GRIP_R);
 }
 
-// ---------- B2B wall: console and wall cleat (local x 0..CW, placed at CON_X) ----------
+// ---------- B2B wall: hidden L-bracket (local x 0..CW, placed at CON_X) ----------
 module konsol() {
   difference() {
     union() {
-      // top flange under the unit, 6 thick, with bosses down to CON_T at the screws
-      translate([0, 20, -CON_F]) cube([CW, D - 20, CON_F]);
-      for (s = concat(CON_L, CON_R)) translate([s[0], s[1], -CON_T]) cylinder(d = 12, h = CON_T);
-      // back plate, flush with the unit's back
-      translate([0, D, -CON_H]) cube([CW, 8, CON_H]);
-      // two webs at the ends, 6 thick, from the back plate's foot to 20 high at the front
-      for (x = [0, CW - 6]) hull() { translate([x, D - 0.01, -CON_H]) cube([6, 0.01, CON_H]); translate([x, 20, -20]) cube([6, 0.01, 20]); }
-      // cleat: 45 degree hook behind the back plate, over the wall cleat's bevel
-      translate([20, D + 7.9, CLEAT_Z]) rotate([0, 90, 0]) linear_extrude(CW - 40) polygon([[0, 0], [0, 12.1], [12.1, 12.1]]);
+      // shelf under the printer, with a small chamfer along the front's lower edge
+      hull() { translate([0, 3, -CON_T]) cube([CW, D - 3, CON_T]); translate([0, 0, -CON_T + 3]) cube([CW, 1, CON_T - 3]); }
+      // back plate behind the printer, rounded at the top
+      hull() {
+        translate([0, D, -CON_T]) cube([CW, CON_B, 1]);
+        for (x = [8, CW - 8]) translate([x, D, CON_H - 8]) rotate([-90, 0, 0]) cylinder(r = 8, h = CON_B);
+      }
+      // fillet in the inside corner (the printer's back edge is rounded R10 there)
+      translate([0, D, 0]) rotate([0, 90, 0]) linear_extrude(CW) polygon([[0, 0], [0, -CON_FIL], [-CON_FIL, 0]]);
     }
-    // two windows in the flange, between the rows of bosses
-    for (w = CON_WIN) translate([w[0], 82, -CON_F - 1]) cube([w[1] - w[0], D - 164, CON_F + 2]);
     for (s = CON_L) translate([s[0], s[1], -CON_T - 1]) cylinder(d = 3.2, h = CON_T + 2);           // pilots, base screws
     for (s = CON_R) translate([s[0], s[1], -CON_T - 1]) {                                           // screws up into the exit module
       cylinder(d = 4.5, h = CON_T + 2); cylinder(d1 = 9.2, d2 = 4.5, h = 2.4);
     }
-    // security screw (Torx with pin) through the back plate into the wall cleat, below the cleat
-    translate([CC, D - 1, SEC_Z]) rotate([-90, 0, 0]) { cylinder(d = 4.5, h = 30); cylinder(d = 9, h = 4); }
+    // wall screws, countersunk flush with the face the printer stands against
+    for (x = WALL_X) for (z = WALL_Z) translate([x, D - 1, z]) rotate([-90, 0, 0]) {
+      cylinder(d = 5.2, h = CON_B + 2); cylinder(d1 = 12.4, d2 = 5.2, h = 1 + 3.6);
+    }
+    // holes for the dowel pins in both ends
+    for (x = [-1, CW - 9]) for (q = PINS) translate([x, q[0], q[1]]) rotate([0, 90, 0]) cylinder(d = 6.3, h = 10, $fn = 24);
+    // groove for the mains cable down the back plate's face and out under the shelf (both brackets, so they are the same)
+    translate([CAB_X - 5, D - CON_FIL - 1, 0]) cube([10, CON_FIL + 10, 14]);                 // through the fillet
+    translate([CAB_X - 5, D - 0.01, -CON_T - 1]) cube([10, 9, CON_T + 1 + 14]);
   }
-}
-module vaegplade() difference() {
-  // 45 degree bevel at the top, facing the console's hook
-  translate([20, D + 8, 0]) rotate([0, 90, 0]) linear_extrude(CW - 40)
-    polygon([[-CLEAT_Z + 0.2, 0], [CON_H - 4, 0], [CON_H - 4, 12], [-CLEAT_Z + 12.2, 12], [-CLEAT_Z + 0.2, 0]]);   // 0.2 under the hook
-  for (x = [CC - 60, CC + 60]) for (z = WALL_Z) translate([x, D + 7, z]) rotate([-90, 0, 0]) {
-    cylinder(d = 5.2, h = 20); translate([0, 0, 0.99]) cylinder(d1 = 10.4, d2 = 5.2, h = 3.01);
-  }
-  translate([CC, D + 7, SEC_Z]) rotate([-90, 0, 0]) cylinder(d = 3.4, h = 20);   // pilot, security screw
 }
 module konsoller() for (x = CON_X) translate([x, 0, 0]) konsol();
-module vaegplader() for (x = CON_X) translate([x, 0, 0]) vaegplade();
-module s_wall() for (c = CON_X) for (x = [CC - 60, CC + 60]) for (z = WALL_Z) translate([c + x, D + 9, z]) rotate([-90, 0, 0]) cylinder(d = 5, h = 40, $fn = 12);   // from the countersink into the wall
-module s_con() for (s = CON_R) translate([CON_X[1] + s[0], s[1], -CON_T - 0.5]) { cylinder(d = 4, h = 20, $fn = 12); cylinder(d1 = 8.8, d2 = 4, h = 2.4, $fn = 16); }
+module s_pin() for (q = PINS) translate([CON_X[1] - 8, q[0], q[1]]) rotate([0, 90, 0]) cylinder(d = 6, h = 16, $fn = 16);
+module s_wall() for (c = CON_X) for (x = WALL_X) for (z = WALL_Z) translate([c + x, D + 0.5, z]) rotate([-90, 0, 0]) { cylinder(d = 5, h = 50, $fn = 12); cylinder(d1 = 10, d2 = 5, h = 3, $fn = 16); }
+module s_con() for (s = CON_R) translate([CON_X[1] + s[0], s[1], -CON_T - 0.9]) { cylinder(d = 4, h = 25, $fn = 12); cylinder(d1 = 8.8, d2 = 4, h = 2.4, $fn = 16); }
 
 // ---------- logo ----------
 module logo(c) translate([PM / 2, LOGO_D, LOGO_Z]) rotate([90, 0, 0]) linear_extrude(LOGO_D) scale(LOGO_S)
@@ -471,7 +467,9 @@ module c_printer() translate([PX0, PY0, BASE]) difference() {
 module c_pi() translate([PX0 - 9.8, 99, BASE + 4]) cube([1.6, 65, 30]);
 // mains cable: in through the slot, up the bay, angled C13 into the printer's rear inlet
 module c_kabel() {
-  translate([CAB_X, D + 30, 3.5]) rotate([90, 0, 0]) cylinder(d = 7, h = CAB_L + 30, $fn = 16);
+  // out at the back and down (on the wall in the brackets' groove)
+  translate([CAB_X, D + 4.5, 3.5]) rotate([90, 0, 0]) cylinder(d = 7, h = CAB_L + 4.5, $fn = 16);
+  translate([CAB_X, D + 4.5, -60]) cylinder(d = 7, h = 63.5, $fn = 16);
   translate([CAB_X, D - CAB_L, 3.5]) cylinder(d = 7, h = 22, $fn = 16);
   translate([CAB_X - 3.5, D - CAB_L - 3.5, 22]) cube([PX0 - CAB_X - 2, 7, 7]);
   translate([PX0 - 26, D - CAB_L - 16, 20]) cube([24, 32, 22]);                        // the C13 plug
@@ -492,8 +490,7 @@ module place(v) {
   if (!PRINT) children();
   else if (v == "kappe" || v == "logo_hvid" || v == "logo_groen") rotate([0, -90, 0]) children();   // left end on the bed
   else if (v == "udgang" || v == "tekst_hvid" || v == "tekst_groen") translate([0, 0, L]) rotate([0, 90, 0]) children();                        // right end on the bed
-  else if (v == "konsol") rotate([180, 0, 0]) children();                          // shelf top on the bed
-  else if (v == "vaegplade") rotate([-90, 0, 0]) children();                       // wall side on the bed
+  else if (v == "konsol") rotate([0, -90, 0]) children();                          // on its left end: the L profile on the bed
   else if (v == "daempeplade") translate([0, 0, BASE]) mirror([0, 0, 1]) children();      // deck on the bed, cones up
   else rotate([0, 0, 90]) children();               // base: bottom down, turned so 287 runs along the 306 side of the bed
 }
@@ -510,11 +507,10 @@ if (VIEW == "c_printer")  c_printer();
 if (VIEW == "daempeplade") place(VIEW) daempeplade();
 if (VIEW == "c_pi")       c_pi();
 if (VIEW == "konsol")     place(VIEW) konsol();
-if (VIEW == "vaegplade")  place(VIEW) vaegplade();
 if (VIEW == "konsoller")  konsoller();
-if (VIEW == "vaegplader") vaegplader();
 if (VIEW == "s_wall")     s_wall();
 if (VIEW == "s_con")      s_con();
+if (VIEW == "s_pin")      s_pin();
 if (VIEW == "c_kabel")    c_kabel();
 if (VIEW == "c_lock")     c_lock();
 if (VIEW == "c_led")      c_led();
