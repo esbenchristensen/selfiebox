@@ -116,5 +116,5 @@ export const functionMap: { slug: string; href?: string; name: string; text: str
   { slug: "konkurrence", name: "Konkurrence", text: "Gæsterne stemmer, vinderen får en præmie.", goals: ["sjov", "omsaetning", "indhold"] },
   { slug: "guldtid", name: "Guldtid", text: "Korte vinduer, hvor næste billede vinder.", goals: ["sjov", "omsaetning"] },
   { slug: "skattejagt", name: "Skattejagt og rundtur", text: "Fra boks til boks. Kræver mindst to bokse.", goals: ["sjov", "omsaetning", "sponsor"] },
-  { slug: "printede-fotos", href: "#printer", name: "Printer ved boksen", text: "Et print i hånden. Gæsten betaler på skærmen.", goals: ["sjov", "omsaetning", "branding"] },
+  { slug: "printede-fotos", href: "#printer", name: "Printer ved boksen", text: "Et print i hånden. Gæsten betaler på skærmen.", goals: ["sjov", "omsaetning"] },
 ];

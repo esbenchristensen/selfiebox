@@ -33,19 +33,19 @@ const ideas: Idea[] = [
   },
   {
     title: "Med i pakken",
-    text: "Læg et print i prisen på julefrokost, polterabend og fødselsdag. Hver gæst går hjem med jeres navn på et billede, og I tjener på hvert ét.",
+    text: "Læg et print i prisen på julefrokost, polterabend og fødselsdag. Hver gæst går hjem med et billede fra aftenen, og I tjener på hvert ét.",
     sum: "4 selskaber × 40 gæster",
     prints: 160,
   },
   {
     title: "Samlekort efter kampen",
-    text: "Fans tager billedet med maskotten eller pokalen, og printet bliver et samlekort med kampens dato. Børnene vil have et til hver kamp.",
+    text: "Fans tager billedet med maskotten eller pokalen, og printet bliver et samlekort fra kampen. Børnene vil have et til hver kamp.",
     sum: "60 print × 2 hjemmekampe",
     prints: 120,
   },
   {
     title: "Festivalens minde",
-    text: "Et print med festivalens navn og år er det, folk tager med hjem fra pladsen. Ved en scene eller i et partnerområde er der kø hele dagen.",
+    text: "Et print fra festivalen er det, folk tager med hjem fra pladsen. Ved en scene eller i et partnerområde er der kø hele dagen.",
     sum: "150 print × 4 dage",
     prints: 600,
   },
@@ -85,7 +85,7 @@ export function PrinterOffer() {
               <p className="pr-price">
                 0<sup>kr./md.</sup>
               </p>
-              <p className="muted">Har I en boks, kan I få printeren med uden at betale for den. Vi sætter prisen, fylder papir på og tager salget fra printeren. Gæsterne får et print med jeres navn på, og I har ingen udgift.</p>
+              <p className="muted">Har I en boks, kan I få printeren med uden at betale for den. Vi sætter prisen, fylder papir på og tager salget fra printeren. Gæsterne får et print med hjem, og I har ingen udgift.</p>
             </div>
           </div>
         </div>
