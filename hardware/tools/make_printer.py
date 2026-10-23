@@ -169,13 +169,29 @@ v3["coupons"] = [c for c in v3["coupons"] if c[0] != "stroemindgang"] + [
 VERSIONS["selfi-printer-v4"] = v4 = json.loads(json.dumps(v3))
 v4["scad"] = "selfi_printer_v4.scad"
 P = {p[0]: p for p in v4["parts"]}
-P["kappe"][2] = "Kappe (sort ASA): flad top, luftlameller, nøglelås i venstre ende og 6 kroge, der trækker den ned på tætningen"
+P["kappe"][2] = "Kappe (sort ASA): flad top, luftlameller, nøglelås og gribehak i venstre ende og 6 kroge, der trækker den ned på tætningen"
 P["sokkel"][2] = "Sokkel: printerramme, låseholder, Pi-holder, kabelspor bagtil, rille til skumsnor og ramper til kappens kroge (sort ASA)"
 v4["coupons"] = [c for c in v4["coupons"] if c[0] != "taetning"] + [
     ["taetning", "sokkel", [0, 0, 0, 45, 45, 24], "Hjørnet med rillen (2,0 × 1,0) til skumsnoren Ø1,5 under kappens væg: snoren skal ligge i rillen og stikke 0,5 op."],
     ["kappekrog", "sokkel", [112, 0, 0, 168, 24, 24], "Krog-rampen i læben (x 140): sammen med proeve-kappekrog_kappe. Kappen sænkes 10 mm til venstre og skubbes hjem; krogen skal glide ind under rampen og trække kappen ned, så den ligger fladt på soklen."],
     ["kappekrog", "kappe", [112, 0, 0, 168, 24, 24], "Kappens krog ved x 140, nederst på forvæggen (lægges sammen med proeve-kappekrog_sokkel)."],
     ["studs", "udgang", [272, 0, 0, 296, 60, 60], "Studsens rille (2,0 × 0,7) til skumsnoren og kappens indføringsfase: snoren skal blive i rillen, når kappen skubbes over."]]
+i = [p[0] for p in v4["parts"]].index("udgang")
+v4["parts"][i][2] = "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme, skærm, \"Dit print\" og gribehak i højre ende (sort ASA)"
+# v4 shock: a printed deck on 56 crush cones (two rings near the rim), cones on the hood's end wall and the exit
+# module's hangers; and slim T-arm consoles
+v4["printed"].insert([p[0] for p in v4["printed"]].index("sokkel") + 1, ["daempeplade", "daempeplade", "Dæmpeplade med 56 knusekegler (sort ASA), print 1"])
+v4["parts"].insert([p[0] for p in v4["parts"]].index("sokkel") + 1,
+    ["daempeplade", "daempeplade", "Dæmpeplade: printeren står på den, 56 knusekegler under tager stødet ved et fald (må knuses, udskiftes)", "#e07a1f", "Kabinet", [0, 0, 40]])
+P["skruer_sokkel"][2] = "2 skruer, sokkel til bord/hylde/konsol (B2B, SPUN+ 4,0 × 16, sættes i før dæmpepladen)"
+P["skruer_link"][2] = "2 skruer, soklens tunge til udgangsmodulet nedefra (3,5 × 12 til plast)"
+P["konsoller"][2] = "2 vægkonsoller, slanke T-arme (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra"
+v4["coupons"] = [c for c in v4["coupons"] if c[0] != "krog"] + [
+    ["krog", "konsol", [100, 180, -80, 160, 244, 0], "Konsollens 45°-krog og bagplade: skal hægte sig på vægskinnen og ligge tæt mod væggen."],
+    ["krog", "vaegplade", [100, 228, -60, 160, 244, -25], "Vægskinnens 45°-kant (lægges sammen med proeve-krog_konsol)."],
+    ["greb", "kappe", [0, 66, 12, 30, 156, 52], "Venstre gribehak (76 × 22, loftet 20° op indad): fingrene skal kunne hage sig op bag kanten med god plads."],
+    ["greb", "udgang", [446, 76, 0, 476, 166, 46], "Højre gribehak i udgangsmodulets ende, samme form."],
+    ["knusekegler", "daempeplade", [41, 6, 0, 110, 66, 13], "Hjørne af dæmpepladen med knusekegler: tryk en kegle flad i en skruestik (skal give efter ved ca. 5–10 kg pr. kegle og knække, ikke pladen)."]]
 NEWEST = "selfi-printer-v4"
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF

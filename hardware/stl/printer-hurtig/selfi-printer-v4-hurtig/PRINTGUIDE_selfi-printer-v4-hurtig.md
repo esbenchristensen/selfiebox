@@ -4,7 +4,7 @@
 
 ## Kladdeprofil
 
-PLA · 0,28 mm lag · 2 vægge · 3 top- og bundlag · 10 % fyld · ingen støtte. Hele dele printes i samme retning som de normale. Stram pasform (låsen, kappens kroge, studsen med snor og konsolkrogen) skal til sidst prøves i ASA, fordi PLA krymper mindre. Bland ikke PLA og ASA i én samling.
+PLA · 0,28 mm lag · 2 vægge · 3 top- og bundlag · 10 % fyld · ingen støtte. Hele dele printes i samme retning som de normale. Stram pasform (låsen, kappens kroge, studsen med snor, konsolkrogen og knusekeglerne) skal til sidst prøves i ASA, fordi PLA krymper mindre. Bland ikke PLA og ASA i én samling.
 
 ## Prøvestykker (print dem først, og mål printeren samtidig)
 
@@ -20,11 +20,13 @@ PLA · 0,28 mm lag · 2 vægge · 3 top- og bundlag · 10 % fyld · ingen støtt
 | `_proeve-fuge_kappe.stl` + `_proeve-fuge_udgang.stl` | 205 × 222 × 25 og 206 × 222 × 26 | Kappens højre kant med indføringsfasen og udgangsmodulets studs med snor i rillen (lidt silikonefedt). De skal kunne skubbes sammen, snoren skal blive siddende, og skyggefugen skal være lige. |
 | `_proeve-lomme_udgang.stl` | 165 × 125 × 104 | Højre del af udtagslommen med endevæggen: åbning, stoplæbe med dræn, skærm og rutsjebanens fod. Et 4×6-print skal glide ned og blive liggende i lommen. |
 | `_proeve-led_udgang.stl` | 42 × 32 × 40 | LED-skinnen. Stripen (10 mm) skubbes ind og sidder fast uden klister. |
-| `_proeve-krog_konsol.stl` + `_proeve-krog_vaegplade.stl` | 60 × 56 × 70 og 50 × 32 × 12 | Konsollens 45°-krog på vægskinnen. Den skal hægte sig fast og ligge tæt mod væggen. |
+| `_proeve-krog_konsol.stl` + `_proeve-krog_vaegplade.stl` | 60 × 62 × 80 og 60 × 30 × 12 | Den slanke konsols 45°-krog på vægskinnen. Den skal hægte sig fast og ligge tæt mod væggen. |
+| `_proeve-greb_kappe.stl` + `_proeve-greb_udgang.stl` | 40 × 90 × 22 og 46 × 90 × 30 | Gribehakkene i enderne (76 × 22, loftet 20° op indad). Fingrene skal kunne komme ind og hage sig op bag kanten. |
+| `_proeve-knusekegler_daempeplade.stl` | 68 × 59 × 11 | Et hjørne af dæmpepladen. Tryk en kegle flad: den skal give efter ved ca. 5–10 kg og knuses, mens pladen holder. Print den i ASA, ikke PLA, før den bedømmes. |
 
 ## Hele dele
 
-`selfi-printer-v4-hurtig_kappe.stl`, `_sokkel.stl`, `_udgang.stl`, `_konsol.stl`, `_vaegplade.stl` og de to `_flerfarvet.3mf` (logo og "Dit print") er de normale printfiler. Med kladdeprofilen tager de ca. halvdelen af tiden.
+`selfi-printer-v4-hurtig_kappe.stl`, `_sokkel.stl`, `_daempeplade.stl`, `_udgang.stl`, `_konsol.stl`, `_vaegplade.stl` og de to `_flerfarvet.3mf` (logo og "Dit print") er de normale printfiler. Med kladdeprofilen tager de ca. halvdelen af tiden.
 
 ## Mål samtidig på printeren
 

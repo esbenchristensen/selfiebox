@@ -1,7 +1,7 @@
 [
  {
   "node": "kappe",
-  "label": "Kappe (sort ASA): flad top, luftlameller, nøglelås i venstre ende og 6 kroge, der trækker den ned på tætningen",
+  "label": "Kappe (sort ASA): flad top, luftlameller, nøglelås og gribehak i venstre ende og 6 kroge, der trækker den ned på tætningen",
   "color": "#1d1d20",
   "group": "Kabinet",
   "explode": [
@@ -55,8 +55,19 @@
   ]
  },
  {
+  "node": "daempeplade",
+  "label": "Dæmpeplade: printeren står på den, 56 knusekegler under tager stødet ved et fald (må knuses, udskiftes)",
+  "color": "#e07a1f",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   40
+  ]
+ },
+ {
   "node": "udgang",
-  "label": "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme, skærm og \"Dit print\" (sort ASA)",
+  "label": "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme, skærm, \"Dit print\" og gribehak i højre ende (sort ASA)",
   "color": "#1d1d20",
   "group": "Kabinet",
   "explode": [
@@ -144,7 +155,7 @@
  },
  {
   "node": "skruer_sokkel",
-  "label": "2 skruer, sokkel til bord/hylde (B2B, SPUN+ 4,0 × 30)",
+  "label": "2 skruer, sokkel til bord/hylde/konsol (B2B, SPUN+ 4,0 × 16, sættes i før dæmpepladen)",
   "color": "#c3c7cf",
   "group": "Skruer",
   "explode": [
@@ -155,7 +166,7 @@
  },
  {
   "node": "skruer_link",
-  "label": "2 skruer, sokkel til udgangsmodul (3,5 × 10 til plast)",
+  "label": "2 skruer, soklens tunge til udgangsmodulet nedefra (3,5 × 12 til plast)",
   "color": "#c3c7cf",
   "group": "Skruer",
   "explode": [
@@ -166,7 +177,7 @@
  },
  {
   "node": "konsoller",
-  "label": "2 vægkonsoller (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra",
+  "label": "2 vægkonsoller, slanke T-arme (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra",
   "color": "#3a3a3f",
   "group": "B2B væg",
   "explode": [
