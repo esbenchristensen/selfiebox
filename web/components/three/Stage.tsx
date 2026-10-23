@@ -50,7 +50,7 @@ function Frame({ variant }: { variant: StageProps["variant"] }) {
     const aspect = size.width / size.height;
     // Fit the whole design: height for tall frames, width for wide ones.
     const [hgt, wid, cx, cy] =
-      variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : variant === "stand" ? [17.4, 11.4, 1.1, -0.35] : [3.6, 4.4, 0.35, 0];
+      variant === "venue" ? [6.3, 4.5, 0, 0.42] : variant === "box" ? [3.7, 3, 0, 0] : variant === "stand" ? [17.4, 12.4, 1.5, -0.35] : [3.6, 4.4, 0.35, 0];
     const fov = (cam.fov * Math.PI) / 180;
     const byH = hgt / 2 / Math.tan(fov / 2);
     const byW = wid / 2 / Math.tan(fov / 2) / aspect;
@@ -116,7 +116,7 @@ function Spinner({ design, variant, motion }: { design: Design; variant: StagePr
           <Tripod casing={shown.venue.casing} />
           <FrontLight motion={motion} />
           {shown.venue.shoot && (
-            <StandPrinter photo={shown.venue.shoot.photo} motion={motion} position={[SOCKET.x + 460, FLOOR_Y, SOCKET.z - 150]} turn={-0.35} />
+            <StandPrinter photo={shown.venue.shoot.photo} motion={motion} position={[SOCKET.x + 500, FLOOR_Y, SOCKET.z - 120]} turn={-0.12} />
           )}
         </group>
       </group>

@@ -213,49 +213,39 @@ export function OutlinePoster() {
   );
 }
 
-// The printer (selfi-printer-v1, 222,5 × 220 × 294 mm): a rounded cabinet on its base, the paper slot and
-// tray in the front, the Selfi mark below, and a print on its way out. `poster` draws it alone, for the
-// 3D viewer while it loads; otherwise with sparkles, as a small picture.
+// The printer (selfi-printer-v3, 476 × 222,5 × 217 mm): a long, flat cabinet, the printer under the hood on the
+// left with the Selfi mark, and the exit module on the right with "Dit print" over the pocket a print lies in.
+// `poster` draws it alone, for the 3D viewer while it loads; otherwise with sparkles, as a small picture.
 export function OutlinePrinter({ className, poster }: { className?: string; poster?: boolean }) {
-  const x = 96, y = 150, w = 228, h = 226, r = 42;
-  const s = w / 222.5;
-  const d: P = [26, -14];
-  const cx = x + w / 2;
-  const slotY = y + 112 * s, slotW = 124 * s, slotH = 8 * s;
-  const trayW = 150 * s, trayY = slotY + 24 * s;
-  const baseY = y + h - 12 * s;
-  // The print: a polaroid rising out of the slot, its lower edge still inside.
-  const pw = 112, ph = 136, px = cx - pw / 2, py = slotY - ph + 26;
+  const x = 30, y = 120, w = 430, s = w / 476, h = 217 * s, r = 10;
+  const d: P = [24, -12];
+  const joint = x + 287.7 * s;
+  const ox = x + 381.9 * s, ow = 170 * s, oh = 54 * s, oy = y + h - 85 * s;
+  const lx = x + (287.7 / 2) * s;
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 420 480" role={poster ? undefined : "img"} aria-hidden={poster ? true : undefined} aria-label={poster ? undefined : "Tegning af Selfi printer med et billede på vej ud af slidsen"}>
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 500 400" role={poster ? undefined : "img"} aria-hidden={poster ? true : undefined} aria-label={poster ? undefined : "Tegning af Selfi printer med et print i lommen"}>
       {/* Cabinet, seen a little from the right */}
       <Slab x={x} y={y} w={w} h={h} r={r} d={d} />
-      {/* Vents on the side */}
-      <path className="o-faint" d={`M${x + w + 6} ${y + 46} l10 -5.4 M${x + w + 6} ${y + 58} l10 -5.4 M${x + w + 6} ${y + 70} l10 -5.4 M${x + w + 6} ${y + 82} l10 -5.4 M${x + w + 6} ${y + 94} l10 -5.4`} />
-      {/* Seam between cabinet and base */}
-      <path className="o-faint" d={`M${x + 4} ${baseY} H${x + w - 4}`} />
-      {/* The print, in front of the cabinet, rising from the slot */}
-      <g transform={`rotate(-5 ${cx} ${slotY})`}>
-        <path d={rr(px, py, pw, ph, 3)} fill="var(--surface)" />
-        <path d={rr(px + 10, py + 10, pw - 20, pw - 20, 2)} />
-        <circle cx={px + pw / 2 - 20} cy={py + 48} r={7} />
-        <circle cx={px + pw / 2 + 20} cy={py + 44} r={8} />
-        <path d={`M${px + pw / 2 - 33} ${py + 70} c0 -11 7 -14 13 -14 s13 3 13 14 M${px + pw / 2 + 5} ${py + 68} c0 -12 8 -16 15 -16 s15 4 15 16`} />
-        <path className="o-green" d={`M${px + 22} ${py + ph - 14} q${pw / 2 - 22} 8 ${pw - 44} 0`} />
-      </g>
-      {/* Slot and tray, drawn over the print so it looks like it comes out of the cabinet */}
-      <path d={rr(cx - slotW / 2, slotY - slotH / 2, slotW, slotH, slotH / 2)} fill="var(--ink)" />
-      <path d={`M${cx - trayW / 2} ${trayY} H${cx + trayW / 2} l${12} ${8} H${cx - trayW / 2 + 12} Z`} fill="var(--surface)" />
-      <path className="o-faint" d={`M${cx - 28 * s} ${slotY + 14 * s} h${12 * s} M${cx + 16 * s} ${slotY + 14 * s} h${12 * s}`} />
-      {/* The Selfi mark */}
-      <path d={rr(cx - 11, y + 164 * s, 22, 30, 7)} />
-      <circle className="o-green-fill" cx={cx} cy={y + 164 * s + 7} r={3} />
-      <path className="o-green" d={`M${cx - 6} ${y + 164 * s + 18} a6 6 0 0 0 12 0`} />
+      {/* Shadow joint between the hood and the exit module */}
+      <path className="o-faint" d={`M${joint} ${y + 3} V${y + h - 3}`} />
+      {/* The Selfi mark on the hood */}
+      <path d={rr(lx - 30, y + h - 128 * s, 22, 30, 7)} />
+      <circle className="o-green-fill" cx={lx - 19} cy={y + h - 128 * s + 7} r={3} />
+      <path className="o-green" d={`M${lx - 25} ${y + h - 128 * s + 18} a6 6 0 0 0 12 0`} />
+      <path d={`M${lx + 2} ${y + h - 128 * s + 22} h40`} />
+      {/* "Dit print" and the arrow over the pocket */}
+      <path d={`M${ox - 30} ${y + h - 122 * s} h60`} />
+      <path className="o-green" d={`M${ox} ${y + h - 110 * s} v12 m-5 -5 l5 5 l5 -5`} />
+      {/* The pocket with a print lying in it */}
+      <path d={rr(ox - ow / 2, oy, ow, oh, 7)} fill="var(--ink)" />
+      <path d={`M${ox - 62} ${oy + oh - 6} L${ox - 52} ${oy + 14} H${ox + 52} L${ox + 62} ${oy + oh - 6} Z`} fill="var(--surface)" />
+      <path d={`M${ox - 50} ${oy + oh - 11} L${ox - 46} ${oy + 18} H${ox - 8} L${ox - 8} ${oy + oh - 11} Z`} />
+      <path className="o-green" d={`M${ox + 6} ${oy + oh - 18} h34`} />
       {!poster && (
         <>
-          <Sparkle x={62} y={120} s={11} />
-          <Sparkle x={372} y={102} s={13} />
-          <Sparkle x={356} y={300} s={8} />
+          <Sparkle x={44} y={86} s={11} />
+          <Sparkle x={470} y={70} s={13} />
+          <Sparkle x={478} y={330} s={8} />
         </>
       )}
     </svg>

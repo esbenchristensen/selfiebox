@@ -14,6 +14,7 @@ import { GuestFlow } from "@/components/erhverv/GuestFlow";
 import { GuestList } from "@/components/erhverv/GuestList";
 import { Outcomes } from "@/components/erhverv/Outcomes";
 import { Pricing } from "@/components/erhverv/Pricing";
+import { PrinterOffer } from "@/components/erhverv/PrinterOffer";
 import { Proof } from "@/components/erhverv/Proof";
 import { Quotes } from "@/components/erhverv/Quotes";
 import { Start } from "@/components/erhverv/Start";
@@ -26,7 +27,7 @@ import { contact, pricing } from "@/lib/erhverv/placeholder";
 // selfi.dk/erhverv: the box for places with guests, sold through a conversation. The page follows the
 // questions an owner asks, in the order they ask them: what is it and what do we get (hero, proof,
 // outcomes), how does it work for a guest, what does it look like for us (design, cases), what does it
-// cost, what if it breaks (service), may we use the guest list, how do we start, what keeps guests busy,
+// cost, can a printer pay for it, what if it breaks (service), may we use the guest list, how do we start, what keeps guests busy,
 // the film, what other places say, who we are, questions, and then the one action: book a call.
 // Facts that are not decided or not true yet come from lib/erhverv/placeholder.ts and are marked.
 // The front page is the rental for private parties; the customer catalogues live under /erhverv/<sted>.
@@ -81,6 +82,7 @@ export default function Erhverv() {
           { label: "Det får I", href: "#faar" },
           { label: "Design", href: "#design" },
           { label: "Pris", href: "#pris" },
+          { label: "Printer", href: "#printer" },
           { label: "Service", href: "#service" },
           { label: "Eksempler", href: "#cases" },
           { label: "Spørgsmål", href: "#faq" },
@@ -121,6 +123,7 @@ export default function Erhverv() {
         />
         <Cases />
         <Pricing />
+        <PrinterOffer />
         <Care />
         <GuestList />
         <Start />
