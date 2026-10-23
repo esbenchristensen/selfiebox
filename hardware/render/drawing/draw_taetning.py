@@ -35,8 +35,8 @@ o.append('<defs><marker id="aw" markerWidth="9" markerHeight="9" refX="6" refY="
 
 BLK, WHT, WST, NAT, NST, GLS, GST = "#2b2b2f", "#f4f0e6", "#8a8578", "#fffdf8", "#a39e90", "#cfe9f1", "#5b8fa3"
 NEW, RED = "#16a34a", "#dc2626"
-t(60, 56, "Selfi Halo gen 2 · tætning efter v19: én universel O-ringsnor Ø1,5 overalt", 26, w=700)
-t(60, 84, "Outline-skitse til godkendelse, kun hovedenheden. Bygger på halo-gen2-v19 (gen2_concept.scad). Mål i mm. Rød = O-ringsnor Ø1,5 (silikone), blå = vandvej. 23. okt. 2026", 14, "#666")
+t(60, 56, "Selfi Halo gen 2 · tætning efter v19 (v2): én universel O-ringsnor Ø1,5 overalt, boksen +2 mm", 26, w=700)
+t(60, 84, "Outline-skitse til godkendelse, kun hovedenheden. Bygger på halo-gen2-v19 (gen2_concept.scad). Mål i mm. Rød = O-ringsnor Ø1,5 (silikoneskum), blå = vandvej. 23. okt. 2026, v2 efter Esbens svar", 14, "#666")
 
 # ---------------------------------------------------------------- front view
 box(40, 110, 470, 640)
@@ -68,20 +68,21 @@ o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{10 * S:.1f}" fill="{GLS}" fil
 o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{6.8 * S:.1f}" fill="#0b0b0d"/>')
 for n, p, d in [(1, (-111, 120), (-16, 0)), (2, (-71, 230), (16, 0)), (3, (94.5, 120), (16, 0)), (4, (0, 300), (0, -20))]:
     a = fv(p); num(a[0] + d[0], a[1] + d[1], n)
-t(60, 735, "5 højttaler og 6 låselomme sitter på bagsiden (se nederst).", 13, "#666")
+t(60, 718, "Boksen bliver 224,5 × 308 (i dag 222,5 × 306).", 13, NEW)
+t(60, 735, "5 højttaler og 6 låselomme sidder på bagsiden (se nederst).", 13, "#666")
 
 # ---------------------------------------------------------------- list
 box(530, 110, 1230, 640)
 t(550, 140, "Alle steder, hvor vand kan komme ind (v19), og forslaget", 18, w=700)
 rows = [
     ("1", "Front mod skal", "I dag: printet ribbe i rille + 2 drænhak. Lækker i de 4 hjørner, hvor frontskruernes tårne skærer skallens væg.",
-     "Snor i rille i skallens forkant, 0,96 m. De 4 frontskruer klemmer. Skruerne 2 mm ind, så væggen er hel hele vejen rundt."),
+     "Snor i rille i skallens forkant, 0,97 m. De 4 frontskruer klemmer. Skruerne 2 mm ind, så væggen er hel hele vejen rundt."),
     ("2", "Skærmglas", "I dag: skumbånd 3 × 1 i rille 3,2 × 0,6 (tesa, klæber).",
-     "Samme snor i rillen i stedet, 0,73 m. Rillen bliver 2,0 × 1,2. Intet klister, kan tages ud og genbruges."),
+     "Samme snor i rillen i stedet, 0,73 m. Rillen bliver 2,0 × 1,0. Intet klister, kan tages ud og genbruges."),
     ("3", "Lysring (diffuser)", "I dag: løs ring med 0,15 mm skyggefuge på begge sider, 2 × 0,9 m fuge direkte ned til LED-stripsene.",
-     "Ingen pakning: ringen printes sammen med fronten i natur-ASA (to farver, som logoet). Ingen fuge, én del mindre."),
+     "Ringen er stadig en løs del i dit matte materiale. Kanalen 1 mm bredere på hver side; snor bag frontpladen på begge sider af ringen, 1,8 m. Boksen 224,5 × 308."),
     ("4", "Kamera", "I dag: åbent hul, linsen 0,3 mm bag forsiden, 0,2 mm luft rundt om linsen.",
-     "Glas Ø20 × 1,5 bag en 1,6 mm kant, snor-ring Ø15 foran glasset, lille printet låsering bag. Kameraet 2,9 mm tilbage."),
+     "Glas Ø10 × 1,5 bag en 0,6 mm kant, snor-ring bag glasset rundt om linsens spids, trykket af et printet rør. Kameraet 2,2 mm tilbage."),
     ("5", "Højttaler (bag)", "I dag: Ø2-huller i bagvæggen, højttaleren sidder løst bag dem.",
      "Snor rundt om hulfeltet under højttalerens flange, 0,19 m. Vand i gitteret når kun højttalerens forside."),
     ("6", "Låselomme (bag)", "I dag: slids i bagvæggen til låsetungen, åben ind til elektronikken.",
@@ -123,14 +124,14 @@ def sec1(ox, new):
         t(ox, 1145, "Ribbe og rille er en labyrint, ikke en tætning.", 13, "#444")
         t(ox, 1163, "I hjørnerne skærer skruetårnene (Ø7) væggen op.", 13, "#444")
     else:
-        rect(6, 7.2, 0.5, 2.5, F, "#fff", "#000", 1)
-        cord(F, 6.6, 1.5, 1.2, 1.8)
-        dim((6, -0.6), (7.2, -0.6), F, "1,2", (0, -6))
+        rect(6, 7.0, 0.5, 2.5, F, "#fff", "#000", 1)
+        cord(F, 6.5, 1.5, 1.0, 1.9)
+        dim((6, -0.6), (7.0, -0.6), F, "1,0", (0, -6))
         dim((15.4, 0.5), (15.4, 2.5), F, "2,0", (22, 4))
-        lead(F, (6.6, 1.5), ox + 250, 1100, "Snor Ø1,5 klemt til 1,2 (20 %)", RED)
+        lead(F, (6.6, 1.5), ox + 250, 1100, "Snor Ø1,5 klemt til 1,0 (33 %)", RED)
         t(ox, 1145, "Ribbe og drænhak væk. Fronten trykker på snoren,", 13, NEW)
         t(ox, 1163, "skruerne holder den. Tungen bliver (styring).", 13, NEW)
-    sec1(80, False); sec1(480, True)
+sec1(80, False); sec1(480, True)
 t(110, 1125, "front", 12, "#888"); t(330, 1125, "skal", 12, "#888")
 
 # ---------------------------------------------------------------- section 2: display
@@ -146,19 +147,19 @@ def sec2(ox, new):
         rect(1.0, 1.6, 1.7, 4.7, F, "#fde68a", "#b45309", 1)
         lead(F, (1.3, 3.2), ox + 200, 1040, "Skumbånd 3 × 1, klemt til 0,6 (klæber)", "#b45309")
     else:
-        rect(0.4, 1.6, 1.6, 3.6, F, "#fff", "#000", 1)
-        cord(F, 1.0, 2.6, 1.2, 1.8)
-        dim((0.4, 4.2), (1.6, 4.2), F, "1,2", (16, 4))
+        rect(0.6, 1.6, 1.6, 3.6, F, "#fff", "#000", 1)
+        cord(F, 1.1, 2.6, 1.0, 1.9)
+        dim((0.6, 4.2), (1.6, 4.2), F, "1,0", (16, 4))
         dim((-0.5, 1.6), (-0.5, 3.6), F, "2,0", (0, -6))
-        dim((0, 6.5), (0.4, 6.5), F, "0,4", (20, 4))
-        lead(F, (1.0, 2.6), ox + 200, 1040, "Snor Ø1,5 klemt til 1,2", RED)
+        dim((0, 6.5), (0.6, 6.5), F, "0,6", (20, 4))
+        lead(F, (1.1, 2.6), ox + 200, 1040, "Snor Ø1,5 klemt til 1,0", RED)
     t(ox + 5, 1125, "front 1,6", 12, "#888"); t(ox + 5, 1143, "glas (skærm)", 12, GST)
     if new:
-        t(ox, 1163, "Ca. 0,4 mm plast foran rillen (2 lag, printes med forsiden ned).", 13, NEW)
+        t(ox, 1163, "0,6 mm plast foran rillen (3 lag, printes med forsiden ned).", 13, NEW)
 sec2(960, False); sec2(1370, True)
 
 # ---------------------------------------------------------------- section 3: camera
-panel(40, 1190, 1060, 520, "4  Kamera med glas (snit gennem linsen)", "Venstre: i dag. Højre: forslag med glas Ø20 × 1,5. Forsiden til venstre, kameraets akse vandret, lysringen op.")
+panel(40, 1190, 1060, 520, "4  Kamera med glas (snit gennem linsen)", "Venstre: i dag. Højre: forslag med glas Ø10 × 1,5. Forsiden til venstre, kameraets akse vandret, lysringen op.")
 def sec3(ox, new):
     k = 12
     F = lambda p: (ox + 40 + p[0] * k, 1445 - p[1] * k)
@@ -171,75 +172,77 @@ def sec3(ox, new):
         t(ox, 1665, "Åbent hul Ø7,35, 0,2 mm luft rundt om linsen.", 13, "#444")
         t(ox, 1683, "Spild når linsen og kan løbe ind langs den.", 13, "#444")
     else:
-        lip, gt, gap, tip_r = 1.6, 1.5, 0.4, 2.0
+        lip, gt, gap, tip_r, gr = 0.6, 1.5, 0.4, 2.0, 5.0
         y_tip = lip + gt + gap
         r_gb = tip_r + gap * math.tan(math.radians(60))
         r_gf = r_gb + gt * math.tan(math.asin(math.sin(math.radians(60)) / 1.52))
         r_face = r_gf + 0.3 + lip * math.tan(math.radians(60))
-        for s in [1, -1]:
-            poly([(0, s * r_face), (lip, s * (r_gf + 0.3)), (lip, s * 6.6), (lip - 1.2, s * 6.6), (lip - 1.2, s * 8.6), (lip, s * 8.6), (lip, s * 10.2),
-                  (lip + gt + 0.2, s * 10.2), (lip + gt + 0.2, s * 11.0), (3.2, s * 11.0), (3.2, s * 14), (0, s * 14)], F, BLK, "#000")
-            rect(lip - 1.2, lip, s * 6.6, s * 8.6, F, "#fff", "#000", 1)
-            cord(F, lip - 0.6, s * 7.6, 1.2, 1.8)
-            rect(lip + gt, lip + gt + 3.2, s * 7.0, s * 10.0, F, "#4b5563", "#000")
-        rect(0, 3.2, 12.2, 14, F, NAT, NST)
-        rect(lip, lip + gt, -10, 10, F, GLS, GST)
+        ph = y_tip + 8.3 - 4.07          # holder top face
+        for sx in [1, -1]:
+            poly([(0, sx * r_face), (lip, sx * (r_gf + 0.3)), (lip, sx * (gr + 0.1)), (5.0, sx * (gr + 0.1)), (5.0, sx * 7.0), (3.2, sx * 7.0), (3.2, sx * 14), (0, sx * 14)], F, BLK, "#000")
+            cord(F, lip + gt + 0.5, sx * 4.35, 1.0, 1.5)
+            rect(lip + gt + 1.0, ph, sx * 3.7, sx * 5.0, F, "#4b5563", "#000")
+            rect(ph, y_tip + 8.3, sx * 3.475, sx * 5.4, F, "#777", "#222")
+        rect(0, 3.2, 7.675, 14, F, NAT, NST)
+        rect(lip, lip + gt, -gr, gr, F, GLS, GST)
         rect(y_tip, y_tip + 8.3, -3.475, 3.475, F, "#555", "#222")
         rect(y_tip + 8.3, y_tip + 9.42, -12.5, 12.5, F, "#166534", "#052e16")
-        for s in [1, -1]:
-            line([(y_tip, s * tip_r), (lip + gt, s * r_gb), (lip, s * r_gf), (0, s * (r_face - 0.3)), (-1.2, s * (r_face - 0.3 + 1.2 * 1.732))], F, "#d97706", 1.4, "4,3")
-        dim((-0.8, -r_face), (-0.8, r_face), F, f"Ø{2 * r_face:.1f}", (-34, 4))
-        dim((lip, -11.6), (lip + gt, -11.6), F, "1,5", (0, 18))
-        dim((0, -12.6), (lip, -12.6), F, "1,6", (0, 18))
-        dim((lip + gt + 3.4, -10), (lip + gt + 3.4, 10), F, "Ø20 glas", (40, 4))
-        lead(F, (lip - 0.6, 7.6), ox + 300, 1260, "Snor-ring Ø1,5 (ca. 48 mm snor eller O-ring 13 × 1,5)", RED)
-        lead(F, (lip + gt + 1.5, -8.5), ox + 300, 1600, "Printet låsering, klikker i bag glasset", "#4b5563")
-        lead(F, (y_tip + 3, 2.0), ox + 300, 1440, "Linsen 0,4 mm bag glasset (autofokus bevæger den)", "#555")
-        lead(F, (-0.6, -r_face + 0.5), ox + 300, 1530, "Synsfelt 120° diagonalt (Wide), 60° til siden", "#d97706")
-        lead(F, (1.5, 13), ox + 300, 1300, "Lysringens ender ca. 4,5 mm længere ud", "#a39e90")
-        t(ox, 1665, f"Hullet i forsiden bliver ca. Ø{2 * r_face:.0f} (i dag ca. Ø8), sort kegle.", 13, NEW)
-        t(ox, 1683, "Glas Ø14 er for lille, når snoren skal ligge uden for synsfeltet.", 13, NEW)
+        for sx in [1, -1]:
+            line([(y_tip, sx * tip_r), (lip + gt, sx * r_gb), (lip, sx * r_gf), (0, sx * (r_face - 0.3)), (-1.2, sx * (r_face - 0.3 + 1.2 * 1.732))], F, "#d97706", 1.4, "4,3")
+        dim((-1.6, -r_face), (-1.6, r_face), F, f"Ø{2 * r_face:.1f}", (-34, 4))
+        dim((lip, -12.0), (lip + gt, -12.0), F, "1,5", (14, 18))
+        dim((0, -12.0), (lip, -12.0), F, "0,6", (-12, 18))
+        dim((lip + gt + 0.2, -9.5), (lip + gt + 0.2, -5.0), F, "", (0, 0))
+        lead(F, (lip + gt / 2, -4.6), ox + 330, 1612, "Glas Ø10 × 1,5 (fra din AliExpress-liste)", GST)
+        lead(F, (lip + gt + 0.5, 4.35), ox + 330, 1270, "Snor-ring Ø1,5 i hjørnet bag glasset (ca. 27 mm snor)", RED)
+        lead(F, (lip + gt + 2.5, -4.35), ox + 330, 1560, "Printet rør på linseholderen trykker ringen", "#4b5563")
+        lead(F, (y_tip + 3, 2.0), ox + 330, 1440, "Linsen 0,4 mm bag glasset (autofokus bevæger den)", "#555")
+        lead(F, (-0.6, -r_face + 0.6), ox + 330, 1500, "Synsfelt 120° diagonalt (Wide), 60° til siden", "#d97706")
+        lead(F, (1.5, 10), ox + 330, 1320, "Lysringens ender bliver, hvor de er", "#a39e90")
+        t(ox, 1665, f"Hullet i forsiden bliver ca. Ø{2 * r_face:.0f} (i dag ca. Ø8). Kameraet rykker 2,2 mm tilbage.", 13, NEW)
+        t(ox, 1683, "Snoren ligger uden om linsen bag glasset, så glasset kan være lille.", 13, NEW)
 sec3(80, False); sec3(420, True)
 
 # ---------------------------------------------------------------- section 4: ring + back
-panel(1120, 1190, 640, 520, "3  Lysring printet sammen med fronten", "Venstre: i dag (løs ring). Højre: forslag (ét print, to farver).")
+panel(1120, 1190, 640, 520, "3  Lysring: kanal +1 mm pr. side, snor bag fronten", "Venstre: i dag. Højre: forslag. Ringen er stadig en løs del.")
 ring = [(-0.5, -6.85), (-0.5, 6.85), (3.2, 6.85), (3.2, 8.1), (4.2, 8.1), (4.2, 5.65), (0.5, 5.65), (0.5, -5.65), (4.2, -5.65), (4.2, -8.1), (3.2, -8.1), (3.2, -6.85)]
+ring2 = [(-0.5, -6.85), (-0.5, 6.85), (4.4, 6.85), (4.4, 9.1), (5.6, 9.1), (5.6, 5.65), (0.5, 5.65), (0.5, -5.65), (5.6, -5.65), (5.6, -9.1), (4.4, -9.1), (4.4, -6.85)]
 def sec4(ox, new):
-    k = 13
+    k = 12
     F = lambda p: (ox + p[1] * k, 1300 + p[0] * k)
-    rect(0, 3.2, -12, -7.0, F, BLK, "#000"); rect(0, 3.2, 7.0, 12, F, BLK, "#000")
-    rect(3.2, 20, 8.2, 9.8, F, BLK, "#000"); rect(3.2, 20, -9.8, -8.2, F, BLK, "#000")
-    rect(9, 20, -8.1, 8.1, F, WHT, WST, 1, .5)
+    c = 0 if not new else 1
+    rect(0, 3.2, -12.5, -7.0, F, BLK, "#000"); rect(0, 3.2, 7.0, 12.5, F, BLK, "#000")
+    rect(3.2, 20, 8.2 + c, 9.8 + c, F, BLK, "#000"); rect(3.2, 20, -9.8 - c, -8.2 - c, F, BLK, "#000")
+    rect(9, 20, -8.1 - c, 8.1 + c, F, WHT, WST, 1, .5)
     if not new:
-        poly([(y, r * 0.98) for y, r in ring], F, NAT, NST, 1.3)
+        poly(ring, F, NAT, NST, 1.3)
         water(F, [(-2.5, 7.0), (0.2, 6.95), (3.0, 6.95), (4.6, 7.4), (8, 7.4)])
         t(ox - 150, 1600, "0,15 mm fuge på begge sider", 13, "#444")
         t(ox - 150, 1618, "går direkte ned til stripsene.", 13, "#444")
     else:
-        poly(ring, F, NAT, NST, 1.3)
-        poly([(0, 7.0), (3.2, 7.0), (3.2, 8.2), (0, 8.2)], F, BLK, "none")
-        poly([(0, -7.0), (3.2, -7.0), (3.2, -8.2), (0, -8.2)], F, BLK, "none")
-        line([(-0.5, 6.85), (3.2, 6.85), (3.2, 8.1)], F, "#16a34a", 2.4)
-        line([(-0.5, -6.85), (3.2, -6.85), (3.2, -8.1)], F, "#16a34a", 2.4)
-        t(ox - 120, 1600, "Ingen fuge: natur-ASA og sort ASA", 13, NEW)
-        t(ox - 120, 1618, "smelter sammen i printet.", 13, NEW)
+        poly(ring2, F, NAT, NST, 1.3)
+        for sx in [1, -1]: cord(F, 3.8, sx * 8.1, 1.2, 1.9)
+        water(F, [(-2.5, 7.0), (0.2, 6.95), (3.0, 6.95)])
+        dim((3.2, 10.6 + 1.2), (4.4, 10.6 + 1.2), F, "1,0", (18, 4))
+        t(ox - 140, 1600, "Snoren ligger i lommen mellem frontpladen,", 13, NEW)
+        t(ox - 140, 1618, "kanalvæggen og ringens krave, på begge sider.", 13, NEW)
     t(ox - 20, 1545, "LED-kanal", 12, "#888")
 sec4(1280, False); sec4(1590, True)
-t(1140, 1648, "Fronten printes allerede med forsiden ned og 2 farver (logoet),", 13, "#666")
-t(1140, 1666, "og ringen printes også med forsiden ned. Ringen kan ikke skiftes", 13, "#666")
-t(1140, 1684, "alene, men strips og bagramme tages ud bagfra som i dag.", 13, "#666")
+t(1140, 1648, "Den synlige ring er stadig 14 mm. Bagrammen trykker ringen frem,", 13, "#666")
+t(1140, 1666, "og de 4 frontskruer klemmer bagrammen, så snaplåsene ikke tager", 13, "#666")
+t(1140, 1684, "trykket. Kanalens hvide dele bliver 1 mm bredere pr. side.", 13, "#666")
 
 # ---------------------------------------------------------------- bottom: part and back
 box(40, 1730, 1720, 300)
-t(60, 1762, "Den universelle del: O-ringsnor Ø1,5 mm, silikone 60 Shore (købes i meter, skæres til, enderne stødes sammen i rillen; ingen lim)", 17, w=700)
+t(60, 1762, "Den universelle del: O-ringsnor Ø1,5 mm i silikoneskum (skæres til, enderne stødes sammen i rillen; ingen lim)", 17, w=700)
 info = [
-    "Pr. boks: front/skal 0,96 m + skærm 0,73 m + højttaler 0,19 m + kamera 0,05 m = ca. 1,95 m. Ingen snor i lysringen.",
-    "Samme rille alle steder: 2,0 bred × 1,2 dyb (20 % klem). Snoren ligger løst i rillen, holdes af delen ovenpå, og kan tages ud og genbruges.",
-    "Silikone frem for NBR (Esbens RS-link 234-1990 er NBR 70): NBR revner af ozon og sol og er stivere, så den trykker hårdere på skærm og snaplåse.",
-    "Kraft: ca. 0,6 N pr. mm snor ved 20 %. Skærmen ca. 450 N (som skumbåndet i dag, holdes af skærmskruerne og bagrammens låse); fronten ca. 600 N (150 N pr. frontskrue).",
-    "Hvis skærmen eller fronten bliver for stram ved prøven: samme Ø1,5 i silikoneskum (RS 234-2906) i de samme riller, ca. 5 gange blødere.",
+    "Pr. boks: front/skal 0,97 m + skærm 0,73 m + lysring 1,8 m + højttaler 0,19 m + kamera 0,03 m = ca. 3,7 m. En rulle på 5 m (RS 234-2906) pr. boks.",
+    "Samme rille alle steder: 2,0 bred × 1,0 dyb (ca. 33 % klem). Snoren ligger løst i rillen, holdes af delen ovenpå, og kan tages ud og genbruges.",
+    "Skum frem for massiv silikone: med lysringen er der 3,7 m snor, og massiv snor ville trykke med over 2.000 N; skum ca. 5 gange mindre, og det udligner printets unøjagtighed.",
+    "Ikke NBR (Esbens RS-link 234-1990): NBR revner af ozon og sol og er massiv, så den trykker for hårdt på skærm, ring og de 4 frontskruer.",
     "5 Højttaler: rille i bagvæggens ramme om hulfeltet, flangen trykker på snoren (krogene holder). 6 Låselomme: lukkede vægge inde om tungen, kun print.",
-    "Kun skitse: intet i CAD er ændret endnu. Linsens forkant (Ø4 lysåbning) og pupil er skønnet; tjekkes på det rigtige Wide-kamera med en prøve først.",
+    "+2 mm: alt flytter med i CAD, undtagen reflektor, strip-baner, ringens kile og låse, som har faste mål og skal tegnes om. Alle dele printes igen undtagen vægbeslaget.",
+    "Kun skitse: intet i CAD er ændret endnu. Linsens forreste glas (Ø4) er skønnet; kameraglasset prøves på det rigtige Wide-kamera med et prøvestykke først.",
 ]
 for i, s in enumerate(info): t(60, 1795 + i * 30, "· " + s, 14, "#333")
 
