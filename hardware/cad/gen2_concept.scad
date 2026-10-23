@@ -362,7 +362,7 @@ module services_cut() {
     translate([PWR_P[0], PWR_P[1], -0.01]) cylinder(d1 = PWR_BORE + 1.6, d2 = PWR_BORE, h = 0.8, $fn = 48);
     for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);
     ext_y(D - BACK_T - 0.01, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2);   // v20: seal round the grille
-    cyl_z(2, -1, WALL + 1, LOCK_DRAIN[0], LOCK_DRAIN[1]);                                                  // v20: drain out of the lock pocket
+    cyl_z(2, -1, 12, LOCK_DRAIN[0], LOCK_DRAIN[1]);   // v20: drain out of the lock pocket; v21: up to z 12 (the rounded bottom makes the floor ~6 thick here, so v20 stopped at 4, blind)
 }
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
 module services_add() {
@@ -1084,6 +1084,7 @@ module shell3(top = UNIT_TOP) {
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
             power_holders();
             if (WING_POCKET) wing_pockets();
+            lock_pocket();   // v21: again here, the clearance above round the old v1 post (Ø9.5, to the back wall) cut a round hole in its left side
         }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
