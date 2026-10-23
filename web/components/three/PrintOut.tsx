@@ -5,13 +5,13 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-// A print sliding down the chute of selfi-printer-v3 into the pickup pocket at the front of the exit module, in the
-// model's own millimetres (public/models/selfi-printer-v3.glb: y up, front at +z, centred; made by
+// A print sliding down the chute of selfi-printer-v4 into the pickup pocket at the front of the exit module, in the
+// model's own millimetres (public/models/selfi-printer-v4.glb: y up, front at +z, centred; made by
 // hardware/tools/printer_web_glb.py). The paper follows the chute and the pocket floor as it goes, bending at the
-// kink, and stops against the lip at the front. The figures are hardware/cad/selfi_printer_v3.scad's, moved into
+// kink, and stops against the lip at the front. The figures are hardware/cad/selfi_printer_v4.scad's, moved into
 // the glTF frame: x - 238, y = z_scad - 108.6, z = 111.25 - y_scad.
 
-export const PRINTER_MODEL = "/models/selfi-printer-v3.glb";
+export const PRINTER_MODEL = "/models/selfi-printer-v4.glb";
 // Underside of the base in the model
 export const PRINTER_BOTTOM = -108.6;
 const X = 143.85; // OP_X, the pocket's centre
