@@ -437,21 +437,21 @@ export const features: Feature[] = [
     short: "Et ægte foto i hånden, også mod betaling.",
     icon: "M11 7 H37 V41 H11 Z M15 11 H33 V30 H15 Z",
     title: "Et ægte foto i hånden.",
-    lede: "Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens gæsten står og venter. Rammen bærer jeres navn. Vil I, kan gæsterne betale for de printede fotos, så boksen tjener penge.",
+    lede: "Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens gæsten står og venter. Vil I, kan gæsterne betale for de printede fotos, så boksen tjener penge.",
     seo: {
       title: "Fotoboks med printede Instax-fotos og betaling pr. foto | Selfi",
-      description: "Selfi kan printe Instax-fotos med jeres navn i rammen. Gæsterne kan betale pr. foto, og I sætter selv prisen.",
+      description: "Selfi kan printe Instax-fotos, som gæsterne tager med hjem. Gæsterne kan betale pr. foto, og I sætter selv prisen.",
     },
     photo: { src: "/photos/instax-haand.jpg", alt: "Hænder holder et frisk Instax-foto af tre venner på en bar", pos: "50% 50%" },
     points: [
-      ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere, med jeres navn i rammen."],
+      ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere. Den digitale udgave med jeres logo har gæsten på telefonen."],
       ["Betaling pr. foto", `I sætter prisen pr. foto. Alt over ${business.costPerPhoto} kr. pr. foto går til jer.`],
       ["Kun når I vil", "Printet er et tilvalg. Den digitale udgave kommer altid på SMS."],
     ],
     uses: [
       ["Baren", "Gæsterne betaler for et print, og baren tjener på hvert foto."],
       ["Hotellet", "Et printet foto som minde fra opholdet eller brylluppet i festsalen."],
-      ["Lanceringen", "Hver gæst går hjem med et foto med produktet og jeres navn."],
+      ["Lanceringen", "Hver gæst går hjem med et foto med produktet i hånden."],
     ],
     faq: [{ q: "Hvad koster et print for os?", a: `Papir og drift koster ${business.costPerPhoto} kr. pr. foto. Tager I mere for det, går forskellen til jer.` }],
   },
@@ -571,7 +571,7 @@ export const faq: Faq[] = [
   },
   {
     q: "Kan gæsterne få et printet foto?",
-    a: "Det kommer snart. Printmodulet laver et Instax-foto med jeres navn i rammen, og I kan vælge, at gæsten betaler for det.",
+    a: "Det kommer snart. Printmodulet laver et Instax-foto, gæsten kan tage med hjem, og I kan vælge, at gæsten betaler for det.",
   },
   {
     q: "Kan boksen hænge udendørs?",
