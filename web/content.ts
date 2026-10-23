@@ -34,9 +34,9 @@ export const quality: { title: string; icon: string; text: string; facts: string
     facts: ["HD-video, 900 × 1600", "Stående 9:16 til sociale medier", "Studielys på ansigterne, også i mørke lokaler"],
   },
   {
-    title: "Tydelig lyd (tilvalg)",
+    title: "Tydelig lyd",
     icon: "M19 8 a5 5 0 0 1 10 0 V24 a5 5 0 0 1 -10 0 Z M12 22 a12 12 0 0 0 24 0 M24 34 V41 M17 41 H31",
-    text: "Med mikrofonmodulet retter fire mikrofoner sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde. Modulet er et tilvalg.",
+    text: "Mikrofonmodulet sidder i alle bokse. Fire mikrofoner retter sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde.",
     facts: ["Fire mikrofoner, der finder den, der taler", "Støjfjernelse og ekkodæmpning", "Opfanger tale op til ca. 5 meter væk"],
   },
 ];
@@ -91,7 +91,7 @@ export const features: Feature[] = [
     photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi på en festival i skoven", pos: "50% 50%" },
     points: [
       ["Ægte, ikke iscenesat", "Gæsterne tager billederne selv, midt i aftenen. Det er rigtige mennesker, der har det sjovt hos jer, og det kan ses."],
-      ["Billeder og video i høj kvalitet", "12 MP-billeder og HD-video i stående format, klar til stories og feeds. Med mikrofonmodulet (tilvalg) er lyden tydelig, også i et larmende lokale."],
+      ["Billeder og video i høj kvalitet", "12 MP-billeder og HD-video i stående format, klar til stories og feeds. Mikrofonmodulet gør lyden tydelig, også i et larmende lokale."],
       ["Samlet og med samtykke", "Alt ligger samlet i kontrolpanelet, og kun det, gæsten har sagt ja til, må bruges."],
       ["Hver aften, hele aftenen", "Boksen holder ikke fri, bliver ikke træt og skal ikke have løn. Den laver content, hver gang I har åbent."],
     ],
@@ -209,7 +209,7 @@ export const features: Feature[] = [
     points: [
       ["Jeres spørgsmål", "I vælger spørgsmålene på skærmen, og I kan skifte dem fra dag til dag."],
       ["Færdigt content", "Korte, stående klip i HD med jeres ramme, som I kan bruge på de sociale medier, når gæsten har sagt ja."],
-      ["Klar lyd", "Med mikrofonmodulet (tilvalg) fanger fire mikrofoner stemmen tydeligt, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
+      ["Klar lyd", "Mikrofonmodulet i boksen fanger stemmen tydeligt med fire mikrofoner, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
       ["Hilsner", "Gæsterne kan sende en hilsen til en ven, et band eller et hold, som I kan vise frem."],
     ],
     uses: [

@@ -33,7 +33,6 @@ const models = [
 
 const options: [string, string, boolean?][] = [
   ["Printer", "Står ved siden af boksen, og gæsten betaler pr. print på skærmen. Lej den og behold salget, eller få den gratis, mens vi tager salget."],
-  ["Mikrofon", "Tydelig lyd til videohilsner og spørgsmål på video."],
   ["Flere bokse", "Fra to bokse kan I køre skattejagt og rundtur og sende gæsterne rundt på stedet."],
   ["4G", "Til steder uden wifi, hvor boksen skal hænge.", true],
 ];

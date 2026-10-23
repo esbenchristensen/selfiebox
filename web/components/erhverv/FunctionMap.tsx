@@ -1,6 +1,6 @@
 import { functionMap, goals } from "@/lib/erhverv/value";
 
-const facts = ["12 MP-kamera med autofokus og studielys fra ringen", "Video i HD, stående til stories", "Mikrofonmodul til videohilsner som tilvalg"];
+const facts = ["12 MP-kamera med autofokus og studielys fra ringen", "Video i HD, stående til stories", "Mikrofonmodul til videohilsner i alle bokse"];
 
 // Every function and the goals it serves, as one map. It replaces the old activities grid: activities are
 // rows here next to design, sharing and the guest list, so a reader sees that one function often serves
