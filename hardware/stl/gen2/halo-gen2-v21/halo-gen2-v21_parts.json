@@ -276,9 +276,9 @@
  },
  {
   "node": "lydkerne",
-  "label": "Mikrofon-kerne (XVF3800)",
+  "label": "Mikrofon-kerne (XVF3800), standard",
   "color": "#0ea5e9",
-  "group": "Tilvalg",
+  "group": "Elektronik",
   "explode": [
    0,
    0,
@@ -287,9 +287,9 @@
  },
  {
   "node": "mikrofoner",
-  "label": "Mikrofonstrip",
+  "label": "Mikrofonstrip, standard",
   "color": "#14b8a6",
-  "group": "Tilvalg",
+  "group": "Elektronik",
   "explode": [
    0,
    0,
