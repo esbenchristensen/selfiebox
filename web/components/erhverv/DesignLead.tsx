@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { goals } from "@/lib/erhverv/value";
 
 // The lead machine: "Få jeres designudkast på 24 timer". A place writes who they are and where they live on
 // the web; we send a design proposal for the box and a proposal for what it should do at their place.
@@ -32,7 +33,12 @@ export function DesignLead() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const form = new FormData(e.currentTarget);
+    // The goals they tick go to us as the first line of the message, so the draft starts from what they want.
+    const picked = form.getAll("goal").map(String);
+    form.delete("goal");
+    const data = Object.fromEntries(form) as Record<string, string>;
+    if (picked.length) data.message = [`Vigtigst for os: ${picked.join(", ")}`, data.message].filter(Boolean).join("\n\n");
     setState({ kind: "sending" });
     try {
       const res = await fetch("/api/erhverv/udkast", {
@@ -56,7 +62,7 @@ export function DesignLead() {
           <h2 id="lead-title" className="h-l">
             Se jeres egen Selfi inden for 24 timer.
           </h2>
-          <p className="lede">Skriv, hvem I er, og hvor vi finder jer på nettet. Så tegner vi boksen i jeres farver og form og foreslår, hvad den skal kunne hos jer.</p>
+          <p className="lede">Skriv, hvem I er, hvor vi finder jer på nettet, og hvad boksen skal gøre for jer. Så tegner vi boksen i jeres farver og form og foreslår, hvad den skal kunne hos jer.</p>
           <ol className="lead-gets">
             <li>
               <b>Et designforslag til boksen</b>
@@ -119,6 +125,19 @@ export function DesignLead() {
                 ))}
               </select>
             </div>
+            <fieldset className="field full lead-goals">
+              <legend>
+                Hvad skal boksen gøre for jer? <small>(valgfri)</small>
+              </legend>
+              <div className="lead-goal-list">
+                {goals.map((g) => (
+                  <label key={g.id} className="lead-goal">
+                    <input type="checkbox" name="goal" value={g.title} />
+                    <span>{g.title}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <div className="field full">
               <label htmlFor="l-msg">
                 Noget, vi skal vide? <small>(valgfri)</small>

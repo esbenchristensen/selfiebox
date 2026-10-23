@@ -25,7 +25,7 @@ export const pricing = {
   term: "3 måneders binding",
   fourG: "4G-modul: 149 kr./md.",
   print: "Printmodul med betaling pr. foto: kommer snart",
-  design: "Pris for design aftales",
+  design: "Specialdesign af kabinettet: pris aftales",
 };
 
 // Tid fra ja til boksen hænger.

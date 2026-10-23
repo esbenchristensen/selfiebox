@@ -15,7 +15,7 @@ const defaultHours = Math.round((DEFAULT.nights * (DEFAULT.photos * contentCalc.
 // The amount and the terms come from lib/erhverv/placeholder.ts until they are decided.
 
 const included = [
-  ["Boksen i jeres design", "Top, sider og kabinet printet til jeres sted. Skærm og fotoramme med jeres logo."],
+  ["Standardboksen med jeres tema", "Skærm, tekster og fotoramme i jeres farver og med jeres logo. Et kabinet i jeres egen form er et tilvalg."],
   ["Vægbeslag og tyverilås", "Med guide på én side. I hænger den op på ca. 20 minutter."],
   ["Deling på SMS og gæsteliste", "Gæsten får billedet på SMS og kan sige ja til tilbud fra jer."],
   ["Alle aktiviteter", "Titler, missioner, konkurrence, guldtid, skattejagt og rundtur."],
@@ -42,7 +42,7 @@ export function Pricing() {
               <Ph note="pris pr. måned">{n(pricing.fromPerMonth)}</Ph>
               <sup>kr./md.</sup>
             </p>
-            <p className="muted price-note">Ekskl. moms. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja.</p>
+            <p className="muted price-note">Ekskl. moms. Vælger I specialdesign, aftales prisen for designet, og det hele står i tilbuddet, før I siger ja.</p>
             <a className="btn btn-primary" href="#kontakt">
               Få et tilbud til jeres sted
             </a>
