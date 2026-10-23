@@ -30,6 +30,7 @@ export type RentalSettings = {
     byDays?: number[]; // the old price per number of days, still written by admin for older selfi.dk builds
     theme: number;
     printer: number;
+    keep: number; // add-on: the photos kept for KEEP_MONTHS
   };
   printsIncluded: number;
   themes: string[];
@@ -41,6 +42,8 @@ export type RentalSettings = {
     shipDaysBefore: number; // with the post: the box leaves us this many days before the first day
     returnDaysAfter: number; // and is back this many days after the last day
     prepDays: number; // check, clean and charge before the next booking
+    changeDays: number; // up to this many days before the first day a booking can be moved for free or cancelled
+    refundPercent: number; // and a cancellation gets this share of the amount paid back
   };
 };
 
@@ -52,6 +55,7 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     perExtraDay: 350, // mere end 2 hverdage minus 1 hverdag, så 2 hverdage altid er billigst
     theme: 295,
     printer: 895,
+    keep: 149,
   },
   printsIncluded: 100,
   themes: ["Bryllup", "Fødselsdag", "Julefrokost"],
@@ -63,6 +67,8 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     shipDaysBefore: 2,
     returnDaysAfter: 3,
     prepDays: 1,
+    changeDays: 30,
+    refundPercent: 50,
   },
 };
 
@@ -89,6 +95,16 @@ export type Choice = {
   printer: boolean;
   photoType: PhotoType;
   delivery: Delivery;
+  keep?: boolean; // the photos kept for KEEP_MONTHS instead of GALLERY_MONTHS
+};
+
+/** How long the event page is open without and with the keep add-on. After that the photos are deleted. */
+export const GALLERY_MONTHS = 3;
+export const KEEP_MONTHS = 12;
+
+/** The add-on besides the printer, as the booking shows it. */
+export const ADDONS = {
+  keep: () => ({ name: `Billederne gemt i ${KEEP_MONTHS} måneder`, text: `Eventsiden er åben i ${KEEP_MONTHS} måneder i stedet for ${GALLERY_MONTHS} måneder, så I kan hente billederne igen. Derefter sletter vi dem.` }),
 };
 
 export const PHOTO_TYPES: Record<PhotoType, { name: string; text: string }> = {
@@ -148,6 +164,7 @@ export function priceLines(s: RentalSettings, c: Choice): Line[] {
   const lines: Line[] = [{ id: "box", label: `Selfi Boks · ${q.label}`, amount: q.amount }];
   if (c.theme) lines.push({ id: "theme", label: `Tema: ${c.theme}`, amount: s.prices.theme });
   if (c.printer) lines.push({ id: "printer", label: `Printer med ${s.printsIncluded} print (${PHOTO_TYPES[c.photoType].name.toLowerCase()})`, amount: s.prices.printer });
+  if (c.keep) lines.push({ id: "keep", label: ADDONS.keep().name, amount: s.prices.keep });
   return lines;
 }
 
@@ -157,6 +174,10 @@ function weekday(k: DayKey): number {
   const [y, m, d] = k.split("-").map(Number);
   return (new Date(y, m - 1, d).getDay() + 6) % 7;
 }
+
+/** The last day a booking can be moved or cancelled (/lejebetingelser point 8). After it nothing can be changed. */
+export const changeDeadline = (s: RentalSettings, from: DayKey): DayKey => addDays(from, -s.rules.changeDays);
+export const canChange = (s: RentalSettings, from: DayKey, today: DayKey) => today <= changeDeadline(s, from);
 
 /** The days a booking holds its box and printer, including transport and the check afterwards. */
 export function heldRange(s: RentalSettings, r: Range, delivery: Delivery): Range {

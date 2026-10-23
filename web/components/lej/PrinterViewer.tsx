@@ -7,10 +7,11 @@ import { OutlinePrinter } from "../Outline";
 // three.js is only fetched when the viewer gets close to the screen; the line drawing stands in until then.
 const PrinterStage = dynamic(() => import("../three/PrinterStage"), { ssr: false, loading: () => null });
 
-// The printer in 3D: it sways by itself, a drag turns it by hand, and a print slides out of the slot as the page
+// The printer in 3D: it sways by itself, a drag turns it by hand, and a print slides into the pocket as the page
 // scrolls: nothing when the viewer comes in at the bottom of the screen, as far out as it goes when it has reached
 // the upper part. Scrolling back pulls the print in again.
-export function PrinterViewer() {
+// `erhverv`: the same viewer on /erhverv, where lej.css is not loaded.
+export function PrinterViewer({ variant = "lej" }: { variant?: "lej" | "erhverv" }) {
   const ref = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
   const [near, setNear] = useState(false);
@@ -58,14 +59,14 @@ export function PrinterViewer() {
   }, []);
 
   return (
-    <div className="lej-box3d lej-printer3d">
+    <div className={variant === "lej" ? "lej-box3d lej-printer3d" : "pr-3d"}>
       <div ref={ref} className={`viewer${ready ? " is-ready" : ""}`} role="img" aria-label="Selfi printer i 3D, som den kommer i kassen">
         <div className="viewer-poster" aria-hidden="true">
           <OutlinePrinter poster />
         </div>
         {near && webgl && <PrinterStage onReady={() => setReady(true)} progress={progress} />}
       </div>
-      <span className="lej-box3d-hint" aria-hidden="true">
+      <span className={variant === "lej" ? "lej-box3d-hint" : "pr-3d-hint"} aria-hidden="true">
         Træk for at dreje
       </span>
     </div>

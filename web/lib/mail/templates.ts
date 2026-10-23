@@ -38,6 +38,7 @@ export type MailBooking = {
   days: number;
   printer: boolean;
   photoType: "strip" | "polaroid";
+  keep?: boolean; // the photos kept for 12 months
   address: { street: string; zip: string; city: string } | null;
   contact: { name: string; email: string; phone: string };
   lines: { id: string; label: string; amount: number }[];
@@ -267,11 +268,11 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
           label: "Sådan foregår det",
           items: [
             { title: `Vi sender boksen ${shortDay(shipDay(b, c.shipDaysBefore))}`, text: `Til den dao-pakkeshop, der ligger nærmest ${v.adresse}. Den er fremme senest dagen før, og dao giver jer besked.` },
-            { title: "I henter og stiller op", text: `Sæt boksen på stativet, og sæt strøm til. Den starter selv.${b.printer ? " Printeren kommer i sin egen kasse og finder selv boksen." : ""}` },
-            { title: `Retur senest ${shortDay(returnBy(b.to))}`, text: "Pak boksen i kassen, sæt returlabelen på, og aflever den i en dao-pakkeshop. Fragten er betalt." },
+            { title: "I henter og tester", text: `Sæt strøm til boksen, så snart I har hentet den, og se, at den starter. Virker den ikke, så skriv til os med det samme, så vi kan nå at sende en ny.${b.printer ? " Printeren kommer i sin egen kasse og finder selv boksen." : ""}` },
+            { title: `Retur senest ${shortDay(returnBy(b.to))}`, text: "Pak boksen i kassen, sæt returlabelen på, og aflever den i en dao-pakkeshop. Fragten er betalt. Gem kvitteringen fra pakkeshoppen." },
           ],
         },
-        { type: "note", label: "Fri datoflyt", text: "I kan flytte til en anden ledig dato uden beregning, så længe boksen ikke er sendt. Svar på denne mail med jeres bookingnummer." },
+        { type: "note", label: "Bindende booking", text: "Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, Senest 30 dage før første lejedag kan I flytte den gratis til andre ledige datoer eller afbestille den og få 50 % tilbage. Senere kan den hverken flyttes eller afbestilles. Lejebetingelserne står på selfi.dk/lejebetingelser." },
         { type: "code", label: "Bookingnummer", value: b._id },
       );
       break;

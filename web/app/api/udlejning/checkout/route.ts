@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Sæt flueben ved lejebetingelserne." }, { status: 400 });
   }
 
-  const choice: Choice = { range: { from, to }, theme: str(body.theme, 60) || null, printer: body.printer === true, photoType, delivery };
+  const choice: Choice = { range: { from, to }, theme: str(body.theme, 60) || null, printer: body.printer === true, photoType, delivery, keep: body.keep === true };
 
   let d;
   try {
@@ -83,6 +83,7 @@ export async function POST(req: Request) {
     theme: choice.theme,
     printer: choice.printer,
     photoType,
+    keep: choice.keep,
     delivery,
     address: delivery === "post" ? addr : null,
     contact: {

@@ -9,12 +9,14 @@ const n = (v: number) => v.toLocaleString("da-DK");
 const DEFAULT = { nights: 8, photos: 60, videos: 8 };
 const defaultHours = Math.round((DEFAULT.nights * (DEFAULT.photos * contentCalc.minutesPerPhoto + DEFAULT.videos * contentCalc.minutesPerVideo)) / 60);
 
-// The price, what is in it, what is extra, and the terms. Next to it: what the same pictures and clips
+// The price from, what is in it and what is extra. No start fee, binding or invoicing terms on the page (Esben):
+// those are in the offer. Next to it: what the same pictures and clips
 // would cost in staff time, so the owner can hold the two numbers against each other.
 // The amount and the terms come from lib/erhverv/placeholder.ts until they are decided.
 
 const included = [
-  ["Boksen i jeres design", "Top, sider og kabinet printet til jeres sted. Skærm og fotoramme med jeres logo."],
+  ["Standardboksen med jeres tema", "Skærm, tekster og fotoramme i jeres farver og med jeres logo. Et kabinet i jeres egen form er et tilvalg."],
+  ["Mikrofon til videohilsner", "Mikrofonmodulet sidder i alle bokse, så hilsner og udtalelser får tydelig lyd."],
   ["Vægbeslag og tyverilås", "Med guide på én side. I hænger den op på ca. 20 minutter."],
   ["Deling på SMS og gæsteliste", "Gæsten får billedet på SMS og kan sige ja til tilbud fra jer."],
   ["Alle aktiviteter", "Titler, missioner, konkurrence, guldtid, skattejagt og rundtur."],
@@ -41,34 +43,30 @@ export function Pricing() {
               <Ph note="pris pr. måned">{n(pricing.fromPerMonth)}</Ph>
               <sup>kr./md.</sup>
             </p>
-            <p className="muted">Ekskl. moms. Opstart {n(pricing.setupFee)} kr. én gang. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja.</p>
-            <ul className="price-terms">
-              <li>Opstart {n(pricing.setupFee)} kr.</li>
-              <li>{pricing.term}</li>
-              <li>Faktura hver måned, ingen regninger ved siden af</li>
-            </ul>
+            <p className="muted price-note">Ekskl. moms. Vælger I specialdesign, aftales prisen for designet, og det hele står i tilbuddet, før I siger ja.</p>
             <a className="btn btn-primary" href="#kontakt">
               Få et tilbud til jeres sted
             </a>
+            <div className="price-addons">
+              <span className="label">Tilvalg</span>
+              <ul className="incl incl--addons">
+                <li>
+                  <Ph note="pris på 4G er ikke besluttet">{pricing.fourG}</Ph>
+                </li>
+                <li>{pricing.design}</li>
+                <li>{pricing.print}</li>
+              </ul>
+            </div>
           </div>
           <div className="price-incl">
             <span className="label">Med i prisen</span>
             <ul className="incl">
               {included.map(([title, text]) => (
                 <li key={title}>
-                  <b>{title}</b> {text}
+                  <b>{title}</b>
+                  <span>{text}</span>
                 </li>
               ))}
-            </ul>
-            <span className="label" style={{ marginTop: 24, display: "block" }}>
-              Tilvalg
-            </span>
-            <ul className="incl incl--addons">
-              <li>
-                <Ph note="pris på 4G er ikke besluttet">{pricing.fourG}</Ph>
-              </li>
-              <li>{pricing.design}</li>
-              <li>{pricing.print}</li>
             </ul>
           </div>
         </div>

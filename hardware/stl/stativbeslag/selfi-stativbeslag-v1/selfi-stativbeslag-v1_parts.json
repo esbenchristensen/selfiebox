@@ -1,7 +1,7 @@
 [
  {
   "node": "lysring",
-  "label": "Lysring (naturfarvet ASA)",
+  "label": "Lysring med kile over hvid 3 (mat translucent)",
   "color": "#fbf8f1",
   "group": "Kabinet",
   "explode": [
@@ -44,9 +44,9 @@
   ]
  },
  {
-  "node": "skumbaand",
-  "label": "Tætningsbånd, blødt skum 3 × 1 mm (i rillen rundt om skærmen)",
-  "color": "#d97706",
+  "node": "pakninger",
+  "label": "Pakninger: O-ringsnor Ø1,5 i silikoneskum (skærm, lysring, kamera, højttaler; front/skal har ribbe og rille)",
+  "color": "#dc2626",
   "group": "Kabinet",
   "explode": [
    0,
@@ -55,8 +55,30 @@
   ]
  },
  {
+  "node": "kameraglas",
+  "label": "Kameraglas Ø12 × 1,5",
+  "color": "#bfe3f2",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   140
+  ]
+ },
+ {
+  "node": "kameraroer",
+  "label": "Kamerarør (sort ASA): trykker pakningen mod glasset",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   110
+  ]
+ },
+ {
   "node": "ledskinne",
-  "label": "Bagramme med reflektor (hvid ASA)",
+  "label": "Bagramme med reflektor og kantspor (hvid ASA)",
   "color": "#e9e4da",
   "group": "Kabinet",
   "explode": [
@@ -73,17 +95,6 @@
   "explode": [
    0,
    0,
-   -90
-  ]
- },
- {
-  "node": "printerdaeksel",
-  "label": "Prop til printerhul (drejes 60°, strammer på 3 fjedertunger)",
-  "color": "#3a3a3f",
-  "group": "Kabinet",
-  "explode": [
-   0,
-   -45,
    -90
   ]
  },
@@ -133,7 +144,7 @@
  },
  {
   "node": "ledhvid",
-  "label": "2 × hvid COB-strip Ra95",
+  "label": "3 × hvid COB-strip Ra95 (2 i kantspor på væggen, 1 i reflektoren)",
   "color": "#ffb000",
   "group": "Elektronik",
   "explode": [
@@ -155,7 +166,7 @@
  },
  {
   "node": "klikstik",
-  "label": "3 klikstik til strips (ét pr. strip)",
+  "label": "4 klikstik til strips (ét pr. strip)",
   "color": "#f5f5f4",
   "group": "Elektronik",
   "explode": [
@@ -210,7 +221,7 @@
  },
  {
   "node": "ledstyring",
-  "label": "LED-styring RGB (Gledopto WLED)",
+  "label": "LED-styring RGB (Gledopto GL-C-016WL-D, målt: 45,7 × 87,9 × 17,26 + 2 arme)",
   "color": "#127a49",
   "group": "Elektronik",
   "explode": [
@@ -254,9 +265,9 @@
  },
  {
   "node": "lydkerne",
-  "label": "Mikrofon-kerne (XVF3800)",
+  "label": "Mikrofon-kerne (XVF3800), standard",
   "color": "#0ea5e9",
-  "group": "Tilvalg",
+  "group": "Elektronik",
   "explode": [
    0,
    0,
@@ -265,9 +276,9 @@
  },
  {
   "node": "mikrofoner",
-  "label": "Mikrofonstrip",
+  "label": "Mikrofonstrip, standard",
   "color": "#14b8a6",
-  "group": "Tilvalg",
+  "group": "Elektronik",
   "explode": [
    0,
    0,
@@ -320,7 +331,7 @@
  },
  {
   "node": "skruer_skaerm",
-  "label": "4 skruer, skærm (M2,5, følger med)",
+  "label": "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)",
   "color": "#c3c7cf",
   "group": "Skruer",
   "explode": [
@@ -339,6 +350,42 @@
    -80,
    -90
   ]
+ },
+ {
+  "node": "tema_top",
+  "label": "Tema-top (eksempel): skilt + 2 kroge i de øverste slidser",
+  "color": "#22d36b",
+  "group": "Tema (eksempel)",
+  "explode": [
+   0,
+   90,
+   -40
+  ],
+  "hidden": true
+ },
+ {
+  "node": "tema_vinge_v",
+  "label": "Tema-vinge venstre (eksempel): 2 kroge",
+  "color": "#16a34a",
+  "group": "Tema (eksempel)",
+  "explode": [
+   -90,
+   0,
+   -40
+  ],
+  "hidden": true
+ },
+ {
+  "node": "tema_vinge_h",
+  "label": "Tema-vinge højre (eksempel): 2 kroge",
+  "color": "#16a34a",
+  "group": "Tema (eksempel)",
+  "explode": [
+   90,
+   0,
+   -40
+  ],
+  "hidden": true
  },
  {
   "node": "kabel_0_stik",

@@ -1,47 +1,34 @@
 "use client";
 
-import { useGLTF, useTexture } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { SHOOT, SHOOT_LOOP } from "./HaloBox";
-import { HIDDEN, printerMaterial } from "./PrinterStage";
+import { printerMaterial } from "./PrinterStage";
+import { PRINT_START, PRINTER_BOTTOM, PRINTER_MODEL, PrintOut } from "./PrintOut";
 import { dannebrogTexture, oakTexture } from "./textures";
 
-// The rental printer (selfi-printer-v1, from its CAD export) on a small oak side table with a Danish table flag, next
-// to the box on its stand,
-// printing the photo the box has just taken: the print slides out of the paper slot after the flash, in step with
-// HaloBox's photo loop. Millimetres in the stand's unit coordinates (see Tripod.tsx).
+// The rental printer (selfi-printer-v4, the cabinet from its CAD export) on a round oak side table with a Danish
+// table flag, next to the box on its stand, printing the photo the box has just taken: after the flash the print
+// slides down the chute into the pickup pocket (PrintOut.tsx), in step with HaloBox's photo loop. Millimetres in the
+// stand's unit coordinates (see Tripod.tsx).
 
-const MODEL = "/models/selfi-printer-v1.glb";
-const BOTTOM = -110; // underside of the base in the model
-const SLOT = { y: 41, z: 147 }; // the paper slot in the front, as in PrinterStage
-const TABLE = { r: 240, top: 28, h: 620 };
-const LEGS = { at: 150, splay: 0.14, top: 17, foot: 11 };
+const TABLE = { r: 275, top: 28, h: 620 };
+const LEGS = { at: 180, splay: 0.14, top: 17, foot: 11 };
 // A Danish table flag: a turned oak foot, a thin pole and a 150 mm Dannebrog, at the back of the table on the box's
 // side, flying towards the box so it stays in the picture.
-const FLAG = { x: -150, z: -110, pole: 380, w: 150, h: 124 };
-// A polaroid-style print with a white frame and a wider foot, as in PrinterStage
-const PRINT = { w: 100, border: 5, photo: 90, foot: 23 };
-const DROOP = 0.5;
-const REACH = 0.8;
-const OUT = { from: 1.0, to: 3.4 }; // seconds after the flash
-const PAPER = "#f4f2ec";
+const FLAG = { x: -170, z: -190, pole: 380, w: 150, h: 124 };
+const OUT = { from: 0.9, to: 2.6 }; // seconds after the flash: dropped onto the chute, then in the pocket
 
-useGLTF.preload(MODEL, false, true);
-
-function ease(t: number) {
-  const k = Math.min(1, Math.max(0, t));
-  return k * k * (3 - 2 * k);
-}
+useGLTF.preload(PRINTER_MODEL, false, true);
 
 export function StandPrinter({ photo, motion, position, turn }: { photo: string; motion: boolean; position: [number, number, number]; turn: number }) {
-  const { scene } = useGLTF(MODEL, false, true);
+  const { scene } = useGLTF(PRINTER_MODEL, false, true);
   // A copy of its own: the printer section further down the page shows the same model in another canvas.
   const model = useMemo(() => {
     const copy = scene.clone(true);
     copy.traverse((o) => {
-      if (HIDDEN.has(o.name)) o.visible = false;
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
       m.castShadow = true;
@@ -93,23 +80,13 @@ export function StandPrinter({ photo, motion, position, turn }: { photo: string;
   }, []);
   useEffect(() => () => cloth.dispose(), [cloth]);
 
-  const photoMap = useTexture(`/photos/${photo}.jpg`);
-  photoMap.colorSpace = THREE.SRGBColorSpace;
-  const { w, border, photo: p, foot } = PRINT;
-  const h = border + p + foot;
-  const out = useRef<THREE.Group>(null);
-
-  useFrame((state) => {
-    const g = out.current;
-    if (!g) return;
-    const after = motion ? (state.clock.elapsedTime % SHOOT_LOOP) - SHOOT.idle - SHOOT.count : OUT.to;
-    const k = after < 0 ? 0 : ease((after - OUT.from) / (OUT.to - OUT.from));
-    const reach = k * REACH * h;
-    g.visible = reach > 0.5;
-    // The leading end is `reach` out of the slot, tipping down; the centre is half a print behind it.
-    const c = reach - h / 2;
-    g.position.set(0, SLOT.y - Math.sin(DROOP) * c, SLOT.z + Math.cos(DROOP) * c);
-  });
+  // Down the chute with gravity, then still in the pocket until the next photo.
+  const lead = (t: number) => {
+    const after = motion ? (t % SHOOT_LOOP) - SHOOT.idle - SHOOT.count : OUT.to;
+    if (after < OUT.from) return PRINT_START + 1;
+    const k = Math.min(1, (after - OUT.from) / (OUT.to - OUT.from));
+    return PRINT_START * (1 - k * k);
+  };
 
   return (
     <group position={position}>
@@ -148,21 +125,9 @@ export function StandPrinter({ photo, motion, position, turn }: { photo: string;
           castShadow
         />
       </group>
-      <group position={[0, TABLE.h - BOTTOM, 0]} rotation={[0, turn, 0]}>
+      <group position={[0, TABLE.h - PRINTER_BOTTOM, 0]} rotation={[0, turn, 0]}>
         <primitive object={model} />
-        <group ref={out} visible={false}>
-          {/* Face up with its top towards the printer, so it reads the right way up from the front */}
-          <group rotation={[-Math.PI / 2 + DROOP, 0, 0]}>
-            <mesh castShadow receiveShadow>
-              <planeGeometry args={[w, h]} />
-              <meshStandardMaterial color={PAPER} roughness={0.9} side={THREE.DoubleSide} />
-            </mesh>
-            <mesh position={[0, h / 2 - (border + p / 2), 0.3]}>
-              <planeGeometry args={[p, p]} />
-              <meshBasicMaterial map={photoMap} toneMapped={false} />
-            </mesh>
-          </group>
-        </group>
+        <PrintOut photo={`/photos/${photo}.jpg`} lead={lead} />
       </group>
     </group>
   );

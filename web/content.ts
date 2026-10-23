@@ -34,9 +34,9 @@ export const quality: { title: string; icon: string; text: string; facts: string
     facts: ["HD-video, 900 × 1600", "Stående 9:16 til sociale medier", "Studielys på ansigterne, også i mørke lokaler"],
   },
   {
-    title: "Tydelig lyd (tilvalg)",
+    title: "Tydelig lyd",
     icon: "M19 8 a5 5 0 0 1 10 0 V24 a5 5 0 0 1 -10 0 Z M12 22 a12 12 0 0 0 24 0 M24 34 V41 M17 41 H31",
-    text: "Med mikrofonmodulet retter fire mikrofoner sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde. Modulet er et tilvalg.",
+    text: "Mikrofonmodulet sidder i alle bokse. Fire mikrofoner retter sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde.",
     facts: ["Fire mikrofoner, der finder den, der taler", "Støjfjernelse og ekkodæmpning", "Opfanger tale op til ca. 5 meter væk"],
   },
 ];
@@ -91,7 +91,7 @@ export const features: Feature[] = [
     photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi på en festival i skoven", pos: "50% 50%" },
     points: [
       ["Ægte, ikke iscenesat", "Gæsterne tager billederne selv, midt i aftenen. Det er rigtige mennesker, der har det sjovt hos jer, og det kan ses."],
-      ["Billeder og video i høj kvalitet", "12 MP-billeder og HD-video i stående format, klar til stories og feeds. Med mikrofonmodulet (tilvalg) er lyden tydelig, også i et larmende lokale."],
+      ["Billeder og video i høj kvalitet", "12 MP-billeder og HD-video i stående format, klar til stories og feeds. Mikrofonmodulet gør lyden tydelig, også i et larmende lokale."],
       ["Samlet og med samtykke", "Alt ligger samlet i kontrolpanelet, og kun det, gæsten har sagt ja til, må bruges."],
       ["Hver aften, hele aftenen", "Boksen holder ikke fri, bliver ikke træt og skal ikke have løn. Den laver content, hver gang I har åbent."],
     ],
@@ -209,7 +209,7 @@ export const features: Feature[] = [
     points: [
       ["Jeres spørgsmål", "I vælger spørgsmålene på skærmen, og I kan skifte dem fra dag til dag."],
       ["Færdigt content", "Korte, stående klip i HD med jeres ramme, som I kan bruge på de sociale medier, når gæsten har sagt ja."],
-      ["Klar lyd", "Med mikrofonmodulet (tilvalg) fanger fire mikrofoner stemmen tydeligt, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
+      ["Klar lyd", "Mikrofonmodulet i boksen fanger stemmen tydeligt med fire mikrofoner, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
       ["Hilsner", "Gæsterne kan sende en hilsen til en ven, et band eller et hold, som I kan vise frem."],
     ],
     uses: [
@@ -437,21 +437,21 @@ export const features: Feature[] = [
     short: "Et ægte foto i hånden, også mod betaling.",
     icon: "M11 7 H37 V41 H11 Z M15 11 H33 V30 H15 Z",
     title: "Et ægte foto i hånden.",
-    lede: "Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens gæsten står og venter. Rammen bærer jeres navn. Vil I, kan gæsterne betale for de printede fotos, så boksen tjener penge.",
+    lede: "Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens gæsten står og venter. Vil I, kan gæsterne betale for de printede fotos, så boksen tjener penge.",
     seo: {
       title: "Fotoboks med printede Instax-fotos og betaling pr. foto | Selfi",
-      description: "Selfi kan printe Instax-fotos med jeres navn i rammen. Gæsterne kan betale pr. foto, og I sætter selv prisen.",
+      description: "Selfi kan printe Instax-fotos, som gæsterne tager med hjem. Gæsterne kan betale pr. foto, og I sætter selv prisen.",
     },
     photo: { src: "/photos/instax-haand.jpg", alt: "Hænder holder et frisk Instax-foto af tre venner på en bar", pos: "50% 50%" },
     points: [
-      ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere, med jeres navn i rammen."],
+      ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere. Den digitale udgave med jeres logo har gæsten på telefonen."],
       ["Betaling pr. foto", `I sætter prisen pr. foto. Alt over ${business.costPerPhoto} kr. pr. foto går til jer.`],
       ["Kun når I vil", "Printet er et tilvalg. Den digitale udgave kommer altid på SMS."],
     ],
     uses: [
       ["Baren", "Gæsterne betaler for et print, og baren tjener på hvert foto."],
       ["Hotellet", "Et printet foto som minde fra opholdet eller brylluppet i festsalen."],
-      ["Lanceringen", "Hver gæst går hjem med et foto med produktet og jeres navn."],
+      ["Lanceringen", "Hver gæst går hjem med et foto med produktet i hånden."],
     ],
     faq: [{ q: "Hvad koster et print for os?", a: `Papir og drift koster ${business.costPerPhoto} kr. pr. foto. Tager I mere for det, går forskellen til jer.` }],
   },
@@ -531,11 +531,7 @@ export const activities: { id: ActivityId; name: string; text: string }[] = [
 export const faq: Faq[] = [
   {
     q: "Hvad koster det?",
-    a: `${pricing.fromPerMonth.toLocaleString("da-DK")} kr. om måneden pr. boks ekskl. moms og ${pricing.setupFee.toLocaleString("da-DK")} kr. i opstart. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja. Vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G og print er tilvalg.`,
-  },
-  {
-    q: "Er der binding?",
-    a: `${pricing.term}. Når aftalen slutter, henter vi boksen, og I beholder gæstelisten og de godkendte billeder.`,
+    a: `${pricing.fromPerMonth.toLocaleString("da-DK")} kr. om måneden pr. boks ekskl. moms. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja. Vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G og print er tilvalg.`,
   },
   {
     q: "Hvor lang tid går der, fra vi siger ja, til boksen hænger?",
@@ -575,7 +571,7 @@ export const faq: Faq[] = [
   },
   {
     q: "Kan gæsterne få et printet foto?",
-    a: "Det kommer snart. Printmodulet laver et Instax-foto med jeres navn i rammen, og I kan vælge, at gæsten betaler for det.",
+    a: "Det kommer snart. Printmodulet laver et Instax-foto, gæsten kan tage med hjem, og I kan vælge, at gæsten betaler for det.",
   },
   {
     q: "Kan boksen hænge udendørs?",

@@ -1,5 +1,7 @@
 # Gennemgang af selfi.dk/erhverv
 
+> **23. oktober 2026: det brede billede.** Esben: siden fortalte én smal historie (SMS og gæsteliste) og tænkte ikke i målgrupper og user stories. Siden viser nu først, hvorfor forskellige steder køber: seks mål i køberens egne ord (sjov for gæsterne, branding, indhold og feedback, gæster der kommer igen, mere solgt, sponsorer). Derefter de to måder at få boksen på (standardboksen med eget tema og logo, eller specialdesign; printer, flere bokse og 4G som tilvalg; mikrofonen er standard), ni brancher med beslutningstager, mål, user story og opsætning, og et funktionskort over hvilke funktioner der tjener hvilke mål. Mål og funktionskort ligger i `lib/erhverv/value.ts`. "Det får I" og aktivitetsgitteret er erstattet af målene og funktionskortet. Designudkastet ligger efter funktionskortet og spørger, hvad boksen skal gøre for dem.
+
 > **Status 21. oktober 2026, aften:** A-listen er bygget på `/erhverv` (afsnit 7 nederst siger, hvad der er gjort ved hvert punkt). Alt, vi ikke har, er opdigtet i `lib/erhverv/placeholder.ts`; den gule markering er slået fra (`PLACEHOLDERS_VISIBLE = false`), så siden kan ses, som den kommer til at se ud. Besluttet af Esben samme aften: 1.495 kr./md., 2.495 kr. i opstart, 3 måneders binding, pris for design aftales. `/events` er fjernet, og Smukfest-kataloget ligger på `/erhverv/smukfest`. Siden nævner ingen bøder eller sager: tonen er positiv.
 
 *21. oktober 2026. Grundlag: koden i `web/`, `TEKSTSTRATEGI.md`, `SIDESTRUKTUR.md`, `KONKURRENTER.md`, handelsbetingelser og databehandleraftale, GDPR-kravene (`hardware/dokumentation/selfi-gdpr-v1_*`), `docs/funktioner.md` i platform-repoet (hvad der er bygget), kundekatalogerne, markedslisten, brandpakken, siden set på mobil (375 px) og computer (1440 px), og den udgivne side på www.selfi.dk/erhverv.*
@@ -8,7 +10,7 @@ Konkurrenterne står i `KONKURRENTER-ERHVERV.md`.
 
 ## 1. Det, jeg ved om produktet og kunden, før jeg skriver
 
-**Boksen.** Selfi gen 2: 222,5 × 306 × 70 mm, ca. 1,6 kg, 10" touchskærm, 12 MP-kamera med autofokus (Wide, 120°), lysring (COB-lys til foto, RGBW til farver), Raspberry Pi 5, 90 W strømforsyning. Hænger på vægbeslag med sikkerhedsskrue. Top, sider og kabinet printes i stedets form og farver. Mikrofonkort og 4G er tilvalg og sidder ikke i alle bokse. Video er 900 × 1600, ikke Full HD. Lysringens farve følger endnu ikke temaet (kun styrke). Printeren findes kun som prototype. Navnet er **Selfi**, ikke Selfi Boks (besluttet 21. okt. i platform-repoet; siden bruger stadig "Selfi Boks" 159 steder).
+**Boksen.** Selfi gen 2: 222,5 × 306 × 70 mm, ca. 1,6 kg, 10" touchskærm, 12 MP-kamera med autofokus (Wide, 120°), lysring (COB-lys til foto, RGBW til farver), Raspberry Pi 5, 90 W strømforsyning. Hænger på vægbeslag med sikkerhedsskrue. Top, sider og kabinet printes i stedets form og farver. Mikrofonkortet sidder i alle bokse (Esben 23. okt. 2026). 4G er tilvalg. Video er 900 × 1600, ikke Full HD. Lysringens farve følger endnu ikke temaet (kun styrke). Printeren findes kun som prototype. Navnet er **Selfi**, ikke Selfi Boks (besluttet 21. okt. i platform-repoet; siden bruger stadig "Selfi Boks" 159 steder).
 
 **Det, der er med.** Design, software, kontrolpanel, vægbeslag, monteringsguide, overvågning, opdateringer, support og ny boks ved fejl (vilkår § 2 og § 6). Tilvalg kun når de står i tilbuddet: 4G, printer, ekstra designs.
 
@@ -63,7 +65,7 @@ Vurderet som en barejer og en marketingchef, der ikke kender os. "Gør" er plane
 | # | Fejl | Kilde | Gør |
 |---|---|---|---|
 | L1 | "Video i Full HD" og "Full HD-video" (Kvalitet, Contentmaskine, funktionssider) | `docs/funktioner.md`: 900 × 1600, "Delvist" | "Video i HD i stående format" |
-| L2 | "Fire mikrofoner med støjfjernelse" som standard fem steder | Mikrofonkortet er tilvalg og sidder ikke i alle bokse | "Med mikrofonmodul (tilvalg)" |
+| L2 | "Fire mikrofoner med støjfjernelse" som standard fem steder | Rettet 23. okt. 2026: mikrofonkortet er standard i alle bokse | "Mikrofonmodulet i boksen" |
 | L3 | "Boksen kårer aftenens største smil og største gruppe" | Titlen gælder det enkelte billede, ingen kåring på tværs af aftenen | "Boksen giver billedet en titel, fx største smil eller største gruppe" |
 | L4 | "Lysringen i jeres farver" (hero-lede, showroom, FAQ) | Lyset styres kun i styrke; farven følger ikke temaet | Lysringen nævnes som lys, ikke som farve, til det er bygget. Står i "Kommer snart"-listen |
 | L5 | "Går en boks i stykker, sender vi en ny med det samme" og "I betaler ikke for reparation eller ny boks" | Tekststrategi: sæt ikke tider, før driften kan holde dem. Vilkår § 6: tyveri og hærværk aftales i tilbuddet, ellers betaler kunden kostpris | "Går en boks i stykker, sender vi en ny. Fejl og slitage koster jer ikke noget. Tyveri og hærværk aftaler vi i tilbuddet" |
@@ -180,7 +182,7 @@ Bredt, før jeg vælger. Mærket A (gør nu), B (gør, når vi har data eller en
 
 1. **Hero.** Label "Til barer, klubber, hoteller og festivaler". H1: "En fotoboks i jeres design, der får gæsterne til at komme igen." Lede: "Selfi hænger på væggen i jeres form og farver, tager billeder og video af gæsterne, og sender dem på SMS med jeres navn på. Siger gæsten ja, har I et nummer, I må sende tilbud til." Tre punkter: eget design, gæsteliste med samtykke, fuld service. Knap "Book en snak på 20 minutter", sekundær "Se prisen". Telefon og e-mail som pladsholder. 3D-boks i neutralt design (stregtegning på mobil).
 2. **Bevisstribe** (pladsholder): logoer, antal steder, antal billeder.
-3. **Hvad får I.** Tre resultater med én konkret sætning hver: omtale (jeres navn på hvert delt billede, plads til en sponsor, der betaler for rammen), gæster der bliver og kommer igen (aktiviteter, gæsteliste), billeder og video til jeres kanaler (hver aften I har åbent, med samtykke). Her står også de tre tekniske linjer (12 MP, HD-video stående, mikrofonmodul som tilvalg).
+3. **Hvad får I.** Tre resultater med én konkret sætning hver: omtale (jeres navn på hvert delt billede, plads til en sponsor, der betaler for rammen), gæster der bliver og kommer igen (aktiviteter, gæsteliste), billeder og video til jeres kanaler (hver aften I har åbent, med samtykke). Her står også de tre tekniske linjer (12 MP, HD-video stående, mikrofonmodul i alle bokse).
 4. **Sådan går det for gæsten.** Fire trin i ét kort afsnit uden sticky animation.
 5. **Jeres design.** Showroom, kortere, neutrale designs, "vi printer delene selv".
 6. **Pris.** "Fra [X] kr./md. ekskl. moms" (pladsholder). Med i prisen: design, boksen, vægbeslag og lås, kontrolpanel, overvågning, opdateringer, support, ny boks ved fejl. Tilvalg: 4G, print, flere designs. Binding og opsigelse: pladsholder. Contentberegneren står ved siden af som "Det samme lavet af en medarbejder".
@@ -234,7 +236,7 @@ Siden ligger i `app/erhverv/page.tsx`, de nye afsnit i `components/erhverv/`, pl
 | M6 | "Det skal I have klar": væg, stikkontakt, wifi, i "Sådan kommer vi i gang" |
 | M7 | "Pladsen i rammen kan I også sælge til et bryggeri eller en sponsor" i "Det får I" |
 | Cases | Nyt afsnit "Sådan kan det sættes op" med en fane pr. slags sted: bar/bodega, natklub, sportsklub, hotel, biograf, festival, forlystelsespark/zoo. Hver med boksen i 3D i et design, der passer (Flying Hirsch, Heidi's, AaB, Tuborg, Palads, Smukfest, LEGOLAND), bokse, placering, design, aktiviteter, gæsteliste og "det får de" |
-| L1–L3 | "Video i HD, stående" (900 × 1600), mikrofonmodul som tilvalg, "største smil" som titel på billedet, kåring på tværs af aftenen mærket "kommer snart". Rettet i `content.ts`, så funktionssiderne følger med |
+| L1–L3 | "Video i HD, stående" (900 × 1600), mikrofonmodul (nu standard), "største smil" som titel på billedet, kåring på tværs af aftenen mærket "kommer snart". Rettet i `content.ts`, så funktionssiderne følger med |
 | L4 | Lysringens farve er ude af teksterne og står som "kommer snart" på eget design |
 | L5 | "Går en boks i stykker, sender vi en ny. Fejl og slitage koster jer ikke noget. Tyveri og hærværk aftaler vi i tilbuddet" |
 | L6 | Nummer ved "ring", som pladsholder |

@@ -15,7 +15,7 @@ import type { Response as OpenAIResponse, ResponseInputItem } from "openai/resou
 import { getSettings, todayDK } from "../udlejning/db";
 import { addMessage, supportCollections, type SupportChatDoc, type SupportMessageDoc } from "./db";
 import { ASSISTANT_NAME, dynamicContext, instructions } from "./knowledge";
-import { sendSupportSms, type SmsSender } from "./sms";
+import { sendCodeSms, sendSupportSms, type CodeSender, type SmsSender } from "./sms";
 import { runTool, TOOL_DEFINITIONS, TOOL_LABELS, WEB_SEARCH_TOOL, type ToolContext } from "./tools";
 
 export const MODEL = process.env.SUPPORT_MODEL || "gpt-6.1-sol";
@@ -32,6 +32,8 @@ export type TurnEvent =
 
 export type TurnOptions = {
   sms?: SmsSender;
+  codeSms?: CodeSender;
+  later?: (job: () => Promise<void>) => void;
   client?: OpenAI;
   now?: () => Date;
 };
@@ -39,7 +41,7 @@ export type TurnOptions = {
 let client: OpenAI | null = null;
 const openai = () => (client ??= new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 60_000, maxRetries: 1 }));
 
-const FALLBACK = "Jeg kunne ikke svare lige nu. Prøv igen om et øjeblik, eller tryk på \"Tal med et menneske\", så tager Esben over.";
+const FALLBACK = "Jeg kunne ikke svare lige nu. Prøv igen om et øjeblik, eller tryk på \"Tal med et menneske\", så tager en kollega over.";
 
 /** The history as model input: customers as user, Sif and humans as assistant, system notes as developer notes. */
 function toInput(messages: SupportMessageDoc[]): ResponseInputItem[] {
@@ -47,7 +49,7 @@ function toInput(messages: SupportMessageDoc[]): ResponseInputItem[] {
   for (const m of messages) {
     if (m.role === "customer") out.push({ role: "user", content: m.text });
     else if (m.role === "assistant") out.push({ role: "assistant", content: m.text });
-    else if (m.role === "human") out.push({ role: "assistant", content: `[${m.name ?? "Esben"} (menneske) skrev]: ${m.text}` });
+    else if (m.role === "human") out.push({ role: "assistant", content: `[En kollega (menneske) skrev]: ${m.text}` });
     else if (m.role === "system") out.push({ role: "developer", content: `[System: ${m.text}]` });
   }
   return out;
@@ -81,6 +83,8 @@ export async function runTurn(d: Db, chat: SupportChatDoc, emit: (e: TurnEvent) 
     today: todayDK(),
     now,
     sms: opts.sms ?? sendSupportSms,
+    codeSms: opts.codeSms ?? sendCodeSms,
+    later: opts.later,
     adminUrl: (process.env.ADMIN_URL || "https://admin.selfi.dk").replace(/\/$/, ""),
     setupUrl: process.env.SELFI_SETUP_URL ?? "https://foto.selfi.dk/opsaet",
   };

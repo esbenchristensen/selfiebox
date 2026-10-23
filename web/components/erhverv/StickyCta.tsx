@@ -3,24 +3,27 @@
 import { useEffect, useState } from "react";
 import { contact } from "@/lib/erhverv/placeholder";
 
-// On phones: a bar at the bottom with the phone number and one button to the contact form. It appears once
-// the hero has scrolled away and hides while the form is on screen.
+// On phones: a bar at the bottom with the phone number and one button to the free design proposal. It appears
+// once the hero has scrolled away and hides while one of the forms is on screen.
 export function StickyCta() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById("kontakt");
-    if (!target) return;
-    let formVisible = false;
-    const update = () => setShow(!formVisible && window.scrollY > 600);
+    const targets = ["udkast", "kontakt"].map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
+    if (!targets.length) return;
+    const visible = new Set<Element>();
+    const update = () => setShow(visible.size === 0 && window.scrollY > 600);
     const io = new IntersectionObserver(
-      ([e]) => {
-        formVisible = e.isIntersecting;
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visible.add(e.target);
+          else visible.delete(e.target);
+        }
         update();
       },
       { rootMargin: "0px 0px -20% 0px" },
     );
-    io.observe(target);
+    targets.forEach((t) => io.observe(t));
     window.addEventListener("scroll", update, { passive: true });
     return () => {
       io.disconnect();
@@ -34,8 +37,8 @@ export function StickyCta() {
         <b>{contact.phone}</b>
         <span className="muted">Ring, eller book en snak</span>
       </a>
-      <a className="btn btn-primary" href="#kontakt" tabIndex={show ? 0 : -1}>
-        Book en snak
+      <a className="btn btn-primary" href="#udkast" tabIndex={show ? 0 : -1}>
+        Gratis udkast
       </a>
     </div>
   );

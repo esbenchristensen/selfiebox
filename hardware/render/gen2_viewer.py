@@ -20,50 +20,56 @@ DEPTH = float(sys.argv[4]) if len(sys.argv) > 4 else 85.0   # box depth (D in ge
 
 # node, STL view, label, colour, group, explode [x, y, z] in glTF axes (mm at full explode)
 PARTS = [
-    ("lysring",       "x_ring3",       "Lysring (naturfarvet ASA)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
+    ("lysring",       "x_ring3",       "Lysring med kile over hvid 3 (mat translucent)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
     ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
-    ("skumbaand",     "x_tape3",       "Tætningsbånd, blødt skum 3 × 1 mm (i rillen rundt om skærmen)", "#d97706", "Kabinet", [0, 0, 95]),
-    ("ledskinne",     "x_frame3",      "Bagramme med reflektor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
+    ("pakninger",     "x_seal",        "Pakninger: O-ringsnor Ø1,5 i silikoneskum (skærm, lysring, kamera, højttaler; front/skal har ribbe og rille)", "#dc2626", "Kabinet", [0, 0, 95]),
+    ("kameraglas",    "x_camglass",    "Kameraglas Ø12 × 1,5",            "#bfe3f2", "Kabinet",    [0, 0, 140]),
+    ("kameraroer",    "x_camsleeve",   "Kamerarør (sort ASA): trykker pakningen mod glasset", "#1d1d20", "Kabinet", [0, 0, 110]),
+    ("ledskinne",     "x_frame3",      "Bagramme med reflektor og kantspor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
-    ("printerdaeksel", "c_cap",        "Prop til printerhul (drejes 60°, strammer på 3 fjedertunger)", "#3a3a3f", "Kabinet",    [0, -45, -90]),
     ("skaerm",        "x_dsp_glass",   "Skærm: glas med sort kant (ligger direkte på frontens 1,6 mm kant)",       "#0b0b0d", "Elektronik", [0, 0, 65]),
     ("skaerm_billede", "x_dsp_active", "Skærm: aktivt billede 1200 × 1920", "#4f7df0", "Elektronik", [0, 0, 65]),
     ("skaerm_bag",    "x_dsp_back",    "Skærm: bagside med skrueører",    "#8a8d94", "Elektronik", [0, 0, 65]),
     ("kamera",        "x_camera",      "Kamera (Wide)",                   "#9aa3b5", "Elektronik", [0, 0, 120]),
-    ("ledhvid",       "x_strip_w",     "2 × hvid COB-strip Ra95",         "#ffb000", "Elektronik", [0, 0, 60]),
+    ("ledhvid",       "x_strip_w",     "3 × hvid COB-strip Ra95 (2 i kantspor på væggen, 1 i reflektoren)",         "#ffb000", "Elektronik", [0, 0, 60]),
     ("ledrgb",        "x_strip_rgb",   "RGB-strip 5 mm",                  "#a855f7", "Elektronik", [0, 0, 60]),
-    ("klikstik",      "c_clips",       "3 klikstik til strips (ét pr. strip)", "#f5f5f4", "Elektronik", [0, 0, 60]),
+    ("klikstik",      "c_clips",       "4 klikstik til strips (ét pr. strip)", "#f5f5f4", "Elektronik", [0, 0, 60]),
     ("pi",            "c_pi_board",    "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
     ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
     ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
-    ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto WLED)", "#127a49", "Elektronik", [0, 0, -90]),
+    ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto GL-C-016WL-D, målt: 45,7 × 87,9 × 17,26 + 2 arme)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (DFRobot DFR0457)",       "#0f766e", "Elektronik", [-90, 0, 0]),
     ("stik",          "c_jack",        "Strømindgang i bunden, i midten: hunstik TRU DC-13F + GST-stik nedefra",                  "#e11d48", "Elektronik", [0, 0, -90]),
     ("modem4g",       "c_4g",          "4G-modem med GPS",                "#2563eb", "Tilvalg",    [0, 0, -90]),
-    ("lydkerne",      "c_mcore",       "Mikrofon-kerne (XVF3800)",        "#0ea5e9", "Tilvalg",    [0, 0, -90]),
-    ("mikrofoner",    "c_mics",        "Mikrofonstrip",                   "#14b8a6", "Tilvalg",    [0, 0, -90]),
+    ("lydkerne",      "c_mcore",       "Mikrofon-kerne (XVF3800), standard", "#0ea5e9", "Elektronik",    [0, 0, -90]),
+    ("mikrofoner",    "c_mics",        "Mikrofonstrip, standard",         "#14b8a6", "Elektronik",    [0, 0, -90]),
     ("hoejttaler",    "c_speaker",     "Højttaler (DFRobot FIT0502)",                       "#f97316", "Tilvalg",    [0, 0, -90]),
     ("sensor",        "c_imu",         "Stødsensor",                      "#84cc16", "Tilvalg",    [0, 0, -90]),
     ("reed",          "c_reed",        "Løftesensor (reed + magnet)",     "#ec4899", "Tilvalg",    [0, 0, -90]),
     ("skruer_front",  "s_front3",      "4 skruer, front (3,0 × 15, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
-    ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5, følger med)", "#c3c7cf", "Skruer",  [0, 0, 40]),
+    ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
+    # v21: example theme parts on the hooks (skjult som standard i admin; vises med fluebenet)
+    ("tema_top",      "x_tema_top",    "Tema-top (eksempel): skilt + 2 kroge i de øverste slidser", "#22d36b", "Tema (eksempel)", [0, 90, -40]),
+    ("tema_vinge_v",  "x_tema_vinge_v", "Tema-vinge venstre (eksempel): 2 kroge", "#16a34a", "Tema (eksempel)", [-90, 0, -40]),
+    ("tema_vinge_h",  "x_tema_vinge_h", "Tema-vinge højre (eksempel): 2 kroge",   "#16a34a", "Tema (eksempel)", [90, 0, -40]),
 ]
+OPTIONAL = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"}   # left out if the STL dir has none (versions before v21)
 
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. v12: the display and the Pi sit 2.1 mm
 # further forward (glass at y 1.6), so every point at the Pi or the display back moved with them. Routed along the back wall
 # and the display back, clear of the boards; each cable belongs to the component it serves.
 CABLES = [
     ("stik",       "24 V ind → Wago (sikring 5 A)",  3.0, [(0, 60, 77.5), (0, 59, 84), (0, 56, 140), (8, 48, 149), (60, 48, 149), (66, 52, 146)]),
-    ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(66, 52, 146), (58, 46, 152), (-6, 46, 152), (-6, 48, 134), (-20, 52, 128), (-34, 56, 123)]),
+    ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(66, 52, 146), (58, 46, 152), (-6, 46, 152), (-64, 60, 140), (-64, 70, 40), (-56, 72, 22), (-49, 72, 24)]),   # v17: input at the bottom end
     ("daemper",    "24 V → dæmper",                  2.0, [(66, 52, 146), (60, 44, 154), (-45, 44, 154), (-85, 46, 122), (-100, 55, 104)]),
     ("stroem",     "5 V → Pi",                       2.2, [(66, 52, 146), (60, 46, 152), (40, 36.4, 146), (32, 36.4, 135), (25, 35.9, 120)]),
-    ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 45, 165), (-98, 45, 120), (-100, 55, 104)]),
-    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (45, 50, 205), (-15, 50, 140), (-28, 56, 124)]),
+    ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 296.4), (-25, 36, 296.4), (-40, 50, 250), (-95, 45, 165), (-98, 45, 120), (-100, 55, 104)]),
+    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 296.4), (25, 36, 296.4), (40, 50, 250), (45, 50, 205), (-15, 50, 140), (-30, 60, 132), (-40, 72, 118), (-40, 72, 115)]),   # v17: output at the top end
     ("modem4g",    "4G: USB → Pi",                   2.6, [(-56, 72, 190), (-32, 52, 170), (-18, 41.9, 118)]),
     ("lydkerne",   "Mikrofon-kerne: USB → Pi",       2.6, [(30, 52, 162), (24, 41.9, 150), (20, 36.4, 140), (18, 35.9, 118)]),
     ("mikrofoner", "Mikrofonstrip → kerne",          1.2, [(-0.7, 22.2, 3.6), (-0.7, 33, 3.6), (-0.7, 33.5, 12), (1, 39, 15), (3, 39, 138), (5, 47, 143), (5, 52, 145.5)]),
@@ -75,8 +81,8 @@ CABLES = [
 # flat cables (FFC): owner, label, width, thickness, sections [(point, width direction)].
 # They bend only about their width; the camera ribbon twists slowly behind the frame.
 RIBBONS = [
-    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 10.7, 289), (0, 0, 1)), ((11.5, 11.2, 289), (0, 0, 1)), ((12.6, 13.5, 289), (0, 0, 1)),
-        ((12.6, 34, 289), (0, 0, 1)), ((12.6, 44, 282), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))]),
+    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 13.1, 290), (0, 0, 1)), ((11.5, 13.6, 290), (0, 0, 1)), ((12.6, 15.9, 290), (0, 0, 1)),
+        ((12.6, 34, 290), (0, 0, 1)), ((12.6, 44, 283), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))]),
     ("skaerm", "Skærmkabel (fladt, følger med skærmen)", 11.5, 0.3, [((0, 10.8, 205), (1, 0, 0)), ((0, 11.3, 196), (1, 0, 0)), ((0, 13.9, 189.5), (1, 0, 0)),
         ((0, 17.4, 188), (1, 0, 0)), ((0, 19.4, 186.5), (1, 0, 0))]),
 ]
@@ -106,7 +112,7 @@ def ribbon(sections, w, th):
 
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
-Y0 = -153.0                                                                     # centre the box on y = 0
+Y0 = -153.5                                                                     # centre the box on y = 0 (v20: 307 high)
 
 
 def colour(hexc):
@@ -139,13 +145,15 @@ def tube(points, d):
 scene = trimesh.Scene()
 meta = []
 for node, view, label, hexc, group, ex in PARTS:
+    if view in OPTIONAL and not (STL / f"{view}.stl").exists():
+        continue
     m = trimesh.load(STL / f"{view}.stl")
     m.merge_vertices()
     m.apply_transform(M)
     m.apply_translation([0, Y0, 0])
     m.visual = trimesh.visual.TextureVisuals(material=material(hexc, 0.3 if group == "Skruer" else 0.55))
     scene.add_geometry(m, node_name=node, geom_name=node)
-    meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex})
+    meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex, **({"hidden": True} if view in OPTIONAL else {})})
 
 owners = {p[0]: p for p in PARTS}
 for i, (owner, label, d, pts) in enumerate(CABLES):

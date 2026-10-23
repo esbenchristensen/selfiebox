@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 
 import { MODEL, runTurn, type TurnEvent } from "@/lib/support/agent";
 import { addMessage, supportCollections, type SupportMessageDoc } from "@/lib/support/db";
-import { cookieFor, createChat, ipHash, loadChat, publicView } from "@/lib/support/session";
+import { cookieFor, createChat, ipHash, loadChat, parseContact, publicView } from "@/lib/support/session";
 import { db } from "@/lib/udlejning/db";
 
 // The chat widget's one endpoint.
 //   GET  ?after=<seq>   the chat's state and the messages after seq (the widget polls this)
-//   POST { text, page } a message from the customer; the reply streams back as server-sent events,
+//   POST { text, page, contact? } a message from the customer; `contact` (name, e-mail, phone) is required
+//                       to start a conversation; the reply streams back as server-sent events,
 //                       or, when a human has taken over, a JSON { human: true } and the human answers later
 //   DELETE              forget the cookie, so the next message starts a new conversation
 // Verification, data scope and changes are enforced in lib/support/tools.ts, not here and not in the prompt.
@@ -21,8 +22,9 @@ const NEW_CHATS_PER_HOUR = 20;
 
 const SHOWN: SupportMessageDoc["role"][] = ["customer", "assistant", "human", "system"];
 
+// A colleague's name never leaves the server: the widget shows "Kollega fra Selfi".
 function pub(m: SupportMessageDoc) {
-  return { seq: m.seq, role: m.role, text: m.text, at: m.at.toISOString(), name: m.name ?? null, sources: m.sources ?? null };
+  return { seq: m.seq, role: m.role, text: m.text, at: m.at.toISOString(), name: m.role === "human" ? null : m.name ?? null, sources: m.sources ?? null };
 }
 
 export async function GET(req: Request) {
@@ -40,7 +42,7 @@ export async function DELETE() {
 }
 
 export async function POST(req: Request) {
-  let body: { text?: unknown; page?: unknown };
+  let body: { text?: unknown; page?: unknown; contact?: unknown };
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -60,10 +62,21 @@ export async function POST(req: Request) {
   const { chats, messages } = await supportCollections(d);
   let chat = await loadChat(d, req);
   const headers = new Headers({ "cache-control": "no-store" });
+  // Name, e-mail and phone come first. They are only stored here; nothing is looked up with them until the
+  // customer asks about an order (lib/support/tools.ts).
+  const live = chat && chat.status !== "closed" ? chat : null;
+  const given = body.contact === undefined ? null : parseContact(body.contact);
+  if (given && !given.ok) return NextResponse.json({ error: given.error, needContact: true }, { status: 400 });
+  if (!live?.contact && !given) return NextResponse.json({ error: "Skriv dit navn, din e-mail og dit telefonnummer først.", needContact: true }, { status: 400 });
+  const contact = given?.ok ? given.contact : null;
+  if (live && !live.contact && contact) {
+    live.contact = { ...contact, at: new Date() };
+    await chats.updateOne({ _id: live._id }, { $set: { contact: live.contact } });
+  }
   if (!chat || chat.status === "closed") {
     const recent = await chats.countDocuments({ ipHash: ipHash(req), createdAt: { $gt: new Date(Date.now() - 3600_000) } });
     if (recent >= NEW_CHATS_PER_HOUR) return NextResponse.json({ error: "Der er startet for mange samtaler herfra. Prøv igen om lidt." }, { status: 429 });
-    chat = await createChat(d, req, page, MODEL);
+    chat = await createChat(d, req, page, MODEL, contact);
     headers.set("set-cookie", cookieFor(chat));
   }
   const burst = await messages.countDocuments({ chatId: chat._id, role: "customer", at: { $gt: new Date(Date.now() - 600_000) } });
@@ -85,7 +98,16 @@ export async function POST(req: Request) {
       const send = (e: TurnEvent | { type: "state"; chat: ReturnType<typeof publicView> } | { type: "accepted"; seq: number }) => controller.enqueue(encoder.encode(`event: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`));
       try {
         send({ type: "accepted", seq: saved.seq });
-        await runTurn(d, chatRef, send);
+        // A lead's internal draft takes longer than the reply; after() keeps the function alive for it.
+        await runTurn(d, chatRef, send, {
+          later: (job) => {
+            try {
+              after(job);
+            } catch {
+              void job();
+            }
+          },
+        });
         const fresh = await chats.findOne({ _id: chatRef._id });
         if (fresh) send({ type: "state", chat: publicView(fresh) });
       } catch (e) {

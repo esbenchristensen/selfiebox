@@ -29,7 +29,6 @@ from make_3mf import write_bambu_3mf  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SCAD = ROOT / "hardware/cad/gen2_concept.scad"
-M = np.array([[1, 0, 0, 0], [0, 0, 1, -153.0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF, box centred on y = 0
 
 # node, view, label, colour, group, explode (glTF axes)
 PARTS = [("stativbeslag", "x_stand", "Stativbeslag (sort ASA)", "#1d1d20", "Stativbeslag", [0, 0, -120]),
@@ -71,6 +70,10 @@ def main(ver):
         T, g = box.graph[p["node"]]
         scene.add_geometry(box.geometry[g].copy(), node_name=p["node"], geom_name=p["node"], transform=T)
         meta.append(p)
+    # scad -> glTF like gen2_viewer.py: the box is centred on y = 0, so its underside (scad z = 0) is at -H/2 (v20+: 307 high)
+    T, g = box.graph["skal"]
+    y0 = box.geometry[g].copy().apply_transform(T).bounds[0][1]
+    M = np.array([[1, 0, 0, 0], [0, 0, 1, y0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
     stand = {}
     for node, view, label, col, group, explode in PARTS:
         m = scad(view, tmp / f"{view}.stl")
@@ -85,7 +88,7 @@ def main(ver):
 
     # website: bracket, logo and nut, unit coordinates (bottom of the box at y = 0)
     web = trimesh.Scene()
-    lift = trimesh.transformations.translation_matrix([0, 153.0, 0])
+    lift = trimesh.transformations.translation_matrix([0, -y0, 0])
     for node, m in (("bracket", stand["stativbeslag"]), ("logo_white", stand["stativlogo_hvid"]), ("logo_green", stand["stativlogo_groen"]),
                     ("nut", stand["t_moetrik"])):
         m = m.copy()
