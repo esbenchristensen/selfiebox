@@ -14,7 +14,8 @@
 //  Fastening without visible screws: the 4 side screws of rev G are gone. Four
 //  3.0 mm thread-forming screws from the back run through shell posts and the
 //  LED rail into bosses behind the ring's solid corners (clamping the rail too).
-//  Theme wings hook into slots in the back wall. No inserts, gaskets or glass.
+//  Theme wings hook into slots in the back wall. No inserts. v20: one removable seal everywhere (silicone
+//  sponge cord Ø1.5 in 2 mm grooves) and a small camera window, see "v20 sealing" below.
 //  Print files: VIEW="p_<part>"; released sets live in hardware/stl/gen2/<version>/.
 //  Render: hardware/render/render_gen2.py
 // ============================================================================
@@ -35,6 +36,11 @@ BORDER = RING_Z0 - RING_FACE/2;             // 7.8: box edge -> light ring, all 
 RING_R = 26;                                // = SQ_A: straight light runs end where the corners start
 W = 2*RING_X + RING_FACE + 2*(RING_Z0 - RING_FACE/2);   // 222.5 (H stays 306)
 R = 42.8;                                   // = SQ_A + RING_FACE/2 + BORDER: where the box's straight faces begin
+// v20 (Esben 23 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v20_skitse_taetning-v2.png): the light channel is
+// 1 mm wider each side (diffuser flange room 1.2 -> 2.2) so a seal cord fits beside the ring; the visible ring stays 14.
+// The chin gives the 1 mm back at the bottom, so the border stays 7.8 all round: the box is 224.5 x 307 (v19: 222.5 x 306).
+DIFF_FLANGE = 2.2;  CHIN = 6;  H = RING_Z1 + RING_Z0;
+CLEAT_ZC = 274;                             // as v5-v19 (306 - 32): the wall cleat and its lock tongue stay exactly as they are
 BLOCK_Z = [];                               // no side screws
 // fewer loose parts: no VESA or tripod inserts, no lock screw inside, and every former M3 insert
 // becomes a pilot hole for a 3.0 mm thread-forming plastic screw (e.g. WN 1452 K30)
@@ -52,8 +58,9 @@ PRN_PORT = false;
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
 POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 175], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
-// camera (Esben 19 Oct, Wide chosen): lens tip 0.3 behind the face, hole 0.4 over the tip, only a 0.4 x 45 deg edge break
-CAM_TIP_Y = 0.3;  CAM_HOLE = CAM_BARREL + 0.4;  CAM_HOLE_REAR = CAM_BARREL + 0.85;  CAM_CONE = [0.4, 45];
+// camera (Esben 19 Oct, Wide chosen). v20 (Esben 23 Oct): a small glass window in front of the lens. The glass lies in a
+// pocket behind a 0.6 lip; the lens tip sits 0.6 behind the glass (v19: tip 0.3 behind the open face, so the camera moves 2.4 back)
+CAM_TIP_Y = 2.7;
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(
@@ -170,7 +177,7 @@ MSTRIP = [110, 11, 3.0];  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
 MIC_FLOOR = true;
 MIC_Y = MIC_FLOOR ? 18.0 : D - 17;         // mic line, y (v9: 0.7 back, so the board centred on its holes keeps 0.8 to the front)
 MIC_POCKET = [MSTRIP[0] + 0.6, MSTRIP[1] + 0.6, 1.8];   // recess in the floor: x, y, depth (floor 1.2 under it)
-MIC_PEG = [3.0, 31.25, -0.68, 6.4];       // peg Ø, |x|, y offset from the mic line (holes and board centre sit 0.68 in front of the ports), top z
+MIC_PEG = [3.0, 31.25, -0.68, 5.4];       // peg Ø, |x|, y offset from the mic line (holes and board centre sit 0.68 in front of the ports), top z (v20: 6.4 -> 5.4, the channel wall is 1 mm lower)
 MSTRIP_Y = MIC_Y + MIC_PEG[2];            // v9: board centre line = hole line (v8 centred the board on the ports)
 MIC_FPC = [-0.68, 15, 1.0];               // FPC notch in the pocket's back wall: centre x, width, floor height above the pocket floor
 DRIP = [8.2, 2, 1];                       // drip groove: y start, width, depth
@@ -234,21 +241,14 @@ module wall_cleat2() {
     }
 }
 
-// ------------------------------------------------------- weather, print only ----
-// Rain, sleet and spills from any side under a light roof, with no added parts (Esben 19 Oct):
-// no gaskets, membranes, glass or glue. The shell is one print; the one fixed seam is acetone-welded
-// (diffuser ring); every opening is shaped so water runs back out.
-// Front to shell: a rib on the bezel's skirt enters a groove in the shell's front face. Water that
-// passes the butt joint meets the rib, runs round the groove and leaves through two drain notches
-// in the underside. Behind it the bezel's 5 mm tongue still overlaps the shell wall.
-JR = [1.0, 1.4, 1.4, 0.6, 1.0];         // groove: from outside, width, depth; rib: width, height
-DRAIN_X = [-60, 60];
+// ------------------------------------------------------------------ weather ----
+// Rain, sleet and spills from any side under a light roof. Until v19 with no added parts (Esben 19 Oct: no gaskets,
+// membranes, glass or glue); v20 (Esben 23 Oct) adds one removable seal cord in every joint and a small camera
+// window (see "v20 sealing"). Every opening is still shaped so water runs back out.
+// Front to shell: the cord in the shell's front face; behind it the front's 5 mm tongue still overlaps the shell wall.
+// v20: the rib and its two drain notches are gone; a seal cord lies in a groove in the shell's front face (see v20 sealing).
 module lip_ring(a, b) difference() { translate([0, a]) rr(W - 2*a, H - 2*a, R - a); translate([0, b]) rr(W - 2*b, H - 2*b, R - b); }
-module joint_groove() {
-    ext_y(SKIRT - 0.01, SKIRT + JR[2]) lip_ring(JR[0], JR[0] + JR[1]);
-    for (x = DRAIN_X) translate([x - 0.8, SKIRT - 0.01, -0.01]) cube([1.6, JR[2] + 0.01, JR[0] + JR[1] - 0.2]);
-}
-module joint_rib() { c = JR[0] + (JR[1] - JR[3])/2;  ext_y(SKIRT - 0.01, SKIRT + JR[4]) lip_ring(c, c + JR[3]); }
+module joint_groove() ext_y(SKIRT - 0.01, SKIRT + JOINT_SEAL[2]) lip_ring(JOINT_SEAL[0], JOINT_SEAL[0] + SEAL[1]);
 // display glass: a printed 0.5 mm land around the window replaces the EVA ring (glass on ASA,
 // clamped by the rail); outside the land a 0.5 mm gap is a capillary break. Behind the display the
 // EVA pads become printed springs: each pad spot on the cross bars is a 1.2 mm bridge with a bump.
@@ -358,6 +358,8 @@ module services_cut() {
     cyl_z(PWR_BORE, -1, WALL + 1, PWR_P[0], PWR_P[1]);
     translate([PWR_P[0], PWR_P[1], -0.01]) cylinder(d1 = PWR_BORE + 1.6, d2 = PWR_BORE, h = 0.8, $fn = 48);
     for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);
+    ext_y(D - BACK_T - 0.01, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2);   // v20: seal round the grille
+    cyl_z(2, -1, WALL + 1, LOCK_DRAIN[0], LOCK_DRAIN[1]);                                                  // v20: drain out of the lock pocket
 }
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
 module services_add() {
@@ -370,6 +372,7 @@ module services_add() {
         translate([LOCK_X - LOCK_W/2 - 0.6, D - BACK_T - 0.01, 0]) cube([LOCK_W + 1.2, 5, 20]);
     }
     power_column();
+    lock_pocket();
     // speaker: a rim round the flange, 4 pegs through the ear holes and 2 hooks over the flange
     translate([SPK_P[0], D - BACK_T + 0.01, SPK_P[1]]) rotate([90, 0, 0]) {
         difference() { translate([-SPK[0]/2 - 1.8, -SPK[1]/2 - 1.8, 0]) cube([SPK[0] + 3.6, SPK[1] + 3.6, SPK_FL + 1.6]);
@@ -623,7 +626,7 @@ XB3_Y = CH_BACK - 4;                      // 23.7: front face of the frame's cro
 FR_T = 4;                                 // frame back plate
 FR_BACK = CH_BACK + FR_T;                 // 31.7: flat back of the frame
 RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
-CAM_END = CAM_HOLE/2 + 4 + S3;            // slot end centres, 4 mm black round the camera hole
+CAM_END = 16.175;                         // slot end centres (v19: 14.675); v20: 1.5 further out, so the wider window keeps 3.7 mm black
 CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
 REFL = [[4.2, -6.0], [26.45, 4.4]];       // reflector line (y, r): from the ring flange to the floor
 FLOOR3 = 27.4;                            // v18: 0.95 deeper (v2-v17: 26.45) for the strip lanes; the reflector stops at r 4.4 as before
@@ -656,9 +659,11 @@ U3 = [0.906, 0.4234];  N3 = [0.4234, -0.906];
 function P3(s, d) = [REFL[0][0] + U3[0]*s + N3[0]*d, REFL[0][1] + U3[1]*s + N3[1]*d];
 W3 = [2.5, 10.6, 0.6, 2.6];               // strip 3: s0, s1, d face, d back (8.1 x 2.0)
 W3_GRIP = W3[3] - T_EDGE - 0.1;           // lip and nose reach down to 0.1 above the strip's thin edge
-W3_POCKET = [[REFL[0][0] - 0.01, -FL3 - 0.01], [P3(0, 2.7)[0] + (-FL3 - P3(0, 2.7)[1])/0.4234*0.906 + 0.0, -FL3 - 0.01], P3(10.7, 2.7), P3(10.7, -0.6), [REFL[0][0] - 0.01, -5.4]];
+// v20: with the 1 mm wider flange the pocket floor line meets the reflector's front face (y 4.2) at r -8.98, inside the flange edge
+W3_S0 = -N3[0]*2.7/U3[0];                 // s where the floor line (d 2.7) reaches y = REFL[0][0]
+W3_POCKET = [[REFL[0][0] - 0.01, P3(W3_S0, 2.7)[1] - 0.01], P3(10.7, 2.7), P3(10.7, -0.6), [REFL[0][0] - 0.01, -5.4]];
 W3_LIP = [P3(9.6, -0.3), P3(10.75, -0.3), P3(10.75, W3_GRIP), P3(9.6, W3_GRIP)];
-W3_WEDGE = [[PT + 1, -FL3], [P3(0, 2.7)[0] + (-FL3 - P3(0, 2.7)[1])/0.4234*0.906, -FL3], P3(2.45, 2.7), P3(2.45, -0.3), P3(0.2, -0.3), [PT + 1, -RF3 + RW3]];
+W3_WEDGE = [[PT + 1, P3(W3_S0, 2.7)[1]], P3(2.45, 2.7), P3(2.45, -0.3), P3(0.2, -0.3), [PT + 1, -RF3 + RW3]];
 W3_NOSE = [P3(2.4, W3_GRIP), P3(3.5, W3_GRIP), P3(3.5, -0.3), P3(2.4, -0.3)];   // 1.0 over the dark edge, like the frame lips
 W3_CLIP = [[16, 9.6, 4.3], 6.55, 2.72];   // clip [l, w, h], centre s, bottom d (0.5 mm short of the inner wall); right side, 1.6 proud
 // r range of a convex (y, r) polygon at y
@@ -681,8 +686,68 @@ module w3_clip_box(g) translate([CAM_KEEP[0] + W3_CLIP[0][0]/2, 0, RING_Z1]) {
     c = P3(W3_CLIP[1], W3_CLIP[2] - W3_CLIP[0][2]/2);
     translate([0, c[0], c[1]]) rotate([atan2(U3[1], U3[0]), 0, 0]) cube([W3_CLIP[0][0] + g, W3_CLIP[0][1] + g, W3_CLIP[0][2] + g], center = true);
 }
-J_R = 11.8;                               // front screws: in the outer wall at the 4 corners
+J_R = 10.6;                               // front screws: in the outer wall at the 4 corners. v20: 11.8 -> 10.6, so the bosses and the
+                                          // shell's clearance (Ø6.4) stay inside the shell wall (13.8) and clear of the joint groove
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
+
+// ======================================================================== v20 sealing ==
+// Esben 23 Oct (sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v20_skitse_taetning-v2.png): every joint where water can get
+// in has the same removable seal, a silicone sponge O-ring cord Ø1.5 ([A] RS 234-2906) cut to length, ends butted, no glue.
+// Sponge, not solid: 3.7 m of solid 60 Shore cord squeezed 33 % would push the parts apart with over 2 kN.
+// Grooves are 2.0 wide; each cord is squeezed to about 1.0. All seals sit behind faces, so tape, stickers or a theme on
+// the outside neither touch nor pull on them.
+SEAL = [1.5, 2.0, 1.0];                   // cord Ø, groove width, groove depth
+// 1 front to shell: groove in the shell's front face, 0.5 lands each side. The front's outer skirt stops 0.2 short of the
+// shell, so the 4 screws always clamp the stack front boss -> frame -> shell post (which presses the light ring), and
+// the cord takes up the print tolerance: squeezed to 0.8 + 0.2 = 1.0.
+JOINT_SEAL = [0.5, 0, 0.8];               // groove: from outside, -, depth
+JOINT_GAP = 0.2;
+// 3 light ring: a pocket 1.0 deep in the back of the front plate, the full channel width (CH_IN): the cord lies beside
+// the ring's wall, under its flange. The frame presses the flange onto it (it rested on the front in v19).
+RING_SEAL_Y = PT - 1.0;                   // 2.2: front face of the pocket
+// 4 camera: glass Ø12 x 1.5 ([C] AliExpress, ±0.3) in a Ø12.2 pocket behind a 0.6 lip; the lip opens 60 deg (Wide: 120 deg
+// diagonal) to Ø10.9 at the face. A cord ring sits in the corner behind the glass, pressed into it by the 45 deg front
+// of a printed sleeve that stands on the lens holder: it seals the glass to the pocket wall.
+// Field of view, front lens element Ø4 [C]: r 3.04 at the glass back, 4.08 at its front, 5.12 at the face (lip: 4.41 / 5.45).
+CAM_GLASS = [12, 1.5];
+CAM_WIN = [12.2, 0.6, 10.9];              // pocket Ø, lip, face Ø
+CAM_SLV = [7.7, 11.2, 4.6];               // sleeve: bore (barrel Ø6.95-7.25), outside (shroud 11.6 square), r where the 45 deg front starts
+CAM_SLV_Y = [CAM_TIP_Y - 0.1, CAM_PCB_Y - CAM_HOLDER_H];   // front face (0.5 behind the glass), back = lens holder top
+module cam_window_cut() {
+    cyl_y(CAM_WIN[0], CAM_WIN[1], PT + 1, 0, LENS_Z);
+    translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_WIN[2], d2 = CAM_WIN[2] - 2*(CAM_WIN[1] + 0.02)*tan(60), h = CAM_WIN[1] + 0.02, $fn = 64);
+}
+module cam_glass() cyl_y(CAM_GLASS[0], CAM_WIN[1], CAM_WIN[1] + CAM_GLASS[1], 0, LENS_Z);
+module cam_sleeve() translate([0, 0, LENS_Z]) rotate([-90, 0, 0]) rotate_extrude($fn = 64) polygon([
+    [CAM_SLV[0]/2, CAM_SLV_Y[0]], [CAM_SLV[2], CAM_SLV_Y[0]], [CAM_SLV[1]/2, CAM_SLV_Y[0] + CAM_SLV[1]/2 - CAM_SLV[2]],
+    [CAM_SLV[1]/2, CAM_SLV_Y[1]], [CAM_SLV[0]/2, CAM_SLV_Y[1]]]);
+// the cord ring: inscribed in the corner of glass back, pocket wall and the sleeve's 45 deg face
+CAM_CORD = let(gb = CAM_WIN[1] + CAM_GLASS[1], L = CAM_WIN[0]/2 - (CAM_SLV[2] - (CAM_SLV_Y[0] - gb)), ri = L*(2 - sqrt(2))/2) [gb + ri, CAM_WIN[0]/2 - ri, ri];
+// 5 speaker: a groove in the back wall round the grille, inside the speaker's flange and outside its 38.5 x 27 opening
+module spk_seal2d(h) difference() { offset(r = 6 + h) square([31, 17], center = true); offset(r = max(6 - h, 0.01)) square([31, 17], center = true); }
+// 6 lock: the slot for the cleat's tongue opens into a closed printed pocket (walls 1.6), so whatever gets in at the
+// back stays round the tongue and runs out of a Ø2 drain in the floor.
+LOCK_PK = [LOCK_W/2 + 0.6, LOCK_Y - 1, LOCK_TZ[1] + 0.8, 1.6];   // inner half width, front y, roof z, wall
+LOCK_DRAIN = [LOCK_X - LOCK_W/2 + 0.6, LOCK_Y + 0.5];
+module lock_pocket() difference() {
+    translate([LOCK_X - LOCK_PK[0] - LOCK_PK[3], LOCK_PK[1] - LOCK_PK[3], WALL - 0.01]) cube([2*(LOCK_PK[0] + LOCK_PK[3]), D - BACK_T - LOCK_PK[1] + LOCK_PK[3] + 0.02, LOCK_PK[2] + LOCK_PK[3] - WALL + 0.01]);
+    translate([LOCK_X - LOCK_PK[0], LOCK_PK[1], WALL - 1]) cube([2*LOCK_PK[0], D - BACK_T - LOCK_PK[1] + 1, LOCK_PK[2] - WALL + 1]);
+}
+// front screw boss: where it reaches into the channel (r < CH_IN) it starts at y 4.5, clear of the ring's flange and its
+// cord, with a 45 deg underside (no overhang face down)
+module j2_boss(j) difference() {
+    cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
+    rfill(PT - 1, 4.5, CH_IN, CH_IN);
+    rfill(4.49, 4.5 + 1.62, CH_IN, CH_IN - 1.62);
+}
+// the cords as they lie squeezed (3D viewer, fit check)
+module seal_cords() {
+    ext_y(SKIRT - JOINT_GAP, SKIRT + JOINT_SEAL[2]) lip_ring(JOINT_SEAL[0] + 0.05, JOINT_SEAL[0] + SEAL[1] - 0.05);                         // 1
+    ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3) difference() { groove3_2d(LAND3 + GROOVE3[0] - 0.05); groove3_2d(LAND3 + 0.05); }            // 2
+    ext_y(RING_SEAL_Y, PT) difference() { ring3_2d(CH_IN - 0.05); ring3_2d(RF3 + PT - RING_SEAL_Y - 0.4 + 0.05); }                         // 3
+    translate([0, CAM_CORD[0], LENS_Z]) rotate([-90, 0, 0]) rotate_extrude($fn = 64) translate([CAM_CORD[1], 0]) circle(r = CAM_CORD[2], $fn = 16);   // 4
+    ext_y(D - BACK_T, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2 - 0.05);                                   // 5
+}
 // v12 (Esben 20 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v11_skitse_tyndere-front-og-rille.png):
 // the display stays behind the front, but the front is only 1.6 mm thick over the glass (v2-v11: 3.2 + a 0.5 land,
 // glass 3.7 in). The glass lies straight on the back of that lip, so there is no gap at the window edge. A groove
@@ -690,7 +755,7 @@ J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_
 GLASS_Y3 = 1.6;                           // glass front face = lip thickness
 GLASS_C3 = 0.4;                           // the thin pocket clears the glass by 0.4 (the 8 ribs locate it, 0.2)
 LAND3 = 1.0;                              // flat land from the window bevel to the groove
-GROOVE3 = [3.2, 0.6];                     // groove width, depth; [C] foam tape 3 x 1 mm, squeezed to 0.6 (40 %)
+GROOVE3 = [2.0, 1.0];                     // groove width, depth; v20: seal cord Ø1.5 squeezed to 1.0 (v12-v19: foam tape 3 x 1 in 3.2 x 0.6)
 WIN3_BEVEL = [1.6, 0.6];                  // window grows 1.6 at the face, 0.6 at the glass (as v2-v11)
 module groove3_2d(g) translate([VIEW_X, GC]) offset(r = WIN3_BEVEL[1] + g) square([TD10_VIEW[0] + 1, TD10_VIEW[1] + 1], center = true);
 module pocket3_2d() translate([VIEW_X, GC]) offset(r = DSP_R + GLASS_C3) square([GW - 2*DSP_R, GH - 2*DSP_R], center = true);
@@ -764,20 +829,19 @@ module front3() union() {
             // the skirt carries the tongue: no 1.4 mm ledge hanging over air when printed face down
             ext_y(PT - 0.01, SKIRT + 0.01) difference() { rr(W, H, R); translate([0, WALL + FIT + TONGUE_T]) rr(W - 2*(WALL + FIT + TONGUE_T), H - 2*(WALL + FIT + TONGUE_T), R - WALL - TONGUE_T); }
             ext_y(PT - 0.01, CH_BACK) difference() { ring_band2d(-CH_HALF, CH_HALF); ring_band2d(-CH_IN, CH_IN); glass_keep2d(); cam_keep2d(); }
-            for (j = J2) cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
+            for (j = J2) j2_boss(j);
             for (h = CAM_HOLES_ROT) cyl_y(4.6, PT - 0.01, CAM_PCB_Y, h[0], LENS_Z + h[1]);
             for (i = CAM_PEGS) cam_peg(CAM_HOLES_ROT[i]);
-            cam_shroud(); joint_rib(); cam_caps();
+            cam_shroud(); cam_caps();
         }
         hull() { ext_y(-1, 0) window2d(WIN3_BEVEL[0]); ext_y(-1, GLASS_Y3 + 0.01) window2d(WIN3_BEVEL[1]); }
         ext_y(GLASS_Y3, PT + 0.01) pocket3_2d();                           // v12: thin lip over the glass
         ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3 + 0.01) difference() { groove3_2d(LAND3 + GROOVE3[0]); groove3_2d(LAND3); }
         ext_y(-1, LOGO_D) translate([0, LOGO_Z]) logo_all2d();   // pocket for the inlay
         ext_y(-1, PT + 0.01) ring3_2d(S3);
-        ring3_bevel(1.95, PT + 0.01, S3, FL3 + 0.1);                      // seat for the ring's flange
-        cyl_y(CAM_HOLE, CAM_CONE[0] - 0.01, PT + 1, 0, LENS_Z);
-        cyl_y(CAM_HOLE_REAR, max(CAM_CONE[0], CAM_TIP_Y + 1), PT + 1, 0, LENS_Z);
-        translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_HOLE + 2*CAM_CONE[0]*tan(CAM_CONE[1]), d2 = CAM_HOLE, h = CAM_CONE[0] + 0.02);
+        ext_y(RING_SEAL_Y, PT + 0.01) ring3_2d(CH_IN);                    // v20: seal pocket beside the ring (v19: a 45 deg seat)
+        cam_window_cut();
+        ext_y(SKIRT - JOINT_GAP, SKIRT + 0.02) difference() { offset(r = 1) rr(W, H, R); translate([0, WALL + FIT]) rr(W - 2*(WALL + FIT), H - 2*(WALL + FIT), R - WALL - FIT); }
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
         for (j = J2) cyl_y(INS_M3_D, CH_BACK - 11, CH_BACK + 1, j[0], j[1]);
         snap_windows();
@@ -788,11 +852,14 @@ module front3() union() {
 module ring3() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
     ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
-    ext_y(RING_Y[1] - 0.01, 1.95) ring3_band(RF3 - RW3, RF3);
+    // v20: the wall runs straight on to 2.6 (v19: 1.95), a short 45 deg step to 3.2, then the flange (an 1.65 mm overhang
+    // face down), so the seal cord has its pocket between the front plate, the channel wall and the flange
+    ext_y(RING_Y[1] - 0.01, RING_SEAL_Y + 0.4) ring3_band(RF3 - RW3, RF3);
     difference() {
-        union() { ring3_bevel(1.95, PT, RF3, FL3); ext_y(PT - 0.01, PT + 1) ring3_2d(FL3); }
+        union() { ring3_bevel(RING_SEAL_Y + 0.4, PT, RF3, RF3 + PT - RING_SEAL_Y - 0.4, 3); ext_y(PT - 0.01, PT + 1) ring3_2d(FL3); }
         ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
         translate([-7.4, PT - 2, LENS_Z - 8]) cube([14.8, 4, 16]);       // clear of the camera shroud
+        for (h = CAM_HOLES_ROT) cyl_y(4.6 + 1.0, PT - 1, PT + 2, h[0], LENS_Z + h[1]);   // v20: the flange gives way round the camera bosses
     }
     // v18: wedge on the inner flange, down onto the reflector pocket's floor, with a lip over strip 3's front edge
     // (prints: the ring lies face down, so every face of it looks up or is steeper than 45 deg)
@@ -816,7 +883,7 @@ LK_ARM = [0.3, 2.0];                      // arm: face u (air to the wall), thic
 // window y0, y1 and barb engagement: inner windows sit lower (a longer arm), the outer ones clear the tongue (y 6-11)
 LK_IN = [9.5, 12.5, 1.2];  LK_OUT = [12.5, 15.5, 1.0];
 LK_TOE = [6.5, 1.0, 6, 0.2];              // inner toe: arm end y, leaf thickness, width, preload on the glass
-LK_PAD = [5, 2.8, 18];                    // frame tab under the arm root: u depth (inner, outer: stays 1.2 off the shell wall), width
+LK_PAD = [5, 1.8, 18];                    // frame tab under the arm root: u depth (inner, outer: stays 1.2 off the shell wall; v20 2.8 -> 1.8, the wall is 1 mm further out), width
 LK_SLOT = [1.6, 8];                       // release slot through the frame, wall side of the arm: u, width
 // [face point x, z], normal pointing away from the wall
 SNAPS = [for (sx = [-1, 1], z = [110, 190]) [[sx*(RING_X - CH_HALF), z], [-sx, 0]],
@@ -853,7 +920,7 @@ module frame3() {
         union() {
             ext_y(CH_BACK, FR_BACK) {
                 ring_band2d(-CH_HALF, CH_HALF);
-                for (j = J2) translate(j) circle(d = 6.4, $fn = 32);
+                for (j = J2) translate(j) circle(d = 6.0, $fn = 32);   // v20: 6.4 -> 6.0, clear of the shell wall
                 translate([-16, LENS_Z - 13.5]) square([34, 27]);               // behind the camera board and round the ribbon slot
             }
             // reflector, strip wall and floor, all inside the channel
@@ -902,6 +969,7 @@ module frame3() {
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
+        for (j = J2) cyl_y(6.2, REFL[0][0] - 1, CH_BACK + 0.01, j[0], j[1]);   // v20: the front's screw bosses (Ø6) reach into the channel corners; the strip wall keeps 0.6
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
         cyl_y(4, P3(W3_CLIP[1], 0)[0], FR_BACK + 1, STRIP_LEAD_X + 1.5, RING_Z1 - 4.5);           // v18: strip 3's lead, back through the reflector
     }
@@ -947,7 +1015,7 @@ module shell3(top = UNIT_TOP) {
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
             power_holders();
         }
-        for (j = J2) { cyl_y(7.0, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
+        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
         lock_cut();   // v10: the lock sits over a closed v1 screw hole now; keep its slot open
     }
 }
@@ -1019,7 +1087,10 @@ if (VIEW == "x_strip_w")   placed_strips3("w");
 if (VIEW == "x_strip_rgb") placed_strips3("rgb");
 if (VIEW == "x_display3")  placed_display3();
 // v12: the foam tape in the lip groove, squeezed to the groove depth (for the 3D viewer)
-if (VIEW == "x_tape3")     ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3) difference() { groove3_2d(LAND3 + GROOVE3[0] - 0.1); groove3_2d(LAND3 + 0.1); }
+if (VIEW == "x_seal")      seal_cords();                                                  // v20: every seal cord, squeezed
+if (VIEW == "x_camglass")  cam_glass();
+if (VIEW == "x_camsleeve") cam_sleeve();
+if (VIEW == "p_camsleeve") translate([0, 0, CAM_SLV_Y[1]]) rotate([-90, 0, 0]) translate([0, 0, -LENS_Z]) cam_sleeve();   // holder end down
 if (VIEW == "c_pi3")       placed_pi3();
 // the display and the Pi in their own materials for the 3D viewer: glass with its black border,
 // the active picture, the metal back; the Pi board and the Active Cooler

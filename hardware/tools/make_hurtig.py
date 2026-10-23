@@ -35,7 +35,7 @@ GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 # print file suffix -> node in <version>_3d.glb. The logo inlays (LOGO) are copied as well, as separate colour
 # bodies with the front's origin, and put together with the front in one 3MF; a slicer needs one body per colour.
 PARTS = {"skal": "skal", "front": "front", "bagramme": "ledskinne", "lysring": "lysring",
-         "vaegbeslag": "vaegbeslag"}   # v19: no printer cap (no printer under the box)
+         "vaegbeslag": "vaegbeslag", "kameraroer": "kameraroer"}   # v19: no printer cap; v20: the camera sleeve
 LOGO = [suffix for suffix, *_ in FRONT_PARTS if suffix != "front"]
 
 # Corner region (glTF x, y; seen from the front, bottom left): one front screw, the shell/front joint and the ring corner.
@@ -51,9 +51,11 @@ COUPONS = [
     ("stroemindgang", ["skal"], ["stik"], 8, "+6",
      "Røret i bunden: hunstikket (TRU DC-13F) trykkes ned ovenfra og klikker under de 2 snaplåse, og GST-proppen går "
      "helt op i røret nedefra."),
-    ("hoejttaler", ["skal"], ["hoejttaler"], 8, "+6", "Højttaleren (FIT0502) i sin bakke bag gitteret."),
+    ("hoejttaler", ["skal"], ["hoejttaler"], 8, "+6", "Højttaleren (FIT0502) i sin bakke bag gitteret. v20: læg snoren i rillen "
+     "rundt om gitteret først. Klikker krogene stadig over flangen, og ligger snoren klemt hele vejen rundt?"),
     ("laas-reed", ["skal"], ["skrue_laas", "reed"], 10, "+6",
-     "Låseslidsen, låseskruens hul i bunden og reed-modulets bakke. Prøves med vægbeslagets låsetunge."),
+     "Låseslidsen, låseskruens hul i bunden og reed-modulets bakke. Prøves med vægbeslagets låsetunge. v20: lommen inde om "
+     "tungen er lukket; går tungen frit ind og op, og er drænhullet i bunden åbent?"),
     ("laasetunge", ["vaegbeslag"], ["skrue_laas"], 14, "fuld",
      "Låsetungen på vægbeslaget. Den skal gå ind i skallens låseslids, og låseskruen skal kunne skrues i."),
     ("4g", ["skal"], ["modem4g"], 8, "+6", "4G-modemet i sin bakke (tilvalg)."),
@@ -63,8 +65,11 @@ COUPONS = [
     ("mikrofonstrip", ["skal"], ["mikrofoner"], 8, "+6",
      "Mikrofonkortet i lommen i bunden med Seeed-logoet nedad: pindene gennem hullerne, kortet fladt på de 4 ringe, "
      "kablet fladt ud bagtil (tilvalg)."),
+    ("kameravindue", ["front", "kameraroer"], ["kameraglas"], 6, "fuld",
+     "v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt "
+     "sammen) i hjørnet bag glasset, og røret ovenpå. Sidder glasset uden slør? Mål glassets tykkelse: 1,2–1,8 mm går."),
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
-     "Kameraet på frontens tappe, linsen midt i hullet, bagrammens rør trykker printet ned, "
+     "Kameraet på frontens tappe med glas, snor og rør foran linsen, linsen midt i hullet, bagrammens rør trykker printet ned, "
      "kamerakablet gennem slidsen og de fire klikstik i deres lommer (v18: hvid 3's stik i reflektoren til højre). Front og bagramme lægges sammen."),
     ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
      "v18: lyskanalen uden klister, nederste venstre hjørne med ca. 10 cm strip-bane. Hvid 1 og 2: bagkanten ind under læben, "
@@ -73,7 +78,8 @@ COUPONS = [
      "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
-     "(3,0 × 15) skruet i bagfra. Er skyggefugen mellem skal og front jævn?"),
+     "(3,0 × 15) skruet i bagfra. v20: læg snoren i skallens rille og i lommen ved lysringen. Er fugen mellem skal og front "
+     "jævn (0,2 mm), og er snorene klemt (de skal ikke kunne trækkes ud, når skruen er spændt)?"),
     ("laas", ["front", "bagramme"], ((-116, -64), (-64, -22)), 0, "fuld",
      "v14: en sidelås (venstre side, nederste par): vinduet i indervæggen og i ydervæggen og bagrammens 2 arme. "
      "Klikker begge arme, kan de vippes fri med en lille skruetrækker, og ligger fjedertåen ned på et stykke glas "
@@ -83,9 +89,9 @@ COUPONS = [
      "Læg den på skærmens bagside: står begge tårne ned på beslagene? Skru en M2,5 × 3-4 mm i hvert med en PH0/PH1. "
      "Går begge i uden at skulle tvinges, og tager de fat?"),
     ("skaerm-lysring", ["front"], None, 0, 7.0,
-     "De nederste 7 mm af fronten: den 1,6 mm tynde kant foran skærmen, rillen med skumbåndet, skærmglasset mellem "
-     "de 8 ribber, lysringen i slidsen (skyggefuge 0,15 mm) og kamerahullet. Klæb båndet i rillen, læg skærmen i og "
-     "tryk den ned: ligger glasset helt ind mod kanten hele vejen rundt? Lysringen printes hel."),
+     "De nederste 7 mm af fronten: den 1,6 mm tynde kant foran skærmen, rillen med snoren (v20: 2,0 × 1,0), skærmglasset mellem "
+     "de 8 ribber, lysringen i slidsen (skyggefuge 0,15 mm) med snoren i lommen ved siden af, og kameravinduet. Læg snoren i rillen, "
+     "læg skærmen i og tryk den ned: ligger glasset helt ind mod kanten hele vejen rundt? Lysringen printes hel."),
 ]
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",

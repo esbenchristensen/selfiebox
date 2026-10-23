@@ -24,7 +24,9 @@ PARTS = [
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
     ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
-    ("skumbaand",     "x_tape3",       "Tætningsbånd, blødt skum 3 × 1 mm (i rillen rundt om skærmen)", "#d97706", "Kabinet", [0, 0, 95]),
+    ("pakninger",     "x_seal",        "Pakninger: O-ringsnor Ø1,5 i silikoneskum (front/skal, skærm, lysring, kamera, højttaler)", "#dc2626", "Kabinet", [0, 0, 95]),
+    ("kameraglas",    "x_camglass",    "Kameraglas Ø12 × 1,5",            "#bfe3f2", "Kabinet",    [0, 0, 140]),
+    ("kameraroer",    "x_camsleeve",   "Kamerarør (sort ASA): trykker pakningen mod glasset", "#1d1d20", "Kabinet", [0, 0, 110]),
     ("ledskinne",     "x_frame3",      "Bagramme med reflektor og kantspor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
@@ -61,8 +63,8 @@ CABLES = [
     ("ledstyring", "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)", 2.0, [(66, 52, 146), (58, 46, 152), (-6, 46, 152), (-64, 60, 140), (-64, 70, 40), (-56, 72, 22), (-49, 72, 24)]),   # v17: input at the bottom end
     ("daemper",    "24 V → dæmper",                  2.0, [(66, 52, 146), (60, 44, 154), (-45, 44, 154), (-85, 46, 122), (-100, 55, 104)]),
     ("stroem",     "5 V → Pi",                       2.2, [(66, 52, 146), (60, 46, 152), (40, 36.4, 146), (32, 36.4, 135), (25, 35.9, 120)]),
-    ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 295.4), (-25, 36, 295.4), (-40, 50, 250), (-95, 45, 165), (-98, 45, 120), (-100, 55, 104)]),
-    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 295.4), (25, 36, 295.4), (40, 50, 250), (45, 50, 205), (-15, 50, 140), (-30, 60, 132), (-40, 72, 118), (-40, 72, 115)]),   # v17: output at the top end
+    ("ledhvid",    "Hvide strips ← dæmper",          2.4, [(-25, 29, 296.4), (-25, 36, 296.4), (-40, 50, 250), (-95, 45, 165), (-98, 45, 120), (-100, 55, 104)]),
+    ("ledrgb",     "RGB-strip 5 V ← WLED-styring",       2.0, [(25, 29, 296.4), (25, 36, 296.4), (40, 50, 250), (45, 50, 205), (-15, 50, 140), (-30, 60, 132), (-40, 72, 118), (-40, 72, 115)]),   # v17: output at the top end
     ("modem4g",    "4G: USB → Pi",                   2.6, [(-56, 72, 190), (-32, 52, 170), (-18, 41.9, 118)]),
     ("lydkerne",   "Mikrofon-kerne: USB → Pi",       2.6, [(30, 52, 162), (24, 41.9, 150), (20, 36.4, 140), (18, 35.9, 118)]),
     ("mikrofoner", "Mikrofonstrip → kerne",          1.2, [(-0.7, 22.2, 3.6), (-0.7, 33, 3.6), (-0.7, 33.5, 12), (1, 39, 15), (3, 39, 138), (5, 47, 143), (5, 52, 145.5)]),
@@ -74,8 +76,8 @@ CABLES = [
 # flat cables (FFC): owner, label, width, thickness, sections [(point, width direction)].
 # They bend only about their width; the camera ribbon twists slowly behind the frame.
 RIBBONS = [
-    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 10.7, 289), (0, 0, 1)), ((11.5, 11.2, 289), (0, 0, 1)), ((12.6, 13.5, 289), (0, 0, 1)),
-        ((12.6, 34, 289), (0, 0, 1)), ((12.6, 44, 282), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))]),
+    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 13.1, 290), (0, 0, 1)), ((11.5, 13.6, 290), (0, 0, 1)), ((12.6, 15.9, 290), (0, 0, 1)),
+        ((12.6, 34, 290), (0, 0, 1)), ((12.6, 44, 283), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))]),
     ("skaerm", "Skærmkabel (fladt, følger med skærmen)", 11.5, 0.3, [((0, 10.8, 205), (1, 0, 0)), ((0, 11.3, 196), (1, 0, 0)), ((0, 13.9, 189.5), (1, 0, 0)),
         ((0, 17.4, 188), (1, 0, 0)), ((0, 19.4, 186.5), (1, 0, 0))]),
 ]
@@ -105,7 +107,7 @@ def ribbon(sections, w, th):
 
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
-Y0 = -153.0                                                                     # centre the box on y = 0
+Y0 = -153.5                                                                     # centre the box on y = 0 (v20: 307 high)
 
 
 def colour(hexc):
