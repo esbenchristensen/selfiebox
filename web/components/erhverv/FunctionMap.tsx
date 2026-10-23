@@ -28,7 +28,7 @@ export function FunctionMap() {
           {functionMap.map((f) => (
             <div className="fmap-row" role="row" key={f.slug}>
               <span role="rowheader" className="fmap-fn">
-                <a href={`/funktioner/${f.slug}`}>{f.name}</a>
+                <a href={f.href ?? `/funktioner/${f.slug}`}>{f.name}</a>
                 {f.soon && <span className="soon">Kommer snart</span>}
                 <span className="muted">{f.text}</span>
               </span>

@@ -18,6 +18,7 @@ import { Goals } from "@/components/erhverv/Goals";
 import { FunctionMap } from "@/components/erhverv/FunctionMap";
 import { Models } from "@/components/erhverv/Models";
 import { Pricing } from "@/components/erhverv/Pricing";
+import { PrinterOffer } from "@/components/erhverv/PrinterOffer";
 import { Proof } from "@/components/erhverv/Proof";
 import { Quotes } from "@/components/erhverv/Quotes";
 import { Start } from "@/components/erhverv/Start";
@@ -33,7 +34,7 @@ import { contact, pricing } from "@/lib/erhverv/placeholder";
 // proof), why would we want it (six goals in the buyer's words), how it works for a guest, the two ways to
 // get it (standard box with their theme, or custom design) and the designs, how it looks for a place like
 // ours (industries with buyer, story and setup), every function and who it serves, the free design draft,
-// price, service, the guest list rules, how we start, the film, what others say, who we are, questions,
+// price, the printer that can pay for the box, service, the guest list rules, how we start, the film, what others say, who we are, questions,
 // and then the one action: book a call. The goals and the function map live in lib/erhverv/value.ts.
 // Facts that are not decided or not true yet come from lib/erhverv/placeholder.ts and are marked.
 // The front page is the rental for private parties; the customer catalogues live under /erhverv/<sted>.
@@ -90,6 +91,7 @@ export default function Erhverv() {
           { label: "Brancher", href: "#cases" },
           { label: "Funktioner", href: "#funktioner" },
           { label: "Pris", href: "#pris" },
+          { label: "Printer", href: "#printer" },
           { label: "Spørgsmål", href: "#faq" },
         ]}
         extra={[{ label: "Lej til en privat fest", href: "/" }]}
@@ -132,6 +134,7 @@ export default function Erhverv() {
         <FunctionMap />
         <DesignLead />
         <Pricing />
+        <PrinterOffer />
         <Care />
         <GuestList />
         <Start />

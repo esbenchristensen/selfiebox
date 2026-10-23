@@ -6,7 +6,7 @@ const n = (v: number) => v.toLocaleString("da-DK");
 // Two ways to get the box, and the options on top. The standard box is the quick start: our cabinet, their
 // theme on the screen and their logo on every photo. The custom design is the box printed in the place's own
 // shape, which is what people remember and photograph. Same software, same functions, same service.
-// The printer is an option for the places where a photo in the hand matters, not the reason to buy.
+// The printer is an option next to the box (its own section, PrinterOffer), not the reason to buy.
 
 const models = [
   {
@@ -32,7 +32,7 @@ const models = [
 ];
 
 const options: [string, string, boolean?][] = [
-  ["Printer", "Et Instax-foto i hånden med jeres ramme. Bedst til events, festsalen og brandaktiveringer, hvor et minde på papir betyder mest.", true],
+  ["Printer", "Står ved siden af boksen, og gæsten betaler pr. print på skærmen. Lej den og behold salget, eller få den gratis, mens vi tager salget."],
   ["Mikrofon", "Tydelig lyd til videohilsner og spørgsmål på video."],
   ["Flere bokse", "Fra to bokse kan I køre skattejagt og rundtur og sende gæsterne rundt på stedet."],
   ["4G", "Til steder uden wifi, hvor boksen skal hænge.", true],

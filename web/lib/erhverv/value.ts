@@ -13,7 +13,7 @@ export type Goal = {
   title: string;
   who: string; // the places that usually buy for this reason
   story: string; // the buyer's own words: "Som ... vil jeg ..., så ..."
-  how: [string, string][]; // [function page slug, what it does for this goal]
+  how: [string, string][]; // [function page slug or #anchor on /erhverv, what it does for this goal]
   gain: string;
 };
 
@@ -81,9 +81,9 @@ export const goals: Goal[] = [
       ["guldtid", "Guldtid med præmien i baren"],
       ["rundtur", "Rundtur og skattejagt forbi baren og boderne"],
       ["konkurrence", "Præmie til aftenens bedste billede"],
-      ["printede-fotos", "Printede fotos, som gæsterne betaler for"],
+      ["#printer", "En printer ved boksen, hvor gæsterne betaler pr. print"],
     ],
-    gain: "Præmien hentes i baren, hvor resten af kortet står. Og gæster, der har det sjovt, går senere hjem.",
+    gain: "Præmien hentes i baren, hvor resten af kortet står, og med printeren kan salget af print betale boksen.",
   },
   {
     id: "sponsor",
@@ -102,8 +102,9 @@ export const goals: Goal[] = [
 
 export const goalById = (id: GoalId) => goals.find((g) => g.id === id)!;
 
-// The function map: every function a business can use, and the goals it serves. Rows link to /funktioner/<slug>.
-export const functionMap: { slug: string; name: string; text: string; goals: GoalId[]; soon?: true }[] = [
+// The function map: every function a business can use, and the goals it serves. Rows link to /funktioner/<slug>, or to `href`
+// when the offer lives on /erhverv itself (the printer).
+export const functionMap: { slug: string; href?: string; name: string; text: string; goals: GoalId[]; soon?: true }[] = [
   { slug: "eget-design", name: "Eget design", text: "Top, sider og kabinet printet i jeres form.", goals: ["branding", "sjov", "sponsor"] },
   { slug: "logo-og-sponsorer", name: "Logo og sponsor i rammen", text: "Jeres navn, og en partners, på hvert billede.", goals: ["branding", "sponsor"] },
   { slug: "deling", name: "Billedet på SMS", text: "Gæsten har billedet, før de går videre.", goals: ["branding", "gaester", "sjov"] },
@@ -115,5 +116,5 @@ export const functionMap: { slug: string; name: string; text: string; goals: Goa
   { slug: "konkurrence", name: "Konkurrence", text: "Gæsterne stemmer, vinderen får en præmie.", goals: ["sjov", "omsaetning", "indhold"] },
   { slug: "guldtid", name: "Guldtid", text: "Korte vinduer, hvor næste billede vinder.", goals: ["sjov", "omsaetning"] },
   { slug: "skattejagt", name: "Skattejagt og rundtur", text: "Fra boks til boks. Kræver mindst to bokse.", goals: ["sjov", "omsaetning", "sponsor"] },
-  { slug: "printede-fotos", name: "Printede fotos", text: "Et Instax-foto i hånden, også mod betaling.", goals: ["sjov", "omsaetning", "branding"], soon: true },
+  { slug: "printede-fotos", href: "#printer", name: "Printer ved boksen", text: "Et print i hånden. Gæsten betaler på skærmen.", goals: ["sjov", "omsaetning", "branding"] },
 ];

@@ -25,7 +25,7 @@ export function Goals() {
               <ul className="goal-how" aria-label="Sådan gør boksen det">
                 {g.how.map(([slug, text]) => (
                   <li key={text}>
-                    <a href={`/funktioner/${slug}`}>{text}</a>
+                    <a href={slug.startsWith("#") ? slug : `/funktioner/${slug}`}>{text}</a>
                     {soon.has(slug) && <span className="soon">Kommer snart</span>}
                   </li>
                 ))}
