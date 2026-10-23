@@ -1,6 +1,6 @@
 # Selfi Halo gen 2, version v21: printguide
 
-**Version:** halo-gen2-v21 (23. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v21_`. Den erstatter halo-gen2-v20, som ikke må printes. **Kun skallen er ny.** Front, lysring, bagramme, kamerarør, logo og vægbeslag er præcis som i v20 (filerne er kopieret med nyt navn). Nyt er også 3 eksempel-tema-dele til at prøve krogene. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
+**Version:** halo-gen2-v21 (23. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v21_`. Den erstatter halo-gen2-v20, som ikke må printes. **Skal, front og bagramme er nye.** Lysring, kamerarør, logo og vægbeslag er præcis som i v20 (filerne er kopieret med nyt navn). Nyt er også 3 eksempel-tema-dele til at prøve krogene. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; tema-delene er tilbehør.
 
@@ -18,6 +18,11 @@ Esben 23. okt. 2026: de 4 slidser til temavinger bagpå gik i v20 lige ind i bok
 - **Tjekket i CAD:** alle 34 dele (boksens 31 + top og 2 vinger) er skåret mod hinanden: ingen kollisioner. Tungerne står på slidsens bund (0 mm, som de skal), toppen og vingen har 0,7 mm imellem sig i den fælles slids, og alt går fri af vægbeslaget. Script: `hardware/tools/check_fit_gen2.py` og `hardware/tools/strength_hooks_gen2.py`.
 - **Låselommen er lukket igen i venstre side** (Esben 23. okt. 2026). I v20 skar frigangen om den gamle v1-skruestolpe (Ø9,5, fra bagrammen helt ind til bagvæggen) et rundt hul i lommens venstre væg, ca. 18–27 mm over bunden, så lommen stod åben ind mod boksen. Nu er væggen hel. Kun slidsen bagfra, skruehullet i bunden og drænhullet er åbne.
 - **Låselommens drænhul går nu igennem.** I v20 stoppede det Ø2-hul 4 mm oppe, men bunden er ca. 6 mm tyk der, hvor den runder, så hullet var blindt. Nu går det helt op i lommen.
+- **Oprydning efter gennemgangen** (Esben 23. okt. 2026, alle fund i dokumentet "Gen 2 gennemgang"):
+  - Låselommens nederste venstre hjørne stak op til 1 mm ud gennem skallens runde underkant (siden v20). Lommen er nu skåret af 1 mm inde i skallen, så underkanten er glat.
+  - De 2 nederste ydre snaplåse mellem front og bagramme er flyttet fra 75 til 62 mm fra midten, ind på lyskanalens lige stykke. Ved 75 mm ramte vinduet hjørnets bue og efterlod to tynde flager (0,1–0,3 mm) i fronten, som kunne knække af og ligge i lyskanalen. Derfor er **front og bagramme nye** i v21.
+  - De 4 gamle v1-skruestolper, der blev tegnet ind og fjernet igen, og propperne over deres huller er væk. Det samme gælder rev G's kabelhul nederst til venstre og proppen over det. Den færdige skal er den samme, bortset fra låselommen.
+  - Al kode til printermodulet, kabelproppen, den første gen 2-front, lamellerne bagpå og mikrofonen under taget er slettet. Kollisionstjekket viser, at alle andre 33 dele er præcis som før.
 - Hurtigsættet har en ny prøve, `proeve-vingelomme` (den øverste venstre slids med lommen), og eksempelvingen.
 
 ## Hvad var nyt i v20
