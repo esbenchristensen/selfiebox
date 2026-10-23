@@ -30,7 +30,13 @@ export type SupportChatDoc = {
   summary: string; // the first customer message, for the list in admin
   messages: number;
   unread: number; // customer messages since a human last looked, for the badge in admin
-  customer: { email: string; name: string; bookings: string[]; verifiedAt: Date } | null;
+  // Name, e-mail and phone the customer gave before the first message. Never used to look anything up until
+  // the customer asks about an order or something personal, and then only through verification.
+  contact?: { name: string; email: string; phone: string; at: Date } | null;
+  // via "booking": booking number matching the contact's e-mail or phone. via "sms": a code sent to the contact's phone.
+  customer: { email: string; name: string; bookings: string[]; verifiedAt: Date; via?: "booking" | "sms"; phone?: string } | null;
+  smsCode?: { hash: string; to: string; sentAt: Date; expiresAt: Date; sends: number; attempts: number } | null;
+  lead?: { id: string; at: Date } | null; // a business that asked for a design proposal in the chat
   verifyAttempts: number;
   verifyLockedAt: Date | null;
   takenBy: { id: string; name: string; at: Date } | null;
@@ -58,7 +64,7 @@ export type SupportAuditDoc = {
   chatId: string;
   actor: "ai" | "human" | "customer" | "system";
   actorName: string;
-  action: "verify" | "verify_failed" | "verify_locked" | "date_change_proposed" | "date_change" | "escalate" | "takeover" | "give_back" | "close";
+  action: "verify" | "verify_failed" | "verify_locked" | "sms_code_sent" | "lead" | "date_change_proposed" | "date_change" | "escalate" | "takeover" | "give_back" | "close";
   bookingId: string | null;
   before?: unknown;
   after?: unknown;

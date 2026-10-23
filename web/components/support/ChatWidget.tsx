@@ -5,7 +5,7 @@ import { Mark } from "../Logo";
 import "./support.css";
 
 // The support chat on every page of selfi.dk: a button bottom right, a panel with the conversation.
-// Sif (the AI) answers at once and streams the reply; when Esben takes over in admin, his messages arrive
+// Sif (the AI) answers at once and streams the reply; when a colleague takes over in admin, their messages arrive
 // through polling and the assistant stays quiet. The chat is tied to an httpOnly cookie set by the API.
 
 type Role = "customer" | "assistant" | "human" | "system";
@@ -16,13 +16,19 @@ type Chat = {
   takenBy: string | null;
   escalation: { at: string; urgent: boolean; replyBy: string } | null;
   customer: { name: string; bookings: string[] } | null;
+  contact: { name: string } | null;
   open: boolean;
   hours: string;
 };
 
 const NAME = "Sif";
-const INTRO = "Hej, jeg er Sif, Selfis AI-assistent. Spørg om jeres booking, levering, priser eller boksen. Skal jeg kigge på en booking, så skriv bookingnummer og den e-mail, I bookede med.";
+const COLLEAGUE = "Kollega fra Selfi";
+const INTRO = "Hej, jeg er Sif, Selfis AI-assistent. Jeg hjælper med leje til fester og med bokse i eget design til barer, klubber, hoteller og andre steder.";
+const INTRO_CONTACT = "Skriv dit navn, din e-mail og dit telefonnummer, så går vi i gang. Vi bruger dem kun til at svare dig, og vi slår ikke noget op, før du selv spørger til en ordre.";
 const CHIPS = ["Hvor er vores boks?", "Vi vil flytte datoen", "Hvad koster det?", "Hvordan sender vi den retur?"];
+const CHIPS_ERHVERV = ["Hvad kan boksen gøre for os?", "Vi vil gerne have et designudkast", "Hvad koster det for et sted?", "Hvordan hænger vi den op?"];
+
+type Contact = { name: string; email: string; phone: string };
 
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -35,6 +41,10 @@ export function ChatWidget() {
   const [error, setError] = useState<string | null>(null);
   const [unseen, setUnseen] = useState(0);
   const [menu, setMenu] = useState(false);
+  // What the customer typed on the first screen. Kept in memory only and sent with the first message.
+  const [contact, setContact] = useState<Contact | null>(null);
+  const [askContact, setAskContact] = useState(false);
+  const [erhverv, setErhverv] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const lastSeq = useRef(0);
@@ -88,12 +98,14 @@ export function ChatWidget() {
     return () => clearInterval(t);
   }, [open, chat?.status, busy, poll]);
 
-  // Closed panel: keep an eye out for Esben's replies, so the button can show them.
+  // Closed panel: keep an eye out for a colleague's replies, so the button can show them.
   useEffect(() => {
     if (open || !chat || (chat.status !== "human" && chat.status !== "waiting_human")) return;
     const t = setInterval(() => document.visibilityState === "visible" && void poll(), 8000);
     return () => clearInterval(t);
   }, [open, chat, poll]);
+
+  useEffect(() => setErhverv(location.pathname.startsWith("/erhverv")), [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -122,9 +134,16 @@ export function ChatWidget() {
     ]);
     scroll();
     try {
-      const r = await fetch("/api/support/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: t, page: location.pathname }) });
+      const needs = !chat || chat.status === "closed" || !chat.contact;
+      const r = await fetch("/api/support/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: t, page: location.pathname, ...(needs && contact ? { contact } : {}) }) });
       if (!r.ok) {
-        const b = (await r.json().catch(() => ({}))) as { error?: string };
+        const b = (await r.json().catch(() => ({}))) as { error?: string; needContact?: boolean };
+        if (b.needContact) {
+          setContact(null);
+          setAskContact(true);
+          setDraft(t);
+          setMsgs((cur) => cur.filter((m) => !m.pending));
+        }
         throw new Error(b.error ?? "Beskeden blev ikke sendt. Prøv igen.");
       }
       if (r.headers.get("content-type")?.includes("application/json")) {
@@ -168,7 +187,7 @@ export function ChatWidget() {
     setMenu(false);
     setBusy(true);
     try {
-      const r = await fetch("/api/support/human", { method: "POST" });
+      const r = await fetch("/api/support/human", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(contact ? { contact } : {}) });
       if (r.ok) {
         const b = (await r.json()) as { chat: Chat };
         setChat(b.chat);
@@ -185,6 +204,7 @@ export function ChatWidget() {
     setChat(null);
     setMsgs([]);
     lastSeq.current = 0;
+    setContact(null);
     setError(null);
     inputRef.current?.focus();
   }
@@ -192,7 +212,11 @@ export function ChatWidget() {
   const human = chat?.status === "human";
   const waiting = chat?.status === "waiting_human";
   const closed = chat?.status === "closed";
-  const sub = human ? `${chat?.takenBy ?? "Esben"} skriver med dig` : waiting ? `Esben svarer ${chat?.escalation?.replyBy ?? "snart"}` : "Selfis AI-assistent";
+  // Name, e-mail and phone come before the first message (and again when a closed chat starts over).
+  const needContact = loaded && !contact && (askContact || !chat || closed || !chat.contact);
+  const chips = erhverv ? CHIPS_ERHVERV : CHIPS;
+  // Never the name of the person at Selfi: the customer sees "en kollega" (Esben, 22. okt. 2026).
+  const sub = human ? "En kollega fra Selfi skriver med dig" : waiting ? `En kollega svarer ${chat?.escalation?.replyBy ?? "snart"}` : "Selfis AI-assistent";
 
   return (
     <>
@@ -212,7 +236,7 @@ export function ChatWidget() {
         <header className="sc-head">
           <span className="sc-avatar" aria-hidden="true"><Mark /></span>
           <div className="sc-title">
-            <b>{human ? chat?.takenBy ?? "Esben" : NAME}</b>
+            <b>{human ? COLLEAGUE : NAME}</b>
             <span className={`sc-sub${human ? " is-human" : ""}`}>{sub}</span>
           </div>
           <div className="sc-menu">
@@ -233,10 +257,10 @@ export function ChatWidget() {
         </header>
 
         <div className="sc-list" ref={listRef}>
-          <Bubble m={{ seq: 0, role: "assistant", text: INTRO, at: "", name: NAME, sources: null }} />
-          {loaded && msgs.length === 0 && !closed && (
+          <Bubble m={{ seq: 0, role: "assistant", text: needContact ? `${INTRO}\n\n${INTRO_CONTACT}` : INTRO, at: "", name: NAME, sources: null }} />
+          {loaded && !needContact && msgs.length === 0 && !closed && (
             <div className="sc-chips">
-              {CHIPS.map((c) => (
+              {chips.map((c) => (
                 <button key={c} type="button" onClick={() => void send(c)}>{c}</button>
               ))}
             </div>
@@ -249,6 +273,16 @@ export function ChatWidget() {
           {closed && <p className="sc-note">Samtalen er afsluttet. Skriv igen, så starter en ny.</p>}
         </div>
 
+        {needContact ? (
+          <ContactForm
+            onDone={(c) => {
+              setContact(c);
+              setAskContact(false);
+              setError(null);
+              requestAnimationFrame(() => inputRef.current?.focus());
+            }}
+          />
+        ) : (
         <form
           className="sc-compose"
           onSubmit={(e) => {
@@ -261,7 +295,7 @@ export function ChatWidget() {
             value={draft}
             rows={1}
             maxLength={1500}
-            placeholder={human ? `Skriv til ${chat?.takenBy ?? "Esben"}` : `Skriv til ${NAME}`}
+            placeholder={human ? "Skriv til Selfi" : `Skriv til ${NAME}`}
             aria-label="Din besked"
             onChange={(e) => {
               setDraft(e.target.value);
@@ -279,9 +313,35 @@ export function ChatWidget() {
             <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
           </button>
         </form>
+        )}
         <p className="sc-fine">{human ? "Du skriver med et menneske." : "Sif er en AI og kan tage fejl. Bed om et menneske, når du vil."}</p>
       </section>
     </>
+  );
+}
+
+/** The first screen: name, e-mail and phone, checked lightly here and properly on the server. */
+function ContactForm({ onDone }: { onDone: (c: Contact) => void }) {
+  const [err, setErr] = useState<string | null>(null);
+  return (
+    <form
+      className="sc-contact"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+        const c = { name: (f.name ?? "").trim(), email: (f.email ?? "").trim(), phone: (f.phone ?? "").trim() };
+        if (!c.name) return setErr("Skriv dit navn.");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) return setErr("Skriv en gyldig e-mail.");
+        if (c.phone.replace(/\D/g, "").length < 8) return setErr("Skriv dit telefonnummer.");
+        onDone(c);
+      }}
+    >
+      <input name="name" autoComplete="name" placeholder="Navn" aria-label="Navn" required />
+      <input name="email" type="email" autoComplete="email" placeholder="E-mail" aria-label="E-mail" required />
+      <input name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Telefon" aria-label="Telefon" required />
+      {err && <p className="sc-error" role="alert">{err}</p>}
+      <button type="submit" className="sc-start">Start chatten</button>
+    </form>
   );
 }
 
@@ -290,7 +350,7 @@ function Bubble({ m }: { m: Msg }) {
   const mine = m.role === "customer";
   return (
     <div className={`sc-msg ${mine ? "is-me" : m.role === "human" ? "is-human" : "is-ai"}`}>
-      {!mine && <span className="sc-who">{m.role === "human" ? m.name ?? "Esben" : NAME}</span>}
+      {!mine && <span className="sc-who">{m.role === "human" ? COLLEAGUE : NAME}</span>}
       <div className="sc-bubble">
         {m.text ? <Rich text={m.text} /> : <span className="sc-typing" role="status">Skriver<span className="sc-dots" aria-hidden="true"><i /><i /><i /></span></span>}
       </div>

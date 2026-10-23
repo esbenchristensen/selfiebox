@@ -16,6 +16,7 @@ export type PublicChat = {
   takenBy: string | null;
   escalation: { at: string; urgent: boolean; replyBy: string } | null;
   customer: { name: string; bookings: string[] } | null;
+  contact: { name: string } | null;
   open: boolean;
   hours: string;
 };
@@ -41,7 +42,20 @@ export async function loadChat(d: Db, req: Request): Promise<SupportChatDoc | nu
 
 export const ipHash = (req: Request) => createHash("sha256").update(req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "lokal").digest("hex").slice(0, 24);
 
-export async function createChat(d: Db, req: Request, page: string, model: string): Promise<SupportChatDoc> {
+export type ChatContact = { name: string; email: string; phone: string };
+
+/** Name, e-mail and phone from the widget's first screen, or an error in Danish. All three are required. */
+export function parseContact(raw: unknown): { ok: true; contact: ChatContact } | { ok: false; error: string } {
+  const c = (raw ?? {}) as Record<string, unknown>;
+  const s = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : "");
+  const contact = { name: s(c.name, 120), email: s(c.email, 200).toLowerCase(), phone: s(c.phone, 40) };
+  if (!contact.name) return { ok: false, error: "Skriv dit navn." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)) return { ok: false, error: "Skriv en gyldig e-mail." };
+  if (contact.phone.replace(/\D/g, "").length < 8) return { ok: false, error: "Skriv dit telefonnummer." };
+  return { ok: true, contact };
+}
+
+export async function createChat(d: Db, req: Request, page: string, model: string, contact: ChatContact | null = null): Promise<SupportChatDoc> {
   const { chats } = await supportCollections(d);
   const now = new Date();
   const chat: SupportChatDoc = {
@@ -60,6 +74,9 @@ export async function createChat(d: Db, req: Request, page: string, model: strin
     messages: 0,
     unread: 0,
     customer: null,
+    contact: contact ? { ...contact, at: now } : null,
+    smsCode: null,
+    lead: null,
     verifyAttempts: 0,
     verifyLockedAt: null,
     takenBy: null,
@@ -81,9 +98,10 @@ export function publicView(chat: SupportChatDoc): PublicChat {
   return {
     id: chat._id,
     status: chat.status,
-    takenBy: chat.takenBy?.name ?? null,
+    takenBy: chat.takenBy ? "Kollega" : null, // never the colleague's name in the browser
     escalation: chat.escalation ? { at: chat.escalation.at.toISOString(), urgent: chat.escalation.urgent, replyBy: chat.escalation.replyBy } : null,
     customer: chat.customer ? { name: chat.customer.name, bookings: chat.customer.bookings } : null,
+    contact: chat.contact ? { name: chat.contact.name } : null,
     open: isOpen(),
     hours: hoursText(),
   };

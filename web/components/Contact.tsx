@@ -7,7 +7,8 @@ import { contact } from "@/lib/erhverv/placeholder";
 
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "error"; message: string };
 
-// Places buy through a conversation, so this form is how they get in touch. `topic` tells us which page they
+// Places buy through a conversation, so this form is how they get in touch. It lands on admin's lead list
+// (privat: contact_requests) and Selfi gets an SMS, see app/api/kontakt. `topic` tells us which page they
 // wrote from. The phone number and e-mail stand next to the form: a form must never be the only way in.
 // `privat` is the short version for people renting a box for a party, who book themselves and only write with questions.
 export function Contact({ topic, kind = "erhverv" }: { topic?: string; kind?: "erhverv" | "privat" }) {
@@ -125,6 +126,7 @@ export function Contact({ topic, kind = "erhverv" }: { topic?: string; kind?: "e
               </label>
               <textarea className="input" id="f-msg" name="message" rows={4} placeholder={privat ? undefined : "Fx hvor mange gæster I har på en fredag, og hvor boksen skulle hænge"} />
             </div>
+            <input className="lead-hp" type="text" name="fax" tabIndex={-1} autoComplete="off" aria-hidden="true" />
             {state.kind === "error" && (
               <p className="err full" role="alert">
                 {state.message}

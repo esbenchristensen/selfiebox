@@ -1,19 +1,21 @@
-// SMS to Selfi when a chat is escalated, through Twilio's REST API (the same account the platform uses
-// for guest SMS, see selfiebox-platform fleet/selfiebox_fleet/sms.py). Set in Vercel:
+// SMS through Twilio's REST API (the same account the platform uses for guest SMS, see selfiebox-platform
+// fleet/selfiebox_fleet/sms.py): to Selfi when a chat is escalated or a lead comes in, and the verification
+// code to a customer in the chat. Set in Vercel:
 //   TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM (sender, e.g. "Selfi" or a number)
 //   SUPPORT_SMS_TO   the number that gets escalations, E.164 (+45…)
+//   LEADS_SMS_TO     the number that gets new leads (default SUPPORT_SMS_TO)
 // Without them nothing is sent, and the chat is still marked as waiting for a human.
 
 export const smsEnabled = () => !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.SUPPORT_SMS_TO);
 
 export type SmsSender = (body: string) => Promise<boolean>;
 
-export const sendSupportSms: SmsSender = async (body) => {
+/** One SMS to any number through Twilio. False when Twilio is not set up or the send failed. */
+export async function sendSms(to: string, body: string): Promise<boolean> {
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
-  const to = process.env.SUPPORT_SMS_TO;
   if (!sid || !token || !to) {
-    console.warn("support sms: Twilio er ikke sat op, SMS sendes ikke");
+    console.warn("sms: Twilio eller modtager mangler, SMS sendes ikke");
     return false;
   }
   try {
@@ -24,12 +26,19 @@ export const sendSupportSms: SmsSender = async (body) => {
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
-      console.error("support sms: Twilio afviste", res.status, (await res.text()).slice(0, 200));
+      console.error("sms: Twilio afviste", res.status, (await res.text()).slice(0, 200));
       return false;
     }
     return true;
   } catch (e) {
-    console.error("support sms", e);
+    console.error("sms", e);
     return false;
   }
-};
+}
+
+/** Escalations go to SUPPORT_SMS_TO. */
+export const sendSupportSms: SmsSender = (body) => sendSms(process.env.SUPPORT_SMS_TO || "", body);
+
+/** The verification code to the customer's own number (the one they gave when the chat started). */
+export type CodeSender = (to: string, body: string) => Promise<boolean>;
+export const sendCodeSms: CodeSender = sendSms;

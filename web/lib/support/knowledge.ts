@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { faq as erhvervFaq, features } from "../../content";
-import { kr, PERIODS, type Period, type RentalSettings } from "../udlejning/core";
+import { GALLERY_MONTHS, KEEP_MONTHS, kr, PERIODS, type Period, type RentalSettings } from "../udlejning/core";
 import type { SupportChatDoc } from "./db";
 import { dkParts, hoursText, isOpen } from "./hours";
 
@@ -41,6 +41,7 @@ function generatedKnowledge(): string {
   return out.join("\n");
 }
 
+
 /** The developer message that changes per turn: date, hours, verification, prices and rules. */
 export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, now = new Date()): string {
   const p = dkParts(now);
@@ -48,15 +49,21 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     `Dags dato: ${p.day}, kl. ${p.time} (dansk tid). Menneskelig support svarer ${hoursText()}. Lige nu er der ${isOpen(now) ? "åbent" : "lukket"}.`,
     `Siden, kunden skriver fra: ${chat.page || "selfi.dk"}.`,
   ];
+  if (chat.contact) {
+    lines.push(`Kunden skrev sig ind som ${chat.contact.name}. E-mail og telefon er gemt og bruges af værktøjerne (verificering, SMS-kode, designudkast, eskalering). Tiltal kunden ved fornavn. Gentag ikke e-mail eller telefonnummer, og brug dem ikke til at slå noget op, før kunden selv spørger til en ordre eller noget personligt.`);
+  }
   if (chat.customer) {
-    lines.push(`Kunden er verificeret som ${chat.customer.name} (${chat.customer.email}). Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i verify_customer-svaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
+    lines.push(`Kunden er verificeret (${chat.customer.via === "sms" ? "med SMS-kode" : "med bookingnummer"}) som ${chat.customer.name || chat.contact?.name || "kunden"}. Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i værktøjssvaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
   } else if (chat.verifyLockedAt) {
     lines.push("Kunden er IKKE verificeret, og verificeringen er låst efter for mange forsøg. Eskalér, hvis kunden vil have hjælp med en booking.");
+  } else if (chat.smsCode && chat.smsCode.expiresAt > now) {
+    lines.push(`Kunden er IKKE verificeret endnu. Der er sendt en SMS-kode til nummeret, der slutter på ${chat.smsCode.to.slice(-2)}; når kunden skriver koden, kald verify_sms_code. Forsøg brugt: ${chat.verifyAttempts} af 5.`);
   } else {
-    lines.push(`Kunden er IKKE verificeret. Før noget om en booking: bed om bookingnummer og e-mail og kald verify_customer. Forsøg brugt: ${chat.verifyAttempts} af 5.`);
+    lines.push(`Kunden er IKKE verificeret. Spørger kunden til en ordre eller noget personligt: bed om bookingnummeret (ordrenummeret) og kald verify_customer. Har kunden det ikke, så tilbyd en kode på SMS (send_sms_code). Forsøg brugt: ${chat.verifyAttempts} af 5.`);
   }
+  if (chat.lead) lines.push(`Kunden har allerede bestilt et designudkast i denne chat (lead ${chat.lead.id}). Bestil ikke igen, medmindre det er til et andet sted.`);
   if (chat.status === "waiting_human" && chat.escalation) {
-    lines.push(`Sagen er sendt videre til Esben kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}). Han svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så Esben får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
+    lines.push(`Sagen er sendt videre til en kollega kl. ${dkParts(chat.escalation.at).time} (${chat.escalation.urgent ? "AKUT" : "normal"}), som svarer ${chat.escalation.replyBy}. Giver kunden nye vigtige oplysninger bagefter (navn, telefonnummer, bookingnummer, en ny dato eller et nyt ønske), så kald escalate igen med dem, så kollegaen får dem på SMS. Ellers eskalér ikke igen; hjælp videre med det, du må.`);
   }
   if (chat.pendingChange) {
     const c = chat.pendingChange;
@@ -67,7 +74,9 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
   lines.push(
     "Aktuelle priser og regler for privat leje (fra admin, inkl. moms):",
     `- Boks, faste perioder: ${periods}. Dage før, efter eller mellem perioderne koster ${kr(s.prices.perExtraDay)} pr. ekstra dag, og kunden får altid den billigste kombination (5-7 dage koster højst en uge). check_availability giver den præcise pris for datoerne. Højst ${s.rules.maxDays} dage online.`,
-    `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Det er det eneste tilvalg; temaer findes ikke længere.`,
+    `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Temaer findes ikke længere.`,
+    `- Tilvalg: Billederne gemt i ${KEEP_MONTHS} måneder (${kr(s.prices.keep)}). Uden tilvalget er eventsiden åben i ${GALLERY_MONTHS} måneder, og derefter sletter vi billederne. Tilvalget kan kun vælges ved booking.`,
+    `- Ændringer: senest ${s.rules.changeDays} dage før første lejedag kan bookingen flyttes gratis til andre ledige datoer med samme antal dage, eller annulleres med ${s.rules.refundPercent} % af det betalte tilbage. Senere end det kan bookingen hverken flyttes eller annulleres.`,
     `- Første lejedag tidligst ${s.rules.leadDays} dage frem, højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
     `- Online booking er ${s.open ? "åben" : "lukket lige nu (henvis til chatten/eskalér)"}.`,
   );

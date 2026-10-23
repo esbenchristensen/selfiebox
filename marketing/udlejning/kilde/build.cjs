@@ -19,7 +19,7 @@ const SETUP = [
   ["Stil stativet op", "Fold benene ud, træk dem helt ud, og lås dem. Stil stativet på et fladt gulv med cirka to meter fri plads foran."],
   ["Skru boksen fast", "Skruen på toppen af stativet går i hullet under boksen. Drej boksen, til den sidder fast, og spænd hovedet, så skærmen står lodret."],
   ["Sæt strøm til", "Det runde stik i bunden af boksen, strømforsyningen i en stikkontakt. Brug forlængeren, hvis der er langt, og bind kablet til et af benene med velcrobåndet."],
-  ["Vent et minut", "Boksen starter af sig selv. Ringen lyser, og skærmen viser jeres navn, når den er klar."],
+  ["Vent et minut", "Boksen starter af sig selv. Ringen lyser, og skærmen viser jeres navn, når den er klar. Prøv den samme dag, I henter den. Virker den ikke, så ring med det samme, så vi kan nå at sende en ny."],
 ];
 job("startguide-forside", {
   kind: "pdf", out: R + "startguide/selfi-startguide-forside-A5.pdf", size: () => [154, 216],
@@ -37,7 +37,7 @@ const RETUR = [
   ["Pak ned", "Læg tingene tilbage, som de lå. Billedet inde i låget viser hvor. Boksen med skærmen ind mod skummet."],
   ["Luk kassen", "Brug tapen fra lommen i låget, én stribe hen over midten."],
   ["Skift label", "Tag den gamle label ud af plastlommen på låget, og sæt returlabelen i. Den ligger øverst i kassen."],
-  ["Aflever den", "I en dao-pakkeshop senest dagen efter festen. Find den nærmeste på dao.as. Vi får besked, når den er afleveret."],
+  ["Aflever den", "I en dao-pakkeshop senest dagen efter festen. Find den nærmeste på dao.as. Gem kvitteringen fra pakkeshoppen, den er jeres bevis for, at boksen er afleveret."],
 ];
 job("startguide-bagside", {
   kind: "pdf", out: R + "startguide/selfi-startguide-bagside-A5.pdf", size: () => [154, 216],
