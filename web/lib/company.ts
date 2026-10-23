@@ -8,7 +8,7 @@ export const company = {
   street: "", // fx "Eksempelvej 1"
   postcode: "", // fx "8000 Aarhus C"
   country: "Danmark",
-  email: "", // fx "kontakt@selfi.dk": bruges til databeskyttelse, sikkerhedshuller og produktsikkerhed
+  email: "kontakt@selfi.dk", // fx "kontakt@selfi.dk": bruges til databeskyttelse, sikkerhedshuller og produktsikkerhed
   phone: "",
   web: "selfi.dk",
   signatory: { name: "Esben Christensen", title: "Stifter" },
