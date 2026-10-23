@@ -4,7 +4,7 @@ const steps = [
   { title: "Ringen lyser", text: "Når ingen bruger boksen, pulserer lysringen. Den kan ses over hele lokalet." },
   { title: "Et tryk", text: "Gæsten trykker på skærmen og stiller sig op. Ringen tæller ned fra 3. Ingen skal forklare noget." },
   { title: "Studielys og billede", text: "Ringen skifter til hvidt lys, og kameraet tager billedet, så alle står skarpt, også i en mørk bar." },
-  { title: "På SMS, med jeres navn", text: "Gæsten skriver sit nummer og får billedet med jeres ramme. Et særskilt ja giver jer lov til at sende tilbud." },
+  { title: "På telefonen, med jeres navn", text: "Gæsten skriver sit nummer og får billedet på SMS med jeres ramme, klar til at dele. Vil gæsten høre fra jer, siger de ja for sig." },
 ];
 
 export function GuestFlow() {

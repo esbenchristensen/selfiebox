@@ -25,7 +25,7 @@ export const pricing = {
   term: "3 måneders binding",
   fourG: "4G-modul: 149 kr./md.",
   print: "Printer ved siden af boksen: fra 2.000 kr./md., eller gratis når vi tager salget",
-  design: "Pris for design aftales",
+  design: "Specialdesign af kabinettet: pris aftales",
 };
 
 // Printeren (selfi-printer-v3) til steder. Esben 23. okt. 2026: fra 2.000 kr./md., et print sælger typisk for 50 kr.,
