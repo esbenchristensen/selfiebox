@@ -35,7 +35,8 @@ GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 # print file suffix -> node in <version>_3d.glb. The logo inlays (LOGO) are copied as well, as separate colour
 # bodies with the front's origin, and put together with the front in one 3MF; a slicer needs one body per colour.
 PARTS = {"skal": "skal", "front": "front", "bagramme": "ledskinne", "lysring": "lysring",
-         "vaegbeslag": "vaegbeslag", "kameraroer": "kameraroer"}   # v19: no printer cap; v20: the camera sleeve
+         "vaegbeslag": "vaegbeslag", "kameraroer": "kameraroer",   # v19: no printer cap; v20: the camera sleeve
+         "tema-vinge-venstre-eksempel": "tema_vinge_v"}             # v21: an example wing to try the hooks
 LOGO = [suffix for suffix, *_ in FRONT_PARTS if suffix != "front"]
 
 # Corner region (glTF x, y; seen from the front, bottom left): one front screw, the shell/front joint and the ring corner.
@@ -52,7 +53,7 @@ COUPONS = [
      "Røret i bunden: hunstikket (TRU DC-13F) trykkes ned ovenfra og klikker under de 2 snaplåse, og GST-proppen går "
      "helt op i røret nedefra."),
     ("hoejttaler", ["skal"], ["hoejttaler"], 8, "+6", "Højttaleren (FIT0502) i sin bakke bag gitteret. v20: læg snoren i rillen "
-     "rundt om gitteret først. Klikker krogene stadig over flangen, og ligger snoren klemt hele vejen rundt?"),
+     "rundt om gitteret først. Klikker krogene stadig over flangen, og ligger flangen helt inde mod væggen (v21: intet slør)?"),
     ("laas-reed", ["skal"], ["skrue_laas", "reed"], 10, "+6",
      "Låseslidsen, låseskruens hul i bunden og reed-modulets bakke. Prøves med vægbeslagets låsetunge. v20: lommen inde om "
      "tungen er lukket; går tungen frit ind og op, og er drænhullet i bunden åbent?"),
@@ -65,9 +66,14 @@ COUPONS = [
     ("mikrofonstrip", ["skal"], ["mikrofoner"], 8, "+6",
      "Mikrofonkortet i lommen i bunden med Seeed-logoet nedad: pindene gennem hullerne, kortet fladt på de 4 ringe, "
      "kablet fladt ud bagtil (tilvalg)."),
+    ("vingelomme", ["skal"], ((-116, 70), (-84, 104)), 0, 14,
+     "v21: den øverste venstre vingeslids (9 × 14) med den lukkede lomme bagved og drænhullet i bunden. Prøv eksempelvingens "
+     "øverste krog: løft 3 mm, skub ind og lad den falde ned på slidsens bund. Går krogen ind uden at tvinge, står tungen på bunden, "
+     "og sidder læben bag væggen, så den ikke kan trækkes lige ud? Hæld lidt vand i slidsen: løber det ud af drænet?"),
     ("kameravindue", ["front", "kameraroer"], ["kameraglas"], 6, "fuld",
      "v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt "
-     "sammen) i hjørnet bag glasset, og røret ovenpå. Sidder glasset uden slør? Mål glassets tykkelse: 1,2–1,8 mm går."),
+     "sammen) i hjørnet bag glasset. v21: tryk røret ind på sine 4 ribber, til det stopper på glasset. Sidder røret fast, "
+     "og ligger glasset uden slør? Ses snoren ikke forfra? Mål glassets tykkelse: 1,2–1,8 mm går."),
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
      "Kameraet på frontens tappe med glas, snor og rør foran linsen, linsen midt i hullet, bagrammens rør trykker printet ned, "
      "kamerakablet gennem slidsen og de fire klikstik i deres lommer (v18: hvid 3's stik i reflektoren til højre). Front og bagramme lægges sammen."),
@@ -78,8 +84,9 @@ COUPONS = [
      "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
-     "(3,0 × 15) skruet i bagfra. v20: læg snoren i skallens rille og i lommen ved lysringen. Er fugen mellem skal og front "
-     "jævn (0,2 mm), og er snorene klemt (de skal ikke kunne trækkes ud, når skruen er spændt)?"),
+     "(3,0 × 15) skruet i bagfra. Læg snoren i lommen ved lysringen (v21: ingen snor mellem skal og front, frontens ribbe går i "
+     "skallens rille). Lukker skal og front helt (ingen fuge), sidder bagrammen fast (knusribberne på stolpen trykkes flade), og er "
+     "snoren ved lysringen klemt?"),
     ("laas", ["front", "bagramme"], ((-116, -64), (-64, -22)), 0, "fuld",
      "v14: en sidelås (venstre side, nederste par): vinduet i indervæggen og i ydervæggen og bagrammens 2 arme. "
      "Klikker begge arme, kan de vippes fri med en lille skruetrækker, og ligger fjedertåen ned på et stykke glas "

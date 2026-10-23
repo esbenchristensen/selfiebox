@@ -1,5 +1,7 @@
 # Selfi Halo gen 2, version v20: printguide
 
+> **Erstattet af halo-gen2-v21 (23. okt. 2026), må ikke printes.** I v20 gik de 4 vingeslidser bagpå lige ind i boksen. v21 har lukkede lommer bag slidserne, 9 mm brede slidser til tema-top og vinger, og det nederste par er flyttet op til 175 mm. Kun skallen er ny. Brug mappen halo-gen2-v21.
+
 **Version:** halo-gen2-v20 (23. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v20_`. Den erstatter halo-gen2-v19, som ikke må printes. **Skal, front, lysring og bagramme er nye**, og der er en ny lille del, kamerarøret. Vægbeslaget er præcis det samme som i v10–v19 (samme fil). CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden.

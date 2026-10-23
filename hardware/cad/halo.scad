@@ -124,7 +124,7 @@ VESA = 75;  VESA_Z = GC;
 LOCK_Z = H - 72;
 VESA_ON = true;  TRIPOD_ON = true;  LOCK_INSIDE = true;   // gen 2 turns these off (fewer inserts)
 DC_PANEL = true;                                          // gen 2 moves the jack into a pocket
-REVG_BACK = true;                                         // rev G back: 4 vent slots, recessed band and label recess (gen 2 has its own vents)
+REVG_BACK = true;  REVG_CABLE = true;                                         // rev G back: 4 vent slots, recessed band and label recess (gen 2 has its own vents)
 DC_POS = [-52, 40];
 PB_RAIL = [70, 50, 1.6];   PB_Z0 = 18;  PB_Y = D - BACK_T - 6;   // perfboard: size, bottom, back face y
 POL_X = 46;  POL_Z = [18, 50];                                      // Pololu cradles (right side)
@@ -310,7 +310,7 @@ module shell(top = UNIT_TOP) {
         if (DC_PANEL) cyl_y(DC_JACK_HOLE, D - BACK_T - 1, D + 1, DC_POS[0], DC_POS[1]);
         if (REVG_BACK) for (sx = [-1, 1], x = [50, 57]) ext_y(D - BACK_T - 1, D + 1) translate([sx*x, VESA_Z + 25]) rotate(90) slot2d(36, 3);
         if (REVG_BACK) ext_y(D - 1.2, D + 1) translate([0, 12]) difference() { rr(W - 24, H - 24, 8); translate([0, 11]) rr(W - 46, H - 46, 2); }
-        cyl_y(5, D - BACK_T - 1, D + 1, -(HW - 17.5), 17.5);
+        if (REVG_CABLE) cyl_y(5, D - BACK_T - 1, D + 1, -(HW - 17.5), 17.5);
         if (REVG_BACK) ext_y(D - 0.6, D + 1) translate([0, 40]) rrc(56, 22, 3);
     }
 }

@@ -33,7 +33,8 @@ does not change. The STL files in `stl/` are still rev G until gen 2 gets its ow
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
 | `cad/gen2_concept.scad` | Gen 2 (current design), built on top of `halo.scad` |
-| `docs/gen2/` | Gen 2 renders (`render/render_gen2.py`) and the CAD line sheet (`tools/gen2_sketches/make_cad_sheet.sh`) |
+| `docs/gen2/` | Early gen 2 concept renders and line sheet (v1, with the dropped printer module; their scripts were removed in v21) |
+| `tools/check_fit_gen2.py`, `tools/make_gen2_release.py` | Gen 2: collision/clearance check, and the release set (print files, 3D, PRINTGUIDE) in `stl/gen2/<version>/` |
 
 ```sh
 python3 tools/make_bom.py
