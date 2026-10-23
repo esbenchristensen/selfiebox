@@ -1,6 +1,6 @@
 # Selfi printer v2: printguide
 
-**Version:** selfi-printer-v2 (22. okt. 2026). Alle filer i mappen starter med `selfi-printer-v2_`. CAD-kilden er `hardware/cad/selfi_printer_v2.scad` i esbenchristensen/selfiebox. Filerne laves med `python3 hardware/tools/make_printer.py selfi-printer-v2`. v1 må ikke printes.
+**Må ikke printes: brug selfi-printer-v3.** **Version:** selfi-printer-v2 (22. okt. 2026). Alle filer i mappen starter med `selfi-printer-v2_`. CAD-kilden er `hardware/cad/selfi_printer_v2.scad` i esbenchristensen/selfiebox. Filerne laves med `python3 hardware/tools/make_printer.py selfi-printer-v2`. v1 må ikke printes.
 
 v2 erstatter v1. Grunden er, at en dye-sub-printer fører papiret ud og ind 4 gange under hvert print (gul, magenta, cyan og lak). I v1 stod slidsen og bakken i vejen for papiret, og gæsterne kunne komme til printeren. v2 er hærværkssikret og bruges både til B2C på et bord og til B2B:
 

@@ -110,8 +110,10 @@ def sheets_v1():
     sheet("tegning_vaeg", "Selfi printer v1 · vægmontering (B2B)", "Samme kappe og sokkel; konsollen hægtes på vægpladen og låses. Stedet monterer selv efter guiden.", b, h=1400)
 
 
-def sheets_v2():
-    L, D, TOP, HE, PM = 476.0, 222.5, 277.6, 217.2, 287.2
+def sheets_v2(v3=False):
+    """v2, and v3 (the same unit with a flat top and "Dit print" over the pocket)"""
+    L, D, PM = 476.0, 222.5, 287.2
+    TOP, HE = (217.2, 217.2) if v3 else (277.6, 217.2)
     OP_X, OP_W, OP_Z0, OP_Z1, LOGO_Z, SLOT_Z = (287.7 + 476) / 2, 170, 31, 85, 120, 147
     b = []
     # row 1: front, right end, section through the exit chamber
@@ -121,11 +123,15 @@ def sheets_v2():
     b += [f'<image href="data:image/png;base64,{LOGO}" x="{fx + (PM / 2 - 49.5) * S}" y="{fy - (LOGO_Z + 18) * S}" width="{99 * S}" height="{36 * S}"/>']
     b += [dim_h(fx, fx + L * S, fy + 30, f"{L:g}"), dim_h(fx, fx + PM * S, fy + 62, "kappe + sokkel 287"),
           dim_h(fx + PM * S, fx + L * S, fy + 62, "udgangsmodul 189"),
-          dim_v(fx - 22, fy - HE * S, fy, f"{HE:g}"), dim_v(fx - 52, fy - TOP * S, fy, f"{TOP:g}")]
+          dim_v(fx - 52, fy - TOP * S, fy, f"{TOP:g}")] + ([] if v3 else [dim_v(fx - 22, fy - HE * S, fy, f"{HE:g}")])
     b += [note(fx + (OP_X - OP_W / 2) * S, fy - OP_Z1 * S - 10, f"udtagslomme {OP_W} × {OP_Z1 - OP_Z0}, stoplæbe med 3 dræn")]
     ex, ey = 1150, 190 + TOP * S
     g, _ = place("d_end", ex, ey); b += [text(1150, 150, "Fra højre ende", 18, font_weight="bold"), g]
-    b += [dim_h(ex, ex + D * S, ey + 30, f"{D:g}"), note(ex + D * S + 14, ey - (TOP - 6) * S, "rund ryg R25"), note(ex + D * S + 14, ey - (HE + 30) * S, "sadeltag 30°")]
+    b += [dim_h(ex, ex + D * S, ey + 30, f"{D:g}"), note(ex + D * S + 14, ey - (TOP - 6) * S, "flad top, kanter R10" if v3 else "rund ryg R25"),
+          note(ex + D * S + 14, ey - ((HE - 40) if v3 else (HE + 30)) * S, "ingen åbninger i toppen" if v3 else "sadeltag 30°")]
+    if v3:
+        b += [text(fx + OP_X * S, fy - (LOGO_Z - 6) * S, "Dit print", 17 * S, fill=INK, text_anchor="middle", font_weight="bold"),
+              note(fx + (OP_X + 48) * S, fy - (LOGO_Z + 6) * S, "\"Dit print\" + pil indlagt (hvid + grøn)")]
     cx, cy = 1700, 190 + TOP * S
     g, _ = place("d_cut_end", cx, cy, fill="#e9eae6"); b += [text(1700, 150, "Snit gennem udgangsrummet", 18, font_weight="bold"), g]
     b += [f'<rect x="{cx + (D / 2 - 62) * S}" y="{cy - (SLOT_Z + 6) * S}" width="{124 * S}" height="{6 * S}" fill="none" stroke="{GREEN}" stroke-width="1.4" stroke-dasharray="5 4"/>']
@@ -141,14 +147,17 @@ def sheets_v2():
     g, _ = place("d_cut_long", lx, ly, fill="#e9eae6"); b += [text(1130, 860, "Snit langs midten", 18, font_weight="bold"), g]
     for s_, x_, z_ in (("DNP QW410 drejet 90°, 208 × 198 × 240", 60, 240), ("Pi Zero 2 W", 20, 210), ("frit papirrum 190", 300, 240)):
         b.append(note(lx + x_ * S, ly - z_ * S, s_))
+    if v3:
+        b.append(note(lx + 12 * S, ly + 26, "strømkabel ind bagfra gennem soklen, stikket kun indeni · tætningsbånd 3 × 1 i riller ved fugerne"))
     kx, ky = 2160, 880 + TOP * S
     g, _ = place("d_cut_lock", kx, ky, fill="#e9eae6"); b += [text(2160, 860, "Snit gennem låsen", 18, font_weight="bold"), g]
     for i, s_ in enumerate(("Kamlåsen i venstre ende låser kappen:", "kammen drejer op under taget på", "låseholderen i soklen, så kappen hverken",
                             "kan løftes eller skubbes. Låst op: skub", "kappen 10 mm til venstre og løft den af.")):
         b.append(text(2160, ky + 40 + i * 20, s_, 13, fill=GREEN))
-    sheet("tegning", "Selfi printer v2 · tegning", "Hærværkssikret: DNP QW410 drejet 90°, papiret kører frit i et lukket rum, printet rutsjer ned i en lomme foran · sadeltag · nøglelås",
+    sheet("tegning", f"Selfi printer {'v3' if v3 else 'v2'} · tegning", "Hærværkssikret: DNP QW410 drejet 90°, papiret kører frit i et lukket rum, printet rutsjer ned i en lomme foran · "
+          + ("flad top · nøglelås" if v3 else "sadeltag · nøglelås"),
           b, w=2700, h=1680)
 
 
 LOGO = base64.b64encode(cairosvg.svg2png(url=str(Path(__file__).resolve().parents[2] / "marketing/brandpakke/01_logo/svg/selfi-logo-groen.svg"), output_width=700)).decode()
-{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2}[VER]()
+{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2, "selfi-printer-v3": lambda: sheets_v2(v3=True)}[VER]()

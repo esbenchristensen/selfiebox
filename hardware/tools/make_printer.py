@@ -2,14 +2,14 @@
 """Print files, 3D model, renders and drawings of the Selfi printer (DNP QW410 in a printed enclosure).
 
 Usage:  python3 hardware/tools/make_printer.py [version] [out dir]
-        version: selfi-printer-v1 or selfi-printer-v2 (default: the newest); out dir: default hardware/stl/printer/<version>
+        version: selfi-printer-v1, -v2 or -v3 (default: the newest); out dir: default hardware/stl/printer/<version>
         python3 hardware/tools/make_printer.py <version> --hurtig     the hurtigprint set (v2 and later), see below
 CAD:    hardware/cad/selfi_printer_v<N>.scad
 Needs:  openscad, node + Playwright + three (web/node_modules) for the renders, trimesh, manifold3d, numpy, networkx,
         cairosvg, Pillow. Playwright from elsewhere: PLAYWRIGHT_MJS=/path/to/playwright/index.mjs
 Output (every file starts with the version):
   <v>_<part>.stl                 print-ready, in print orientation, on z = 0
-  <v>_kappe_flerfarvet.3mf       hood + white and green logo as one multi-part object (AMS)
+  <v>_<part>_flerfarvet.3mf      a part + its white and green inlays as one multi-part object (AMS)
   <v>_3d.glb + <v>_parts.json    the admin 3D viewer (one node per part, explode offsets in glTF axes)
   <v>_*.png                      renders of the 3D model (render_glb.mjs) and the drawing sheets (printer_sheet.py)
   <v>_printfiler.zip             print files, guide, shopping list, wiring diagram and pictures
@@ -37,6 +37,7 @@ ROOT = Path(__file__).resolve().parents[2]
 # inlays printed with a part, 3D parts, renders and drawing views.
 #   PRINTED: (CAD view, file name, label)
 #   PARTS:   (node, CAD view in the assembly frame, label, colour, group, explode [x, y, z] in glTF axes (y up, z to the viewer))
+LOGO = ["logo_hvid", "logo_groen"]
 VERSIONS = {
     "selfi-printer-v1": {
         "scad": "selfi_printer_v1.scad", "size": (222.5, 294.4, 220.0), "centre_x": False,
@@ -51,7 +52,7 @@ VERSIONS = {
             ("logo_groen", "logo-groen", "Logo, grønne prikker (indlagt i kappen)"),
         ],
         "co_printed": {"logo_hvid": "kappe", "logo_groen": "kappe"},
-        "multicolour": ["kappe", "kappe_laas"],
+        "multicolour": {"kappe": LOGO, "kappe_laas": LOGO},
         "parts": [
             ("kappe", "kappe_laas", "Kappe (sort ASA; B2B-udgaven med hul til skabslås, B2C-kappen er uden hul)", "#1d1d20", "Kabinet", [0, 260, 0]),
             ("logo_hvid", "logo_hvid", "Logo, hvidt (indlagt i kappen)", "#f5f5f4", "Kabinet", [0, 260, 0]),
@@ -88,7 +89,7 @@ VERSIONS = {
             ("logo_groen", "logo-groen", "Logo, grønne prikker (indlagt i kappen)"),
         ],
         "co_printed": {"logo_hvid": "kappe", "logo_groen": "kappe"},
-        "multicolour": ["kappe"],
+        "multicolour": {"kappe": LOGO},
         "parts": [
             ("kappe", "kappe", "Kappe (sort ASA): sadeltag 30°, luftlameller og nøglelås i venstre ende", "#1d1d20", "Kabinet", [-10, 300, 0]),
             ("logo_hvid", "logo_hvid", "Logo, hvidt (indlagt i kappen)", "#f5f5f4", "Kabinet", [-10, 300, 0]),
@@ -133,7 +134,38 @@ VERSIONS = {
         ],
     },
 }
-NEWEST = "selfi-printer-v2"
+# v3: v2 with a flat top and "Dit print" + arrow inlaid over the pocket (white and green, printed with the exit module)
+D_V3 = 222.5
+VERSIONS["selfi-printer-v3"] = v3 = json.loads(json.dumps(VERSIONS["selfi-printer-v2"]))
+v3.update({"scad": "selfi_printer_v3.scad", "size": (476.0, 222.5, 217.2)})
+v3["printed"] += [["tekst_hvid", "tekst-hvid", "\"Dit print\", hvid (indlagt i udgangsmodulet)"],
+                  ["tekst_groen", "tekst-groen", "Pil ned mod lommen, grøn (indlagt i udgangsmodulet)"]]
+v3["co_printed"].update({"tekst_hvid": "udgang", "tekst_groen": "udgang"})
+v3["multicolour"] = {"kappe": LOGO, "udgang": ["tekst_hvid", "tekst_groen"]}
+i = [p[0] for p in v3["parts"]].index("udgang")
+v3["parts"][i][2] = "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme, skærm og \"Dit print\" (sort ASA)"
+v3["parts"][i + 1:i + 1] = [["tekst_hvid", "tekst_hvid", "\"Dit print\", hvidt (indlagt i udgangsmodulet)", "#f5f5f4", "Kabinet", [150, 0, 0]],
+                            ["tekst_groen", "tekst_groen", "Pil ned mod lommen, grøn", "#22d36b", "Kabinet", [150, 0, 0]]]
+v3["parts"][0][2] = "Kappe (sort ASA): flad top, luftlameller og nøglelås i venstre ende"
+v3["printed"] += [["konsol", "konsol", "Vægkonsol (B2B væg), print 2"], ["vaegplade", "vaegplade", "Vægskinne (B2B væg), print 2"]]
+P = {p[0]: p for p in v3["parts"]}
+P["sokkel"][2] = "Sokkel: printerramme, låseholder, Pi-holder, kabelspor bagtil og rille til tætningsbånd (sort ASA)"
+v3["parts"] = [p for p in v3["parts"] if p[0] != "inlet"]
+v3["parts"].insert([p[0] for p in v3["parts"]].index("pi") + 1,
+    ["kabel", "c_kabel", "Strømkabel Schuko → C13 vinklet: ind bagfra under soklen, stikket kun indeni (trækaflastet med strip)", "#2b2b2f", "Elektronik", [-40, 0, 0]])
+v3["parts"] += [
+    ["konsoller", "konsoller", "2 vægkonsoller (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra", "#3a3a3f", "B2B væg", [0, -110, 0]],
+    ["vaegplader", "vaegplader", "2 vægskinner med 45° kant (4 skruer + dybler hver)", "#4a4a50", "B2B væg", [0, -110, -110]],
+    ["skruer_konsol", "s_con", "2 skruer op i udgangsmodulet (SPUN+ 4,0 × 20)", "#c3c7cf", "Skruer", [0, -60, 0]],
+    ["skruer_vaeg", "s_wall", "8 skruer + dybler (5 × 50) og 2 sikkerhedsskruer (Torx med pind)", "#c3c7cf", "Skruer", [0, -110, -170]]]
+v3["renders"] = [dict(r, hide=["Skruer", "B2B væg"]) if r["out"] != "eksplosion" else dict(r, hide=["B2B væg"]) for r in v3["renders"]]
+v3["renders"].append({"out": "vaeg", "az": -30, "el": 10, "hide": ["Skruer"]})
+v3["coupons"] = [c for c in v3["coupons"] if c[0] != "stroemindgang"] + [
+    ["kabel", "sokkel", [0, D_V3 - 56, 0, 32, D_V3, 32], "Kabelsporet bagtil og ankeret: strømkablet (op til 7,5 mm) trykkes ind nedefra, og en strip om kablet og ankeret holder det."],
+    ["taetning", "sokkel", [0, 0, 0, 45, 45, 24], "Hjørnet med rillen til tætningsbånd 3 × 1 under kappens væg og kanten indenfor."],
+    ["krog", "konsol", [20, 180, -70, 80, 236, 0], "Konsollens 45°-krog og bagplade: skal hægte sig på vægskinnen og ligge tæt mod væggen."],
+    ["krog", "vaegplade", [20, 230, -80, 80, 246, -40], "Vægskinnens 45°-kant (lægges sammen med proeve-krog_konsol)."]]
+NEWEST = "selfi-printer-v3"
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
 
@@ -166,11 +198,11 @@ def print_files(cfg, ver, out, tmp):
         m = meshes[view]
         m.apply_translation(shift[cfg["co_printed"].get(view, view)])
         m.export(out / f"{ver}_{name}.stl")
-    for hood in cfg["multicolour"]:
+    for hood, inlays in cfg["multicolour"].items():
         sc = trimesh.Scene()
         sc.add_geometry(meshes[hood], node_name=hood, geom_name=hood)
-        sc.add_geometry(meshes["logo_hvid"], node_name="logo_hvid", geom_name="logo_hvid")
-        sc.add_geometry(meshes["logo_groen"], node_name="logo_groen", geom_name="logo_groen")
+        for v in inlays:
+            sc.add_geometry(meshes[v], node_name=v, geom_name=v)
         sc.export(out / f"{ver}_{hood.replace('_', '-')}_flerfarvet.3mf")
 
 

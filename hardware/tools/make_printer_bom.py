@@ -2,7 +2,7 @@
 """Shopping list for the Selfi printer as an xlsx: bought parts with prices, what each is for and whether it can be left
 out, and the printed parts with their ASA weight (the printing partner buys the filament himself).
 
-Usage: python3 hardware/tools/make_printer_bom.py <out.xlsx> [version]     (version: selfi-printer-v1 or -v2, default v2)
+Usage: python3 hardware/tools/make_printer_bom.py <out.xlsx> [version]     (version: selfi-printer-v1, -v2 or -v3, default v3)
 Prices are DKK incl. VAT and estimates ("skøn") until a Danish or EU dealer has quoted them.
 """
 import sys
@@ -11,7 +11,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 OUT = sys.argv[1]
-VER = sys.argv[2] if len(sys.argv) > 2 else "selfi-printer-v2"
+VER = sys.argv[2] if len(sys.argv) > 2 else "selfi-printer-v3"
 ASA_KR_G = 0.25   # kr per gram ASA (1 kg spool ca. 250 kr)
 
 # part, use, grams ASA (as sliced: walls 3.2 solid, infill as in the guide), colour
@@ -70,6 +70,25 @@ BOUGHT_V2 = [
     ("SPUN+ Climate 4,0 × 30, undersænket", "B2B", 2, 2, "Sokkel → bord eller hylde (under printeren)", "Ja i B2C"),
 ]
 
+# v3: flat top, "Dit print", foam tape in grooves, mains cable in through the base (no inlet), B2B wall consoles
+PRINTED_V3 = [
+    ("Kappe med låsehul (flad top, lameller)", "Alle", 750, "sort ASA"),
+    ("Logo, hvide dele + grønne prikker (indlagt i kappen)", "Alle", 3, "hvid + grøn ASA"),
+    ("\"Dit print\" + pil (indlagt i udgangsmodulet)", "Alle", 2, "hvid + grøn ASA"),
+    ("Sokkel under printeren (kabelspor, rille til tætningsbånd)", "Alle", 475, "sort ASA"),
+    ("Udgangsmodul (papirrum, rutsjebane, lomme, skærm, LED-skinne)", "Alle", 905, "sort ASA"),
+    ("2 vægkonsoller", "B2B væg", 1300, "sort ASA"),
+    ("2 vægskinner", "B2B væg", 300, "sort ASA"),
+]
+BOUGHT_V3 = [b for b in BOUGHT_V2 if not b[0].startswith(("Panelkabel C14", "Strømkabel Schuko"))] + [
+    ("Strømkabel Schuko → C13 vinklet, 3 m, sort", "Alle", 1, 60, "Går ind bagfra under soklen og sættes direkte i printeren: intet stik udenpå. Maks. Ø7,5", "Nej"),
+    ("Kabelbinder 3,6 × 150, sort", "Alle", 2, 1, "Trækaflastning: om strømkablet og ankeret i bagrummet", "Nej: ellers kan kablet trækkes ud"),
+    ("Skumtætningsbånd 3 × 1 mm, selvklæbende (EPDM/PE), 2 m", "Alle", 1, 40, "I rillerne: soklen under kappens væg og rundt om udgangsmodulets studs (ca. 1,5 m)", "Ja, men så er fugerne ikke tætte"),
+    ("SPUN+ Climate 4,0 × 20, undersænket", "B2B væg", 2, 2, "Højre konsol → udgangsmodulet (nedefra)", "Ja, hvis den ikke hænger på væg"),
+    ("Skrue 5 × 50 + dybel (til væggens materiale)", "B2B væg", 8, 3, "2 vægskinner, 4 hver", "Ja, hvis den ikke hænger på væg"),
+    ("Sikkerhedsskrue Torx med pind 4,0 × 25 + bit", "B2B væg", 2, 8, "Konsol → vægskinne, så konsollen ikke kan løftes af", "Ja, hvis den ikke hænger på væg"),
+]
+
 
 def main():
     wb = Workbook()
@@ -79,8 +98,9 @@ def main():
     ws.append([f"{VER} · indkøbsliste (kr inkl. moms, skøn)"]); ws["A1"].font = Font(bold=True, size=14)
     ws.append([])
     v2 = VER != "selfi-printer-v1"
-    bought = BOUGHT_V2 if v2 else [b + ("",) for b in BOUGHT]
-    printed = PRINTED_V2 if v2 else PRINTED
+    v3 = VER == "selfi-printer-v3"
+    bought = BOUGHT_V3 if v3 else BOUGHT_V2 if v2 else [b + ("",) for b in BOUGHT]
+    printed = PRINTED_V3 if v3 else PRINTED_V2 if v2 else PRINTED
     ws.append(["Købedele", "Bruges til", "Antal", "Pris pr. stk.", "I alt", "Note"] + (["Kan den undværes?"] if v2 else []))
     for c in ws[3]: c.font = bold
     sums = {}
@@ -99,6 +119,8 @@ def main():
     ws.append(["Printer-pakke B2C (bord)", "", "", "", round(base), "inkl. begge ruller"])
     if v2:
         ws.append(["B2B (bord/disk, skruet fast)", "", "", "", round(base + sums.get("B2B", 0)), "+ 2 skruer"])
+        if v3:
+            ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ 2 konsoller, 2 vægskinner og skruer"])
     else:
         ws.append(["B2B hylde/disk", "", "", "", round(base + sums.get("B2B", 0)), "+ lås og 2 skruer"])
         ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ konsol, vægplade og skruer"])

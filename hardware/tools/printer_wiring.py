@@ -42,12 +42,16 @@ def port(x, y, s, anchor="start"):
 
 W, H = 2400, 1400
 o = [f'<rect width="{W}" height="{H}" fill="{PAPER}"/>',
-     text(60, 70, "Selfi printer v2 · ledningsdiagram", 34, font_weight="bold"),
+     text(60, 70, f"Selfi printer {VER.split('-')[-1]} · ledningsdiagram", 34, font_weight="bold"),
      text(60, 104, "Kun færdige kabler med stik · intet loddes · én 230 V-ledning ind · Pi'en og LED'en får strøm fra printerens egen 5 V-udgang", 18, fill=DASH)]
 
 # blocks
-o.append(box(60, 200, 300, 150, "Stikkontakt 230 V", ["Schuko → C13, 2 m", "(det eneste kabel kunden sætter i)"]))
-o.append(box(470, 200, 330, 150, "Strømindgang C14", ["snap-in panelkabel i soklens", "plade i venstre ende,", "→ C13 vinklet, 30 cm"]))
+V3 = VER != "selfi-printer-v2"
+o.append(box(60, 200, 300, 150, "Stikkontakt 230 V", ["Schuko → C13 vinklet, 3 m" if V3 else "Schuko → C13, 2 m", "(det eneste kabel kunden sætter i)"]))
+if V3:   # no inlet: the cable goes in under the base at the back and plugs straight into the printer
+    o.append(box(470, 200, 330, 170, "Kabelspor i soklen", ["kablet trykkes ind nedefra bagtil", "og går op i bagrummet;", "strip om kablet og ankeret", "= trækaflastning"]))
+else:
+    o.append(box(470, 200, 330, 150, "Strømindgang C14", ["snap-in panelkabel i soklens", "plade i venstre ende,", "→ C13 vinklet, 30 cm"]))
 o.append(box(960, 160, 520, 560, "DNP QW410", ["drejet 90°: papirudgangen mod højre ende", "tænd/sluk bagpå står fast på ON", "", "bagpå (venstre ende af kabinettet):"], fill="#f7f7f5"))
 o.append(box(960, 840, 520, 330, "Raspberry Pi Zero 2 WH", ["printserver: CUPS + Gutenprint (selphy_print)", "på boksens wifi; styrer LED'en", "står på højkant i soklens riller"], fill="#eef6f0", stroke=GREEN))
 o.append(box(1720, 840, 600, 300, "WS2812B RGB-strip, 9 LED (15 cm)", ["i skinnen på udgangsrummets bagvæg,", "lyser ned ad rutsjebanen", "JST-SM 3-pin · maks. 30 % lysstyrke ≈ 0,1 A"], fill="#eef6f0", stroke=GREEN))
@@ -63,7 +67,7 @@ o += [port(1720, 960, "5 V (rød)"), port(1720, 1030, "GND (hvid)"), port(1720, 
 
 # mains
 o.append(wire([(360, 275), (470, 275)], MAINS, "230 V", 380, 262))
-o.append(wire([(800, 275), (880, 275), (880, 370), (954, 370)], MAINS, "C13 vinklet", 810, 262))
+o.append(wire([(800, 275), (880, 275), (880, 370), (954, 370)], MAINS, "samme kabel: C13 vinklet" if V3 else "C13 vinklet", 810, 262))
 # 5 V from the printer to the Pi
 o.append(wire([(954, 440), (860, 440), (860, 1000), (954, 1000)], V5, "USB-A → micro-USB 20 cm (5 V)", 560, 720))
 # print data Pi -> printer
@@ -79,7 +83,8 @@ o.append(f'<path d="M1480,880 C1600,880 1640,420 1720,330" fill="none" stroke="{
 o.append(text(1560, 640, "wifi (IPP)", 15, fill=GREY))
 
 # notes
-notes = ["Rækkefølge ved samling: C14 i soklen → C13 i printeren → USB-kablerne → Pi i rillerne → LED-strip i skinnen → Dupont-stik på Pi'en.",
+notes = [("Rækkefølge ved samling: strømkablet i sporet + strip om ankeret" if V3 else "Rækkefølge ved samling: C14 i soklen")
+         + " → C13 i printeren → USB-kablerne → Pi i rillerne → LED-strip i skinnen → Dupont-stik på Pi'en.",
          "LED'en: brug Pi Zero 2 WH (med stiftliste). Data er 3,3 V fra GPIO18; det virker normalt på en kort strip. Flimrer den, sættes en 3,3→5 V-niveauskifter med stik ind (afprøves på prototypen).",
          "Tjek at printerens 5 V-udgang også giver strøm i standby, så Pi'en kører hele tiden. Pi + LED bruger under 0,7 A af de 2 A.",
          "Strippen klippes til 9 LED i den frie ende (efter LED 9, på klippemærket). Enden med JST-stikket bevares."]
