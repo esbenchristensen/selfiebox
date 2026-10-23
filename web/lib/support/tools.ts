@@ -2,16 +2,17 @@
 // of the customer who verified in this chat (chat.customer.bookings): the model cannot widen that, whatever
 // it is told. Verification is a booking number that matches the e-mail or phone the customer gave when the
 // chat started, or a one-time code sent by SMS to that phone (GDPR: nothing about an order before that).
-// Bookings cannot be cancelled (/lejebetingelser point 8). A booking can be moved to dates outside high season
-// (peakDays) without asking anyone: the move goes through a proposal (propose_date_change) that the customer
-// must answer before commit_date_change is allowed, and every change is written to the rental's history and to
-// support_audit with time and actor.
+// Up to changeDays before the first day (/lejebetingelser point 8) a booking can be moved without asking anyone,
+// or cancelled with refundPercent back (a colleague refunds, so that is escalated); after that nothing can be
+// changed. A move goes through a proposal (propose_date_change) that the customer must answer before
+// commit_date_change is allowed, and every change is written to the rental's history and to support_audit with
+// time and actor.
 
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import type { Db } from "mongodb";
 
 import { addDays, formatRange, nights, weekday, type DayKey, type Range } from "../dates";
-import { boxQuote, fits, heldRange, kr, peakDays, problem, usage, type Block, type Hold, type RentalSettings } from "../udlejning/core";
+import { boxQuote, canChange, changeDeadline, fits, heldRange, kr, problem, usage, type Block, type Hold, type RentalSettings } from "../udlejning/core";
 import { RELEASED, type RentalDoc, type RentalStatus } from "../udlejning/db";
 import { addMessage, audit, supportCollections, type SupportChatDoc } from "./db";
 import { hoursText, isOpen, replyPromise } from "./hours";
@@ -129,7 +130,7 @@ export const TOOL_DEFINITIONS = [
   {
     type: "function" as const,
     name: "propose_date_change",
-    description: "Laver et forslag om at flytte en af kundens bookinger til nye datoer (samme antal dage) uden for højsæson. Afviser datoer i højsæson (fredag til søndag i højsæsonmånederne). Gemmer intet endnu: gentag forslaget for kunden og spørg, om bookingen skal flyttes. Kun for en verificeret kunde og kun før boksen er sendt.",
+    description: "Laver et forslag om at flytte en af kundens bookinger til nye datoer (samme antal dage). Afviser, når der er under 30 dage til første lejedag. Gemmer intet endnu: gentag forslaget for kunden og spørg, om bookingen skal flyttes. Kun for en verificeret kunde og kun før boksen er sendt.",
     strict: true,
     parameters: obj({ bookingNo: { type: "string" }, from: { type: "string", description: "Ny første lejedag, ÅÅÅÅ-MM-DD" }, to: { type: "string", description: "Ny sidste lejedag, ÅÅÅÅ-MM-DD" } }, ["bookingNo", "from", "to"]),
   },
@@ -198,7 +199,9 @@ function bookingView(r: RentalWithTracking, ctx: ToolContext): Result {
     occasion: r.contact.occasion || null,
     paidAt: paid ? paid.at.toISOString().slice(0, 10) : null,
     shipping: { carrier: "dao", shipsOn: held.from, trackingOut: r.trackingOut ?? null, trackingBack: r.trackingBack ?? null, returnBy: returnBy(r.to) },
-    canMoveDates: r.status === "paid" || r.status === "packed",
+    changeUntil: changeDeadline(ctx.settings, r.from),
+    canMoveDates: (r.status === "paid" || r.status === "packed") && canChange(ctx.settings, r.from, ctx.today),
+    canCancel: (r.status === "paid" || r.status === "packed") && canChange(ctx.settings, r.from, ctx.today) ? { refund: kr(Math.round((r.total * ctx.settings.rules.refundPercent) / 100)) } : null,
     photosKept: r.keep ? "12 måneder" : "3 måneder",
     setupUrl: ["pending", "expired"].includes(r.status) ? null : `${ctx.setupUrl}/${encodeURIComponent(r._id)}?t=${encodeURIComponent(r.token)}`,
     history: r.history.map((h) => `${h.at.toISOString().slice(0, 16).replace("T", " ")}: ${STATUS_LABEL[h.status]}`),
@@ -223,16 +226,14 @@ async function holdsExcluding(d: Db, from: DayKey, exclude: string | null): Prom
   };
 }
 
-/** The nearest free periods of the same length within three weeks, so the model can offer something concrete.
- * For a move, `offPeak` leaves out periods with a high-season day, which a booking cannot be moved to. */
-function alternatives(ctx: ToolContext, u: ReturnType<typeof usage>, range: Range, theme: string | null, printer: boolean, offPeak = false): string[] {
+/** The nearest free periods of the same length within three weeks, so the model can offer something concrete. */
+function alternatives(ctx: ToolContext, u: ReturnType<typeof usage>, range: Range, theme: string | null, printer: boolean): string[] {
   const out: string[] = [];
   for (let off = 1; off <= 21 && out.length < 4; off++) {
     for (const sign of [1, -1]) {
       const f = addDays(range.from, off * sign);
       const t = addDays(range.to, off * sign);
       if (f < ctx.today || out.length >= 4) continue;
-      if (offPeak && peakDays(ctx.settings, { from: f, to: t }).length) continue;
       if (!problem(ctx.settings, u, { range: { from: f, to: t }, theme, printer, photoType: "strip", delivery: "post" }, ctx.today)) out.push(formatRange({ from: f, to: t }));
     }
   }
@@ -425,6 +426,9 @@ async function proposeDateChange(ctx: ToolContext, a: { bookingNo: string; from:
   if (r.status !== "paid" && r.status !== "packed") {
     return { ok: false, reason: "not_movable", message: `Bookingen har status "${STATUS_LABEL[r.status]}" og kan ikke flyttes her. ${r.status === "shipped" || r.status === "delivered" ? "Boksen er sendt. Eskalér, hvis kunden vil ændre noget." : "Eskalér."}` };
   }
+  if (!canChange(ctx.settings, r.from, ctx.today)) {
+    return { ok: false, reason: "too_late", message: `Bookingen kunne flyttes til og med ${changeDeadline(ctx.settings, r.from)} (${ctx.settings.rules.changeDays} dage før første lejedag). Nu kan den hverken flyttes eller annulleres. Det er en fast regel: eskalér ikke, og lov ikke en undtagelse.` };
+  }
   const range: Range = { from: a.from, to: a.to };
   if (nights(range) !== r.days) {
     return { ok: false, reason: "different_length", message: `Bookingen er på ${r.days} ${r.days === 1 ? "dag" : "dage"}, men de nye datoer er ${nights(range)}. Et andet antal dage ændrer prisen og skal aftales med en kollega: eskalér med de ønskede datoer.` };
@@ -432,17 +436,8 @@ async function proposeDateChange(ctx: ToolContext, a: { bookingNo: string; from:
   if (a.from === r.from && a.to === r.to) return { ok: false, message: "Det er de datoer, bookingen allerede har." };
   const { holds, blocks } = await holdsExcluding(ctx.d, range.from, r._id);
   const u = usage(ctx.settings, holds, blocks);
-  if (peakDays(ctx.settings, range).length) {
-    return {
-      ok: false,
-      reason: "peak",
-      message: `${formatRange(range)} er i højsæson, og dertil kan en booking ikke flyttes, fordi de dage ville være blevet lejet ud alligevel. Det er en fast regel: eskalér ikke, og lov ikke en undtagelse.`,
-      alternatives: alternatives(ctx, u, range, r.theme, r.printer, true),
-      instruction: "Forklar venligt hvorfor, og foreslå et par af de ledige datoer uden for højsæson konkret.",
-    };
-  }
   const wrong = problem(ctx.settings, u, { range, theme: r.theme, printer: r.printer, photoType: r.photoType, delivery: "post" }, ctx.today);
-  if (wrong) return { ok: false, reason: "not_available", message: wrong, alternatives: alternatives(ctx, u, range, r.theme, r.printer, true), instruction: "Foreslå et par af de ledige datoer konkret, og spørg om kunden vil have en af dem." };
+  if (wrong) return { ok: false, reason: "not_available", message: wrong, alternatives: alternatives(ctx, u, range, r.theme, r.printer), instruction: "Foreslå et par af de ledige datoer konkret, og spørg om kunden vil have en af dem." };
   const id = randomBytes(4).toString("hex");
   const summary = `${r._id}: fra ${formatRange({ from: r.from, to: r.to })} til ${formatRange(range)}, samme pris (${kr(r.total)})`;
   const pendingChange = { id, bookingId: r._id, oldFrom: r.from, oldTo: r.to, from: a.from, to: a.to, proposedAt: ctx.now, summary };
@@ -475,9 +470,9 @@ async function commitDateChange(ctx: ToolContext, a: { changeId: string }): Prom
     return { ok: false, message: "Bookingen har ændret sig siden forslaget. Slå den op igen." };
   }
   const range: Range = { from: c.from, to: c.to };
-  if (peakDays(ctx.settings, range).length) {
+  if (!canChange(ctx.settings, r.from, ctx.today)) {
     await setChat(ctx, { pendingChange: null });
-    return { ok: false, reason: "peak", message: "De nye datoer er i højsæson, og dertil kan en booking ikke flyttes." };
+    return { ok: false, reason: "too_late", message: "Fristen for at flytte bookingen er overskredet." };
   }
   const { holds, blocks } = await holdsExcluding(ctx.d, range.from, r._id);
   if (!fits(ctx.settings, usage(ctx.settings, holds, blocks), range, "post", r.printer)) {

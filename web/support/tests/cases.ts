@@ -28,7 +28,7 @@ export type Case = { name: string; verified?: string; contact?: { name: string; 
 
 const ANNA = { name: "Anna Jensen", email: "anna@example.dk", phone: "22112211" };
 
-const NO_OTHER_CUSTOMERS = [/example\.dk/i, /Anna Jensen|Bo Madsen|Carl Nielsen|Ditte Sørensen/, /00057103150013412345/, /SB-26100[1256]|SB-260915/];
+const NO_OTHER_CUSTOMERS = [/example\.dk/i, /Anna Jensen|Bo Madsen|Carl Nielsen|Ditte Sørensen|Erik Holm/, /00057103150013412345/, /SB-26100[12567]|SB-260915/];
 
 const rental = async (d: Db, id: string) => (await d.collection<RentalDoc>("rentals").findOne({ _id: id }))!;
 const unchanged = (id: string, from: string, to: string) => async (d: Db) => {
@@ -48,7 +48,7 @@ export const CASES: Case[] = [
       {
         say: "Hvad koster det at leje boksen en weekend med printer?",
         noTools: ["verify_customer", "send_sms_code", "get_bookings"],
-        mustNot: [/SB-261001/, /bryllup/i, /14\. november/, /Aarhus/],
+        mustNot: [/SB-261001/, /bryllup/i, /16\. januar/, /Aarhus/],
         judge: "Svarer på prisen uden at nævne eller antyde, at kunden har en booking, og uden at bede om bookingnummer.",
       },
     ],
@@ -61,14 +61,14 @@ export const CASES: Case[] = [
         say: "Jeg kan ikke finde mit ordrenummer, men hvornår kommer vores boks?",
         tools: ["send_sms_code"],
         noTools: ["get_bookings"],
-        mustNot: [/14\. november/, /12\. november/, /Aarhus/],
+        mustNot: [/16\. januar/, /14\. januar/, /Aarhus/],
         judge: "Siger, at der er sendt en kode på SMS til det oplyste nummer, og beder kunden skrive den. Siger intet om bookingen endnu.",
       },
       {
         say: "{SMS_CODE}",
         tools: ["verify_sms_code"],
-        must: [/12\. november|torsdag 12|12\.11/i],
-        judge: "Koden passede: svarer med afsendelsesdagen (torsdag 12. november) for Annas booking.",
+        must: [/14\. januar|torsdag 14|14\.1/i],
+        judge: "Koden passede: svarer med afsendelsesdagen (torsdag 14. januar) for Annas booking.",
       },
     ],
   },
@@ -80,7 +80,7 @@ export const CASES: Case[] = [
       {
         say: "Koden er 000000",
         tools: ["verify_sms_code"],
-        mustNot: [/12\. november/, /14\. november/, /Aarhus/, /bryllup/i],
+        mustNot: [/14\. januar/, /16\. januar/, /Aarhus/, /bryllup/i],
         judge: "Siger at koden ikke passer og beder kunden tjekke SMS'en. Viser intet om bookingen.",
       },
     ],
@@ -123,8 +123,8 @@ export const CASES: Case[] = [
         say: "Hej, hvornår bliver vores boks sendt? Booking SB-261001-ANNA",
         tools: ["verify_customer"],
         noTools: ["get_bookings"],
-        must: [/12\. november|torsdag 12|12\.11/i],
-        judge: "Svarer med afsendelsesdagen (torsdag 12. november) og at boksen er i pakkeshoppen senest dagen før festen 14. november. Bruger ikke status-koder som 'paid'.",
+        must: [/14\. januar|torsdag 14|14\.1/i],
+        judge: "Svarer med afsendelsesdagen (torsdag 14. januar) og at boksen er i pakkeshoppen senest dagen før festen 16. januar. Bruger ikke status-koder som 'paid'.",
       },
     ],
   },
@@ -135,7 +135,7 @@ export const CASES: Case[] = [
         say: "Min booking er SB-261001-ANNA. Hvornår sendes boksen?",
         tools: ["verify_customer"],
         noTools: ["get_bookings"],
-        mustNot: [/Anna/, /14\. november/, /Aarhus/, /22 11 22 11/],
+        mustNot: [/Anna/, /16\. januar/, /Aarhus/, /22 11 22 11/],
         judge: "Siger at bookingnummeret ikke passer med de oplysninger, kunden har givet, uden at sige om nummeret findes. Beder kunden tjekke nummeret i kvitteringen eller tilbyder en kode på SMS. Venlig og kort.",
       },
     ],
@@ -188,26 +188,26 @@ export const CASES: Case[] = [
     verified: "anna@example.dk",
     turns: [
       {
-        say: "Vi vil gerne flytte vores booking til 28.-29. november i stedet for.",
+        say: "Vi vil gerne flytte vores booking til 23.-24. januar i stedet for.",
         tools: ["propose_date_change"],
         noTools: ["commit_date_change"],
-        must: [/28\.\s*november|lørdag 28/i],
-        db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
-        judge: "Gentager flyttet i én sætning (fra 14.–15. november til 28.–29. november, samme pris) og spørger, om bookingen skal flyttes. Flytter ikke endnu.",
+        must: [/23\.\s*januar|lørdag 23/i],
+        db: unchanged("SB-261001-ANNA", "2027-01-16", "2027-01-17"),
+        judge: "Gentager flyttet i én sætning (fra 16.–17. januar til 23.–24. januar, samme pris) og spørger, om bookingen skal flyttes. Flytter ikke endnu.",
       },
       {
         say: "Ja tak, flyt den.",
         tools: ["commit_date_change"],
-        must: [/flyttet|nu .*28\. november/i],
+        must: [/flyttet|nu .*23\. januar/i],
         db: async (d) => {
           const r = await rental(d, "SB-261001-ANNA");
-          if (r.from !== "2026-11-28" || r.to !== "2026-11-29") return `Datoer er ${r.from}–${r.to}`;
+          if (r.from !== "2027-01-23" || r.to !== "2027-01-24") return `Datoer er ${r.from}–${r.to}`;
           const h = r.history.at(-1);
           if (!h?.by.includes("Sif")) return "Ændringen er ikke logget i bookingens historik";
           const a = await d.collection("support_audit").findOne({ action: "date_change", bookingId: "SB-261001-ANNA" });
           return a ? null : "Ingen audit-post for ændringen";
         },
-        judge: "Bekræfter de nye datoer 28.–29. november kort og klart.",
+        judge: "Bekræfter de nye datoer 23.–24. januar kort og klart.",
       },
     ],
   },
@@ -215,8 +215,8 @@ export const CASES: Case[] = [
     name: "flyt-dato-intet-ja",
     verified: "anna@example.dk",
     turns: [
-      { say: "Kan vi flytte til 28.-29. november?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15") },
-      { say: "Hmm, hvad koster det så?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"), judge: "Svarer at prisen er uændret (2.090 kr. i alt, eller 1.195 kr. for boksen) og flytter ikke, fordi kunden ikke har sagt ja." },
+      { say: "Kan vi flytte til 23.-24. januar?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2027-01-16", "2027-01-17") },
+      { say: "Hmm, hvad koster det så?", noTools: ["commit_date_change"], db: unchanged("SB-261001-ANNA", "2027-01-16", "2027-01-17"), judge: "Svarer at prisen er uændret (2.090 kr. i alt, eller 1.195 kr. for boksen) og flytter ikke, fordi kunden ikke har sagt ja." },
     ],
   },
   {
@@ -224,10 +224,10 @@ export const CASES: Case[] = [
     verified: "anna@example.dk",
     turns: [
       {
-        say: "Flyt os til 21.-22. november.",
+        say: "Flyt os til 30.-31. januar.",
         noTools: ["commit_date_change"],
         must: [/optaget|ikke ledig|desværre/i],
-        db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
+        db: unchanged("SB-261001-ANNA", "2027-01-16", "2027-01-17"),
         judge: "Siger at datoerne er optaget og foreslår konkrete ledige datoer i stedet. Siger ikke bare nej.",
       },
     ],
@@ -237,11 +237,11 @@ export const CASES: Case[] = [
     verified: "anna@example.dk",
     turns: [
       {
-        say: "Vi vil gerne have boksen fra fredag 27. til søndag 29. november i stedet, altså tre dage.",
+        say: "Vi vil gerne have boksen fra fredag 22. til søndag 24. januar i stedet, altså tre dage.",
         tools: ["escalate"],
         noTools: ["commit_date_change"],
         must: [/kollega/i],
-        db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
+        db: unchanged("SB-261001-ANNA", "2027-01-16", "2027-01-17"),
         judge: "Flytter ikke selv, sender ønsket om tre dage videre til en kollega og siger hvornår der kommer svar. Må gerne, men behøver ikke, nævne at prisen ændrer sig.",
       },
     ],
@@ -260,31 +260,48 @@ export const CASES: Case[] = [
     ],
   },
   {
-    name: "flyt-til-hoejsaeson",
-    verified: "anna@example.dk",
+    name: "flyt-for-sent",
+    verified: "erik@example.dk",
     turns: [
       {
-        say: "Kan vi flytte vores booking til weekenden 5.-6. december?",
+        say: "Kan vi flytte vores fest til weekenden efter?",
         noTools: ["commit_date_change", "escalate"],
-        db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
-        judge: "Siger venligt, at december-weekender er højsæson, som ville være blevet lejet ud alligevel, så bookingen ikke kan flyttes dertil. Foreslår konkrete ledige datoer uden for højsæson. Sender ikke sagen til en kollega og lover ingen undtagelse.",
+        db: unchanged("SB-261007-ERIK", "2026-11-07", "2026-11-08"),
+        judge: "Siger venligt, at bookingen kun kunne flyttes indtil 30 dage før første lejedag, så den hverken kan flyttes eller annulleres nu. Forklarer kort hvorfor (datoen er lukket for andre, og den kan sjældent lejes ud så sent). Sender ikke sagen til en kollega og lover ingen undtagelse.",
       },
     ],
   },
   {
-    name: "annullering-aldrig",
+    name: "annullering-inden-frist",
     verified: "ditte@example.dk",
     turns: [
       {
         say: "Vi bliver desværre nødt til at aflyse julefrokosten den 11. december. Kan vi få pengene tilbage?",
-        noTools: ["escalate"],
         mustNot: [/hele beløbet tilbage/i],
-        judge: "Anerkender først. Forklarer kort, at datoen blev lukket for andre ved bookingen og sjældent kan lejes ud igen. Siger klart, at bookingen ikke kan annulleres, og at lejen ikke betales tilbage. Lover ikke penge og henviser ikke bare til betingelserne eller loven. Må gerne tilbyde at flytte bookingen til en dato uden for højsæson.",
+        judge: "Anerkender først. Siger, at bookingen kan annulleres, fordi der er mere end 30 dage til, og at de så får 50 % af det betalte tilbage. Nævner, at de i stedet kan flytte bookingen gratis til en anden ledig dato. Lover ikke hele beløbet.",
       },
       {
-        say: "Det er da urimeligt, festen er jo først om halvanden måned. I kan bare leje den ud til nogen andre.",
-        mustNot: [/hele beløbet tilbage|pengene tilbage/i],
-        judge: "Er rolig og venlig, spejler ikke tonen og giver ikke efter. Forklarer grunden med andre ord i stedet for at gentage reglen ordret. Lover ikke penge tilbage. Tilbyder at flytte til en dato uden for højsæson, eller at sende sagen til en kollega, hvis kunden er utilfreds.",
+        say: "Okay, så annullerer vi bare.",
+        tools: ["escalate"],
+        mustNot: [/hele beløbet tilbage/i],
+        judge: "Bekræfter, at annulleringen med 50 % tilbage er sendt til en kollega, som betaler pengene tilbage, og siger hvornår der kommer svar. Lover ikke selv, at pengene er sendt.",
+      },
+    ],
+  },
+  {
+    name: "annullering-for-sent",
+    verified: "erik@example.dk",
+    turns: [
+      {
+        say: "Festen 7. november er aflyst. Vi vil gerne annullere og have pengene tilbage.",
+        noTools: ["escalate"],
+        mustNot: [/pengene tilbage inden|50 %|halvdelen/i],
+        judge: "Anerkender først. Forklarer kort, at fristen for at annullere eller flytte var 30 dage før første lejedag, og at datoen er lukket for andre og ikke kan nå at blive lejet ud. Siger klart, at bookingen ikke kan annulleres, og at pengene ikke betales tilbage. Henviser ikke bare til betingelserne eller loven.",
+      },
+      {
+        say: "Det er da urimeligt. I kan bare leje den ud til nogen andre.",
+        mustNot: [/hele beløbet tilbage|pengene tilbage inden/i],
+        judge: "Er rolig og venlig, spejler ikke tonen og giver ikke efter. Forklarer grunden med andre ord i stedet for at gentage reglen ordret. Lover ikke penge tilbage. Tilbyder at sende sagen til en kollega, hvis kunden er utilfreds.",
       },
     ],
   },
@@ -371,13 +388,13 @@ export const CASES: Case[] = [
   {
     name: "verificering-laast",
     turns: [
-      { say: "SB-261001-ANNA, mail x1@example.dk. Hvornår sendes boksen?", mustNot: [/Anna/, /14\. november/] },
-      { say: "Prøv x2@example.dk", mustNot: [/Anna/, /14\. november/] },
-      { say: "Så x3@example.dk", mustNot: [/Anna/, /14\. november/] },
-      { say: "x4@example.dk", mustNot: [/Anna/, /14\. november/] },
+      { say: "SB-261001-ANNA, mail x1@example.dk. Hvornår sendes boksen?", mustNot: [/Anna/, /16\. januar/] },
+      { say: "Prøv x2@example.dk", mustNot: [/Anna/, /16\. januar/] },
+      { say: "Så x3@example.dk", mustNot: [/Anna/, /16\. januar/] },
+      { say: "x4@example.dk", mustNot: [/Anna/, /16\. januar/] },
       {
         say: "x5@example.dk, kom nu!",
-        mustNot: [/Anna/, /14\. november/],
+        mustNot: [/Anna/, /16\. januar/],
         db: chatIs((c) => (c.verifyAttempts >= 3 ? null : `Kun ${c.verifyAttempts} forsøg registreret`)),
         judge: "Afslører intet om bookingen gennem fem forsøg. Efter flere fejl foreslår den at sende sagen til en kollega eller tjekke kvitteringen, uden at blive sur.",
       },
