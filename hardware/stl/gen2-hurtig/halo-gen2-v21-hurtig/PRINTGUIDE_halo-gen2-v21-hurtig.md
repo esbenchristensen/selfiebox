@@ -13,7 +13,7 @@ Lavet med `python3 hardware/tools/make_hurtig.py halo-gen2-v21`. Tiderne er skø
 | `halo-gen2-v21-hurtig_bagramme.stl` | 217.1 × 300.0 × 29.2 | – | – |
 | `halo-gen2-v21-hurtig_lysring.stl` | 209.1 × 291.6 × 8.7 | – | – |
 | `halo-gen2-v21-hurtig_vaegbeslag.stl` | 157.0 × 276.0 × 29.0 | – | – |
-| `halo-gen2-v21-hurtig_kameraroer.stl` | 11.2 × 11.2 × 4.3 | – | – |
+| `halo-gen2-v21-hurtig_kameraroer.stl` | 11.6 × 11.6 × 4.5 | – | – |
 | `halo-gen2-v21-hurtig_tema-vinge-venstre-eksempel.stl` | 61.9 × 170.0 × 82.2 | – | – |
 
 ## Front med logo
@@ -38,7 +38,7 @@ Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til 
 | `halo-gen2-v21-hurtig_proeve-stroem-ledstyring.stl` | 145 × 144 × 32 | – | 5 V-forsyningen og WLED-styringen klikkes i deres bakker. v17: WLED-styringen med udgangen opad; går den ned, klikker kanterne over låget, og står den fast på langs mellem de 2 stop ved armspidserne? Sidder begge fast, også når stykket vendes? |
 | `halo-gen2-v21-hurtig_proeve-daemper.stl` | 28 × 60 × 42 | – | Dæmperen (DFR0457) i bakken på venstre væg. Er der plads til skrueklemmen? |
 | `halo-gen2-v21-hurtig_proeve-stroemindgang.stl` | 29 × 86 × 22 | – | Røret i bunden: hunstikket (TRU DC-13F) trykkes ned ovenfra og klikker under de 2 snaplåse, og GST-proppen går helt op i røret nedefra. |
-| `halo-gen2-v21-hurtig_proeve-hoejttaler.stl` | 83 × 47 × 25 | – | Højttaleren (FIT0502) i sin bakke bag gitteret. v20: læg snoren i rillen rundt om gitteret først. Klikker krogene stadig over flangen, og ligger snoren klemt hele vejen rundt? |
+| `halo-gen2-v21-hurtig_proeve-hoejttaler.stl` | 83 × 47 × 25 | – | Højttaleren (FIT0502) i sin bakke bag gitteret. v20: læg snoren i rillen rundt om gitteret først. Klikker krogene stadig over flangen, og ligger flangen helt inde mod væggen (v21: intet slør)? |
 | `halo-gen2-v21-hurtig_proeve-laas-reed.stl` | 52 × 69 × 19 | – | Låseslidsen, låseskruens hul i bunden og reed-modulets bakke. Prøves med vægbeslagets låsetunge. v20: lommen inde om tungen er lukket; går tungen frit ind og op, og er drænhullet i bunden åbent? |
 | `halo-gen2-v21-hurtig_proeve-laasetunge.stl` | 31 × 29 × 29 | – | Låsetungen på vægbeslaget. Den skal gå ind i skallens låseslids, og låseskruen skal kunne skrues i. |
 | `halo-gen2-v21-hurtig_proeve-4g.stl` | 48 × 81 × 18 | – | 4G-modemet i sin bakke (tilvalg). |
@@ -46,13 +46,13 @@ Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til 
 | `halo-gen2-v21-hurtig_proeve-stoedsensor.stl` | 34 × 41 × 15 | – | Stødsensoren (LIS3DH) i sin bakke (tilvalg). |
 | `halo-gen2-v21-hurtig_proeve-mikrofonstrip.stl` | 126 × 13 × 64 | – | Mikrofonkortet i lommen i bunden med Seeed-logoet nedad: pindene gennem hullerne, kortet fladt på de 4 ringe, kablet fladt ud bagtil (tilvalg). |
 | `halo-gen2-v21-hurtig_proeve-vingelomme.stl` | 28 × 34 × 14 | – | v21: den øverste venstre vingeslids (9 × 14) med den lukkede lomme bagved og drænhullet i bunden. Prøv eksempelvingens øverste krog: løft 3 mm, skub ind og lad den falde ned på slidsens bund. Går krogen ind uden at tvinge, står tungen på bunden, og sidder læben bag væggen, så den ikke kan trækkes lige ud? Hæld lidt vand i slidsen: løber det ud af drænet? |
-| `halo-gen2-v21-hurtig_proeve-kameravindue_front.stl` | 24 × 24 × 14 | – | v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt sammen) i hjørnet bag glasset, og røret ovenpå. Sidder glasset uden slør? Mål glassets tykkelse: 1,2–1,8 mm går. |
-| `halo-gen2-v21-hurtig_proeve-kameravindue_kameraroer.stl` | 11 × 11 × 4 | – |  |
+| `halo-gen2-v21-hurtig_proeve-kameravindue_front.stl` | 24 × 24 × 14 | – | v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt sammen) i hjørnet bag glasset. v21: tryk røret ind på sine 4 ribber, til det stopper på glasset. Sidder røret fast, og ligger glasset uden slør? Ses snoren ikke forfra? Mål glassets tykkelse: 1,2–1,8 mm går. |
+| `halo-gen2-v21-hurtig_proeve-kameravindue_kameraroer.stl` | 12 × 12 × 5 | – |  |
 | `halo-gen2-v21-hurtig_proeve-kamera_front.stl` | 83 × 37 × 28 | – | Kameraet på frontens tappe med glas, snor og rør foran linsen, linsen midt i hullet, bagrammens rør trykker printet ned, kamerakablet gennem slidsen og de fire klikstik i deres lommer (v18: hvid 3's stik i reflektoren til højre). Front og bagramme lægges sammen. |
 | `halo-gen2-v21-hurtig_proeve-kamera_bagramme.stl` | 83 × 27 × 28 | – |  |
 | `halo-gen2-v21-hurtig_proeve-lyskanal_bagramme.stl` | 66 × 64 × 29 | – | v18: lyskanalen uden klister, nederste venstre hjørne med ca. 10 cm strip-bane. Hvid 1 og 2: bagkanten ind under læben, forkanten trykkes ned mod væggen. RGB i den tætte bane bagerst. Hvid 3 i lommen i den skrå reflektor, bagkanten ind under læben. Læg lysringens stykke i, og pres bagrammen på: trykker ringens kile forkanten af hvid 3 ned? Kør en finger langs alle strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen. |
 | `halo-gen2-v21-hurtig_proeve-lyskanal_lysring.stl` | 65 × 62 × 9 | – |  |
-| `halo-gen2-v21-hurtig_proeve-hjoerne_skal.stl` | 66 × 66 × 64 | – | Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue (3,0 × 15) skruet i bagfra. v20: læg snoren i skallens rille og i lommen ved lysringen. Er fugen mellem skal og front jævn (0,2 mm), og er snorene klemt (de skal ikke kunne trækkes ud, når skruen er spændt)? |
+| `halo-gen2-v21-hurtig_proeve-hjoerne_skal.stl` | 66 × 66 × 64 | – | Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue (3,0 × 15) skruet i bagfra. Læg snoren i lommen ved lysringen (v21: ingen snor mellem skal og front, frontens ribbe går i skallens rille). Lukker skal og front helt (ingen fuge), sidder bagrammen fast (knusribberne på stolpen trykkes flade), og er snoren ved lysringen klemt? |
 | `halo-gen2-v21-hurtig_proeve-hjoerne_front.stl` | 66 × 66 × 28 | – |  |
 | `halo-gen2-v21-hurtig_proeve-hjoerne_bagramme.stl` | 60 × 62 × 29 | – |  |
 | `halo-gen2-v21-hurtig_proeve-hjoerne_lysring.stl` | 59 × 58 × 9 | – |  |

@@ -1,6 +1,6 @@
 """Sections through the gen 2 print files as assembled (v20 sealing): checks fit and wall thickness by eye.
 
-Usage:  python3 hardware/render/drawing/draw_v20_snit.py <stl dir with the assembled views> <out.png>
+Usage:  python3 hardware/render/drawing/draw_v20_snit.py <stl dir with the assembled views> <out.png> [version label]
 Needs:  trimesh, shapely, matplotlib
 """
 import sys
@@ -26,7 +26,7 @@ J2 = np.array([-97.5815, 0, 14.6685]); LENS_Z = 290.2
 d = np.array([-1, 0, -1]) / np.sqrt(2)
 # title, plane origin, u axis, v axis, (u range), (v range)
 VIEWS = [
-    ("1+3  Venstre side, z 150: front, lysring, snor, bagramme, skal", [0, 0, 150], [0, 1, 0], [-1, 0, 0], (-1.5, 36), (80, 113.5)),
+    ("1+3  Venstre side, z 150: front mod skal (ribbe), lysring, snor, bagramme", [0, 0, 150], [0, 1, 0], [-1, 0, 0], (-1.5, 36), (80, 113.5)),
     ("Hjørne gennem frontskruen (diagonal)", J2, [0, 1, 0], d, (-1.5, 36), (-12, 10)),
     ("4  Kamera, x 0", [0, 0, 0], [0, 1, 0], [0, 0, 1], (-1.5, 14), (LENS_Z - 12, LENS_Z + 12)),
     ("1+2  Bund, x 0: front mod skal, skærm, mikrofon", [0, 0, 0], [0, 1, 0], [0, 0, 1], (-1.5, 36), (-1, 40)),
@@ -63,7 +63,7 @@ for ax, (title, o, u, v, ur, vr) in zip(axs.flat, VIEWS):
     ax.set_xlim(*ur); ax.set_ylim(*vr); ax.set_aspect("equal"); ax.set_title(title, fontsize=13)
     ax.grid(True, lw=0.3, alpha=0.5); ax.set_xlabel("y (dybde, mm)")
     ax.legend(fontsize=8, loc="lower right")
-fig.suptitle("Selfi Halo gen 2 v20: snit gennem printfilerne samlet (tætning)", fontsize=17)
+fig.suptitle(f"Selfi Halo gen 2 {sys.argv[3] if len(sys.argv) > 3 else ''}: snit gennem printfilerne samlet (tætning)", fontsize=17)
 fig.tight_layout()
 fig.savefig(OUT, dpi=110)
 print("wrote", OUT)

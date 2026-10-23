@@ -41,17 +41,16 @@ CONTACT = {
     ("x_frame3", "x_dsp_back"): 150, ("x_frame3", "x_dsp_glass"): 20,  # bosses and spring toes press the display 0.2 (PRELOAD, LK_TOE)
     ("x_shell3", "c_speaker"): 100, ("x_shell3", "c_mics"): 50,        # pegs through the ear / board holes (the block models have none)
     ("x_ring3", "x_seal"): 40, ("x_front3", "x_seal"): 1,               # the cords lie on the faces they seal (0.01 mm modelling overlap)
+    ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
+    ("x_camsleeve", "x_front3"): 0.5,       # v21: the sleeve's 4 press ribs on the shroud's flats
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
     ("x_ring3", "x_front3", 0.1, "light ring in the slot and its seal pocket"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame"),
-    ("x_camsleeve", "x_front3", 0.1, "camera sleeve in the shroud"),
-    ("x_camsleeve", "x_camera", 0.0, "sleeve stands on the lens holder (bore 0.2 round the barrel)"),
-    ("x_camsleeve", "x_camglass", 0.2, "sleeve behind the glass"),
+    ("x_camsleeve", "x_camera", 0.2, "v21: sleeve 0.3 clear of the lens holder, bore 0.2 round the barrel"),
     ("x_camera", "x_camglass", 0.2, "lens tip behind the glass"),
-    ("x_front3", "x_shell3", 0.1, "front in the shell (screw bosses, tongue)"),
-    ("x_frame3", "x_shell3", 0.0, "frame clamped on the shell posts"),
+    ("x_front3", "x_shell3", 0.0, "v21: front face on the shell face (no gap), rib in the groove"),
     ("x_dsp_glass", "x_frame3", 0.0, "display glass: the frame toes press it"),
     ("c_mics", "x_front3", 0.3, "mic board under the channel wall"),
     ("x_strip_w", "x_front3", 0.0, "white strips end at the camera caps"),

@@ -24,7 +24,7 @@ PARTS = [
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
     ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
-    ("pakninger",     "x_seal",        "Pakninger: O-ringsnor Ø1,5 i silikoneskum (front/skal, skærm, lysring, kamera, højttaler)", "#dc2626", "Kabinet", [0, 0, 95]),
+    ("pakninger",     "x_seal",        "Pakninger: O-ringsnor Ø1,5 i silikoneskum (skærm, lysring, kamera, højttaler; front/skal har ribbe og rille)", "#dc2626", "Kabinet", [0, 0, 95]),
     ("kameraglas",    "x_camglass",    "Kameraglas Ø12 × 1,5",            "#bfe3f2", "Kabinet",    [0, 0, 140]),
     ("kameraroer",    "x_camsleeve",   "Kamerarør (sort ASA): trykker pakningen mod glasset", "#1d1d20", "Kabinet", [0, 0, 110]),
     ("ledskinne",     "x_frame3",      "Bagramme med reflektor og kantspor (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),

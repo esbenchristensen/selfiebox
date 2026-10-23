@@ -186,10 +186,19 @@ module wall_cleat2() {
 // Rain, sleet and spills from any side under a light roof. Until v19 with no added parts (Esben 19 Oct: no gaskets,
 // membranes, glass or glue); v20 (Esben 23 Oct) adds one removable seal cord in every joint and a small camera
 // window (see "v20 sealing"). Every opening is still shaped so water runs back out.
-// Front to shell: the cord in the shell's front face; behind it the front's 5 mm tongue still overlaps the shell wall.
-// v20: the rib and its two drain notches are gone; a seal cord lies in a groove in the shell's front face (see v20 sealing).
+// Front to shell (v21, Esben 23 Oct): no cord here any more (v20 had one, and it showed through the 0.2 mm joint gap).
+// The two faces now meet with no gap; a rib on the front's skirt enters a groove in the shell's front face, as in v19.
+// Water that passes the butt joint meets the rib, runs round the groove and leaves through two drain notches in the
+// underside. Behind it the front's 5 mm tongue still overlaps the shell wall. The faces are the hard stop, so the
+// 4 screws clamp the white frame through small crush bumps on the shell posts (CRUSH), which take up the print tolerance.
+JR = [1.0, 1.4, 1.4, 0.8, 1.0];         // groove: from outside, width, depth; rib: width, height (v19: rib 0.6 wide)
+DRAIN_X = [-60, 60];
 module lip_ring(a, b) difference() { translate([0, a]) rr(W - 2*a, H - 2*a, R - a); translate([0, b]) rr(W - 2*b, H - 2*b, R - b); }
-module joint_groove() ext_y(SKIRT - 0.01, SKIRT + JOINT_SEAL[2]) lip_ring(JOINT_SEAL[0], JOINT_SEAL[0] + SEAL[1]);
+module joint_groove() {
+    ext_y(SKIRT - 0.01, SKIRT + JR[2]) lip_ring(JR[0], JR[0] + JR[1]);
+    for (x = DRAIN_X) translate([x - 0.8, SKIRT - 0.01, -0.01]) cube([1.6, JR[2] + 0.01, JR[0] + JR[1] - 0.2]);
+}
+module joint_rib() { c = JR[0] + (JR[1] - JR[3])/2;  ext_y(SKIRT - 0.01, SKIRT + JR[4]) lip_ring(c, c + JR[3]); }
 // camera: a printed sleeve round the lens holder, from the front to just short of the camera board. Since v20 a small
 // glass sits in front of the lens (see v20 sealing, 4); the sleeve still keeps the camera bay apart from the channel.
 module cam_shroud() translate([0, 0, LENS_Z]) difference() {
@@ -277,7 +286,7 @@ module services_add() {
         // v17: hooks with a flat catch 1.2 over the flange (until v16 a slope 0.3 above it, 0.8 in at the top)
         for (sz = [-1, 1]) translate([-6, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
             cube([12, 1.5, SPK_FL + 2.0]);
-            translate([0, sz > 0 ? 0 : 1.5, SPK_FL + 0.1]) snap_lip(12, 1.2, 1.6, sz > 0 ? 1 : 0);
+            translate([0, sz > 0 ? 0 : 1.5, SPK_FL - 0.02]) snap_lip(12, 1.2, 1.6, sz > 0 ? 1 : 0);   // v21: no play (v17-v20: 0.1), the flange closes fully on the wall over the cord
         }
     }
 }
@@ -508,30 +517,41 @@ J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_
 // Grooves are 2.0 wide; each cord is squeezed to about 1.0. All seals sit behind faces, so tape, stickers or a theme on
 // the outside neither touch nor pull on them.
 SEAL = [1.5, 2.0, 1.0];                   // cord Ø, groove width, groove depth
-// 1 front to shell: groove in the shell's front face, 0.5 lands each side. The front's outer skirt stops 0.2 short of the
-// shell, so the 4 screws always clamp the stack front boss -> frame -> shell post (which presses the light ring), and
-// the cord takes up the print tolerance: squeezed to 0.8 + 0.2 = 1.0.
-JOINT_SEAL = [0.5, 0, 0.8];               // groove: from outside, -, depth
-JOINT_GAP = 0.2;
+// 1 front to shell: v21 has no cord here, see "weather" (rib and groove, faces meet with no gap).
+JOINT_GAP = 0;                            // v20: 0.2, the cord took up the tolerance
+// v21: crush bumps on each shell post's face against the frame: the front/shell faces are the stop, the bumps reach
+// CRUSH[0] past the frame's back face and are squeezed flat by the screw, so the frame stays clamped (front boss ->
+// frame -> post) whatever the print tolerance. The post face itself stays CRUSH[1] clear of the frame.
+CRUSH = [0.2, 0.1, 3, 1.6, 0.6, 3.1];     // reach, face clearance, count, base Ø, tip Ø, radius from the screw
 // 3 light ring: a pocket 1.0 deep in the back of the front plate, the full channel width (CH_IN): the cord lies beside
 // the ring's wall, under its flange. The frame presses the flange onto it (it rested on the front in v19).
 RING_SEAL_Y = PT - 1.0;                   // 2.2: front face of the pocket
 // 4 camera: glass Ø12 x 1.5 ([C] AliExpress, ±0.3) in a Ø12.2 pocket behind a 0.6 lip; the lip opens 60 deg (Wide: 120 deg
 // diagonal) to Ø10.9 at the face. A cord ring sits in the corner behind the glass, pressed into it by the 45 deg front
-// of a printed sleeve that stands on the lens holder: it seals the glass to the pocket wall.
+// of a printed sleeve: it seals the glass to the pocket wall. v21 (Esben 23 Oct: every seal closes fully, no gap): the
+// sleeve is pressed into the shroud on 4 ribs until its front face stops on the glass, so glass -> lip and sleeve ->
+// glass are both hard stops and the cord's corner is a closed, fixed gland (Ø1.5 squeezed to about 1.05). The sleeve
+// stays CAM_SLV_GAP clear of the lens holder (v20: it stood on the holder, 0.5 behind the glass).
 // Field of view, front lens element Ø4 [C]: r 3.04 at the glass back, 4.08 at its front, 5.12 at the face (lip: 4.41 / 5.45).
 CAM_GLASS = [12, 1.5];
 CAM_WIN = [12.2, 0.6, 10.9];              // pocket Ø, lip, face Ø
-CAM_SLV = [7.7, 11.2, 4.6];               // sleeve: bore (barrel Ø6.95-7.25), outside (shroud 11.6 square), r where the 45 deg front starts
-CAM_SLV_Y = [CAM_TIP_Y - 0.1, CAM_PCB_Y - CAM_HOLDER_H];   // front face (0.5 behind the glass), back = lens holder top
+CAM_SLV = [7.7, 11.2, 4.3];               // sleeve: bore (barrel Ø6.95-7.25), outside (shroud 11.6 square), r where the 45 deg front starts (v20: 4.6)
+CAM_SLV_GAP = 0.3;
+CAM_SLV_Y = [CAM_WIN[1] + CAM_GLASS[1], CAM_PCB_Y - CAM_HOLDER_H - CAM_SLV_GAP];   // front face on the glass, back clear of the lens holder
+CAM_SLV_RIB = [1.0, (CAM_HOLDER + 0.8)/2, PT + 1.2];   // press ribs: width, reach (= the shroud's flat), from y (behind the glass pocket)
 module cam_window_cut() {
     cyl_y(CAM_WIN[0], CAM_WIN[1], PT + 1, 0, LENS_Z);
     translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_WIN[2], d2 = CAM_WIN[2] - 2*(CAM_WIN[1] + 0.02)*tan(60), h = CAM_WIN[1] + 0.02, $fn = 64);
 }
 module cam_glass() cyl_y(CAM_GLASS[0], CAM_WIN[1], CAM_WIN[1] + CAM_GLASS[1], 0, LENS_Z);
-module cam_sleeve() translate([0, 0, LENS_Z]) rotate([-90, 0, 0]) rotate_extrude($fn = 64) polygon([
-    [CAM_SLV[0]/2, CAM_SLV_Y[0]], [CAM_SLV[2], CAM_SLV_Y[0]], [CAM_SLV[1]/2, CAM_SLV_Y[0] + CAM_SLV[1]/2 - CAM_SLV[2]],
-    [CAM_SLV[1]/2, CAM_SLV_Y[1]], [CAM_SLV[0]/2, CAM_SLV_Y[1]]]);
+module cam_sleeve() translate([0, 0, LENS_Z]) {
+    rotate([-90, 0, 0]) rotate_extrude($fn = 64) polygon([
+        [CAM_SLV[0]/2, CAM_SLV_Y[0]], [CAM_SLV[2], CAM_SLV_Y[0]], [CAM_SLV[1]/2, CAM_SLV_Y[0] + CAM_SLV[1]/2 - CAM_SLV[2]],
+        [CAM_SLV[1]/2, CAM_SLV_Y[1]], [CAM_SLV[0]/2, CAM_SLV_Y[1]]]);
+    // v21: 4 press ribs onto the shroud's flats (the sleeve is held by them, not by the camera)
+    for (a = [0, 90, 180, 270]) rotate([0, -a, 0]) translate([CAM_SLV[1]/2 - 0.3, CAM_SLV_RIB[2], -CAM_SLV_RIB[0]/2])
+        cube([CAM_SLV_RIB[1] - CAM_SLV[1]/2 + 0.3, CAM_SLV_Y[1] - CAM_SLV_RIB[2], CAM_SLV_RIB[0]]);
+}
 // the cord ring: inscribed in the corner of glass back, pocket wall and the sleeve's 45 deg face
 CAM_CORD = let(gb = CAM_WIN[1] + CAM_GLASS[1], L = CAM_WIN[0]/2 - (CAM_SLV[2] - (CAM_SLV_Y[0] - gb)), ri = L*(2 - sqrt(2))/2) [gb + ri, CAM_WIN[0]/2 - ri, ri];
 // 5 speaker: a groove in the back wall round the grille, inside the speaker's flange and outside its 38.5 x 27 opening
@@ -623,7 +643,6 @@ module j2_boss(j) difference() {
 }
 // the cords as they lie squeezed (3D viewer, fit check)
 module seal_cords() {
-    ext_y(SKIRT - JOINT_GAP, SKIRT + JOINT_SEAL[2]) lip_ring(JOINT_SEAL[0] + 0.05, JOINT_SEAL[0] + SEAL[1] - 0.05);                         // 1
     ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3) difference() { groove3_2d(LAND3 + GROOVE3[0] - 0.05); groove3_2d(LAND3 + 0.05); }            // 2
     ext_y(RING_SEAL_Y, PT) difference() { ring3_2d(CH_IN - 0.05); ring3_2d(RF3 + PT - RING_SEAL_Y - 0.4 + 0.05); }                         // 3
     translate([0, CAM_CORD[0], LENS_Z]) rotate([-90, 0, 0]) rotate_extrude($fn = 64) translate([CAM_CORD[1], 0]) circle(r = CAM_CORD[2], $fn = 16);   // 4
@@ -728,6 +747,7 @@ module front3() union() {
         translate([0, 0, LENS_Z]) ext_y(PT, CAM_PCB_Y) square(CAM_HOLDER + 0.8, center = true);   // the caps keep clear of the lens holder
     }
     glass_ribs();
+    joint_rib();                                                          // v21: into the shell's groove
 }
 module ring3() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
@@ -891,16 +911,20 @@ module shell3(top = UNIT_TOP) {
     difference() {
         union() {
             shell2(top);
-            for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
+            for (j = J2) { cyl_y(POST_D, FR_BACK + CRUSH[1], D - BACK_T + 0.01, j[0], j[1]); crush_bumps(j); }
             power_holders();
             if (WING_POCKET) wing_pockets();
         }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
-        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
+        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
     }
 }
+
+module crush_bumps(j) for (i = [0 : CRUSH[2] - 1]) let(a = 90 + i*360/CRUSH[2])
+    translate([j[0] + CRUSH[5]*cos(a), FR_BACK + CRUSH[1] + 0.01, j[1] + CRUSH[5]*sin(a)]) rotate([90, 0, 0])
+        cylinder(d1 = CRUSH[3], d2 = CRUSH[4], h = CRUSH[0] + CRUSH[1] + 0.01, $fn = 16);
 
 // ------------------------------------------------------------ main unit ----
 module main_unit() {        // gen 2 unit, without the wall cleat
