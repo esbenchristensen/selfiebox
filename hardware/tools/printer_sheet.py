@@ -148,16 +148,16 @@ def sheets_v2(v3=False):
     for s_, x_, z_ in (("DNP QW410 drejet 90°, 208 × 198 × 240", 60, 240), ("Pi Zero 2 W", 20, 210), ("frit papirrum 190", 300, 240)):
         b.append(note(lx + x_ * S, ly - z_ * S, s_))
     if v3:
-        b.append(note(lx + 12 * S, ly + 26, "strømkabel ind bagfra gennem soklen, stikket kun indeni · tætningsbånd 3 × 1 i riller ved fugerne"))
+        b.append(note(lx + 12 * S, ly + 26, "strømkabel ind bagfra gennem soklen, stikket kun indeni · " + ("skumsnor Ø1,5 i riller ved fugerne, 6 kroge trækker kappen ned" if VER == "selfi-printer-v4" else "tætningsbånd 3 × 1 i riller ved fugerne")))
     kx, ky = 2160, 880 + TOP * S
     g, _ = place("d_cut_lock", kx, ky, fill="#e9eae6"); b += [text(2160, 860, "Snit gennem låsen", 18, font_weight="bold"), g]
     for i, s_ in enumerate(("Kamlåsen i venstre ende låser kappen:", "kammen drejer op under taget på", "låseholderen i soklen, så kappen hverken",
                             "kan løftes eller skubbes. Låst op: skub", "kappen 10 mm til venstre og løft den af.")):
         b.append(text(2160, ky + 40 + i * 20, s_, 13, fill=GREEN))
-    sheet("tegning", f"Selfi printer {'v3' if v3 else 'v2'} · tegning", "Hærværkssikret: DNP QW410 drejet 90°, papiret kører frit i et lukket rum, printet rutsjer ned i en lomme foran · "
+    sheet("tegning", f"Selfi printer {VER.rsplit('-', 1)[1]} · tegning", "Hærværkssikret: DNP QW410 drejet 90°, papiret kører frit i et lukket rum, printet rutsjer ned i en lomme foran · "
           + ("flad top · nøglelås" if v3 else "sadeltag · nøglelås"),
           b, w=2700, h=1680)
 
 
 LOGO = base64.b64encode(cairosvg.svg2png(url=str(Path(__file__).resolve().parents[2] / "marketing/brandpakke/01_logo/svg/selfi-logo-groen.svg"), output_width=700)).decode()
-{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2, "selfi-printer-v3": lambda: sheets_v2(v3=True)}[VER]()
+{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2, "selfi-printer-v3": lambda: sheets_v2(v3=True), "selfi-printer-v4": lambda: sheets_v2(v3=True)}[VER]()

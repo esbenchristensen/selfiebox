@@ -28,7 +28,7 @@ export const pricing = {
   design: "Specialdesign af kabinettet: pris aftales",
 };
 
-// Printeren (selfi-printer-v3) til steder. Esben 23. okt. 2026: fra 2.000 kr./md., et print sælger typisk for 50 kr.,
+// Printeren (selfi-printer-v4) til steder. Esben 23. okt. 2026: fra 2.000 kr./md., et print sælger typisk for 50 kr.,
 // og har stedet en boks, kan printeren være gratis, mod at Selfi tager hele salget fra den.
 // Papir er et skøn: DNP QW410 4×6, 2 ruller à 150 print for ca. 650 kr. (hardware/tools/make_printer_bom.py).
 export const printer = {
