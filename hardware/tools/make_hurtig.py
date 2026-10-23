@@ -72,7 +72,7 @@ COUPONS = [
      "og sidder læben bag væggen, så den ikke kan trækkes lige ud? Hæld lidt vand i slidsen: løber det ud af drænet?"),
     ("kameravindue", ["front", "kameraroer"], ["kameraglas"], 6, "fuld",
      "v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt "
-     "sammen) i hjørnet bag glasset. v21: tryk røret ind på sine 4 ribber, til det stopper på glasset. Sidder røret fast, "
+     "sammen) i hjørnet bag glasset. v22: tryk røret ind med ribberne i hjørnerne, til det stopper. Prøv også uden glas: står røret samme sted? Sidder røret fast, "
      "og ligger glasset uden slør? Ses snoren ikke forfra? Mål glassets tykkelse: 1,2–1,8 mm går."),
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
      "Kameraet på frontens tappe med glas, snor og rør foran linsen, linsen midt i hullet, bagrammens rør trykker printet ned, "
@@ -84,7 +84,7 @@ COUPONS = [
      "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
-     "(3,0 × 15) skruet i bagfra. Læg snoren i lommen ved lysringen (v21: ingen snor mellem skal og front, frontens ribbe går i "
+     "(3,0 × 15) skruet i bagfra. Lysringens skulder står på frontpladen, og snoren ligger i rillen ved siden af (v22; prøv også uden snor: rasler ringen?). Ingen snor mellem skal og front (frontens ribbe går i "
      "skallens rille). Lukker skal og front helt (ingen fuge), sidder bagrammen fast (knusribberne på stolpen trykkes flade), og er "
      "snoren ved lysringen klemt?"),
     ("laas", ["front", "bagramme"], ((-116, -64), (-64, -22)), 0, "fuld",

@@ -524,21 +524,26 @@ JOINT_GAP = 0;                            // v20: 0.2, the cord took up the tole
 // frame -> post) whatever the print tolerance. The post face itself stays CRUSH[1] clear of the frame.
 CRUSH = [0.2, 0.1, 3, 1.6, 0.6, 3.1];     // reach, face clearance, count, base Ø, tip Ø, radius from the screw
 // 3 light ring: a pocket 1.0 deep in the back of the front plate, the full channel width (CH_IN): the cord lies beside
-// the ring's wall, under its flange. The frame presses the flange onto it (it rested on the front in v19).
+// the ring's wall, under its flange. v22: the ring's shoulder stands on the pocket floor (hard stop) and the frame holds the
+// flange down, so the groove is closed and fixed and the ring is just as tight without a cord (v20/v21: it rested on the cord).
 RING_SEAL_Y = PT - 1.0;                   // 2.2: front face of the pocket
+RING_SH = S3 + 0.4;                       // v22: the ring's shoulder rests on the pocket floor from the slot edge (7.0) to 7.4
 // 4 camera: glass Ø12 x 1.5 ([C] AliExpress, ±0.3) in a Ø12.2 pocket behind a 0.6 lip; the lip opens 60 deg (Wide: 120 deg
 // diagonal) to Ø10.9 at the face. A cord ring sits in the corner behind the glass, pressed into it by the 45 deg front
 // of a printed sleeve: it seals the glass to the pocket wall. v21 (Esben 23 Oct: every seal closes fully, no gap): the
 // sleeve is pressed into the shroud on 4 ribs until its front face stops on the glass, so glass -> lip and sleeve ->
 // glass are both hard stops and the cord's corner is a closed, fixed gland (Ø1.5 squeezed to about 1.05). The sleeve
 // stays CAM_SLV_GAP clear of the lens holder (v20: it stood on the holder, 0.5 behind the glass).
+// v22 (Esben 23 Oct: everything must assemble and work without seals and without the glass): the 4 ribs sit in the corners of
+// the shroud's square bore and their front ends stop on the front plate's back face (y PT), where the square bore starts. That
+// is the sleeve's own hard stop; with a 1.5 mm glass the sleeve's front face meets the glass at the same time.
 // Field of view, front lens element Ø4 [C]: r 3.04 at the glass back, 4.08 at its front, 5.12 at the face (lip: 4.41 / 5.45).
 CAM_GLASS = [12, 1.5];
 CAM_WIN = [12.2, 0.6, 10.9];              // pocket Ø, lip, face Ø
 CAM_SLV = [7.7, 11.2, 4.3];               // sleeve: bore (barrel Ø6.95-7.25), outside (shroud 11.6 square), r where the 45 deg front starts (v20: 4.6)
 CAM_SLV_GAP = 0.3;
 CAM_SLV_Y = [CAM_WIN[1] + CAM_GLASS[1], CAM_PCB_Y - CAM_HOLDER_H - CAM_SLV_GAP];   // front face on the glass, back clear of the lens holder
-CAM_SLV_RIB = [1.0, (CAM_HOLDER + 0.8)/2, PT + 1.2];   // press ribs: width, reach (= the shroud's flat), from y (behind the glass pocket)
+CAM_SLV_RIB = [1.0, (CAM_HOLDER + 0.8)/2*sqrt(2) - 0.5 + 0.05, PT];   // v22: corner ribs: width, reach (0.05 into the corner walls), front end y (stop)
 module cam_window_cut() {
     cyl_y(CAM_WIN[0], CAM_WIN[1], PT + 1, 0, LENS_Z);
     translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_WIN[2], d2 = CAM_WIN[2] - 2*(CAM_WIN[1] + 0.02)*tan(60), h = CAM_WIN[1] + 0.02, $fn = 64);
@@ -548,8 +553,8 @@ module cam_sleeve() translate([0, 0, LENS_Z]) {
     rotate([-90, 0, 0]) rotate_extrude($fn = 64) polygon([
         [CAM_SLV[0]/2, CAM_SLV_Y[0]], [CAM_SLV[2], CAM_SLV_Y[0]], [CAM_SLV[1]/2, CAM_SLV_Y[0] + CAM_SLV[1]/2 - CAM_SLV[2]],
         [CAM_SLV[1]/2, CAM_SLV_Y[1]], [CAM_SLV[0]/2, CAM_SLV_Y[1]]]);
-    // v21: 4 press ribs onto the shroud's flats (the sleeve is held by them, not by the camera)
-    for (a = [0, 90, 180, 270]) rotate([0, -a, 0]) translate([CAM_SLV[1]/2 - 0.3, CAM_SLV_RIB[2], -CAM_SLV_RIB[0]/2])
+    // 4 press ribs in the corners of the shroud's square bore (v21: on its flats); they hold the sleeve and stop it at y PT
+    for (a = [45, 135, 225, 315]) rotate([0, -a, 0]) translate([CAM_SLV[1]/2 - 0.3, CAM_SLV_RIB[2], -CAM_SLV_RIB[0]/2])
         cube([CAM_SLV_RIB[1] - CAM_SLV[1]/2 + 0.3, CAM_SLV_Y[1] - CAM_SLV_RIB[2], CAM_SLV_RIB[0]]);
 }
 // the cord ring: inscribed in the corner of glass back, pocket wall and the sleeve's 45 deg face
@@ -644,7 +649,7 @@ module j2_boss(j) difference() {
 // the cords as they lie squeezed (3D viewer, fit check)
 module seal_cords() {
     ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3) difference() { groove3_2d(LAND3 + GROOVE3[0] - 0.05); groove3_2d(LAND3 + 0.05); }            // 2
-    ext_y(RING_SEAL_Y, PT) difference() { ring3_2d(CH_IN - 0.05); ring3_2d(RF3 + PT - RING_SEAL_Y - 0.4 + 0.05); }                         // 3
+    ext_y(RING_SEAL_Y, PT) difference() { ring3_2d(CH_IN - 0.05); ring3_2d(RING_SH + 0.05); }                                               // 3
     translate([0, CAM_CORD[0], LENS_Z]) rotate([-90, 0, 0]) rotate_extrude($fn = 64) translate([CAM_CORD[1], 0]) circle(r = CAM_CORD[2], $fn = 16);   // 4
     ext_y(D - BACK_T, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2 - 0.05);                                   // 5
 }
@@ -752,11 +757,12 @@ module front3() union() {
 module ring3() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
     ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
-    // v20: the wall runs straight on to 2.6 (v19: 1.95), a short 45 deg step to 3.2, then the flange (an 1.65 mm overhang
-    // face down), so the seal cord has its pocket between the front plate, the channel wall and the flange
-    ext_y(RING_Y[1] - 0.01, RING_SEAL_Y + 0.4) ring3_band(RF3 - RW3, RF3);
+    // v22: the wall runs straight on to the pocket floor (2.2), where a shoulder (RING_SH) stands on the front plate: a hard
+    // stop, so the ring sits the same with or without its cord. The cord lies in the closed groove between the shoulder,
+    // the pocket floor, the channel wall and the flange (v20/v21: a 45 deg step from 2.6 and the flange rested on the cord).
+    ext_y(RING_Y[1] - 0.01, RING_SEAL_Y + 0.01) ring3_band(RF3 - RW3, RF3);
     difference() {
-        union() { ring3_bevel(RING_SEAL_Y + 0.4, PT, RF3, RF3 + PT - RING_SEAL_Y - 0.4, 3); ext_y(PT - 0.01, PT + 1) ring3_2d(FL3); }
+        union() { ext_y(RING_SEAL_Y, PT) ring3_2d(RING_SH); ext_y(PT - 0.01, PT + 1) ring3_2d(FL3); }
         ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
         translate([-7.4, PT - 2, LENS_Z - 8]) cube([14.8, 4, 16]);       // clear of the camera shroud
         for (h = CAM_HOLES_ROT) cyl_y(4.6 + 1.0, PT - 1, PT + 2, h[0], LENS_Z + h[1]);   // v20: the flange gives way round the camera bosses
