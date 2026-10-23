@@ -7,10 +7,8 @@ and the Selfi logo in the front. Node names match unit.glb (bezel, diffuser_ring
 v_camera) so HaloBox can use either; the logo is logo_white / logo_green. There is no side light band and no
 joint spacer on gen 2.
 
-It also writes web/public/models/stand_gen2.glb: the stand bracket the rental box hangs on when it goes out on the
-floor tripod (B2C). That is the wall cleat from the same assembly plus a foot 70 x 12 x 52 behind it with a rib and
-a pressed-in 1/4"-20 nut, as in the packing plan (emballage v2). Same unit coordinates as unit_gen2.glb; the nut's
-underside, where the tripod's quick-release plate screws in, is at STAND_SOCKET.
+The stand bracket for the floor tripod (web/public/models/stand_gen2.glb) comes from its own release:
+hardware/tools/make_stativbeslag.py.
 
 front_layers() gives the same parts as flat front-view outlines (unit coordinates: x centred, z up from the
 bottom of the unit), so a theme sketch draws the real unit instead of a stand-in.
@@ -21,7 +19,6 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-import numpy as np
 import shapely
 import trimesh
 from shapely.ops import unary_union
@@ -33,10 +30,6 @@ NODES = {"front": "bezel", "lysring": "diffuser_ring", "skal": "shell_closed", "
 # Colours from the assembly's parts.json: black ASA front and shell, natural ASA ring, the logo inlays.
 COLOURS = {"skal": "#1d1d20", "skaerm": "#0a0a0c", "kamera": "#2b2f33", "front": "#1d1d20", "lysring": "#fbf8f1",
            "logo_hvid": "#f5f5f4", "logo_groen": "#22d36b"}
-# Stand bracket foot and nut, in assembly coordinates (y centred, v20: unit 307 high, cleat bottom at -143.5): the tripod
-# screw goes up into the nut from below.
-FOOT = {"centre": (-16.5, -137.5, -108.0), "size": (70.0, 12.0, 52.0)}
-NUT = {"centre": (-16.5, -141.1, -110.0), "r": 6.4, "h": 5.5}
 DRAW_ORDER = ["skal", "skaerm", "kamera", "front", "lysring", "logo_hvid", "logo_groen"]
 
 
@@ -78,23 +71,6 @@ def front_layers():
     return layers
 
 
-def stand_bracket():
-    """The stand bracket as one mesh, plus the nut, lifted like the unit (bottom of the unit at y = 0)."""
-    parts, _, lift = _parts(["vaegbeslag"])
-    tr = trimesh.transformations.translation_matrix
-    foot = trimesh.creation.box(extents=FOOT["size"], transform=tr(FOOT["centre"]))
-    # Rib between the cleat's back and the top of the foot: 8 thick, 46 back along the foot, 60 up the cleat.
-    x0, y0, z0 = FOOT["centre"][0] - 4, FOOT["centre"][1] + 6, -84.0
-    tri = [(0, 0), (46, 0), (0, 60)]   # (back, up)
-    rib = trimesh.Trimesh([(x0 + dx, y0 + up, z0 - back) for dx in (0, 8) for back, up in tri],
-                          [(0, 2, 1), (3, 4, 5), (0, 1, 4), (0, 4, 3), (1, 2, 5), (1, 5, 4), (2, 0, 3), (2, 3, 5)])
-    bracket = trimesh.util.concatenate([parts["vaegbeslag"], foot.apply_translation([0, lift, 0]), rib.apply_translation([0, lift, 0])])
-    nut = trimesh.creation.cylinder(radius=NUT["r"], height=NUT["h"], sections=6)
-    nut.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [1, 0, 0]))
-    nut.apply_translation(np.add(NUT["centre"], [0, lift, 0]))
-    return {"bracket": bracket, "nut": nut}
-
-
 def main():
     parts, h, _ = _parts()
     scene = trimesh.Scene()
@@ -107,15 +83,6 @@ def main():
     out = ROOT / "web/public/models/unit_gen2.glb"
     scene.export(out)
     print(latest_assembly().name, f"-> {out} ({out.stat().st_size // 1024} kB, unit {h:.1f} mm high)")
-
-    stand = trimesh.Scene()
-    for node, m in stand_bracket().items():
-        m.visual = trimesh.visual.ColorVisuals(m)
-        stand.add_geometry(m, node_name=node, geom_name=node)
-    out = ROOT / "web/public/models/stand_gen2.glb"
-    stand.export(out)
-    b = stand.bounds
-    print(f"stand bracket -> {out} ({out.stat().st_size // 1024} kB, x {b[0][0]:.1f}..{b[1][0]:.1f}, y {b[0][1]:.1f}..{b[1][1]:.1f}, z {b[0][2]:.1f}..{b[1][2]:.1f})")
 
 
 if __name__ == "__main__":
