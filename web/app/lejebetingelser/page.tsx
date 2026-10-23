@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { company, companyAddress, contactHref, contactText } from "@/lib/company";
-import { DEFAULT_SETTINGS, GALLERY_MONTHS, KEEP_YEARS } from "@/lib/udlejning/core";
-
-const FLEX_DAYS = DEFAULT_SETTINGS.rules.flexDays;
+import { GALLERY_MONTHS, KEEP_MONTHS } from "@/lib/udlejning/core";
 
 export const metadata: Metadata = {
   title: "Lejebetingelser for private | Selfi",
@@ -127,7 +125,6 @@ export default function Lejebetingelser() {
       <ul>
         <li>Der er ikke fortrydelsesret. Lejen er en tjenesteydelse til jeres fest på de datoer, I har valgt, og vi holder boksen til jer de dage. Derfor gælder den almindelige fortrydelsesret på 14 dage ved køb på nettet ikke (forbrugeraftalelovens § 18, stk. 2, nr. 12).</li>
         <li>Bookingen kan ikke afbestilles, når den er betalt. Bruger I ikke boksen, får I ikke lejen tilbage.</li>
-        <li>Har I købt tilvalget Fleksibel afbestilling, kan I afbestille senest {FLEX_DAYS} dage før første lejedag ved at skrive til os. Så får I lejen tilbage, men ikke prisen for tilvalget. Senere end {FLEX_DAYS} dage før kan bookingen heller ikke afbestilles med tilvalget. Tilvalget skal købes sammen med bookingen.</li>
         <li>Så længe boksen ikke er sendt, kan I flytte bookingen til andre ledige datoer med samme antal dage uden for højsæson. Højsæson er fredag til søndag i april til september og i december. Ind i højsæson kan en booking ikke flyttes, fordi de dage ville være blevet lejet ud alligevel.</li>
         <li>Det ændrer ikke punkt 4 og 9: kommer boksen ikke frem, eller kan den ikke bruges, og skyldes det ikke jer, får I hele lejen tilbage.</li>
       </ul>
@@ -148,9 +145,8 @@ export default function Lejebetingelser() {
 
       <h2>11. Billederne</h2>
       <ul>
-        <li>Billederne samles på jeres eventside, som kun kan ses af dem, der har linket. Vi bruger ikke billederne til noget og viser dem ikke for andre, medmindre I har sagt ja til det (se nedenfor).</li>
-        <li>Eventsiden er åben i mindst {GALLERY_MONTHS} måneder efter festen. Har I købt tilvalget Billederne gemt i {KEEP_YEARS} år, er den åben i {KEEP_YEARS} år efter festen. Hent de billeder, I vil gemme, inden siden lukker.</li>
-        <li>Når I sætter festen op, kan I sige ja til, at vi må spørge, om vi må vise et par billeder på selfi.dk og sociale medier. Et ja betyder kun, at vi må spørge. Vi bruger aldrig et billede, før I har godkendt netop det billede, og kun hvis dem på billedet er med på det. I kan altid trække et ja tilbage, så fjerner vi billedet.</li>
+        <li>Billederne samles på jeres eventside, som kun kan ses af dem, der har linket. Vi bruger ikke billederne til noget og viser dem ikke for andre.</li>
+        <li>Eventsiden er åben i {GALLERY_MONTHS} måneder efter festen. Har I købt tilvalget Billederne gemt i {KEEP_MONTHS} måneder, er den åben i {KEEP_MONTHS} måneder. Derefter sletter vi billederne, så hent dem, I vil gemme, inden da.</li>
         <li>Vil en gæst have et billede fjernet, kan I slette det fra eventsiden, eller skrive til os, så gør vi det.</li>
       </ul>
 

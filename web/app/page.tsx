@@ -66,7 +66,7 @@ export default async function Home() {
   const faq = [
     {
       q: "Hvad koster det at leje en fotoboks?",
-      a: `I vælger selv datoerne. En hverdag koster ${kr(P.day)}, en hel weekend fra fredag til søndag ${kr(P.weekend)}, to hverdage ${kr(P.twoDays)} og en uge ${kr(P.week)}, alt inkl. moms. Har I brug for en dag mere end perioden, koster hver ekstra dag ${kr(s.prices.perExtraDay)} Printeren med ${s.printsIncluded} print koster ${kr(s.prices.printer)} Vil I have det, kan I også tilvælge billederne gemt i 2 år (${kr(s.prices.keep)}) og fleksibel afbestilling (${kr(s.prices.flex)}). Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
+      a: `I vælger selv datoerne. En hverdag koster ${kr(P.day)}, en hel weekend fra fredag til søndag ${kr(P.weekend)}, to hverdage ${kr(P.twoDays)} og en uge ${kr(P.week)}, alt inkl. moms. Har I brug for en dag mere end perioden, koster hver ekstra dag ${kr(s.prices.perExtraDay)} Printeren med ${s.printsIncluded} print koster ${kr(s.prices.printer)} Vil I gemme billederne længere, kan eventsiden holdes åben i 12 måneder i stedet for 3 for ${kr(s.prices.keep)}. Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
     },
     {
       q: "Hvor sent kan vi booke?",

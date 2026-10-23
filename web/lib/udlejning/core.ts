@@ -30,8 +30,7 @@ export type RentalSettings = {
     byDays?: number[]; // the old price per number of days, still written by admin for older selfi.dk builds
     theme: number;
     printer: number;
-    flex: number; // add-on: Fleksibel afbestilling
-    keep: number; // add-on: the photos kept for KEEP_YEARS
+    keep: number; // add-on: the photos kept for KEEP_MONTHS
   };
   printsIncluded: number;
   themes: string[];
@@ -43,7 +42,6 @@ export type RentalSettings = {
     shipDaysBefore: number; // with the post: the box leaves us this many days before the first day
     returnDaysAfter: number; // and is back this many days after the last day
     prepDays: number; // check, clean and charge before the next booking
-    flexDays: number; // with Fleksibel afbestilling: cancel up to this many days before the first day
     peakMonths: number[]; // 1-12: friday to sunday in these months is high season, which a booking cannot be moved to
   };
 };
@@ -56,7 +54,6 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     perExtraDay: 350, // mere end 2 hverdage minus 1 hverdag, så 2 hverdage altid er billigst
     theme: 295,
     printer: 895,
-    flex: 199,
     keep: 149,
   },
   printsIncluded: 100,
@@ -69,7 +66,6 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     shipDaysBefore: 2,
     returnDaysAfter: 3,
     prepDays: 1,
-    flexDays: 14,
     peakMonths: [4, 5, 6, 7, 8, 9, 12], // konfirmationer, bryllupper, sommerfester, julefrokoster
   },
 };
@@ -97,18 +93,16 @@ export type Choice = {
   printer: boolean;
   photoType: PhotoType;
   delivery: Delivery;
-  flex?: boolean; // Fleksibel afbestilling
-  keep?: boolean; // the photos kept for KEEP_YEARS instead of GALLERY_MONTHS
+  keep?: boolean; // the photos kept for KEEP_MONTHS instead of GALLERY_MONTHS
 };
 
-/** How long the event page is open without and with the keep add-on. */
+/** How long the event page is open without and with the keep add-on. After that the photos are deleted. */
 export const GALLERY_MONTHS = 3;
-export const KEEP_YEARS = 2;
+export const KEEP_MONTHS = 12;
 
-/** The add-ons besides the printer, as the booking shows them. */
+/** The add-on besides the printer, as the booking shows it. */
 export const ADDONS = {
-  flex: (s: RentalSettings) => ({ name: "Fleksibel afbestilling", text: `Afbestil senest ${s.rules.flexDays} dage før første lejedag, og få lejen tilbage. Prisen for tilvalget får I ikke tilbage.` }),
-  keep: () => ({ name: `Billederne gemt i ${KEEP_YEARS} år`, text: `Eventsiden er åben i ${KEEP_YEARS} år i stedet for ${GALLERY_MONTHS} måneder, så I kan hente billederne igen.` }),
+  keep: () => ({ name: `Billederne gemt i ${KEEP_MONTHS} måneder`, text: `Eventsiden er åben i ${KEEP_MONTHS} måneder i stedet for ${GALLERY_MONTHS} måneder, så I kan hente billederne igen. Derefter sletter vi dem.` }),
 };
 
 export const PHOTO_TYPES: Record<PhotoType, { name: string; text: string }> = {
@@ -169,7 +163,6 @@ export function priceLines(s: RentalSettings, c: Choice): Line[] {
   if (c.theme) lines.push({ id: "theme", label: `Tema: ${c.theme}`, amount: s.prices.theme });
   if (c.printer) lines.push({ id: "printer", label: `Printer med ${s.printsIncluded} print (${PHOTO_TYPES[c.photoType].name.toLowerCase()})`, amount: s.prices.printer });
   if (c.keep) lines.push({ id: "keep", label: ADDONS.keep().name, amount: s.prices.keep });
-  if (c.flex) lines.push({ id: "flex", label: ADDONS.flex(s).name, amount: s.prices.flex });
   return lines;
 }
 

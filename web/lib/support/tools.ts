@@ -2,10 +2,10 @@
 // of the customer who verified in this chat (chat.customer.bookings): the model cannot widen that, whatever
 // it is told. Verification is a booking number that matches the e-mail or phone the customer gave when the
 // chat started, or a one-time code sent by SMS to that phone (GDPR: nothing about an order before that).
-// Bookings cannot be cancelled (/lejebetingelser point 8) unless the customer bought Fleksibel afbestilling. A
-// booking can be moved to dates outside high season (peakDays) without asking anyone: the move goes through a
-// proposal (propose_date_change) that the customer must answer before commit_date_change is allowed, and every
-// change is written to the rental's history and to support_audit with time and actor.
+// Bookings cannot be cancelled (/lejebetingelser point 8). A booking can be moved to dates outside high season
+// (peakDays) without asking anyone: the move goes through a proposal (propose_date_change) that the customer
+// must answer before commit_date_change is allowed, and every change is written to the rental's history and to
+// support_audit with time and actor.
 
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import type { Db } from "mongodb";
@@ -199,8 +199,7 @@ function bookingView(r: RentalWithTracking, ctx: ToolContext): Result {
     paidAt: paid ? paid.at.toISOString().slice(0, 10) : null,
     shipping: { carrier: "dao", shipsOn: held.from, trackingOut: r.trackingOut ?? null, trackingBack: r.trackingBack ?? null, returnBy: returnBy(r.to) },
     canMoveDates: r.status === "paid" || r.status === "packed",
-    flex: r.flex ? { canCancelUntil: addDays(r.from, -ctx.settings.rules.flexDays) } : null,
-    photosKept: r.keep ? "2 år" : "3 måneder",
+    photosKept: r.keep ? "12 måneder" : "3 måneder",
     setupUrl: ["pending", "expired"].includes(r.status) ? null : `${ctx.setupUrl}/${encodeURIComponent(r._id)}?t=${encodeURIComponent(r.token)}`,
     history: r.history.map((h) => `${h.at.toISOString().slice(0, 16).replace("T", " ")}: ${STATUS_LABEL[h.status]}`),
   };

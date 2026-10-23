@@ -18,7 +18,7 @@ export const mailCompany: Company = { ...company };
 
 export async function mailContext(d: Db, b: RentalDoc, extra: Partial<MailContext> = {}): Promise<MailContext> {
   const settings = await getSettings(d);
-  return { booking: b as MailBooking, shipDaysBefore: settings.rules.shipDaysBefore, flexDays: settings.rules.flexDays, site: site(), portal: portal(), phone: company.phone || undefined, ...extra };
+  return { booking: b as MailBooking, shipDaysBefore: settings.rules.shipDaysBefore, site: site(), portal: portal(), phone: company.phone || undefined, ...extra };
 }
 
 /** Sends one automatic mail if it is switched on in admin and has not been sent before (`key`). */
