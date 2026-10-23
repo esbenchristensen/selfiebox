@@ -2,13 +2,13 @@
 
 **Version:** selfi-printer-v4 (23. okt. 2026). Alle filer i mappen starter med `selfi-printer-v4_`. CAD-kilden er `hardware/cad/selfi_printer_v4.scad` i esbenchristensen/selfiebox. Filerne laves med `python3 hardware/tools/make_printer.py selfi-printer-v4`. v1, v2 og v3 må ikke printes.
 
-v4 er v3 med samme tætning som boksen (halo-gen2-v20), støddæmpning om printeren, gribehak og slankere vægbeslag:
+v4 er v3 med samme tætning som boksen (halo-gen2-v20), støddæmpning om printeren, gribehak og lettere vægbeslag:
 
 - **Skumsnor i stedet for bånd.** Begge fuger tætnes med silikoneskum-snor Ø1,5 mm (RS 234-2906), som klemmes 33 % mod et hårdt anslag. Rillen i soklens overside er 2,0 × 1,0 mm og ligger midt under kappens væg. Rillen rundt om udgangsmodulets studs er 2,0 × 0,7 mm. Kappens højre kant har en indføringsfase på 30° × 1 mm, så snoren ikke ruller ud.
 - **6 kroge trækker kappen ned.** Snoren skubber kappen op, så kappen har 3 kroge på hver langvæg. Når kappen skubbes de sidste 10 mm på plads, glider krogene ind under ramper i soklens læbe og trækker den sidste millimeter ned. Kamlåsen holder kappen, så den ikke kan skubbes tilbage.
 - **Støddæmpning inden for de samme mål.** Printeren står ikke længere direkte på soklen, men på en dæmpeplade (1,6 mm) med 56 hule knusekegler (8,4 mm høje, væg 0,45) ned mod soklens 2 mm-bund. Keglerne står i 2 ringe tæt ved kanten, hvor bunden bæres af soklens vægge. Hvis kassen tabes, knuses keglerne i stedet for printeren. Ved enderne sidder 4 kegler på kappens endevæg og 2 på bøjler i udgangsmodulet, 1 mm fra printeren. Dæmpepladen er en billig sliddel, der skiftes efter et hårdt fald. Se `selfi-printer-v4_snit-daempning.png`.
 - **Gribehak i begge ender.** Kabinettet løftes med en hånd i hvert hak (76 × 22 mm, 20 mm dybe). Loftet i hakket vinkler 20° opad indad, så fingerspidserne hager sig op bag kanten. Hakkene er lukket bagtil, så kabinettet stadig er tæt, og gulvet hælder 0,7 mm udad, så vand løber ud. Det venstre sidder midt på kappens ende under nøglelåsen. Det højre sidder i udgangsmodulets ende, 8 mm lavere og 10 mm længere bagud, fordi rutsjebanen er over det. Soklens læbe er skåret væk bag det venstre hak. Se `selfi-printer-v4_skitse_gribehak.png`.
-- **Slankere vægbeslag.** Konsollerne er nu T-arme (6 mm top, 2 kroppe på 10 mm og en 110 mm bagplade) i stedet for en massiv hylde på 12 mm med 170 mm bagplade. De bruger ca. 60 % mindre filament og er regnet til 500 N (en der læner sig på printerens forkant).
+- **Lettere vægbeslag.** Konsollerne har den samme bredde som i v3 (hylder på 200 mm), men sidder 20 mm inde fra hver ende, så de står symmetrisk under printeren. Hylden er 6 mm med 2 vinduer, der er en knægt på 6 mm i hver side, og bagpladen er 110 mm høj i stedet for 170. De bruger ca. halvt så meget filament som v3 og er regnet til 500 N (en der læner sig på printerens forkant).
 
 Fra v3:
 
@@ -48,8 +48,8 @@ Kabinettet er tegnet efter DNP's datablad og fotos, ikke efter en rigtig QW410. 
 | `selfi-printer-v4_udgang_flerfarvet.3mf` | Udgangsmodul + "Dit print" og pil | ASA sort, tekst i hvid og pil i grøn via AMS · højre ende ned · 0,2 mm lag · 8 vægge · 15 % fyld · ingen støtte · ca. 960 g |
 | `selfi-printer-v4_sokkel.stl` | Sokkel under printeren | ASA sort · bunden ned · 6 vægge · 40 % fyld · ingen støtte · ca. 300 g |
 | `selfi-printer-v4_daempeplade.stl` | Dæmpeplade med 56 knusekegler | ASA sort · pladen ned, keglerne op · 0,2 mm lag · linjebredde 0,45 (keglerne er én streg) · massiv plade · ingen støtte · ca. 85 g. Print gerne 2, så der er en i reserve |
-| `selfi-printer-v4_konsol.stl` | Vægkonsol (kun B2B på væg), **print 2** | ASA sort · toppen ned · 6 vægge · 40 % fyld · ingen støtte · ca. 260 g pr. stk. |
-| `selfi-printer-v4_vaegplade.stl` | Vægskinne (kun B2B på væg), **print 2** | ASA sort · vægsiden ned · 6 vægge · 40 % fyld · ca. 75 g pr. stk. |
+| `selfi-printer-v4_konsol.stl` | Vægkonsol (kun B2B på væg), **print 2** | ASA sort · toppen ned · 6 vægge · 40 % fyld · ingen støtte · ca. 340 g pr. stk. |
+| `selfi-printer-v4_vaegplade.stl` | Vægskinne (kun B2B på væg), **print 2** | ASA sort · vægsiden ned · 6 vægge · 40 % fyld · ca. 85 g pr. stk. |
 | `selfi-printer-v4_kappe.stl`, `_udgang.stl`, `_logo-*.stl`, `_tekst-*.stl` | De samme dele som enkelte filer | Til sliceren, hvis 3MF ikke bruges |
 
 Kappen og udgangsmodulet printes stående på en ende uden støtte. Logo og tekst ligger på den lodrette front, så farveskiftet sker lag for lag. Lad 50 mm stå fri langs én kant af pladen til prime-tårnet.
@@ -76,7 +76,7 @@ Der skal ikke loddes. Den eneste 230 V-ledning er et færdigt kabel med støbte 
 - **B2C (bord):** Stil den på bordet med gummifødderne. Kablet kommer ud bagtil ved bordet.
 - **B2B (bord eller disk):** Skru soklen fast med 2 SPUN+ 4,0 × 16 gennem de 2 tårne i lommen, før dæmpepladen og printeren sættes i.
 - **B2B (væg):**
-  1. Skru de 2 vægskinner fast med 4 skruer og dybler hver (5 × 50, til væggens materiale). De skal sidde i vater, i samme højde og 256 mm fra hinanden, målt fra venstre kant til venstre kant.
+  1. Skru de 2 vægskinner fast med 4 skruer og dybler hver (5 × 50, til væggens materiale). De skal sidde i vater, i samme højde og 236 mm fra hinanden, målt fra venstre kant til venstre kant, og 20 mm inde fra hver af printerens ender.
   2. Hæng konsollerne på skinnerne og skru en sikkerhedsskrue (Torx med pind) gennem hver bagplade ind i skinnen.
   3. Stil soklen og udgangsmodulet (skruet sammen) på konsollerne. Skru soklen ned i den venstre konsol med 2 SPUN+ 4,0 × 16 indefra, før dæmpepladen lægges i. Skru den højre konsol op i udgangsmodulet med 2 SPUN+ 4,0 × 20 nedefra.
   4. Strømkablet går ned til venstre for den venstre konsol.
@@ -91,7 +91,7 @@ Som v2: Pi Zero 2 WH med CUPS og Gutenprint (`selphy_print`), print via IPP på 
 
 - **Fald (B2C):** Keglerne giver 6–7 mm knusevej. Det svarer til ca. 50–60 g på printeren ved fald fra 0,3 m (fra et bord eller ud af hænderne) og ca. 130–180 g fra 0,75 m. Uden dæmpepladen er det flere hundrede g. Et fald fra 0,75 m flat på bunden kan stadig skade printeren. Det er et skøn, ikke målt: test med prøvestykket og et fald af hele kassen med en dummy-vægt på 5,8 kg. Under forsendelse er skummet i transportkassen stadig den vigtigste beskyttelse.
 - **Løft:** Løft med en hånd i hvert gribehak, og hold den vandret. Løft aldrig i udtagslommen eller skærmen. Hvert hak tager ca. 40 N. Det venstre hak sidder i kappen, så soklen hænger i de 6 kroge (ca. 27 N hver), og samlingen mellem sokkel og udgangsmodul (tunge og studs) tager ca. 8 MPa. Det er godt inden for ASA. Kappen skal være låst, når den bæres.
-- **Vægbeslag:** Regnet med 500 N på forkanten: ca. 55 Nm pr. konsol, ca. 4 MPa i kroppene og ca. 750 N på 45°-krogen. Vægskinnernes 4 skruer pr. stk. skal sidde i dybler, der passer til væggen. I gips skal der bruges gipsdybler i metal eller skrues i en lægte.
+- **Vægbeslag:** Regnet med 500 N på forkanten: ca. 55 Nm pr. konsol, ca. 2,5 MPa i knægtene og ca. 750 N på 45°-krogen. Vægskinnernes 4 skruer pr. stk. skal sidde i dybler, der passer til væggen. I gips skal der bruges gipsdybler i metal eller skrues i en lægte.
 
 - Alle mål på printeren er fra DNP's datablad og skal måles. Det gælder især papirets udkørsel og højden (toppen sidder 4 mm over printeren).
 - Med flad top kan en gæst stille en dåse på toppen. Det har Esben valgt. Spild løber af, fordi toppen ingen åbninger har, og fugerne er tætnet med skumsnor.
@@ -99,5 +99,5 @@ Som v2: Pi Zero 2 WH med CUPS og Gutenprint (`selphy_print`), print via IPP på 
 - Snoren glider langs rillen de sidste 7 mm, mens den klemmes. Uden fedt kan den trække sig skæv, så tjek den, når kappen har været af.
 - Under printeren er der kun 0,75 mm mellem læben og printeren. Det skal tjekkes, når printeren er målt.
 - 4,5×8-print kan ikke komme ud. Lommen passer til 4×6, 2×6-striber og 4×4.
-- Hvis vægskinnerne ikke sidder i vater og i samme højde, vrides kabinettet. Brug vaterpas og mål de 256 mm.
+- Hvis vægskinnerne ikke sidder i vater og i samme højde, vrides kabinettet. Brug vaterpas og mål de 236 mm.
 - Kabinettet er 476 mm langt, så printerkassen fra emballage v2 er for lille. Der skal en ny kasse til.

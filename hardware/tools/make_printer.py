@@ -179,13 +179,13 @@ v4["coupons"] = [c for c in v4["coupons"] if c[0] != "taetning"] + [
 i = [p[0] for p in v4["parts"]].index("udgang")
 v4["parts"][i][2] = "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme, skærm, \"Dit print\" og gribehak i højre ende (sort ASA)"
 # v4 shock: a printed deck on 56 crush cones (two rings near the rim), cones on the hood's end wall and the exit
-# module's hangers; and slim T-arm consoles
+# module's hangers; and consoles with a 200 wide shelf, 20 in from each end (symmetric), 110 high
 v4["printed"].insert([p[0] for p in v4["printed"]].index("sokkel") + 1, ["daempeplade", "daempeplade", "Dæmpeplade med 56 knusekegler (sort ASA), print 1"])
 v4["parts"].insert([p[0] for p in v4["parts"]].index("sokkel") + 1,
     ["daempeplade", "daempeplade", "Dæmpeplade: printeren står på den, 56 knusekegler under tager stødet ved et fald (må knuses, udskiftes)", "#e07a1f", "Kabinet", [0, 0, 40]])
 P["skruer_sokkel"][2] = "2 skruer, sokkel til bord/hylde/konsol (B2B, SPUN+ 4,0 × 16, sættes i før dæmpepladen)"
 P["skruer_link"][2] = "2 skruer, soklens tunge til udgangsmodulet nedefra (3,5 × 12 til plast)"
-P["konsoller"][2] = "2 vægkonsoller, slanke T-arme (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra"
+P["konsoller"][2] = "2 vægkonsoller, hylder 200 brede, 20 mm inde fra hver ende (B2B væg): soklen og udgangsmodulet skrues fast indefra/nedefra"
 v4["coupons"] = [c for c in v4["coupons"] if c[0] != "krog"] + [
     ["krog", "konsol", [100, 180, -80, 160, 244, 0], "Konsollens 45°-krog og bagplade: skal hægte sig på vægskinnen og ligge tæt mod væggen."],
     ["krog", "vaegplade", [100, 228, -60, 160, 244, -25], "Vægskinnens 45°-kant (lægges sammen med proeve-krog_konsol)."],

@@ -128,19 +128,22 @@ GRIP_L = [[D / 2 - 38, D / 2 + 38], [16, 38]];          // left: y, z of the ope
 GRIP_R = [[GRIP_L[0][0] + 10, GRIP_L[0][1] + 10], [8, 30]];
 GRIP_D = 20; GRIP_A = 20; GRIP_RAD = 6;                 // depth, the ceiling's angle, corners
 // B2B wall: two identical consoles, each hung on its own printed wall cleat; one under the base, one under the
-// exit module (Esben 23 Oct 2026: it must sit firmly on the wall and on its bracket)
+// exit module (Esben 23 Oct 2026: it must sit firmly on the wall and on its bracket). Each is a shelf as wide as
+// v3's (200), set 20 in from each end so the pair is symmetric under the printer (Esben 23 Oct 2026), but only
+// 110 high instead of 170
 CW = 200; CON_T = 12; CON_H = 110; // console length, thickness at the screws' bosses, height below the top
-// (v4: slimmed from v3's solid 12 mm shelf, 170 high, ~650 g, to a T-arm, ~250 g: 500 N leant on the front edge is
-// 55 Nm per console, about 4 MPa in the webs and 750 N on the cleat)
+// (v4: the shelf is a 6 mm flange with two windows over two end webs instead of v3's solid 12 mm shelf: 500 N
+// leant on the front edge is 55 Nm per console, about 2.5 MPa in the webs and 750 N on the cleat)
 CON_F = 6;                         // top flange
-CC = 120;                          // the console's middle, between its screws at local x 90 and 150
+CC = CW / 2;                       // the console's middle
 CLEAT_Z = -30;                     // top of the 45 degree hook
 WALL_Z = [-52, -96];               // the wall cleat's screws
 SEC_Z = -74;                       // the security screw
-CON_X = [20, L - CW];              // the consoles' left ends: under the base, under the exit module (256 apart);
+CON_X = [20, L - 20 - CW];         // the consoles' left ends: 20 in from each end (236 apart);
                                    // the mains cable drops down left of the left one
 CON_L = [[90, 70], [90, D - 70]];  // left console: pilots for the base's SCREWS (110, y), from above
-CON_R = [[150, 70], [150, D - 70]];// right console: screws up from below into the exit module's bosses (426, y)
+CON_R = [[170, 70], [170, D - 70]];// right console: screws up from below into the exit module's bosses (426, y)
+CON_WIN = [[22, 78], [122, 178]];  // windows in the flange (x), between the bosses' rows
 
 // ---------- outline ----------
 // end profile (y, z): a rectangle with R10 edges; inset by d (concentric)
@@ -417,17 +420,17 @@ module konsol() {
   difference() {
     union() {
       // top flange under the unit, 6 thick, with bosses down to CON_T at the screws
-      translate([CC - 50, 20, -CON_F]) cube([100, D - 20, CON_F]);
+      translate([0, 20, -CON_F]) cube([CW, D - 20, CON_F]);
       for (s = concat(CON_L, CON_R)) translate([s[0], s[1], -CON_T]) cylinder(d = 12, h = CON_T);
       // back plate, flush with the unit's back
-      translate([CC - 60, D, -CON_H]) cube([120, 8, CON_H]);
-      // two webs, 10 thick, from the back plate's foot to 20 high at the front
-      for (x = [CC - 50, CC + 40]) hull() { translate([x, D - 0.01, -CON_H]) cube([10, 0.01, CON_H]); translate([x, 20, -20]) cube([10, 0.01, 20]); }
+      translate([0, D, -CON_H]) cube([CW, 8, CON_H]);
+      // two webs at the ends, 6 thick, from the back plate's foot to 20 high at the front
+      for (x = [0, CW - 6]) hull() { translate([x, D - 0.01, -CON_H]) cube([6, 0.01, CON_H]); translate([x, 20, -20]) cube([6, 0.01, 20]); }
       // cleat: 45 degree hook behind the back plate, over the wall cleat's bevel
-      translate([CC - 50, D + 7.9, CLEAT_Z]) rotate([0, 90, 0]) linear_extrude(100) polygon([[0, 0], [0, 12.1], [12.1, 12.1]]);
+      translate([20, D + 7.9, CLEAT_Z]) rotate([0, 90, 0]) linear_extrude(CW - 40) polygon([[0, 0], [0, 12.1], [12.1, 12.1]]);
     }
-    // a window in the flange between the screws
-    translate([CC - 18, 45, -CON_F - 1]) cube([36, D - 90, CON_F + 2]);
+    // two windows in the flange, between the rows of bosses
+    for (w = CON_WIN) translate([w[0], 82, -CON_F - 1]) cube([w[1] - w[0], D - 164, CON_F + 2]);
     for (s = CON_L) translate([s[0], s[1], -CON_T - 1]) cylinder(d = 3.2, h = CON_T + 2);           // pilots, base screws
     for (s = CON_R) translate([s[0], s[1], -CON_T - 1]) {                                           // screws up into the exit module
       cylinder(d = 4.5, h = CON_T + 2); cylinder(d1 = 9.2, d2 = 4.5, h = 2.4);
@@ -438,16 +441,16 @@ module konsol() {
 }
 module vaegplade() difference() {
   // 45 degree bevel at the top, facing the console's hook
-  translate([CC - 50, D + 8, 0]) rotate([0, 90, 0]) linear_extrude(100)
+  translate([20, D + 8, 0]) rotate([0, 90, 0]) linear_extrude(CW - 40)
     polygon([[-CLEAT_Z + 0.2, 0], [CON_H - 4, 0], [CON_H - 4, 12], [-CLEAT_Z + 12.2, 12], [-CLEAT_Z + 0.2, 0]]);   // 0.2 under the hook
-  for (x = [CC - 36, CC + 36]) for (z = WALL_Z) translate([x, D + 7, z]) rotate([-90, 0, 0]) {
+  for (x = [CC - 60, CC + 60]) for (z = WALL_Z) translate([x, D + 7, z]) rotate([-90, 0, 0]) {
     cylinder(d = 5.2, h = 20); translate([0, 0, 0.99]) cylinder(d1 = 10.4, d2 = 5.2, h = 3.01);
   }
   translate([CC, D + 7, SEC_Z]) rotate([-90, 0, 0]) cylinder(d = 3.4, h = 20);   // pilot, security screw
 }
 module konsoller() for (x = CON_X) translate([x, 0, 0]) konsol();
 module vaegplader() for (x = CON_X) translate([x, 0, 0]) vaegplade();
-module s_wall() for (c = CON_X) for (x = [CC - 36, CC + 36]) for (z = WALL_Z) translate([c + x, D + 20 + 1, z]) rotate([90, 0, 0]) cylinder(d = 5, h = 40, $fn = 12);
+module s_wall() for (c = CON_X) for (x = [CC - 60, CC + 60]) for (z = WALL_Z) translate([c + x, D + 9, z]) rotate([-90, 0, 0]) cylinder(d = 5, h = 40, $fn = 12);   // from the countersink into the wall
 module s_con() for (s = CON_R) translate([CON_X[1] + s[0], s[1], -CON_T - 0.5]) { cylinder(d = 4, h = 20, $fn = 12); cylinder(d1 = 8.8, d2 = 4, h = 2.4, $fn = 16); }
 
 // ---------- logo ----------

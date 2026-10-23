@@ -97,7 +97,7 @@ PRINTED_V4 = [
     ("Sokkel under printeren (kabelspor, rille til skumsnor, krog-ramper, lomme til dæmpepladen)", "Alle", 300, "sort ASA"),
     ("Dæmpeplade med 56 knusekegler (udskiftes efter et hårdt fald)", "Alle", 85, "sort ASA"),
     ("Udgangsmodul (papirrum, rutsjebane, lomme, skærm, LED-skinne, knusekegler)", "Alle", 960, "sort ASA"),
-    ("2 vægkonsoller, slanke T-arme", "B2B væg", 520, "sort ASA"),
+    ("2 vægkonsoller, hylder 200 brede", "B2B væg", 680, "sort ASA"),
     ("2 vægskinner", "B2B væg", 150, "sort ASA"),
 ]
 BOUGHT_V4 = [b if not b[0].startswith("SPUN+ Climate 4,0 × 30") else
