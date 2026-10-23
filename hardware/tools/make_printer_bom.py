@@ -2,7 +2,7 @@
 """Shopping list for the Selfi printer as an xlsx: bought parts with prices, what each is for and whether it can be left
 out, and the printed parts with their ASA weight (the printing partner buys the filament himself).
 
-Usage: python3 hardware/tools/make_printer_bom.py <out.xlsx> [version]     (version: selfi-printer-v1, -v2 or -v3, default v3)
+Usage: python3 hardware/tools/make_printer_bom.py <out.xlsx> [version]     (version: selfi-printer-v1 .. -v4, default v4)
 Prices are DKK incl. VAT and estimates ("skøn") until a Danish or EU dealer has quoted them.
 """
 import sys
@@ -11,7 +11,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 OUT = sys.argv[1]
-VER = sys.argv[2] if len(sys.argv) > 2 else "selfi-printer-v3"
+VER = sys.argv[2] if len(sys.argv) > 2 else "selfi-printer-v4"
 ASA_KR_G = 0.25   # kr per gram ASA (1 kg spool ca. 250 kr)
 
 # part, use, grams ASA (as sliced: walls 3.2 solid, infill as in the guide), colour
@@ -89,6 +89,13 @@ BOUGHT_V3 = [b for b in BOUGHT_V2 if not b[0].startswith(("Panelkabel C14", "Str
     ("Sikkerhedsskrue Torx med pind 4,0 × 25 + bit", "B2B væg", 2, 8, "Konsol → vægskinne, så konsollen ikke kan løftes af", "Ja, hvis den ikke hænger på væg"),
 ]
 
+# v4: the foam cord in 2.0 grooves instead of the tape (same as halo-gen2-v20), hooks printed with the hood
+PRINTED_V4 = [(n.replace("rille til tætningsbånd", "rille til skumsnor, krog-ramper").replace("(flad top, lameller)", "(flad top, lameller, 6 kroge)"), u, g, c) for n, u, g, c in PRINTED_V3]
+BOUGHT_V4 = [b for b in BOUGHT_V3 if not b[0].startswith("Skumtætningsbånd")]
+BOUGHT_V4.insert(3, ("Silikoneskum-snor Ø1,5 mm (RS 234-2906), 5 m", "Alle", 1, 150,
+    "Samme snor som boksen (halo-gen2-v20). Ca. 1,5 m: soklens rille under kappens væg (0,8 m) og ringen om udgangsmodulets studs (0,7 m). Pris skønnet", "Nej: ellers er fugerne ikke tætte"))
+BOUGHT_V4.insert(4, ("Silikonefedt, lille tube", "Alle", 1, 40, "En tynd smule på snoren om studsen, så den ikke ruller ud, når kappen skubbes på", "Ja, men snoren kan rulle ud"))
+
 
 def main():
     wb = Workbook()
@@ -98,9 +105,10 @@ def main():
     ws.append([f"{VER} · indkøbsliste (kr inkl. moms, skøn)"]); ws["A1"].font = Font(bold=True, size=14)
     ws.append([])
     v2 = VER != "selfi-printer-v1"
-    v3 = VER == "selfi-printer-v3"
-    bought = BOUGHT_V3 if v3 else BOUGHT_V2 if v2 else [b + ("",) for b in BOUGHT]
-    printed = PRINTED_V3 if v3 else PRINTED_V2 if v2 else PRINTED
+    v4 = VER == "selfi-printer-v4"
+    v3 = v4 or VER == "selfi-printer-v3"
+    bought = BOUGHT_V4 if v4 else BOUGHT_V3 if v3 else BOUGHT_V2 if v2 else [b + ("",) for b in BOUGHT]
+    printed = PRINTED_V4 if v4 else PRINTED_V3 if v3 else PRINTED_V2 if v2 else PRINTED
     ws.append(["Købedele", "Bruges til", "Antal", "Pris pr. stk.", "I alt", "Note"] + (["Kan den undværes?"] if v2 else []))
     for c in ws[3]: c.font = bold
     sums = {}

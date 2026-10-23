@@ -2,7 +2,7 @@
 """Print files, 3D model, renders and drawings of the Selfi printer (DNP QW410 in a printed enclosure).
 
 Usage:  python3 hardware/tools/make_printer.py [version] [out dir]
-        version: selfi-printer-v1, -v2 or -v3 (default: the newest); out dir: default hardware/stl/printer/<version>
+        version: selfi-printer-v1 .. -v4 (default: the newest); out dir: default hardware/stl/printer/<version>
         python3 hardware/tools/make_printer.py <version> --hurtig     the hurtigprint set (v2 and later), see below
 CAD:    hardware/cad/selfi_printer_v<N>.scad
 Needs:  openscad, node + Playwright + three (web/node_modules) for the renders, trimesh, manifold3d, numpy, networkx,
@@ -165,7 +165,18 @@ v3["coupons"] = [c for c in v3["coupons"] if c[0] != "stroemindgang"] + [
     ["taetning", "sokkel", [0, 0, 0, 45, 45, 24], "Hjørnet med rillen til tætningsbånd 3 × 1 under kappens væg og kanten indenfor."],
     ["krog", "konsol", [20, 180, -70, 80, 236, 0], "Konsollens 45°-krog og bagplade: skal hægte sig på vægskinnen og ligge tæt mod væggen."],
     ["krog", "vaegplade", [20, 230, -80, 80, 246, -40], "Vægskinnens 45°-kant (lægges sammen med proeve-krog_konsol)."]]
-NEWEST = "selfi-printer-v3"
+# v4: v3 with the foam cord (RS 234-2906) in 2.0 grooves instead of tape, and six hooks that pull the hood down
+VERSIONS["selfi-printer-v4"] = v4 = json.loads(json.dumps(v3))
+v4["scad"] = "selfi_printer_v4.scad"
+P = {p[0]: p for p in v4["parts"]}
+P["kappe"][2] = "Kappe (sort ASA): flad top, luftlameller, nøglelås i venstre ende og 6 kroge, der trækker den ned på tætningen"
+P["sokkel"][2] = "Sokkel: printerramme, låseholder, Pi-holder, kabelspor bagtil, rille til skumsnor og ramper til kappens kroge (sort ASA)"
+v4["coupons"] = [c for c in v4["coupons"] if c[0] != "taetning"] + [
+    ["taetning", "sokkel", [0, 0, 0, 45, 45, 24], "Hjørnet med rillen (2,0 × 1,0) til skumsnoren Ø1,5 under kappens væg: snoren skal ligge i rillen og stikke 0,5 op."],
+    ["kappekrog", "sokkel", [112, 0, 0, 168, 24, 24], "Krog-rampen i læben (x 140): sammen med proeve-kappekrog_kappe. Kappen sænkes 10 mm til venstre og skubbes hjem; krogen skal glide ind under rampen og trække kappen ned, så den ligger fladt på soklen."],
+    ["kappekrog", "kappe", [112, 0, 0, 168, 24, 24], "Kappens krog ved x 140, nederst på forvæggen (lægges sammen med proeve-kappekrog_sokkel)."],
+    ["studs", "udgang", [272, 0, 0, 296, 60, 60], "Studsens rille (2,0 × 0,7) til skumsnoren og kappens indføringsfase: snoren skal blive i rillen, når kappen skubbes over."]]
+NEWEST = "selfi-printer-v4"
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
 
