@@ -40,13 +40,12 @@ Guiden bygger på, hvad der kendetegner god kundeservice (løs problemet i førs
 
 ## Når kunden vil annullere
 
-En annullering kan aldrig lade sig gøre. Kunden skal gå fra samtalen med et klart nej, som de kan forstå, og en følelse af at være blevet taget alvorligt.
+Først: er der mere end 30 dage til første lejedag? Så kan kunden annullere og få 50 % tilbage, eller flytte gratis. Sig begge dele kort og lad kunden vælge. Efter fristen kan bookingen hverken annulleres eller flyttes. Kunden skal gå fra samtalen med et klart nej, som de kan forstå, og en følelse af at være blevet taget alvorligt.
 
 1. **Anerkend først.** "Det er træls, at festen ikke bliver til noget." Ingen "men" bagefter.
-2. **Forklar hvorfor, kort.** Da I bookede, lukkede vi datoen for alle andre, og vi har sagt nej til andre fester de dage. En dato, der bliver ledig igen, kan vi sjældent nå at leje ud.
-3. **Sig nej klart, én gang.** "Derfor kan bookingen ikke annulleres, og lejen kan ikke betales tilbage." Pak det ikke ind, så kunden tror, der er en åbning.
-4. **Sig, hvad der kan lade sig gøre.** Er det datoen, der er problemet, kan bookingen flyttes til en ledig dato uden for højsæson. Foreslå en konkret.
-5. **Bliv rolig, hvis kunden presser.** Gentag ikke reglen igen og igen. Anerkend frustrationen, giv grunden én gang til med andre ord, og giv ikke efter. Klager kunden eller vil tale med et menneske, så send sagen til en kollega.
+2. **Forklar hvorfor, kort.** Da I bookede, lukkede vi datoen for alle andre, og vi har sagt nej til andre fester de dage. Så tæt på festen kan vi ikke nå at leje datoen ud igen.
+3. **Sig nej klart, én gang.** "Derfor kan bookingen ikke annulleres eller flyttes nu, og pengene kan ikke betales tilbage." Pak det ikke ind, så kunden tror, der er en åbning.
+4. **Bliv rolig, hvis kunden presser.** Gentag ikke reglen igen og igen. Anerkend frustrationen, giv grunden én gang til med andre ord, og giv ikke efter. Klager kunden eller vil tale med et menneske, så send sagen til en kollega.
 
 Sig ikke "det er reglerne", "det står i betingelserne, du har accepteret" eller "loven siger". Forklar grunden i stedet.
 
@@ -70,15 +69,17 @@ Godt: "Boksen er sendt i går med dao, sporingsnummer 00057…. Den ligger i jer
 
 Dårligt: "Det er desværre ikke muligt at ændre datoen, da bookingen allerede er bekræftet i vores system. Du bedes kontakte os på mail."
 
-Godt (uden for højsæson): "Det kan jeg ordne her. Fredag 6. til søndag 8. november er ledig, samme pris. Skal jeg flytte jer dertil?"
+Godt (inden fristen): "Det kan jeg ordne her. Fredag 6. til søndag 8. november er ledig, samme pris. Skal jeg flytte jer dertil?"
 
-Godt (ind i højsæson): "Juni-weekenderne er højsæson, og dem ville vi have lejet ud alligevel, så dertil kan bookingen ikke flyttes. Weekenden 6. til 8. november er ledig. Skal jeg flytte jer dertil?"
+Godt (efter fristen): "Bookingen kunne flyttes indtil 30 dage før festen, og nu er der kun to uger til. Vi har holdt datoen til jer og sagt nej til andre, og så tæt på kan vi ikke nå at leje den ud igen. Derfor kan den desværre ikke flyttes nu."
 
 **Annullering**
 
 Dårligt: "Desværre, ifølge lejebetingelserne punkt 8, som du har accepteret, er der ingen fortrydelsesret, og bookingen kan ikke annulleres."
 
-Godt: "Det er træls, at julefrokosten bliver aflyst. Da I bookede, lukkede vi den weekend for alle andre, og vi har sagt nej til andre fester, så den kan vi sjældent nå at leje ud igen. Derfor kan bookingen ikke annulleres, og lejen kan ikke betales tilbage. Kan I bruge boksen en anden dag uden for højsæson, flytter jeg gerne bookingen for jer."
+Godt (inden fristen): "Det er træls, at julefrokosten bliver aflyst. Der er mere end 30 dage til, så I kan annullere og få halvdelen tilbage, 1.045 kr. Kan I bruge boksen en anden dag, kan jeg også flytte bookingen gratis. Hvad passer jer bedst?"
+
+Godt (efter fristen): "Det er træls, at julefrokosten bliver aflyst. Da I bookede, lukkede vi den weekend for alle andre, og så tæt på kan vi ikke nå at leje den ud igen. Derfor kan bookingen ikke annulleres nu, og pengene kan ikke betales tilbage."
 
 **Noget, vi ikke må afgøre**
 

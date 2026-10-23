@@ -102,7 +102,7 @@ export default async function Home() {
     },
     {
       q: "Kan vi flytte datoen eller afbestille?",
-      a: "Afbestille kan I ikke. Vi holder boksen til jer på de datoer, I vælger, så bookingen er bindende, når den er betalt, og der er ingen fortrydelsesret. Flytte kan I, så længe boksen ikke er sendt, til ledige datoer uden for højsæson (fredag til søndag i april til september og december). Kommer boksen ikke frem, eller virker den ikke, og skyldes det ikke jer, får I hele lejen tilbage. Det hele står i lejebetingelserne.",
+      a: "Ja, senest 30 dage før første lejedag. Indtil da kan I flytte bookingen gratis til andre ledige datoer, eller afbestille den og få 50 % tilbage. Senere kan den hverken flyttes eller afbestilles, fordi vi holder boksen til jer og har sagt nej til andre. Der er ingen fortrydelsesret. Kommer boksen ikke frem, eller virker den ikke, og skyldes det ikke jer, får I hele lejen tilbage. Det hele står i lejebetingelserne.",
     },
     {
       q: "Hvad hvis noget går i stykker?",

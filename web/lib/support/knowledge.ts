@@ -41,7 +41,6 @@ function generatedKnowledge(): string {
   return out.join("\n");
 }
 
-const MONTH_NAMES = ["januar","februar","marts","april","maj","juni","juli","august","september","oktober","november","december"];
 
 /** The developer message that changes per turn: date, hours, verification, prices and rules. */
 export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, now = new Date()): string {
@@ -77,7 +76,7 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     `- Boks, faste perioder: ${periods}. Dage før, efter eller mellem perioderne koster ${kr(s.prices.perExtraDay)} pr. ekstra dag, og kunden får altid den billigste kombination (5-7 dage koster højst en uge). check_availability giver den præcise pris for datoerne. Højst ${s.rules.maxDays} dage online.`,
     `- Printer: ${kr(s.prices.printer)} med ${s.printsIncluded} print. Temaer findes ikke længere.`,
     `- Tilvalg: Billederne gemt i ${KEEP_MONTHS} måneder (${kr(s.prices.keep)}). Uden tilvalget er eventsiden åben i ${GALLERY_MONTHS} måneder, og derefter sletter vi billederne. Tilvalget kan kun vælges ved booking.`,
-    `- Højsæson: fredag til søndag i ${s.rules.peakMonths.map((m) => MONTH_NAMES[m - 1]).join(", ")}. En booking kan flyttes til datoer uden for højsæson, aldrig ind i højsæson.`,
+    `- Ændringer: senest ${s.rules.changeDays} dage før første lejedag kan bookingen flyttes gratis til andre ledige datoer med samme antal dage, eller annulleres med ${s.rules.refundPercent} % af det betalte tilbage. Senere end det kan bookingen hverken flyttes eller annulleres.`,
     `- Første lejedag tidligst ${s.rules.leadDays} dage frem, højst ${s.rules.monthsAhead} måneder frem. Boksen sendes ${s.rules.shipDaysBefore} dage før første lejedag og skal være retur ${s.rules.returnDaysAfter} dage efter sidste.`,
     `- Online booking er ${s.open ? "åben" : "lukket lige nu (henvis til chatten/eskalér)"}.`,
   );

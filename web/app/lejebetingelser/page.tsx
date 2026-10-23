@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { company, companyAddress, contactHref, contactText } from "@/lib/company";
-import { GALLERY_MONTHS, KEEP_MONTHS } from "@/lib/udlejning/core";
+import { DEFAULT_SETTINGS, GALLERY_MONTHS, KEEP_MONTHS } from "@/lib/udlejning/core";
+
+const { changeDays: CHANGE_DAYS, refundPercent: REFUND } = DEFAULT_SETTINGS.rules;
 
 export const metadata: Metadata = {
   title: "Lejebetingelser for private | Selfi",
@@ -44,7 +46,7 @@ export default function Lejebetingelser() {
       label="Lejebetingelser"
       title="Lejebetingelser for private"
       lede="Gælder, når I lejer Selfi Boks til en fest gennem selfi.dk. De er skrevet, så de kan læses på fem minutter. Har I et spørgsmål, som ikke er besvaret her, så skriv til os."
-      updated="23. oktober 2026 (version 4)"
+      updated="23. oktober 2026 (version 5)"
     >
       <h2>1. Hvem aftalen er mellem</h2>
       <p>
@@ -121,11 +123,11 @@ export default function Lejebetingelser() {
         </tbody>
       </table>
 
-      <h2>8. Ingen fortrydelsesret eller afbestilling</h2>
+      <h2>8. Fortrydelsesret, flytning og afbestilling</h2>
       <ul>
         <li>Der er ikke fortrydelsesret. Lejen er en tjenesteydelse til jeres fest på de datoer, I har valgt, og vi holder boksen til jer de dage. Derfor gælder den almindelige fortrydelsesret på 14 dage ved køb på nettet ikke (forbrugeraftalelovens § 18, stk. 2, nr. 12).</li>
-        <li>Bookingen kan ikke afbestilles, når den er betalt. Bruger I ikke boksen, får I ikke lejen tilbage.</li>
-        <li>Så længe boksen ikke er sendt, kan I flytte bookingen til andre ledige datoer med samme antal dage uden for højsæson. Højsæson er fredag til søndag i april til september og i december. Ind i højsæson kan en booking ikke flyttes, fordi de dage ville være blevet lejet ud alligevel.</li>
+        <li>Senest {CHANGE_DAYS} dage før første lejedag kan I flytte bookingen gratis til andre ledige datoer med samme antal dage, eller afbestille den og få {REFUND} % af det betalte tilbage. Skriv til os, så klarer vi det.</li>
+        <li>Senere end {CHANGE_DAYS} dage før første lejedag kan bookingen hverken flyttes eller afbestilles. Bruger I ikke boksen, får I ikke pengene tilbage.</li>
         <li>Det ændrer ikke punkt 4 og 9: kommer boksen ikke frem, eller kan den ikke bruges, og skyldes det ikke jer, får I hele lejen tilbage.</li>
       </ul>
 
