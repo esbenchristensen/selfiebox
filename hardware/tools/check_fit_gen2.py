@@ -27,6 +27,7 @@ PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_camsleev
 BOUGHT = ["x_seal", "x_camglass", "x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
           "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "x_logo_w", "x_logo_g"]
+THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
 
 # pairs that touch by design: (a, b) -> largest overlap in mm3 that is still fine (contact faces render as slivers)
 CONTACT = {
@@ -54,6 +55,15 @@ CLEARANCES = [
     ("x_dsp_glass", "x_frame3", 0.0, "display glass: the frame toes press it"),
     ("c_mics", "x_front3", 0.3, "mic board under the channel wall"),
     ("x_strip_w", "x_front3", 0.0, "white strips end at the camera caps"),
+    ("x_tema_top", "x_shell3", 0.0, "theme top: base on the top face, tongues rest on the upper slots' floor"),
+    ("x_tema_vinge_v", "x_shell3", 0.0, "left wing: rib beside the side wall, tongues rest on both slots' floor"),
+    ("x_tema_vinge_h", "x_shell3", 0.0, "right wing"),
+    ("x_tema_top", "x_tema_vinge_v", 0.2, "top and left wing share the upper slot"),
+    ("x_tema_top", "x_tema_vinge_h", 0.2, "top and right wing"),
+    ("x_tema_vinge_v", "x_cleat", 0.5, "left wing strap beside the wall cleat"),
+    ("x_tema_top", "x_cleat", 0.5, "top straps beside the wall cleat"),
+    ("x_tema_top", "x_front3", 0.15, "top sign over the front"),
+    ("x_tema_vinge_v", "x_front3", 0.15, "left wing beside the front"),
 ]
 
 
@@ -99,7 +109,7 @@ def main():
     ref = None
     if "--ref" in args:
         i = args.index("--ref"); ref = Path(args[i + 1]); del args[i:i + 2]
-    views = PRINTED + BOUGHT
+    views = PRINTED + BOUGHT + THEME
     if args:
         d = Path(args[0])
     else:

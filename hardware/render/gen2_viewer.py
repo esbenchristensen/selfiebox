@@ -20,7 +20,7 @@ DEPTH = float(sys.argv[4]) if len(sys.argv) > 4 else 85.0   # box depth (D in ge
 
 # node, STL view, label, colour, group, explode [x, y, z] in glTF axes (mm at full explode)
 PARTS = [
-    ("lysring",       "x_ring3",       "Lysring med kile over hvid 3 (naturfarvet ASA)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
+    ("lysring",       "x_ring3",       "Lysring med kile over hvid 3 (mat translucent)",       "#fbf8f1", "Kabinet",    [0, 0, 170]),
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
     ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
@@ -53,7 +53,12 @@ PARTS = [
     ("skruer_front",  "s_front3",      "4 skruer, front (3,0 × 15, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
+    # v21: example theme parts on the hooks (skjult som standard i admin; vises med fluebenet)
+    ("tema_top",      "x_tema_top",    "Tema-top (eksempel): skilt + 2 kroge i de øverste slidser", "#22d36b", "Tema (eksempel)", [0, 90, -40]),
+    ("tema_vinge_v",  "x_tema_vinge_v", "Tema-vinge venstre (eksempel): 2 kroge", "#16a34a", "Tema (eksempel)", [-90, 0, -40]),
+    ("tema_vinge_h",  "x_tema_vinge_h", "Tema-vinge højre (eksempel): 2 kroge",   "#16a34a", "Tema (eksempel)", [90, 0, -40]),
 ]
+OPTIONAL = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"}   # left out if the STL dir has none (versions before v21)
 
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. v12: the display and the Pi sit 2.1 mm
 # further forward (glass at y 1.6), so every point at the Pi or the display back moved with them. Routed along the back wall
@@ -140,13 +145,15 @@ def tube(points, d):
 scene = trimesh.Scene()
 meta = []
 for node, view, label, hexc, group, ex in PARTS:
+    if view in OPTIONAL and not (STL / f"{view}.stl").exists():
+        continue
     m = trimesh.load(STL / f"{view}.stl")
     m.merge_vertices()
     m.apply_transform(M)
     m.apply_translation([0, Y0, 0])
     m.visual = trimesh.visual.TextureVisuals(material=material(hexc, 0.3 if group == "Skruer" else 0.55))
     scene.add_geometry(m, node_name=node, geom_name=node)
-    meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex})
+    meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex, **({"hidden": True} if view in OPTIONAL else {})})
 
 owners = {p[0]: p for p in PARTS}
 for i, (owner, label, d, pts) in enumerate(CABLES):

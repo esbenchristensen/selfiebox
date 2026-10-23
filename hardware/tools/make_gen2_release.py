@@ -27,7 +27,10 @@ D = 70
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
-         "vaegbeslag": ("x_cleat", DOWN), "kameraroer": ("x_camsleeve", DOWN)}
+         "vaegbeslag": ("x_cleat", DOWN), "kameraroer": ("x_camsleeve", DOWN),
+         # v21: example theme parts to test the hooks, face down like every theme part
+         "tema-top-eksempel": ("x_tema_top", UP), "tema-vinge-venstre-eksempel": ("x_tema_vinge_v", UP),
+         "tema-vinge-hoejre-eksempel": ("x_tema_vinge_h", UP)}
 LOGOS = {"logo-hvid": "x_logo_w", "logo-groen": "x_logo_g"}   # with the front's orientation and offset
 
 

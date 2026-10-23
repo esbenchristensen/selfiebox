@@ -57,7 +57,7 @@ IF_SCREW = [];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-20, 38];  IF_CAB
 PRN_PORT = false;
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
-POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 175], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
+POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 205], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker; v21: [-98, 175] -> 205, clear of the wing pocket                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
 // camera (Esben 19 Oct, Wide chosen). v20 (Esben 23 Oct): a small glass window in front of the lens. The glass lies in a
 // pocket behind a 0.6 lip; the lens tip sits 0.6 behind the glass (v19: tip 0.3 behind the open face, so the camera moves 2.4 back)
 CAM_TIP_Y = 2.7;
@@ -134,7 +134,10 @@ module diffuser2() {
     ext_y(0, PT) difference() { ring_band2d(-SLOT_W/2 + 0.15, SLOT_W/2 - 0.15); offset(r = RIB_T + 0.15) glass_keep2d(); offset(r = 0.15) cam_block2d(); }
 }
 // theme wings: hook slots in the back wall (hidden against the wall)
-WING_P = [for (sx = [-1, 1], z = [RING_Z0 + 50, RING_Z1 - 50]) [sx*(W/2 - 12), z]];
+WING_POCKET = true;                       // v21: each slot opens into a closed pocket (see v20 sealing, 7)
+// v21: the lower pair moves up from RING_Z0 + 50 (57.7) to 175: its closed pocket (below) would hit the MOSFET board and the
+// reed switch low on the left, and the speaker (z 128-159) leaves no room between them. The upper pair (249.3) also carries a theme top: its back plate hooks in like a wing.
+WING_P = [for (sx = [-1, 1], z = [WING_POCKET ? 175 : RING_Z0 + 50, RING_Z1 - 50]) [sx*(W/2 - 12), z]];
 module shell2(top = UNIT_TOP) {
     y0 = RIB_TOP + RAIL_T;
     difference() {
@@ -729,6 +732,72 @@ module spk_seal2d(h) difference() { offset(r = 6 + h) square([31, 17], center = 
 // back stays round the tongue and runs out of a Ø2 drain in the floor.
 LOCK_PK = [LOCK_W/2 + 0.6, LOCK_Y - 1, LOCK_TZ[1] + 0.8, 1.6];   // inner half width, front y, roof z, wall
 LOCK_DRAIN = [LOCK_X - LOCK_W/2 + 0.6, LOCK_Y + 0.5];
+// 7 v21 (Esben 23 Oct): the four theme-wing hook slots (WING_P, 4 x 14 through the back wall) opened straight into the
+// box in v20. Each now opens into a closed printed pocket (walls 1.6) that leaves room for a hook to drop in: 6.5 behind the
+// wall and 4 below the slot for the hook's lip (the theme hook: a 6 mm tongue through the slot, resting on its floor, with
+// a lip 3 mm down behind the wall; it goes in near the top of the slot and drops). A Ø2 drain at the pocket floor runs
+// back out through the back wall.
+WING_SLOT = 9;                            // v21: 9 wide (v20: 4), so a top and a wing can share the upper slot: top inside, wing outside
+WING_PK = [WING_SLOT/2 + 0.2, 6.5, 4, 1.6, 1];   // inner half width, depth behind the wall, room below the slot, wall, room above
+module wing_pockets() for (p = WING_P) difference() {
+    translate([p[0] - WING_PK[0] - WING_PK[3], D - BACK_T - WING_PK[1] - WING_PK[3], p[1] - 4 - WING_PK[2] - WING_PK[3]])
+        cube([2*(WING_PK[0] + WING_PK[3]), WING_PK[1] + WING_PK[3] + 0.01, 14 + WING_PK[2] + WING_PK[4] + 2*WING_PK[3]]);
+    translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 1, 14 + WING_PK[2] + WING_PK[4]]);
+}
+module wing_drains() for (p = WING_P) cyl_y(2, D - BACK_T - 1, D + 1, p[0], p[1] - 4 - WING_PK[2] + 1);
+module wing_slot_chamfers() for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T, p[1] - 4]) rotate([90, 0, 90]) linear_extrude(WING_SLOT) polygon([[-0.01, 0.01], [1.3, 0.01], [-0.01, -1.31]]);
+
+// ----------------------------------------------------------- theme hooks (v21) --
+// Esben 23 Oct: a theme top and the wings hang in the slots. Each hook is a tongue 4 x 6 (x, z) from a strap behind the
+// box, through the 3 mm wall, resting on the slot floor, with a lip 5 thick that reaches 3 below the floor behind the
+// wall: lift 3, push in, drop. The top owns the inner half of each upper slot, a wing the outer half of both slots on its
+// side. Straps stay outside the wall cleat (x -95..62) in the 14 mm gap to the wall, so put them on before hanging the box.
+HOOK = [4, 6, 5, 3, 0.25];                // tongue width (x), height (z), lip thickness (y), lip drop below the floor, clearance (tools/strength_hooks_gen2.py)
+// To come off, a hook must move 8.25 back (lip + clearance + wall). The straps are 10 (top) and 9 (wing) thick, so with the
+// box on the wall cleat (wall 14 behind the back) only 3.8 / 4.8 is left: hung on the wall, the parts cannot be unhooked.
+WING_STRAP = 9;
+STRAP_Y = D + 0.2;                        // straps' front face, 0.2 off the back wall
+TOP_Z0 = H + 0.2;                         // the top's base rests on the closed top face
+module hook(xc, zf) {                     // zf: slot floor; tongue from the strap face forward through the wall
+    y0 = D - BACK_T - HOOK[4] - HOOK[2];
+    translate([xc - HOOK[0]/2, y0, zf]) cube([HOOK[0], STRAP_Y - y0 + 0.01, HOOK[1]]);
+    translate([xc - HOOK[0]/2, y0, zf - HOOK[3]]) cube([HOOK[0], HOOK[2], HOOK[3] + 0.01]);
+    // 1 mm fillets (as 45 deg chamfers) in the two loaded corners: tongue top at the strap, tongue underside at the lip
+    // (the slot floor's inner edge has a 1.3 chamfer to clear it, wing_slot_chamfers)
+    translate([xc - HOOK[0]/2, STRAP_Y, zf + HOOK[1]]) rotate([90, 0, 90]) linear_extrude(HOOK[0]) polygon([[0.01, 0], [0.01, 1], [-1, 0]]);
+    translate([xc - HOOK[0]/2, y0 + HOOK[2], zf]) rotate([90, 0, 90]) linear_extrude(HOOK[0]) polygon([[0, 0], [1, 0], [0, -1]]);
+}
+function hook_x(sx, inner) = sx*(W/2 - 12) + (inner ? -sx : sx)*(WING_SLOT/4 + 0.1);   // centre of the slot's inner / outer half
+// example top: a 6 mm sign over the front, a 4 mm base on the top face, ribs, and two straps 4 x 10 down to the upper slots
+module theme_top_demo() {
+    zf = WING_P[1][1] - 4;
+    translate([0, 0, TOP_Z0]) {
+        translate([0, 3, 0]) rotate([90, 0, 0]) linear_extrude(6) translate([0, 40]) offset(r = 14) square([W - 28, 80 - 28], center = true);
+        translate([-(W/2 - 14), 0, 0]) cube([W - 28, D + 0.2, 4]);
+        for (x = [-60, 0, 60]) translate([x - 2, 2.9, 3.9]) rotate([90, 0, 90]) linear_extrude(4) polygon([[0, 0], [30, 0], [0, 36]]);
+    }
+    for (sx = [-1, 1]) {
+        x0 = hook_x(sx, true);
+        xa = sx < 0 ? x0 - HOOK[0]/2 : x0 - HOOK[0]/2 - 1;      // 1 mm wider towards the middle, flush on the wing's side
+        translate([xa, STRAP_Y, zf - HOOK[3]]) cube([HOOK[0] + 1, 10, TOP_Z0 + 4 - zf + HOOK[3]]);
+        translate([xa, D - 14, TOP_Z0]) cube([HOOK[0] + 1, STRAP_Y + 10 - (D - 14), 4]);   // ties the strap to the base
+        hook(x0, zf);
+    }
+}
+// example wing: a 6 mm panel beside the front, a 4 mm rib along the side, and a strap 9 thick behind the back wall that
+// carries a hook into both slots on that side
+module theme_wing_demo(sx) {
+    xe = W/2 + 0.2;                       // inner face of the rib (0.2 off the side wall)
+    zs = [for (p = WING_P) if (p[0]*sx > 0) p[1] - 4];
+    z0 = min(zs) - HOOK[3] - 6;  z1 = max(zs) + HOOK[1] + 8;
+    mirror([sx < 0 ? 1 : 0, 0, 0]) {
+        translate([xe, -3, 120]) rotate([90, 0, 0]) mirror([0, 0, 1]) linear_extrude(6) offset(r = 12) translate([12, 12]) square([50 - 24, 170 - 24]);
+        translate([xe, -3, 130]) cube([4, D + 3.2, 150]);
+        translate([hook_x(1, false) - HOOK[0]/2, STRAP_Y, z0]) cube([xe + 4 - (hook_x(1, false) - HOOK[0]/2), WING_STRAP, z1 - z0]);   // ends flush with the hook, 0.7 from the top's strap
+        translate([xe, D - 10, z0]) cube([4, 10.21 + WING_STRAP, z1 - z0]);
+        for (z = zs) hook(hook_x(1, false), z);
+    }
+}
 module lock_pocket() difference() {
     translate([LOCK_X - LOCK_PK[0] - LOCK_PK[3], LOCK_PK[1] - LOCK_PK[3], WALL - 0.01]) cube([2*(LOCK_PK[0] + LOCK_PK[3]), D - BACK_T - LOCK_PK[1] + LOCK_PK[3] + 0.02, LOCK_PK[2] + LOCK_PK[3] - WALL + 0.01]);
     translate([LOCK_X - LOCK_PK[0], LOCK_PK[1], WALL - 1]) cube([2*LOCK_PK[0], D - BACK_T - LOCK_PK[1] + 1, LOCK_PK[2] - WALL + 1]);
@@ -1014,7 +1083,11 @@ module shell3(top = UNIT_TOP) {
             for (j = JOINTS) cyl_y(M3_HEAD_CB + 1, D - BACK_T - 0.01, D, j[0], j[1]);   // close v1's screw holes (Ø6.4) in the back wall: no screw there since v2
             for (j = J2) cyl_y(POST_D, FR_BACK, D - BACK_T + 0.01, j[0], j[1]);
             power_holders();
+            if (WING_POCKET) wing_pockets();
         }
+        if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
+        if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
+        if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
         for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK + 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
         lock_cut();   // v10: the lock sits over a closed v1 screw hole now; keep its slot open
     }
@@ -1090,6 +1163,10 @@ if (VIEW == "x_display3")  placed_display3();
 if (VIEW == "x_seal")      seal_cords();                                                  // v20: every seal cord, squeezed
 if (VIEW == "x_camglass")  cam_glass();
 if (VIEW == "x_camsleeve") cam_sleeve();
+if (VIEW == "x_tema_top")   theme_top_demo();                                             // v21: example theme parts on the hooks
+if (VIEW == "x_tema_vinge_v") theme_wing_demo(-1);
+if (VIEW == "x_tema_vinge_h") theme_wing_demo(1);
+if (VIEW == "c_tema_demo")  { main_unit(); color("orange") { theme_top_demo(); theme_wing_demo(-1); theme_wing_demo(1); } }
 if (VIEW == "p_camsleeve") translate([0, 0, CAM_SLV_Y[1]]) rotate([-90, 0, 0]) translate([0, 0, -LENS_Z]) cam_sleeve();   // holder end down
 if (VIEW == "c_pi3")       placed_pi3();
 // the display and the Pi in their own materials for the 3D viewer: glass with its black border,

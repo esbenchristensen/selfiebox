@@ -35,7 +35,8 @@ GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 # print file suffix -> node in <version>_3d.glb. The logo inlays (LOGO) are copied as well, as separate colour
 # bodies with the front's origin, and put together with the front in one 3MF; a slicer needs one body per colour.
 PARTS = {"skal": "skal", "front": "front", "bagramme": "ledskinne", "lysring": "lysring",
-         "vaegbeslag": "vaegbeslag", "kameraroer": "kameraroer"}   # v19: no printer cap; v20: the camera sleeve
+         "vaegbeslag": "vaegbeslag", "kameraroer": "kameraroer",   # v19: no printer cap; v20: the camera sleeve
+         "tema-vinge-venstre-eksempel": "tema_vinge_v"}             # v21: an example wing to try the hooks
 LOGO = [suffix for suffix, *_ in FRONT_PARTS if suffix != "front"]
 
 # Corner region (glTF x, y; seen from the front, bottom left): one front screw, the shell/front joint and the ring corner.
@@ -65,6 +66,10 @@ COUPONS = [
     ("mikrofonstrip", ["skal"], ["mikrofoner"], 8, "+6",
      "Mikrofonkortet i lommen i bunden med Seeed-logoet nedad: pindene gennem hullerne, kortet fladt på de 4 ringe, "
      "kablet fladt ud bagtil (tilvalg)."),
+    ("vingelomme", ["skal"], ((-116, 70), (-84, 104)), 0, 14,
+     "v21: den øverste venstre vingeslids (9 × 14) med den lukkede lomme bagved og drænhullet i bunden. Prøv eksempelvingens "
+     "øverste krog: løft 3 mm, skub ind og lad den falde ned på slidsens bund. Går krogen ind uden at tvinge, står tungen på bunden, "
+     "og sidder læben bag væggen, så den ikke kan trækkes lige ud? Hæld lidt vand i slidsen: løber det ud af drænet?"),
     ("kameravindue", ["front", "kameraroer"], ["kameraglas"], 6, "fuld",
      "v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt "
      "sammen) i hjørnet bag glasset, og røret ovenpå. Sidder glasset uden slør? Mål glassets tykkelse: 1,2–1,8 mm går."),
