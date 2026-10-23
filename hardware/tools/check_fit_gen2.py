@@ -42,11 +42,11 @@ CONTACT = {
     ("x_shell3", "c_speaker"): 100, ("x_shell3", "c_mics"): 50,        # pegs through the ear / board holes (the block models have none)
     ("x_ring3", "x_seal"): 40, ("x_front3", "x_seal"): 1,               # the cords lie on the faces they seal (0.01 mm modelling overlap)
     ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
-    ("x_camsleeve", "x_front3"): 0.5,       # v21: the sleeve's 4 press ribs on the shroud's flats
+    ("x_camsleeve", "x_front3"): 0.5,       # the sleeve's 4 press ribs in the shroud's corners (v21: on its flats)
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
-    ("x_ring3", "x_front3", 0.1, "light ring in the slot and its seal pocket"),
+    ("x_ring3", "x_front3", 0.0, "v22: ring shoulder on the pocket floor, 0.15 shadow gap in the slot"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame"),
     ("x_camsleeve", "x_camera", 0.2, "v21: sleeve 0.3 clear of the lens holder, bore 0.2 round the barrel"),
     ("x_camera", "x_camglass", 0.2, "lens tip behind the glass"),
