@@ -16,6 +16,7 @@ const defaultHours = Math.round((DEFAULT.nights * (DEFAULT.photos * contentCalc.
 
 const included = [
   ["Standardboksen med jeres tema", "Skærm, tekster og fotoramme i jeres farver og med jeres logo. Et kabinet i jeres egen form er et tilvalg."],
+  ["Mikrofon til videohilsner", "Mikrofonmodulet sidder i alle bokse, så hilsner og udtalelser får tydelig lyd."],
   ["Vægbeslag og tyverilås", "Med guide på én side. I hænger den op på ca. 20 minutter."],
   ["Deling på SMS og gæsteliste", "Gæsten får billedet på SMS og kan sige ja til tilbud fra jer."],
   ["Alle aktiviteter", "Titler, missioner, konkurrence, guldtid, skattejagt og rundtur."],

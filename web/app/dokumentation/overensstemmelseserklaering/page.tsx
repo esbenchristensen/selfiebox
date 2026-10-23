@@ -27,7 +27,7 @@ export default function Overensstemmelseserklaering() {
           <tr><th>Hardwareversion</th><td>{product.hardware}</td></tr>
           <tr><th>Serienummer</th><td>Alle enheder med serienummer SB2-2026-0001 og frem (står på typeskiltet bag på boksen)</td></tr>
           <tr><th>Mærkedata</th><td>{product.rating}</td></tr>
-          <tr><th>Varianter</th><td>Med eller uden 4G-modem (Waveshare SIM7600G-H) og mikrofonkort (reSpeaker XVF3800). Erklæringen dækker alle varianter.</td></tr>
+          <tr><th>Varianter</th><td>Med eller uden 4G-modem (Waveshare SIM7600G-H). Mikrofonkortet (reSpeaker XVF3800) sidder i alle bokse. Erklæringen dækker begge varianter.</td></tr>
         </tbody>
       </table>
 
