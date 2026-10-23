@@ -33,9 +33,10 @@ NODES = {"front": "bezel", "lysring": "diffuser_ring", "skal": "shell_closed", "
 # Colours from the assembly's parts.json: black ASA front and shell, natural ASA ring, the logo inlays.
 COLOURS = {"skal": "#1d1d20", "skaerm": "#0a0a0c", "kamera": "#2b2f33", "front": "#1d1d20", "lysring": "#fbf8f1",
            "logo_hvid": "#f5f5f4", "logo_groen": "#22d36b"}
-# Stand bracket foot and nut, in assembly coordinates (y centred): the tripod screw goes up into the nut from below.
-FOOT = {"centre": (-16.5, -137.0, -108.0), "size": (70.0, 12.0, 52.0)}
-NUT = {"centre": (-16.5, -140.6, -110.0), "r": 6.4, "h": 5.5}
+# Stand bracket foot and nut, in assembly coordinates (y centred, v20: unit 307 high, cleat bottom at -143.5): the tripod
+# screw goes up into the nut from below.
+FOOT = {"centre": (-16.5, -137.5, -108.0), "size": (70.0, 12.0, 52.0)}
+NUT = {"centre": (-16.5, -141.1, -110.0), "r": 6.4, "h": 5.5}
 DRAW_ORDER = ["skal", "skaerm", "kamera", "front", "lysring", "logo_hvid", "logo_groen"]
 
 

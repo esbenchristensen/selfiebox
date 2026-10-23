@@ -52,9 +52,9 @@ G = dict(W=234.0, H=306.0, D=66.0, R=24.0, SIDE_Y=10.0, BZ0=66.8, BZ1=239.2, H_S
          PRN_FRONT_W=82.0, PRN_FRONT_H=58.0)
 HW = G["W"] / 2
 X0 = HW + 0.2                      # inner edge of a wing
-# Gen 2 (gen2_concept.scad): one concentric squircle outline, 222.5 wide with a 7.8 mm border to the light ring,
-# 70 mm deep since v5 (85 mm before), and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
-G2 = dict(G, W=222.5, D=70.0, R=42.8, WING_X=222.5 / 2 - 12)
+# Gen 2 (gen2_concept.scad): one concentric squircle outline, 224.5 x 307 since v20 (222.5 x 306 before) with a border to the
+# light ring, 70 mm deep since v5 (85 mm before), and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
+G2 = dict(G, W=224.5, H=307.0, D=70.0, R=42.8, WING_X=224.5 / 2 - 12)
 
 
 def use_unit(unit):
