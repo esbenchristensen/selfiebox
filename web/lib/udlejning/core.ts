@@ -6,7 +6,7 @@
 // returnDaysAfter + prepDays after the last day. A day is free when fewer boxes (printers) are held than
 // we own, minus what is blocked in admin (service, B2B use).
 
-import { addDays, nights, type DayKey, type Range } from "../dates";
+import { addDays, daysIn, nights, type DayKey, type Range } from "../dates";
 
 export type Delivery = "post"; // always by post with dao; there is no pickup
 export type PhotoType = "strip" | "polaroid";
@@ -30,6 +30,7 @@ export type RentalSettings = {
     byDays?: number[]; // the old price per number of days, still written by admin for older selfi.dk builds
     theme: number;
     printer: number;
+    keep: number; // add-on: the photos kept for KEEP_MONTHS
   };
   printsIncluded: number;
   themes: string[];
@@ -41,6 +42,7 @@ export type RentalSettings = {
     shipDaysBefore: number; // with the post: the box leaves us this many days before the first day
     returnDaysAfter: number; // and is back this many days after the last day
     prepDays: number; // check, clean and charge before the next booking
+    peakMonths: number[]; // 1-12: friday to sunday in these months is high season, which a booking cannot be moved to
   };
 };
 
@@ -52,6 +54,7 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     perExtraDay: 350, // mere end 2 hverdage minus 1 hverdag, så 2 hverdage altid er billigst
     theme: 295,
     printer: 895,
+    keep: 149,
   },
   printsIncluded: 100,
   themes: ["Bryllup", "Fødselsdag", "Julefrokost"],
@@ -63,6 +66,7 @@ export const DEFAULT_SETTINGS: RentalSettings = {
     shipDaysBefore: 2,
     returnDaysAfter: 3,
     prepDays: 1,
+    peakMonths: [4, 5, 6, 7, 8, 9, 12], // konfirmationer, bryllupper, sommerfester, julefrokoster
   },
 };
 
@@ -89,6 +93,16 @@ export type Choice = {
   printer: boolean;
   photoType: PhotoType;
   delivery: Delivery;
+  keep?: boolean; // the photos kept for KEEP_MONTHS instead of GALLERY_MONTHS
+};
+
+/** How long the event page is open without and with the keep add-on. After that the photos are deleted. */
+export const GALLERY_MONTHS = 3;
+export const KEEP_MONTHS = 12;
+
+/** The add-on besides the printer, as the booking shows it. */
+export const ADDONS = {
+  keep: () => ({ name: `Billederne gemt i ${KEEP_MONTHS} måneder`, text: `Eventsiden er åben i ${KEEP_MONTHS} måneder i stedet for ${GALLERY_MONTHS} måneder, så I kan hente billederne igen. Derefter sletter vi dem.` }),
 };
 
 export const PHOTO_TYPES: Record<PhotoType, { name: string; text: string }> = {
@@ -148,6 +162,7 @@ export function priceLines(s: RentalSettings, c: Choice): Line[] {
   const lines: Line[] = [{ id: "box", label: `Selfi Boks · ${q.label}`, amount: q.amount }];
   if (c.theme) lines.push({ id: "theme", label: `Tema: ${c.theme}`, amount: s.prices.theme });
   if (c.printer) lines.push({ id: "printer", label: `Printer med ${s.printsIncluded} print (${PHOTO_TYPES[c.photoType].name.toLowerCase()})`, amount: s.prices.printer });
+  if (c.keep) lines.push({ id: "keep", label: ADDONS.keep().name, amount: s.prices.keep });
   return lines;
 }
 
@@ -156,6 +171,12 @@ export const total = (lines: Line[]) => lines.reduce((t, l) => t + l.amount, 0);
 function weekday(k: DayKey): number {
   const [y, m, d] = k.split("-").map(Number);
   return (new Date(y, m - 1, d).getDay() + 6) % 7;
+}
+
+/** The high-season days in a range: friday to sunday in the peak months. A booking can be moved to other
+ * dates, but not into these, because they would have been rented out anyway (/lejebetingelser point 8). */
+export function peakDays(s: RentalSettings, r: Range): DayKey[] {
+  return daysIn(r).filter((k) => weekday(k) >= 4 && s.rules.peakMonths.includes(Number(k.slice(5, 7))));
 }
 
 /** The days a booking holds its box and printer, including transport and the check afterwards. */

@@ -1,6 +1,6 @@
 # Supportchatten (Sif)
 
-AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder: slå kundens bookinger op, svare på priser, vilkår og datoer, flytte datoer efter et klart ja, søge på nettet, og sende sagen videre til Esben med en SMS, når den ikke må eller kan svare. Esben overtager fra admin.selfi.dk → Support.
+AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder: slå kundens bookinger op, svare på priser, vilkår og datoer, flytte datoer uden for højsæson efter et klart ja, søge på nettet, og sende sagen videre til Esben med en SMS, når den ikke må eller kan svare. Esben overtager fra admin.selfi.dk → Support.
 
 ## Filer
 
@@ -31,7 +31,8 @@ Admin-siden ligger i selfiebox-platform: `web/src/app/admin/(panel)/support/` (l
 - **Verificering** (GDPR) med bookingnummer, der skal være lavet med den oplyste e-mail eller det oplyste telefonnummer (`verify_customer`), eller med en 6-cifret engangskode på SMS til det oplyste nummer (`send_sms_code` + `verify_sms_code`: 10 min., højst 3 koder, hash i databasen). Efter en SMS-kode er kundens bookinger dem, der er lavet med det telefonnummer. Højst 5 forkerte forsøg pr. chat i alt. Før det kender modellen ingen bookinger.
 - **Erhverv:** Sif taler også med steder og kan bestille et gratis designudkast (`register_business_lead`), som havner i Leads i admin, præcis som formularen på /erhverv.
 - **Afgrænsning i backend:** alle opslag og ændringer går gennem `myRental()` i `tools.ts`, som kun accepterer bookingnumre fra `chat.customer.bookings`. Prompten kan ikke udvide det.
-- **Ændringer kræver ja:** `propose_date_change` gemmer et forslag; `commit_date_change` afvises, medmindre kunden har skrevet en ny besked efter forslaget (og inden en time). Alt logges i bookingens `history` og i `support_audit` med tid og aktør.
+- **Bindende bookinger:** En annullering er aldrig mulig (lejebetingelserne punkt 8, stilguiden). Flytning kun til datoer uden for højsæson (`peakDays` i `lib/udlejning/core.ts`, måneder i `rules.peakMonths`).
+- **Ændringer kræver ja:** `propose_date_change` gemmer et forslag og afviser højsæsondatoer; `commit_date_change` afvises, medmindre kunden har skrevet en ny besked efter forslaget (og inden en time). Alt logges i bookingens `history` og i `support_audit` med tid og aktør. Verificering og eskalering logges i `support_audit` med tid og aktør.
 - **Penge, klager, jura, skade:** aldrig i chatten; `escalate`.
 - **Prompt injection:** reglerne står i `instructions`, kundens tekst er altid `user`-beskeder, værktøjs- og websvar mærkes som data. Modellen får `store: false`, så OpenAI gemmer intet; `safety_identifier` er en hash af chat-id'et.
 - **Rate limits:** 1.500 tegn pr. besked, 30 beskeder pr. 10 min. pr. chat, 20 nye chats pr. time pr. IP (pseudonymiseret).

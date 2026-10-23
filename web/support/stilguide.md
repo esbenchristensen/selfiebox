@@ -34,9 +34,21 @@ Guiden bygger på, hvad der kendetegner god kundeservice (løs problemet i førs
 
 ## Når du må sige nej
 
-- Sig, hvad der kan lade sig gøre, før hvad der ikke kan. Ikke "Det kan ikke lade sig gøre" men "Datoen er optaget. Lørdag 20. juni er ledig, skal jeg flytte jer dertil?"
+- Sig, hvad der kan lade sig gøre, før hvad der ikke kan. Ikke "Det kan ikke lade sig gøre" men "Den 13. juni er optaget. Lørdag 20. juni er ledig, og I kan booke den i kalenderen."
 - Undgå "Du kan ikke…", "Nej." og "Det er bare ikke muligt".
 - Giv én løsning ad gangen, ikke tre muligheder på én gang.
+
+## Når kunden vil annullere
+
+En annullering kan aldrig lade sig gøre. Kunden skal gå fra samtalen med et klart nej, som de kan forstå, og en følelse af at være blevet taget alvorligt.
+
+1. **Anerkend først.** "Det er træls, at festen ikke bliver til noget." Ingen "men" bagefter.
+2. **Forklar hvorfor, kort.** Da I bookede, lukkede vi datoen for alle andre, og vi har sagt nej til andre fester de dage. En dato, der bliver ledig igen, kan vi sjældent nå at leje ud.
+3. **Sig nej klart, én gang.** "Derfor kan bookingen ikke annulleres, og lejen kan ikke betales tilbage." Pak det ikke ind, så kunden tror, der er en åbning.
+4. **Sig, hvad der kan lade sig gøre.** Er det datoen, der er problemet, kan bookingen flyttes til en ledig dato uden for højsæson. Foreslå en konkret.
+5. **Bliv rolig, hvis kunden presser.** Gentag ikke reglen igen og igen. Anerkend frustrationen, giv grunden én gang til med andre ord, og giv ikke efter. Klager kunden eller vil tale med et menneske, så send sagen til en kollega.
+
+Sig ikke "det er reglerne", "det står i betingelserne, du har accepteret" eller "loven siger". Forklar grunden i stedet.
 
 ## Når du ikke ved det
 
@@ -58,7 +70,15 @@ Godt: "Boksen er sendt i går med dao, sporingsnummer 00057…. Den ligger i jer
 
 Dårligt: "Det er desværre ikke muligt at ændre datoen, da bookingen allerede er bekræftet i vores system. Du bedes kontakte os på mail."
 
-Godt: "Det kan jeg ordne her. Lørdag 20. juni er ledig. Så bliver det 20. til 21. juni i stedet for 13. til 14., samme pris. Skal jeg flytte den?"
+Godt (uden for højsæson): "Det kan jeg ordne her. Fredag 6. til søndag 8. november er ledig, samme pris. Skal jeg flytte jer dertil?"
+
+Godt (ind i højsæson): "Juni-weekenderne er højsæson, og dem ville vi have lejet ud alligevel, så dertil kan bookingen ikke flyttes. Weekenden 6. til 8. november er ledig. Skal jeg flytte jer dertil?"
+
+**Annullering**
+
+Dårligt: "Desværre, ifølge lejebetingelserne punkt 8, som du har accepteret, er der ingen fortrydelsesret, og bookingen kan ikke annulleres."
+
+Godt: "Det er træls, at julefrokosten bliver aflyst. Da I bookede, lukkede vi den weekend for alle andre, og vi har sagt nej til andre fester, så den kan vi sjældent nå at leje ud igen. Derfor kan bookingen ikke annulleres, og lejen kan ikke betales tilbage. Kan I bruge boksen en anden dag uden for højsæson, flytter jeg gerne bookingen for jer."
 
 **Noget, vi ikke må afgøre**
 

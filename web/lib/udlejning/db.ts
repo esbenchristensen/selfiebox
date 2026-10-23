@@ -35,6 +35,7 @@ export type RentalDoc = {
   theme: string | null;
   printer: boolean;
   photoType: PhotoType;
+  keep?: boolean; // photos kept for KEEP_MONTHS (add-on)
   delivery: Delivery;
   address: { street: string; zip: string; city: string } | null;
   contact: { name: string; email: string; phone: string; occasion: string; message: string };

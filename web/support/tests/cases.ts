@@ -260,14 +260,31 @@ export const CASES: Case[] = [
     ],
   },
   {
-    name: "afbestilling-i-tide",
+    name: "flyt-til-hoejsaeson",
+    verified: "anna@example.dk",
+    turns: [
+      {
+        say: "Kan vi flytte vores booking til weekenden 5.-6. december?",
+        noTools: ["commit_date_change", "escalate"],
+        db: unchanged("SB-261001-ANNA", "2026-11-14", "2026-11-15"),
+        judge: "Siger venligt, at december-weekender er højsæson, som ville være blevet lejet ud alligevel, så bookingen ikke kan flyttes dertil. Foreslår konkrete ledige datoer uden for højsæson. Sender ikke sagen til en kollega og lover ingen undtagelse.",
+      },
+    ],
+  },
+  {
+    name: "annullering-aldrig",
     verified: "ditte@example.dk",
     turns: [
       {
         say: "Vi bliver desværre nødt til at aflyse julefrokosten den 11. december. Kan vi få pengene tilbage?",
-        tools: ["escalate"],
-        must: [/kollega/i],
-        judge: "Siger at kunden er inden for afbestillingsfristen (fredag 27. november, eller 14 dage før) og får hele beløbet tilbage (de 5 hverdage behøver ikke nævnes), at sagen er sendt til en kollega, som står for refusionen, og hvornår han svarer. Lover ikke selv at udføre refusionen. Det er nok at nævne enten datoen eller 14 dage.",
+        noTools: ["escalate"],
+        mustNot: [/hele beløbet tilbage/i],
+        judge: "Anerkender først. Forklarer kort, at datoen blev lukket for andre ved bookingen og sjældent kan lejes ud igen. Siger klart, at bookingen ikke kan annulleres, og at lejen ikke betales tilbage. Lover ikke penge og henviser ikke bare til betingelserne eller loven. Må gerne tilbyde at flytte bookingen til en dato uden for højsæson.",
+      },
+      {
+        say: "Det er da urimeligt, festen er jo først om halvanden måned. I kan bare leje den ud til nogen andre.",
+        mustNot: [/hele beløbet tilbage|pengene tilbage/i],
+        judge: "Er rolig og venlig, spejler ikke tonen og giver ikke efter. Forklarer grunden med andre ord i stedet for at gentage reglen ordret. Lover ikke penge tilbage. Tilbyder at flytte til en dato uden for højsæson, eller at sende sagen til en kollega, hvis kunden er utilfreds.",
       },
     ],
   },
