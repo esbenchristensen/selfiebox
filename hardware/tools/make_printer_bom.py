@@ -97,8 +97,7 @@ PRINTED_V4 = [
     ("Sokkel under printeren (kabelspor, rille til skumsnor, krog-ramper, lomme til dæmpepladen)", "Alle", 300, "sort ASA"),
     ("Dæmpeplade med 56 knusekegler (udskiftes efter et hårdt fald)", "Alle", 85, "sort ASA"),
     ("Udgangsmodul (papirrum, rutsjebane, lomme, skærm, LED-skinne, knusekegler)", "Alle", 960, "sort ASA"),
-    ("2 vægkonsoller, slanke T-arme", "B2B væg", 520, "sort ASA"),
-    ("2 vægskinner", "B2B væg", 150, "sort ASA"),
+    ("2 skjulte L-beslag (hylde under printeren, bagplade bag den)", "B2B væg", 900, "sort ASA"),
 ]
 BOUGHT_V4 = [b if not b[0].startswith("SPUN+ Climate 4,0 × 30") else
              ("SPUN+ Climate 4,0 × 16, undersænket", "B2B", 2, 2, "Sokkel → bord, hylde eller konsol: sættes i før dæmpepladen", "Ja i B2C")
@@ -108,6 +107,12 @@ BOUGHT_V4 = [b if not b[0].startswith("Skrue til plast 3,5 × 10") else
              for b in BOUGHT_V4]
 BOUGHT_V4.insert(3, ("Silikoneskum-snor Ø1,5 mm (RS 234-2906), 5 m", "Alle", 1, 150,
     "Samme snor som boksen (halo-gen2-v20). Ca. 1,5 m: soklens rille under kappens væg (0,8 m) og ringen om udgangsmodulets studs (0,7 m). Pris skønnet", "Nej: ellers er fugerne ikke tætte"))
+# v4 on the wall: hidden L-brackets screwed to the wall behind the printer, so no cleats and no security screws
+BOUGHT_V4 = [b for b in BOUGHT_V4 if not b[0].startswith("Sikkerhedsskrue")]
+BOUGHT_V4 = [("SPUN+ Climate 4,0 × 25, undersænket", "B2B væg", 2, 2, "Højre L-beslag → udgangsmodulet (nedefra)", "Ja, hvis den ikke hænger på væg") if b[0].startswith("SPUN+ Climate 4,0 × 20")
+             else ("Skrue 5 × 50 + dybel (til væggens materiale)", "B2B væg", 8, 3, "2 L-beslag, 4 hver, skjult bag printeren. I gips: metal-gipsdybler eller skru i en lægte", "Ja, hvis den ikke hænger på væg") if b[0].startswith("Skrue 5 × 50")
+             else b for b in BOUGHT_V4]
+BOUGHT_V4.append(("Dyvelstift Ø6 × 16, stål", "B2B væg", 2, 2, "Samler de 2 L-beslag i enderne, så de sidder i lige linje og samme højde", "Ja, hvis den ikke hænger på væg"))
 BOUGHT_V4.insert(4, ("Silikonefedt, lille tube", "Alle", 1, 40, "En tynd smule på snoren om studsen, så den ikke ruller ud, når kappen skubbes på", "Ja, men snoren kan rulle ud"))
 
 
@@ -142,7 +147,7 @@ def main():
     if v2:
         ws.append(["B2B (bord/disk, skruet fast)", "", "", "", round(base + sums.get("B2B", 0)), "+ 2 skruer"])
         if v3:
-            ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ 2 konsoller, 2 vægskinner og skruer"])
+            ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ 2 L-beslag og skruer" if VER == "selfi-printer-v4" else "+ 2 konsoller, 2 vægskinner og skruer"])
     else:
         ws.append(["B2B hylde/disk", "", "", "", round(base + sums.get("B2B", 0)), "+ lås og 2 skruer"])
         ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ konsol, vægplade og skruer"])

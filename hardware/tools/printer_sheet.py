@@ -103,9 +103,12 @@ def sheets_v1():
     b += [dim_v(sx + (D + 22) * S + 40, sy - H * S, sy + 170 * S, "390"), note(sx - 60 * S, sy + 200 * S, "kabel ned ad væggen i skinne · min. 120 fri over kappen")]
     cx, cy = 1120 + 72 * S, 230 + (H + 10) * S
     g, _ = place("d_cut_vaeg", cx, cy, fill="#e9eae6"); b += [text(1080, 150, "Snit midt, væg", 18, font_weight="bold"), g]
-    for s_, y_ in (("sokkel i konsollen: 2 × SPUN+ 4,0 × 30", -6),
-                   ("konsol: hylde 12 + 2 massive knægte 14", -60), ("vægplade, 45° skinne, 4 skruer + dybler", -110),
-                   ("pin-Torx-skrue låser konsollen", -150)):
+    v4 = VER == "selfi-printer-v4"
+    rows = ((("sokkel i L-beslaget: 2 × SPUN+ 4,0 × 16", -6), ("skjult L-beslag: hylde 15 + bagplade 15", -60),
+             ("4 vægskruer + dybler pr. beslag, bag printeren", -110)) if v4 else
+            (("sokkel i konsollen: 2 × SPUN+ 4,0 × 30", -6), ("konsol: hylde 12 + 2 massive knægte 14", -60),
+             ("vægplade, 45° skinne, 4 skruer + dybler", -110), ("pin-Torx-skrue låser konsollen", -150)))
+    for s_, y_ in rows:
         b.append(note(cx + (D + 42) * S, cy - y_ * S, s_))
     sheet("tegning_vaeg", "Selfi printer v1 · vægmontering (B2B)", "Samme kappe og sokkel; konsollen hægtes på vægpladen og låses. Stedet monterer selv efter guiden.", b, h=1400)
 
