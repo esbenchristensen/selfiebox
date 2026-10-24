@@ -70,6 +70,10 @@ COUPONS = [
      "v21: den øverste venstre vingeslids (9 × 14) med den lukkede lomme bagved og drænhullet i bunden. Prøv eksempelvingens "
      "øverste krog: løft 3 mm, skub ind og lad den falde ned på slidsens bund. Går krogen ind uden at tvinge, står tungen på bunden, "
      "og sidder læben bag væggen, så den ikke kan trækkes lige ud? Hæld lidt vand i slidsen: løber det ud af drænet?"),
+    ("kabelloekke", ["skal"], ((-26, -78), (26, -10)), 0, 14,
+     "v23: de 2 kabelløkker midt på bagvæggen (112 og 136 mm over bunden) og trækaflastningen over strømstikket. "
+     "Kan en 10 mm velcrostrop trækkes gennem begge løkker, og klikker 2 ledninger (ca. Ø2,5 hver) fast i trækaflastningen "
+     "fra siden? Træk i ledningerne: bliver de siddende?"),
     ("kameravindue", ["front", "kameraroer"], ["kameraglas"], 6, "fuld",
      "v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt "
      "sammen) i hjørnet bag glasset. v22: tryk røret ind med ribberne i hjørnerne, til det stopper. Prøv også uden glas: står røret samme sted? Sidder røret fast, "

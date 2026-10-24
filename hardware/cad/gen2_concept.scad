@@ -50,7 +50,7 @@ IF_SCREW = [];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-20, 38];  IF_CAB
 // pilots (IF_SCREW was ±70) are gone; the dowel holes stay for the floor stand bracket.
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
-POWER_REVG = false;  CLIPS = [[-75, 90], [0, 110], [-98, 205], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker; v21: [-98, 175] -> 205, clear of the wing pocket                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
+POWER_REVG = false;  CLIPS = [];   // v23: halo's cable-tie loops replaced by cable_loops() (see "cable routing"); until v22 [[-75, 90], [0, 110], [-98, 205], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker; v21: [-98, 175] -> 205, clear of the wing pocket                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
 // camera (Esben 19 Oct, Wide chosen). v20 (Esben 23 Oct): a small glass window in front of the lens. The glass lies in a
 // pocket behind a 0.6 lip; the lens tip sits 0.6 behind the glass (v19: tip 0.3 behind the open face, so the camera moves 2.4 back)
 CAM_TIP_Y = 2.7;
@@ -929,6 +929,7 @@ module frame3() {
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
+        frame_loop_cut();                                                 // v23: service loop strap
         for (j = J2) cyl_y(6.2, REFL[0][0] - 1, CH_BACK + 0.01, j[0], j[1]);   // v20: the front's screw bosses (Ø6) reach into the channel corners; the strip wall keeps 0.6
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
         cyl_y(4, P3(W3_CLIP[1], 0)[0], FR_BACK + 1, STRIP_LEAD_X + 1.5, RING_Z1 - 4.5);           // v18: strip 3's lead, back through the reflector
@@ -974,6 +975,7 @@ module shell3(top = UNIT_TOP) {
             for (j = J2) { cyl_y(POST_D, FR_BACK + CRUSH[1], D - BACK_T + 0.01, j[0], j[1]); crush_bumps(j); }
             power_holders();
             if (WING_POCKET) wing_pockets();
+            cable_loops(); strain_clip();                          // v23: cable routing
         }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
@@ -985,6 +987,36 @@ module shell3(top = UNIT_TOP) {
 module crush_bumps(j) for (i = [0 : CRUSH[2] - 1]) let(a = 90 + i*360/CRUSH[2])
     translate([j[0] + CRUSH[5]*cos(a), FR_BACK + CRUSH[1] + 0.01, j[1] + CRUSH[5]*sin(a)]) rotate([90, 0, 0])
         cylinder(d1 = CRUSH[3], d2 = CRUSH[4], h = CRUSH[0] + CRUSH[1] + 0.01, $fn = 16);
+
+// ------------------------------------------------------------ cable routing ----
+// v23 (Esben 24 Oct): one main bundle up the middle of the back wall, from the power inlet past the PSU and the WLED to a
+// hand-over point under the mic core, and from there a service loop (about 100 mm slack) to the frame's upper cross bar, so
+// the shell can lie beside the front with everything still plugged in. Loops take a cable tie or a 10 mm hook-and-loop strap
+// (reusable for service). Until v22: 4 loops with a 6 x 1.8 slot, ties only.
+// [x, z, dir]: "h" = the strap runs along x round a bundle that runs up/down, "v" = along z round a bundle that runs sideways
+CABLE_LOOPS = [[0, 112, "h"], [0, 136, "h"],                  // main bundle; 136 = the shell end of the service loop
+               [-80, 72, "h"], [-75, 112, "v"],                // left: reed, dimmer, WLED, speaker
+               [-98, 205, "h"], [88, 100, "h"], [55, 158, "v"]];   // 4G / IMU along the left wall, PSU on the right
+LOOP = [10.4, 2.2, 1.6, 2.0, 5];          // tunnel width (strap 10), tunnel height (strap 2), bridge, side posts, length
+module cable_loop(p) translate([p[0], D - BACK_T + 0.01, p[1]]) rotate([0, p[2] == "h" ? 0 : 90, 0]) difference() {
+    translate([-LOOP[4]/2, -(LOOP[1] + LOOP[2]), -LOOP[0]/2 - LOOP[3]]) cube([LOOP[4], LOOP[1] + LOOP[2] + 0.01, LOOP[0] + 2*LOOP[3]]);
+    translate([-LOOP[4]/2 - 1, -LOOP[1], -LOOP[0]/2]) cube([LOOP[4] + 2, LOOP[1] + 0.02, LOOP[0]]);
+}
+module cable_loops() for (p = CABLE_LOOPS) cable_loop(p);
+// strain relief: a snap clip just above the power inlet holds the two leads from the jack (together up to Ø5.4), so a pull on
+// the bundle never reaches the jack's terminals. It opens towards the front; the leads click in from the front.
+STRAIN = [5.4, 1.6, 6, 3.8, 84];          // bore, wall, height (z), opening, z bottom
+module strain_clip() translate([PWR_P[0], PWR_P[1], STRAIN[4]]) difference() {
+    union() {
+        cylinder(d = STRAIN[0] + 2*STRAIN[1], h = STRAIN[2], $fn = 40);
+        translate([-3, 0, 0]) cube([6, D - BACK_T - PWR_P[1] + 0.01, STRAIN[2]]);
+    }
+    translate([0, 0, -1]) cylinder(d = STRAIN[0], h = STRAIN[2] + 2, $fn = 40);
+    translate([-STRAIN[3]/2, -10, -1]) cube([STRAIN[3], 10, STRAIN[2] + 2]);
+}
+// the frame end of the service loop: two slots through the upper cross bar for one strap round the bundle
+FRAME_LOOP = [30, 230.5, 7.6];            // x, z centre, slot spacing (crossbar z 223-238)
+module frame_loop_cut() for (dz = [-1, 1]) translate([FRAME_LOOP[0] - LOOP[0]/2, CH_BACK - 1, FRAME_LOOP[1] + dz*FRAME_LOOP[2]/2 - 1.2]) cube([LOOP[0], FR_T + 2, 2.4]);
 
 // ------------------------------------------------------------ main unit ----
 module main_unit() {        // gen 2 unit, without the wall cleat
