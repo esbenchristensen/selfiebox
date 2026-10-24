@@ -1,11 +1,10 @@
 import { Logo } from "./Logo";
-import { Ph } from "./Placeholder";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { company, companyAddress } from "@/lib/company";
 import { contact } from "@/lib/erhverv/placeholder";
 
 // The company line must carry name, address, CVR and e-mail (e-handelsloven § 7). The real fields live in
-// lib/company.ts; while they are empty, the footer shows the placeholders from lib/erhverv/placeholder.ts.
+// lib/company.ts; while they are empty, the footer shows only the name, the e-mail and the web address.
 export function Footer() {
   const real = [company.legalName || company.name, companyAddress, company.cvr && `CVR ${company.cvr}`, company.email, company.web].filter(Boolean).join(" · ");
   const complete = !!(company.legalName && company.cvr && companyAddress && company.email);
@@ -30,9 +29,8 @@ export function Footer() {
           {complete ? (
             real
           ) : (
-            <Ph note="firmanavn, adresse, CVR og e-mail mangler i lib/company.ts">
-              Selfi [firmanavn] · [adresse], {contact.city} · CVR [12345678] · {contact.email} · {contact.phone} · selfi.dk
-            </Ph>
+            // Navn, adresse og CVR kommer på, når de findes (lib/company.ts). Indtil da kun det, der er rigtigt.
+            [company.name, company.email || contact.email, company.web].join(" · ")
           )}
         </span>
       </div>

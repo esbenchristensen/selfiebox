@@ -11,6 +11,9 @@ import {
   boxQuote,
   fromPrice,
   priceLines,
+  campaignFor,
+  campaignWhen,
+  discounted,
   total,
   type Period,
   type PhotoType,
@@ -86,6 +89,7 @@ export function Booking() {
   const choice = s.range ? { range: s.range, theme: s.theme, printer: s.printer, photoType: s.photoType, delivery: s.delivery, keep: s.keep } : null;
   const lines = settings && choice ? priceLines(settings, choice) : [];
   const sum = total(lines);
+  const camp = settings && s.range ? campaignFor(settings, s.range.from) : null;
 
   const emailOk = /^\S+@\S+\.\S+$/.test(s.contact.email);
   const addressOk = (!!s.address.street.trim() && /^\d{4}$/.test(s.address.zip.trim()) && !!s.address.city.trim());
@@ -182,6 +186,7 @@ export function Booking() {
                   ? `Tryk på en dag, så vælger vi ${{ day: "den hverdag", twoDays: "to hverdage fra den dag", weekend: "weekenden fra fredag til søndag", week: "en uge fra den dag" }[mode]}. Tryk på ${PRESETS.find((p) => p.period === mode)!.name.toLowerCase()} igen for at vælge frit.`
                   : "Vælg en periode, eller tryk på første dag og derefter på sidste dag."}{" "}
                 Prisen under hver dag er den samlede pris{s.printer ? " med printer" : ""}.
+                {settings.campaign ? ` Fester ${campaignWhen(settings.campaign)} får ${settings.campaign.percent} % ${settings.campaign.name.toLowerCase()}, og den er allerede trukket fra prisen under dagen.` : ""}
                 {s.printer ? " Kalenderen viser kun de dage, hvor både boks og printer er ledige." : ""}
               </p>
               <div className="hb-pkgs" aria-label="Genveje">
@@ -240,7 +245,7 @@ export function Booking() {
                       <b>Boksen</b>
                       <span className="muted">Ubegrænsede billeder på telefonen og jeres eventside.</span>
                     </span>
-                    <strong>{s.range ? kr(boxPrice(settings, s.range)) : ""}</strong>
+                    <strong>{s.range ? kr(discounted(boxPrice(settings, s.range), camp)) : ""}</strong>
                   </span>
                 </label>
                 <label className={`bk-pick-card${printerBlocked ? " is-off" : ""}`}>
@@ -255,7 +260,7 @@ export function Booking() {
                           : `Som boksen, og ${settings.printsIncluded} print, så gæsterne har billedet med hjem.`}
                       </span>
                     </span>
-                    <strong>+ {kr(settings.prices.printer)}</strong>
+                    <strong>+ {kr(discounted(settings.prices.printer, camp))}</strong>
                   </span>
                 </label>
               </div>
@@ -401,7 +406,7 @@ export function Booking() {
             </div>
             <div className="bk-sum-lines">
               {(lines.length ? lines : preview(settings, s)).map((l) => (
-                <div key={l.id}>
+                <div key={l.id} className={l.id === "campaign" ? "bk-sum-campaign" : undefined}>
                   <span>{l.label}</span>
                   <span>{l.amount === null ? "–" : kr(l.amount)}</span>
                 </div>

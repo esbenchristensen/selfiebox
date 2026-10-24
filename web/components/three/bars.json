@@ -34,7 +34,8 @@
       "wing_right",
       "wing_left",
       "topper"
-    ]
+    ],
+    "unit": "gen2"
   },
   {
     "id": "aab",
@@ -70,7 +71,8 @@
       "wing_right",
       "wing_left",
       "topper"
-    ]
+    ],
+    "unit": "gen2"
   },
   {
     "id": "palads",
@@ -184,7 +186,7 @@
       "ink": "base",
       "caption": "Fjerritslev"
     },
-    "photo": "print-club",
+    "photo": "print-birthday",
     "parts": [
       "wing_right",
       "wing_left",

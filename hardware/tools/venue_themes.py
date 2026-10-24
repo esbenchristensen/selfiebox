@@ -17,7 +17,11 @@ Output per theme, in themes/<id>/build/:
   web/logo.svg       the logo in colour
   web/theme.json     palette, casing colour and ring light for the viewer
 
-Usage: python3 hardware/tools/venue_themes.py [theme-id ...]       (all themes when none given)
+Usage: python3 hardware/tools/venue_themes.py [--uden-logo] [theme-id ...]       (all themes when none given)
+
+--uden-logo builds the website's concept examples (Esben 24. okt. 2026: no logos in the 3D theme examples): every
+traced logo, every brand name and slogan in the artwork is left out, every theme is drawn on the gen 2 unit, and the
+output goes to themes/<id>/build-eksempel/ so the printable parts and the catalogues' models in build/ stay as they are.
 Needs: trimesh, manifold3d, shapely, mapbox_earcut, cairosvg, matplotlib, opencv-python-headless
 Logos: logos/<id>.geo.json (traced, one geometry per colour) is used when present, otherwise the
 logo is drawn here. Replace it with the venue's official artwork before anything leaves the house.
@@ -120,6 +124,8 @@ _fonts = {}
 
 def text(s, font, cx, cz, height, width=None, anchor="middle"):
     """Text as polygons in mm: cap height about `height`, at most `width` wide, centred on (cx, cz)."""
+    if branded(s):
+        return Polygon()
     fp = _fonts.setdefault(font, FontProperties(fname=str(TOOLS / "fonts" / f"{font}.ttf")))
     tp = TextPath((0, 0), s, size=10, prop=fp)
     shape = Polygon()
@@ -138,6 +144,8 @@ def text(s, font, cx, cz, height, width=None, anchor="middle"):
 
 def fit(g, bounds, keep_aspect=True):
     """Scale and move geometry `g` into bounds (x0, z0, x1, z1), centred."""
+    if g.is_empty:
+        return g
     gx0, gz0, gx1, gz1 = g.bounds
     x0, z0, x1, z1 = bounds
     kx, kz = (x1 - x0) / (gx1 - gx0), (z1 - z0) / (gz1 - gz0)
@@ -153,8 +161,29 @@ def mirror(g):
 
 
 # ------------------------------------------------------------------- logos --
+# --uden-logo: no logos, and no brand names or slogans in any text drawn on the parts, the screen or the print.
+NO_LOGOS = False
+BRAND_WORDS = ["SMUKFEST", "ROSKILDE", "NIBE", "FÅRUP", "SOMMERLAND", "LEGOLAND", "BILLUND", "AALBORG ZOO", "AAB", "BOLDSPILKLUB",
+               "BOLCHESTRIBEDE", "HAWKS", "PALADS", "MENY", "FJERRITSLEV", "HEIDI", "TUBORG", "GRØN", "CARLSBERG", "PROBABLY THE BEST",
+               "RED BULL", "VIIINGER", "AIRTOX", "DOMINANCE", "FEAR NOTHING", "CRAZIEST AFTERSKIBAR", "FLYING HIRSCH", "HELE DANMARKS PILSNER",
+               "BRYGGET SIDEN", "1880", "1885", "1964", "SIDEN 1964", "SAMMEN ER VI", "SMUKKESTE", "SKALSKOVEN"]
+
+
+class _NoLogo(dict):
+    """A traced logo with nothing in it: any colour key gives an empty geometry."""
+
+    def __missing__(self, key):
+        return Polygon()
+
+
+def branded(s):
+    return NO_LOGOS and any(w in s.upper() for w in BRAND_WORDS)
+
+
 def traced_logo(tid):
     """A traced logo: {colour key: geometry} in image pixels (y down). None if there is none."""
+    if NO_LOGOS:
+        return _NoLogo()
     f = TOOLS / "logos" / f"{tid}.geo.json"
     if not f.exists():
         return None
@@ -163,6 +192,8 @@ def traced_logo(tid):
 
 def place_logo(layers_px, bounds, order):
     """Turn a traced logo into back-to-front (key, geometry) layers fitted into bounds (mm, z up)."""
+    if NO_LOGOS:
+        return []
     allg = U(*layers_px.values())
     flip = {k: affinity.scale(g, 1, -1, origin=(0, 0)) for k, g in layers_px.items()}
     allg = affinity.scale(allg, 1, -1, origin=(0, 0))
@@ -190,6 +221,8 @@ def legoland_logo(bounds):
 
 def smukfest_tree(cx, z0, h):
     """Beech with a heart-shaped crown: Smukfest's mark, drawn after the description in its design manual."""
+    if NO_LOGOS:
+        return Polygon()
     crown = heart(cx, z0 + h * 0.62, h * 0.78)
     trunk = Polygon([(cx - h * 0.045, z0 + h * 0.08), (cx + h * 0.045, z0 + h * 0.08), (cx + h * 0.03, z0 + h * 0.5), (cx - h * 0.03, z0 + h * 0.5)])
     roots = U(line([(cx, z0 + h * 0.12), (cx - h * 0.14, z0)], h * 0.035), line([(cx, z0 + h * 0.12), (cx + h * 0.14, z0)], h * 0.035),
@@ -368,12 +401,12 @@ def smukfest():
         rng = random.Random(3)
         crown = U(box(-HW, 0, HW, 62), *[Point(x, 48 + 22 * math.cos(x / HW * 1.4) + rng.uniform(-4, 4)).buffer(rng.uniform(22, 30), 48)
                                           for x in np.linspace(-HW + 16, HW - 16, 9)])
-        crown = U(crown, heart(0, 118, 74)).intersection(box(-HW - 14, 0, HW + 14, 152))
+        crown = U(crown, Polygon() if NO_LOGOS else heart(0, 118, 74)).intersection(box(-HW - 14, 0, HW + 14, 152))
         layers = [("base", crown)]
         layers += [("forest", U(*[Point(rng.uniform(-HW, HW), rng.uniform(55, 115)).buffer(rng.uniform(10, 18), 32) for _ in range(12)]))]
         layers += [("leaf", U(*[Point(rng.uniform(-HW, HW), rng.uniform(70, 130)).buffer(rng.uniform(6, 10), 32) for _ in range(14)]))]
         layers += [("lime", U(*[ell(rng.uniform(-HW, HW), rng.uniform(60, 140), rng.uniform(3, 5), 2, rng.uniform(0, 180)) for _ in range(40)]))]
-        layers += [("base", heart(0, 116, 66).buffer(2.5))]
+        layers += [] if NO_LOGOS else [("base", heart(0, 116, 66).buffer(2.5))]
         layers += [("red", smukfest_tree(0, 64, 86))]
         layers += [("cream", text("SMUKFEST", "outfit", 0, 36, 24, 196))]
         layers += [("lime", text("DANMARKS SMUKKESTE FESTIVAL", "outfit", 0, 13, 6.2, 170))]
@@ -1015,6 +1048,8 @@ def aab_logo(bounds):
 
 def flip_text(g):
     """Text that reads right after the left wing is mirrored."""
+    if g.is_empty:
+        return g
     c = g.centroid
     return affinity.scale(g, -1, 1, origin=(c.x, c.y))
 
@@ -1271,6 +1306,8 @@ def palads():
 
 def meny_logo(bounds, outline=True):
     """The MENY arch: red arch with white letters. With `outline`, a white edge 1.6 mm wide around it."""
+    if NO_LOGOS:
+        return []
     lg = traced_logo("meny")
     flip = {k: affinity.scale(g, 1, -1, origin=(0, 0)) for k, g in lg.items()}
     arch = U(*[Polygon(p.exterior) for p in getattr(flip["red"], "geoms", [flip["red"]])])
@@ -1796,6 +1833,8 @@ def tuborg_crown(bounds):
     """The royal crown from the Grøn Tuborg can: the silver crown with its pearls and stones left white and the
     velvet in lime. The silver grows 0.6 mm outward and the white stones shrink 0.55 mm, so the thin silver rings
     round the pearls stay above theme_builder's MIN_FEATURE and print."""
+    if NO_LOGOS:
+        return []
     lg = traced_logo("tuborg_crown")
     placed = dict(place_logo(lg, bounds, [("silver", "silver"), ("white", "white"), ("velvet", "lime")]))
     crown = U(*placed.values()).buffer(0.6).buffer(-0.6)
@@ -1807,6 +1846,8 @@ def tuborg_crown(bounds):
 
 def tuborg_arched(cx, cz, radius, height, key="ink"):
     """Tuborg's own wordmark bent over an arc like on the Grøn Tuborg label: each letter turned to the arc."""
+    if NO_LOGOS:
+        return [], height * 4
     lg = traced_logo("tuborg")["white"]
     letters = sorted([affinity.scale(g, 1, -1, origin=(0, 0)) for g in getattr(lg, "geoms", [lg])], key=lambda g: g.bounds[0])
     x0, z0, x1, z1 = U(*letters).bounds
@@ -1932,6 +1973,8 @@ def royal_crown(cx, z0, w):
     """The royal warrant crown from the cans, drawn as the brand draws it: a band, arches that bow out and meet under the
     orb, and a cross. Returns (outline, lines): the solid outline to build the part around and the white lines, so the
     open spaces between the arches stay in the panel colour and nothing thin stands free."""
+    if NO_LOGOS:
+        return Polygon(), Polygon()
     t = max(3.2, w * 0.06)                                      # line weight, printable
     band = box(cx - w * 0.42, z0, cx + w * 0.42, z0 + w * 0.17).buffer(w * 0.02).buffer(-w * 0.02)
     top = (cx, z0 + w * 0.66)
@@ -2206,8 +2249,9 @@ def logo_png_svg(src, size=480):
 
 def build(tid):
     t = THEMES[tid]
-    use_unit(t.get("unit"))
-    out = ROOT / "themes" / tid / "build"
+    # Rev G is retired: every theme is drawn on the gen 2 unit, the one that is printed (Esben 24. okt. 2026).
+    use_unit("gen2")
+    out = ROOT / "themes" / tid / ("build-eksempel" if NO_LOGOS else "build")
     web = out / "web"
     (out / "preview").mkdir(parents=True, exist_ok=True)
     web.mkdir(parents=True, exist_ok=True)
@@ -2279,7 +2323,7 @@ def build(tid):
     tick_text = text(sc["ticker"], "poppins", 12, 23, 14, None, anchor="start")
     sl += [("base", box(0, 0, 0, 0)), (sc["accent"], btn), (sc["ink"], cta), (sc["accent"], tick), (sc["bg"] if spal[sc["bg"]] != spal[sc["accent"]] else "base", tick_text.intersection(tick))]
     png(layers_svg(sl, spal, sw, sh), web / "screen.png", 600, 960)
-    art = t.get("logo_png")
+    art = None if NO_LOGOS else t.get("logo_png")
     if art:
         paste_logo(web / "screen.png", art["file"], art["screen"][0], sh - art["screen"][1], width=art["screen"][2])
 
@@ -2287,17 +2331,18 @@ def build(tid):
     fr = t["frame"]
     fw, fh = 720.0, 860.0
     frame = box(0, 0, fw, fh).difference(box(50, 190, 670, 810))
-    logo = t["logo"]()
+    logo = [(k, g) for k, g in t["logo"]() if not g.is_empty]
     lg = U(*[g for _, g in logo])
     fl = [(fr["bg"], frame)]
     placed = []
-    lx0, lz0, lx1, lz1 = lg.bounds
-    k = min(150 / (lx1 - lx0), 100 / (lz1 - lz0))
-    for key, g in logo:
-        g = affinity.scale(g, k, k, origin=(0, 0))
-        placed.append((key, g))
-    pb = U(*[g for _, g in placed]).bounds
-    placed = [(key, affinity.translate(g, 60 - pb[0], 95 - (pb[1] + pb[3]) / 2)) for key, g in placed]
+    if logo:
+        lx0, lz0, lx1, lz1 = lg.bounds
+        k = min(150 / (lx1 - lx0), 100 / (lz1 - lz0))
+        for key, g in logo:
+            g = affinity.scale(g, k, k, origin=(0, 0))
+            placed.append((key, g))
+        pb = U(*[g for _, g in placed]).bounds
+        placed = [(key, affinity.translate(g, 60 - pb[0], 95 - (pb[1] + pb[3]) / 2)) for key, g in placed]
     cap = text(fr["caption"].upper(), "poppins", 685, 95, 18, 440, anchor="end")
     fl += placed + [(fr["ink"], cap)]
     if art:
@@ -2307,7 +2352,7 @@ def build(tid):
         paste_logo(web / "print.png", art["file"], art["frame"][0], fh - art["frame"][1], height=art["frame"][2], anchor="left")
 
     # Logo on its own, for the site
-    lb = lg.bounds
+    lb = lg.bounds if logo else (0, 0, 1, 1)
     pad = 4
     logo_svg = layers_svg([(key, affinity.translate(g, -lb[0] + pad, -lb[1] + pad)) for key, g in logo], spal, lb[2] - lb[0] + pad * 2, lb[3] - lb[1] + pad * 2, scale=4)
     if art:
@@ -2315,8 +2360,16 @@ def build(tid):
     (web / "logo.svg").write_text(logo_svg)
 
     meta = dict(id=tid, name=t["name"], place=t["place"], palette=t["pal"], casing=t["casing"], ring=t["ring"],
-                frame=fr, photo=t["photo"], parts=[r[0] for r in report], **({"unit": t["unit"]} if t.get("unit") else {}))
+                frame=fr, photo=t["photo"], parts=[r[0] for r in report], unit="gen2")
+    if NO_LOGOS:
+        # The example on the website: gen 2, its files in /models/eksempel/<id>/, and no brand slogan under the photo.
+        meta.update(dir=f"eksempel/{tid}", frame=dict(fr, caption=""))
     (web / "theme.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    if NO_LOGOS:
+        print(f"{t['name']} (uden logo):")
+        for name, cols, size in report:
+            print(f"  {name:11s} {size[1]} × {size[0]} mm   base + {', '.join(cols)}")
+        return
     theme_json = dict(name=t["name"], event=f"{t['name']} – concept design (venue artwork, internal use)", palette=pal,
                       casing={"style": "venue", "colour": t["casing"], "built_by": "hardware/tools/venue_themes.py"},
                       light={"idle": {"animation": "slow-wave", "colors": t["ring"]["idle"], "period_s": 8}, "countdown": {"color": "#ffffff"},
@@ -2329,5 +2382,9 @@ def build(tid):
 
 
 if __name__ == "__main__":
-    for tid in sys.argv[1:] or list(THEMES):
+    args = sys.argv[1:]
+    if "--uden-logo" in args:
+        args.remove("--uden-logo")
+        NO_LOGOS = True
+    for tid in args or list(THEMES):
         build(tid)

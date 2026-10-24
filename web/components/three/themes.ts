@@ -1,5 +1,5 @@
 // Private party themes for the 3D box: the box stays black with a white ring, and the screen and the
-// frame on the photo change. Venue designs are built from the hardware repo, see venues.json.
+// frame on the photo change. Venue designs are built from the hardware repo, see examples.json and bars.json.
 
 export type FontKey = "display" | "archivo" | "poppins" | "outfit" | "lilita";
 

@@ -4,6 +4,8 @@
 //
 //   --occasions builds only the private party designs (bryllup, fodselsdag, julefrokost) into
 //   components/three/occasions.json and leaves the enclosure and the venues alone.
+//   --examples builds only the logo-free concept designs for /erhverv's showroom and cases (venue_themes.py --uden-logo,
+//   themes/<id>/build-eksempel) into public/models/eksempel/<id>/ and components/three/examples.json.
 //   --bars builds only the bar, club and cinema designs (flying_hirsch, aab, palads, heidis, meny, white_hawks, carlsberg, red_bull, tuborg, airtox_dominance) into components/three/bars.json, for the bars' catalogues.
 //
 // unit.glb       the real Halo enclosure (bezel, diffuser ring, shell, photo module, joint spacer)
@@ -22,6 +24,7 @@ import { join, resolve } from "node:path";
 const halo = resolve(process.argv[2] ?? "../../halo");
 const occasionsOnly = process.argv.includes("--occasions");
 const barsOnly = process.argv.includes("--bars");
+const examplesOnly = process.argv.includes("--examples");
 const out = resolve("public/models");
 const UNIT = ["bezel", "diffuser_ring", "shell_closed", "shell_closed_band", "v_display", "v_camera", "instax_front", "instax_shell", "instax_shell_band", "joint_spacer"];
 
@@ -37,6 +40,11 @@ const kb = (f) => `${Math.round(statSync(f).size / 1024)} kB`;
 mkdirSync(out, { recursive: true });
 
 // The enclosure
+if (examplesOnly) {
+  await buildThemes(["smukfest", "roskilde", "nibe", "faarup", "legoland", "zoo", "flying_hirsch", "aab", "palads", "heidis", "meny", "white_hawks", "red_bull", "tuborg"], "components/three/examples.json", "build-eksempel");
+  process.exit(0);
+}
+
 if (!occasionsOnly && !barsOnly) {
   const unit = await io.read(join(halo, "hardware/docs/pack/pack.json"));
   for (const node of unit.getRoot().listNodes()) {
@@ -51,20 +59,20 @@ if (!occasionsOnly && !barsOnly) {
 }
 
 // Venue themes (business) and occasion themes (private parties) are built the same way
-async function buildThemes(order, jsonFile) {
+async function buildThemes(order, jsonFile, variant = "build") {
   const themes = join(halo, "themes");
   // A theme whose build/web is not on this machine keeps its entry from the last build, so building one theme
   // never drops the others from the list.
   const before = existsSync(jsonFile) ? JSON.parse(readFileSync(jsonFile, "utf8")) : [];
   const index = [];
   for (const id of order) {
-    const web = join(themes, id, "build/web");
+    const web = join(themes, id, variant, "web");
     if (!existsSync(join(web, "parts.glb"))) {
       const kept = before.find((t) => t.id === id);
       if (kept) index.push(kept);
       continue;
     }
-    const dir = join(out, id);
+    const dir = join(out, variant === "build" ? id : `eksempel/${id}`);
     mkdirSync(dir, { recursive: true });
     const doc = await io.read(join(web, "parts.glb"));
     await squeeze(doc, 0.6);

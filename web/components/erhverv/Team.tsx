@@ -14,15 +14,10 @@ export function Team() {
             Boksen er tegnet, printet og samlet i Danmark.
           </h2>
           <p className="lede">
-            Selfi er startet af {contact.founders}. Elektronikken, kabinettet og softwaren er udviklet her, delene printes på vores egne printere i{" "}
-            <Ph note="by er ikke bekræftet">{contact.city}</Ph>, og det er os selv, der svarer, når I ringer.
+            Selfi er startet af {contact.founders}. Elektronikken, kabinettet og softwaren er udviklet her, delene printes på vores egne printere, og det er os selv, der svarer, når I skriver.
           </p>
           <p className="muted">
-            Ring på{" "}
-            <Ph note="telefonnummer mangler">
-              <a href={contact.phoneHref}>{contact.phone}</a>
-            </Ph>{" "}
-            eller skriv til{" "}
+            Skriv til{" "}
             <Ph note="e-mail mangler">
               <a href={`mailto:${contact.email}`}>{contact.email}</a>
             </Ph>

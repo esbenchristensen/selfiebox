@@ -49,22 +49,10 @@ export function Contact({ topic, kind = "erhverv" }: { topic?: string; kind?: "e
           {!privat && (
             <ul className="contact-ways">
               <li>
-                <b>Telefon</b>
-                <Ph note="telefonnummer mangler">
-                  <a href={contact.phoneHref}>{contact.phone}</a>
-                </Ph>
-                <span className="muted">
-                  <Ph note="åbningstid for telefonen er ikke besluttet">{contact.hours}</Ph>
-                </span>
-              </li>
-              <li>
                 <b>E-mail</b>
                 <Ph note="e-mail mangler">
                   <a href={`mailto:${contact.email}`}>{contact.email}</a>
                 </Ph>
-                <span className="muted">
-                  Vi svarer inden <Ph note="svartid er ikke besluttet">{contact.replyWithin}</Ph>
-                </span>
               </li>
             </ul>
           )}
