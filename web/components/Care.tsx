@@ -1,4 +1,3 @@
-import { Ph } from "./Placeholder";
 import { contact } from "@/lib/erhverv/placeholder";
 
 // Full service for every place. It answers the question every owner asks right after the price:
@@ -26,8 +25,8 @@ const fears = [
     a: "Boksen melder sig til os hele tiden. Går den ned, får vi en alarm og går i gang, tit før I selv har set det. Falder jeres net ud, tager den stadig billeder og sender dem, når nettet er tilbage.",
   },
   {
-    q: "Hvem skal jeg ringe til?",
-    a: "Til os, når som helst på døgnet. I skal ikke finde fejlen selv eller forklare noget teknisk.",
+    q: "Hvem skal jeg kontakte?",
+    a: "Os. Skriv til kontakt@selfi.dk eller i chatten, så er det os, der svarer. I skal ikke finde fejlen selv eller forklare noget teknisk.",
   },
   {
     q: "Skal personalet lære noget?",
@@ -103,11 +102,8 @@ export function Care() {
           <p>
             <b>Fast pris. Ingen regninger ved siden af. Intet at passe.</b>
             <span className="muted">
-              Går noget galt, er det vores problem, ikke jeres. Ring på{" "}
-              <Ph note="telefonnummer mangler">
-                <a href={contact.phoneHref}>{contact.phone}</a>
-              </Ph>
-              .
+              Går noget galt, er det vores problem, ikke jeres. Skriv til{" "}
+              <a href={`mailto:${contact.email}`}>{contact.email}</a>.
             </span>
           </p>
           <a className="btn btn-primary" href="#kontakt">

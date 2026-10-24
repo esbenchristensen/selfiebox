@@ -9,8 +9,8 @@ export const PLACEHOLDERS_VISIBLE = false;
 
 // Kontakt. Rigtige felter hører hjemme i lib/company.ts (de bruges også i vilkår og CE-erklæring).
 export const contact = {
-  phone: "+45 12 34 56 78",
-  phoneHref: "tel:+4512345678",
+  phone: "", // intet telefonnummer endnu: siden viser e-mail og chat i stedet (24. okt. 2026)
+  phoneHref: "",
   email: "kontakt@selfi.dk",
   hours: "alle dage kl. 10–22, og døgnet rundt for kunder",
   replyWithin: "én arbejdsdag",
@@ -43,47 +43,4 @@ export const timeline = {
   design: "ca. 1 uge",
   print: "ca. 2 uger",
   total: "ca. 3 uger",
-};
-
-// Social proof. Opdigtet.
-export const proof = {
-  places: 12,
-  photosLastMonth: 38_400,
-  optInShare: 31, // procent af gæster med nummer, der siger ja til tilbud
-  logos: ["Bodega Hjørnet", "Klub Nord", "Hotel Søfryd", "Byens Bio", "Vestkysten Live", "Fjordparken"],
-};
-
-export type Quote = { text: string; name: string; title: string; place: string };
-
-// Tre citater. Opdigtede. Ét af dem har et forbehold med vilje, se ERHVERV-GENNEMGANG.md, afsnit 3, punkt 3.
-export const quotes: Quote[] = [
-  {
-    text: "Jeg var sikker på, at den ville hænge og samle støv. Nu ligger fredagens billeder på Instagram lørdag formiddag, og vi har 410 numre, vi må skrive til.",
-    name: "Mette Haugaard",
-    title: "Ejer",
-    place: "Bodega Hjørnet, Aalborg",
-  },
-  {
-    text: "Det er den eneste ting i baren, jeg ikke skal tænke på. Da skærmen gik en lørdag, havde Selfi set det, før vi nåede at ringe. Der hang en ny tirsdag.",
-    name: "Jonas Lind",
-    title: "Driftschef",
-    place: "Klub Nord, Aarhus",
-  },
-  {
-    text: "Vi bruger videohilsnerne fra bryllupperne i vores annoncer. Det eneste minus er, at gæsterne står i kø ved den, når vi gerne vil lukke.",
-    name: "Sofie Brandt",
-    title: "Marketingchef",
-    place: "Hotel Søfryd, Svendborg",
-  },
-];
-
-// Én case med tal. Opdigtet.
-export const caseStudy = {
-  place: "Bodega Hjørnet, Aalborg",
-  boxes: 1,
-  since: "marts 2026",
-  photosPerNight: 74,
-  numbersPerMonth: 410,
-  optIn: "31 %",
-  text: "Én boks ved baren i øjenhøjde, guldtid hver halve time på tirsdage og titler fredag og lørdag. Tilbuddet til næste fredag sendes lørdag kl. 14.",
 };

@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { nights } from "@/lib/dates";
-import { priceLines, problem, total, usage, type Choice, type Delivery, type PhotoType } from "@/lib/udlejning/core";
+import { chargeLines, priceLines, problem, total, usage, type Choice, type Delivery, type PhotoType } from "@/lib/udlejning/core";
 import { db, getHolds, getSettings, todayDK, type RentalDoc } from "@/lib/udlejning/db";
 import { stripe, type CheckoutSession } from "@/lib/udlejning/stripe";
 
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
         client_reference_id: doc._id,
         metadata: { booking: doc._id },
         payment_intent_data: { description: `Selfi udlejning ${doc._id}`, metadata: { booking: doc._id } },
-        line_items: lines.map((l) => ({ quantity: 1, price_data: { currency: "dkk", unit_amount: l.amount * 100, product_data: { name: l.label } } })),
+        line_items: chargeLines(lines).map((l) => ({ quantity: 1, price_data: { currency: "dkk", unit_amount: l.amount * 100, product_data: { name: l.label } } })),
         success_url: `${back}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${site()}/?annulleret=${doc._id}&t=${doc.token}#book`,
         expires_at: Math.floor(expiresAt.getTime() / 1000) + 60,

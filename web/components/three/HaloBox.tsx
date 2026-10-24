@@ -7,7 +7,7 @@ import * as THREE from "three";
 import { countdownTexture, printTexture, ringGlowTexture, screenTexture, shotTexture } from "./textures";
 import type { BoxTheme } from "./themes";
 import occasions from "./occasions.json";
-import venues from "./venues.json";
+import examples from "./examples.json";
 
 // Selfi Boks as it is printed: the Halo enclosure from the CAD export, and for venues the wings and
 // topper built by hardware/tools/venue_themes.py. Millimetres, scaled so 100 mm = 1 unit.
@@ -24,7 +24,8 @@ export type Venue = {
   frame: { bg: string; ink: string; caption: string };
   photo: string;
   parts: string[];
-  unit?: "gen2"; // drawn for the gen 2 unit (222.5 wide, 85 deep) instead of rev G
+  unit?: "gen2"; // drawn for the gen 2 unit instead of rev G (every theme is gen 2 since 24. okt. 2026)
+  dir?: string; // folder under /models/ with parts, screen and print, when it is not the id (the logo-free examples)
   // The box taking a photo, over and over: a party theme on the screen (an OCCASIONS id), a countdown with a green
   // ring filling up round the edge, a flash, and then the photo (/photos/<photo>.jpg) on the screen.
   shoot?: { screen: string; photo: string };
@@ -32,7 +33,7 @@ export type Venue = {
   // than one they take turns, a slow cross-fade every few seconds.
   screen?: string[];
 };
-export const VENUES = venues as Venue[];
+export const VENUES = examples as Venue[];
 export const OCCASIONS = occasions as Venue[];
 
 const MM = 0.01;
@@ -58,7 +59,7 @@ const GREEN = new THREE.Color("#22d36b"); // a touch warm, so the burst shows on
 const CASING = ["bezel", "shell_closed", "instax_front", "instax_shell", "joint_spacer"];
 const LIGHT = ["diffuser_ring", "shell_closed_band", "instax_shell_band"];
 
-useGLTF.preload("/models/unit.glb", false, true);
+useGLTF.preload("/models/unit_gen2.glb", false, true);
 
 function ease(t: number) {
   const k = Math.min(1, Math.max(0, t));
@@ -106,7 +107,7 @@ function useUnit(unit?: "gen2") {
 const topAt = (venue: Venue) => UNIT_H + (venue.unit === "gen2" ? 0 : SPACER);
 
 function Parts({ venue, attach }: { venue: Venue; attach: React.MutableRefObject<number> }) {
-  const { scene } = useGLTF(`/models/${venue.id}/parts.glb`, false, true);
+  const { scene } = useGLTF(`/models/${venue.dir ?? venue.id}/parts.glb`, false, true);
   const groups = useMemo(() => {
     const byPart: Record<string, THREE.Mesh[]> = { wing_left: [], wing_right: [], topper: [] };
     for (const [name, geometry] of Object.entries(baked(scene))) {
@@ -188,7 +189,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   }, [casing, ring, shoot, countOn, fill]);
   useEffect(() => () => Object.values(mats).forEach((m) => m.dispose()), [mats]);
 
-  const screens = useTexture(venue ? (venue.screen ?? [`/models/${shoot?.screen ?? venue.id}/screen.png`]) : ["/models/smukfest/screen.png"]);
+  const screens = useTexture(venue ? (venue.screen ?? [`/models/${shoot?.screen ?? venue.dir ?? venue.id}/screen.png`]) : ["/models/eksempel/smukfest/screen.png"]);
   screens.forEach((x) => (x.colorSpace = THREE.SRGBColorSpace));
   const screenMap = screens[0];
   const screenBase = useRef<THREE.MeshBasicMaterial>(null);
@@ -197,7 +198,7 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
   useEffect(() => () => privateScreen?.dispose(), [privateScreen]);
 
   // The print: the venue's frame over the photo, or the private theme's own frame.
-  const frame = useTexture(venue ? `/models/${venue.id}/print.png` : "/models/smukfest/print.png");
+  const frame = useTexture(venue ? `/models/${venue.dir ?? venue.id}/print.png` : "/models/eksempel/smukfest/print.png");
   const photo = useTexture(venue ? `/photos/${venue.photo}.jpg` : "/photos/print-wedding.jpg");
   const printMap = useMemo(() => {
     if (theme) return printTexture(theme);
@@ -382,8 +383,8 @@ export function HaloBox({ venue, theme, module = true, motion = true, bornAt = 0
 }
 
 export function preloadVenue(v: Venue) {
-  if (v.parts.length) useGLTF.preload(`/models/${v.id}/parts.glb`, false, true);
-  (v.screen ?? [`/models/${v.shoot?.screen ?? v.id}/screen.png`]).forEach((src) => useTexture.preload(src));
-  useTexture.preload(`/models/${v.id}/print.png`);
+  if (v.parts.length) useGLTF.preload(`/models/${v.dir ?? v.id}/parts.glb`, false, true);
+  (v.screen ?? [`/models/${v.shoot?.screen ?? v.dir ?? v.id}/screen.png`]).forEach((src) => useTexture.preload(src));
+  useTexture.preload(`/models/${v.dir ?? v.id}/print.png`);
   useTexture.preload(`/photos/${v.photo}.jpg`);
 }

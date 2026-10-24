@@ -103,6 +103,7 @@
 .bk-sum-lines { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: var(--space-4); }
 .bk-sum-lines div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: 15px; }
 .bk-sum-lines span:first-child { color: var(--ink-muted); }
+.bk-sum-lines .bk-sum-campaign span { color: var(--green-ink); font-weight: 600; }
 .bk-sum-total { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); border-top: 1px solid var(--line); padding-top: var(--space-4); }
 .bk-sum-total b { font: 500 28px/1 var(--font-display), sans-serif; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .bk-done { display: flex; flex-direction: column; gap: var(--space-5); max-width: 640px; }
@@ -543,4 +544,27 @@
 .lej-stand .viewer-poster { padding: 18% 22%; }
 @media (max-width: 900px) {
   .lej-stand { aspect-ratio: 4 / 5; max-height: 72vh; }
+}
+
+/* Funktioner: three groups of what the box can do */
+.fn { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+.fn-title { margin: 0 0 var(--space-3); font-size: 15px; font-weight: 600; color: var(--green-ink); }
+.fn-list, .trust { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.fn-list li, .trust li, .trust-foot p { display: flex; gap: var(--space-3); align-items: flex-start; padding-top: var(--space-3); border-top: 1px solid var(--line); margin: 0; }
+.fn-list li > span, .trust li > span, .trust-foot p > span { display: flex; flex-direction: column; gap: 2px; color: var(--ink-muted); font-size: 15px; }
+.fn-list b, .trust b, .trust-foot b { color: var(--ink); font-weight: 500; font-size: 16px; }
+
+/* Tryg booking: the promises from the rental terms instead of reviews */
+.trust { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+.trust-foot { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); margin: var(--space-6) 0 var(--space-4); }
+.trust-foot p { padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--surface-raised); }
+
+/* The launch campaign: a band in the hero and the 2027 price under each period */
+.lej-camp { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: var(--radius-pill); background: var(--surface-raised); border: 1px solid var(--green); color: var(--ink); font-size: 15px; text-decoration: none; }
+.lej-camp b { color: var(--green-ink); font-weight: 600; }
+.lej-price-camp { color: var(--green-ink); font-weight: 600; font-size: 15px; }
+
+@media (max-width: 900px) {
+  .fn, .trust { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .trust-foot { grid-template-columns: minmax(0, 1fr); }
 }

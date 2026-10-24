@@ -33,9 +33,9 @@ export function StickyCta() {
 
   return (
     <div className={`sticky-cta${show ? " is-on" : ""}`} aria-hidden={!show}>
-      <a href={contact.phoneHref} tabIndex={show ? 0 : -1}>
-        <b>{contact.phone}</b>
-        <span className="muted">Ring, eller book en snak</span>
+      <a href={`mailto:${contact.email}`} tabIndex={show ? 0 : -1}>
+        <b>{contact.email}</b>
+        <span className="muted">Skriv, eller book en snak</span>
       </a>
       <a className="btn btn-primary" href="#udkast" tabIndex={show ? 0 : -1}>
         Gratis udkast

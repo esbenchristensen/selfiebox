@@ -6,7 +6,6 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { JsonLd } from "@/components/JsonLd";
 import { Nav } from "@/components/Nav";
-import { Ph } from "@/components/Placeholder";
 import { Faq } from "@/components/Sections";
 import { Showroom } from "@/components/ThemeStudio";
 import { Cases } from "@/components/erhverv/Cases";
@@ -19,8 +18,6 @@ import { FunctionMap } from "@/components/erhverv/FunctionMap";
 import { Models } from "@/components/erhverv/Models";
 import { Pricing } from "@/components/erhverv/Pricing";
 import { PrinterOffer } from "@/components/erhverv/PrinterOffer";
-import { Proof } from "@/components/erhverv/Proof";
-import { Quotes } from "@/components/erhverv/Quotes";
 import { Start } from "@/components/erhverv/Start";
 import { StickyCta } from "@/components/erhverv/StickyCta";
 import { Team } from "@/components/erhverv/Team";
@@ -61,8 +58,8 @@ const jsonLd = [
     name: company.legalName || company.name,
     url: "https://www.selfi.dk",
     email: company.email || contact.email,
-    telephone: company.phone || contact.phone,
-    address: { "@type": "PostalAddress", addressLocality: company.postcode || contact.city, addressCountry: "DK" },
+    ...(company.phone ? { telephone: company.phone } : {}),
+    address: { "@type": "PostalAddress", ...(company.postcode ? { addressLocality: company.postcode } : {}), addressCountry: "DK" },
   },
   {
     "@context": "https://schema.org",
@@ -110,11 +107,7 @@ export default function Erhverv() {
                 <li>Vi overvåger, opdaterer og bytter boksen. I holder åbent</li>
               </ul>
               <p className="hero-contact muted">
-                Ring på{" "}
-                <Ph note="telefonnummer mangler">
-                  <a href={contact.phoneHref}>{contact.phone}</a>
-                </Ph>
-                , eller book en snak på 20 minutter.
+                Skriv til <a href={`mailto:${contact.email}`}>{contact.email}</a>, eller book en snak på 20 minutter.
               </p>
             </>
           }
@@ -122,7 +115,6 @@ export default function Erhverv() {
           secondary={{ label: "Book en snak", href: "#kontakt" }}
           visual={<HeroPlainBox />}
         />
-        <Proof />
         <Goals />
         <GuestFlow />
         <Models />
@@ -145,7 +137,6 @@ export default function Erhverv() {
           lede="Design, billeder, video, aktiviteter, gæsteliste og service, fortalt på to minutter."
           alt="Film: Selfi i jeres eget design med billeder, videoer og videohilsner, missioner, titler, konkurrence, deling, gæsteliste og fuld service"
         />
-        <Quotes />
         <Team />
         <Faq title="Det, ejere spørger om, før de siger ja." items={faq} />
         <Contact topic="erhverv" />

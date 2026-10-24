@@ -17,19 +17,20 @@ import { Occasions } from "@/components/lej/Occasions";
 import { Personal } from "@/components/lej/Personal";
 import { PrinterViewer } from "@/components/lej/PrinterViewer";
 import { RentalProvider } from "@/components/lej/RentalContext";
-import { Example, Reviews, Stars } from "@/components/lej/Reviews";
+import { Functions } from "@/components/lej/Functions";
+import { Trust } from "@/components/lej/Trust";
 import { StickyCta } from "@/components/lej/StickyCta";
-import { DEFAULT_SETTINGS, fromPrice, kr, PERIODS, type Period, type RentalSettings } from "@/lib/udlejning/core";
+import { campaignWhen, DEFAULT_SETTINGS, discounted, fromPrice, kr, PERIODS, type Period, type RentalSettings } from "@/lib/udlejning/core";
 import { db, getSettings, todayDK } from "@/lib/udlejning/db";
-import { PROOF, ratingText } from "@/lib/udlejning/proof";
 import "./lej/lej.css";
 
 // selfi.dk: rent a box for one party, booked and paid here. The page follows the questions a host has, in the
 // order they ask them: what is it (the box on its floor stand in the hero), is our day free and what does it
 // cost (the price in the hero, the live calendar in the booking near the bottom), why this one and not the others (one price, everything in it), how does it work, what does it look like for our party,
-// what do the guests get, the box itself, the printer, prices, what other hosts say, our kind of party,
-// then the booking, questions and contact. Places and businesses have /erhverv.
-// Prices and free days come from admin.selfi.dk → Udlejning. Social proof comes from lib/udlejning/proof.ts.
+// what do the guests get, the box itself and what it can do, the printer, prices, why it is safe to book with us
+// (the promises from the rental terms: Selfi is new and shows no reviews until it has real ones), our kind of
+// party, then the booking, questions and contact. Places and businesses have /erhverv.
+// Prices, the launch campaign and free days come from admin.selfi.dk → Udlejning (lib/udlejning/core.ts).
 
 // The title and description carry the day price, so they follow the price set in admin.
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Lej en fotoboks til festen. Alt er med i prisen | Selfi",
       description: `Fotoboksen, der får alle med på billedet. Fra ${from} med ubegrænsede billeder, fragt og forsikring. Se ledige datoer og book online.`,
       url: "/",
-      images: [{ url: "/photos/fest-bryllup-2.jpg", width: 1200, height: 896, alt: "Brudeparret og to gæster griner foran Selfi Boks i en gammel sal" }],
+      images: [{ url: "/photos/fest-bryllup-3.jpg", width: 1200, height: 896, alt: "Brudeparret og to gæster griner foran Selfi Boks i en gammel sal" }],
     },
   };
 }
@@ -62,8 +63,17 @@ export default async function Home() {
   const from = fromPrice(s);
   const P = s.prices.periods;
   const R = s.rules;
+  const camp = s.campaign ?? null;
 
   const faq = [
+    ...(camp
+      ? [
+          {
+            q: "Hvad er lanceringstilbuddet?",
+            a: `Selfi er nyt, og som tak til dem, der booker os først, giver vi ${camp.percent} % rabat på hele bestillingen, også printeren, til alle fester ${campaignWhen(camp)}. Rabatten gælder datoer ${campaignWhen(camp)}, uanset hvornår I booker, og den er allerede trukket fra, når I vælger datoer i kalenderen. En weekend koster ${kr(discounted(P.weekend, camp))} i stedet for ${kr(P.weekend)}`,
+          },
+        ]
+      : []),
     {
       q: "Hvad koster det at leje en fotoboks?",
       a: `I vælger selv datoerne. En hverdag koster ${kr(P.day)}, en hel weekend fra fredag til søndag ${kr(P.weekend)}, to hverdage ${kr(P.twoDays)} og en uge ${kr(P.week)}, alt inkl. moms. Har I brug for en dag mere end perioden, koster hver ekstra dag ${kr(s.prices.perExtraDay)} Printeren med ${s.printsIncluded} print koster ${kr(s.prices.printer)} Vil I gemme billederne længere, kan eventsiden holdes åben i 12 måneder i stedet for 3 for ${kr(s.prices.keep)}. Fragt begge veje, forsikring, ubegrænsede billeder og jeres egen eventside er altid med, og I ser den samlede pris, før I betaler. Der er ikke noget depositum.`,
@@ -110,7 +120,7 @@ export default async function Home() {
     },
     {
       q: "Hvad hvis boksen ikke virker på dagen?",
-      a: "Boksen er testet, før den bliver sendt, og vi kan se på afstand, om den har det godt. Driller den alligevel, så ring eller skriv til os på selve dagen, så hjælper vi med det samme. Kan vi ikke få den til at virke, får I hele lejen tilbage.",
+      a: "Boksen er testet, før den bliver sendt, og vi kan se på afstand, om den har det godt. Driller den alligevel, så skriv til os i chatten eller på kontakt@selfi.dk på selve dagen, så hjælper vi med det samme. Kan vi ikke få den til at virke, får I hele lejen tilbage.",
     },
     {
       q: "Må vi bruge billederne, som vi vil?",
@@ -131,8 +141,6 @@ export default async function Home() {
       areaServed: "DK",
       provider: { "@type": "Organization", name: "Selfi", url: "https://selfi.dk" },
       offers: (Object.keys(PERIODS) as Period[]).map((k) => ({ "@type": "Offer", name: PERIODS[k].name, price: P[k], priceCurrency: "DKK" })),
-      // aggregateRating is only sent with real reviews: see lib/udlejning/proof.ts.
-      ...(PROOF.placeholder ? {} : { aggregateRating: { "@type": "AggregateRating", ratingValue: PROOF.rating, reviewCount: PROOF.reviewCount } }),
     },
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
   ];
@@ -164,7 +172,7 @@ export default async function Home() {
         links={[
           { label: "Sådan foregår det", href: "#saadan" },
           { label: "Priser", href: "#priser" },
-          { label: "Anmeldelser", href: "#anmeldelser" },
+          { label: "Funktioner", href: "#funktioner" },
           { label: "Spørgsmål", href: "#faq" },
           { label: "Erhverv", href: "/erhverv" },
         ]}
@@ -186,15 +194,19 @@ export default async function Home() {
                   <Icon name="clock" />
                   Klar på fem minutter. Den skal kun i en stikkontakt.
                 </li>
+                <li>
+                  <Icon name="undo" />
+                  Hele lejen tilbage, hvis boksen ikke kommer frem eller ikke virker.
+                </li>
               </ul>
-              <a className="lej-trust" href="#anmeldelser">
-                <Stars n={PROOF.rating} />
-                <b>{ratingText(PROOF.rating)}</b>
-                <span className="muted">
-                  {PROOF.reviewCount.toLocaleString("da-DK")} anmeldelser · {PROOF.parties.toLocaleString("da-DK")} fester
-                </span>
-                <Example />
-              </a>
+              {camp && (
+                <a className="lej-camp" href="#priser">
+                  <Icon name="tag" />
+                  <span>
+                    <b>Lanceringstilbud:</b> {camp.percent} % rabat på alle fester {campaignWhen(camp)}
+                  </span>
+                </a>
+              )}
             </>
           }
           primary={{ label: "Se ledige datoer", href: "#book" }}
@@ -202,6 +214,7 @@ export default async function Home() {
           price={
             <>
               <b>Fra {kr(from)}</b> · alt er med i prisen
+              {camp && <span className="lej-price-camp">{` · ${camp.percent} % rabat ${campaignWhen(camp)}`}</span>}
             </>
           }
           visual={<BoxStand />}
@@ -236,7 +249,7 @@ export default async function Home() {
               ))}
             </ol>
             <figure className="lej-wide">
-              <Image src="/photos/fest-opsaetning-2.jpg" alt="En kvinde sætter Selfi Boks på gulvstativet i en stue, med kassen åben på gulvet" width={1200} height={896} sizes="(max-width: 900px) 90vw, 1160px" />
+              <Image src="/photos/fest-opsaetning-3.jpg" alt="En kvinde sætter Selfi Boks på gulvstativet i en stue, med kassen åben på gulvet" width={1200} height={896} sizes="(max-width: 900px) 90vw, 1160px" />
               <figcaption className="muted">Ud af kassen, på stativet og i stikkontakten. Fem minutter, så står den.</figcaption>
             </figure>
           </div>
@@ -251,14 +264,14 @@ export default async function Home() {
           items={[
             {
               kind: "photo",
-              src: "/photos/fest-samler-2.jpg",
+              src: "/photos/fest-samler-3.jpg",
               alt: "Brudeparret og to gæster griner foran Selfi Boks i en gammel sal",
               title: "Den samler gæsterne",
               text: "Lyset kan ses fra den anden ende af salen. Folk stiller sig i kø, griner af hinanden og ender på billede med en, de ikke kendte før festen.",
             },
             {
               kind: "photo",
-              src: "/photos/fest-fodselsdag-2.jpg",
+              src: "/photos/fest-fodselsdag-3.jpg",
               alt: "En fødselar på 60 med datter og børnebørn foran Selfi Boks i et forsamlingshus",
               title: "Alle generationer er med",
               text: "Et tryk på skærmen og en nedtælling fra 3. Det kan alle finde ud af, fra børnebørnene til fødselaren.",
@@ -303,6 +316,8 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        <Functions />
 
         <section id="billeder" className="section" aria-labelledby="billeder-title">
           <div className="wrap lej-printer">
@@ -352,7 +367,10 @@ export default async function Home() {
             <div className="sec-head">
               <span className="label">Priser</span>
               <h2 id="priser-title" className="h-l">Faste perioder. Alt er med.</h2>
-              <p className="lede">Alle priser er inkl. moms, og der kommer ikke noget oveni. Intet depositum og ingen gebyrer.</p>
+              <p className="lede">
+                Alle priser er inkl. moms, og der kommer ikke noget oveni. Intet depositum og ingen gebyrer.
+                {camp ? ` Holder I fest ${campaignWhen(camp)}, får I ${camp.percent} % ${camp.name.toLowerCase()} på hele bestillingen, også printeren. Rabatten trækkes fra i kalenderen, når I vælger datoer.` : ""}
+              </p>
             </div>
             <div className="lej-prices">
               {([
@@ -362,11 +380,12 @@ export default async function Home() {
                 ["week", `${kr(Math.round(P.week / 7))} pr. dag`],
               ] as [Period, string][]).map(([k, note]) => (
                 <div className={`lej-price${k === "weekend" ? " lej-price--best" : ""}`} key={k}>
-                  {k === "weekend" && <span className="tag lej-price-tag">Mest populær</span>}
+                  {camp && <span className="tag lej-price-tag">{camp.percent} % rabat {campaignWhen(camp)}</span>}
                   <b>{PERIODS[k].name}</b>
                   <span className="muted">{PERIODS[k].text}</span>
                   <strong>{kr(P[k])}</strong>
                   <span className="muted">{note}</span>
+                  {camp && <span className="lej-price-camp">{kr(discounted(P[k], camp))} {campaignWhen(camp)}</span>}
                   <a className="btn btn-secondary" href="#book">Se ledige datoer</a>
                 </div>
               ))}
@@ -393,7 +412,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <Reviews />
+        <Trust s={s} />
 
         <Occasions from={from} />
 
