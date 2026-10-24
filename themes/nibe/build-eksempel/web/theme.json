@@ -1,0 +1,33 @@
+{
+  "id": "nibe",
+  "name": "Nibe Festival",
+  "place": "Skalskoven",
+  "palette": {
+    "base": "#050505",
+    "neon": "#e5ff50",
+    "purple": "#995dff",
+    "plum": "#3b1f7a",
+    "white": "#ffffff"
+  },
+  "casing": "#050505",
+  "ring": {
+    "idle": [
+      "#e5ff50",
+      "#995dff"
+    ],
+    "glow": "#e5ff50"
+  },
+  "frame": {
+    "bg": "white",
+    "ink": "base",
+    "caption": ""
+  },
+  "photo": "print-bar",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ],
+  "unit": "gen2",
+  "dir": "eksempel/nibe"
+}

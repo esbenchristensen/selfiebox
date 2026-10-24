@@ -1,0 +1,528 @@
+[
+  {
+    "id": "smukfest",
+    "name": "Smukfest",
+    "place": "Skanderborg",
+    "palette": {
+      "base": "#0f3d24",
+      "forest": "#1c5a33",
+      "leaf": "#3f8f3a",
+      "lime": "#9cc94a",
+      "red": "#e2001a",
+      "cream": "#f6eedc",
+      "bark": "#5a3b22"
+    },
+    "casing": "#0f3d24",
+    "ring": {
+      "idle": [
+        "#9cc94a",
+        "#e2001a",
+        "#f6eedc"
+      ],
+      "glow": "#9cc94a"
+    },
+    "frame": {
+      "bg": "cream",
+      "ink": "red",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/smukfest"
+  },
+  {
+    "id": "roskilde",
+    "name": "Roskilde Festival",
+    "place": "Roskilde",
+    "palette": {
+      "base": "#121212",
+      "orange": "#ff8200",
+      "white": "#ffffff",
+      "grey": "#3b3b3b",
+      "ember": "#c85a00"
+    },
+    "casing": "#ff8200",
+    "ring": {
+      "idle": [
+        "#ff8200",
+        "#ffffff"
+      ],
+      "glow": "#ff8200"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "orange",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/roskilde"
+  },
+  {
+    "id": "nibe",
+    "name": "Nibe Festival",
+    "place": "Skalskoven",
+    "palette": {
+      "base": "#050505",
+      "neon": "#e5ff50",
+      "purple": "#995dff",
+      "plum": "#3b1f7a",
+      "white": "#ffffff"
+    },
+    "casing": "#050505",
+    "ring": {
+      "idle": [
+        "#e5ff50",
+        "#995dff"
+      ],
+      "glow": "#e5ff50"
+    },
+    "frame": {
+      "bg": "white",
+      "ink": "base",
+      "caption": ""
+    },
+    "photo": "print-bar",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/nibe"
+  },
+  {
+    "id": "faarup",
+    "name": "Fårup Sommerland",
+    "place": "Blokhus",
+    "palette": {
+      "base": "#003817",
+      "green": "#007531",
+      "gold": "#ffda81",
+      "white": "#ffffff",
+      "sea": "#3aa6d8",
+      "sand": "#ecdcae",
+      "pine": "#0b5a2c"
+    },
+    "casing": "#007531",
+    "ring": {
+      "idle": [
+        "#ffda81",
+        "#3aa6d8",
+        "#ffffff"
+      ],
+      "glow": "#ffda81"
+    },
+    "frame": {
+      "bg": "green",
+      "ink": "white",
+      "caption": ""
+    },
+    "photo": "print-birthday",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/faarup"
+  },
+  {
+    "id": "legoland",
+    "name": "LEGOLAND",
+    "place": "Billund",
+    "palette": {
+      "base": "#facd22",
+      "red": "#e3000b",
+      "black": "#111111",
+      "white": "#ffffff",
+      "blue": "#006db7",
+      "green": "#009d2e"
+    },
+    "casing": "#e3000b",
+    "ring": {
+      "idle": [
+        "#facd22",
+        "#e3000b",
+        "#006db7",
+        "#009d2e"
+      ],
+      "glow": "#facd22"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "black",
+      "caption": ""
+    },
+    "photo": "print-birthday",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/legoland"
+  },
+  {
+    "id": "zoo",
+    "name": "Aalborg Zoo",
+    "place": "Aalborg",
+    "palette": {
+      "base": "#1f4d2b",
+      "sand": "#e8c27a",
+      "grass": "#7aa83a",
+      "giraffe": "#d08a3a",
+      "spot": "#6b3a1a",
+      "cream": "#fff3dc",
+      "night": "#141414"
+    },
+    "casing": "#e8c27a",
+    "ring": {
+      "idle": [
+        "#ffcf7a",
+        "#7aa83a"
+      ],
+      "glow": "#ffcf7a"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "cream",
+      "caption": ""
+    },
+    "photo": "print-bar",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/zoo"
+  },
+  {
+    "id": "flying_hirsch",
+    "name": "Flying Hirsch",
+    "place": "Frederikshavn",
+    "palette": {
+      "base": "#0d0b0a",
+      "grey": "#333333",
+      "white": "#f8f7f4",
+      "red": "#c8181f",
+      "darkred": "#43060a",
+      "fur": "#89633d",
+      "brown": "#65421f",
+      "tan": "#c59b6d",
+      "stone": "#6b6f78",
+      "pine": "#1d4a35",
+      "night": "#14213a"
+    },
+    "casing": "#0d0b0a",
+    "ring": {
+      "idle": [
+        "#fff1de",
+        "#c8181f"
+      ],
+      "glow": "#e8333a"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "red",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/flying_hirsch"
+  },
+  {
+    "id": "aab",
+    "name": "AaB",
+    "place": "Aalborg",
+    "palette": {
+      "base": "#c4161d",
+      "bright": "#ed1c24",
+      "darkred": "#870e12",
+      "white": "#f7f7f5",
+      "ink": "#16181b",
+      "steel": "#8d939b",
+      "grass": "#2f7d3a",
+      "grass2": "#3b9548",
+      "night": "#0e1730",
+      "sky": "#1d2c52"
+    },
+    "casing": "#c4161d",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#ed1c24"
+      ],
+      "glow": "#ed1c24"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/aab"
+  },
+  {
+    "id": "palads",
+    "name": "Palads Teatret",
+    "place": "Frederikshavn",
+    "palette": {
+      "base": "#2b2a3d",
+      "night": "#312f43",
+      "deep": "#1b1a28",
+      "white": "#f7f5ee",
+      "gold": "#e0ae45",
+      "bulb": "#fff2c2",
+      "velvet": "#9b1c22",
+      "velvetd": "#5e0d14",
+      "corn": "#f3dc9a",
+      "silver": "#a7a9ba",
+      "sky": "#47456a"
+    },
+    "casing": "#2b2a3d",
+    "ring": {
+      "idle": [
+        "#fff2c2",
+        "#e0ae45"
+      ],
+      "glow": "#e0ae45"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "gold",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/palads"
+  },
+  {
+    "id": "heidis",
+    "name": "Heidi's Bier Bar",
+    "place": "Aalborg · Aarhus · København · Herning · Sønderborg · Thisted",
+    "palette": {
+      "base": "#00572a",
+      "green": "#006a31",
+      "deep": "#023d1e",
+      "yellow": "#fccd28",
+      "white": "#fbfaf4",
+      "brown": "#734c1e",
+      "ginger": "#a5642b",
+      "beer": "#f0a524",
+      "foam": "#fff6dc",
+      "glass": "#cfe6d8",
+      "steel": "#9aa3a0",
+      "sky": "#0b7a3c",
+      "hop": "#8dbb3c"
+    },
+    "casing": "#00572a",
+    "ring": {
+      "idle": [
+        "#fccd28",
+        "#fff6dc"
+      ],
+      "glow": "#fccd28"
+    },
+    "frame": {
+      "bg": "green",
+      "ink": "yellow",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/heidis"
+  },
+  {
+    "id": "meny",
+    "name": "MENY Fjerritslev",
+    "place": "Fjerritslev",
+    "palette": {
+      "base": "#3c3c3b",
+      "deep": "#262625",
+      "red": "#cc092f",
+      "darkred": "#8e0620",
+      "white": "#ffffff",
+      "cream": "#f4efe6",
+      "kraft": "#c4b9aa",
+      "wood": "#b07a45",
+      "woodd": "#7a4f2a",
+      "green": "#4f8a2b",
+      "lime": "#93c143",
+      "orange": "#ef7d1a",
+      "yellow": "#f2c230",
+      "bottle": "#24452f",
+      "bread": "#d9a25b"
+    },
+    "casing": "#cc092f",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#cc092f"
+      ],
+      "glow": "#ffffff"
+    },
+    "frame": {
+      "bg": "white",
+      "ink": "base",
+      "caption": ""
+    },
+    "photo": "print-birthday",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/meny"
+  },
+  {
+    "id": "white_hawks",
+    "name": "Frederikshavn White Hawks",
+    "place": "Nordjyske Bank Arena, Frederikshavn",
+    "palette": {
+      "base": "#011a3f",
+      "navy2": "#163463",
+      "red": "#a61d26",
+      "lamp": "#e0262f",
+      "glow": "#f2685f",
+      "white": "#ffffff",
+      "grey": "#cdcccc",
+      "ink": "#121417",
+      "gold": "#f7a60b",
+      "ice": "#e6f1f8",
+      "iceline": "#2a5fa8",
+      "steel": "#8d939b",
+      "sky": "#0d2f63"
+    },
+    "casing": "#011a3f",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#a61d26"
+      ],
+      "glow": "#e0262f"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/white_hawks"
+  },
+  {
+    "id": "red_bull",
+    "name": "Red Bull",
+    "place": "Bars, klubber og studenterbarer",
+    "palette": {
+      "base": "#0e1d48",
+      "blue": "#14275e",
+      "blue2": "#22407f",
+      "silver": "#c9ced6",
+      "red": "#d2003c",
+      "yellow": "#ffd300",
+      "white": "#ffffff",
+      "grey": "#9ea8b8",
+      "ink": "#070c1f"
+    },
+    "casing": "#0e1d48",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#ffd300"
+      ],
+      "glow": "#d2003c"
+    },
+    "frame": {
+      "bg": "silver",
+      "ink": "base",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/red_bull"
+  },
+  {
+    "id": "tuborg",
+    "name": "Tuborg",
+    "place": "Danmarks barer",
+    "palette": {
+      "base": "#2e9a48",
+      "band": "#1a8a3c",
+      "deep": "#1a3a30",
+      "lime": "#80e040",
+      "white": "#ffffff",
+      "silver": "#8f8f93",
+      "cream": "#f4ead2",
+      "beer": "#e7a21f",
+      "sky": "#3aa852",
+      "ink": "#1a3a30",
+      "shine": "#5cbf6a"
+    },
+    "casing": "#2e9a48",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#80e040"
+      ],
+      "glow": "#5fd36a"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "lime",
+      "caption": ""
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2",
+    "dir": "eksempel/tuborg"
+  }
+]

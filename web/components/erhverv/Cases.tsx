@@ -4,12 +4,11 @@ import { useState } from "react";
 import { BoxViewer } from "@/components/BoxViewer";
 import { Ph } from "@/components/Placeholder";
 import type { Venue } from "@/components/three/HaloBox";
-import bars from "@/components/three/bars.json";
-import venues from "@/components/three/venues.json";
+import examples from "@/components/three/examples.json";
 import { goalById, type GoalId } from "@/lib/erhverv/value";
 
 // Plain JSON, so this component does not pull three.js in; BoxViewer fetches it when the box scrolls near.
-const DESIGNS = [...(venues as Venue[]), ...(bars as Venue[])];
+const DESIGNS = examples as Venue[]; // the logo-free concept designs, as in the showroom
 const designOf = (id: string) => DESIGNS.find((v) => v.id === id)!;
 
 // The industries, each seen from the buyer: who decides, what they want (the goals from lib/erhverv/value.ts),
@@ -19,7 +18,7 @@ const designOf = (id: string) => DESIGNS.find((v) => v.id === id)!;
 
 type Case = {
   id: string;
-  box: string; // a design from venues.json or bars.json that shows what the box looks like for this kind of place
+  box: string; // a design from examples.json that shows what the box looks like for this kind of place
   name: string;
   intro: string;
   buyer: string;

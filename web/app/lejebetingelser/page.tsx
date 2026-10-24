@@ -77,7 +77,7 @@ export default function Lejebetingelser() {
       <ul>
         <li>Vi sender boksen med posten til den pakkeshop, der ligger nærmest den adresse, I har skrevet, så den er fremme senest dagen før første lejedag. I får en sms eller mail fra pakketjenesten, når den kan hentes.</li>
         <li>Pakken skal hentes af jer eller en, I sender. Bliver pakken ikke hentet, før den sendes retur til os, er lejen stadig betalt.</li>
-        <li>Sæt boksen i stikkontakten, så snart I har hentet den, og se, at den starter. Virker den ikke, eller mangler der noget, så ring eller skriv til os med det samme, så vi kan nå at sende en ny før festen.</li>
+        <li>Sæt boksen i stikkontakten, så snart I har hentet den, og se, at den starter. Virker den ikke, eller mangler der noget, så skriv til os i chatten eller på kontakt@selfi.dk med det samme, så vi kan nå at sende en ny før festen.</li>
         <li>Bliver vi forsinkede, så boksen ikke er fremme senest dagen før, giver vi besked, så snart vi ved det. Når boksen ikke frem til jeres første lejedag, og det ikke skyldes jer, får I hele beløbet tilbage.</li>
       </ul>
 
@@ -133,7 +133,7 @@ export default function Lejebetingelser() {
 
       <h2>9. Hvis boksen ikke virker</h2>
       <ul>
-        <li>Boksen er testet, før den sendes, og vi kan se på afstand, om den er i gang. Virker den ikke på festen, så ring eller skriv til os med det samme, så hjælper vi.</li>
+        <li>Boksen er testet, før den sendes, og vi kan se på afstand, om den er i gang. Virker den ikke på festen, så skriv til os i chatten eller på kontakt@selfi.dk med det samme, så hjælper vi.</li>
         <li>Kan boksen ikke bruges til festen, og skyldes det ikke jer, får I hele lejen tilbage. Vi kan se på afstand, om boksen har været tændt og taget billeder i festens tidsrum, og det lægger vi til grund. Virker den kun en del af tiden, får I et forholdsmæssigt afslag.</li>
         <li>Udfald i jeres strøm eller wifi er ikke en fejl ved boksen. Boksen tager billeder uden internet, og billederne kommer på eventsiden, når den er på nettet igen.</li>
         <li>Vores ansvar er højst det, I har betalt for lejen. Vi erstatter ikke udgifter ud over lejen eller indirekte tab, fx til fotograf eller andre indslag.</li>
