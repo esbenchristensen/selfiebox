@@ -24,18 +24,21 @@ export const pricing = {
   setupFee: 2495, // kr. ekskl. moms, én gang
   term: "3 måneders binding",
   fourG: "4G-modul: 149 kr./md.",
-  print: "Printer ved siden af boksen: fra 2.000 kr./md., eller gratis når vi tager salget",
+  print: "Printer ved siden af boksen: fra 2.000 kr./md., eller gratis med Print-kredit, hvor I får 10 kr. pr. print",
   design: "Specialdesign af kabinettet: pris aftales",
 };
 
 // Printeren (selfi-printer-v4) til steder. Esben 23. okt. 2026: fra 2.000 kr./md., et print sælger typisk for 50 kr.,
 // og har stedet en boks, kan printeren være gratis, mod at Selfi tager hele salget fra den.
+// Print-kredit (24. okt. 2026): med den gratis printer får stedet 10 kr. pr. solgt print trukket fra boksens regning,
+// højst op til boksens pris, så både stedet og Selfi tjener på hvert print. Printeren tilbydes kun steder med mange gæster.
 // Papir er et skøn: DNP QW410 4×6, 2 ruller à 150 print for ca. 650 kr. (hardware/tools/make_printer_bom.py).
 export const printer = {
   fromPerMonth: 2000, // kr. pr. måned, ekskl. moms
   pricePerPrint: 50, // kr. inkl. moms, det gæsten betaler
   paperPerPrint: 2, // kr. ekskl. moms, skøn
   vat: 0.25,
+  creditPerPrint: 10, // kr. ekskl. moms, trukket fra boksens regning ved Print-kredit
 };
 
 // Tid fra ja til boksen hænger.
