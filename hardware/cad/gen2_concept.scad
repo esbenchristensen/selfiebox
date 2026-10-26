@@ -132,7 +132,7 @@ REED = [32, 19, 7];                         // w (x), h (z), thickness (y); REED
 module back_part(p, sz, c) color(c) translate([p[0], D - BACK_T - 1.2 - sz[2], p[1]]) cube([sz[0], sz[2], sz[1]]);
 module placed_electronics() {
     back_part(HAT4G_P, HAT4G, [0.1, 0.3, 0.6]);
-    back_part(MCORE_P, MCORE, [0.15, 0.15, 0.15]);
+    color([0.15, 0.15, 0.15]) mcore_model();
     back_part(IMU_P, IMU, [0.1, 0.1, 0.4]);
     color([0.15, 0.15, 0.15]) translate([-MSTRIP[0]/2, MSTRIP_Y - MSTRIP[1]/2, WALL - MIC_POCKET[2] + MIC_RING[2]]) cube(MSTRIP);
     back_part(REED_P, REED, [0.1, 0.3, 0.6]);
@@ -141,13 +141,43 @@ module placed_electronics() {
 module electronics_holders() {
     for (q = [[HAT4G_P, HAT4G], [IMU_P, IMU]])
         translate([q[0][0], D - BACK_T + 0.01, q[0][1]]) rotate([90, 0, 0]) cradle2([q[1][0], q[1][1], q[1][2]], BOARD_LIP);
-    difference() {   // v9: the bottom lip opens 20 mm for the FPC socket (17.5 long, 2 over the edge)
-        translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) cradle2(MCORE, BOARD_LIP);
-        translate([MCORE_P[0] + MCORE[0]/2 - 10, D - BACK_T - MCORE[2] - 3, MCORE_P[1] - 3]) cube([20, MCORE[2] + 2.2, 5]);
-    }
+    translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) mcore_cradle();
     for (sx = [-1, 1]) cyl_z(MIC_PEG[0], WALL - MIC_POCKET[2] - 0.01, MIC_PEG[3], sx*MIC_PEG[1], MSTRIP_Y);   // v9: up to 0.6 under the front, so the board cannot lift off
     // reed module tray just above the lock tongue (reed glass at the bottom edge): lifting the box off the cleat moves the magnet away
     translate([REED_P[0], D - BACK_T + 0.01, REED_P[1]]) rotate([90, 0, 0]) cradle2([REED[0], REED[1], REED[2]], BOARD_LIP);
+}
+
+// v24 (Esben 26 Oct, first assembly: the tray's walls were too high and the aux jack, on the USB-C edge, sticks out). Until v24 the
+// tray was the generic cradle2 with the lips 12.2 over the floor, on top of the tallest parts; the board itself is 1.2 thick
+// (Seeed DXF, hardware/datablade/halo-gen2-v2_respeaker_flex_coreboard_2d.dxf) with through-hole pins 2.1 under it. Now it
+// stands on 4 pads round its own M3 holes (pins clear), Ø3 pegs through the holes locate it, and the lips catch the PCB's top
+// face. Parts side to the front, FPC edge down, so the USB-C (1.4 over the edge) and the 3.5 mm jack (1.7 over) are on the top
+// edge; the top wall is cut down to the PCB there. The short ends (pin header, XIAO's USB-C) only have low stops. Positions
+// in the tray's x (from the left seen from the front, the DXF turned 180 deg).
+MC_PAD = [6, 2.6];                         // pad Ø, height (pins 2.1 under the board)
+MC_HOLES = [[4, 4], [66.5, 4], [4, 48.2], [66.5, 48.2]];
+MC_NOTCH = [[6, 18.5], [30.5, 42.5]];      // top wall cut to the PCB: aux jack 8.4-16.1, USB-C 32-41.1
+MC_LIPS = [[[21.5, 5.5], [44, 7.5]], [[19, 11], [62.5, 7]]];   // [x, length]: bottom (FPC) wall, top wall, clear of the edge parts
+// the board on its pads for the fit check: the 1.2 PCB with its 4 holes, and the parts (up to 9 over it) 1.4 in from the long
+// edges, where the lips catch the PCB (the DXF has no parts there at the lips' places)
+module mcore_model() translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0]) translate([0.15, 0.15, 1.2 + MC_PAD[1]]) {
+    difference() { cube([MCORE[0], MCORE[1], 1.2]); for (h = MC_HOLES) translate([h[0], h[1], -1]) cylinder(d = 3.3, h = 4, $fn = 24); }
+    translate([6, 1.4, 1.2]) cube([MCORE[0] - 12, MCORE[1] - 2.8, 9]);
+}
+module mcore_cradle() {
+    sz = MCORE;  t = MC_PAD[1] + 1.2;  fl = 1.2;  hgt = fl + t + 0.1 + BOARD_LIP[3] + 0.3;  pcb = fl + t;
+    difference() {
+        translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
+        translate([0, 0, fl]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
+        for (sx = [0, 1]) translate([sx > 0 ? sz[0] + 0.3 - 0.01 : -2, -2, pcb - 0.2]) cube([2.01, sz[1] + 4.3, hgt]);   // low ends
+        for (n = MC_NOTCH) translate([n[0], sz[1] - 1, pcb]) cube([n[1] - n[0], 4, hgt]);
+        translate([sz[0]/2 - 10 + 0.15, -2, fl]) cube([20, 4, hgt]);                 // FPC socket
+    }
+    for (h = MC_HOLES) translate([h[0] + 0.15, h[1] + 0.15, fl - 0.01]) {
+        cylinder(d = MC_PAD[0], h = MC_PAD[1] + 0.01, $fn = 32);
+        cylinder(d = 3.0, h = MC_PAD[1] + 1.2 + 1.5, $fn = 24);
+    }
+    for (sy = [0, 1], l = MC_LIPS[sy]) translate([l[0], sy > 0 ? sz[1] + 0.3 : 0, pcb + 0.1]) snap_lip(l[1], BOARD_LIP[0], BOARD_LIP[3], sy);
 }
 
 // ------------------------------------------------------------ wall lock ----
@@ -318,9 +348,13 @@ function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 // the barrel bore (plug pulled out) and two snap fingers catch the top of its body (plug pushed in).
 // [C] Body ~13 square (photo); [C] plug grip Ø<=12, <=38 long under the barrel (no Mean Well drawing): measure.
 PWR_P = [0, 60];                                // column axis (x, y): v11 in the middle (v10: x -49)
-PWR_SOCK = [10, 12, 13, 22.8, 10, 5];           // barrel Ø, length; body width, length; terminal block width, length
+// v24 (Esben 26 Oct: the socket was too big to go all the way down; Conrad lists the body as 14 x 13, not 13 square): the
+// cavity is 14.6 square, so the socket goes in either way round, the barrel bore 0.5 wider, and the catches reach 1.6 over
+// the body (1.3 on the 14 side, 1.8 on the 13 side) so pressing the plug in from below cannot push it out of the top.
+PWR_SOCK = [10, 12, 14, 22.8, 10, 5];           // barrel Ø, length; body width (Conrad: 14 x 13), length; terminal block width, length
 PWR_MOUTH = 38;                                 // socket mouth z: plug space below it
-PWR_BORE = 12.5;  PWR_CAV = 13.8;  PWR_WALLT = 2;  // plug bore Ø, body cavity, column wall
+PWR_BORE = 12.5;  PWR_CAV = 14.6;  PWR_WALLT = 2;  // plug bore Ø, body cavity, column wall
+PWR_CATCH = 1.6;                                // catch over the body's top edge
 PWR_BODY_TOP = PWR_MOUTH + PWR_SOCK[1] + PWR_SOCK[3];   // 72.8: the fingers catch here
 PWR_TOP = PWR_BODY_TOP + 2;                      // column top; the terminal block stands 3 mm above it
 PWR_OUT = PWR_CAV + 2*PWR_WALLT;                 // column outside, square
@@ -379,15 +413,15 @@ module power_column() translate([PWR_P[0], PWR_P[1], 0]) {
         translate([0, 0, WALL - 0.01]) linear_extrude(PWR_TOP - WALL + 0.01) hull() {
             rrc(o, o, 2); translate([0, -o]) square(0.01, center = true); }        // v24: ridge in front
         teardrop_z(PWR_BORE, -1, PWR_MOUTH);                                        // plug
-        teardrop_z(PWR_SOCK[0] + 0.5, PWR_MOUTH - 0.01, PWR_MOUTH + PWR_SOCK[1]);   // barrel; its top is the step the body rests on
+        teardrop_z(PWR_SOCK[0] + 1.0, PWR_MOUTH - 0.01, PWR_MOUTH + PWR_SOCK[1]);   // barrel; its top is the step the body rests on
         translate([0, 0, PWR_MOUTH + PWR_SOCK[1]]) linear_extrude(PWR_TOP) hull() {   // body, with its gable
             translate([-c/2, -c/2]) square([c, c]); translate([0, -c]) square(0.01, center = true); }
         for (sx = [-1, 1], sy = [-1, 1]) translate([sx > 0 ? c/2 - 0.5 : -o/2 - 0.5, sy > 0 ? c/2 - 0.8 : -c/2, fz])
             cube([PWR_WALLT + 1, 0.8, PWR_TOP]);                                      // slots free the fingers
     }
-    // catches: 1.2 over the body's top edge, ramped above so the socket pushes past them
+    // catches: PWR_CATCH into the cavity over the body's top edge, ramped above so the socket pushes past them
     for (sx = [-1, 1]) translate([sx*c/2, -c/2 + 1.5, PWR_BODY_TOP + 0.2]) rotate([-90, 0, 0]) linear_extrude(c - 3)
-        polygon([[0, 0], [-sx*1.2, 0], [-sx*1.2, -0.4], [0, -(PWR_TOP - PWR_BODY_TOP - 0.2)]]);
+        polygon([[0, 0], [-sx*PWR_CATCH, 0], [-sx*PWR_CATCH, -0.4], [0, -(PWR_TOP - PWR_BODY_TOP - 0.2)]]);
 }
 module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // socket mouth down, and the PSU plug pushed in from below
     s = PWR_SOCK;  z1 = PWR_MOUTH + s[1];
@@ -1099,7 +1133,7 @@ if (VIEW == "x_camera")    placed_camera();
 // one mesh per component for the 3D viewer (admin → Hardware); cables are drawn by hardware/render/gen2_viewer.py
 module screw_y(d, l, head, x, y, z, dir = 1) { translate([x, y, z]) rotate([dir > 0 ? -90 : 90, 0, 0]) { translate([0, 0, -head[1]]) cylinder(d = head[0], h = head[1], $fn = 24); cylinder(d = d, h = l, $fn = 16); } }
 if (VIEW == "c_4g")        back_part(HAT4G_P, HAT4G, "red");
-if (VIEW == "c_mcore")     back_part(MCORE_P, MCORE, "red");
+if (VIEW == "c_mcore")     mcore_model();
 if (VIEW == "c_imu")       back_part(IMU_P, IMU, "red");
 if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MSTRIP_Y - MSTRIP[1]/2, WALL - MIC_POCKET[2] + MIC_RING[2]]) cube(MSTRIP);
 if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
