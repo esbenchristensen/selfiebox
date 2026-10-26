@@ -3,12 +3,12 @@ import { kr } from "@/lib/udlejning/core";
 
 // The parties people rent a box for, in the words they search with. Each card sends them to the calendar.
 const OCCASIONS: { name: string; text: string; photo: string; alt: string }[] = [
-  { name: "Bryllup", photo: "fest-bryllup-3", alt: "Brudeparret og to gæster foran Selfi Boks i en gammel sal", text: "Alle gæster på billede med jeres navne og datoen. Det bliver den gæstebog, der faktisk bliver kigget i." },
-  { name: "Konfirmation", photo: "fest-konfirmation-3", alt: "Konfirmand og tre veninder foran Selfi Boks i et festtelt", text: "Konfirmanden og vennerne går i boksen igen og igen, og familien har billederne på telefonen samme aften." },
-  { name: "Rund fødselsdag", photo: "fest-fodselsdag-have-3", alt: "Fødselar på 50 med familien foran Selfi Boks i haven", text: "Fra de yngste til fødselaren: et tryk, en nedtælling, og alle er med." },
-  { name: "Firmafest og julefrokost", photo: "fest-julefrokost-3", alt: "Kolleger med nissehuer foran Selfi Boks til julefrokost", text: "Kollegerne viser en side, man ikke ser til morgenmødet. Kvitteringen fra betalingen kan bruges som bilag." },
-  { name: "Studenterfest", photo: "fest-studenter-3", alt: "Studenter med huer foran Selfi Boks", text: "Billederne fra den aften, I kommer til at tale om de næste 20 år, i godt lys og med alle på." },
-  { name: "Barnedåb og jubilæum", photo: "fest-barnedaab-3", alt: "Familie med dåbsbarn og bedstemor foran Selfi Boks", text: "En rolig boks i hjørnet, der samler familien, mens kagen bliver skåret." },
+  { name: "Bryllup", photo: "fest-bryllup-5", alt: "Brudeparret og to gæster foran Selfi Boks i en gammel sal", text: "Alle gæster på billede med jeres navne og datoen. Det bliver den gæstebog, der faktisk bliver kigget i." },
+  { name: "Konfirmation", photo: "fest-konfirmation-5", alt: "Konfirmand og tre veninder foran Selfi Boks i et festtelt", text: "Konfirmanden og vennerne går i boksen igen og igen, og familien har billederne på telefonen samme aften." },
+  { name: "Rund fødselsdag", photo: "fest-fodselsdag-have-5", alt: "Fødselar på 50 med familien foran Selfi Boks i haven", text: "Fra de yngste til fødselaren: et tryk, en nedtælling, og alle er med." },
+  { name: "Firmafest og julefrokost", photo: "fest-julefrokost-5", alt: "Kolleger med nissehuer foran Selfi Boks til julefrokost", text: "Kollegerne viser en side, man ikke ser til morgenmødet. Kvitteringen fra betalingen kan bruges som bilag." },
+  { name: "Studenterfest", photo: "fest-studenter-5", alt: "Studenter med huer foran Selfi Boks", text: "Billederne fra den aften, I kommer til at tale om de næste 20 år, i godt lys og med alle på." },
+  { name: "Barnedåb og jubilæum", photo: "fest-barnedaab-5", alt: "Familie med dåbsbarn og bedstemor foran Selfi Boks", text: "En rolig boks i hjørnet, der samler familien, mens kagen bliver skåret." },
 ];
 
 export function Occasions({ from }: { from: number }) {
