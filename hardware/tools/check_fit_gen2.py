@@ -26,7 +26,7 @@ SCAD = Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_camsleeve", "x_fanguard"]   # v24: fan guard
 BOUGHT = ["x_seal", "x_camglass", "x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
-          "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_fanguard", "x_logo_w", "x_logo_g"]
+          "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "x_logo_w", "x_logo_g"]
 THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
 
 # pairs that touch by design: (a, b) -> largest overlap in mm3 that is still fine (contact faces render as slivers)
@@ -44,8 +44,7 @@ CONTACT = {
     ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
     ("x_camsleeve", "x_front3"): 0.5,       # the sleeve's 4 press ribs in the shroud's corners (v21: on its flats)
     ("x_ring3", "x_frame3"): 12,            # v24: the frame's crush bumps press the ring's flange forward (0.25 each)
-    ("x_fanguard", "c_pi_board"): 1e9, ("x_fanguard", "s_fanguard"): 1e9,   # v24: the guard's tubes stand on the Pi round its screws
-    ("c_pi_board", "s_fanguard"): 1e9, ("x_dsp_back", "s_fanguard"): 1e9,
+    ("x_fanguard", "x_frame3"): 1e9,   # v24: the fan guard clicks onto the frame's upper cross bar
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
@@ -53,7 +52,8 @@ CLEARANCES = [
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame (v24: pressed by crush bumps)"),
     ("x_camsleeve", "x_camera", 0.6, "v24: sleeve 1.0 clear of the lens holder, bore 0.65 round the barrel: nothing touches the lens"),
     ("x_camera", "x_camglass", 0.95, "v24: lens tip 1.0 behind the glass (it moves to focus)"),
-    ("x_fanguard", "c_cooler", 0.3, "v24: the grille 3.0 over the Active Cooler, the tubes 0.45 beside it"),
+    ("x_fanguard", "c_cooler", 0.75, "v24: the grille 3.0 over the Active Cooler, the stop pegs 0.8 over the heat sink"),
+    ("x_fanguard", "c_pi_board", 0.5, "v24: the guard clear of the Pi and its ports"),
     ("x_fanguard", "x_shell3", 1.0, "v24: guard free of the shell (1.4 to the 5 V supply tray)"),
     ("x_fanguard", "c_mcore", 3.0, "v24: guard free of the mic core"),
     ("x_front3", "x_shell3", 0.0, "v21: front face on the shell face (no gap), rib in the groove"),

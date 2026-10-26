@@ -28,7 +28,7 @@ D = 70
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
          "vaegbeslag": ("x_cleat", DOWN), "kameraroer": ("x_camsleeve", DOWN),
-         "blaeserhegn": ("x_fanguard", UP),   # v24: grille face down, the tubes stand up
+         "blaeserhegn": ("x_fanguard", UP),   # v24: grille face down, the clip arms stand up
          # v21: example theme parts to test the hooks, face down like every theme part
          "tema-top-eksempel": ("x_tema_top", UP), "tema-vinge-venstre-eksempel": ("x_tema_vinge_v", UP),
          "tema-vinge-hoejre-eksempel": ("x_tema_vinge_h", UP)}

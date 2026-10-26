@@ -221,20 +221,9 @@
  },
  {
   "node": "blaeserhegn",
-  "label": "Blæserhegn på Pi'en (sort ASA): rist 3 mm over blæseren",
+  "label": "Blæserhegn (sort ASA): klikkes på bagrammens øverste tværstykke, rist 3 mm over blæseren",
   "color": "#1d1d20",
   "group": "Kabinet",
-  "explode": [
-   0,
-   0,
-   -40
-  ]
- },
- {
-  "node": "skruer_hegn",
-  "label": "4 skruer, blæserhegn (M2,5 × 25)",
-  "color": "#c3c7cf",
-  "group": "Skruer",
   "explode": [
    0,
    0,
