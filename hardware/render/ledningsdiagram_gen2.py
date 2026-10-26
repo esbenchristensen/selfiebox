@@ -43,7 +43,7 @@ lab(40, 640, "Strøm: 1,0 mm² silikone", "#444")
 box(840, 130, 300, 210, "5 V-forsyning", "Mean Well RSD-60G-5|24 V → 5 V, 12 A|ind (venstre) · ud (højre)|isoleret: −V skal bindes|til GND (bro W4 → W2)")
 wire([(618, w1[1]), (840, w1[1])], C["v24"]); lab(830, w1[1]-6, "Vin+", C["v24"], "end")
 wire([(618, w2[1]), (800, w2[1]), (800, 310), (840, 310)], C["gnd"]); lab(830, 304, "Vin−", "#222", "end")
-w3 = wago(1230, 150, 3, "W3 · 5 V + ", C["v5"])
+w3 = wago(1230, 150, 4, "W3 · 5 V + ", C["v5"])
 w4 = wago(1230, 370, 5, "W4 · 5 V GND ", C["gnd"])
 wire([(1140, 180), (1180, 180), (1180, w3[0]), (1230, w3[0])], C["v5"]); lab(1150, 172, "+V", C["v5"])
 wire([(1140, 250), (1200, 250), (1200, w4[0]), (1230, w4[0])], C["gnd"]); lab(1150, 242, "−V", "#222")
@@ -54,14 +54,17 @@ wire([(1288, w3[1]), (1440, w3[1])], C["v5"]); lab(1300, w3[1]-6, "USB-C rød", 
 wire([(1288, w4[1]), (1440, w4[1])], C["gnd"]); lab(1300, w4[1]-6, "USB-C sort")
 
 # Gledopto + RGB
-box(1440, 560, 320, 150, "RGB-styring", "Gledopto GL-C-016WL-D|forsynes med 5 V, ALDRIG 24 V:|den sender sin indgangsspænding|direkte ud på strippen", fill="#fff4e6")
+box(1440, 560, 320, 150, "RGB-styring", "Gledopto GL-C-016WL-D|forsynes med 5 V, ALDRIG 24 V|giver kun data til strippen:|OUTPUT V+ og GND bruges ikke", fill="#fff4e6")
 wire([(1288, w3[2]), (1320, w3[2]), (1320, 600), (1440, 600)], C["v5"]); lab(1430, 594, "V+", C["v5"], "end")
 wire([(1288, w4[2]), (1340, w4[2]), (1340, 650), (1440, 650)], C["gnd"]); lab(1430, 644, "V−", "#222", "end")
-box(1440, 860, 320, 100, "RGB-strip 5 V", "WS2812b COB 5 mm, MiniClip|strømloft 2 A (2000 mA) i WLED", fill="#f3e8ff")
-wire([(1500, 710), (1500, 860)], C["v5"]); lab(1508, 790, "5 V", C["v5"])
-wire([(1600, 710), (1600, 860)], C["data"]); lab(1608, 790, "DATA", C["data"])
-wire([(1700, 710), (1700, 860)], C["gnd"]); lab(1708, 790, "GND")
-lab(1600, 990, "RGB: 1,0 mm² fra styringen til klipset", "#444", "middle")
+# v24 (26 Oct 2026, first assembly): the strip takes its power straight from W3/W4; the controller only drives DATA (GPIO16)
+box(1440, 860, 320, 100, "RGB-strip 5 V", "WS2812b COB 5 mm, MiniClip i IN-enden|strømloft 2 A (2000 mA) i WLED", fill="#f3e8ff")
+wire([(1288, w3[3]), (1400, w3[3]), (1400, 790), (1500, 790), (1500, 860)], C["v5"]); lab(1492, 820, "5 V fra W3", C["v5"], "end")
+wire([(1600, 710), (1600, 860)], C["data"]); lab(1608, 790, "DATA (GPIO16)", C["data"])
+wire([(1288, w4[4]), (1380, w4[4]), (1380, 840), (1700, 840), (1700, 860)], C["gnd"]); lab(1708, 832, "GND fra W4")
+lab(1600, 990, "RGB: 1,0 mm² fra W3/W4 til klipset", "#444", "middle")
+# control: a short USB-A to USB-C cable from the Pi (WLED JSON over serial), so it works without wifi at the venue
+wire([(1745, 450), (1745, 560)], C["sig"], 3); lab(1735, 520, "USB-A → USB-C", C["sig"], "end"); lab(1735, 540, "styring (serial)", C["sig"], "end")
 
 # bridge W4 -> W2
 wire([(1288, w4[3]), (1300, w4[3]), (1300, 520), (700, 520), (700, w2[3]), (618, w2[3])], C["gnd"]); lab(720, 512, "bro W4 → W2: fælles GND til dæmperens styresignal")
@@ -73,26 +76,22 @@ wire([(618, w2[2]), (680, w2[2]), (680, 720), (840, 720)], C["gnd"]); lab(830, 7
 wire([(1440, 300), (1170, 300), (1170, 700), (1140, 700)], C["sig"], 3)
 wire([(1440, 330), (1185, 330), (1185, 760), (1140, 760)], C["sig"], 3)
 lab(1195, 700, "GPIO18 (ben 12) → signal, 20 kHz", C["sig"]); lab(1195, 760, "3V3 (ben 1) → VCC · GND (ben 14) → GND", C["sig"])
-w5 = wago(960, 880, 4, "W5 · hvid − ", C["sw"], (1030, 905, "start"))
+w5 = wago(960, 880, 3, "W5 · hvid − ", C["sw"], (1030, 905, "start"))
 wire([(990, 800), (990, 860), (940, 860), (940, w5[0]), (960, w5[0])], C["sw"]); lab(1000, 845, "OUT−", "#555")
-box(1100, 1040, 300, 190, "Hvid strip 1, 2 og 3", "Ledproff COB Ra95 24 V, 8 mm|klikstik, 0,35 mm²|(3 fra v18: i reflektoren)", fill="#fffbe6")
+box(1100, 1040, 300, 190, "Hvid strip 1 og 2", "Ledproff COB Ra95 24 V, 8 mm|klikstik, 0,35 mm²|(v24: kun 2, ingen strip|i reflektoren)", fill="#fffbe6")
 wire([(1018, w5[1]), (1180, w5[1]), (1180, 1040)], C["sw"]); lab(1190, w5[1]-6, "strip 1 −", "#555")
 wire([(1018, w5[2]), (1140, w5[2]), (1140, 1040)], C["sw"]); lab(1150, w5[2]+18, "strip 2 −", "#555")
-wire([(1018, w5[3]), (1110, w5[3]), (1110, 1040)], C["sw"]); lab(1040, w5[3]+30, "strip 3 −", "#555")
 wire([(618, w1[3]), (640, w1[3]), (640, 1080), (1100, 1080)], C["v24"]); lab(660, 1074, "strip 1 + (direkte fra W1)", C["v24"])
-w6 = wago(880, 1120, 3, "W6 · hvid + ", C["v24"], (870, 1215, "end"))
-wire([(618, w1[4]), (600, w1[4]), (600, 1250), (860, 1250), (860, w6[0]), (880, w6[0])], C["v24"]); lab(610, 1244, "fra W1", C["v24"])
-wire([(938, w6[1]), (1100, w6[1])], C["v24"]); lab(950, w6[1]-6, "strip 2 +", C["v24"])
-wire([(938, w6[2]), (1100, w6[2])], C["v24"]); lab(950, w6[2]-6, "strip 3 +", C["v24"])
+wire([(618, w1[4]), (600, w1[4]), (600, 1180), (1100, 1180)], C["v24"]); lab(610, 1174, "strip 2 + (direkte fra W1)", C["v24"])
 
 # legend + notes
-for i, t in enumerate(["W1 24 V +: 221-415", "W2 GND: 221-415", "W3 5 V +: 221-413", "W4 5 V GND: 221-415", "W5 hvid −: 221-414", "W6 hvid +: 221-413"]):
+for i, t in enumerate(["W1 24 V +: 221-415", "W2 GND: 221-415", "W3 5 V +: 221-414", "W4 5 V GND: 221-415", "W5 hvid −: 221-413"]):
     lab(40, 980 + i*22, t, "#333", size=15)
 lx, ly = 40, 740
 for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip −, dæmpet"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
     out.append(f'<line x1="{lx}" y1="{ly+i*32}" x2="{lx+46}" y2="{ly+i*32}" stroke="{C[k]}" stroke-width="6"/><text x="{lx+58}" y="{ly+i*32+5}" font-size="16">{t}</text>')
 for i, t in enumerate(["Skærmen får strøm fra Pi'ens ben 4 (5 V) og 6 (GND) med sit eget kabel.",
-                       "Tilvalg (4G, mikrofon) går i Pi'ens USB-A; sensorer tegnes, når de kommer i boksen.",
+                       "Tilvalg (4G, mikrofon) og RGB-styringen går i Pi'ens USB-A; sensorer tegnes, når de kommer i boksen.",
                        "Mærkningen på dæmperen og styringen gælder: tjek den, før der tændes."]):
     lab(40, 1285 + i*22, t, "#444", size=15)
 svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="Inter, Helvetica, Arial, sans-serif">' + "".join(out) + "</svg>"
