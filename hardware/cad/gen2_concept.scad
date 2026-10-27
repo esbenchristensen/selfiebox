@@ -776,14 +776,26 @@ function hook_x(sx, inner) = sx*(W/2 - 12) + (inner ? -sx : sx)*(WING_SLOT/4 + 0
 // v28 (Esben 27 Oct: "en ekstra rille ned ved bunden af boksen, så de kan blive længere og være stabile i bunden"): a groove
 // low in the back face on each side, under the wing's hooks (x = the outer hook's centre). A wing can now reach down to the
 // bottom of the box: its strap runs on down behind the back and a tab on it sits in the groove, so the lower end cannot swing
-// out sideways or twist. The groove is blind (1.5 deep in the 3 mm back wall): a third slot with a pocket does not fit there
+// out sideways or twist. The groove is blind (v28: 1.5 deep in the 3 mm back wall; v30: 3.5 with a boss behind): a third slot with a pocket does not fit there
 // (reed module, lock pocket and the dimmer tray on the left, see WING_P), and the tab only steadies, the hooks carry.
 // The groove is 3.5 longer upwards than the tab, so the tab goes in with the hooks (lift 3, push in, drop) and ends 0.5 off
 // its floor. It sits 5 mm inside the box's round bottom corner, hidden behind the box.
-WING_GROOVE = [HOOK[0] + 2*HOOK[4], 1.5, 23.5, 36];    // width (0.25 per side round the tab), depth, z bottom, z top
-WING_TAB = [HOOK[0], WING_GROOVE[1] - 0.2, 24, 32];    // width, depth into the groove (0.2 off its floor), z bottom, z top
-module wing_grooves() for (sx = [-1, 1]) translate([hook_x(sx, false) - WING_GROOVE[0]/2, D - WING_GROOVE[1], WING_GROOVE[2]])
+// v30 (Esben 27 Oct: "de ser ikke så dybe ud"): v28-v29's groove was 4.5 x 1.5 with a 4 x 1.3 x 8 tab, too shallow to hold a
+// wing that someone pulls at the bottom. Now 5.5 wide and 3.5 deep, with a printed boss inside the back wall behind it
+// (1.6 wall behind the groove's floor and round its sides), and the tab is 5 x 3.3 x 10 (tab bottom z 24, groove to 38).
+// The groove's inner edge lines up with the strap's inner edge (WG_X0 = the outer hook's inner side, 100.6 from the middle).
+WG_X0 = hook_x(1, false) - HOOK[0]/2;
+WING_TAB = [5, 3.3, 24, 34];                            // width, depth into the groove (0.2 off its floor), z bottom, z top
+WING_GROOVE = [WING_TAB[0] + 0.5, WING_TAB[1] + 0.2, WING_TAB[2] - 0.5, WING_TAB[3] + HOOK[3] + 1];   // width, depth, z bottom, z top
+WG_BOSS = 1.6;                                          // wall round the groove inside the box
+function wg_xc(sx) = sx*(WG_X0 + WING_TAB[0]/2);
+module wing_grooves() for (sx = [-1, 1]) translate([wg_xc(sx) - WING_GROOVE[0]/2, D - WING_GROOVE[1], WING_GROOVE[2]])
     cube([WING_GROOVE[0], WING_GROOVE[1] + 1, WING_GROOVE[3] - WING_GROOVE[2]]);
+module wing_groove_bosses() intersection() {
+    for (sx = [-1, 1]) translate([wg_xc(sx) - WING_GROOVE[0]/2 - WG_BOSS, D - WING_GROOVE[1] - WG_BOSS, WING_GROOVE[2] - WG_BOSS])
+        cube([WING_GROOVE[0] + 2*WG_BOSS, WING_GROOVE[1] + WG_BOSS - BACK_T + 0.01, WING_GROOVE[3] - WING_GROOVE[2] + 2*WG_BOSS]);
+    ext_y(SKIRT, D) translate([0, 1]) rr(W - 2, H - 2, R - 1);
+}
 // example top: a 6 mm sign over the front, a 4 mm base on the top face, ribs, and two straps 4 x 10 down to the upper slots
 module theme_top_demo() {
     zf = WING_P[1][1] - 4;
@@ -821,7 +833,7 @@ module theme_wing_demo(sx) {
         }
         translate([xe, D - 10, z0]) cube([4, 10.21 + WING_STRAP, z1 - z0]);
         for (z = zs) hook(hook_x(1, false), z);
-        translate([xh, D - WING_TAB[1], WING_TAB[2]]) cube([WING_TAB[0], STRAP_Y - D + WING_TAB[1] + 0.01, WING_TAB[3] - WING_TAB[2]]);   // v28: tab in the groove
+        translate([WG_X0, D - WING_TAB[1], WING_TAB[2]]) cube([WING_TAB[0], STRAP_Y - D + WING_TAB[1] + 0.01, WING_TAB[3] - WING_TAB[2]]);   // v28: tab in the groove (v30: 5 x 3.3 x 10)
     }
 }
 // v21: clipped to 1 mm inside the shell's outer skin (until now its bottom-left corner stood up to 1 mm out of the round bottom edge)
@@ -1098,6 +1110,7 @@ module shell3(top = UNIT_TOP) {
             for (j = J2) { cyl_y(POST_D, FR_BACK + CRUSH[1], D - BACK_T + 0.01, j[0], j[1]); crush_bumps(j); }
             power_holders();
             if (WING_POCKET) wing_pockets();
+            wing_groove_bosses();   // v30
             cable_loops(); strain_clip();                          // v23: cable routing
             wago_row();                                            // v29
         }
