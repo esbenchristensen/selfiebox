@@ -81,6 +81,8 @@ SETTINGS = {
              "brim_width": "3", **SEAM},
     "vaegbeslag": {"layer_height": "0.2", "wall_loops": "6", "sparse_infill_density": "100%", **SEAM, **NO_SUPPORT},
     "kameraroer": {"layer_height": "0.16", "sparse_infill_density": "100%", **NO_SUPPORT},
+    # v29: the Wago row on its own, for a v24-v28 shell (its end wall on the plate, every wall straight up)
+    "wagoraekke": {"layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%", **NO_SUPPORT},
     "blaeserhegn": {"layer_height": "0.16", "wall_loops": "4", "sparse_infill_density": "100%", "brim_type": "outer_only",
                     "brim_width": "3", **NO_SUPPORT},
     # theme parts: face down too; tree support (auto) under the straps
@@ -227,7 +229,7 @@ def skal_3mf(folder, prefix=None):
 # the other parts: (file suffix, settings, turn); the frame lies like the shell (box underside at -y), so it is turned too
 SINGLE = [("lysring", "lysring", False), ("bagramme", "bagramme", True), ("vaegbeslag", "vaegbeslag", False),
           ("tema-top-eksempel", "tema", False), ("tema-vinge-venstre-eksempel", "tema", False),
-          ("tema-vinge-hoejre-eksempel", "tema", False)]
+          ("tema-vinge-hoejre-eksempel", "tema", False), ("wagoraekke-eftermontering", "wagoraekke", False)]
 
 
 def part_3mfs(folder, prefix=None):

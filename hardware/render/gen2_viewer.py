@@ -48,6 +48,8 @@ PARTS = [
     ("hoejttaler",    "c_speaker",     "Højttaler (DFRobot FIT0502)",                       "#f97316", "Tilvalg",    [0, 0, -90]),
     ("sensor",        "c_imu",         "Stødsensor",                      "#84cc16", "Tilvalg",    [0, 0, -90]),
     ("reed",          "c_reed",        "Løftesensor (reed + magnet)",     "#ec4899", "Tilvalg",    [0, 0, -90]),
+    # v29: the six Wago clamps in their row on the wall cleat's block
+    ("wago",          "c_wagos",       "6 Wago-klemmer i rækken på vægbeslagets klods (W6 W5 W3 W4 W2 W1)", "#ff922b", "Elektronik", [0, 0, -90]),
     ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
@@ -64,7 +66,7 @@ PARTS = [
     ("stativlogo_groen", "x_stand_logo_g", "Stativbeslag: logo bagpå, grønne prikker", "#22d36b", "Stativbeslag", [0, 0, -210]),
     ("t_moetrik",     "x_tnut",        "Stativbeslag: T-møtrik 1/4\"-20 til kuglehovedet", "#9a9ea2", "Stativbeslag", [0, -60, -210]),
 ]
-OPTIONAL = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+OPTIONAL = {"c_wagos", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
             "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # left out if the STL dir has none (older versions)
 HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # off until ticked
 
@@ -94,6 +96,44 @@ RIBBONS = [
     ("skaerm", "Skærmkabel (fladt, følger med skærmen)", 11.5, 0.3, [((0, 10.8, 205), (1, 0, 0)), ((0, 11.3, 196), (1, 0, 0)), ((0, 13.9, 189.5), (1, 0, 0)),
         ((0, 17.4, 188), (1, 0, 0)), ((0, 19.4, 186.5), (1, 0, 0))]),
 ]
+
+# v29: the cables come from the harness model (render/harness_gen2.py), every one in its lane. The two hinge bundles are shown
+# closed: their slack folds into a U along the left side between the front unit and the shell.
+HARNESS = (STL / "c_wagos.stl").exists()
+H_OWNER = {"P1": "stik", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
+           "P9": "daemper", "P10": "daemper", "P11": "daemper", "P12": "stroem", "P13": "ledstyring", "P14": "ledstyring",
+           "S1": "ledrgb", "S2": "ledrgb", "S3": "ledrgb", "S4": "ledhvid", "S5": "ledhvid", "S6": "ledhvid", "S7": "ledhvid",
+           "U1": "ledstyring", "U2": "lydkerne", "U3": "modem4g", "G1": "daemper", "G2": "reed", "G3": "sensor", "G4": "skaerm",
+           "A1": "hoejttaler"}
+K_FOLD = {"K1": (-90.0, -1), "K2": (-84.0, 1)}     # x of the fold, and which way it runs from the frame end
+
+
+def k_fold(hz, k, i):
+    """The closed hinge bundle: from the frame's strap out to y 38, along the left side to the turn, back at y 45 and in to
+    the shell's strap, as long as the open bundle (hz.k_loop)."""
+    import math
+    (xs, ys, zs), (xf, yf, zf) = hz.K[k]["shell"], hz.K[k]["frame"]
+    x, sgn = K_FOLD[k]
+    x += 0.8 * (i % 4)
+    ends = math.dist((xf, yf, zf), (x, 38.0, zf)) + 7.0 + math.dist((x, 45.0, zs), (xs, ys, zs))
+    zt = (zf + zs) / 2 + sgn * max(0.0, (hz.k_loop(k) - ends - abs(zs - zf)) / 2)
+    return [(x, 38.0, zf), (x, 38.0, zt), (x, 45.0, zt), (x, 45.0, zs)]
+
+
+def harness_cables():
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import harness_gen2 as hz
+    out = []
+    for i, c in enumerate(hz.CABLES):
+        pts, k_prev = [], None
+        for p in c[7]:
+            if isinstance(p, str):
+                pts += k_fold(hz, p, i)
+            else:
+                pts.append(p)
+        d = 2.8 if "1,0" in c[5] else 4.0 if c[0][0] == "U" else 2.2
+        out.append((H_OWNER[c[0]], f"{c[0]}: {c[2]}", d, pts))
+    return out
 
 
 def back_y(y):
@@ -164,8 +204,13 @@ for node, view, label, hexc, group, ex in PARTS:
     meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex, **({"hidden": True} if view in HIDDEN else {})})
 
 owners = {p[0]: p for p in PARTS}
+if HARNESS:
+    CABLES = harness_cables() + [c for c in CABLES if c[0] == "mikrofoner"]
+    RIBBONS[0] = ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 11.15, 290), (0, 0, 1)), ((11.5, 11.65, 290), (0, 0, 1)),
+        ((12.6, 13.95, 290), (0, 0, 1)), ((12.6, 34, 290), (0, 0, 1)), ((12.6, 40, 283), (0.5, 0, 0.87)), ((11, 42, 266), (1, 0, 0.2)),
+        ((8, 42, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))])   # v29: in front of the Wago row (y 48), not through it
 for i, (owner, label, d, pts) in enumerate(CABLES):
-    m = tube([(x, back_y(y), z) for x, y, z in pts], d)
+    m = tube([(x, y if HARNESS else back_y(y), z) for x, y, z in pts], d)
     m.apply_transform(M)
     m.apply_translation([0, Y0, 0])
     hexc = owners[owner][3]
