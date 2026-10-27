@@ -784,7 +784,7 @@
  },
  {
   "node": "kabel_28_hoejttaler",
-  "label": "A1: højttaler → mikrofon-kerne (tilvalg)",
+  "label": "A1: højttaler → mikrofon-kernens SPEAKER-stik (tilvalg)",
   "color": "#f97316",
   "group": "Kabler",
   "owner": "hoejttaler",
