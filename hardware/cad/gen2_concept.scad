@@ -304,9 +304,15 @@ module joint_rib() { c = JR[0] + (JR[1] - JR[3])/2;  ext_y(SKIRT - 0.01, SKIRT +
 // glass sits in front of the lens (see v20 sealing, 4); the sleeve still keeps the camera bay apart from the channel.
 // v24: the bay is 0.8 wider than the lens holder each side (v20-v23: 0.4), so the board always lies flat on its 4 bosses
 CAM_BAY = CAM_HOLDER + 1.6;
+// v24 (Esben 27 Oct: make sure the camera lies flat): the shroud's walls stop 1.2 in front of the board (v14-v23: 0.6), and
+// 2.0 where they cross the flat sensor flex under the lens holder (Raspberry Pi drawing: 8.9 wide, 7.3 out from the holder,
+// towards the edge away from the ribbon, -x here). Only the 4 bosses round the holes touch the board's front.
+CAM_SHR_GAP = [1.2, 2.0];                  // walls to the board; over the sensor flex
+CAM_FLEX = [8.9, 7.3];                     // sensor flex below the holder: width, reach from the holder
 module cam_shroud() translate([0, 0, LENS_Z]) difference() {
-    ext_y(PT - 0.01, CAM_PCB_Y - 0.6) square(CAM_BAY + 2.4, center = true);
+    ext_y(PT - 0.01, CAM_PCB_Y - CAM_SHR_GAP[0]) square(CAM_BAY + 2.4, center = true);
     ext_y(PT - 1, CAM_PCB_Y) square(CAM_BAY, center = true);
+    translate([-CAM_HOLDER/2 - CAM_FLEX[1] - 1, CAM_PCB_Y - CAM_SHR_GAP[1], -CAM_FLEX[0]/2 - 2.5]) cube([CAM_FLEX[1] + 1, CAM_SHR_GAP[1] + 1, CAM_FLEX[0] + 5]);   // 1.45 off centre in the drawing: either way round
 }
 // mic ports: Ø1.0 through the floor (v8); over each a printed crush ring presses on the strip round the
 // mic's port, so the port is a closed air pocket that water cannot push into.

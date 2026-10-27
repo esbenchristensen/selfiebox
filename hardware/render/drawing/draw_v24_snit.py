@@ -61,8 +61,8 @@ panel(40, 150, 1000, 560, chan, [0, 0, ZM], [0, 0, 1], lambda p: (p[1], -(p[0] +
       "A  Lyskanalen, venstre side",
       "Kun hvid 1 og 2; reflektoren er glat og trykker på ringens krave. Bagrammens knusknopper (0,25 mm) presser kraven frem.")
 s, pw, ph = panel(1090, 150, 670, 560, ["x_front3", "x_camglass", "x_camsleeve", "x_camera"], [0, 0, LENS_Z], [0, 0, 1],
-                  lambda p: (p[1], p[0]), ((-0.5, 14), (-9, 9)), "B  Kameraet, vandret snit gennem linsen",
-                  "1,0 mm luft foran linsen, 0,65 mm rundt om den og 1,0 mm til holderen.")
+                  lambda p: (p[1], p[0]), ((-0.5, 16), (-13, 9)), "B  Kameraet, vandret snit gennem linsen",
+                  "Linsen: 1,0 mm til glasset, 0,7 rundt om, røret 1,0 før holderen. Kortet rører kun de 4 tappe.")
 panel(40, 820, 1000, 330, ["x_shell3", "x_cleat", "s_lock"], [-82, 0, 0], [1, 0, 0], lambda p: (p[1], p[2]), ((40, 86), (-2, 42)),
       "C  Låsen, lodret snit gennem låseskruen (set fra venstre)",
       "Tungen står 0,3 mm over bundknasten: skruen trækker kassen de 0,3 mm op, og så står knasten på tungen.")
