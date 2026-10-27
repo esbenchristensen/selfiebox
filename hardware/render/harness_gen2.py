@@ -64,6 +64,7 @@ M = lambda z: (0.0, 50.0, z)
 RH = lambda x: (x, 48.0, 156.0)
 Hh = lambda x: (x, 50.0 if x <= -66 else 44.0, 112.0)       # across the Gledopto: in front of it
 G = lambda z: (-62.0, 46.0, z)                              # beside the Gledopto, in front of its tray wall
+RS = lambda z: (88.0, 48.0, z)                              # right of the 5 V supply, from its output end (bottom) up
 FT = lambda x: (x, 36.0, 296.0)
 FL = lambda z: (-80.0, 36.0, z)
 UB = lambda x: (x, 34.0, 230.5)
@@ -72,11 +73,17 @@ LB = lambda x: (x, 30.0, 84.0)
 K1s, K1f, K2s, K2f = K["K1"]["shell"], K["K1"]["frame"], K["K2"]["shell"], K["K2"]["frame"]
 P = {
     "jack": (0.0, 60.0, 77.0), "strain": (0.0, 60.0, 87.0),
-    "psu_vin+": (18.0, 52.0, 146.0), "psu_vin-": (26.0, 52.0, 146.0), "psu_v+": (52.0, 52.0, 146.0), "psu_v-": (62.0, 52.0, 146.0),
-    "dim_term": (-100.0, 50.0, 108.0), "dim_grav": (-100.0, 50.0, 64.0),
-    "wled_in": (-45.0, 50.0, 20.0), "wled_out": (-22.0, 58.0, 120.0), "wled_usb": (-17.0, 58.0, 126.0),
+    # RSD-60G-5 (Esben's photo 27 Oct): DC IN (FG, V-, V+) at its top end, DC OUT (+V, -V) at its bottom end, screws to the front
+    "psu_vin+": (48.0, 43.0, 145.0), "psu_vin-": (39.0, 43.0, 145.0), "psu_v+": (46.0, 40.0, 17.0), "psu_v-": (54.5, 40.0, 17.0),
+    # DFR0457 on the left wall: screw terminals at its top end (VOUT nearest the front, GND, VIN nearest the back wall),
+    # the Gravity plug at its bottom end
+    "dim_vout": (-100.0, 42.0, 104.0), "dim_gnd": (-100.0, 50.0, 104.0), "dim_vin": (-100.0, 58.0, 104.0),
+    "dim_grav": (-100.0, 44.0, 64.0),
+    # Gledopto: input V+/V- at the bottom end, OUTPUT (V+, GPIO16, GPIO2, GND) and USB-C at the top end
+    "wled_in": (-44.0, 50.0, 19.0), "wled_out": (-45.7, 50.0, 123.0), "wled_usb": (-28.5, 55.0, 125.0),
     "reed": (-66.0, 58.0, 46.0), "g4_usb": (-72.0, 58.0, 166.0),
-    "core_usb": (6.5, 58.0, 202.0), "core_aux": (-18.0, 58.0, 202.0),
+    # XVF3800 lying, FPC down (photo 27 Oct): USB-C and aux jack on the top edge, SPEAKER plug and the mic FPC on the bottom edge
+    "core_usb": (3.0, 56.0, 200.0), "core_aux": (-23.0, 56.0, 196.0), "core_spk": (22.0, 54.0, 150.0),
     "spk": (-41.0, 58.0, 143.0), "imu": (0.0, 62.0, 231.0),
     # front unit
     "usb_a1": (-19.0, 26.0, 84.0), "usb_a2": (-1.0, 26.0, 84.0), "usb_a3": (-19.0, 30.0, 82.0),   # 90 deg plugs, cable out to the left
@@ -88,6 +95,7 @@ TO_K1 = [T(-85.0), K1s, "K1", K1f]                 # shell -> front through K1 (
 TO_K2 = [Hh(-80.0), K2s, "K2", K2f]
 DOWN_L = [T(-45.0), L(222.0), L(170.0), L(112.0)]  # distribution lane -> left lane -> H
 UP_R = [RH(72.0), R(200.0), R(245.0)]              # RH -> right lane -> distribution lane
+PSU_OUT = [(64.0, 38.5, 15.5), (84.0, 40.0, 15.5), RS(30.0), RS(100.0), RS(140.0), (80.0, 50.0, 154.0), RH(72.0)]   # off DC OUT, along the supply's bottom end above its tray stop (z 13), up its right side
 
 
 def rev(r):
@@ -109,13 +117,13 @@ CABLES = [
     ("P2", "24 V", "hunstik − → W2", "hunstik −", "W2", "1,0 mm² sort", BLK, TRUNK + UP_R + w("W2"), 15),
     ("P3", "24 V", "W1 → 5 V-forsyning +Vin", "W1", "RSD-60G-5 +Vin", "1,0 mm² rød", RED, rev(w("W1", -3)) + rev(UP_R) + [RH(18.0), P["psu_vin+"]], 15),
     ("P4", "24 V", "W2 → 5 V-forsyning −Vin", "W2", "RSD-60G-5 −Vin", "1,0 mm² sort", BLK, rev(w("W2", -3)) + rev(UP_R) + [RH(26.0), P["psu_vin-"]], 15),
-    ("P5", "5 V", "5 V-forsyning +V → W3", "RSD-60G-5 +V", "W3", "1,0 mm² rød, orange tape", ORG, [P["psu_v+"], RH(52.0)] + UP_R + w("W3"), 15),
-    ("P6", "5 V", "5 V-forsyning −V → W4", "RSD-60G-5 −V", "W4", "1,0 mm² sort", BLK, [P["psu_v-"], RH(62.0)] + UP_R + w("W4"), 15),
+    ("P5", "5 V", "5 V-forsyning +V → W3", "RSD-60G-5 +V", "W3", "1,0 mm² rød, orange tape", ORG, [P["psu_v+"]] + PSU_OUT + UP_R[1:] + w("W3"), 15),
+    ("P6", "5 V", "5 V-forsyning −V → W4", "RSD-60G-5 −V", "W4", "1,0 mm² sort", BLK, [P["psu_v-"]] + PSU_OUT + UP_R[1:] + w("W4"), 15),
     ("P7", "GND", "bro W4 → W2 (fælles GND)", "W4", "W2", "1,0 mm² sort", BLK, rev(w("W4", 6)) + w("W2", -6), 15),
     ("P8", "GND", "bro W2 → W5 (hvid −)", "W2", "W5", "1,0 mm² sort", BLK, rev(w("W2", 6)) + w("W5", 4), 15),
-    ("P9", "24 V", "W1 → dæmper VIN", "W1", "DFR0457 VIN", "0,75 mm² rød", RED, rev(w("W1", 3)) + DOWN_L + [Hh(-90.0), P["dim_term"]], 15),
-    ("P10", "GND", "W2 → dæmper GND", "W2", "DFR0457 GND", "0,75 mm² sort", BLK, rev(w("W2", 3)) + DOWN_L + [Hh(-90.0), P["dim_term"]], 15),
-    ("P11", "hvid", "dæmper VOUT → W6", "DFR0457 VOUT", "W6", "0,75 mm² rød, hvid tape", GRY, [P["dim_term"], Hh(-90.0)] + rev(DOWN_L) + w("W6"), 15),
+    ("P9", "24 V", "W1 → dæmper VIN", "W1", "DFR0457 VIN", "0,75 mm² rød", RED, rev(w("W1", 3)) + DOWN_L + [Hh(-90.0), (-100.0, 58.0, 112.0), P["dim_vin"]], 15),
+    ("P10", "GND", "W2 → dæmper GND", "W2", "DFR0457 GND", "0,75 mm² sort", BLK, rev(w("W2", 3)) + DOWN_L + [Hh(-90.0), (-100.0, 50.0, 112.0), P["dim_gnd"]], 15),
+    ("P11", "hvid", "dæmper VOUT → W6", "DFR0457 VOUT", "W6", "0,75 mm² rød, hvid tape", GRY, [P["dim_vout"], (-100.0, 42.0, 112.0), Hh(-90.0)] + rev(DOWN_L) + w("W6"), 15),
     # 5 V side
     ("P12", "5 V", "W3 → Pi USB-C (pigtail: rød i W3, sort i W4)", "W3 + W4", "Pi 5 USB-C", "USB-C-pigtail 2 × 0,75 mm²", ORG,
      rev(w("W3")) + TO_K1 + [UB(-24.0), (-22.0, 40.0, 232.0), (22.0, 40.0, 232.0), UB(24.0), UB(34.0), UB(45.0), (45.0, 30.0, 175.0), P["usb_c_pi"]], 15),
@@ -129,7 +137,7 @@ CABLES = [
     ("S2", "RGB", "RGB-strip GND (hvid) → W4", "RGB-strip", "W4", "strippens ledning", BLK,
      [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W4", -8), 15),
     ("S3", "RGB", "RGB-strip data (grøn) → RGB-styring GPIO16", "RGB-strip", "Gledopto GPIO16", "strippens ledning", GRN,
-     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s] + DOWN_L + [Hh(-30.0), P["wled_out"]], 10),
+     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-45.0), L(222.0), L(170.0), L(130.0), P["wled_out"]], 10),
     ("S4", "hvid", "hvid strip 1 + → W6", "hvid strip 1", "W6", "strippens ledning", RED,
      [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W6", -4), 15),
     ("S5", "hvid", "hvid strip 1 − → W5", "hvid strip 1", "W5", "strippens ledning", BLK,
@@ -140,24 +148,24 @@ CABLES = [
      [P["hole_r"], FT(19.5), FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W5"), 15),
     # data
     ("U1", "USB", "Pi USB-A → RGB-styring USB-C (styring)", "Pi 5 USB-A", "Gledopto USB-C", "USB-A 90° venstre → USB-C", BLU,
-     [P["usb_a1"], LB(-76.0), K2f, "K2", K2s, Hh(-80.0), Hh(-62.0), Hh(-17.0), P["wled_usb"]], 0),
+     [P["usb_a1"], LB(-76.0), K2f, "K2", K2s, Hh(-80.0), Hh(-62.0), L(112.0), L(140.0), (-28.5, 46.0, 146.0), P["wled_usb"]], 0),
     ("U2", "USB", "Pi USB-A → mikrofon-kerne USB-C", "Pi 5 USB-A", "XVF3800 USB-C", "USB-A 90° venstre → USB-C", BLU,
-     [P["usb_a2"], LB(-76.0), K2f, "K2", K2s, Hh(-80.0), L(112.0), L(170.0), L(204.0), (6.5, 50.0, 204.0), P["core_usb"]], 0),
+     [P["usb_a2"], LB(-76.0), K2f, "K2", K2s, Hh(-80.0), L(112.0), L(170.0), L(204.0), (3.0, 50.0, 208.0), P["core_usb"]], 0),
     ("U3", "USB", "Pi USB-A → 4G-modem (tilvalg)", "Pi 5 USB-A", "4G-modem", "USB-A 90° venstre → modemets stik", BLU,
      [P["usb_a3"], LB(-76.0), K2f, "K2", K2s, Hh(-80.0), L(112.0), L(160.0), (-72.0, 50.0, 160.0), P["g4_usb"]], 0),
     ("G1", "GPIO", "Pi ben 1, 12, 14 → dæmperens 3-polede stik", "Pi 5 GPIO", "DFR0457 Gravity", "3 ledere: Gravity-kabel + forlænger", BLU,
-     [pin(12), GD(150.0), GD(78.0), (-76.0, 34.0, 78.0), K2f, "K2", K2s, (-88.0, 52.0, 62.0), P["dim_grav"]], 0),
+     [pin(12), GD(150.0), GD(78.0), (-76.0, 34.0, 78.0), K2f, "K2", K2s, (-88.0, 48.0, 58.0), (-100.0, 44.0, 58.0), P["dim_grav"]], 0),
     ("G2", "GPIO", "Pi ben 13, 17, 20 → reed (tilvalg)", "Pi 5 GPIO", "reed-modul", "3 dupont-ledere hun-hun", BLU,
      [pin(17), GD(146.0), GD(78.0), (-76.0, 34.0, 78.0), K2f, "K2", K2s, (-64.0, 56.0, 64.0), (-64.0, 56.0, 50.0), P["reed"]], 0),
     ("G3", "GPIO", "Pi ben 3, 4, 5, 7, 9 → stødsensor (tilvalg)", "Pi 5 GPIO", "LIS3DH", "5 dupont-ledere hun-hun", BLU,
      [pin(5), (-34.0, 36.0, 176.0), UB(-34.0), K1f, "K1", K1s, T(-85.0), T(0.0), P["imu"]], 0),
     ("G4", "GPIO", "Pi ben 2, 6 → skærmens strøm", "Pi 5 GPIO", "Touch Display 2", "skærmens eget kabel", BLU,
      [pin(2), (-20.0, 30.0, 190.0), P["dsp_pwr"]], 0),
-    ("A1", "lyd", "højttaler → mikrofon-kerne (tilvalg)", "FIT0502", "XVF3800 aux", "højttalerens kabel", "#f97316",
-     [P["spk"], (-35.0, 50.0, 143.0), (-35.0, 50.0, 204.0), (-18.0, 50.0, 204.0), P["core_aux"]], 0),
+    ("A1", "lyd", "højttaler → mikrofon-kernens SPEAKER-stik (tilvalg)", "FIT0502", "XVF3800 SPEAKER", "højttalerens kabel", "#f97316",
+     [P["spk"], (-35.0, 46.0, 146.0), (22.0, 46.0, 146.0), P["core_spk"]], 0),
 ]
 LANES = {   # for the drawing: name, half, points
-    "T": ("shell", [T(-88.0), T(80.0)]), "L": ("shell", [L(250.0), L(112.0)]), "R": ("shell", [R(250.0), R(156.0)]),
+    "T": ("shell", [T(-88.0), T(80.0)]), "L": ("shell", [L(250.0), L(112.0)]), "R": ("shell", [R(250.0), R(156.0)]), "RS": ("shell", [(46.0, 38.5, 15.5), (84.0, 40.0, 15.5), RS(30.0), RS(140.0), (80.0, 50.0, 154.0)]),
     "RH": ("shell", [RH(0.0), RH(72.0)]), "M": ("shell", [M(87.0), M(156.0)]), "H": ("shell", [Hh(-90.0), Hh(-17.0)]),
     "G": ("shell", [G(112.0), G(30.0)]),
     "FT": ("front", [FT(19.5), FT(-80.0)]), "FL": ("front", [FL(296.0), FL(230.5)]), "UB": ("front", [UB(-76.0), UB(45.0)]),

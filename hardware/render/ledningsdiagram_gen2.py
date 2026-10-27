@@ -40,7 +40,7 @@ wire([(250, 390), (250, 420), (460, 420), (460, w2[0]), (560, w2[0])], C["gnd"])
 lab(40, 640, "Strøm: 1,0 mm² silikone", "#444")
 
 # RSD
-box(840, 130, 300, 210, "5 V-forsyning", "Mean Well RSD-60G-5|24 V → 5 V, 12 A|ind (venstre) · ud (højre)|isoleret: −V skal bindes|til GND (bro W4 → W2)")
+box(840, 130, 300, 210, "5 V-forsyning", "Mean Well RSD-60G-5|DC IN øverst: V+ · V−|DC OUT nederst: +V · −V|isoleret: −V bindes til|GND (bro W4 → W2)")
 wire([(618, w1[1]), (840, w1[1])], C["v24"]); lab(830, w1[1]-6, "P3 · Vin+", C["v24"], "end")
 wire([(618, w2[1]), (800, w2[1]), (800, 310), (840, 310)], C["gnd"]); lab(830, 304, "P4 · Vin−", "#222", "end")
 w3 = wago(1230, 150, 4, "W3 · 5 V + ", C["v5"])
@@ -54,7 +54,7 @@ wire([(1288, w3[1]), (1440, w3[1])], C["v5"]); lab(1300, w3[1]-6, "P12 · USB-C 
 wire([(1288, w4[1]), (1440, w4[1])], C["gnd"]); lab(1300, w4[1]-6, "P12 · USB-C sort")
 
 # Gledopto + RGB
-box(1440, 560, 320, 150, "RGB-styring", "Gledopto GL-C-016WL-D|forsynes med 5 V, ALDRIG 24 V|giver kun data til strippen:|OUTPUT V+ og GND bruges ikke", fill="#fff4e6")
+box(1440, 560, 320, 150, "RGB-styring", "Gledopto GL-C-016WL-D|5 V, ALDRIG 24 V|ind V+ V− nederst|GPIO16 og USB-C øverst", fill="#fff4e6")
 wire([(1288, w3[2]), (1320, w3[2]), (1320, 600), (1440, 600)], C["v5"]); lab(1430, 594, "P13 · V+", C["v5"], "end")
 wire([(1288, w4[2]), (1340, w4[2]), (1340, 650), (1440, 650)], C["gnd"]); lab(1430, 644, "P14 · V−", "#222", "end")
 # v24 (26 Oct 2026, first assembly): the strip takes its power straight from W3/W4; the controller only drives DATA (GPIO16)
@@ -70,7 +70,7 @@ wire([(1745, 450), (1745, 560)], C["sig"], 3); lab(1735, 520, "U1 · USB-A → U
 wire([(1288, w4[3]), (1300, w4[3]), (1300, 520), (700, 520), (700, w2[3]), (618, w2[3])], C["gnd"]); lab(720, 512, "P7 · bro W4 → W2: fælles GND til dæmperens styresignal")
 
 # dimmer
-box(840, 640, 300, 160, "Dæmper hvidt lys", "DFRobot DFR0457|3 skrueklemmer: VIN, GND, VOUT|VOUT = dæmpet + til strips|styring: 3-polet stik (signal, VCC, GND)")
+box(840, 640, 300, 160, "Dæmper hvidt lys", "DFRobot DFR0457|klemmer øverst: VOUT · GND · VIN|VOUT = dæmpet + til strips|Gravity-stik nederst")
 wire([(618, w1[2]), (660, w1[2]), (660, 680), (840, 680)], C["v24"]); lab(830, 674, "P9 · VIN", C["v24"], "end")
 wire([(618, w2[2]), (680, w2[2]), (680, 720), (840, 720)], C["gnd"]); lab(830, 714, "P10 · GND", "#222", "end")
 wire([(1440, 300), (1170, 300), (1170, 700), (1140, 700)], C["sig"], 3)
@@ -95,7 +95,7 @@ for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælle
     out.append(f'<line x1="{lx}" y1="{ly+i*32}" x2="{lx+46}" y2="{ly+i*32}" stroke="{C[k]}" stroke-width="6"/><text x="{lx+58}" y="{ly+i*32+5}" font-size="16">{t}</text>')
 # v29: every cable has an id (P = power, S = strip, U = USB, G = GPIO, A = audio, F = flat); route and length are in the
 # ledningsplan (render/drawing/draw_v29_ledningsplan.py from render/harness_gen2.py)
-box(1440, 1030, 330, 250, "Data fra Pi'en", "U1 USB-A → RGB-styring (USB-C)|U2 USB-A → mikrofon-kerne (USB-C)|U3 USB-A → 4G (tilvalg) · alle 90° stik|G2 ben 13 · 17 · 20 → reed (tilvalg)|G3 ben 3 · 4 · 5 · 7 · 9 → stødsensor (tilvalg)|G4 ben 2 · 6 → skærmens strøm|F1 kamera · F2 skærm · F3 mikrofoner: flade|A1 højttaler → mikrofon-kerne", fill="#e7f5ff")
+box(1440, 1030, 330, 250, "Data fra Pi'en", "U1 USB-A → RGB-styring (USB-C)|U2 USB-A → mikrofon-kerne (USB-C)|U3 USB-A → 4G (tilvalg) · alle 90° stik|G2 ben 13 · 17 · 20 → reed (tilvalg)|G3 ben 3 · 4 · 5 · 7 · 9 → stødsensor (tilvalg)|G4 ben 2 · 6 → skærmens strøm|F1 kamera · F2 skærm · F3 mikrofoner: flade|A1 højttaler → kernens SPEAKER-stik", fill="#e7f5ff")
 for i, t in enumerate(["Kabel-id'erne (P, S, U, G, A, F) er de samme som i ledningsplanen, hvor rute, bane og længde står.",
                        "Skærmen får strøm fra Pi'ens ben 2 (5 V, yderst i hjørnet) og 6 (GND) med sit eget kabel (G4).",
                        "Mærkningen på dæmperen og styringen gælder: tjek den, før der tændes."]):
