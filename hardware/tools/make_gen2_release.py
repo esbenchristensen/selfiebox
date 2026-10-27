@@ -26,13 +26,16 @@ D = 70
 
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
+FLIP = np.diag([1.0, -1.0, -1.0, 1.0])   # v29: upside down, the Wago row's end wall on the plate
 SIDE = np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]], float)   # v26: on its side, the -x face on the bed
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
          "vaegbeslag": ("x_cleat", DOWN),   # v27: no camera sleeve (v20-v26: "kameraroer", x_camsleeve)
          "blaeserhegn": ("x_fanguard", SIDE),   # v26: on its side (v24/v25: UP, which put the arm tips on the bed and the grille on top)
          # v21: example theme parts to test the hooks, face down like every theme part
          "tema-top-eksempel": ("x_tema_top", UP), "tema-vinge-venstre-eksempel": ("x_tema_vinge_v", UP),
-         "tema-vinge-hoejre-eksempel": ("x_tema_vinge_h", UP)}
+         "tema-vinge-hoejre-eksempel": ("x_tema_vinge_h", UP),
+         # v29: the Wago row alone, to glue (VHB) on the wall cleat's block in a v24-v28 shell; v29 has it in the shell
+         "wagoraekke-eftermontering": ("x_wagorow", FLIP)}
 LOGOS = {"logo-hvid": "x_logo_w", "logo-groen": "x_logo_g"}   # with the front's orientation and offset
 
 

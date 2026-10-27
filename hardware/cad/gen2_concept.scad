@@ -1044,7 +1044,10 @@ module frame3() {
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
         for (j = J2) cyl_y(FS_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
-        frame_loop_cut();                                                 // v23: service loop strap
+        frame_loop_cut();                                                 // v23: service loop strap (v29: K1, K2 and the Pi's power lead)
+        // v29: the lower bar's top 8 mm cut away under the Pi's USB-A ports (stacks at x -19 and -1), so the 90 deg plugs of the
+        // USB leads (cable out to the left, towards K2) have 20 mm below the ports; the bar stays 8 mm tall there
+        translate([USB_NOTCH[0], XB3_Y - 1, GC + DSP_XB_Z[1] + 8 - USB_NOTCH[2]]) cube([USB_NOTCH[1] - USB_NOTCH[0], FR_BACK - XB3_Y + 2, USB_NOTCH[2] + 1]);
         for (j = J2) cyl_y(6.2, REFL[0][0] - 1, CH_BACK + 0.01, j[0], j[1]);   // v20: the front's screw bosses (Ø6) reach into the channel corners; the strip wall keeps 0.6
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
     }
@@ -1096,6 +1099,7 @@ module shell3(top = UNIT_TOP) {
             power_holders();
             if (WING_POCKET) wing_pockets();
             cable_loops(); strain_clip();                          // v23: cable routing
+            wago_row();                                            // v29
         }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
@@ -1118,14 +1122,54 @@ module crush_bumps(j) for (i = [0 : CRUSH[2] - 1]) let(a = 90 + i*360/CRUSH[2])
 CABLE_LOOPS = [[0, 112, "h"], [0, 136, "h"],                  // main bundle; 136 = the shell end of the service loop
                [-80, 72, "h"], [-75, 112, "v"],                // left: reed, dimmer, WLED, speaker
                [-98, 205, "h"], [88, 100, "h"], [55, 158, "v"],    // 4G / IMU along the left wall, PSU on the right
-               [42, 214, "v"]];                                    // v24: the IMU's branch goes round the right of the mic core (until v23
+               [42, 214, "v"],                                     // v24: the IMU's branch goes round the right of the mic core (until v23
                                                                    // straight up the middle, over the mic core and right behind the Pi's fan)
+               // v29 (Esben 27 Oct: "baner og ruter frem for overalt"): the left lane up past the speaker and the 4G, the right lane
+               // from the PSU's terminals up to the Wago row, and the shell end of the top hinge bundle K1 (K2's shell end is [-80, 72])
+               [-45, 170, "h"], [-45, 222, "h"], [72, 200, "h"], [72, 245, "h"], [-85, 240, "h"],
+               [-30, 243, "v"], [30, 243, "v"]];                   // ... and two under the Wago row for the distribution lane
 LOOP = [10.4, 2.2, 1.6, 2.0, 5];          // tunnel width (strap 10), tunnel height (strap 2), bridge, side posts, length
 module cable_loop(p) translate([p[0], D - BACK_T + 0.01, p[1]]) rotate([0, p[2] == "h" ? 0 : 90, 0]) difference() {
     translate([-LOOP[4]/2, -(LOOP[1] + LOOP[2]), -LOOP[0]/2 - LOOP[3]]) cube([LOOP[4], LOOP[1] + LOOP[2] + 0.01, LOOP[0] + 2*LOOP[3]]);
     translate([-LOOP[4]/2 - 1, -LOOP[1], -LOOP[0]/2]) cube([LOOP[4] + 2, LOOP[1] + 0.02, LOOP[0]]);
 }
 module cable_loops() for (p = CABLE_LOOPS) cable_loop(p);
+// v29: the Wago row. Until v28 the Wago clamps hung loose in the bundle (Esben's photo 27 Oct: wires everywhere). Now all six sit
+// in one row of press-fit pockets on the front face of the wall cleat's block high on the back wall (y 58, z 247-286): levers to
+// the front, so with the front off every lever and every entry is in reach, and the wire entries face down into a 20 mm
+// distribution lane (z 240-262), where the left lane, the right lane and K1 arrive. The strip leads come out of the frame right
+// above it. Order from the left (seen from the front): W6 white + (dimmed), W5 white -, W3 5 V +, W4 5 V GND, W2 GND, W1 24 V +.
+// [A] WAGO data sheets 221-413 / 221-415: 18.7-18.8 wide (3 poles) / 29.9-30 (5 poles), 18.6-18.8 deep, 8.3-8.6 high;
+//     221-414 by the 5.6 mm pitch: 24.4. The pockets take the largest figure + WG_C, and 2 crush ribs per side press it in.
+WAGOS = [["W6", 3, 18.8], ["W5", 3, 18.8], ["W3", 4, 24.4], ["W4", 5, 30.0], ["W2", 5, 30.0], ["W1", 3, 18.8]];
+WG = [18.8, 8.6];                          // depth (entry face to back), height (lever side up)
+WG_C = 0.2;  WG_GAP = 3;  WG_WALL = [1.6, 5.5];   // clearance per side, wall between pockets, outer wall, wall height over the floor
+WG_Z = 262;                                // entry face (down); the backs rest on an end wall
+WG_FL = [1.2, CLEAT_ZC - 27 + 39];         // floor on the block face, block top (286)
+function wg_w(i) = WAGOS[i][2] + 2*WG_C;
+function wg_x(i) = i == 0 ? -wg_x0() : wg_x(i - 1) + wg_w(i - 1) + WG_GAP;   // left edge of pocket i
+function wg_x0() = (len(WAGOS) - 1)*WG_GAP/2 + sum_w(len(WAGOS) - 1)/2;
+function sum_w(i) = i < 0 ? 0 : wg_w(i) + sum_w(i - 1);
+WG_Y = D - BACK_T - CLEAT_D;               // 58: block face
+module wago_row() {
+    x0 = wg_x(0) - WG_WALL[0];  x1 = wg_x(len(WAGOS) - 1) + wg_w(len(WAGOS) - 1) + WG_WALL[0];
+    z1 = WG_Z + WG[0] + WG_C + 1.6;
+    difference() {
+        union() {
+            translate([x0, WG_Y - WG_FL[0], WG_Z - 0.5]) cube([x1 - x0, WG_FL[0] + 0.01, z1 - WG_Z + 0.5]);                 // floor
+            for (sx = [-1, 1]) translate([sx > 0 ? CLEAT_L/2 + 3 - 0.01 : x0, WG_Y - WG_FL[0], WG_Z - 0.5])                // feet past the block
+                cube([sx > 0 ? x1 - CLEAT_L/2 - 3 + 0.01 : -CLEAT_L/2 - 3 - x0 + 0.01, D - BACK_T - WG_Y + WG_FL[0] + 0.01, z1 - WG_Z + 0.5]);
+            translate([x0, WG_Y - WG_FL[0] - WG_WALL[1], z1 - 1.6]) cube([x1 - x0, WG_WALL[1] + 0.01, 1.6]);                // end wall at the backs
+            for (i = [0 : len(WAGOS)]) {                                                                                        // side walls
+                xa = i == 0 ? x0 : wg_x(i - 1) + wg_w(i - 1);  t = (i == 0 || i == len(WAGOS)) ? WG_WALL[0] : WG_GAP;
+                translate([xa, WG_Y - WG_FL[0] - WG_WALL[1], WG_Z + 3]) cube([t, WG_WALL[1] + 0.01, z1 - WG_Z - 3]);
+            }
+            for (i = [0 : len(WAGOS) - 1], sx = [0, 1], z = [WG_Z + 7, WG_Z + 15])                                             // crush ribs
+                translate([sx ? wg_x(i) + wg_w(i) : wg_x(i), WG_Y - WG_FL[0] - 4, z]) cylinder(d = 2*(WG_C + 0.05) + 0.01, h = 3, $fn = 12);
+        }
+    }
+}
+module placed_wagos() for (i = [0 : len(WAGOS) - 1]) translate([wg_x(i) + WG_C, WG_Y - WG_FL[0] - WG[1], WG_Z]) cube([WAGOS[i][2], WG[1], WG[0]]);
 // strain relief: a snap clip just above the power inlet holds the two leads from the jack (together up to Ø5.4), so a pull on
 // the bundle never reaches the jack's terminals. It opens towards the front; the leads click in from the front.
 STRAIN = [5.4, 1.6, 6, 3.8, 84];          // bore, wall, height (z), opening, z bottom
@@ -1141,8 +1185,15 @@ module strain_clip() translate([PWR_P[0], PWR_P[1], STRAIN[4]]) difference() {
 // fan stopped, there were wires in it): the slots move from the upper cross bar (above the fan, so the loop hung across it) to
 // the lower one, below the Pi. The shell end stays at the main bundle's top loop (z 136), so the loop runs down from there and
 // its slack hangs down in front of the 5 V supply, away from the fan. The fan also gets a guard (fan_guard).
-FRAME_LOOP = [30, GC + DSP_XB_Z[1], 7.6];  // x, z centre (lower cross bar, z 62.5-78.5), slot spacing
-module frame_loop_cut() for (dz = [-1, 1]) translate([FRAME_LOOP[0] - LOOP[0]/2, CH_BACK - 1, FRAME_LOOP[1] + dz*FRAME_LOOP[2]/2 - 1.2]) cube([LOOP[0], FR_T + 2, 2.4]);
+FRAME_LOOP = [30, GC + DSP_XB_Z[1], 7.6];  // x, z centre (lower cross bar, z 62.5-78.5), slot spacing (v23-v28)
+// v29: the box opens like a book over its left side (front face down to the left of the shell, as Esben lays it). Every cable
+// between the front and the shell crosses there in one of two hinge bundles, strapped on both halves: K1 (top: strips, Pi power,
+// IMU) from the upper cross bar's left end, K2 (middle: the 3 USB cables, dimmer and reed) from the lower bar's left end. A third
+// pair of slots on the upper bar, right of the fan guard, holds the Pi's power lead on its way to K1. The slot pair at x 30 on the
+// lower bar (the v23-v28 service loop) is gone.
+FRAME_LOOPS = [[-76, GC + DSP_XB_Z[1]], [-76, GC + DSP_XB_Z[0]], [34, GC + DSP_XB_Z[0]]];   // K2, K1, Pi power
+USB_NOTCH = [-32, 10, 8];                  // x from, x to, depth from the lower bar's top
+module frame_loop_cut() for (f = FRAME_LOOPS, dz = [-1, 1]) translate([f[0] - LOOP[0]/2, CH_BACK - 1, f[1] + dz*FRAME_LOOP[2]/2 - 1.2]) cube([LOOP[0], FR_T + 2, 2.4]);
 
 // ------------------------------------------------------------ fan guard ----
 // v24 (Esben 26 Oct: the Pi's fan stopped because of the wires in the box; it must have a fence so nothing can stop it). A
@@ -1304,3 +1355,6 @@ if (VIEW == "p_shell3")   translate([0, -H/2, D]) rotate([-90, 0, 0]) shell3(); 
 if (VIEW == "main") main_unit();
 if (VIEW == "info") echo(W = W, H = H, R = R, BORDER = BORDER, RUN_V = RUN_V, RUN_H = RUN_H, RUN_T = RUN_T, JOINTS = JOINTS, WING_P = WING_P);
 if (VIEW == "c_clips")     placed_clips3();
+if (VIEW == "c_wagos")     placed_wagos();                                                // v29: the 6 Wago clamps in their row
+if (VIEW == "x_wagorow")   wago_row();                                                    // v29: the row alone (print it for a v24-v28 shell)
+if (VIEW == "wago_info")   echo(WGX = [for (i = [0 : len(WAGOS) - 1]) [WAGOS[i][0], wg_x(i), wg_x(i) + wg_w(i)]], WG_Y = WG_Y, XB = [GC + DSP_XB_Z[0], GC + DSP_XB_Z[1]]);

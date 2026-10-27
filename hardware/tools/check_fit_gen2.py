@@ -26,7 +26,8 @@ SCAD = Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard"]   # v24: fan guard; v27: no camera sleeve
 BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
-          "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g"]   # v28: wall screws
+          "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g",
+          "c_wagos"]   # v28: wall screws; v29: the 6 Wago clamps in their row
 THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
 # v27: keep-out bodies for the camera (no glass, open window): the lens's field of view in front of it, and the barrel
 CAMERA = ["x_cam_fov", "x_cam_lens"]
@@ -47,6 +48,7 @@ CONTACT = {
     ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
     ("x_ring3", "x_frame3"): 12,            # v24: the frame's crush bumps press the ring's flange forward (0.25 each)
     ("x_fanguard", "x_frame3"): 1e9,   # v24: the fan guard clicks onto the frame's upper cross bar
+    ("x_shell3", "c_wagos"): 2,        # v29: 2 crush ribs per side press each Wago 0.05 into its pocket
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
@@ -76,6 +78,9 @@ CLEARANCES = [
     ("x_tema_top", "x_cleat", 0.5, "top straps beside the wall cleat"),
     ("x_tema_top", "x_front3", 0.15, "top sign over the front"),
     ("x_tema_vinge_v", "x_front3", 0.15, "left wing beside the front"),
+    ("c_wagos", "x_frame3", 14.0, "v29: Wago levers face the front: 16.5 to the frame, so a closed lever never touches it"),
+    ("c_wagos", "x_fanguard", 10.0, "v29: the Wago row above the fan guard"),
+    ("c_wagos", "c_imu", 20.0, "v29: the distribution lane (z 240-262) between the IMU and the Wago entries"),
 ]
 
 
