@@ -103,7 +103,7 @@ def sheets_v1():
     b += [dim_v(sx + (D + 22) * S + 40, sy - H * S, sy + 170 * S, "390"), note(sx - 60 * S, sy + 200 * S, "kabel ned ad væggen i skinne · min. 120 fri over kappen")]
     cx, cy = 1120 + 72 * S, 230 + (H + 10) * S
     g, _ = place("d_cut_vaeg", cx, cy, fill="#e9eae6"); b += [text(1080, 150, "Snit midt, væg", 18, font_weight="bold"), g]
-    v4 = VER == "selfi-printer-v4"
+    v4 = VER in ("selfi-printer-v4", "selfi-printer-v5")
     rows = ((("sokkel i L-beslaget: 2 × SPUN+ 4,0 × 16", -6), ("skjult L-beslag: hylde 15 + bagplade 15", -60),
              ("4 vægskruer + dybler pr. beslag, bag printeren", -110)) if v4 else
             (("sokkel i konsollen: 2 × SPUN+ 4,0 × 30", -6), ("konsol: hylde 12 + 2 massive knægte 14", -60),
@@ -151,7 +151,7 @@ def sheets_v2(v3=False):
     for s_, x_, z_ in (("DNP QW410 drejet 90°, 208 × 198 × 240", 60, 240), ("Pi Zero 2 W", 20, 210), ("frit papirrum 190", 300, 240)):
         b.append(note(lx + x_ * S, ly - z_ * S, s_))
     if v3:
-        b.append(note(lx + 12 * S, ly + 26, "strømkabel ind bagfra gennem soklen, stikket kun indeni · " + ("skumsnor Ø1,5 i riller ved fugerne, 6 kroge trækker kappen ned" if VER == "selfi-printer-v4" else "tætningsbånd 3 × 1 i riller ved fugerne")))
+        b.append(note(lx + 12 * S, ly + 26, "strømkabel ind bagfra gennem soklen, stikket kun indeni · " + ("ingen pakninger: fugerne er tætte ved formen (læbe og studs)" if VER == "selfi-printer-v5" else "skumsnor Ø1,5 i riller ved fugerne, 6 kroge trækker kappen ned" if VER == "selfi-printer-v4" else "tætningsbånd 3 × 1 i riller ved fugerne")))
     kx, ky = 2160, 880 + TOP * S
     g, _ = place("d_cut_lock", kx, ky, fill="#e9eae6"); b += [text(2160, 860, "Snit gennem låsen", 18, font_weight="bold"), g]
     for i, s_ in enumerate(("Kamlåsen i venstre ende låser kappen:", "kammen drejer op under taget på", "låseholderen i soklen, så kappen hverken",
@@ -163,4 +163,4 @@ def sheets_v2(v3=False):
 
 
 LOGO = base64.b64encode(cairosvg.svg2png(url=str(Path(__file__).resolve().parents[2] / "marketing/brandpakke/01_logo/svg/selfi-logo-groen.svg"), output_width=700)).decode()
-{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2, "selfi-printer-v3": lambda: sheets_v2(v3=True), "selfi-printer-v4": lambda: sheets_v2(v3=True)}[VER]()
+{"selfi-printer-v1": sheets_v1, "selfi-printer-v2": sheets_v2, "selfi-printer-v3": lambda: sheets_v2(v3=True), "selfi-printer-v4": lambda: sheets_v2(v3=True), "selfi-printer-v5": lambda: sheets_v2(v3=True)}[VER]()

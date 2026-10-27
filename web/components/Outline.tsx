@@ -213,7 +213,7 @@ export function OutlinePoster() {
   );
 }
 
-// The printer (selfi-printer-v4, 476 × 222,5 × 217 mm): a long, flat cabinet, the printer under the hood on the
+// The printer (selfi-printer-v5, 476 × 222,5 × 217 mm): a long, flat cabinet, the printer under the hood on the
 // left with the Selfi mark, and the exit module on the right with "Dit print" over the pocket a print lies in.
 // `poster` draws it alone, for the 3D viewer while it loads; otherwise with sparkles, as a small picture.
 export function OutlinePrinter({ className, poster }: { className?: string; poster?: boolean }) {

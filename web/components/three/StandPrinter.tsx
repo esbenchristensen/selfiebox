@@ -9,7 +9,7 @@ import { printerMaterial } from "./PrinterStage";
 import { PRINT_START, PRINTER_BOTTOM, PRINTER_MODEL, PrintOut } from "./PrintOut";
 import { dannebrogTexture, oakTexture } from "./textures";
 
-// The rental printer (selfi-printer-v4, the cabinet from its CAD export) on a round oak side table with a Danish
+// The rental printer (selfi-printer-v5, the cabinet from its CAD export) on a round oak side table with a Danish
 // table flag, next to the box on its stand, printing the photo the box has just taken: after the flash the print
 // slides down the chute into the pickup pocket (PrintOut.tsx), in step with HaloBox's photo loop. Millimetres in the
 // stand's unit coordinates (see Tripod.tsx).

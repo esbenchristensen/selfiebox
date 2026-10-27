@@ -2,7 +2,7 @@
 """Print files, 3D model, renders and drawings of the Selfi printer (DNP QW410 in a printed enclosure).
 
 Usage:  python3 hardware/tools/make_printer.py [version] [out dir]
-        version: selfi-printer-v1 .. -v4 (default: the newest); out dir: default hardware/stl/printer/<version>
+        version: selfi-printer-v1 .. -v5 (default: the newest); out dir: default hardware/stl/printer/<version>
         python3 hardware/tools/make_printer.py <version> --hurtig     the hurtigprint set (v2 and later), see below
 CAD:    hardware/cad/selfi_printer_v<N>.scad
 Needs:  openscad, node + Playwright + three (web/node_modules) for the renders, trimesh, manifold3d, numpy, networkx,
@@ -197,7 +197,16 @@ v4["coupons"] = [c for c in v4["coupons"] if c[0] != "krog"] + [
     ["greb", "kappe", [0, 66, 12, 30, 156, 52], "Venstre gribehak (76 × 22, loftet 20° op indad): fingrene skal kunne hage sig op bag kanten med god plads."],
     ["greb", "udgang", [446, 76, 0, 476, 166, 46], "Højre gribehak i udgangsmodulets ende, samme form."],
     ["knusekegler", "daempeplade", [41, 6, 0, 110, 66, 13], "Hjørne af dæmpepladen med knusekegler: tryk en kegle flad i en skruestik (skal give efter ved ca. 5–10 kg pr. kegle og knække, ikke pladen)."]]
-NEWEST = "selfi-printer-v4"
+# v5 (Esben 27 Oct 2026: no seals, as halo-gen2-v27): no foam cord or grooves, and no hooks and ramps (they only pulled
+# the hood down onto the cord). The hood lies on the base by its weight; spigot and cam lock hold it.
+VERSIONS["selfi-printer-v5"] = v5 = json.loads(json.dumps(v4))
+v5["scad"] = "selfi_printer_v5.scad"
+P = {p[0]: p for p in v5["parts"]}
+P["kappe"][2] = "Kappe (sort ASA): flad top, luftlameller, nøglelås og gribehak i venstre ende; ligger på soklen ved egen vægt"
+P["sokkel"][2] = "Sokkel: printerramme, låseholder, Pi-holder, kabelspor bagtil og lomme til dæmpepladen (sort ASA)"
+v5["coupons"] = [c for c in v5["coupons"] if c[0] not in ("taetning", "kappekrog", "studs")] + [
+    ["fuge", "sokkel", [0, 0, 0, 45, 45, 24], "Hjørnet af soklen med læben indenfor kappens væg (v5: ingen rille): kappens kant skal stå fladt på soklen og læben gå fri indenfor."]]
+NEWEST = "selfi-printer-v5"
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
 

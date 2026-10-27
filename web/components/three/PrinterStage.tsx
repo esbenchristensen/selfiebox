@@ -6,8 +6,8 @@ import { Suspense, useEffect, useMemo, useRef, useState, type MutableRefObject }
 import * as THREE from "three";
 import { PRINT_START, PRINTER_BOTTOM, PRINTER_MODEL, PrintOut } from "./PrintOut";
 
-// Selfi printer v4 as it is printed (hardware/stl/printer/selfi-printer-v4): the cabinet only, from
-// public/models/selfi-printer-v4.glb (see PrintOut.tsx). Millimetres with y up and the front at +z, like the box.
+// Selfi printer v5 as it is printed (hardware/stl/printer/selfi-printer-v5): the cabinet only, from
+// public/models/selfi-printer-v5.glb (see PrintOut.tsx). Millimetres with y up and the front at +z, like the box.
 // A print slides down the chute into the pickup pocket as the page scrolls: `progress` (0 to 1) says how far.
 
 const MM = 0.01;
