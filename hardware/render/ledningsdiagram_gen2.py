@@ -32,7 +32,7 @@ box(40, 140, 270, 100, "Strømforsyning", "Mean Well GST90A24|24 V, lige stik ne
 box(40, 290, 270, 100, "Hunstik 5,5/2,5", "TRU DC-13F, i røret i bunden|skrueklemmer + og −")
 box(40, 450, 270, 80, "Sikring 3 A", "fladsikring ATO (violet), kun på +")
 wire([(175, 240), (175, 290)], C["v24"], 6); lab(185, 270, "24 V", C["v24"])
-w1 = wago(560, 150, 5, "W1 · 24 V + ", C["v24"])
+w1 = wago(560, 150, 3, "W1 · 24 V + ", C["v24"])
 w2 = wago(560, 430, 5, "W2 · GND ", C["gnd"], (550, 480, "end"))
 wire([(120, 390), (120, 450)], C["v24"]); lab(130, 425, "+", C["v24"])
 wire([(120, 530), (120, 600), (420, 600), (420, w1[0]), (560, w1[0])], C["v24"]); lab(430, w1[0]-6, "fra sikring", C["v24"])
@@ -70,25 +70,28 @@ wire([(1745, 450), (1745, 560)], C["sig"], 3); lab(1735, 520, "USB-A → USB-C",
 wire([(1288, w4[3]), (1300, w4[3]), (1300, 520), (700, 520), (700, w2[3]), (618, w2[3])], C["gnd"]); lab(720, 512, "bro W4 → W2: fælles GND til dæmperens styresignal")
 
 # dimmer
-box(840, 640, 300, 160, "Dæmper hvidt lys", "DFRobot DFR0457|power: VIN, GND|last: OUT− (lavside-MOSFET)|styring: PH2.0 (signal, VCC, GND)")
+box(840, 640, 300, 160, "Dæmper hvidt lys", "DFRobot DFR0457|3 skrueklemmer: VIN, GND, VOUT|VOUT = dæmpet + til strips|styring: 3-polet stik (signal, VCC, GND)")
 wire([(618, w1[2]), (660, w1[2]), (660, 680), (840, 680)], C["v24"]); lab(830, 674, "VIN", C["v24"], "end")
 wire([(618, w2[2]), (680, w2[2]), (680, 720), (840, 720)], C["gnd"]); lab(830, 714, "GND", "#222", "end")
 wire([(1440, 300), (1170, 300), (1170, 700), (1140, 700)], C["sig"], 3)
 wire([(1440, 330), (1185, 330), (1185, 760), (1140, 760)], C["sig"], 3)
-lab(1195, 700, "GPIO18 (ben 12) → signal, 20 kHz", C["sig"]); lab(1195, 760, "3V3 (ben 1) → VCC · GND (ben 14) → GND", C["sig"])
-w5 = wago(960, 880, 3, "W5 · hvid − ", C["sw"], (1030, 905, "start"))
-wire([(990, 800), (990, 860), (940, 860), (940, w5[0]), (960, w5[0])], C["sw"]); lab(1000, 845, "OUT−", "#555")
+lab(1195, 700, "grøn → GPIO18 (ben 12), 20 kHz", C["sig"]); lab(1195, 760, "rød → 3V3 (ben 1) · sort → GND (ben 14)", C["sig"])
+lab(1195, 782, "3 han-hun-jumpere", C["sig"])
+w6 = wago(960, 880, 3, "W6 · hvid + (dæmpet) ", C["sw"], (1030, 905, "start"))
+wire([(990, 800), (990, 860), (940, 860), (940, w6[0]), (960, w6[0])], C["sw"]); lab(1000, 845, "VOUT", "#555")
+w5 = wago(700, 880, 3, "W5 · hvid − ", C["gnd"])
+wire([(618, w2[4]), (640, w2[4]), (640, 860), (680, 860), (680, w5[0]), (700, w5[0])], C["gnd"]); lab(650, 850, "fra W2", "#222")
 box(1100, 1040, 300, 190, "Hvid strip 1 og 2", "Ledproff COB Ra95 24 V, 8 mm|klikstik, 0,35 mm²|(v24: kun 2, ingen strip|i reflektoren)", fill="#fffbe6")
-wire([(1018, w5[1]), (1180, w5[1]), (1180, 1040)], C["sw"]); lab(1190, w5[1]-6, "strip 1 −", "#555")
-wire([(1018, w5[2]), (1140, w5[2]), (1140, 1040)], C["sw"]); lab(1150, w5[2]+18, "strip 2 −", "#555")
-wire([(618, w1[3]), (640, w1[3]), (640, 1080), (1100, 1080)], C["v24"]); lab(660, 1074, "strip 1 + (direkte fra W1)", C["v24"])
-wire([(618, w1[4]), (600, w1[4]), (600, 1180), (1100, 1180)], C["v24"]); lab(610, 1174, "strip 2 + (direkte fra W1)", C["v24"])
+wire([(1018, w6[1]), (1180, w6[1]), (1180, 1040)], C["sw"]); lab(1190, w6[1]-6, "strip 1 +", "#555")
+wire([(1018, w6[2]), (1140, w6[2]), (1140, 1040)], C["sw"]); lab(1150, w6[2]+18, "strip 2 +", "#555")
+wire([(758, w5[1]), (800, w5[1]), (800, 1080), (1100, 1080)], C["gnd"]); lab(810, 1074, "strip 1 −", "#222")
+wire([(758, w5[2]), (780, w5[2]), (780, 1180), (1100, 1180)], C["gnd"]); lab(790, 1174, "strip 2 −", "#222")
 
 # legend + notes
-for i, t in enumerate(["W1 24 V +: 221-415", "W2 GND: 221-415", "W3 5 V +: 221-414", "W4 5 V GND: 221-415", "W5 hvid −: 221-413"]):
+for i, t in enumerate(["W1 24 V +: 221-413", "W2 GND: 221-415", "W3 5 V +: 221-414", "W4 5 V GND: 221-415", "W5 hvid −: 221-413", "W6 hvid + dæmpet: 221-413"]):
     lab(40, 980 + i*22, t, "#333", size=15)
 lx, ly = 40, 740
-for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip −, dæmpet"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
+for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip +, dæmpet (VOUT)"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
     out.append(f'<line x1="{lx}" y1="{ly+i*32}" x2="{lx+46}" y2="{ly+i*32}" stroke="{C[k]}" stroke-width="6"/><text x="{lx+58}" y="{ly+i*32+5}" font-size="16">{t}</text>')
 for i, t in enumerate(["Skærmen får strøm fra Pi'ens ben 2 (5 V, yderst i hjørnet) og 6 (GND) med sit eget kabel.",
                        "Tilvalg (4G, mikrofon) og RGB-styringen går i Pi'ens USB-A; sensorer tegnes, når de kommer i boksen.",
