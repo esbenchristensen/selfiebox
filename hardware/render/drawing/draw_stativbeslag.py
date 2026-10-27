@@ -102,7 +102,7 @@ o.append('<defs><marker id="da" markerWidth="8" markerHeight="8" refX="4" refY="
 o.append(f'<rect width="{W}" height="{H}" fill="#fbfaf7"/>')
 t(50, 50, f"{VER} · stativbeslag til B2C-gulvstativet (Sirui Traveler 5AX), logo bagpå", 25, w=700)
 t(50, 76, f"Fra CAD (gen2_concept.scad, stand_bracket) på boksen fra {sorted((ROOT / 'hardware/stl/gen2').glob('halo-gen2-v*'), key=lambda p: int(p.name.split('-v')[1]))[-1].name}. "
-  "Boksen ændres ikke. Mål i mm. 23. okt. 2026", 14, "#666")
+  "Mål i mm. v2: 27. okt. 2026 (låsetunge som v24, ingen styrepinde)", 14, "#666")
 
 # ---------------- 1: from behind ----------------
 frame(30, 100, 560, 820, "1  Set bagfra")
@@ -168,7 +168,7 @@ for x, z, s in [(16.5, -18, "mikrofonhul"), ]:
     lead(f3, (x, z), 1700, 170, "mikrofonhuller fri (1,5 mm)")
 lead(f3, (45, -48), 1700, 250, "luftslidser fri")
 lead(f3, (0, -58), 1700, 330, "strømstik i slids", "#be123c")
-lead(f3, (18, -60), 1700, 400, "2 styrepinde i styrehullerne")
+lead(f3, (18, -60), 1700, 400, "styrehullerne bruges ikke (v2)")
 lead(f3, (0, NUT_Z), 1700, 470, "T-møtrik under tyngdepunktet")
 lead(f3, (-82, -61), 1300, 520, "låseskrue fri", "#555")
 dim((-24, -94), (24, -94), f3, "48", (0, 18))
@@ -192,7 +192,8 @@ lines(50, 1000, [
     "Boksen på beslaget:",
     "• Boksen står på hylden, og hylden står direkte på kuglehovedet. Vægten går lige ned gennem T-møtrikken; der er ingen arm, der kan bøje.",
     "• Skinnen og låsetungen holder toppen, som på væggen. Boksen kan ikke løftes af uden vores bit, og løftealarmen (reed) virker.",
-    "• To pinde i bundens styrehuller (Ø6,2) gør, at boksen ikke kan dreje eller glide på hylden.",
+    "• Låsetungen sidder i bundslidsen med 0,2 mm luft i hver side, og skinnen holder toppen, så boksen kan ikke dreje eller glide på hylden. Låseskruen spænder bundknasten",
+    "  op mod tungen (0,1 mm luft), så boksen sidder fast mellem hylden og tungen. v1 havde 2 styrepinde; de spærrede for at svinge bunden ind og er fjernet.",
     "• T-møtrikkens flange sidder oppe i hylden: lynpladen spænder hele hylden (8 mm ASA) fast, og boksens bund lukker over flangen.",
     "",
     "Stativet:",
@@ -202,7 +203,7 @@ lines(50, 1000, [
     "  og stativet op ad en væg eller i et hjørne, ikke midt på dansegulvet. Det skal stå i guiden i kassen.",
     "",
     "Tjek på første print:",
-    "• At Sirui-klemmen ikke rammer strømstikket (lynpladen på tværs: ca. 2 mm luft, hvis klemmen er 44 mm dyb).  • Pindene går i styrehullerne, og boksen sidder i skinnen uden slør.",
+    "• At Sirui-klemmen ikke rammer strømstikket (lynpladen på tværs: ca. 2 mm luft, hvis klemmen er 44 mm dyb).  • Bunden svinger ind over tungen, og boksen rokker ikke, når skruen er i.",
     "• T-møtrikken: hullerne passer til den købte møtrik.  • Træk-test: boksen på stativet, løft i hjørnerne og skub fra siden.",
 ], 14, 23)
 

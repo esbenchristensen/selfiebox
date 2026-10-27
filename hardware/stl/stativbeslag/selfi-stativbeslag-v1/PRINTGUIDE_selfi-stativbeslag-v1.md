@@ -1,5 +1,7 @@
 # Selfi stativbeslag v1: printguide
 
+> **Erstattet af selfi-stativbeslag-v2 (27. okt. 2026).** v1 passer ikke til halo-gen2-v24 og nyere (ny låsetunge). Print ikke v1.
+
 **Version:** selfi-stativbeslag-v1 (22. okt. 2026). Alle filer i mappen starter med `selfi-stativbeslag-v1`. CAD-kilden er modulet `stand_bracket` i `hardware/cad/gen2_concept.scad`; sættet bygges med `python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v1` og tegningen med `hardware/render/drawing/draw_stativbeslag.py`.
 
 Beslaget bruges kun til B2C-udlejning: gen 2-boksen på gulvstativet Sirui Traveler 5AX (kuglehoved B-00K). **Boksen ændres ikke.** Beslaget er tegnet og tjekket mod **halo-gen2-v22** (gældende, 307 mm høj): ingen overlap med skal, strømstik, reed-modul eller temaets top og vinger (5 mm luft til toppens stropper bag boksen). Det passer til alle gen 2-bokse fra v11 og frem (samme skinne, låsetunge ved x -82 og styrehuller 18 mm fra midten i bunden). B2B-bokse hænger stadig på væggen med vægbeslaget.
