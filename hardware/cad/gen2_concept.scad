@@ -53,9 +53,10 @@ VENT_X = [];                                // rev G's four slots give way to th
 UNIT_TOP = "closed";
 POWER_REVG = false;  CLIPS = [];   // v23: halo's cable-tie loops replaced by cable_loops() (see "cable routing"); until v22 [[-75, 90], [0, 110], [-98, 205], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker; v21: [-98, 175] -> 205, clear of the wing pocket                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
 // camera (Esben 19 Oct, Wide chosen). v20-v26 had a small glass window in front of the lens (lens tip 3.1 behind the face in
-// v24-v26). v27 (Esben 27 Oct: no glass): the window is open and the camera sits 0.9 further forward, so the Wide lens's
-// 120 deg field of view still clears the same Ø12.1 opening in the face (see cam_window_cut). Nothing is in front of the lens.
-CAM_TIP_Y = 2.2;   // lens tip behind the front face (v24-v26: 3.1, 1.0 behind the glass; v19: 0.3)
+// v24-v26). v27 (Esben 27 Oct: no glass, and no big hole either, the camera must stay protected): the window is a plain
+// Ø8.6 bore round the lens barrel and the camera sits 1.95 further forward, so the lens tip is 1.15 inside the bore and the
+// Wide lens's 120 deg field of view clears the bore's edge at the face (see cam_window_cut). Nothing is in front of the lens.
+CAM_TIP_Y = 1.15;  // lens tip behind the front face (v24-v26: 3.1, 1.0 behind the glass; v19: 0.3)
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(
@@ -681,15 +682,13 @@ CRUSH = [0.2, 0.1, 3, 1.6, 0.6, 3.1];     // reach, face clearance, count, base 
 // 3 light ring: v27 has no cord pocket beside the ring (v20-v26: 1.0 deep behind the front plate, with the ring's shoulder
 // standing on its floor). The ring's wall runs straight through the slot and its flange lies on the front plate's back face
 // (y PT): that is the ring's hard stop, and the frame's crush bumps (ring_bumps) press the flange onto it.
-// 4 camera: an open window, no glass, no cord ring and no sleeve. The face opening is Ø12.1 as in v24-v26 and narrows at the
-// Wide lens's 60 deg half angle to a Ø8.6 bore round the lens barrel (Ø6.95-7.25: 0.65 air), which the lens tip sits in.
-// Field of view, front lens element Ø4 [C] at the tip (y 2.2): r 5.81 at the face, 0.24 inside the opening, the same
-// margin all the way down the cone (x_cam_fov in the fit check).
-CAM_WIN = [12.1, 8.6];                    // face Ø, bore Ø round the lens barrel
-module cam_window_cut() {
-    cyl_y(CAM_WIN[1], -1, PT + 1, 0, LENS_Z);
-    translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_WIN[0], d2 = CAM_WIN[1], h = (CAM_WIN[0] - CAM_WIN[1])/2/tan(60) + 0.02, $fn = 64);
-}
+// 4 camera: an open window, no glass, no cord ring and no sleeve. The window is one straight Ø8.6 bore through the front
+// plate, no bigger than the lens barrel needs (Ø6.95 at the tip, Ø7.25 at most: 0.65-0.8 air all round, so the focus
+// motor's barrel touches nothing, as in v24). The lens tip sits 1.15 inside it, so the plate's edge shields the lens.
+// Field of view, front lens element Ø4 [C] at the tip (y 1.15): r 3.99 at the face, 0.31 inside the bore (x_cam_fov in
+// the fit check). v27's first draft kept v24-v26's Ø12.1 face opening with a 60 deg cone: far too big without the glass.
+CAM_WIN = 8.6;                            // bore Ø round the lens barrel, also the opening in the face
+module cam_window_cut() cyl_y(CAM_WIN, -1, PT + 1, 0, LENS_Z);
 // the lens's field of view (120 deg diagonal, from the Ø4 front element) to just in front of the face, and the lens barrel
 // with its largest diameter: fit-check bodies, nothing may touch them
 CAM_FOV = [4, 60];

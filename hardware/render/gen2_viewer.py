@@ -77,9 +77,9 @@ CABLES = [
 ]
 
 # flat cables (FFC): owner, label, width, thickness, sections [(point, width direction)].
-# They bend only about their width; the camera ribbon twists slowly behind the frame (v27: its start 0.9 forward with the camera).
+# They bend only about their width; the camera ribbon twists slowly behind the frame (v27: its start 1.95 forward with the camera).
 RIBBONS = [
-    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 12.2, 290), (0, 0, 1)), ((11.5, 12.7, 290), (0, 0, 1)), ((12.6, 15.0, 290), (0, 0, 1)),
+    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 11.15, 290), (0, 0, 1)), ((11.5, 11.65, 290), (0, 0, 1)), ((12.6, 13.95, 290), (0, 0, 1)),
         ((12.6, 34, 290), (0, 0, 1)), ((12.6, 44, 283), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))]),
     ("skaerm", "Skærmkabel (fladt, følger med skærmen)", 11.5, 0.3, [((0, 10.8, 205), (1, 0, 0)), ((0, 11.3, 196), (1, 0, 0)), ((0, 13.9, 189.5), (1, 0, 0)),
         ((0, 17.4, 188), (1, 0, 0)), ((0, 19.4, 186.5), (1, 0, 0))]),

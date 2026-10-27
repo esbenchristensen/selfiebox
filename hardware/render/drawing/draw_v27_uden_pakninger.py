@@ -69,7 +69,7 @@ ROWS = [
      "Lommen og snoren er væk; frontpladen er hel (3,2 mm), og kraven ligger direkte på den."),
     ("2  Kameraet (vandret snit gennem linsen)", ["x_front3", "x_camglass", "x_camsleeve", "x_cam_fov", "x_camera"],
      [0, 0, LENS_Z], [0, 0, 1], lambda p: (p[1], p[0]), ((-0.5, 14), (-10, 10)),
-     "Ingen glas, snor-ring eller kamerarør. Kameraet 0,9 mm frem; åbent vindue Ø12,1, linsen fri i et Ø8,6-hul."),
+     "Ingen glas, snor-ring eller kamerarør. Kameraet 1,95 mm frem; åbent vindue Ø8,6, linsen 1,15 mm inde i hullet."),
     ("3  Skærmens kant (lodret snit midt over vinduets overkant)", ["x_front3", "x_dsp_glass", "x_seal"],
      [0, 0, 0], [1, 0, 0], lambda p: (p[1], p[2] - GT), ((-0.5, 6), (-22, 3)),
      "Rillen i kanten er væk; kanten er massiv 1,6 mm, og glasset ligger direkte på den."),
