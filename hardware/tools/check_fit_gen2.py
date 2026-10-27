@@ -34,7 +34,7 @@ CAMERA = ["x_cam_fov", "x_cam_lens"]
 # pairs that touch by design: (a, b) -> largest overlap in mm3 that is still fine (contact faces render as slivers)
 CONTACT = {
     ("x_front3", "x_logo_w"): 1e9, ("x_front3", "x_logo_g"): 1e9, ("x_logo_w", "x_logo_g"): 1e9,
-    ("x_front3", "s_front3"): 1e9,          # thread-forming screws cut their thread
+    ("x_front3", "s_front3"): 1e9,          # the screws cut their thread (v27: 4.0 x 50 T20 in a Ø3.2 pilot)
     ("x_frame3", "s_display"): 1e9, ("x_dsp_back", "s_display"): 1e9,
     ("x_shell3", "s_lock"): 1e9, ("x_cleat", "s_lock"): 1e9,
     ("x_dsp_glass", "x_dsp_back"): 1e9, ("x_dsp_back", "c_pi_board"): 1e9, ("c_pi_board", "c_cooler"): 1e9,
@@ -58,6 +58,8 @@ CLEARANCES = [
     ("x_fanguard", "x_shell3", 1.0, "v24: guard free of the shell (1.4 to the 5 V supply tray)"),
     ("x_fanguard", "c_mcore", 3.0, "v24: guard free of the mic core"),
     ("x_front3", "x_shell3", 0.0, "v21: front face on the shell face (no gap), rib in the groove"),
+    ("s_front3", "x_shell3", 0.1, "v27: 4.0 x 50 T20 front screws: 0.3 round the thread in the post, head 0.22 clear across in its countersink (0.16 square to the cone)"),
+    ("s_front3", "x_frame3", 0.15, "v27: front screws clear of the frame's ears (clamped, not threaded)"),
     ("x_dsp_glass", "x_frame3", 0.0, "display glass: the frame toes press it"),
     ("c_mics", "x_front3", 0.3, "mic board under the channel wall"),
     ("x_strip_w", "x_front3", 0.0, "white strips end at the camera caps"),

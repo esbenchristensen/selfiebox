@@ -88,7 +88,7 @@ COUPONS = [
      "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
-     "(3,0 × 15) skruet i bagfra. Lysringens skulder står på frontpladen, og snoren ligger i rillen ved siden af (v22; prøv også uden snor: rasler ringen?). Ingen snor mellem skal og front (frontens ribbe går i "
+     "(v27: 4,0 × 50 T20, før 3,0 × 15) skruet i bagfra. Lysringens skulder står på frontpladen, og snoren ligger i rillen ved siden af (v22; prøv også uden snor: rasler ringen?). Ingen snor mellem skal og front (frontens ribbe går i "
      "skallens rille). Lukker skal og front helt (ingen fuge), sidder bagrammen fast (knusribberne på stolpen trykkes flade), og er "
      "snoren ved lysringen klemt?"),
     ("laas", ["front", "bagramme"], ((-116, -64), (-64, -22)), 0, "fuld",

@@ -48,7 +48,7 @@ PARTS = [
     ("hoejttaler",    "c_speaker",     "Højttaler (DFRobot FIT0502)",                       "#f97316", "Tilvalg",    [0, 0, -90]),
     ("sensor",        "c_imu",         "Stødsensor",                      "#84cc16", "Tilvalg",    [0, 0, -90]),
     ("reed",          "c_reed",        "Løftesensor (reed + magnet)",     "#ec4899", "Tilvalg",    [0, 0, -90]),
-    ("skruer_front",  "s_front3",      "4 skruer, front (3,0 × 15, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
+    ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
     # v21: example theme parts on the hooks (skjult som standard i admin; vises med fluebenet)

@@ -7,8 +7,8 @@
 //  curvature corners, and every outline of the face is an exact offset of it.
 //  The border from box edge to light ring is the same 7.8 mm on all sides.
 //
-//  Fastening without visible screws: the 4 side screws of rev G are gone. Four 3.0 mm
-//  thread-forming screws from the back, in the 4 corners, run through shell posts and the
+//  Fastening without visible screws: the 4 side screws of rev G are gone. Four screws (v27: 4.0 x 50 T20,
+//  until v26 3.0 mm thread-forming) from the back, in the 4 corners, run through shell posts and the
 //  frame into bosses in the front (J2). Theme parts hook into closed pockets in the back
 //  wall (v21). No inserts. v27 (Esben 27 Oct): no glass and no seals anywhere (v20-v26 had a seal cord in 4 joints and a
 //  glass in front of the camera); every opening is shaped so water runs back out, see "weather" and "v27: no seals" below.
@@ -666,6 +666,16 @@ module sweep3(p) {
 J_R = 10.6;                               // front screws: in the outer wall at the 4 corners. v20: 11.8 -> 10.6, so the bosses and the
                                           // shell's clearance (Ø6.4) stay inside the shell wall (13.8) and clear of the joint groove
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
+// v27 (Esben 27 Oct: the screws he has, so one T20 bit does it all): the 4 front screws are 4.0 x 50 countersunk T20
+// chipboard screws (measured: thread 3.77, head Ø7.75, 49.25 long, part thread). The head lies flush in a 90 deg
+// countersink in the back face, the shank runs through a clearance hole in the shell post and the frame's ear, and the
+// tip ends 50 in front of the back face (y 20), so the thread has 7 mm in the front boss's pilot. Until v26: 3.0 x 15
+// SPUN+ with the head 37 mm down a counterbore (needed a long bit).
+FS = [4.0, 50, 7.75];                     // screw: Ø, length, head Ø
+FS_CLR = 4.4;                             // through the post and the frame
+FS_PILOT = 3.2;                           // in the front's Ø6 boss (chipboard thread, core about 2.6)
+FS_CSK = 8.2;                             // countersink Ø at the back face
+FS_TIP = D - FS[1];
 
 // ================================================================= v27: no seals ==
 // v20-v26 (Esben 23 Oct) had a removable seal, a silicone sponge O-ring cord Ø1.5 (RS 234-2906), in 4 joints (display,
@@ -871,7 +881,7 @@ module front3() union() {
         cam_window_cut();
         ext_y(SKIRT - JOINT_GAP, SKIRT + 0.02) difference() { offset(r = 1) rr(W, H, R); translate([0, WALL + FIT]) rr(W - 2*(WALL + FIT), H - 2*(WALL + FIT), R - WALL - FIT); }
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
-        for (j = J2) cyl_y(INS_M3_D, CH_BACK - 11, CH_BACK + 1, j[0], j[1]);
+        for (j = J2) cyl_y(FS_PILOT, FS_TIP - 1.5, CH_BACK + 1, j[0], j[1]);   // v27: 4.0 x 50 T20 (until v26: Ø2.4 for 3.0)
         snap_windows();
         translate([0, 0, LENS_Z]) ext_y(PT, CAM_PCB_Y) square(CAM_BAY, center = true);   // the caps keep clear of the lens holder
     }
@@ -987,7 +997,7 @@ module frame3() {
         // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
-        for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
+        for (j = J2) cyl_y(FS_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
         frame_loop_cut();                                                 // v23: service loop strap
         for (j = J2) cyl_y(6.2, REFL[0][0] - 1, CH_BACK + 0.01, j[0], j[1]);   // v20: the front's screw bosses (Ø6) reach into the channel corners; the strip wall keeps 0.6
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
@@ -1044,7 +1054,7 @@ module shell3(top = UNIT_TOP) {
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
-        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
+        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D, j[0], j[1]); }   // v27: head flush in the back face
     }
 }
 
@@ -1165,7 +1175,7 @@ if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MSTRIP_Y - MSTRIP[1]/2, WALL
 if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
 if (VIEW == "c_speaker")   speaker3();
 if (VIEW == "c_jack")      power_inlet();
-// screws: 4 front (3.0 x 14 thread-forming, heads in the back wall), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
+// screws: 4 front (v27: 4.0 x 50 T20 countersunk, heads flush in the back face), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
 if (VIEW == "s_camera")    for (h = CAM_HOLES_ROT) screw_y(2, 6, [3.8, 1.3], h[0], CAM_PCB_Y + CAM_PCB[2], LENS_Z + h[1], -1);
 if (VIEW == "s_lock")      both_locks() translate([$lx, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
@@ -1224,7 +1234,10 @@ if (VIEW == "c_wled")      placed_wled();
 if (VIEW == "x_wled_holder") intersection() { shell3(); wled_frame() translate([-10, -15, -5]) cube([WLED_B[0] + 20, WLED_B[1] + 30, 40]); }
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
-if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [6, 2.3], j[0], FR_BACK + 2, j[1], -1);
+if (VIEW == "s_front3")    for (j = J2) {   // v27: 4.0 x 50 T20, countersunk head flush with the back face (thread drawn at its 3.77 crest)
+    cyl_y(3.77, FS_TIP, D - 1, j[0], j[1]);
+    translate([j[0], D, j[1]]) rotate([90, 0, 0]) cylinder(d1 = FS[2], d2 = 3.77, h = (FS[2] - 3.77)/2, $fn = 32);
+}
 if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 4, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + DSP_FLOOR - PRELOAD, GC + z, -1);   // v16: M2.5 x 4, head on the 1.6 mm floor
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
 if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
