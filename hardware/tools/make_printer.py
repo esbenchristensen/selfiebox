@@ -31,6 +31,9 @@ from pathlib import Path
 import numpy as np
 import trimesh
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from make_3mf import SETTINGS, write_bambu_3mf  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 
 # Per version: CAD file, overall size (x along the front, depth, height; used to centre the 3D model), print files,
@@ -240,11 +243,11 @@ def print_files(cfg, ver, out, tmp):
         m.apply_translation(shift[cfg["co_printed"].get(view, view)])
         m.export(out / f"{ver}_{name}.stl")
     for hood, inlays in cfg["multicolour"].items():
-        sc = trimesh.Scene()
-        sc.add_geometry(meshes[hood], node_name=hood, geom_name=hood)
-        for v in inlays:
-            sc.add_geometry(meshes[v], node_name=v, geom_name=v)
-        sc.export(out / f"{ver}_{hood.replace('_', '-')}_flerfarvet.3mf")
+        # a Bambu Studio project with the print settings (make_3mf.py): the part on slot 1 (sort), white 2, green 3
+        parts = [(hood, meshes[hood], 1)] + [(v, meshes[v], 2 if v.endswith("hvid") else 3) for v in inlays]
+        name = f"{ver}_{hood.replace('_', '-')}"
+        write_bambu_3mf(out / f"{name}_flerfarvet.3mf", parts, name, SETTINGS["printerkappe"],
+                        filaments=("sort", "hvid", "groen"))
 
 
 def model(cfg, ver, out, tmp):
