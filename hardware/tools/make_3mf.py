@@ -70,21 +70,24 @@ PRINTER = {"printer_settings_id": "Bambu Lab H2C 0.4 nozzle", "printer_model": "
            "printer_extruder_id": ["1", "1", "1", "2", "2"]}
 PROCESS = {"print_settings_id": "0.20mm Standard @BBL H2C",
            "print_extruder_variant": PRINTER["printer_extruder_variant"], "print_extruder_id": PRINTER["printer_extruder_id"]}
-# the plate-wide process values the box changes from Bambu's 0.20mm Standard (one value per extruder variant)
+# the plate-wide process values the box changes from Bambu's 0.20mm Standard (one value per extruder variant), for parts
+# seen from outside; a hidden part keeps Bambu's own values (v32: the slow first layer and the travel round the walls only
+# cost time there)
 PROCESS_CHANGES = {"initial_layer_speed": ["30"] * 5, "initial_layer_infill_speed": ["30"] * 5, "reduce_crossing_wall": "1"}
 FILAMENT = {"filament_settings_id": "Bambu ASA @BBL H2C", "filament_ids": "GFB01", "filament_type": "ASA",
             "filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
 PLATES = {"glat": "High Temp Plate", "tekstureret": "Textured PEI Plate"}   # Bambu's names: smooth PEI, textured PEI
 
 
-def project_settings(filaments, plate, tower=None):
+def project_settings(filaments, plate, tower=None, visible=True):
     """Metadata/project_settings.config: the project config Bambu Studio writes (PresetBundle::full_fff_config, keys
     that equal Bambu's own defaults left out; the loader puts them back). filaments: COLOURS keys, slot 1 first."""
     n = len(filaments)
-    cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **PROCESS_CHANGES,
+    changes = PROCESS_CHANGES if visible else {}
+    cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **changes,
            **{k: [v] * n for k, v in FILAMENT.items()},
            "filament_colour": [COLOURS[f] for f in filaments], "filament_self_index": [str(i + 1) for i in range(n)],
-           "different_settings_to_system": [";".join(sorted(PROCESS_CHANGES))] + [""] * (n + 1),
+           "different_settings_to_system": [";".join(sorted(changes))] + [""] * (n + 1),
            "curr_bed_type": PLATES[plate], "flush_multiplier": ["1", "1"],
            "flush_volumes_matrix": [("0" if i == j else "280") for _ in range(2) for i in range(n) for j in range(n)],
            "flush_volumes_vector": ["140"] * (2 * n)}
@@ -111,33 +114,44 @@ SOLID_FACE = {   # the visible face is the first layer (printed face down): one 
 SEAM = {"seam_position": "back", "seam_slope_type": "external"}   # scarf seam on the outer contour, at the box's underside
 NO_SUPPORT = {"enable_support": "0"}
 SETTINGS = {
+    # v32 (Esben 27 Oct: the shell took 26 h in Bambu Studio, the frame 12 h 51 m; "Udseende er høj prioritet, men ikke
+    # inden i kassen"): almost all the time went to walls, so every part has 3 walls (1.26 mm; the box's 3 mm side walls
+    # stay solid, 3 loops from each side) where v26-v31 had 4-6, and fewer shells where nobody sees them. Parts seen from
+    # outside keep 0.2 mm layers (the shell and the theme parts match the front); parts inside the box or behind it
+    # ("_visible": False) get 0.28 mm, Bambu's own first-layer speed and no "avoid crossing walls" (see PROCESS_CHANGES).
     # front: 0.2 so the logo is exactly the first 4 layers; 0.15 elephant foot so the 0.15 shadow gap stays open
-    "front": {"layer_height": "0.2", "wall_loops": "4", "top_shell_layers": "5", "bottom_shell_layers": "5",
-              "sparse_infill_density": "20%", "sparse_infill_pattern": "gyroid", "elefant_foot_compensation": "0.15",
+    "front": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "4", "bottom_shell_layers": "4",
+              "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid", "elefant_foot_compensation": "0.15",
               "brim_type": "no_brim", **SOLID_FACE, **SEAM, **NO_SUPPORT},
     # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes
     "lysring": {"layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%",
                 "bottom_surface_pattern": "concentric", "top_surface_pattern": "concentric",
                 "internal_solid_infill_pattern": "concentric", "elefant_foot_compensation": "0.15", "brim_type": "no_brim",
                 **SEAM, **NO_SUPPORT},
-    "bagramme": {"layer_height": "0.2", "wall_loops": "4", "sparse_infill_density": "20%", "sparse_infill_pattern": "gyroid",
-                 **SEAM, **NO_SUPPORT},
-    # shell: support only at its 2 enforcers (tree, manual, also from the model), 3 mm brim against corner lift
-    "skal": {"layer_height": "0.16", "wall_loops": "5", "top_shell_layers": "6", "bottom_shell_layers": "6",
-             "sparse_infill_density": "20%", "sparse_infill_pattern": "gyroid", "enable_support": "1",
+    # frame: inside the box; the reflector's steps at 0.28 are behind the 1 mm diffuser
+    "bagramme": {"_visible": False, "layer_height": "0.28", "wall_loops": "3", "top_shell_layers": "4",
+                 "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid", **SEAM, **NO_SUPPORT},
+    # shell: the sides are seen, so 0.2 like the front; its top (the inside) and bottom (the back, to the wall) 3 shells.
+    # Support only at its 2 enforcers (tree, manual, also from the model), 3 mm brim against corner lift
+    "skal": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "3", "bottom_shell_layers": "3",
+             "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid", "enable_support": "1",
              "support_type": "tree(manual)", "support_on_build_plate_only": "0", "brim_type": "outer_only",
              "brim_width": "3", **SEAM},
-    "vaegbeslag": {"layer_height": "0.2", "wall_loops": "6", "sparse_infill_density": "100%", **SEAM, **NO_SUPPORT},
+    # wall cleat: behind the box, carries it: solid, 4 walls round the tongues
+    "vaegbeslag": {"_visible": False, "layer_height": "0.28", "wall_loops": "4", "sparse_infill_density": "100%",
+                   **SEAM, **NO_SUPPORT},
     "kameraroer": {"layer_height": "0.16", "sparse_infill_density": "100%", **NO_SUPPORT},
     # v29: the Wago row on its own, for a v24-v28 shell (its end wall on the plate, every wall straight up)
-    "wagoraekke": {"layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%", **NO_SUPPORT},
-    "blaeserhegn": {"layer_height": "0.16", "wall_loops": "4", "sparse_infill_density": "100%", "brim_type": "outer_only",
-                    "brim_width": "3", **NO_SUPPORT},
+    "wagoraekke": {"_visible": False, "layer_height": "0.2", "wall_loops": "3", "sparse_infill_density": "100%",
+                   **NO_SUPPORT},
+    "blaeserhegn": {"_visible": False, "layer_height": "0.2", "wall_loops": "3", "sparse_infill_density": "100%",
+                    "brim_type": "outer_only", "brim_width": "3", **NO_SUPPORT},
     # theme parts: face down too; tree support (auto) under the straps
-    "tema": {"layer_height": "0.2", "wall_loops": "4", "top_shell_layers": "5", "bottom_shell_layers": "5",
+    "tema": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "4", "bottom_shell_layers": "4",
              "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid", "enable_support": "1",
              "support_type": "tree(auto)", **SOLID_FACE, **SEAM},
-    # printer hood and exit module (selfi-printer-v5): stood on an end, logo and text on the vertical front
+    # printer hood and exit module (selfi-printer-v5): stood on an end, logo and text on the vertical front. Its panels
+    # are 3.2 mm, so they are solid with 4 walls as with 8 (v32 review: 2 % faster at most, not changed)
     "printerkappe": {"layer_height": "0.2", "wall_loops": "8", "sparse_infill_density": "15%", **NO_SUPPORT},
     # stand bracket: carries the whole box; the logo panel lies on the plate
     "stativbeslag": {"layer_height": "0.2", "wall_loops": "5", "top_shell_layers": "5", "bottom_shell_layers": "5",
@@ -165,7 +179,9 @@ def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filamen
 
 def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=None):
     """objects: list of (name, parts, settings, (dx, dy) from the bed centre, turn). One plate, each object as in
-    write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default."""
+    write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default. A settings key "_visible": False
+    (every object on the plate) leaves out the plate-wide PROCESS_CHANGES."""
+    visible = any(st.get("_visible", True) for _, _, st, _, _ in objects)
     ns = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
           'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
           'xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" requiredextensions="p"')
@@ -201,7 +217,7 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
         items.append(f'  <item objectid="{obj}" p:UUID="{_uuid()}" transform="{tr}" printable="1"/>')
         cfg += [f'  <object id="{obj}">', f'    <metadata key="name" value="{escape(object_name)}"/>',
                 '    <metadata key="extruder" value="1"/>']
-        cfg += [f'    <metadata key="{key}" value="{escape(v)}"/>' for key, v in settings.items()]
+        cfg += [f'    <metadata key="{key}" value="{escape(v)}"/>' for key, v in settings.items() if not key.startswith("_")]
         for i, (n, m, slot, kind) in zip(ids, parts):
             cfg += [f'    <part id="{i}" subtype="{kind}">', f'      <metadata key="name" value="{escape(n)}"/>',
                     '      <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>',
@@ -232,7 +248,7 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
         "3D/3dmodel.model": main,
         **files,
         "Metadata/model_settings.config": "\n".join(cfg),
-        "Metadata/project_settings.config": project_settings(filaments, plate, tower),
+        "Metadata/project_settings.config": project_settings(filaments, plate, tower, visible),
     }
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
         for name, text in out.items():
