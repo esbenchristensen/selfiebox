@@ -1,23 +1,31 @@
 #!/usr/bin/env python3
-"""Multi-colour front for Bambu Studio: <version>_front_flerfarvet.3mf (v26: and the shell with its support
-enforcers and blockers, <version>_skal_support.3mf; see skal_3mf below).
+"""Bambu Studio project files for every printed part of a gen 2 release, each with its print settings inside.
 
-The front is printed in one go with the AMS: the black front with the logo inlays (white and green) in its
-0.8 mm recess. The release has them as separate STLs that share one origin (`_front`, `_logo-hvid`,
-`_logo-groen`); a slicer needs each colour as its own body. This tool puts the three bodies into one
-3MF as ONE object with three parts, already in place, each on its own filament slot:
+v26 print settings (Esben 27 Oct, second round: "the best possible settings for a clean result without faults, that looks moulded but
+is durable"): every part now has its own 3MF with the object's settings already set (layer height, walls, infill, the
+first-layer pattern of the visible face, scarf seam, support, brim), so a print looks the same from box to box and does
+not depend on what was last chosen in Bambu Studio. Only object-level settings are written (Bambu Studio's
+PrintObjectConfig / PrintRegionConfig keys, as <metadata> on the object in Metadata/model_settings.config, which the
+loader passes to the object's config). Printer, filament and the plate-wide process values (first layer height, speeds,
+which are per-extruder lists on the H2C) are not in the files; the print guide lists them.
 
-    slot 1 = sort (front), slot 2 = hvid (logo), slot 3 = groen (logo dots)
+  <version>_front_flerfarvet.3mf  the black front with the logo inlays (white and green) in its 0.8 mm recess, as ONE
+                                  object with three parts on slots 1 sort / 2 hvid / 3 groen
+  <version>_skal_support.3mf      the shell with its support enforcers and blockers (v26, see skal_3mf below)
+  <version>_lysring.3mf, _bagramme.3mf, _vaegbeslag.3mf, _smaadele.3mf (camera sleeve + fan guard on one plate),
+  _tema-*.3mf                     one object each, settings inside
 
-The file follows Bambu Studio's own 3MF layout (component object + Metadata/model_settings.config), so it
-opens as one object with three parts and the slots set. No printer or process settings are in it; those
-are chosen in Bambu Studio as usual. It deliberately does not claim to be written by Bambu Studio
-(no Application metadata): a Bambu-tagged project without project_settings.config crashes the slicer's
-command line loader (checked with OrcaSlicer 2.3.1, which shares the loader), while this one loads with
-the three parts, their positions and slots 1/2/3.
+Seams: Bambu's "back" seam goes to the part's rear (+y on the plate). Every part is placed so that +y is the box's
+underside (the front and the ring already lie that way; the shell and the frame are turned 180 degrees on the plate),
+so what is left of a seam ends up under the box, and it is a scarf seam on the outer contour.
+
+The files follow Bambu Studio's own 3MF layout (component object + Metadata/model_settings.config). They deliberately do
+not claim to be written by Bambu Studio (no Application metadata): a Bambu-tagged project without project_settings.config
+crashes the slicer's command line loader (checked with OrcaSlicer 2.3.1, which shares the loader), while these load with
+their parts, positions and slots.
 
 Usage:  python3 hardware/tools/make_3mf.py <version folder> [<file prefix>]
-        e.g. python3 hardware/tools/make_3mf.py hardware/stl/gen2/halo-gen2-v12
+        e.g. python3 hardware/tools/make_3mf.py hardware/stl/gen2/halo-gen2-v26
              python3 hardware/tools/make_3mf.py hardware/stl/gen2-hurtig/halo-gen2-v12-hurtig
 Needs:  trimesh, numpy
 """
@@ -48,45 +56,105 @@ def _mesh_xml(oid, mesh, name):
             f'    </vertices>\n    <triangles>\n{t}\n    </triangles>\n   </mesh>\n  </object>')
 
 
-def write_bambu_3mf(path, parts, object_name):
+# v26 print settings, per object. Values are Bambu Studio's own option keys and enum values (checked against
+# src/libslic3r/PrintConfig.cpp, Oct 2026). Everything else comes from the chosen printer/filament/process profile.
+SOLID_FACE = {   # the visible face is the first layer (printed face down): one direction, one outline, no wall rings
+    "bottom_surface_pattern": "monotonicline", "only_one_wall_first_layer": "1"}
+SEAM = {"seam_position": "back", "seam_slope_type": "external"}   # scarf seam on the outer contour, at the box's underside
+NO_SUPPORT = {"enable_support": "0"}
+SETTINGS = {
+    # front: 0.2 so the logo is exactly the first 4 layers; 0.15 elephant foot so the 0.15 shadow gap stays open
+    "front": {"layer_height": "0.2", "wall_loops": "4", "top_shell_layers": "5", "bottom_shell_layers": "5",
+              "sparse_infill_density": "20%", "sparse_infill_pattern": "gyroid", "elefant_foot_compensation": "0.15",
+              "brim_type": "no_brim", **SOLID_FACE, **SEAM, **NO_SUPPORT},
+    # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes
+    "lysring": {"layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%",
+                "bottom_surface_pattern": "concentric", "top_surface_pattern": "concentric",
+                "internal_solid_infill_pattern": "concentric", "elefant_foot_compensation": "0.15", "brim_type": "no_brim",
+                **SEAM, **NO_SUPPORT},
+    "bagramme": {"layer_height": "0.2", "wall_loops": "4", "sparse_infill_density": "20%", "sparse_infill_pattern": "gyroid",
+                 **SEAM, **NO_SUPPORT},
+    # shell: support only at its 2 enforcers (tree, manual, also from the model), 3 mm brim against corner lift
+    "skal": {"layer_height": "0.16", "wall_loops": "5", "top_shell_layers": "6", "bottom_shell_layers": "6",
+             "sparse_infill_density": "20%", "sparse_infill_pattern": "gyroid", "enable_support": "1",
+             "support_type": "tree(manual)", "support_on_build_plate_only": "0", "brim_type": "outer_only",
+             "brim_width": "3", **SEAM},
+    "vaegbeslag": {"layer_height": "0.2", "wall_loops": "6", "sparse_infill_density": "100%", **SEAM, **NO_SUPPORT},
+    "kameraroer": {"layer_height": "0.16", "sparse_infill_density": "100%", **NO_SUPPORT},
+    "blaeserhegn": {"layer_height": "0.16", "wall_loops": "4", "sparse_infill_density": "100%", "brim_type": "outer_only",
+                    "brim_width": "3", **NO_SUPPORT},
+    # theme parts: face down too; tree support (auto) under the straps
+    "tema": {"layer_height": "0.2", "wall_loops": "4", "top_shell_layers": "5", "bottom_shell_layers": "5",
+             "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid", "enable_support": "1",
+             "support_type": "tree(auto)", **SOLID_FACE, **SEAM},
+    # stand bracket: carries the whole box; the logo panel lies on the plate
+    "stativbeslag": {"layer_height": "0.2", "wall_loops": "5", "top_shell_layers": "5", "bottom_shell_layers": "5",
+                     "sparse_infill_density": "40%", "sparse_infill_pattern": "gyroid", **SOLID_FACE, **SEAM, **NO_SUPPORT},
+}
+TURN = np.diag([-1.0, -1.0, 1.0])   # 180 degrees on the plate: the box's underside to +y (Bambu's "back" seam)
+
+
+def write_bambu_3mf(path, parts, object_name, settings=None, turn=False):
     """parts: list of (name, trimesh.Trimesh, filament slot[, subtype]). All meshes in one shared coordinate system;
     the object is moved as a whole so it sits on the plate (z = 0) in the middle of the bed. subtype is Bambu Studio's
-    part type: "normal_part" (default), or "support_enforcer" / "support_blocker" for a support modifier volume."""
-    parts = [tuple(p) + ("normal_part",) * (4 - len(p)) for p in parts]
-    lo = np.min([m.bounds[0] for _, m, _, _ in parts], axis=0)
-    hi = np.max([m.bounds[1] for _, m, _, _ in parts], axis=0)
-    shift = np.array([-(lo[0] + hi[0]) / 2, -(lo[1] + hi[1]) / 2, -lo[2]])
+    part type: "normal_part" (default), or "support_enforcer" / "support_blocker" for a support modifier volume.
+    settings: the object's own print settings ({Bambu option key: value}); turn: 180 degrees round z on the plate."""
+    write_bambu_objects(path, [(object_name, parts, settings or {}, (0.0, 0.0), turn)])
+
+
+def write_bambu_objects(path, objects):
+    """objects: list of (name, parts, settings, (dx, dy) from the bed centre, turn). One plate, each object as in
+    write_bambu_3mf."""
     ns = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
           'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
           'xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" requiredextensions="p"')
     head = ('<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<model unit="millimeter" xml:lang="en-US" {ns}>\n')
-    sub = head + " <resources>\n" + "\n".join(
-        _mesh_xml(i + 1, m.copy().apply_translation(shift), n) for i, (n, m, _, _) in enumerate(parts)) + \
-        "\n </resources>\n <build/>\n</model>\n"
-    obj = len(parts) + 1
-    comps = "\n".join(f'    <component p:path="/3D/Objects/object_1.model" objectid="{i + 1}" p:UUID="{_uuid()}" '
-                      'transform="1 0 0 0 1 0 0 0 1 0 0 0"/>' for i in range(len(parts)))
-    main = head + (f' <resources>\n  <object id="{obj}" p:UUID="{_uuid()}" type="model">\n   <components>\n{comps}\n'
-                   f'   </components>\n  </object>\n </resources>\n <build p:UUID="{_uuid()}">\n'
-                   f'  <item objectid="{obj}" p:UUID="{_uuid()}" transform="1 0 0 0 1 0 0 0 1 '
-                   f'{BED_CENTRE[0]} {BED_CENTRE[1]} 0" printable="1"/>\n </build>\n</model>\n')
-    ident = 1000 + obj
-    cfg = ['<?xml version="1.0" encoding="UTF-8"?>', "<config>", f'  <object id="{obj}">',
-           f'    <metadata key="name" value="{escape(object_name)}"/>', '    <metadata key="extruder" value="1"/>']
-    for i, (n, m, slot, kind) in enumerate(parts):
-        cfg += [f'    <part id="{i + 1}" subtype="{kind}">', f'      <metadata key="name" value="{escape(n)}"/>',
-                '      <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>',
-                f'      <metadata key="extruder" value="{slot}"/>',
-                f'      <mesh_stat face_count="{len(m.faces)}" edges_fixed="0" degenerate_facets="0" '
-                'facets_removed="0" facets_reversed="0" backwards_edges="0"/>', "    </part>"]
-    cfg += ["  </object>", "  <plate>", '    <metadata key="plater_id" value="1"/>', '    <metadata key="plater_name" value=""/>',
-            '    <metadata key="locked" value="false"/>', "    <model_instance>",
-            f'      <metadata key="object_id" value="{obj}"/>', '      <metadata key="instance_id" value="0"/>',
-            f'      <metadata key="identify_id" value="{ident}"/>', "    </model_instance>", "  </plate>",
-            "  <assemble>", f'   <assemble_item object_id="{obj}" instance_id="0" transform="1 0 0 0 1 0 0 0 1 '
-            f'{BED_CENTRE[0]} {BED_CENTRE[1]} 0" offset="0 0 0" />', "  </assemble>", "</config>", ""]
-    files = {
+    meshes, items, assemble, plate = [], [], [], []
+    cfg = ['<?xml version="1.0" encoding="UTF-8"?>', "<config>"]
+    files, main_objs, nid = {}, [], 0
+    for k, (object_name, parts, settings, (dx, dy), turn) in enumerate(objects):
+        parts = [tuple(q) + ("normal_part",) * (4 - len(q)) for q in parts]
+        lo = np.min([m.bounds[0] for _, m, _, _ in parts], axis=0)
+        hi = np.max([m.bounds[1] for _, m, _, _ in parts], axis=0)
+        shift = np.array([-(lo[0] + hi[0]) / 2, -(lo[1] + hi[1]) / 2, -lo[2]])
+        ids = list(range(nid + 1, nid + len(parts) + 1))
+        nid += len(parts) + 1
+        obj = nid
+        sub_path = f"/3D/Objects/object_{k + 1}.model"
+        files[sub_path[1:]] = head + " <resources>\n" + "\n".join(
+            _mesh_xml(i, m.copy().apply_translation(shift), n) for i, (n, m, _, _) in zip(ids, parts)) + \
+            "\n </resources>\n <build/>\n</model>\n"
+        meshes.append(sub_path)
+        comps = "\n".join(f'    <component p:path="{sub_path}" objectid="{i}" p:UUID="{_uuid()}" '
+                          'transform="1 0 0 0 1 0 0 0 1 0 0 0"/>' for i in ids)
+        main_objs.append(f'  <object id="{obj}" p:UUID="{_uuid()}" type="model">\n   <components>\n{comps}\n'
+                         '   </components>\n  </object>')
+        r = TURN if turn else np.eye(3)
+        tr = " ".join(f"{v:g}" for v in r.T.flatten()) + f" {BED_CENTRE[0] + dx:g} {BED_CENTRE[1] + dy:g} 0"
+        items.append(f'  <item objectid="{obj}" p:UUID="{_uuid()}" transform="{tr}" printable="1"/>')
+        cfg += [f'  <object id="{obj}">', f'    <metadata key="name" value="{escape(object_name)}"/>',
+                '    <metadata key="extruder" value="1"/>']
+        cfg += [f'    <metadata key="{key}" value="{escape(v)}"/>' for key, v in settings.items()]
+        for i, (n, m, slot, kind) in zip(ids, parts):
+            cfg += [f'    <part id="{i}" subtype="{kind}">', f'      <metadata key="name" value="{escape(n)}"/>',
+                    '      <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>',
+                    f'      <metadata key="extruder" value="{slot}"/>',
+                    f'      <mesh_stat face_count="{len(m.faces)}" edges_fixed="0" degenerate_facets="0" '
+                    'facets_removed="0" facets_reversed="0" backwards_edges="0"/>', "    </part>"]
+        cfg.append("  </object>")
+        plate += ["    <model_instance>", f'      <metadata key="object_id" value="{obj}"/>',
+                  '      <metadata key="instance_id" value="0"/>', f'      <metadata key="identify_id" value="{1000 + obj}"/>',
+                  "    </model_instance>"]
+        assemble.append(f'   <assemble_item object_id="{obj}" instance_id="0" transform="{tr}" offset="0 0 0" />')
+    cfg += ["  <plate>", '    <metadata key="plater_id" value="1"/>', '    <metadata key="plater_name" value=""/>',
+            '    <metadata key="locked" value="false"/>'] + plate + ["  </plate>", "  <assemble>"] + assemble + \
+           ["  </assemble>", "</config>", ""]
+    main = head + " <resources>\n" + "\n".join(main_objs) + f'\n </resources>\n <build p:UUID="{_uuid()}">\n' + \
+        "\n".join(items) + "\n </build>\n</model>\n"
+    rels = "".join(f' <Relationship Target="{s}" Id="rel-{i + 1}" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>\n'
+                   for i, s in enumerate(meshes))
+    out = {
         "[Content_Types].xml": '<?xml version="1.0" encoding="UTF-8"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">\n'
         ' <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>\n'
         ' <Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/>\n'
@@ -94,13 +162,13 @@ def write_bambu_3mf(path, parts, object_name):
         "_rels/.rels": '<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n'
         ' <Relationship Target="/3D/3dmodel.model" Id="rel-1" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>\n</Relationships>\n',
         "3D/_rels/3dmodel.model.rels": '<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n'
-        ' <Relationship Target="/3D/Objects/object_1.model" Id="rel-1" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>\n</Relationships>\n',
+        + rels + '</Relationships>\n',
         "3D/3dmodel.model": main,
-        "3D/Objects/object_1.model": sub,
+        **files,
         "Metadata/model_settings.config": "\n".join(cfg),
     }
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
-        for name, text in files.items():
+        for name, text in out.items():
             z.writestr(zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0)), text, zipfile.ZIP_DEFLATED)
 
 
@@ -109,7 +177,7 @@ def front_3mf(folder, prefix=None):
     prefix = prefix or folder.name
     parts = [(name, trimesh.load(folder / f"{prefix}_{suffix}.stl"), slot) for suffix, name, slot, _ in FRONT_PARTS]
     out = folder / f"{prefix}_front_flerfarvet.3mf"
-    write_bambu_3mf(out, parts, f"{prefix}_front")
+    write_bambu_3mf(out, parts, f"{prefix}_front", SETTINGS["front"])
     return out
 
 
@@ -152,13 +220,41 @@ def skal_3mf(folder, prefix=None):
     parts += [(n, _box(b), 1, "support_enforcer") for n, b in SKAL_ENFORCE]
     parts += [(n, _box(b), 1, "support_blocker") for n, b in SKAL_BLOCK]
     out = folder / f"{prefix}_skal_support.3mf"
-    write_bambu_3mf(out, parts, f"{prefix}_skal")
+    write_bambu_3mf(out, parts, f"{prefix}_skal", SETTINGS["skal"], turn=True)
     return out
+
+
+# the other parts: (file suffix, settings, turn); the frame lies like the shell (box underside at -y), so it is turned too
+SINGLE = [("lysring", "lysring", False), ("bagramme", "bagramme", True), ("vaegbeslag", "vaegbeslag", False),
+          ("tema-top-eksempel", "tema", False), ("tema-vinge-venstre-eksempel", "tema", False),
+          ("tema-vinge-hoejre-eksempel", "tema", False)]
+
+
+def part_3mfs(folder, prefix=None):
+    """<prefix>_<part>.3mf for each part in SINGLE that the release has, and <prefix>_smaadele.3mf: the camera sleeve and
+    the fan guard (both small and black) on one plate, 40 mm apart."""
+    folder = Path(folder)
+    prefix = prefix or folder.name
+    outs = []
+    for suffix, key, turn in SINGLE:
+        stl = folder / f"{prefix}_{suffix}.stl"
+        if stl.exists():
+            outs.append(folder / f"{prefix}_{suffix}.3mf")
+            write_bambu_3mf(outs[-1], [(suffix, trimesh.load(stl), 1)], f"{prefix}_{suffix}", SETTINGS[key], turn)
+    small = [(s, folder / f"{prefix}_{s}.stl") for s in ("blaeserhegn", "kameraroer")]
+    if all(p.exists() for _, p in small):
+        outs.append(folder / f"{prefix}_smaadele.3mf")
+        write_bambu_objects(outs[-1], [(f"{prefix}_{s}", [(s, trimesh.load(p), 1)], SETTINGS[s], (0.0, 20.0 - 40.0*i), False)
+                                       for i, (s, p) in enumerate(small)])
+    return outs
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
-    print(front_3mf(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None))
-    if Path(sys.argv[1], f"{sys.argv[2] if len(sys.argv) > 2 else Path(sys.argv[1]).name}_skal.stl").exists():
-        print(skal_3mf(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None))
+    folder, prefix = sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None
+    print(front_3mf(folder, prefix))
+    if Path(folder, f"{prefix or Path(folder).name}_skal.stl").exists():
+        print(skal_3mf(folder, prefix))
+    for o in part_3mfs(folder, prefix):
+        print(o)

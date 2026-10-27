@@ -1,4 +1,4 @@
-# Selfi stativbeslag v3: printguide
+# Selfi stativbeslag v4: printguide
 
 **Version:** selfi-stativbeslag-v4 (27. okt. 2026, til halo-gen2-v25 og v26; v1 og v2 passer ikke til en v25-boks). Alle filer i mappen starter med `selfi-stativbeslag-v4`. CAD-kilden er modulet `stand_bracket` i `hardware/cad/gen2_concept.scad`; sættet bygges med `python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v4` og tegningen med `hardware/render/drawing/draw_stativbeslag.py`. v3 må ikke printes (samme pasform, men se herunder).
 
@@ -41,9 +41,9 @@ Tegning: `selfi-stativbeslag-v4_tegning.png`. 3D af boksen på beslaget: `selfi-
 Printer: Bambu Lab H2C. STL-filerne ligger i printretning: **bagsiden ned** (logoet i de første lag), hylden står lodret op. Ingen support. 189 × 304 × 54 mm (H2C-zonen er 285 × 306), ca. 176 cm³.
 
 - Sort ASA, som vægbeslaget. Logo i hvid og grøn ASA via AMS.
-- Brug `selfi-stativbeslag-v4_flerfarvet.3mf`: ét objekt med tre dele på slot 1 (sort), 2 (hvid) og 3 (grøn). Eller indlæs `selfi-stativbeslag-v4.stl`, `_logo-hvid.stl` og `_logo-groen.stl` samlet (samme nulpunkt) og giv logodelene filament 2 og 3. Der er plads til prime tower (115 mm fri på tværs).
+- Brug `selfi-stativbeslag-v4_flerfarvet.3mf`: ét objekt med tre dele på slot 1 (sort), 2 (hvid) og 3 (grøn), og med printindstillingerne lagt ind på objektet (27. okt.): 0,2 mm lag, 5 vægge, top og bund 5, 40 % gyroid, ingen support, scarf seam bagud, og bagsiden med logoet som *Monotonic line* med kun én væg i første lag, så logopanelet bliver ensartet uden krydsmønster. Printer, filament og første lag (0,2 mm, 30 mm/s) sættes som til boksen; se Indstillinger i halo-gen2-v26's printguide. Eller indlæs `selfi-stativbeslag-v4.stl`, `_logo-hvid.stl` og `_logo-groen.stl` samlet (samme nulpunkt) og giv logodelene filament 2 og 3. Der er plads til prime tower (115 mm fri på tværs).
 - Textured PEI, som fronten, så logoet bliver pænt.
-- 5 vægge og mindst 40 % gyroid i hylden og omkring låsetungen; de bærer hele boksen.
+- 5 vægge og 40 % gyroid (ligger i 3MF'en); hylden og låsetungerne bærer hele boksen. Tør ASA'en (4–8 timer ved 80 °C) før print.
 - **Support: fra.** v4 har ingen flader, der skal have support. Hylden er en lodret væg, hullerne er dråber, og slidsen til strømstikket ender i en lav bue.
 
 ## Købedele

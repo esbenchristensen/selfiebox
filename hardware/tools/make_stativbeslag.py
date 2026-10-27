@@ -25,7 +25,7 @@ import numpy as np
 import trimesh
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from make_3mf import write_bambu_3mf  # noqa: E402
+from make_3mf import SETTINGS, write_bambu_3mf  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SCAD = ROOT / "hardware/cad/gen2_concept.scad"
@@ -58,7 +58,7 @@ def main(ver):
         m = scad(view, tmp / f"{view}.stl")
         m.export(out / f"{ver}{suffix}.stl")
         parts.append((name, m, slot))
-    write_bambu_3mf(out / f"{ver}_flerfarvet.3mf", parts, ver)
+    write_bambu_3mf(out / f"{ver}_flerfarvet.3mf", parts, ver, SETTINGS["stativbeslag"])
 
     # the bracket on the newest box: every box node except the wall cleat, then the bracket's parts
     box = trimesh.load(latest_box())

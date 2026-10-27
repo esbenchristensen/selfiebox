@@ -1,8 +1,8 @@
 # Selfi Halo gen 2, version v26: printguide
 
-**Version:** halo-gen2-v26 (27. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v26_`. Den erstatter halo-gen2-v25, som ikke må printes. **Nye dele: skal, vægbeslag og blæserhegn, og skallen har en 3MF med support kun de rigtige steder.** Front, bagramme, lysring, kamerarør, logo og tema-eksemplerne er præcis som i v25 (filerne er kopieret med nyt navn). Boksen passer sammen præcis som v25. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
+**Version:** halo-gen2-v26 (27. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v26_`. Den erstatter halo-gen2-v25, som ikke må printes. **Nye dele: skal, vægbeslag og blæserhegn, og hver del har nu en 3MF med de rigtige printindstillinger lagt ind (skallen også med support kun de rigtige steder).** Front, bagramme, lysring, kamerarør, logo og tema-eksemplerne er præcis som i v25 (filerne er kopieret med nyt navn). Boksen passer sammen præcis som v25. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
-Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; tema-delene er tilbehør.
+Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filerne ligger også i printretning. Én del pr. plade (kamerarør og blæserhegn deler én), 1 stk. af hver. Kun hovedenheden; tema-delene er tilbehør.
 
 ## Hvad er nyt i v26: printgennemgang
 
@@ -12,6 +12,14 @@ Esben 27. okt. 2026: gennemgå hele boksen for alt, der kan gå galt i printet: 
 - **Vægbeslagets tunger hang 9 mm ud over pladen.** Pladen bag hver låsetunge stoppede 9 mm før tungens øverste ende. Med bagsiden ned blev det en flad underside på 9 × 18 mm (højre: 9 × 12) 4 mm over pladen, uden support. Det er netop roden af tungen, der bærer boksen. Nu går pladen 2 mm forbi tungen, så hele tungen vokser op af pladen. Pladen ligger i spalten bag boksen, så intet andet ændrer sig. Stativbeslaget havde samme fejl: **selfi-stativbeslag-v4** (samme pasform som v3; T-møtrikkens huller er nu også dråbeformede).
 - **Luftskærmene over bundhullerne hang i luften.** Skærmene stopper 1,5 mm før bagvæggen (luften går også ud den vej), så deres første lag blev lagt 1,5 mm over bagvæggen med fæste kun i bunden: to 8,6 mm lange udhæng og en 43 mm lang kant imellem. Nu er der 3 små stolper (1,6 × 1,6 mm) over spalten i hver skærm, ved hjørnerne og midt på, så kanten er korte broer (8,6 og 2 × 16 mm). Luften har stadig næsten hele spalten.
 - **Uønsket support i skallen.** Med automatisk support fylder sliceren steder, der kan printes uden: strømrøret (det var der, support fyldte hunstikkets hul i v23), de 2 låselommer (support, der sidder tilbage i en slids med 0,2 mm luft, stopper tungen) og de 4 vingelommer. Og med "kun fra pladen" får det ene sted inde i skallen, der virkelig skal have support, ingen: **dæmperbakkens forreste væg** på venstre side er en 18 mm hylde 35 mm oppe uden noget under (den kan ikke tegnes om, for dæmperen fylder hele bakken). Derfor er der nu **`halo-gen2-v26_skal_support.3mf`**: skallen med 2 support-enforcere (skinnens udsparing øverst bagpå og dæmperbakkens væg) og 7 support-blockere (strømrør, 2 låselommer, 4 vingelommer). Med support-typen **Tree (manuel)** kommer der support præcis de 2 steder og ingen andre. Se "Skal" under Indstillinger.
+
+**Printindstillinger** (Esben 27. okt., anden runde: forsiden på fronten viste banemønster på den glatte plade, og alt skal se støbt ud og holde). Ingen dele er ændret; kun hvordan de printes:
+- **En 3MF pr. del** med lag, vægge, fyld, support og brim lagt ind på objektet, så alle bokse bliver printet ens (`_lysring`, `_bagramme`, `_vaegbeslag`, `_smaadele` med kamerarør og blæserhegn, `_tema-*`, og front og skal som før).
+- **Frontens forside** (første lag) har nu *Monotonic line* og kun én væg i første lag, så banerne ligger ens og ikke laver krydsmønster langs kanterne. Bedst er stadig tekstureret PEI; se "Front: sådan bliver forsiden pæn".
+- **Lysringen** printes med koncentriske baner, så lyset bliver jævnt.
+- **Scarf seam** på alle dele, og sømmen sidder på boksens underside (skal og bagramme ligger derfor vendt 180° på pladen).
+- **Skallen har en 3 mm brim** i stedet for musøre, og det lille blæserhegn også.
+- Første lag 30 mm/s, *Avoid crossing walls* og tørt filament fra samme parti: se "Én gang: printer, filament og proces".
 
 **Tjekket, ikke ændret** (det printer, men hold øje med det): bagrammens 14 klikarme står på højkant og bøjer på tværs af lagene (ca. 1,8 % ved klik; de holdt ved samlingen af v23, men vip dem ikke længere ud end nødvendigt), læberne i strip-banerne er 0,5–0,7 mm og printes som én bane, skallens inderste kant ved rillen mod fronten er 0,6 mm, og bakkernes klikkanter har en flad fangeflade på 1,2–2,0 mm, der kan hænge 0,1–0,2 mm ned (skrab den, hvis en del ikke vil klikke ned). Alt andet er broer på højst 16 mm eller udhæng på højst 1,5 mm.
 
@@ -338,78 +346,80 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 | Fil | Del | Mål på pladen (mm) | Materiale | Ca. vægt | Plade | Support |
 |---|---|---|---|---|---|---|
 | `halo-gen2-v26_skal.stl` (+ `halo-gen2-v26_skal_support.3mf`) | Skal med stolper under luftskærmene (v26), 2 låseslidser, -lommer og bundknaster (ny lås til højre set forfra, v25), 8 kabelløkker, trækaflastning over strømstikket, strømrør uden support med plads til hunstikket på 14 × 13, lav mikrofonbakke med plads til aux, rille til frontens ribbe, knusribber på stolperne og 4 lukkede vingelommer | 224,5 × 307 × 64 | ASA sort | ca. 340 g | Glat PEI | **Kun de 2 steder i 3MF'en** (Tree, manuel) |
-| `halo-gen2-v26_front.stl` | Front med ribbe mod skallen, større kameravindue Ø12,1 og bredere kamerakasse (v24), lomme til lysringens snor og skærmrille | 224,5 × 307 × 27,7 | ASA sort | 106 g | **Tekstureret PEI** | Nej |
+| `halo-gen2-v26_front.stl` (+ `halo-gen2-v26_front_flerfarvet.3mf`) | Front med ribbe mod skallen, større kameravindue Ø12,1 og bredere kamerakasse (v24), lomme til lysringens snor og skærmrille | 224,5 × 307 × 27,7 | ASA sort | 106 g | **Tekstureret PEI** | Nej |
 | `halo-gen2-v26_logo-hvid.stl` | Logo, hvide dele (farvedel til fronten) | 27,5 × 9,9 × 0,8 | ASA hvid | under 1 g | Sammen med fronten | Nej |
 | `halo-gen2-v26_logo-groen.stl` | Logo, grønne prikker (farvedel til fronten) | 24,6 × 2,6 × 0,8 | ASA grøn | under 1 g | Sammen med fronten | Nej |
-| `halo-gen2-v26_lysring.stl` | Lysring med skulder, der står på frontpladen; uden kile (v24) og med enderne ved kameraet 0,6 mm længere ude | 209,1 × 291,6 × 4,7 | Jeres matte translucente materiale | 25 g | **Tekstureret PEI** | Nej |
-| `halo-gen2-v26_bagramme.stl` | Bagramme med kun 2 hvide baner og glat reflektor, 54 knusknopper mod lysringen, slidser til serviceløkken i det nederste tværstykke og WLED-holder til 108 mm (alt v24) | 217,1 × 300 × 29,2 | ASA hvid | 247 g | Glat PEI | Nej |
-| `halo-gen2-v26_kameraroer.stl` | Kamerarør med hul Ø8,6, slutter 1,0 mm før linseholderen (v24) | 12,5 × 12,5 × 4,2 | ASA sort | under 1 g | Glat PEI (sammen med en anden del) | Nej |
-| `halo-gen2-v26_vaegbeslag.stl` | Vægbeslag med 2 låsetunger (18 og 12 mm brede, 0,3 mm over bundknasterne), boksen 4,5 mm fra væggen (v25); pladen bærer nu hele tungerne (v26) | 189 × 285,7 × 19,5 | ASA sort | ca. 135 g | Glat PEI | Nej |
-| `halo-gen2-v26_blaeserhegn.stl` | Blæserhegn: rist 3 mm over Pi'ens Active Cooler, klikkes på bagrammens øverste tværstykke uden skruer; printes på siden, slidserne på tværs (v26) | 120,5 × 14,6 × 41 | ASA sort | 18 g | Glat PEI (sammen med en anden del), **på siden** | Nej |
-| `halo-gen2-v26_tema-top-eksempel.stl` | Eksempel på en tema-top med 2 kroge og stropper 3,9 × 10 mm (v25; kun til at prøve krogene, et rigtigt tema laves pr. kunde) | 224,5 × 154 × 77,1 | ASA, valgfri farve | ca. 75 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stropperne |
-| `halo-gen2-v26_tema-vinge-venstre-eksempel.stl` / `..._hoejre-eksempel.stl` | Eksempel på tema-vinger med 2 kroge hver og en strop 3,9 mm tyk (v25) | 61,9 × 170 × 77,1 | ASA, valgfri farve | ca. 45 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stroppen |
+| `halo-gen2-v26_lysring.stl` (+ `.3mf`) | Lysring med skulder, der står på frontpladen; uden kile (v24) og med enderne ved kameraet 0,6 mm længere ude | 209,1 × 291,6 × 4,7 | Jeres matte translucente materiale | 25 g | **Tekstureret PEI** | Nej |
+| `halo-gen2-v26_bagramme.stl` (+ `.3mf`) | Bagramme med kun 2 hvide baner og glat reflektor, 54 knusknopper mod lysringen, slidser til serviceløkken i det nederste tværstykke og WLED-holder til 108 mm (alt v24) | 217,1 × 300 × 29,2 | ASA hvid | 247 g | Glat PEI | Nej |
+| `halo-gen2-v26_kameraroer.stl` (+ `halo-gen2-v26_smaadele.3mf`) | Kamerarør med hul Ø8,6, slutter 1,0 mm før linseholderen (v24) | 12,5 × 12,5 × 4,2 | ASA sort | under 1 g | Glat PEI (sammen med blæserhegnet) | Nej |
+| `halo-gen2-v26_vaegbeslag.stl` (+ `.3mf`) | Vægbeslag med 2 låsetunger (18 og 12 mm brede, 0,3 mm over bundknasterne), boksen 4,5 mm fra væggen (v25); pladen bærer nu hele tungerne (v26) | 189 × 285,7 × 19,5 | ASA sort | ca. 135 g | Glat PEI | Nej |
+| `halo-gen2-v26_blaeserhegn.stl` (+ `halo-gen2-v26_smaadele.3mf`) | Blæserhegn: rist 3 mm over Pi'ens Active Cooler, klikkes på bagrammens øverste tværstykke uden skruer; printes på siden, slidserne på tværs (v26) | 120,5 × 14,6 × 41 | ASA sort | 18 g | Glat PEI (sammen med kamerarøret), **på siden** | Nej |
+| `halo-gen2-v26_tema-top-eksempel.stl` (+ `.3mf`) | Eksempel på en tema-top med 2 kroge og stropper 3,9 × 10 mm (v25; kun til at prøve krogene, et rigtigt tema laves pr. kunde) | 224,5 × 154 × 77,1 | ASA, valgfri farve | ca. 75 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stropperne |
+| `halo-gen2-v26_tema-vinge-venstre-eksempel.stl` / `..._hoejre-eksempel.stl` (+ `.3mf`) | Eksempel på tema-vinger med 2 kroge hver og en strop 3,9 mm tyk (v25) | 61,9 × 170 × 77,1 | ASA, valgfri farve | ca. 45 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stroppen |
 
 Vægtene er skøn ud fra rumfanget. Bambu Studio viser den rigtige vægt og tid, når delene er skåret.
 
-**Pladen:** front og skal er 307 mm lange og ligger med 6,5 mm fri til pladens kant foran og bagved (H2C-pladen er 320 mm). Det er 0,5 mm under vores egen margin på 7 mm, så læg dem midt på pladen, og brug ikke brim eller skirt på den lange led; musørerne i skallens hjørner er inden for.
+**Pladen:** front og skal er 307 mm lange og ligger med 6,5 mm fri til pladens kant foran og bagved (H2C-pladen er 320 mm). Det er 0,5 mm under vores egen margin på 7 mm, så læg dem midt på pladen, og brug ikke skirt. Skallens brim på 3 mm (v26) er inden for; 3MF'erne lægger delene midt på pladen.
 
 Fire farver ASA: **sort** (skal, front, beslag, kamerarør, blæserhegn), **hvid** (bagrammen og logoet), **grøn** (prikkerne i logoet), og lysringen i jeres matte translucente materiale, som I har valgt til den. Logoet skal være ASA ligesom fronten, ellers hæfter lagene ikke.
 
 ## Indstillinger (Bambu Studio)
 
-Start fra Bambus egen profil **Bambu ASA** og ret dette:
+**v26: hver del har sin egen 3MF med indstillingerne lagt ind** (Esben 27. okt.: et pænt resultat uden fejl, der ser støbt ud og holder). Åbn 3MF'en, ikke STL'en. Så får hver del de samme lag, vægge, fyld, søm, support og brim hver gang, uanset hvad der sidst stod i Bambu Studio. Indstillingerne ligger på objektet; i objektlisten har det et tandhjul, og der kan du se og rette dem.
 
-**Fælles for alle dele**
-- Dyse 260 °C, plade 100 °C.
-- Luk lågen, og lad kammeret varme op til ca. 60 °C, før printet starter.
-- Køling 10–20 % (5 % de første 3 lag).
+| Fil | Plade | Lag | Vægge | Fyld | Andet |
+|---|---|---|---|---|---|
+| `halo-gen2-v26_front_flerfarvet.3mf` | Tekstureret PEI (glat kan bruges, se herunder) | 0,2 | 4, top/bund 5 | 20 % gyroid | Forsiden: *Monotonic line* og én væg i første lag; elefantfod 0,15; ingen brim, ingen support |
+| `halo-gen2-v26_lysring.3mf` | Tekstureret PEI | 0,16 | 3 | 100 % | Alle baner *koncentrisk* (rundt langs ringen), så lyset bliver jævnt uden striber; elefantfod 0,15 |
+| `halo-gen2-v26_bagramme.3mf` | Glat PEI | 0,2 | 4 | 20 % gyroid | Ingen support |
+| `halo-gen2-v26_skal_support.3mf` | Glat PEI | 0,16 | 5, top/bund 6 | 20 % gyroid | Support: Tree (manuel), kun ved de 2 enforcere, også fra modellen; brim 3 mm |
+| `halo-gen2-v26_vaegbeslag.3mf` | Glat PEI | 0,2 | 6 | 100 % | Ingen support |
+| `halo-gen2-v26_smaadele.3mf` | Glat PEI | 0,16 | 4 | 100 % | Kamerarør og blæserhegn på én plade; brim 3 mm om hegnet |
+| `halo-gen2-v26_tema-*.3mf` | Glat PEI | 0,2 | 4, top/bund 5 | 15 % gyroid | Forsiden som fronten; Tree-support (auto) under stropperne |
+
+Alle dele har **scarf seam** (sømmen glider ind over et stykke i stedet for at starte og stoppe ét sted) med sømmen placeret **bagud på pladen**, og alle filer ligger, så bagud på pladen er boksens **underside** (skal og bagramme er vendt 180° i forhold til STL'en). Det, der er tilbage af sømmen, sidder derfor under boksen, hvor ingen ser den. Drej ikke delene på pladen.
+
+**Én gang: printer, filament og proces** (det kan ikke ligge i en 3MF; gem det som egne profiler, fx "Selfi ASA")
+- Printer: Bambu Lab H2C med 0,4-dyse. Proces: Bambus 0,20 mm Standard for H2C. Filament: Bambu ASA (eller jeres ASA med Bambus ASA-profil).
+- **Første lag:** højde 0,2 mm (logoet er præcis de 4 første lag), hastighed 30 mm/s for både væg og fyld, bredde 0,5 mm. Det første lag er frontens forside, så det skal lægges langsomt og ens.
+- **Undgå at krydse vægge** (*Avoid crossing walls*): til. Dysen kører uden om i stedet for hen over flader, der kan ses, så der kommer færre tråde og mærker.
+- Dyse 260 °C, plade 100 °C, kammer 60 °C (luk lågen, og lad kammeret varme op, før printet starter). Køling 10–20 % (5 % de første 3 lag).
+- Slå *Flow dynamics calibration* til i print-vinduet, hver gang der er sat en ny rulle i.
 - Ingen "hole compensation" eller skalering. Hullerne er tegnet til målet (±0,2 mm).
-- Søm (seam): *Aligned*, placeret bagud.
-- **Elefantfod-kompensation:** lad Bambus standard stå (0,15 mm). Lysringens skyggefuge er kun 0,15 mm, og både ringen og fronten printes med forsiden ned, så uden kompensation kan de første lag klemme ringen fast i slidsen.
-- **Tråde (stringing):** brug Bambus ASA-tilbagetrækning, og tør filamentet (ASA trækker vand og giver flere tråde). Tråde i bagrammens lyskanal og strip-baner kaster skygger i lysringen: skær dem væk før samling.
+- Lad ydervæggenes hastighed stå, som Bambu har den. Siderne er pæne, som de er.
 
-**Front** (forsiden ned på tekstureret PEI)
-- 0,2 mm lag, 4 vægge, 5 top- og bundlag, 20 % gyroid.
-- Der er ingen support. Lyskanalen er åben bagtil, og alle skrå flader er 45° eller stejlere.
-- Rengør pladen med sæbe og vand før print. Fingeraftryk ses i forsidens tekstur.
+**Filamentet**
+- **Tør ASA før hvert stort print**: 4–8 timer ved 80 °C. Fugtigt ASA giver tråde, små bobler og en grå, ru flade. Det er den største enkelte årsag til et grimt print.
+- Front, skal og beslag i **samme sorte ASA fra samme parti**, så farven og glansen er ens. Logoet skal være ASA ligesom fronten, ellers hæfter lagene ikke.
 
-**Front med logo** (AMS: sort, hvid og grøn)
-Nemmest: åbn `halo-gen2-v26_front_flerfarvet.3mf`. Den har front og logo som ét objekt med tre dele på AMS-plads 1 (sort), 2 (hvid) og 3 (grøn). Tjek, at de tre pladser i AMS'en har de rigtige filamenter. Ellers:
-
-1. Træk alle tre filer ind i Bambu Studio på én gang: `halo-gen2-v26_front.stl`, `halo-gen2-v26_logo-hvid.stl` og `halo-gen2-v26_logo-groen.stl`.
-2. Svar **Ja**, når Bambu Studio spørger, om de skal indlæses som ét objekt med flere dele. Så ligger logoet præcis i sin fordybning i fronten. Flyt ikke delene hver for sig.
-3. Giv fronten sort, logo-hvid hvid og logo-grøn grøn i objektlisten.
-4. Lag på 0,2 mm, så logoet er præcis de første 4 lag. Farveskiftet sker kun i de 4 lag, derefter printes der kun sort.
-5. Sæt "Prime tower" til og "Flush into object's infill" til, så spildet bliver mindre. Skøn: ca. 12 farveskift, 10–15 g spild og 20–30 min ekstra.
-6. Mindste detalje i logoet er ca. 0,9–1,1 mm (to dysebaner med 0,4-dysen). Brug ikke en 0,6-dyse til fronten.
+**Front: sådan bliver forsiden pæn**
+Forsiden er det første lag. På en **glat plade** bliver hver bane et lille spejl, og man ser mønsteret, især langs kanterne, hvor de 4 vægge mødes med fyldet. Det retter 3MF'en: alle baner i forsiden ligger samme vej i samme rækkefølge (*Monotonic line*), og der er kun én væg i første lag i stedet for 4. Det, der er tilbage, kommer af pladen og første lag:
+- **Tekstureret PEI giver det pæneste, mest "støbte" resultat.** Teksturen skjuler banerne helt og giver den samme matte flade overalt. Brug den, hvis I har den.
+- På den **glatte plade**: vask pladen med opvaskemiddel og varmt vand, og rør ikke ved den bagefter (fingeraftryk ses i forsiden). Brug ikke lim under fronten; limen giver en mat, skjoldet forside. Lav en Z-offset-justering på den glatte plade (første lag må hverken have revner mellem banerne eller striber af for meget plast).
+- Lad pladen køle under 40 °C, før fronten tages af, og bøj pladen, ikke fronten.
+- Logo (AMS: sort, hvid og grøn): `halo-gen2-v26_front_flerfarvet.3mf` har front og logo som ét objekt med tre dele på AMS-plads 1 (sort), 2 (hvid) og 3 (grøn). Tjek, at de tre pladser har de rigtige filamenter. Sæt "Prime tower" til og "Flush into object's infill" til, så spildet bliver mindre (ca. 12 farveskift, 10–15 g spild, 20–30 min ekstra). Mindste detalje i logoet er ca. 0,9–1,1 mm, så brug ikke en 0,6-dyse til fronten.
+- Uden 3MF'en: træk `halo-gen2-v26_front.stl`, `_logo-hvid.stl` og `_logo-groen.stl` ind på én gang, svar **Ja** til ét objekt med flere dele, giv delene sort, hvid og grøn, og sæt indstillingerne fra tabellen.
+- Elefantfod-kompensation 0,15 mm: lysringens skyggefuge er kun 0,15 mm, og både ringen og fronten printes med forsiden ned, så uden kompensation kan de første lag klemme ringen fast i slidsen.
 
 **Lysring** (forsiden ned på tekstureret PEI)
-- 0,16 mm lag, 3 vægge (væggene er 1,2 mm), 100 % fyld.
-- Lysfladen er 1 mm tyk og printes som massive lag. v20: væggen går lige op til 2,6 mm, så 3 korte trin i 45°, og kraven hænger derefter 1,65 mm ud uden support. Det går fint med ASA og PETG; en lille hængning under kraven gør ikke noget, den ligger på skumsnoren.
-- Print lysringen i jeres matte translucente materiale med samme indstillinger som før.
-- Lad pladen køle helt af, før ringen tages af, så den ikke bliver skæv.
+- Lysfladen er 1 mm tyk og printes massiv. Med koncentriske baner går hver bane rundt langs ringen, så lyset gennem den bliver jævnt; på tværs ville banerne give striber i lyset.
+- Kraven hænger 1,65 mm ud uden support (v20). En lille hængning under kraven gør ikke noget, den ligger på skumsnoren.
+- Print lysringen i jeres matte translucente materiale. Lad pladen køle helt af, før ringen tages af, så den ikke bliver skæv.
 
 **Bagramme** (den flade bagside ned på glat PEI)
-- 0,2 mm lag, 4 vægge, 20 % gyroid.
-- Reflektoren er en skrå trappe i 0,5 mm trin. Den skal ikke slibes; trinene spreder lyset.
-- v24: reflektoren er glat (ingen lomme til hvid 3), og de 54 knusknopper står 0,25 mm op på de flader, lysringens krave ligger på. Slib dem ikke af; de skal trykkes flade ved samlingen.
-- v18: læberne i strip-banerne peger fremad og står på laget under. Stammerne og trinnet foran hvid 1 er korte, flade hylder på ca. 1,1 mm. Der skal ikke support på; en lille hængning under hylderne gør ikke noget. Se efter, at læberne er hele hele vejen rundt, og fjern trådrester i banerne med en kniv.
-
-**Kamerarør:** læg det på pladen sammen med skallen eller bagrammen (den flade ende ned, skråningen opad). 0,16 mm lag, 100 % fyld.
+- Reflektoren er glat (v24), og de 54 knusknopper står 0,25 mm op på de flader, lysringens krave ligger på. Slib dem ikke af; de skal trykkes flade ved samlingen.
+- Læberne i strip-banerne (v18) peger fremad og står på laget under. Se efter, at de er hele hele vejen rundt, og fjern trådrester i banerne og lyskanalen med en kniv. Tråde dér kaster skygger i lysringen.
 
 **Skal** (bagsiden ned på glat PEI)
-- 0,16 mm lag på ydersiden giver de fineste flader.
-- 5 vægge, 6 top- og bundlag, 20 % gyroid.
-- **Support (v26): åbn `halo-gen2-v26_skal_support.3mf`** i stedet for STL'en. Den har skallen som ét objekt med 2 grønne support-enforcere og 7 røde support-blockere allerede på plads. Sæt support til, type **Tree (manuel)**, og slå **"Kun på byggepladen" (On build plate only) fra**. Så kommer der support præcis 2 steder:
+- **Support (v26):** 3MF'en har skallen som ét objekt med 2 grønne support-enforcere og 7 røde support-blockere, og support står allerede på **Tree (manuel)** med **"Kun på byggepladen" fra**. Så kommer der support præcis 2 steder:
   - i **skinnens udsparing** øverst bagpå (taget er 120 × 33 mm, 9 mm oppe; for bredt til en bro), fra pladen, og
   - under **dæmperbakkens forreste væg** inde i venstre side (en 18 mm hylde 35 mm oppe), fra bagvæggen indvendigt. Den tages ud gennem bakkens åbning.
   Alt andet i skallen er tegnet til at printes uden: strømrøret (dråbeformede huller og 45°-tag, v24), låselommerne (broer på 16 og 10 mm), vingelommerne (broer på 7 mm), kabelløkkerne (broer på 8 mm) og luftskærmene (v26: stolper). Blockerne holder dem rene, også hvis typen ved en fejl står på *Tree (auto)*.
-  Uden 3MF'en: mal support på de 2 steder med *Support painting*, og sæt blockere i strømrøret og de 6 lommer.
-- Brug **musøre** (mouse ears) i de 4 hjørner.
+- **Brim 3 mm** hele vejen rundt (v26; før musøre), så hjørnerne ikke løfter sig. Den sidder på bagsiden, som vender mod væggen. Skær den af med en afgratningskniv langs kanten.
 
-**Vægbeslag:** printes som i v1 (6 vægge og 100 % fyld). Ingen support (v26: hele tungen står på pladen).
+**Vægbeslag:** 6 vægge og 100 % fyld; det bærer hele boksen. Ingen support (v26: hele tungen står på pladen).
 
-**Blæserhegn** (v26): **på siden**, som filen ligger: den lange, smalle side ned, 41 mm højt, armene ligger fladt i lagene. 0,2 mm lag, 4 vægge, 100 % fyld. Ingen support. Brug en brim på 3 mm, hvis pladen er kold eller hjørnerne løfter sig (delen er smal og høj). Læg det sammen med skallen eller bagrammen. Fjern trådrester i slidserne med en kniv.
+**Småt: kamerarør og blæserhegn** (`halo-gen2-v26_smaadele.3mf`): begge i sort, på én plade. Kamerarøret står med den flade ende ned. Blæserhegnet står **på siden** (41 mm højt, armene ligger fladt i lagene) med en brim på 3 mm, fordi det er smalt og højt. Fjern trådrester i hegnets slidser med en kniv.
 
 ## Efter print
 
@@ -468,6 +478,10 @@ Købedele, der skal skrues: 4 frontskruer, 8 M2,5-skruer (følger med skærmen) 
 - Kamera: sidder linsen midt i hullet, og er der ingen sort kant i billedets hjørner? Går kamerakablet gennem slidsen uden skarpe knæk?
 - Lysring: er skyggefugen jævn, og rasler ringen ikke, når boksen er samlet, også uden snor (v22)?
 - Printet (v26): er der support andre steder i skallen end i skinnens udsparing og under dæmperbakkens væg? Er låseslidserne, vingelommerne og strømrøret rene? Står luftskærmenes kant lige uden at hænge ned mod bagvæggen? Er vægbeslagets tunger glatte på undersiden?
+- Forside (v26-indstillinger): ligger banerne i forsiden alle samme vej, uden krydsmønster langs kanterne og rundt om vinduet? Er der ingen revner mellem banerne og ingen striber af for meget plast? Er der fingeraftryk eller limpletter, så vask pladen før næste print.
+- Søm (v26): kan sømmen ses nogen steder på siderne eller forsiden, når boksen hænger? Den skal sidde på undersiden.
+- Lysring (v26): er lyset jævnt hele vejen rundt, uden striber på tværs?
+- Brim (v26): slipper skallens brim rent, og løftede ingen hjørner?
 - Blæserhegn (v26): står det lige op på pladen uden at slidserne er lukket af tråde? Klikker det fast og af igen uden at armene revner?
 - Blæser (v24): klikker hegnet fast på tværstykket uden slør, og kan det tages af igen uden at armene knækker? Kører blæseren frit, når skallen er lukket, og viser admin mindst 6000 rpm? Rører nogen ledning hegnet?
 - Kamera (v24): ligger kortet fladt på tappene, og fokuserer kameraet hele vejen (tag billeder tæt på og langt væk)?
