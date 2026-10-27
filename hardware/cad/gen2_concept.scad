@@ -225,7 +225,7 @@ module wall_cleat2() {
     }
 }
 // v24: 45 deg chamfer on the tongue's lower front edge, so it rides over the boss's edge when the box swings in
-module lock_nose_cut() translate([LOCK_X - LOCK_W/2 - 1, LOCK_Y, LOCK_TZ[0]]) rotate([90, 0, 90]) linear_extrude(LOCK_W + 2)
+module lock_nose_cut(z0 = LOCK_TZ[0]) translate([LOCK_X - LOCK_W/2 - 1, LOCK_Y, z0]) rotate([90, 0, 90]) linear_extrude(LOCK_W + 2)
     polygon([[-0.01, -0.01], [LOCK_C[2], -0.01], [-0.01, LOCK_C[2]]]);
 
 // ------------------------------------------------------------ stand bracket ----
@@ -238,11 +238,16 @@ module lock_nose_cut() translate([LOCK_X - LOCK_W/2 - 1, LOCK_Y, LOCK_TZ[0]]) ro
 // the unit turning on the shelf. A steel 1/4"-20 T-nut (Einschlagmutter, flange up) sits flush in the underside:
 // the quick-release plate clamps the whole shelf against its flange, and the unit's underside closes it in.
 // Printed back face down like the wall cleat, the logo inlaid in the first layers (white + green, AMS).
+// selfi-stativbeslag-v2 (Esben 27 Oct, for v24 boxes): v1 had the old lock tongue (10 mm above the floor boss, the box lowered
+// 9 mm onto it) and 2 pins in the dowel holes. A v24 box goes on like on the wall: top hooked on the bar with the bottom held
+// out, then the bottom swings in level. The pins would stop that, so they are gone; the tongue in its slot (0.2 per side)
+// and the bar already stop the box turning or sliding. On the stand the box stands on the shelf, so the tongue goes down to
+// 0.1 above the boss (wall cleat: 0.3): the security screw clamps the boss to the tongue and the box stays on the shelf.
+ST_TZ0 = LOCK_BOSS[1] + 0.1;
 ST_SHELF = [24, 20.5, 14];          // half width, front edge (y), thickness under the unit
 ST_NUT = [0, 31];                   // tripod screw axis (x, y)
 TNUT = [8.0, 8.0, 20.0];            // [C] 1/4"-20 T-nut: barrel Ø, barrel length, flange Ø (+0.5 clearance); measure the bought part
 ST_SLOT = [8, 50];                  // power plug slot: half width, front edge (y); open to the plate
-ST_PIN = [5.8, 5];                  // pins in the Ø6.2 x 8 dowel holes: Ø, height
 ST_PANEL = [180, 58, 8, 17];        // logo panel: width, height, corner r, gap to the unit's top. v20+ unit is 307 high: bracket 304 (H2C bed 306); 180 wide keeps 4.9 mm to the theme top's straps (|x| >= 94.9)
 ST_SPINE = 60;
 ST_LOGO = 130;                      // logo width on the panel
@@ -254,11 +259,11 @@ module stand_bracket() {
     difference() {
         union() {
             // the wall cleat, holes filled by the panel and spine below
-            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); hull() { translate([0, 40]) rrc(60, 20, 6); translate([LOCK_X, LOCK_TZ[0] + 4]) rrc(LOCK_W + 8, 24, 6); } }
+            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); hull() { translate([0, 40]) rrc(60, 20, 6); translate([LOCK_X, ST_TZ0 + 4]) rrc(LOCK_W + 8, 24, 6); } }
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
             for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
-            translate([LOCK_X - LOCK_W/2, LOCK_Y, LOCK_TZ[0]]) cube([LOCK_W, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
-            translate([LOCK_X - LOCK_W/2, yb + 0.01, LOCK_TZ[0]]) rotate([0, 90, 0]) linear_extrude(LOCK_W) polygon([[0, 0], [-(LOCK_TZ[1] - LOCK_TZ[0]), 0], [0, -6]]);
+            translate([LOCK_X - LOCK_W/2, LOCK_Y, ST_TZ0]) cube([LOCK_W, yb - LOCK_Y + 0.01, LOCK_TZ[1] - ST_TZ0]);
+            translate([LOCK_X - LOCK_W/2, yb + 0.01, ST_TZ0]) rotate([0, 90, 0]) linear_extrude(LOCK_W) polygon([[0, 0], [-(LOCK_TZ[1] - ST_TZ0), 0], [0, -6]]);
             // logo panel and spine
             ext_y(yb, yf) { translate([0, ST_LOGO_Z]) rrc(ST_PANEL[0], ST_PANEL[1], ST_PANEL[2]); translate([0, (zs + CLEAT_ZC)/2]) rrc(ST_SPINE, CLEAT_ZC - zs, 6); }
             // shelf under the unit, rounded front corners
@@ -269,12 +274,10 @@ module stand_bracket() {
             // gussets in the 14 mm gap behind the unit, beside the plug slot
             for (sx = [-1, 1]) translate([sx*(ST_SLOT[0] + 9) - 4, D + 0.5, -0.01]) rotate([90, 0, 90]) linear_extrude(8)
                 polygon([[0, 0], [yb - D - 0.5 + 0.01, 0], [yb - D - 0.5 + 0.01, 40]]);
-            for (p = IF_DOWEL) cyl_z(ST_PIN[0], -0.01, ST_PIN[1], p[0], p[1]);
-            for (p = IF_DOWEL) translate([p[0], p[1], ST_PIN[1] - 0.01]) cylinder(d1 = ST_PIN[0], d2 = ST_PIN[0] - 1.6, h = 0.8, $fn = 32);
         }
-        cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
+        cyl_z(3.4, ST_TZ0 - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
         cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit)
-        lock_nose_cut();
+        lock_nose_cut(ST_TZ0);
         cyl_z(TNUT[0] + 0.3, zs - 1, 1, ST_NUT[0], ST_NUT[1]);                  // T-nut barrel, flush with the underside
         cyl_z(TNUT[2], zs + TNUT[1], 1, ST_NUT[0], ST_NUT[1]);                   // flange seat; the unit closes it
         translate([-ST_SLOT[0], ST_SLOT[1], zs - 1]) cube([2*ST_SLOT[0], yb - ST_SLOT[1] + 0.01, ST_SHELF[2] + 2]);   // power plug
