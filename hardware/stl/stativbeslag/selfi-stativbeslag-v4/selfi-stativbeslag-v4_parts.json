@@ -44,39 +44,6 @@
   ]
  },
  {
-  "node": "pakninger",
-  "label": "Pakninger: O-ringsnor Ø1,5 i silikoneskum (skærm, lysring, kamera, højttaler; front/skal har ribbe og rille)",
-  "color": "#dc2626",
-  "group": "Kabinet",
-  "explode": [
-   0,
-   0,
-   95
-  ]
- },
- {
-  "node": "kameraglas",
-  "label": "Kameraglas Ø12 × 1,5",
-  "color": "#bfe3f2",
-  "group": "Kabinet",
-  "explode": [
-   0,
-   0,
-   140
-  ]
- },
- {
-  "node": "kameraroer",
-  "label": "Kamerarør (sort ASA): går fri af linsen, trykker pakningen mod glasset",
-  "color": "#1d1d20",
-  "group": "Kabinet",
-  "explode": [
-   0,
-   0,
-   110
-  ]
- },
- {
   "node": "ledskinne",
   "label": "Bagramme med reflektor, kantspor og knusknopper mod lysringen (hvid ASA)",
   "color": "#e9e4da",

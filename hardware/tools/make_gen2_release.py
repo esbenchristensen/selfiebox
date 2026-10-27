@@ -28,7 +28,7 @@ D = 70
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
 SIDE = np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]], float)   # v26: on its side, the -x face on the bed
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
-         "vaegbeslag": ("x_cleat", DOWN), "kameraroer": ("x_camsleeve", DOWN),
+         "vaegbeslag": ("x_cleat", DOWN),   # v27: no camera sleeve (v20-v26: "kameraroer", x_camsleeve)
          "blaeserhegn": ("x_fanguard", SIDE),   # v26: on its side (v24/v25: UP, which put the arm tips on the bed and the grille on top)
          # v21: example theme parts to test the hooks, face down like every theme part
          "tema-top-eksempel": ("x_tema_top", UP), "tema-vinge-venstre-eksempel": ("x_tema_vinge_v", UP),

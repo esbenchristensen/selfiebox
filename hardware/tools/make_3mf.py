@@ -12,8 +12,8 @@ which are per-extruder lists on the H2C) are not in the files; the print guide l
   <version>_front_flerfarvet.3mf  the black front with the logo inlays (white and green) in its 0.8 mm recess, as ONE
                                   object with three parts on slots 1 sort / 2 hvid / 3 groen
   <version>_skal_support.3mf      the shell with its support enforcers and blockers (v26, see skal_3mf below)
-  <version>_lysring.3mf, _bagramme.3mf, _vaegbeslag.3mf, _smaadele.3mf (camera sleeve + fan guard on one plate),
-  _tema-*.3mf                     one object each, settings inside
+  <version>_lysring.3mf, _bagramme.3mf, _vaegbeslag.3mf, _blaeserhegn.3mf (v27; v26 had _smaadele.3mf with the camera
+  sleeve and the fan guard on one plate), _tema-*.3mf   one object each, settings inside
 
 Seams: Bambu's "back" seam goes to the part's rear (+y on the plate). Every part is placed so that +y is the box's
 underside (the front and the ring already lie that way; the shell and the frame are turned 180 degrees on the plate),
@@ -231,8 +231,9 @@ SINGLE = [("lysring", "lysring", False), ("bagramme", "bagramme", True), ("vaegb
 
 
 def part_3mfs(folder, prefix=None):
-    """<prefix>_<part>.3mf for each part in SINGLE that the release has, and <prefix>_smaadele.3mf: the camera sleeve and
-    the fan guard (both small and black) on one plate, 40 mm apart."""
+    """<prefix>_<part>.3mf for each part in SINGLE that the release has, and the fan guard: on its own (v27, which has no
+    camera sleeve) or, in a release with the sleeve (v24-v26), <prefix>_smaadele.3mf with both small black parts on one
+    plate, 40 mm apart."""
     folder = Path(folder)
     prefix = prefix or folder.name
     outs = []
@@ -242,7 +243,10 @@ def part_3mfs(folder, prefix=None):
             outs.append(folder / f"{prefix}_{suffix}.3mf")
             write_bambu_3mf(outs[-1], [(suffix, trimesh.load(stl), 1)], f"{prefix}_{suffix}", SETTINGS[key], turn)
     small = [(s, folder / f"{prefix}_{s}.stl") for s in ("blaeserhegn", "kameraroer")]
-    if all(p.exists() for _, p in small):
+    if small[0][1].exists() and not small[1][1].exists():
+        outs.append(folder / f"{prefix}_blaeserhegn.3mf")
+        write_bambu_3mf(outs[-1], [("blaeserhegn", trimesh.load(small[0][1]), 1)], f"{prefix}_blaeserhegn", SETTINGS["blaeserhegn"])
+    elif all(p.exists() for _, p in small):
         outs.append(folder / f"{prefix}_smaadele.3mf")
         write_bambu_objects(outs[-1], [(f"{prefix}_{s}", [(s, trimesh.load(p), 1)], SETTINGS[s], (0.0, 20.0 - 40.0*i), False)
                                        for i, (s, p) in enumerate(small)])

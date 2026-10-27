@@ -1,8 +1,8 @@
 # Selfi stativbeslag v4: printguide
 
-**Version:** selfi-stativbeslag-v4 (27. okt. 2026, til halo-gen2-v25 og v26; v1 og v2 passer ikke til en v25-boks). Alle filer i mappen starter med `selfi-stativbeslag-v4`. CAD-kilden er modulet `stand_bracket` i `hardware/cad/gen2_concept.scad`; sættet bygges med `python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v4` og tegningen med `hardware/render/drawing/draw_stativbeslag.py`. v3 må ikke printes (samme pasform, men se herunder).
+**Version:** selfi-stativbeslag-v4 (27. okt. 2026, til halo-gen2-v25, v26 og v27; v1 og v2 passer ikke til en v25-boks). Alle filer i mappen starter med `selfi-stativbeslag-v4`. CAD-kilden er modulet `stand_bracket` i `hardware/cad/gen2_concept.scad`; sættet bygges med `python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v4` og tegningen med `hardware/render/drawing/draw_stativbeslag.py`. v3 må ikke printes (samme pasform, men se herunder).
 
-Beslaget bruges kun til B2C-udlejning: gen 2-boksen på gulvstativet Sirui Traveler 5AX (kuglehoved B-00K). Beslaget er tegnet og tjekket mod **halo-gen2-v26** (boksens ydre er det samme som v25): ingen overlap med skal eller front, og bunden kan svinges ind over begge låsetunger. B2B-bokse hænger stadig på væggen med vægbeslaget.
+Beslaget bruges kun til B2C-udlejning: gen 2-boksen på gulvstativet Sirui Traveler 5AX (kuglehoved B-00K). Beslaget er tegnet og tjekket mod **halo-gen2-v26** (boksens ydre er det samme som v25): ingen overlap med skal eller front, og bunden kan svinges ind over begge låsetunger. **v27** (ingen glas og pakninger, 27. okt.) har samme bagside, låse og bund: beslaget er skåret mod v27's skal og front igen uden overlap, og filerne er uændrede. Kun 3D-modellen viser nu en v27-boks. B2B-bokse hænger stadig på væggen med vægbeslaget.
 
 ## Nyt i v4 (printgennemgang 27. okt.)
 
