@@ -93,7 +93,7 @@ WING_P = [for (sx = [-1, 1], z = [WING_POCKET ? 175 : RING_Z0 + 50, RING_Z1 - 50
 module shell2(top = UNIT_TOP) {
     difference() {
         shell(top);   // v21: v1's 4 screw posts at JOINTS (no screw there since v2) and the plug over rev G's cable hole are gone
-        lock_cut();
+        both_locks() lock_cut();
         services_cut();
         mic_floor_cut();
         joint_groove();
@@ -198,34 +198,54 @@ LOCK_C = [0.2, 1.0, 2.0];                           // v24: slot clearance per s
 LOCK_SY = (LOCK_Y + D - BACK_T)/2;                  // screw axis, y
 REED_P = [LOCK_X - REED[0]/2, LOCK_TZ[1] + 4];      // reed module tray, bottom-left on the back wall
 LOCK_HEAD = [8.6, 0.3];                             // [A] Bolte 88115 = DIN 7982 ST4.2 countersunk (head Ø8.1, ISO 14586 max 8.4), 90°; head 0.3 below the bottom
+// v25 (Esben 27 Oct): a second lock in the other bottom corner: tongue, slot, pocket, drain, floor boss and security screw.
+// The corner there is tight: the 5 V supply's tray wall stands at x 74.2 and the box's 42.8 corner radius rises from x 68.5,
+// so the right tongue is 12 wide (left: 18) at x +84, and both tongues are clipped 0.5 inside the shell's inner corner.
+// The reed magnet stays in the left tongue only. Lock geometry below uses $lx / $lw, set per lock by both_locks().
+// v25 (Esben 27 Oct): the box sits close to the wall, so no fingers get in behind it to pull, and it looks stuck to the wall.
+// Until v24 the back stood 14 off the wall (cleat plate 4 + 10 air); now 4.5: the box's back 0.5 off the cleat plate, which
+// stays 4 thick. The theme straps behind the box go from 9-10 to 3.9 thick (0.2 off the back and 0.4 off the wall).
+GAP_WALL = 4.5;                                 // = PLATE_T + 0.5; a number, since halo.scad sets PLATE_T after GAP_WALL
+LOCKS = [[LOCK_X, LOCK_W], [84, 12]];   // [x, tongue width]
+$lx = LOCK_X;  $lw = LOCK_W;
+module both_locks() for (l = LOCKS) { $lx = l[0]; $lw = l[1]; children(); }
+module tongue_clip(y0, y1) ext_y(y0, y1) translate([0, WALL + 0.5]) rr(W - 2*(WALL + 0.5), H, R - WALL - 0.5);
 module lock_cut() {
     c = LOCK_C[0];  e = LOCK_C[1];
-    translate([LOCK_X - LOCK_W/2 - c, D - BACK_T - 1, LOCK_TZ[0] - 0.4]) cube([LOCK_W + 2*c, BACK_T + 2, LOCK_TZ[1] - LOCK_TZ[0] + 1.0]);
+    translate([$lx - $lw/2 - c, D - BACK_T - 1, LOCK_TZ[0] - 0.4]) cube([$lw + 2*c, BACK_T + 2, LOCK_TZ[1] - LOCK_TZ[0] + 1.0]);
     hull() {   // lead-in round the slot's mouth
-        translate([LOCK_X - LOCK_W/2 - c, D - 0.01, LOCK_TZ[0] - 0.4]) cube([LOCK_W + 2*c, 0.02, LOCK_TZ[1] - LOCK_TZ[0] + 1.0]);
-        translate([LOCK_X - LOCK_W/2 - c - e, D + 0.01, LOCK_TZ[0] - 0.4 - e]) cube([LOCK_W + 2*c + 2*e, 0.02, LOCK_TZ[1] - LOCK_TZ[0] + 1.0 + 2*e]);
+        translate([$lx - $lw/2 - c, D - 0.01, LOCK_TZ[0] - 0.4]) cube([$lw + 2*c, 0.02, LOCK_TZ[1] - LOCK_TZ[0] + 1.0]);
+        translate([$lx - $lw/2 - c - e, D + 0.01, LOCK_TZ[0] - 0.4 - e]) cube([$lw + 2*c + 2*e, 0.02, LOCK_TZ[1] - LOCK_TZ[0] + 1.0 + 2*e]);
     }
-    cyl_z(4.5, -1, LOCK_TZ[0], LOCK_X, LOCK_SY);
-    cyl_z(LOCK_HEAD[0], -1, LOCK_HEAD[1], LOCK_X, LOCK_SY);
-    translate([LOCK_X, LOCK_SY, LOCK_HEAD[1] - 0.01]) cylinder(d1 = LOCK_HEAD[0], d2 = 4.4, h = (LOCK_HEAD[0] - 4.4)/2, $fn = 32);   // 90° countersink
+    cyl_z(4.5, -1, LOCK_TZ[0], $lx, LOCK_SY);
+    cyl_z(LOCK_HEAD[0], -1, LOCK_HEAD[1], $lx, LOCK_SY);
+    translate([$lx, LOCK_SY, LOCK_HEAD[1] - 0.01]) cylinder(d1 = LOCK_HEAD[0], d2 = 4.4, h = (LOCK_HEAD[0] - 4.4)/2, $fn = 32);   // 90° countersink
 }
 module wall_cleat2() {
     yb = D + GAP_WALL - PLATE_T;
     difference() {
         union() {
             wall_cleat();
-            ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); translate([LOCK_X, LOCK_TZ[0] + 4]) rrc(LOCK_W + 8, 24, 6); }
-            translate([LOCK_X - LOCK_W/2, LOCK_Y, LOCK_TZ[0]]) cube([LOCK_W, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
-            // root fillet where the tongue meets the plate
-            translate([LOCK_X - LOCK_W/2, yb + 0.01, LOCK_TZ[0]]) rotate([0, 90, 0]) linear_extrude(LOCK_W) polygon([[0, 0], [-(LOCK_TZ[1] - LOCK_TZ[0]), 0], [0, -6]]);
+            both_locks() {
+                ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); translate([$lx, LOCK_TZ[0] + 4]) rrc($lw + 8, 24, 6); }
+                intersection() {
+                    union() {
+                        translate([$lx - $lw/2, LOCK_Y, LOCK_TZ[0]]) cube([$lw, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
+                        // root fillet where the tongue meets the plate
+                        translate([$lx - $lw/2, yb + 0.01, LOCK_TZ[0]]) rotate([0, 90, 0]) linear_extrude($lw) polygon([[0, 0], [-(LOCK_TZ[1] - LOCK_TZ[0]), 0], [0, -6]]);
+                    }
+                    tongue_clip(LOCK_Y - 1, D - BACK_T);   // inside the box only; through the wall and behind it the tongue is whole
+                }
+                translate([$lx - $lw/2, D - BACK_T - 0.01, LOCK_TZ[0]]) cube([$lw, yb - D + BACK_T + 0.02, LOCK_TZ[1] - LOCK_TZ[0]]);
+            }
         }
-        cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
-        cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit)
-        lock_nose_cut();
+        both_locks() cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, $lx, LOCK_SY);   // pilot for the security screw
+        cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit), left tongue only
+        both_locks() lock_nose_cut();
     }
 }
 // v24: 45 deg chamfer on the tongue's lower front edge, so it rides over the boss's edge when the box swings in
-module lock_nose_cut(z0 = LOCK_TZ[0]) translate([LOCK_X - LOCK_W/2 - 1, LOCK_Y, z0]) rotate([90, 0, 90]) linear_extrude(LOCK_W + 2)
+module lock_nose_cut(z0 = LOCK_TZ[0]) translate([$lx - $lw/2 - 1, LOCK_Y, z0]) rotate([90, 0, 90]) linear_extrude($lw + 2)
     polygon([[-0.01, -0.01], [LOCK_C[2], -0.01], [-0.01, LOCK_C[2]]]);
 
 // ------------------------------------------------------------ stand bracket ----
@@ -243,6 +263,8 @@ module lock_nose_cut(z0 = LOCK_TZ[0]) translate([LOCK_X - LOCK_W/2 - 1, LOCK_Y, 
 // out, then the bottom swings in level. The pins would stop that, so they are gone; the tongue in its slot (0.2 per side)
 // and the bar already stop the box turning or sliding. On the stand the box stands on the shelf, so the tongue goes down to
 // 0.1 above the boss (wall cleat: 0.3): the security screw clamps the boss to the tongue and the box stays on the shelf.
+// selfi-stativbeslag-v3 (Esben 27 Oct, for v25 boxes): 2 tongues like the v25 wall cleat (the right one 12 wide, magnet in the
+// left only), and the box 0.5 off the plate (GAP_WALL 4.5), so the gussets and spacers in the old 14 mm gap are gone.
 ST_TZ0 = LOCK_BOSS[1] + 0.1;
 ST_SHELF = [24, 20.5, 14];          // half width, front edge (y), thickness under the unit
 ST_NUT = [0, 31];                   // tripod screw axis (x, y)
@@ -259,11 +281,19 @@ module stand_bracket() {
     difference() {
         union() {
             // the wall cleat, holes filled by the panel and spine below
-            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); hull() { translate([0, 40]) rrc(60, 20, 6); translate([LOCK_X, ST_TZ0 + 4]) rrc(LOCK_W + 8, 24, 6); } }
+            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); both_locks() hull() { translate([0, 40]) rrc(60, 20, 6); translate([$lx, ST_TZ0 + 4]) rrc($lw + 8, 24, 6); } }
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
-            for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
-            translate([LOCK_X - LOCK_W/2, LOCK_Y, ST_TZ0]) cube([LOCK_W, yb - LOCK_Y + 0.01, LOCK_TZ[1] - ST_TZ0]);
-            translate([LOCK_X - LOCK_W/2, yb + 0.01, ST_TZ0]) rotate([0, 90, 0]) linear_extrude(LOCK_W) polygon([[0, 0], [-(LOCK_TZ[1] - ST_TZ0), 0], [0, -6]]);
+            if (yb - D > 2) for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
+            both_locks() {
+                intersection() {
+                    union() {
+                        translate([$lx - $lw/2, LOCK_Y, ST_TZ0]) cube([$lw, yb - LOCK_Y + 0.01, LOCK_TZ[1] - ST_TZ0]);
+                        translate([$lx - $lw/2, yb + 0.01, ST_TZ0]) rotate([0, 90, 0]) linear_extrude($lw) polygon([[0, 0], [-(LOCK_TZ[1] - ST_TZ0), 0], [0, -6]]);
+                    }
+                    tongue_clip(LOCK_Y - 1, D - BACK_T);
+                }
+                translate([$lx - $lw/2, D - BACK_T - 0.01, ST_TZ0]) cube([$lw, yb - D + BACK_T + 0.02, LOCK_TZ[1] - ST_TZ0]);
+            }
             // logo panel and spine
             ext_y(yb, yf) { translate([0, ST_LOGO_Z]) rrc(ST_PANEL[0], ST_PANEL[1], ST_PANEL[2]); translate([0, (zs + CLEAT_ZC)/2]) rrc(ST_SPINE, CLEAT_ZC - zs, 6); }
             // shelf under the unit, rounded front corners
@@ -271,13 +301,13 @@ module stand_bracket() {
                 for (sx = [-1, 1]) translate([sx*(ST_SHELF[0] - 6), ST_SHELF[1] + 6]) circle(r = 6, $fn = 32);
                 translate([-ST_SPINE/2, yb]) square([ST_SPINE, PLATE_T]);
             }
-            // gussets in the 14 mm gap behind the unit, beside the plug slot
-            for (sx = [-1, 1]) translate([sx*(ST_SLOT[0] + 9) - 4, D + 0.5, -0.01]) rotate([90, 0, 90]) linear_extrude(8)
+            // gussets in the gap behind the unit, beside the plug slot (until v2; v3's gap is 0.5)
+            if (yb - D > 2) for (sx = [-1, 1]) translate([sx*(ST_SLOT[0] + 9) - 4, D + 0.5, -0.01]) rotate([90, 0, 90]) linear_extrude(8)
                 polygon([[0, 0], [yb - D - 0.5 + 0.01, 0], [yb - D - 0.5 + 0.01, 40]]);
         }
-        cyl_z(3.4, ST_TZ0 - 1, LOCK_TZ[1] - 4.4, LOCK_X, LOCK_SY);           // pilot for the security screw
-        cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit)
-        lock_nose_cut(ST_TZ0);
+        both_locks() cyl_z(3.4, ST_TZ0 - 1, LOCK_TZ[1] - 4.4, $lx, LOCK_SY);   // pilot for the security screw
+        cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit), left tongue only
+        both_locks() lock_nose_cut(ST_TZ0);
         cyl_z(TNUT[0] + 0.3, zs - 1, 1, ST_NUT[0], ST_NUT[1]);                  // T-nut barrel, flush with the underside
         cyl_z(TNUT[2], zs + TNUT[1], 1, ST_NUT[0], ST_NUT[1]);                   // flange seat; the unit closes it
         translate([-ST_SLOT[0], ST_SLOT[1], zs - 1]) cube([2*ST_SLOT[0], yb - ST_SLOT[1] + 0.01, ST_SHELF[2] + 2]);   // power plug
@@ -380,16 +410,16 @@ module services_cut() {
     translate([PWR_P[0], PWR_P[1], -0.01]) cylinder(d1 = PWR_BORE + 1.6, d2 = PWR_BORE, h = 0.8, $fn = 48);
     for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);
     ext_y(D - BACK_T - 0.01, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2);   // v20: seal round the grille
-    cyl_z(2, -1, 12, LOCK_DRAIN[0], LOCK_DRAIN[1]);   // v20: drain out of the lock pocket; v21: up to z 12 (the rounded bottom makes the floor ~6 thick here, so v20 stopped at 4, blind)
+    both_locks() cyl_z(2, -1, 12, $lx - $lw/2 + 1.0, LOCK_DRAIN[1]);   // v20: drain out of the lock pocket; v21: up to z 12 (the rounded bottom makes the floor ~6 thick here, so v20 stopped at 4, blind)
 }
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
 module services_add() {
     vent_hoods();
     // floor boss under the lock screw head
-    difference() {
-        cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], LOCK_X, LOCK_SY);
-        cyl_z(4.5, -1, LOCK_BOSS[1] + 1, LOCK_X, LOCK_SY);
-        translate([LOCK_X - LOCK_W/2 - 0.6, D - BACK_T - 0.01, 0]) cube([LOCK_W + 1.2, 5, 20]);
+    both_locks() difference() {
+        cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], $lx, LOCK_SY);
+        cyl_z(4.5, -1, LOCK_BOSS[1] + 1, $lx, LOCK_SY);
+        translate([$lx - $lw/2 - 0.6, D - BACK_T - 0.01, 0]) cube([$lw + 1.2, 5, 20]);
     }
     power_column();
     lock_pocket();
@@ -695,11 +725,12 @@ module wing_slot_chamfers() for (p = WING_P) translate([p[0] - WING_SLOT/2, D - 
 // Esben 23 Oct: a theme top and the wings hang in the slots. Each hook is a tongue 4 x 6 (x, z) from a strap behind the
 // box, through the 3 mm wall, resting on the slot floor, with a lip 5 thick that reaches 3 below the floor behind the
 // wall: lift 3, push in, drop. The top owns the inner half of each upper slot, a wing the outer half of both slots on its
-// side. Straps stay outside the wall cleat (x -95..62) in the 14 mm gap to the wall, so put them on before hanging the box.
+// side. Straps stay outside the wall cleat (x -95..62) in the gap to the wall (v25: 4.5), so put them on before hanging the box.
 HOOK = [4, 6, 5, 3, 0.25];                // tongue width (x), height (z), lip thickness (y), lip drop below the floor, clearance (tools/strength_hooks_gen2.py)
 // To come off, a hook must move 8.25 back (lip + clearance + wall). The straps are 10 (top) and 9 (wing) thick, so with the
 // box on the wall cleat (wall 14 behind the back) only 3.8 / 4.8 is left: hung on the wall, the parts cannot be unhooked.
-WING_STRAP = 9;
+WING_STRAP = GAP_WALL - 0.6;              // v25: 3.9 (until v24: 9, in a 14 gap)
+TOP_STRAP = [GAP_WALL - 0.6, HOOK[0] + 6];   // v25: thickness 3.9 (until v24: 10), width 10 (until v24: 5); it carries the top in tension
 STRAP_Y = D + 0.2;                        // straps' front face, 0.2 off the back wall
 TOP_Z0 = H + 0.2;                         // the top's base rests on the closed top face
 module hook(xc, zf) {                     // zf: slot floor; tongue from the strap face forward through the wall
@@ -723,8 +754,9 @@ module theme_top_demo() {
     for (sx = [-1, 1]) {
         x0 = hook_x(sx, true);
         xa = sx < 0 ? x0 - HOOK[0]/2 : x0 - HOOK[0]/2 - 1;      // 1 mm wider towards the middle, flush on the wing's side
-        translate([xa, STRAP_Y, zf - HOOK[3]]) cube([HOOK[0] + 1, 10, TOP_Z0 + 4 - zf + HOOK[3]]);
-        translate([xa, D - 14, TOP_Z0]) cube([HOOK[0] + 1, STRAP_Y + 10 - (D - 14), 4]);   // ties the strap to the base
+        xs = sx < 0 ? xa : xa + HOOK[0] + 1 - TOP_STRAP[1];   // wider towards the middle
+        translate([xs, STRAP_Y, zf - HOOK[3]]) cube([TOP_STRAP[1], TOP_STRAP[0], TOP_Z0 + 4 - zf + HOOK[3]]);
+        translate([xs, D - 14, TOP_Z0]) cube([TOP_STRAP[1], STRAP_Y + TOP_STRAP[0] - (D - 14), 4]);   // ties the strap to the base
         hook(x0, zf);
     }
 }
@@ -744,9 +776,9 @@ module theme_wing_demo(sx) {
 }
 // v21: clipped to 1 mm inside the shell's outer skin (until now its bottom-left corner stood up to 1 mm out of the round bottom edge)
 module lock_pocket() intersection() {
-    difference() {
-        translate([LOCK_X - LOCK_PK[0] - LOCK_PK[3], LOCK_PK[1] - LOCK_PK[3], WALL - 0.01]) cube([2*(LOCK_PK[0] + LOCK_PK[3]), D - BACK_T - LOCK_PK[1] + LOCK_PK[3] + 0.02, LOCK_PK[2] + LOCK_PK[3] - WALL + 0.01]);
-        translate([LOCK_X - LOCK_PK[0], LOCK_PK[1], WALL - 1]) cube([2*LOCK_PK[0], D - BACK_T - LOCK_PK[1] + 1, LOCK_PK[2] - WALL + 1]);
+    both_locks() difference() {
+        translate([$lx - ($lw/2 + LOCK_C[0]) - LOCK_PK[3], LOCK_PK[1] - LOCK_PK[3], WALL - 0.01]) cube([2*(($lw/2 + LOCK_C[0]) + LOCK_PK[3]), D - BACK_T - LOCK_PK[1] + LOCK_PK[3] + 0.02, LOCK_PK[2] + LOCK_PK[3] - WALL + 0.01]);
+        translate([$lx - ($lw/2 + LOCK_C[0]), LOCK_PK[1], WALL - 1]) cube([2*($lw/2 + LOCK_C[0]), D - BACK_T - LOCK_PK[1] + 1, LOCK_PK[2] - WALL + 1]);
     }
     ext_y(SKIRT, D) translate([0, 1]) rr(W - 2, H - 2, R - 1);
 }
@@ -1150,7 +1182,7 @@ if (VIEW == "c_speaker")   speaker3();
 if (VIEW == "c_jack")      power_inlet();
 // screws: 4 front (3.0 x 14 thread-forming, heads in the back wall), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
 if (VIEW == "s_camera")    for (h = CAM_HOLES_ROT) screw_y(2, 6, [3.8, 1.3], h[0], CAM_PCB_Y + CAM_PCB[2], LENS_Z + h[1], -1);
-if (VIEW == "s_lock")      translate([LOCK_X, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
+if (VIEW == "s_lock")      both_locks() translate([$lx, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cleat")     wall_cleat2();
 if (VIEW == "x_stand")     stand_bracket();

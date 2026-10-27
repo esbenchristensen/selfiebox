@@ -1,4 +1,6 @@
-# Selfi stativbeslag v1: printguide
+# Selfi stativbeslag v2: printguide
+
+> **Til halo-gen2-v24.** En v25-boks (2 låse, tæt på væggen) skal bruge selfi-stativbeslag-v3.
 
 **Version:** selfi-stativbeslag-v2 (27. okt. 2026, erstatter v1, som ikke passer til v24-bokse). Alle filer i mappen starter med `selfi-stativbeslag-v2`. CAD-kilden er modulet `stand_bracket` i `hardware/cad/gen2_concept.scad`; sættet bygges med `python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v2` og tegningen med `hardware/render/drawing/draw_stativbeslag.py`.
 

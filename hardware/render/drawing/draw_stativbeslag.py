@@ -102,7 +102,7 @@ o.append('<defs><marker id="da" markerWidth="8" markerHeight="8" refX="4" refY="
 o.append(f'<rect width="{W}" height="{H}" fill="#fbfaf7"/>')
 t(50, 50, f"{VER} · stativbeslag til B2C-gulvstativet (Sirui Traveler 5AX), logo bagpå", 25, w=700)
 t(50, 76, f"Fra CAD (gen2_concept.scad, stand_bracket) på boksen fra {sorted((ROOT / 'hardware/stl/gen2').glob('halo-gen2-v*'), key=lambda p: int(p.name.split('-v')[1]))[-1].name}. "
-  "Mål i mm. v2: 27. okt. 2026 (låsetunge som v24, ingen styrepinde)", 14, "#666")
+  "Mål i mm. v3: 27. okt. 2026 (2 låsetunger som v25, boksen 4,5 mm fra beslagets bagside)", 14, "#666")
 
 # ---------------- 1: from behind ----------------
 frame(30, 100, 560, 820, "1  Set bagfra")
@@ -118,7 +118,7 @@ dim((-122, 79), (-122, 137), f1, "58", (16, 4))
 dim((-130, YB - 14), (-130, 137), f1, "304", (22, 4))
 dim((30, -100), (-30, -100), f1, "60", (0, -6))
 lead(f1, (-60, 115), 440, 185, "logo 130 bredt, indlagt 0,8")
-lead(f1, (-82, -125), 470, 860, "låsetunge + låseskrue")
+lead(f1, (-82, -125), 470, 860, "2 låsetunger + 2 låseskruer")
 lead(f1, (0, YB - 7), 420, 895, "hylde under boksen")
 
 # ---------------- 2: from the side ----------------
@@ -141,14 +141,14 @@ circ(f2, cg, 7, "none", "#dc2626", 2)
 line([(cg[0] - 4.5, cg[1]), (cg[0] + 4.5, cg[1])], f2, "#dc2626", 2); line([(cg[0], cg[1] - 4.5), (cg[0], cg[1] + 4.5)], f2, "#dc2626", 2)
 line([cg, (cg[0], qy - 2)], f2, "#dc2626", 1.2, "3 3")
 dim((0, 170), (-70, 170), f2, "70", (0, -6))
-dim((-70, 170), (-84, 170), f2, "14", (0, -6))
+dim((-70, 170), (-74.5, 170), f2, "4,5", (0, -6))
 dim((0, qy - 100), (NUT_Z, qy - 100), f2, "31", (-24, 5))
-dim((-20.5, YB + 26), (-84, YB + 26), f2, "63,5", (0, -6))
+dim((-20.5, YB + 26), (-74.5, YB + 26), f2, "54", (0, -6))
 dim((-95, YB), (-95, qy), f2, "14", (16, 5))
 lead(f2, (-78, 112), 1000, 170, "skinnen i boksens rille")
 lead(f2, (-80, 100), 1000, 230, "logopanel")
 lead(f2, cg, 1000, 330, "tyngdepunkt (skøn, ca. 1,9 kg)", "#dc2626")
-lead(f2, (-75, -135), 1000, 420, "ribber i mellemrummet")
+lead(f2, (-72, -135), 1000, 420, "0,5 mm luft til boksen")
 lead(f2, (NUT_Z, YB - 6), 1000, 560, "T-møtrik 1/4\"-20, flugter i bunden")
 lead(f2, (-60, YB - 30), 1000, 640, "strømstik ned gennem slids", "#be123c")
 lead(f2, (NUT_Z + 20, qy - 5), 1000, 720, "lynplade på tværs")
@@ -177,12 +177,12 @@ dim((-24, -94), (24, -94), f3, "48", (0, 18))
 frame(1250, 620, 620, 300, "4  Print og dele")
 lines(1270, 680, [
     "Print (Bambu H2C, sort ASA + hvid/grøn via AMS):",
-    "• Bagsiden ned, logoet i de første lag. 185 × 304 × 63,5.",
-    "• Hylden står lodret; ingen support. Ca. 200 cm³.",
+    "• Bagsiden ned, logoet i de første lag. 189 × 304 × 54.",
+    "• Hylden står lodret; ingen support. Ca. 170 cm³.",
     "Købedele:",
     "• T-møtrik 1/4\"-20 (Einschlagmutter), Ø8 × 8, flange Ø19.",
     "  Mål den købte, før print (TNUT i gen2_concept.scad).",
-    "• Låseskruen og magneten er de samme som på væggen.",
+    "• 2 låseskruer og 1 magnet, de samme som på væggen.",
     "• 5 kg sandsæk på stativkrogen.",
 ], 13, 20)
 
@@ -192,8 +192,8 @@ lines(50, 1000, [
     "Boksen på beslaget:",
     "• Boksen står på hylden, og hylden står direkte på kuglehovedet. Vægten går lige ned gennem T-møtrikken; der er ingen arm, der kan bøje.",
     "• Skinnen og låsetungen holder toppen, som på væggen. Boksen kan ikke løftes af uden vores bit, og løftealarmen (reed) virker.",
-    "• Låsetungen sidder i bundslidsen med 0,2 mm luft i hver side, og skinnen holder toppen, så boksen kan ikke dreje eller glide på hylden. Låseskruen spænder bundknasten",
-    "  op mod tungen (0,1 mm luft), så boksen sidder fast mellem hylden og tungen. v1 havde 2 styrepinde; de spærrede for at svinge bunden ind og er fjernet.",
+    "• De 2 låsetunger sidder i bundslidserne med 0,2 mm luft i hver side, og skinnen holder toppen, så boksen kan ikke dreje eller glide på hylden. Låseskruerne spænder",
+    "  bundknasterne op mod tungerne (0,1 mm luft), så boksen sidder fast mellem hylden og tungerne. Ingen styrepinde (fjernet i v2).",
     "• T-møtrikkens flange sidder oppe i hylden: lynpladen spænder hele hylden (8 mm ASA) fast, og boksens bund lukker over flangen.",
     "",
     "Stativet:",
@@ -203,7 +203,7 @@ lines(50, 1000, [
     "  og stativet op ad en væg eller i et hjørne, ikke midt på dansegulvet. Det skal stå i guiden i kassen.",
     "",
     "Tjek på første print:",
-    "• At Sirui-klemmen ikke rammer strømstikket (lynpladen på tværs: ca. 2 mm luft, hvis klemmen er 44 mm dyb).  • Bunden svinger ind over tungen, og boksen rokker ikke, når skruen er i.",
+    "• At Sirui-klemmen ikke rammer strømstikket (lynpladen på tværs: ca. 2 mm luft, hvis klemmen er 44 mm dyb).  • Bunden svinger ind over tungerne, og boksen rokker ikke, når skruerne er i.",
     "• T-møtrikken: hullerne passer til den købte møtrik.  • Træk-test: boksen på stativet, løft i hjørnerne og skub fra siden.",
 ], 14, 23)
 
