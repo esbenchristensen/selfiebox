@@ -26,9 +26,10 @@ D = 70
 
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
+SIDE = np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]], float)   # v26: on its side, the -x face on the bed
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
          "vaegbeslag": ("x_cleat", DOWN), "kameraroer": ("x_camsleeve", DOWN),
-         "blaeserhegn": ("x_fanguard", UP),   # v24: grille face down, the clip arms stand up
+         "blaeserhegn": ("x_fanguard", SIDE),   # v26: on its side (v24/v25: UP, which put the arm tips on the bed and the grille on top)
          # v21: example theme parts to test the hooks, face down like every theme part
          "tema-top-eksempel": ("x_tema_top", UP), "tema-vinge-venstre-eksempel": ("x_tema_vinge_v", UP),
          "tema-vinge-hoejre-eksempel": ("x_tema_vinge_h", UP)}

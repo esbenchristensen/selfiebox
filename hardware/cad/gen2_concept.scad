@@ -221,13 +221,17 @@ module lock_cut() {
     cyl_z(LOCK_HEAD[0], -1, LOCK_HEAD[1], $lx, LOCK_SY);
     translate([$lx, LOCK_SY, LOCK_HEAD[1] - 0.01]) cylinder(d1 = LOCK_HEAD[0], d2 = 4.4, h = (LOCK_HEAD[0] - 4.4)/2, $fn = 32);   // 90° countersink
 }
+// v26 (print review 27 Oct): the plate behind each tongue reaches 2 mm above the tongue's top. Until v25 it stopped at z0 + 16,
+// so the tongue's upper 12 mm stood on nothing but the plate's edge: printed back face down, that was a 9 x 18 (12) mm flat
+// overhang 4 mm over the bed, which sags without support. Now the whole tongue grows out of the plate.
+module lock_plate2d(z0) translate([$lx, (z0 - 8 + LOCK_TZ[1] + 2)/2]) rrc($lw + 8, LOCK_TZ[1] + 2 - (z0 - 8), 6);
 module wall_cleat2() {
     yb = D + GAP_WALL - PLATE_T;
     difference() {
         union() {
             wall_cleat();
             both_locks() {
-                ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); translate([$lx, LOCK_TZ[0] + 4]) rrc($lw + 8, 24, 6); }
+                ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); lock_plate2d(LOCK_TZ[0]); }
                 intersection() {
                     union() {
                         translate([$lx - $lw/2, LOCK_Y, LOCK_TZ[0]]) cube([$lw, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
@@ -265,6 +269,8 @@ module lock_nose_cut(z0 = LOCK_TZ[0]) translate([$lx - $lw/2 - 1, LOCK_Y, z0]) r
 // 0.1 above the boss (wall cleat: 0.3): the security screw clamps the boss to the tongue and the box stays on the shelf.
 // selfi-stativbeslag-v3 (Esben 27 Oct, for v25 boxes): 2 tongues like the v25 wall cleat (the right one 12 wide, magnet in the
 // left only), and the box 0.5 off the plate (GAP_WALL 4.5), so the gussets and spacers in the old 14 mm gap are gone.
+// selfi-stativbeslag-v4 (print review 27 Oct, for v25/v26 boxes, same fit as v3): the plate carries the whole of both tongues
+// (lock_plate2d, as the v26 wall cleat; v3's tongues hung 9 mm over the plate's edge on the bed) and the T-nut bores are teardrops.
 ST_TZ0 = LOCK_BOSS[1] + 0.1;
 ST_SHELF = [24, 20.5, 14];          // half width, front edge (y), thickness under the unit
 ST_NUT = [0, 31];                   // tripod screw axis (x, y)
@@ -281,7 +287,7 @@ module stand_bracket() {
     difference() {
         union() {
             // the wall cleat, holes filled by the panel and spine below
-            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); both_locks() hull() { translate([0, 40]) rrc(60, 20, 6); translate([$lx, ST_TZ0 + 4]) rrc($lw + 8, 24, 6); } }
+            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); both_locks() hull() { translate([0, 40]) rrc(60, 20, 6); lock_plate2d(ST_TZ0); } }
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
             if (yb - D > 2) for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
             both_locks() {
@@ -308,8 +314,10 @@ module stand_bracket() {
         both_locks() cyl_z(3.4, ST_TZ0 - 1, LOCK_TZ[1] - 4.4, $lx, LOCK_SY);   // pilot for the security screw
         cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit), left tongue only
         both_locks() lock_nose_cut(ST_TZ0);
-        cyl_z(TNUT[0] + 0.3, zs - 1, 1, ST_NUT[0], ST_NUT[1]);                  // T-nut barrel, flush with the underside
-        cyl_z(TNUT[2], zs + TNUT[1], 1, ST_NUT[0], ST_NUT[1]);                   // flange seat; the unit closes it
+        // v4 (print review 27 Oct): the bracket prints back face down, so these bores lie along the bed; teardrops with a 45 deg
+        // peak to the front (up on the bed) keep the Ø20 flange seat round and free of support (v1-v3: round, the roof sagged)
+        translate([ST_NUT[0], ST_NUT[1], 0]) teardrop_z(TNUT[0] + 0.3, zs - 1, 1);   // T-nut barrel, flush with the underside
+        translate([ST_NUT[0], ST_NUT[1], 0]) teardrop_z(TNUT[2], zs + TNUT[1], 1);    // flange seat; the unit closes it
         translate([-ST_SLOT[0], ST_SLOT[1], zs - 1]) cube([2*ST_SLOT[0], yb - ST_SLOT[1] + 0.01, ST_SHELF[2] + 2]);   // power plug
         translate([0, ST_SLOT[1], zs - 1]) cylinder(r = ST_SLOT[0], h = ST_SHELF[2] + 2, $fn = 32);
         ext_y(yf - LOGO_D, yf + 1) translate([0, ST_LOGO_Z]) st_logo2d("all");   // pocket for the inlay
@@ -366,6 +374,12 @@ module vent_hoods() for (sx = [-1, 1]) {
     y0 = vent_y(sx) - vent_l(sx)/2 - 2;  y1 = vent_y(sx) + vent_l(sx)/2 + 2;
     for (x = [x0 - HOOD[1], x1]) translate([sx > 0 ? x : -x - HOOD[1], y0, WALL - 0.01]) cube([HOOD[1], y1 - y0, HOOD[0] + HOOD[1]]);
     translate([sx > 0 ? x0 - HOOD[1] : -x1 - HOOD[1], y0, WALL + HOOD[0]]) cube([x1 - x0 + 2*HOOD[1], y1 - y0, HOOD[1]]);
+    // v26 (print review 27 Oct): the hood stops 1.5 short of the back wall (air out that way too), so on the bed (back face
+    // down) its first layers hung 1.5 over the back wall, held only by the floor: two 8.6 mm cantilevers and a 43 mm roof
+    // edge between their tips. 3 small posts across the gap, at the roof's two corners and its middle, make that a set of
+    // short bridges (the side walls 8.6, the roof 2 x 20). They block 3 x 1.6 x 1.5 of the gap.
+    for (x = [x0 - HOOD[1], (x0 + x1 - HOOD[1])/2, x1]) translate([sx > 0 ? x : -x - HOOD[1], y1 - 0.01, WALL + HOOD[0]])
+        cube([HOOD[1], D - BACK_T - y1 + 0.02, HOOD[1]]);
 }
 
 // ------------------------------------------------- underside and back services ----
@@ -1115,7 +1129,12 @@ module frame_loop_cut() for (dz = [-1, 1]) translate([FRAME_LOOP[0] - LOOP[0]/2,
 // stand-offs, is screwed to that bar, so the gap to the cooler does not depend on the shell): a pad on the bar's back face
 // and 2 arms over the bar's top and bottom with lips that snap behind its front face. Off again: lever an arm up with a
 // small screwdriver. The grille hangs 35-100 mm below the bar: a solid web between the bar and the cooler stiffens it, and 4 pegs stop
-// 0.8 mm over the heat sink, outside the fan, if a bundle presses on it. Prints grille down, the arms stand up.
+// 0.8 mm over the heat sink, outside the fan, if a bundle presses on it.
+// v26 (print review 27 Oct): the v24/v25 STL lay with the arm tips on the bed and the grille 13 mm up in the air (the guide said
+// grille down), and either way up the 2 arms stand on end, so the snap bends them across the layers. Everything here is an
+// extrusion along x, so it now prints on its side (an x face on the bed): the arms, the pad, the web and the lips are whole
+// profiles in every layer and bend along the layers, nothing overhangs, and the grille's slots run along x (until v25 along z),
+// so on the bed they are upright slits with only a 2.5 mm bridge at their ends.
 COOLER_TOP = PI_Y3 + PI_T + PI_COOLER[2];  // 32.45
 PI_C = [0, GC + DSP_PI_DZ];               // Pi centre (x, z); holes at +-24.5, +-29
 FAN_Z = PI_C[1] + 14;                     // fan axis z (the Active Cooler's fan sits towards the top holes)
@@ -1147,7 +1166,7 @@ module fan_guard() {
         }
         ext_y(FG_Y - 1, y1 + 1) intersection() {
             translate([0, FAN_Z]) circle(r = FG[4], $fn = 64);
-            for (i = [-4:4]) translate([i*(FG[2] + FG[3]) - FG[2]/2, FAN_Z - FG[4]]) square([FG[2], 2*FG[4]]);
+            for (i = [-3:3]) translate([-FG[4], FAN_Z + i*(FG[2] + FG[3]) - FG[2]/2]) square([2*FG[4], FG[2]]);   // v26: slots along x
         }
     }
 }

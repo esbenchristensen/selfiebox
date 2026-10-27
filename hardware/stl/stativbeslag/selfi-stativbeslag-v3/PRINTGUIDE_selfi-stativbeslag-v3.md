@@ -1,5 +1,7 @@
 # Selfi stativbeslag v3: printguide
 
+> **Erstattet af selfi-stativbeslag-v4** (27. okt. 2026): samme pasform, men v3's låsetunger hænger 9 mm ud over pladen i printet. Print v4.
+
 **Version:** selfi-stativbeslag-v3 (27. okt. 2026, til halo-gen2-v25 og nyere; v1 og v2 passer ikke til en v25-boks). Alle filer i mappen starter med `selfi-stativbeslag-v3`. CAD-kilden er modulet `stand_bracket` i `hardware/cad/gen2_concept.scad`; sættet bygges med `python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v3` og tegningen med `hardware/render/drawing/draw_stativbeslag.py`.
 
 Beslaget bruges kun til B2C-udlejning: gen 2-boksen på gulvstativet Sirui Traveler 5AX (kuglehoved B-00K). Beslaget er tegnet og tjekket mod **halo-gen2-v25**: ingen overlap med skal eller front, og det er simuleret, at bunden kan svinges ind over begge låsetunger. Det er lavet til **v25-bokse** (2 låse); brug v2 til en v24-boks. B2B-bokse hænger stadig på væggen med vægbeslaget.

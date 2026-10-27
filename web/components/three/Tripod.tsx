@@ -5,7 +5,7 @@ import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 
 // The floor stand the rental box goes out with (B2C, emballage v2): a Sirui Traveler 5AX tripod with its ball head,
-// and the printed stand bracket on top (selfi-stativbeslag-v3, public/models/stand_gen2.glb, made from the CAD by
+// and the printed stand bracket on top (selfi-stativbeslag-v4, public/models/stand_gen2.glb, made from the CAD by
 // hardware/tools/make_stativbeslag.py): the box's own wall cleat with the Selfi logo on the back and a shelf under the
 // box with a 1/4"-20 T-nut right under its centre of gravity. The tripod is bought, so it is drawn from its catalogue sizes.
 // Millimetres in unit coordinates: x across, y up from the bottom of the box, z out of the front (front at 0).

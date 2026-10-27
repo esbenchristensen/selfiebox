@@ -102,7 +102,7 @@ o.append('<defs><marker id="da" markerWidth="8" markerHeight="8" refX="4" refY="
 o.append(f'<rect width="{W}" height="{H}" fill="#fbfaf7"/>')
 t(50, 50, f"{VER} · stativbeslag til B2C-gulvstativet (Sirui Traveler 5AX), logo bagpå", 25, w=700)
 t(50, 76, f"Fra CAD (gen2_concept.scad, stand_bracket) på boksen fra {sorted((ROOT / 'hardware/stl/gen2').glob('halo-gen2-v*'), key=lambda p: int(p.name.split('-v')[1]))[-1].name}. "
-  "Mål i mm. v3: 27. okt. 2026 (2 låsetunger som v25, boksen 4,5 mm fra beslagets bagside)", 14, "#666")
+  "Mål i mm. v4: 27. okt. 2026 (som v3, men pladen bærer hele tungerne og T-møtrikkens huller er dråbeformede, så alt printes uden support)", 14, "#666")
 
 # ---------------- 1: from behind ----------------
 frame(30, 100, 560, 820, "1  Set bagfra")
