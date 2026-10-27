@@ -15,7 +15,7 @@ TONGUE_W, TONGUE_H, LIP_T, LIP_DROP, CLR = 4.0, 6.0, 5.0, 3.0, 0.25       # HOOK
 WALL = 3.0                                                                 # BACK_T
 SLOT_Z = (175.0, 240.2)                                                    # WING_P: lower / upper slot centre (floor 4 below)
 UNHOOK = LIP_T + CLR + WALL                                                # travel back needed to come off
-ROOM = {"top": 84 - 80.2, "vinge": 84 - 79.2}                              # strap back face to the wall behind the cleat
+ROOM = {"top": 74.5 - 74.1, "vinge": 74.5 - 74.1}                          # strap back face to the wall (v25: box 4.5 off the wall, straps 3.9; v21-v24: 84 - 80.2 / 79.2)
 # ASA, FDM, 0.2 layers, conservative (datasheet XY ~ 40 MPa tensile; across layers ~ 1/3)
 S_XY, S_Z, T_Z = 30.0, 12.0, 10.0                                          # MPa: in-plane, across layers, layer shear
 KT = 1.2                                                                   # notch at the corners, with the 1 mm fillets in the CAD

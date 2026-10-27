@@ -493,7 +493,7 @@ module wall_cleat() {
             }
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
             if (LOCK_INSIDE) cyl_y(14, D + 1, yb + 0.01, 0, LOCK_Z);
-            for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
+            if (yb - D > 2) for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);   // spacers (none when the box sits on the plate)
         }
         if (LOCK_INSIDE) cyl_y(INS_M4_D, D, D + 1 + INS_M4_L, 0, LOCK_Z);
         for (p = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125]]) {
