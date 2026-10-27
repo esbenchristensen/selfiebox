@@ -6,7 +6,7 @@
 
 - **Væk:** skumsnoren (RS 234-2906) og silikonefedtet, rillen i soklens overside (2,0 × 1,0) og de korte grene ved studsen, rillen rundt om udgangsmodulets studs (2,0 × 0,7) og kappens indføringsfase ved højre kant.
 - **Krogene er også væk.** De 6 kroge på kappen og ramperne og slidserne i soklens læbe var der kun for at trække kappen ned mod snoren, som skubbede den op. Uden snor ligger kappen på soklen ved sin egen vægt, som i v3. Studsen holder højre ende, kamlåsen holder venstre ende nede og fast, og læben indenfor kappens væg (0,3 mm luft) holder den på plads til siderne.
-- **Nye dele: kappe, sokkel og udgangsmodul.** Dæmpeplade og L-beslag er som i v4. Ydermålene er de samme, så emballagen passer stadig.
+- **Nye dele: kappe, sokkel, udgangsmodul og dæmpeplade** (dæmpepladen har hak om soklens nye stop). L-beslagene er som i v4. Ydermålene er de samme, så emballagen passer stadig.
 - **Tæt ved formen:** fugerne er lukket af læben indenfor kappens væg og af studsen inde i kappens ende. Spild på toppen løber af. Brug den indendørs som før.
 - **Samlingen** er kortere: ingen snor at lægge i og intet fedt. Kappen sænkes stadig ned 10 mm til venstre og skubbes ind over studsen, men nu glider den bare på plads.
 - **Soklen kan printes på H2C** (rettet i v5, fejlen var der også i v4): tungen under udgangsmodulet er 17,5 mm (v4: 35), så soklen er 304,7 mm lang og ligger inden for H2C's sikre område (306). v4's sokkel var 322 mm og kunne ikke være på pladen. De 2 skruer gennem tungen sidder 9,5 mm inde (v4: 20).
