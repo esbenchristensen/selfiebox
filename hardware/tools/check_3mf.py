@@ -90,7 +90,7 @@ def check(path):
         if k and k not in print_opts: errs.append(f"diff key {k} not a print option")
     pv = cfg["print_extruder_variant"]
     for k in ("initial_layer_speed", "initial_layer_infill_speed"):
-        if len(cfg[k]) != len(pv): errs.append(f"{k} size != print variants")
+        if k in cfg and len(cfg[k]) != len(pv): errs.append(f"{k} size != print variants")
     # the presets: exist, are compatible, and their variants match
     mach = resolved("machine", cfg["printer_settings_id"]); proc = resolved("process", cfg["print_settings_id"])
     if mach["printer_model"] != cfg["printer_model"]: errs.append("printer_model mismatch")
