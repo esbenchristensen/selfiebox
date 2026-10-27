@@ -228,13 +228,30 @@ module lock_cut() {
 // so the tongue's upper 12 mm stood on nothing but the plate's edge: printed back face down, that was a 9 x 18 (12) mm flat
 // overhang 4 mm over the bed, which sags without support. Now the whole tongue grows out of the plate.
 module lock_plate2d(z0) translate([$lx, (z0 - 8 + LOCK_TZ[1] + 2)/2]) rrc($lw + 8, LOCK_TZ[1] + 2 - (z0 - 8), 6);
+// v28 (Esben 27 Oct, from the 3D model: "bagbeslaget stikker ud i bunden og kan ses lidt forfra"): the arms out to the locks
+// ended in lock_plate2d, 0.3 above the floor and 95 out, so their lower outer corners stood outside the box's round bottom
+// corners and showed from the front. The arms (wall cleat and stand bracket) are now clipped CLEAT_IN inside the box's
+// outline; the tongues still grow out of the plate along their whole length (outline 1.3 below the tongue at its corner).
+CLEAT_IN = 1.5;
+module arm_clip(y0, y1) ext_y(y0, y1) translate([0, CLEAT_IN]) rr(W - 2*CLEAT_IN, H - 2*CLEAT_IN, R - CLEAT_IN);
+module lock_arm(z0, yb) intersection() { ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); lock_plate2d(z0); } arm_clip(yb - 1, yb + PLATE_T + 1); }
+// v28 (Esben 27 Oct): one wall screw in each arm, out towards the lock, so the corner that takes the lock is held to the wall
+// too (until v27 only the 4 holes in the bar and the spine). Every hole now has a real 90 deg countersink in the face
+// towards the box: until v27 halo.scad's cone started 0.6 inside the plate, so the face was only Ø6.2 and a 4.0 x 50
+// head (Ø7.75) stood 0.8 proud, more than the 0.5 to the box since v25. Now the head lies 0.4 below the face.
+CLEAT_HOLES = [[-48, CLEAT_ZC - 32], [48, CLEAT_ZC - 32], [0, 70], [0, 125], [-60, 24], [60, 24]];
+CLEAT_CSK = 8.6;
+module cleat_hole(p, yb) {
+    cyl_y(5, yb - 1, yb + PLATE_T + 1, p[0], p[1]);
+    translate([p[0], yb - 0.01, p[1]]) rotate([-90, 0, 0]) cylinder(d1 = CLEAT_CSK, d2 = 5, h = (CLEAT_CSK - 5)/2 + 0.01, $fn = 32);
+}
 module wall_cleat2() {
     yb = D + GAP_WALL - PLATE_T;
     difference() {
         union() {
             wall_cleat();
             both_locks() {
-                ext_y(yb, yb + PLATE_T) hull() { translate([0, 40]) rrc(60, 20, 6); lock_plate2d(LOCK_TZ[0]); }
+                lock_arm(LOCK_TZ[0], yb);
                 intersection() {
                     union() {
                         translate([$lx - $lw/2, LOCK_Y, LOCK_TZ[0]]) cube([$lw, yb - LOCK_Y + 0.01, LOCK_TZ[1] - LOCK_TZ[0]]);
@@ -249,7 +266,12 @@ module wall_cleat2() {
         both_locks() cyl_z(3.4, LOCK_TZ[0] - 1, LOCK_TZ[1] - 4.4, $lx, LOCK_SY);   // pilot for the security screw
         cyl_z(8.2, LOCK_TZ[1] - 3.4, LOCK_TZ[1] + 1, LOCK_X, LOCK_SY);           // magnet pocket Ø8 x 3 (press fit), left tongue only
         both_locks() lock_nose_cut();
+        for (p = CLEAT_HOLES) cleat_hole(p, yb);
     }
+}
+// the 6 wall screws (4.0 x 50 countersunk T20, head Ø7.75, 90 deg) as fitted, for the fit check against the box's back
+module wall_screws() for (p = CLEAT_HOLES) translate([p[0], D + GAP_WALL - PLATE_T + 0.4, p[1]]) rotate([-90, 0, 0]) {
+    cylinder(d1 = 7.75, d2 = 3.77, h = (7.75 - 3.77)/2, $fn = 32); cylinder(d = 3.77, h = 50, $fn = 16);
 }
 // v24: 45 deg chamfer on the tongue's lower front edge, so it rides over the boss's edge when the box swings in
 module lock_nose_cut(z0 = LOCK_TZ[0]) translate([$lx - $lw/2 - 1, LOCK_Y, z0]) rotate([90, 0, 90]) linear_extrude($lw + 2)
@@ -274,12 +296,15 @@ module lock_nose_cut(z0 = LOCK_TZ[0]) translate([$lx - $lw/2 - 1, LOCK_Y, z0]) r
 // left only), and the box 0.5 off the plate (GAP_WALL 4.5), so the gussets and spacers in the old 14 mm gap are gone.
 // selfi-stativbeslag-v4 (print review 27 Oct, for v25/v26 boxes, same fit as v3): the plate carries the whole of both tongues
 // (lock_plate2d, as the v26 wall cleat; v3's tongues hung 9 mm over the plate's edge on the bed) and the T-nut bores are teardrops.
+// selfi-stativbeslag-v5 (Esben 27 Oct, for v28 boxes, also fits v25-v27): the arms out to the locks are clipped 1.5 inside the
+// box's outline like the v28 wall cleat (v4's lower corners stood out of the box's round bottom corners and showed from the front),
+// and the logo panel is 172 wide (v4: 180 touched the theme top's straps, 10 wide since v25).
 ST_TZ0 = LOCK_BOSS[1] + 0.1;
 ST_SHELF = [24, 20.5, 14];          // half width, front edge (y), thickness under the unit
 ST_NUT = [0, 31];                   // tripod screw axis (x, y)
 TNUT = [8.0, 8.0, 20.0];            // [C] 1/4"-20 T-nut: barrel Ø, barrel length, flange Ø (+0.5 clearance); measure the bought part
 ST_SLOT = [8, 50];                  // power plug slot: half width, front edge (y); open to the plate
-ST_PANEL = [180, 58, 8, 17];        // logo panel: width, height, corner r, gap to the unit's top. v20+ unit is 307 high: bracket 304 (H2C bed 306); 180 wide keeps 4.9 mm to the theme top's straps (|x| >= 94.9)
+ST_PANEL = [172, 58, 8, 17];        // logo panel: width, height, corner r, gap to the unit's top. v20+ unit is 307 high: bracket 304 (H2C bed 306). v5: 172 wide (v1-v4: 180), 3.9 mm to the theme top's straps (|x| >= 89.9 since v25's 10 wide straps; v4's panel overlapped them by 0.1)
 ST_SPINE = 60;
 ST_LOGO = 130;                      // logo width on the panel
 ST_LOGO_Z = H - ST_PANEL[3] - ST_PANEL[1]/2;
@@ -290,7 +315,8 @@ module stand_bracket() {
     difference() {
         union() {
             // the wall cleat, holes filled by the panel and spine below
-            ext_y(yb, yf) { translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6); both_locks() hull() { translate([0, 40]) rrc(60, 20, 6); lock_plate2d(ST_TZ0); } }
+            ext_y(yb, yf) translate([0, CLEAT_ZC - 14]) rrc(CLEAT_L + 4, 52, 6);
+            both_locks() lock_arm(ST_TZ0, yb);   // v5: clipped inside the box's outline (v1-v4 stood out at the bottom corners)
             ext_x(-CLEAT_L/2 + 2, CLEAT_L/2 - 2) bar_2d(yb);
             if (yb - D > 2) for (z = [40, 100]) translate([-25, D + 1, z - 5]) cube([50, yb - D - 0.99, 10]);
             both_locks() {
@@ -747,6 +773,17 @@ module hook(xc, zf) {                     // zf: slot floor; tongue from the str
     translate([xc - HOOK[0]/2, y0 + HOOK[2], zf]) rotate([90, 0, 90]) linear_extrude(HOOK[0]) polygon([[0, 0], [1, 0], [0, -1]]);
 }
 function hook_x(sx, inner) = sx*(W/2 - 12) + (inner ? -sx : sx)*(WING_SLOT/4 + 0.1);   // centre of the slot's inner / outer half
+// v28 (Esben 27 Oct: "en ekstra rille ned ved bunden af boksen, så de kan blive længere og være stabile i bunden"): a groove
+// low in the back face on each side, under the wing's hooks (x = the outer hook's centre). A wing can now reach down to the
+// bottom of the box: its strap runs on down behind the back and a tab on it sits in the groove, so the lower end cannot swing
+// out sideways or twist. The groove is blind (1.5 deep in the 3 mm back wall): a third slot with a pocket does not fit there
+// (reed module, lock pocket and the dimmer tray on the left, see WING_P), and the tab only steadies, the hooks carry.
+// The groove is 3.5 longer upwards than the tab, so the tab goes in with the hooks (lift 3, push in, drop) and ends 0.5 off
+// its floor. It sits 5 mm inside the box's round bottom corner, hidden behind the box.
+WING_GROOVE = [HOOK[0] + 2*HOOK[4], 1.5, 23.5, 36];    // width (0.25 per side round the tab), depth, z bottom, z top
+WING_TAB = [HOOK[0], WING_GROOVE[1] - 0.2, 24, 32];    // width, depth into the groove (0.2 off its floor), z bottom, z top
+module wing_grooves() for (sx = [-1, 1]) translate([hook_x(sx, false) - WING_GROOVE[0]/2, D - WING_GROOVE[1], WING_GROOVE[2]])
+    cube([WING_GROOVE[0], WING_GROOVE[1] + 1, WING_GROOVE[3] - WING_GROOVE[2]]);
 // example top: a 6 mm sign over the front, a 4 mm base on the top face, ribs, and two straps 4 x 10 down to the upper slots
 module theme_top_demo() {
     zf = WING_P[1][1] - 4;
@@ -766,16 +803,25 @@ module theme_top_demo() {
 }
 // example wing: a 6 mm panel beside the front, a 4 mm rib along the side, and a strap 9 thick behind the back wall that
 // carries a hook into both slots on that side
+// v28 (Esben 27 Oct): the wing reaches down to the bottom of the box (until v27 its panel stopped at z 120 and the strap at
+// 162): panel from z WING_BOT, rib and strap down to the groove, and the tab in the groove steadies the lower end.
+// Behind the box the strap is clipped 1 mm inside the box's outline, so it does not show at the round bottom corner.
+WING_BOT = 20;
 module theme_wing_demo(sx) {
     xe = W/2 + 0.2;                       // inner face of the rib (0.2 off the side wall)
     zs = [for (p = WING_P) if (p[0]*sx > 0) p[1] - 4];
-    z0 = min(zs) - HOOK[3] - 6;  z1 = max(zs) + HOOK[1] + 8;
+    z0 = WING_TAB[2] - 4;  z1 = max(zs) + HOOK[1] + 8;
+    xh = hook_x(1, false) - HOOK[0]/2;
     mirror([sx < 0 ? 1 : 0, 0, 0]) {
-        translate([xe, -3, 120]) rotate([90, 0, 0]) mirror([0, 0, 1]) linear_extrude(6) offset(r = 12) translate([12, 12]) square([50 - 24, 170 - 24]);
-        translate([xe, -3, 130]) cube([4, D + 3.2, 150]);
-        translate([hook_x(1, false) - HOOK[0]/2, STRAP_Y, z0]) cube([xe + 4 - (hook_x(1, false) - HOOK[0]/2), WING_STRAP, z1 - z0]);   // ends flush with the hook, 0.7 from the top's strap
+        translate([xe, -3, WING_BOT]) rotate([90, 0, 0]) mirror([0, 0, 1]) linear_extrude(6) offset(r = 12) translate([12, 12]) square([50 - 24, 290 - WING_BOT - 24]);
+        translate([xe, -3, WING_BOT + 4]) cube([4, D + 3.2, 280 - WING_BOT - 4]);
+        intersection() {   // ends flush with the hook, 0.7 from the top's strap
+            translate([xh, STRAP_Y, z0]) cube([xe + 4 - xh, WING_STRAP, z1 - z0]);
+            union() { ext_y(STRAP_Y - 1, STRAP_Y + WING_STRAP + 1) translate([0, 1]) rr(W - 2, H - 2, R - 1); translate([W/2 - 2, STRAP_Y - 1, R]) cube([20, WING_STRAP + 2, H]); translate([xe - 0.01, STRAP_Y - 1, 0]) cube([10, WING_STRAP + 2, H]); }
+        }
         translate([xe, D - 10, z0]) cube([4, 10.21 + WING_STRAP, z1 - z0]);
         for (z = zs) hook(hook_x(1, false), z);
+        translate([xh, D - WING_TAB[1], WING_TAB[2]]) cube([WING_TAB[0], STRAP_Y - D + WING_TAB[1] + 0.01, WING_TAB[3] - WING_TAB[2]]);   // v28: tab in the groove
     }
 }
 // v21: clipped to 1 mm inside the shell's outer skin (until now its bottom-left corner stood up to 1 mm out of the round bottom edge)
@@ -1053,6 +1099,7 @@ module shell3(top = UNIT_TOP) {
         }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
+        wing_grooves();   // v28
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
         for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D, j[0], j[1]); }   // v27: head flush in the back face
     }
@@ -1180,6 +1227,7 @@ if (VIEW == "s_camera")    for (h = CAM_HOLES_ROT) screw_y(2, 6, [3.8, 1.3], h[0
 if (VIEW == "s_lock")      both_locks() translate([$lx, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cleat")     wall_cleat2();
+if (VIEW == "s_wall")      wall_screws();                                                // v28: the 6 wall screws, heads in the cleat's countersinks
 if (VIEW == "x_stand")     stand_bracket();
 if (VIEW == "x_stand_logo_w") st_logo("white");
 if (VIEW == "x_stand_logo_g") st_logo("green");

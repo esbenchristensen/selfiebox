@@ -31,16 +31,16 @@ Hovedenhed;Skrue M3 x 8 Torx linsehoved (ISO 7380), sort;Kabinet til front, 2 pr
 Hovedenhed;Skrue M2 x 6 gevinddannende (plast);Kamera;4;stk;0,80;3,20;100;80,00;Ja;Skruer.dk / AliExpress;Estimat;
 Hovedenhed;Skrue M2,5 x 6 gevinddannende (plast);LED-skinne;4;stk;0,80;3,20;100;80,00;Ja;Skruer.dk / AliExpress;Estimat;
 Hovedenhed;Skrue M4 x 10 Torx;Låseskrue vægbeslag;1;stk;1,00;1,00;50;50,00;Ja;Skruer.dk;Estimat;
-Hovedenhed;Vægskrue 4,5 x 50 undersænket + dybel;Vægbeslag til væg (4 huller Ø5, undersænket);4;stk;1,50;6,00;50;75,00;Ja;Jem & Fix / Bauhaus;Estimat;
+Hovedenhed;Vægskrue 4,0 x 50 undersænket T20 + dybel;"Vægbeslag til væg (v28: 6 huller Ø5, forsænket Ø8,6; samme skrue som fronten)";6;stk;1,50;9,00;50;75,00;Ja;Jem & Fix / Bauhaus;Estimat;
 Hovedenhed;Styrestift Ø6 x 20 stål;Til samlinger mellem moduler (2 pr. samling);0;stk;1,50;0,00;20;30,00;Ja;Skruer.dk / AliExpress;Estimat;Købes med det samme, så de er klar til tilbehør
 Hovedenhed;Skrue M3 x 16 Torx linsehoved;Til samlinger mellem moduler (2 pr. samling);0;stk;1,00;0,00;100;100,00;Ja;Skruer.dk;Estimat;
 Hovedenhed;Sekundlim (CA) gel;Sikrer diffuserringen i slidserne;0,05;tube;39,00;1,95;1;39,00;Ja;Jem & Fix;Estimat;
 Hovedenhed;Varmeledende/isolerende kapton-tape;Isolering under perfboard og ved lodninger;0,05;rulle;59,00;2,95;1;59,00;Ja;Let Elektronik;Estimat;
-Hovedenhed;Filament: ASA sort;Bezel + LED-skinne + kabinet + vægbeslag - ca. 776 g. Kabinet med lukket top.;0,776;kg;300,00;232,83;;;Ja;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
+Hovedenhed;Filament: ASA sort;Bezel + LED-skinne + kabinet + vægbeslag - ca. 776 g. Kabinet med lukket top.;0,776;kg;300,00;232,85;;;Ja;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
 Hovedenhed;Filament: PETG translucent;Diffuserring + glødestribe i kabinet - ca. 154 g. Stribe = lag 34-44 mm i kabinettet.;0,154;kg;199,00;30,62;;;Ja;Bambu Lab EU-shop;Estimat;Bambu PETG Translucent
 Hovedenhed;Spole: ASA sort 1 kg;Indkøb af hele spoler (forbrug står ovenfor);0;spole;300,00;0,00;1;300,00;Ja;Bambu Lab EU-shop / prisjagt.dk;Fundet;prisjagt.dk: Bambu ASA fra 295-305 kr
 Hovedenhed;Spole: PETG translucent 1 kg;Indkøb af hele spoler (forbrug står ovenfor);0;spole;199,00;0,00;1;199,00;Ja;Bambu Lab EU-shop;Estimat;Bambu PETG Translucent
-Hovedenhed;SUM Hovedenhed;;;;;3656,10;;5306,00;;;;
+Hovedenhed;SUM Hovedenhed;;;;;3659,12;;5306,00;;;;
 
 Tilbehør: Fotomodul (Instax Square Link);Fujifilm Instax Square Link;Farvefotos på instax SQUARE-film 62 x 62 mm, Bluetooth, 105 x 37,5 x 127,5 mm;1;stk;897,00;897,00;1;897,00;Nej;Proshop.dk / Elgiganten.dk;Fundet;PriceRunner DK 897 kr (Ash White)
 Tilbehør: Fotomodul (Instax Square Link);Instax SQUARE film, 20 billeder;Forbrug: ca. 7,40 kr pr. foto;1;pakke;148,00;148,00;1;148,00;Nej;Proshop.dk / Fotoudstyr.dk;Fundet;PriceRunner DK 148 kr / 20 stk
@@ -88,7 +88,7 @@ Værktøj (engangskøb, hvis I ikke har det);Torx T10/T20 + M2/M2.5 bits;;0;sæt
 Værktøj (engangskøb, hvis I ikke har det);Bambu Textured PEI-plade (ekstra);Glat matteret front;0;stk;299,00;0,00;1;299,00;Nej;Bambu Lab EU-shop;Estimat;
 Værktøj (engangskøb, hvis I ikke har det);SUM Værktøj (engangskøb, hvis I ikke har det);;;;;0,00;;1324,00;;;;
 
-TOTAL;HOVEDPRIS: hovedenhed pr. boks (forbrug);;;;;3656,10;;;Ja;;;
+TOTAL;HOVEDPRIS: hovedenhed pr. boks (forbrug);;;;;3659,12;;;Ja;;;
 TOTAL;HOVEDPRIS: første indkøb (hele pakker og spoler);;;;;;;5306,00;Ja;;;
 TOTAL;Alt tilbehør pr. boks (ikke i hovedpris);;;;;1400,74;;1384,00;Nej;;;
 TOTAL;Tema: Sommernat (ikke i hovedpris);;;;;86,19;;1194,00;Nej;;;

@@ -102,7 +102,7 @@ o.append('<defs><marker id="da" markerWidth="8" markerHeight="8" refX="4" refY="
 o.append(f'<rect width="{W}" height="{H}" fill="#fbfaf7"/>')
 t(50, 50, f"{VER} · stativbeslag til B2C-gulvstativet (Sirui Traveler 5AX), logo bagpå", 25, w=700)
 t(50, 76, f"Fra CAD (gen2_concept.scad, stand_bracket) på boksen fra {sorted((ROOT / 'hardware/stl/gen2').glob('halo-gen2-v*'), key=lambda p: int(p.name.split('-v')[1]))[-1].name}. "
-  "Mål i mm. v4: 27. okt. 2026 (som v3, men pladen bærer hele tungerne og T-møtrikkens huller er dråbeformede, så alt printes uden support)", 14, "#666")
+  "Mål i mm. v5: 27. okt. 2026 (som v4, men armene ud til låsene er skåret 1,5 mm inden for boksens kant, så de ikke ses forfra, og logopanelet er 172 bredt)", 14, "#666")
 
 # ---------------- 1: from behind ----------------
 frame(30, 100, 560, 820, "1  Set bagfra")
@@ -112,8 +112,8 @@ path(unit_b, f1, BOX, BOXS, 1.2)
 path(silhouette(br, [0, 1]), f1, BR, BRS, 2.0)
 path(silhouette(logo_w, [0, 1]), f1, "#f5f5f4", "none")
 path(silhouette(logo_g, [0, 1]), f1, "#22d36b", "none")
-dim((90, 170), (-90, 170), f1, "180", (0, -6))
-dim((111.25, -182), (-111.25, -182), f1, "222,5 (boks)", (0, 18))
+dim((86, 170), (-86, 170), f1, "172", (0, -6))   # v5 (v1-v4: 180)
+dim((112.25, -182), (-112.25, -182), f1, "224,5 (boks)", (0, 18))
 dim((-122, 79), (-122, 137), f1, "58", (16, 4))
 dim((-130, YB - 14), (-130, 137), f1, "304", (22, 4))
 dim((30, -100), (-30, -100), f1, "60", (0, -6))

@@ -26,7 +26,7 @@ SCAD = Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard"]   # v24: fan guard; v27: no camera sleeve
 BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
-          "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "x_logo_w", "x_logo_g"]
+          "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g"]   # v28: wall screws
 THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
 # v27: keep-out bodies for the camera (no glass, open window): the lens's field of view in front of it, and the barrel
 CAMERA = ["x_cam_fov", "x_cam_lens"]
@@ -37,6 +37,7 @@ CONTACT = {
     ("x_front3", "s_front3"): 1e9,          # the screws cut their thread (v27: 4.0 x 50 T20 in a Ø3.2 pilot)
     ("x_frame3", "s_display"): 1e9, ("x_dsp_back", "s_display"): 1e9,
     ("x_shell3", "s_lock"): 1e9, ("x_cleat", "s_lock"): 1e9,
+    ("x_cleat", "s_wall"): 1e9,             # v28: the wall screws' heads in the cleat's countersinks
     ("x_dsp_glass", "x_dsp_back"): 1e9, ("x_dsp_back", "c_pi_board"): 1e9, ("c_pi_board", "c_cooler"): 1e9,
     ("x_camera", "x_front3"): 1e9,          # the pegs go through the board's holes (the board model has them)
     ("x_strip_w", "c_clips"): 1e9, ("x_strip_rgb", "c_clips"): 1e9,    # the clips sit on the strip ends
@@ -69,6 +70,9 @@ CLEARANCES = [
     ("x_tema_top", "x_tema_vinge_v", 0.2, "top and left wing share the upper slot"),
     ("x_tema_top", "x_tema_vinge_h", 0.2, "top and right wing"),
     ("x_tema_vinge_v", "x_cleat", 0.5, "left wing strap beside the wall cleat"),
+    ("x_tema_vinge_h", "x_cleat", 0.5, "v28: right wing strap beside the wall cleat (both now reach down to the groove)"),
+    ("s_wall", "x_shell3", 0.3, "v28: wall screw heads 0.4 below the cleat's face, 0.9 off the box's back"),
+    ("s_wall", "x_tema_vinge_v", 0.5, "v28: the arm screws clear of the wing straps"),
     ("x_tema_top", "x_cleat", 0.5, "top straps beside the wall cleat"),
     ("x_tema_top", "x_front3", 0.15, "top sign over the front"),
     ("x_tema_vinge_v", "x_front3", 0.15, "left wing beside the front"),
