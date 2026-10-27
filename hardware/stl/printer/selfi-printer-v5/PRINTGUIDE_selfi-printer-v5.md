@@ -9,6 +9,8 @@
 - **Nye dele: kappe, sokkel og udgangsmodul.** Dæmpeplade og L-beslag er som i v4. Ydermålene er de samme, så emballagen passer stadig.
 - **Tæt ved formen:** fugerne er lukket af læben indenfor kappens væg og af studsen inde i kappens ende. Spild på toppen løber af. Brug den indendørs som før.
 - **Samlingen** er kortere: ingen snor at lægge i og intet fedt. Kappen sænkes stadig ned 10 mm til venstre og skubbes ind over studsen, men nu glider den bare på plads.
+- **Soklen kan printes på H2C** (rettet i v5, fejlen var der også i v4): tungen under udgangsmodulet er 17,5 mm (v4: 35), så soklen er 304,7 mm lang og ligger inden for H2C's sikre område (306). v4's sokkel var 322 mm og kunne ikke være på pladen. De 2 skruer gennem tungen sidder 9,5 mm inde (v4: 20).
+- **Dæmpepladen ligger fladt på pladen** (rettet i v5, også i v4): i v4 sad de 4 små stop ved printerens ender oven på dæmpepladen, så printfilen stod på stoppene med pladen 3 mm oppe i luften. Nu er stoppene finner på soklens lommevægge, der går op gennem hak i dæmpepladen (0,3 mm luft), og dæmpepladen printes med pladen fladt ned og keglerne op. Pladen kan stadig glide ned forbi finnerne, når keglerne knuses. Printeren har stadig 0,3 mm til stoppene.
 - **Tjekket i CAD:** kappe, sokkel, udgangsmodul, dæmpeplade og printeren er skåret mod hinanden i samlet stand: intet overlap (som i v4). Alle printfiler er én lukket krop.
 
 Fra v4 (uændret):
@@ -28,7 +30,7 @@ Resten er som v2. Printeren (DNP QW410) står drejet 90°, så papiret kan køre
 
 Kabinettet er 476 × 222,5 × 217,2 mm og består af 4 printede dele: kappe, sokkel, dæmpeplade og udgangsmodul. På væg bruges desuden 2 skjulte L-beslag.
 
-Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning, og alle dele er tjekket mod H2C's sikre område (285 × 306 × 305 mm, `hardware/tools/check_bed.py`). Print én del pr. plade.
+Printer: Bambu Lab H2C. Alle STL-filer ligger allerede i printretning, og sokkel, kappe, udgangsmodul, dæmpeplade og L-beslag er tjekket mod H2C's sikre område (285 × 306 × 305 mm, `hardware/tools/check_bed.py`; logo og tekst printes i deres del). Print én del pr. plade.
 
 ## Mål printeren før første print
 
@@ -96,7 +98,7 @@ Som v2: Pi Zero 2 WH med CUPS og Gutenprint (`selphy_print`), print via IPP på 
 ## Kendte risici
 
 - **Fald (B2C):** Keglerne giver 6–7 mm knusevej. Det svarer til ca. 50–60 g på printeren ved fald fra 0,3 m (fra et bord eller ud af hænderne) og ca. 130–180 g fra 0,75 m. Uden dæmpepladen er det flere hundrede g. Et fald fra 0,75 m flat på bunden kan stadig skade printeren. Det er et skøn, ikke målt: test med prøvestykket og et fald af hele kassen med en dummy-vægt på 5,8 kg. Under forsendelse er skummet i transportkassen stadig den vigtigste beskyttelse.
-- **Løft:** Løft med en hånd i hvert gribehak, og hold den vandret. Løft aldrig i udtagslommen eller skærmen. Hvert hak tager ca. 40 N. Det venstre hak sidder i kappen, så soklens venstre ende hænger i kamlåsen (kammen under holderens tag, ca. 40 N; v4 fordelte det på 6 kroge), og samlingen mellem sokkel og udgangsmodul (tunge og studs) tager ca. 8 MPa. Det er godt inden for ASA. **Kappen skal være låst, når den bæres**, ellers løftes kappen af soklen.
+- **Løft:** Løft med en hånd i hvert gribehak, og hold den vandret. Løft aldrig i udtagslommen eller skærmen. Hvert hak tager ca. 40 N. Det venstre hak sidder i kappen, så soklens venstre ende hænger i kamlåsen (kammen under holderens tag, ca. 40 N; v4 fordelte det på 6 kroge), og samlingen mellem sokkel og udgangsmodul (tunge og studs) tog ca. 8 MPa i v4. I v5 er tungen halvt så lang, så skønnet er ca. det dobbelte (ca. 16 MPa), stadig under ASA's ca. 40 MPa; studsen inde i kappen tager en del af det. Prøv et løft på første print. **Kappen skal være låst, når den bæres**, ellers løftes kappen af soklen.
 - **Vægbeslag:** Regnet med 500 N på forkanten plus printerens 80 N: ca. 60 Nm pr. beslag og ca. 7 MPa i hjørnet (hylde og bagplade 238 × 15). Printet på enden bøjer begge ben langs lagene (ASA ca. 30 MPa), så der er mindst 3–4 gange sikkerhed, også med kun 6 vægge og 25 % fyld. Bagpladens nederste kant trykker mod væggen, og de øverste skruer (95 mm højere) tager ca. 320 N hver. De 4 skruer pr. beslag skal sidde i dybler, der passer til væggen. I gips skal der bruges gipsdybler i metal eller skrues i en lægte.
 
 - Alle mål på printeren er fra DNP's datablad og skal måles. Det gælder især papirets udkørsel og højden (toppen sidder 4 mm over printeren).

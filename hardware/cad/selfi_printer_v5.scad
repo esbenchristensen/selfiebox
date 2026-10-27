@@ -94,8 +94,9 @@ SCREEN = [[0, 150], [48, 84], [45, 80], [0, 142]];   // 54 degree screen over th
 LED_Z = 136;                       // LED rail on the chamber's back wall (strip 10-12 wide)
 SCREWS = [[110, 70], [110, D - 70]];                   // base to table/shelf, under the printer (B2B)
 // tongue from the base under the exit module, two screws up from below into a pad in the exit module
-TONGUE = [PM + 35, 5];             // to x, thickness
-LINK = [[PM + 20, 60], [PM + 20, D - 60]];
+// v5: 17.5 long (v4: 35), so the base is 304.7 long and fits the H2C's safe area (306); v4's 322.2 did not
+TONGUE = [PM + 17.5, 5];           // to x, thickness
+LINK = [[PM + 9.5, 60], [PM + 9.5, D - 60]];
 // shock: the deck under the printer, its cones, and the end cones (see the header)
 FLOOR = 2.0;                       // the base's floor under the deck
 DECK_T = 1.6;
@@ -200,16 +201,24 @@ module daempeplade() difference() {
   union() {
     translate([DECK[0][0], DECK[0][1], BASE - DECK_T]) cube([DECK[1][0] - DECK[0][0], DECK[1][1] - DECK[0][1], DECK_T]);
     for (c = deck_cones()) translate([c[0], c[1], FLOOR + 0.01]) translate([0, 0, CONE_H]) mirror([0, 0, 1]) hcone(CONE_D[0], CONE_D[1], CONE_H, CONE_W);
-    // stops at the printer's ends, 0.3 off it (it is held sideways by the lip, 0.75 off)
-    for (y = [PY0 + 25, D - PY0 - 45]) {
-      translate([DECK[0][0], y, BASE - 0.01]) cube([PX0 - 0.3 - DECK[0][0], 20, 3]);
-      translate([PX1 + 0.3, y, BASE - 0.01]) cube([DECK[1][0] - PX1 - 0.3, 20, 3]);
-    }
+  }
+  // v5: notches round the base's end stops (deck_stops), 0.3 clear, so the deck is flat on the bed with the cones up
+  // (v4 had the stops on the deck itself, and its print file stood on them, the deck 3 mm in the air)
+  for (y = STOP_Y) {
+    translate([DECK[0][0] - 1, y - 0.3, BASE - DECK_T - 1]) cube([PX0 + 0.01 - DECK[0][0] + 1, 20.6, DECK_T + 2]);
+    translate([PX1 - 0.01, y - 0.3, BASE - DECK_T - 1]) cube([DECK[1][0] + 1 - PX1 + 0.01, 20.6, DECK_T + 2]);
   }
   // round the B2B screws' bosses, so the deck passes them
   for (q = SCREWS) translate([q[0], q[1], BASE - DECK_T - 1]) cylinder(d = 17, h = DECK_T + 2);
   // vents (cool air in), between the cones
   for (v = vents()) translate([v[0] - 6.75, v[1] - 9, BASE - DECK_T - 1]) cube([13.5, 18, DECK_T + 2]);
+}
+// the printer's end stops, 0.3 off it (it is held sideways by the lip, 0.75 off): fins on the base's pocket walls from the
+// pocket floor to 3 over the deck, through notches in the deck, which slides down past them when its cones crush
+STOP_Y = [PY0 + 25, D - PY0 - 45];
+module deck_stops() for (y = STOP_Y) {
+  translate([POCKET[0][0] - 0.01, y, FLOOR - 0.01]) cube([PX0 - 0.3 - POCKET[0][0] + 0.01, 20, BASE + 3 - FLOOR + 0.01]);
+  translate([PX1 + 0.3, y, FLOOR - 0.01]) cube([POCKET[1][0] - PX1 - 0.3 + 0.01, 20, BASE + 3 - FLOOR + 0.01]);
 }
 module end_cones() for (c = END_CONES) translate([WALL - 0.01, c[0], c[1]]) rotate([0, 90, 0]) hcone(END_D[0], END_D[1], PX0 - 1 - WALL, END_W);
 module exit_cones() for (c = EXIT_CONES) {
@@ -278,6 +287,7 @@ module sokkel() difference() {
     intersection() { body(0, PM - JG); zband(0, BASE); }
     lip();
     keeper();
+    deck_stops();
     // tongue under the exit module
     translate([PM - JG - 1, 30, 0]) cube([TONGUE[0] - PM + JG + 1, D - 60, TONGUE[1]]);
     // anchor post for the cable tie that holds the mains cable (strain relief)
@@ -296,6 +306,7 @@ module sokkel() difference() {
     translate([POCKET[0][0], POCKET[0][1], FLOOR]) cube([POCKET[1][0] - POCKET[0][0], POCKET[1][1] - POCKET[0][1], BASE]);
     for (q = SCREWS) translate([q[0], q[1], 0]) cylinder(d = 14, h = FLOOR + 3);
     for (q = FEET_IN) translate([q[0], q[1], 0]) cylinder(d = 16, h = FLOOR + 1.5);
+    deck_stops();
   }
   // vents in the floor (cool air in), under the deck's
   for (v = vents()) translate([v[0] - 5.25, v[1] - 7, -1]) cube([10.5, 14, FLOOR + 2]);
