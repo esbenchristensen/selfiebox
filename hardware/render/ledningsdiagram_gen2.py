@@ -90,7 +90,7 @@ for i, t in enumerate(["W1 24 V +: 221-415", "W2 GND: 221-415", "W3 5 V +: 221-4
 lx, ly = 40, 740
 for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip −, dæmpet"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
     out.append(f'<line x1="{lx}" y1="{ly+i*32}" x2="{lx+46}" y2="{ly+i*32}" stroke="{C[k]}" stroke-width="6"/><text x="{lx+58}" y="{ly+i*32+5}" font-size="16">{t}</text>')
-for i, t in enumerate(["Skærmen får strøm fra Pi'ens ben 4 (5 V) og 6 (GND) med sit eget kabel.",
+for i, t in enumerate(["Skærmen får strøm fra Pi'ens ben 2 (5 V, yderst i hjørnet) og 6 (GND) med sit eget kabel.",
                        "Tilvalg (4G, mikrofon) og RGB-styringen går i Pi'ens USB-A; sensorer tegnes, når de kommer i boksen.",
                        "Mærkningen på dæmperen og styringen gælder: tjek den, før der tændes."]):
     lab(40, 1285 + i*22, t, "#444", size=15)
