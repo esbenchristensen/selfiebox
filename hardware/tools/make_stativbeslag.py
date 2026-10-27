@@ -58,7 +58,8 @@ def main(ver):
         m = scad(view, tmp / f"{view}.stl")
         m.export(out / f"{ver}{suffix}.stl")
         parts.append((name, m, slot))
-    write_bambu_3mf(out / f"{ver}_flerfarvet.3mf", parts, ver, SETTINGS["stativbeslag"])
+    write_bambu_3mf(out / f"{ver}_flerfarvet.3mf", parts, ver, SETTINGS["stativbeslag"], filaments=("sort", "hvid", "groen"),
+                    plate="tekstureret")
 
     # the bracket on the newest box: every box node except the wall cleat, then the bracket's parts
     box = trimesh.load(latest_box())

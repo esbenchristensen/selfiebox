@@ -62,6 +62,8 @@ Kabinettet er tegnet efter DNP's datablad og fotos, ikke efter en rigtig QW410. 
 
 Kappen og udgangsmodulet printes stående på en ende uden støtte. Logo og tekst ligger på den lodrette front, så farveskiftet sker lag for lag. Lad 50 mm stå fri langs én kant af pladen til prime-tårnet.
 
+**3MF-filerne (27. okt.):** `_kappe_flerfarvet.3mf` og `_udgang_flerfarvet.3mf` er nu rigtige Bambu Studio-projekter med indstillingerne lagt ind (vælg "Open as project"): 0,2 mm lag, 8 vægge, 15 % fyld og ingen støtte på objektet, printer Bambu Lab H2C 0.4 nozzle, proces 0.20mm Standard @BBL H2C (første lag 30 mm/s, *Avoid crossing walls*), Bambu ASA på plads 1 sort, 2 hvid og 3 grøn, glat PEI, og delen til venstre på pladen med prime tower til højre for. Før var de almindelige 3MF'er uden indstillinger. Siger Bambu Studio *"invalid config, load geometry data only"*, så sæt det selv: Layer height 0.2, Wall loops 8, Sparse infill density 15 %, Enable support fra, og Prime tower til.
+
 ## Samling
 
 1. Print delene. Der er ingen støtte at fjerne.

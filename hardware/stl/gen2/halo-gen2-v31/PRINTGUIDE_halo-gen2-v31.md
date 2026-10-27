@@ -1,6 +1,6 @@
 # Selfi Halo gen 2, version v31: printguide
 
-**Version:** halo-gen2-v31 (27. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v31_`. Den erstatter halo-gen2-v30. **Ledningsplanen er rettet, så hver ledning går til den rigtige klemme på delene.** Ingen printdel er ændret: alle STL- og 3MF-filer er præcis som i v30 (kopieret med nyt navn), så en boks printet efter v29 eller v30 kan bruges uændret. Nyt er ledningsplanen, ledningsdiagrammet, kabellisten og 3D-modellens kabler. Til stativet bruges **selfi-stativbeslag-v5**. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox; ruterne og længderne er i `hardware/render/harness_gen2.py`.
+**Version:** halo-gen2-v31 (27. okt. 2026). Alle filer i denne mappe starter med `halo-gen2-v31_`. Den erstatter halo-gen2-v30. **Ledningsplanen er rettet, så hver ledning går til den rigtige klemme på delene.** Ingen printdel er ændret: alle STL-filer er præcis som i v30 (kopieret med nyt navn), og 3MF-filerne har de samme dele og indstillinger, men er nu rigtige Bambu Studio-projekter, så Bambu Studio indlæser indstillingerne (27. okt., tredje runde; se Indstillinger). Så en boks printet efter v29 eller v30 kan bruges uændret. Nyt er ledningsplanen, ledningsdiagrammet, kabellisten og 3D-modellens kabler. Til stativet bruges **selfi-stativbeslag-v5**. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox; ruterne og længderne er i `hardware/render/harness_gen2.py`.
 
 Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filerne ligger også i printretning. Én del pr. plade, 1 stk. af hver. Kun hovedenheden; tema-delene er tilbehør.
 
@@ -134,7 +134,7 @@ Esben 27. okt. 2026: gennemgå hele boksen for alt, der kan gå galt i printet: 
 - **Lysringen** printes med koncentriske baner, så lyset bliver jævnt.
 - **Scarf seam** på alle dele, og sømmen sidder på boksens underside (skal og bagramme ligger derfor vendt 180° på pladen).
 - **Skallen har en 3 mm brim** i stedet for musøre, og det lille blæserhegn også.
-- Første lag 30 mm/s, *Avoid crossing walls* og tørt filament fra samme parti: se "Én gang: printer, filament og proces".
+- Første lag 30 mm/s, *Avoid crossing walls* og tørt filament fra samme parti: se "Printer, filament og proces" (27. okt., tredje runde: 3MF'erne er nu Bambu Studio-projekter, så de første to ligger i filerne).
 
 **Tjekket, ikke ændret** (det printer, men hold øje med det): bagrammens 14 klikarme står på højkant og bøjer på tværs af lagene (ca. 1,8 % ved klik; de holdt ved samlingen af v23, men vip dem ikke længere ud end nødvendigt), læberne i strip-banerne er 0,5–0,7 mm og printes som én bane, skallens inderste kant ved rillen mod fronten er 0,6 mm, og bakkernes klikkanter har en flad fangeflade på 1,2–2,0 mm, der kan hænge 0,1–0,2 mm ned (skrab den, hvis en del ikke vil klikke ned). Alt andet er broer på højst 16 mm eller udhæng på højst 1,5 mm.
 
@@ -474,13 +474,21 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 
 Vægtene er skøn ud fra rumfanget. Bambu Studio viser den rigtige vægt og tid, når delene er skåret.
 
-**Pladen:** front og skal er 307 mm lange og ligger med 6,5 mm fri til pladens kant foran og bagved (H2C-pladen er 320 mm). Det er 0,5 mm under vores egen margin på 7 mm, så læg dem midt på pladen, og brug ikke skirt. Skallens brim på 3 mm (v26) er inden for; 3MF'erne lægger delene midt på pladen.
+**Pladen:** front og skal er 307 mm lange og ligger med 6,5 mm fri til pladens kant foran og bagved (H2C-pladen er 320 mm). Det er 0,5 mm under vores egen margin på 7 mm, så flyt dem ikke frem eller tilbage, og brug ikke skirt. Skallens brim på 3 mm (v26) er inden for. 3MF'erne lægger delene midt på pladen; fronten (flere farver) ligger til venstre, fra 30 mm, med prime tower til højre for.
 
 Fire farver ASA: **sort** (skal, front, beslag, blæserhegn), **hvid** (bagrammen og logoet), **grøn** (prikkerne i logoet), og lysringen i jeres matte translucente materiale, som I har valgt til den. Logoet skal være ASA ligesom fronten, ellers hæfter lagene ikke.
 
 ## Indstillinger (Bambu Studio)
 
-**v26: hver del har sin egen 3MF med indstillingerne lagt ind** (Esben 27. okt.: et pænt resultat uden fejl, der ser støbt ud og holder). Åbn 3MF'en, ikke STL'en. Så får hver del de samme lag, vægge, fyld, søm, support og brim hver gang, uanset hvad der sidst stod i Bambu Studio. Indstillingerne ligger på objektet; i objektlisten har det et tandhjul, og der kan du se og rette dem.
+**Hver del har sin egen 3MF med indstillingerne lagt ind** (v26; Esben 27. okt.: et pænt resultat uden fejl, der ser støbt ud og holder). Åbn 3MF'en, ikke STL'en, og vælg **"Open as project"** (åbn som projekt), ikke "Import geometry only". Så får hver del de samme lag, vægge, fyld, søm, support og brim hver gang, uanset hvad der sidst stod i Bambu Studio. Indstillingerne ligger på objektet; i objektlisten har det et tandhjul, og der kan du se og rette dem.
+
+**27. okt., tredje runde: filerne er nu rigtige Bambu Studio-projekter.** Indtil nu sagde Bambu Studio 2.8 *"The 3mf file has invalid config, load geometry data only"* og smed objektets indstillinger væk, fordi filerne ikke sagde, hvilken printer, proces og filament de var lavet til. Nu vælger hver fil selv:
+- Printer **Bambu Lab H2C 0.4 nozzle**, proces **0.20mm Standard @BBL H2C** og filament **Bambu ASA @BBL H2C** på hver plads, med farverne sort, hvid, grøn og natur (lysringen).
+- **Pladen**: tekstureret PEI til front og lysring, glat PEI (*Smooth PEI Plate / High Temp Plate*) til resten.
+- **Første lag 30 mm/s** (væg og fyld) og **Avoid crossing walls** til. Processen står derfor som *0.20mm Standard @BBL H2C* med ændringer; resten (temperaturer, køling, hastigheder) er Bambus egne profiler.
+- Front, stativbeslag og printerens kappe og udgang (flere farver) ligger til venstre på pladen med **prime tower** til højre for, så det ikke står i vejen.
+
+Filerne er bygget og tjekket mod Bambu Studio 2.8.2's egen indlæsningskode, men ikke åbnet i Bambu Studio her. Får du stadig beskeden, så sig til, og brug tabellen under "Sæt det selv" imens.
 
 | Fil | Plade | Lag | Vægge | Fyld | Andet |
 |---|---|---|---|---|---|
@@ -490,14 +498,36 @@ Fire farver ASA: **sort** (skal, front, beslag, blæserhegn), **hvid** (bagramme
 | `halo-gen2-v31_skal_support.3mf` | Glat PEI | 0,16 | 5, top/bund 6 | 20 % gyroid | Support: Tree (manuel), kun ved de 2 enforcere, også fra modellen; brim 3 mm |
 | `halo-gen2-v31_vaegbeslag.3mf` | Glat PEI | 0,2 | 6 | 100 % | Ingen support |
 | `halo-gen2-v31_blaeserhegn.3mf` | Glat PEI | 0,16 | 4 | 100 % | På siden; brim 3 mm (v27: alene på pladen, kamerarøret er væk) |
+| `halo-gen2-v31_wagoraekke-eftermontering.3mf` | Glat PEI | 0,16 | 3 | 100 % | Enden ned; ingen support |
 | `halo-gen2-v31_tema-*.3mf` | Glat PEI | 0,2 | 4, top/bund 5 | 15 % gyroid | Forsiden som fronten; Tree-support (auto) under stropperne |
 
 Alle dele har **scarf seam** (sømmen glider ind over et stykke i stedet for at starte og stoppe ét sted) med sømmen placeret **bagud på pladen**, og alle filer ligger, så bagud på pladen er boksens **underside** (skal og bagramme er vendt 180° i forhold til STL'en). Det, der er tilbage af sømmen, sidder derfor under boksen, hvor ingen ser den. Drej ikke delene på pladen.
 
-**Én gang: printer, filament og proces** (det kan ikke ligge i en 3MF; gem det som egne profiler, fx "Selfi ASA")
-- Printer: Bambu Lab H2C med 0,4-dyse. Proces: Bambus 0,20 mm Standard for H2C. Filament: Bambu ASA (eller jeres ASA med Bambus ASA-profil).
-- **Første lag:** højde 0,2 mm (logoet er præcis de 4 første lag), hastighed 30 mm/s for både væg og fyld, bredde 0,5 mm. Det første lag er frontens forside, så det skal lægges langsomt og ens.
-- **Undgå at krydse vægge** (*Avoid crossing walls*): til. Dysen kører uden om i stedet for hen over flader, der kan ses, så der kommer færre tråde og mærker.
+**Sæt det selv** (hvis en fil kun indlæses som geometri, eller du printer fra STL). Vælg printer, proces og filament som ovenfor, slå **Advanced** til øverst i procesfeltet, og find hvert felt med **søgefeltet** (forstørrelsesglasset) under dets engelske navn. Der er én del pr. plade, så du kan sætte det i den globale proces; gem den som en proces pr. del (fx "Selfi front"), så skal det kun gøres én gang.
+
+| Bambu Studio-felt (fane) | Front | Lysring | Bagramme | Skal | Vægbeslag | Blæserhegn | Wago-række | Tema-dele |
+|---|---|---|---|---|---|---|---|---|
+| Layer height (Quality) | 0.2 | 0.16 | 0.2 | 0.16 | 0.2 | 0.16 | 0.16 | 0.2 |
+| Wall loops (Strength) | 4 | 3 | 4 | 5 | 6 | 4 | 3 | 4 |
+| Top / Bottom shell layers (Strength) | 5 / 5 | | | 6 / 6 | | | | 5 / 5 |
+| Sparse infill density (Strength) | 20 % | 100 % | 20 % | 20 % | 100 % | 100 % | 100 % | 15 % |
+| Sparse infill pattern (Strength) | Gyroid | | Gyroid | Gyroid | | | | Gyroid |
+| Bottom surface pattern (Strength) | Monotonic line | Concentric | | | | | | Monotonic line |
+| Top surface pattern og Internal solid infill pattern (Strength) | | Concentric | | | | | | |
+| Only one wall on first layer (Quality) | Til | | | | | | | Til |
+| Elephant foot compensation (Quality) | 0.15 | 0.15 | | | | | | |
+| Enable support (Support) | Fra | Fra | Fra | **Til** | Fra | Fra | Fra | **Til** |
+| Type (Support) | | | | **Tree (manual)** | | | | Tree (auto) |
+| On build plate only (Support) | | | | **Fra** | | | | |
+| Brim type / Brim width (Others) | No-brim | No-brim | | Outer brim only / 3 | | Outer brim only / 3 | | |
+| Plate type (pladen øverst i Prepare) | Textured PEI | Textured PEI | Smooth PEI | Smooth PEI | Smooth PEI | Smooth PEI | Smooth PEI | Smooth PEI |
+
+Tomt felt: lad Bambus værdi stå. For alle dele: **Seam position** *Back* og **Scarf joint seam** *Contour* (Quality), **Initial layer speed** og **Initial layer infill speed** 30 mm/s (Speed), **Avoid crossing walls** til (Quality). Ved front, stativbeslag og printerens kappe/udgang: **Prime tower** til og **Flush into object's infill** til.
+
+**Printer, filament og proces** (det, der ikke ligger i 3MF'en; tjek det første gang)
+- Printer: Bambu Lab H2C med 0,4-dyse. Proces: Bambus 0,20 mm Standard for H2C. Filament: Bambu ASA (eller jeres ASA med Bambus ASA-profil; lysringens eget materiale på dens plads 1).
+- **Første lag:** højde 0,2 mm (logoet er præcis de 4 første lag; det er Bambus standard), hastighed 30 mm/s for både væg og fyld (ligger i 3MF'en), bredde 0,5 mm. Det første lag er frontens forside, så det skal lægges langsomt og ens.
+- **Undgå at krydse vægge** (*Avoid crossing walls*): til (ligger i 3MF'en). Dysen kører uden om i stedet for hen over flader, der kan ses, så der kommer færre tråde og mærker.
 - Dyse 260 °C, plade 100 °C, kammer 60 °C (luk lågen, og lad kammeret varme op, før printet starter). Køling 10–20 % (5 % de første 3 lag).
 - Slå *Flow dynamics calibration* til i print-vinduet, hver gang der er sat en ny rulle i.
 - Ingen "hole compensation" eller skalering. Hullerne er tegnet til målet (±0,2 mm).

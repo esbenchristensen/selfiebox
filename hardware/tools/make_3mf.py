@@ -6,8 +6,8 @@ is durable"): every part now has its own 3MF with the object's settings already 
 first-layer pattern of the visible face, scarf seam, support, brim), so a print looks the same from box to box and does
 not depend on what was last chosen in Bambu Studio. Only object-level settings are written (Bambu Studio's
 PrintObjectConfig / PrintRegionConfig keys, as <metadata> on the object in Metadata/model_settings.config, which the
-loader passes to the object's config). Printer, filament and the plate-wide process values (first layer height, speeds,
-which are per-extruder lists on the H2C) are not in the files; the print guide lists them.
+loader passes to the object's config). Since the third round the files also name the printer, process and filament presets and the
+plate (see below); temperatures and the rest stay Bambu's own presets.
 
   <version>_front_flerfarvet.3mf  the black front with the logo inlays (white and green) in its 0.8 mm recess, as ONE
                                   object with three parts on slots 1 sort / 2 hvid / 3 groen
@@ -19,16 +19,25 @@ Seams: Bambu's "back" seam goes to the part's rear (+y on the plate). Every part
 underside (the front and the ring already lie that way; the shell and the frame are turned 180 degrees on the plate),
 so what is left of a seam ends up under the box, and it is a scarf seam on the outer contour.
 
-The files follow Bambu Studio's own 3MF layout (component object + Metadata/model_settings.config). They deliberately do
-not claim to be written by Bambu Studio (no Application metadata): a Bambu-tagged project without project_settings.config
-crashes the slicer's command line loader (checked with OrcaSlicer 2.3.1, which shares the loader), while these load with
-their parts, positions and slots.
+Bambu projects (27 Oct, third round; Esben: "vi kan ikke loade de configs der er i 3mf filerne"): until then the files had no project
+config, so Bambu Studio 2.8.2 said "The 3mf file has invalid config, load geometry data only" and reset every object's
+settings (Plater::priv::load_files: a config without a Bambu printer_model or nozzle_diameter is invalid, and with
+load_config off the objects' configs are reset, only the extruder is kept). Now every file is a Bambu Studio project:
+Application "BambuStudio-<version>" in the model and Metadata/project_settings.config naming Bambu's own system presets
+(Bambu Lab H2C 0.4 nozzle, 0.20mm Standard @BBL H2C, Bambu ASA @BBL H2C per filament slot) with the bed type. On loading,
+PresetCollection::load_external_preset() restores every key not listed in different_settings_to_system from the
+installed system preset, so the file only has to carry the names, the structure the loader checks (filament_diameter,
+filament_extruder_variant and filament_self_index sized to the filaments, the extruder variants) and the few process
+values the box changes for the whole plate (first layer 30 mm/s, avoid crossing walls), listed as different. Checked
+against BambuStudio v02.08.02.61's source (Plater.cpp, PresetBundle.cpp, Preset.cpp, bbs_3mf.cpp, PrintConfig.cpp), not
+in the slicer itself.
 
 Usage:  python3 hardware/tools/make_3mf.py <version folder> [<file prefix>]
         e.g. python3 hardware/tools/make_3mf.py hardware/stl/gen2/halo-gen2-v26
              python3 hardware/tools/make_3mf.py hardware/stl/gen2-hurtig/halo-gen2-v12-hurtig
 Needs:  trimesh, numpy
 """
+import json
 import sys
 import uuid
 import zipfile
@@ -42,7 +51,46 @@ import trimesh
 FRONT_PARTS = [("front", "front (sort)", 1, "#1D1D20"),
                ("logo-hvid", "logo hvid", 2, "#F5F5F4"),
                ("logo-groen", "logo groen", 3, "#22D36B")]
-BED_CENTRE = (162.5, 160.0)   # H2C, 325 x 320 mm
+BED_CENTRE = (165.0, 160.0)   # H2C, printable_area 330 x 320 mm
+# the left extruder reaches x 0-325 and the right one x 25-330 (extruder_printable_area), so a part with more than one
+# filament lies from x = 30, and the prime tower (60 mm, prime_tower_width) stands to its right
+BOTH_EXTRUDERS_X = (30.0, 325.0)
+PRIME_TOWER = (60.0, 110.0)   # width, y of its front edge
+
+# the filament on each slot of a file: colour (as in the AMS) and Bambu's system preset for it
+COLOURS = {"sort": "#1D1D20", "hvid": "#F5F5F4", "groen": "#22D36B", "natur": "#E8E4D8"}
+BAMBU_VERSION = "02.08.02.61"   # the Bambu Studio whose loader and H2C presets these files are written for
+PRINTER = {"printer_settings_id": "Bambu Lab H2C 0.4 nozzle", "printer_model": "Bambu Lab H2C", "printer_variant": "0.4",
+           "printer_technology": "FFF", "nozzle_diameter": ["0.4", "0.4"], "extruder_type": ["Direct Drive", "Direct Drive"],
+           "nozzle_volume_type": ["Standard", "Standard"],
+           "extruder_variant_list": ["Direct Drive Standard,Direct Drive High Flow,Direct Drive E3D High Flow",
+                                     "Direct Drive Standard,Direct Drive High Flow"],
+           "printer_extruder_variant": ["Direct Drive Standard", "Direct Drive High Flow", "Direct Drive E3D High Flow",
+                                        "Direct Drive Standard", "Direct Drive High Flow"],
+           "printer_extruder_id": ["1", "1", "1", "2", "2"]}
+PROCESS = {"print_settings_id": "0.20mm Standard @BBL H2C",
+           "print_extruder_variant": PRINTER["printer_extruder_variant"], "print_extruder_id": PRINTER["printer_extruder_id"]}
+# the plate-wide process values the box changes from Bambu's 0.20mm Standard (one value per extruder variant)
+PROCESS_CHANGES = {"initial_layer_speed": ["30"] * 5, "initial_layer_infill_speed": ["30"] * 5, "reduce_crossing_wall": "1"}
+FILAMENT = {"filament_settings_id": "Bambu ASA @BBL H2C", "filament_ids": "GFB01", "filament_type": "ASA",
+            "filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
+PLATES = {"glat": "High Temp Plate", "tekstureret": "Textured PEI Plate"}   # Bambu's names: smooth PEI, textured PEI
+
+
+def project_settings(filaments, plate, tower=None):
+    """Metadata/project_settings.config: the project config Bambu Studio writes (PresetBundle::full_fff_config, keys
+    that equal Bambu's own defaults left out; the loader puts them back). filaments: COLOURS keys, slot 1 first."""
+    n = len(filaments)
+    cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **PROCESS_CHANGES,
+           **{k: [v] * n for k, v in FILAMENT.items()},
+           "filament_colour": [COLOURS[f] for f in filaments], "filament_self_index": [str(i + 1) for i in range(n)],
+           "different_settings_to_system": [";".join(sorted(PROCESS_CHANGES))] + [""] * (n + 1),
+           "curr_bed_type": PLATES[plate], "flush_multiplier": ["1", "1"],
+           "flush_volumes_matrix": [("0" if i == j else "280") for _ in range(2) for i in range(n) for j in range(n)],
+           "flush_volumes_vector": ["140"] * (2 * n)}
+    if tower:
+        cfg["wipe_tower_x"], cfg["wipe_tower_y"] = [f"{tower[0]:g}"], [f"{tower[1]:g}"]
+    return json.dumps(cfg, indent=4) + "\n"
 
 
 def _uuid():
@@ -89,6 +137,8 @@ SETTINGS = {
     "tema": {"layer_height": "0.2", "wall_loops": "4", "top_shell_layers": "5", "bottom_shell_layers": "5",
              "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid", "enable_support": "1",
              "support_type": "tree(auto)", **SOLID_FACE, **SEAM},
+    # printer hood and exit module (selfi-printer-v5): stood on an end, logo and text on the vertical front
+    "printerkappe": {"layer_height": "0.2", "wall_loops": "8", "sparse_infill_density": "15%", **NO_SUPPORT},
     # stand bracket: carries the whole box; the logo panel lies on the plate
     "stativbeslag": {"layer_height": "0.2", "wall_loops": "5", "top_shell_layers": "5", "bottom_shell_layers": "5",
                      "sparse_infill_density": "40%", "sparse_infill_pattern": "gyroid", **SOLID_FACE, **SEAM, **NO_SUPPORT},
@@ -96,23 +146,37 @@ SETTINGS = {
 TURN = np.diag([-1.0, -1.0, 1.0])   # 180 degrees on the plate: the box's underside to +y (Bambu's "back" seam)
 
 
-def write_bambu_3mf(path, parts, object_name, settings=None, turn=False):
+def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filaments=("sort",), plate="glat"):
     """parts: list of (name, trimesh.Trimesh, filament slot[, subtype]). All meshes in one shared coordinate system;
     the object is moved as a whole so it sits on the plate (z = 0) in the middle of the bed. subtype is Bambu Studio's
     part type: "normal_part" (default), or "support_enforcer" / "support_blocker" for a support modifier volume.
-    settings: the object's own print settings ({Bambu option key: value}); turn: 180 degrees round z on the plate."""
-    write_bambu_objects(path, [(object_name, parts, settings or {}, (0.0, 0.0), turn)])
+    settings: the object's own print settings ({Bambu option key: value}); turn: 180 degrees round z on the plate.
+    filaments: the colour on each slot (COLOURS keys, slot 1 first); plate: "glat" or "tekstureret" (PLATES).
+    With more than one filament the object lies from x = 30 with the prime tower to its right (BOTH_EXTRUDERS_X)."""
+    dx, tower = 0.0, None
+    if len(filaments) > 1:
+        width = max(m.bounds[1][0] for _, m, *_ in parts) - min(m.bounds[0][0] for _, m, *_ in parts)
+        x0, x1 = BOTH_EXTRUDERS_X
+        if x0 + width + 10 + PRIME_TOWER[0] <= x1:
+            dx = x0 + width / 2 - BED_CENTRE[0]
+            tower = (x0 + width + 10, PRIME_TOWER[1])
+    write_bambu_objects(path, [(object_name, parts, settings or {}, (dx, 0.0), turn)], filaments, plate, tower)
 
 
-def write_bambu_objects(path, objects):
+def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=None):
     """objects: list of (name, parts, settings, (dx, dy) from the bed centre, turn). One plate, each object as in
-    write_bambu_3mf."""
+    write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default."""
     ns = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
           'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
           'xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" requiredextensions="p"')
     head = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-            f'<model unit="millimeter" xml:lang="en-US" {ns}>\n')
-    meshes, items, assemble, plate = [], [], [], []
+            f'<model unit="millimeter" xml:lang="en-US" {ns}>\n'
+            ' <metadata name="BambuStudio:3mfVersion">1</metadata>\n')
+    # what Bambu Studio writes in the main model; "Application" is what makes the loader read the file as its own project
+    meta = {"Application": f"BambuStudio-{BAMBU_VERSION}", "Title": Path(path).stem, "Designer": "Selfi",
+            "CreationDate": "2026-10-27", "ModificationDate": "2026-10-27"}
+    main_head = head + "".join(f' <metadata name="{k}">{escape(v)}</metadata>\n' for k, v in meta.items())
+    meshes, items, assemble, instances = [], [], [], []
     cfg = ['<?xml version="1.0" encoding="UTF-8"?>', "<config>"]
     files, main_objs, nid = {}, [], 0
     for k, (object_name, parts, settings, (dx, dy), turn) in enumerate(objects):
@@ -145,14 +209,14 @@ def write_bambu_objects(path, objects):
                     f'      <mesh_stat face_count="{len(m.faces)}" edges_fixed="0" degenerate_facets="0" '
                     'facets_removed="0" facets_reversed="0" backwards_edges="0"/>', "    </part>"]
         cfg.append("  </object>")
-        plate += ["    <model_instance>", f'      <metadata key="object_id" value="{obj}"/>',
+        instances += ["    <model_instance>", f'      <metadata key="object_id" value="{obj}"/>',
                   '      <metadata key="instance_id" value="0"/>', f'      <metadata key="identify_id" value="{1000 + obj}"/>',
                   "    </model_instance>"]
         assemble.append(f'   <assemble_item object_id="{obj}" instance_id="0" transform="{tr}" offset="0 0 0" />')
     cfg += ["  <plate>", '    <metadata key="plater_id" value="1"/>', '    <metadata key="plater_name" value=""/>',
-            '    <metadata key="locked" value="false"/>'] + plate + ["  </plate>", "  <assemble>"] + assemble + \
-           ["  </assemble>", "</config>", ""]
-    main = head + " <resources>\n" + "\n".join(main_objs) + f'\n </resources>\n <build p:UUID="{_uuid()}">\n' + \
+            '    <metadata key="locked" value="false"/>', f'    <metadata key="bed_type" value="{PLATES[plate]}"/>'] + \
+        instances + ["  </plate>", "  <assemble>"] + assemble + ["  </assemble>", "</config>", ""]
+    main = main_head + " <resources>\n" + "\n".join(main_objs) + f'\n </resources>\n <build p:UUID="{_uuid()}">\n' + \
         "\n".join(items) + "\n </build>\n</model>\n"
     rels = "".join(f' <Relationship Target="{s}" Id="rel-{i + 1}" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>\n'
                    for i, s in enumerate(meshes))
@@ -168,6 +232,7 @@ def write_bambu_objects(path, objects):
         "3D/3dmodel.model": main,
         **files,
         "Metadata/model_settings.config": "\n".join(cfg),
+        "Metadata/project_settings.config": project_settings(filaments, plate, tower),
     }
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
         for name, text in out.items():
@@ -179,7 +244,8 @@ def front_3mf(folder, prefix=None):
     prefix = prefix or folder.name
     parts = [(name, trimesh.load(folder / f"{prefix}_{suffix}.stl"), slot) for suffix, name, slot, _ in FRONT_PARTS]
     out = folder / f"{prefix}_front_flerfarvet.3mf"
-    write_bambu_3mf(out, parts, f"{prefix}_front", SETTINGS["front"])
+    write_bambu_3mf(out, parts, f"{prefix}_front", SETTINGS["front"], filaments=("sort", "hvid", "groen"),
+                    plate="tekstureret")
     return out
 
 
@@ -222,14 +288,17 @@ def skal_3mf(folder, prefix=None):
     parts += [(n, _box(b), 1, "support_enforcer") for n, b in SKAL_ENFORCE]
     parts += [(n, _box(b), 1, "support_blocker") for n, b in SKAL_BLOCK]
     out = folder / f"{prefix}_skal_support.3mf"
-    write_bambu_3mf(out, parts, f"{prefix}_skal", SETTINGS["skal"], turn=True)
+    write_bambu_3mf(out, parts, f"{prefix}_skal", SETTINGS["skal"], turn=True, filaments=("sort",))
     return out
 
 
-# the other parts: (file suffix, settings, turn); the frame lies like the shell (box underside at -y), so it is turned too
-SINGLE = [("lysring", "lysring", False), ("bagramme", "bagramme", True), ("vaegbeslag", "vaegbeslag", False),
-          ("tema-top-eksempel", "tema", False), ("tema-vinge-venstre-eksempel", "tema", False),
-          ("tema-vinge-hoejre-eksempel", "tema", False), ("wagoraekke-eftermontering", "wagoraekke", False)]
+# the other parts: (file suffix, settings, turn, filament, plate); the frame lies like the shell (box underside at -y), so
+# it is turned too. The light ring's own translucent material goes on slot 1 instead of the ASA preset if it is not ASA.
+SINGLE = [("lysring", "lysring", False, "natur", "tekstureret"), ("bagramme", "bagramme", True, "hvid", "glat"),
+          ("vaegbeslag", "vaegbeslag", False, "sort", "glat"), ("tema-top-eksempel", "tema", False, "sort", "glat"),
+          ("tema-vinge-venstre-eksempel", "tema", False, "sort", "glat"),
+          ("tema-vinge-hoejre-eksempel", "tema", False, "sort", "glat"),
+          ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat")]
 
 
 def part_3mfs(folder, prefix=None):
@@ -239,11 +308,12 @@ def part_3mfs(folder, prefix=None):
     folder = Path(folder)
     prefix = prefix or folder.name
     outs = []
-    for suffix, key, turn in SINGLE:
+    for suffix, key, turn, colour, plate in SINGLE:
         stl = folder / f"{prefix}_{suffix}.stl"
         if stl.exists():
             outs.append(folder / f"{prefix}_{suffix}.3mf")
-            write_bambu_3mf(outs[-1], [(suffix, trimesh.load(stl), 1)], f"{prefix}_{suffix}", SETTINGS[key], turn)
+            write_bambu_3mf(outs[-1], [(suffix, trimesh.load(stl), 1)], f"{prefix}_{suffix}", SETTINGS[key], turn,
+                            filaments=(colour,), plate=plate)
     small = [(s, folder / f"{prefix}_{s}.stl") for s in ("blaeserhegn", "kameraroer")]
     if small[0][1].exists() and not small[1][1].exists():
         outs.append(folder / f"{prefix}_blaeserhegn.3mf")
