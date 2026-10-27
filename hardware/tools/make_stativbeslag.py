@@ -11,7 +11,7 @@ and web/public/models/stand_gen2.glb (bracket, its logo and the T-nut for the we
 bottom of the box at y = 0, front at z = 0).
 The drawing is hardware/render/drawing/draw_stativbeslag.py.
 
-Usage: python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v4
+Usage: python3 hardware/tools/make_stativbeslag.py selfi-stativbeslag-v5
 Needs: openscad, trimesh, numpy
 """
 import json
@@ -65,7 +65,7 @@ def main(ver):
     box_meta = json.loads(latest_box().with_name(latest_box().name.replace("_3d.glb", "_parts.json")).read_text())
     scene, meta = trimesh.Scene(), []
     for p in box_meta:
-        if p["node"] == "vaegbeslag":
+        if p["node"] in ("vaegbeslag", "skruer_vaeg") or p["group"] == "Stativbeslag":   # v28: the box's model has the bracket too (hidden)
             continue
         T, g = box.graph[p["node"]]
         scene.add_geometry(box.geometry[g].copy(), node_name=p["node"], geom_name=p["node"], transform=T)
@@ -102,4 +102,4 @@ def main(ver):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "selfi-stativbeslag-v4")
+    main(sys.argv[1] if len(sys.argv) > 1 else "selfi-stativbeslag-v5")

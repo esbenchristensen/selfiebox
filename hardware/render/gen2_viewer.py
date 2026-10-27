@@ -51,12 +51,22 @@ PARTS = [
     ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
+    # v28: the 6 wall screws (4.0 x 50 T20, the 2 new ones in the arms out to the locks)
+    ("skruer_vaeg",   "s_wall",        "6 vægskruer i vægbeslaget (4,0 × 50 T20 + dybel), 2 af dem i armene ud mod låsene", "#c3c7cf", "Skruer", [0, 0, -260]),
     # v21: example theme parts on the hooks (skjult som standard i admin; vises med fluebenet)
     ("tema_top",      "x_tema_top",    "Tema-top (eksempel): skilt + 2 kroge i de øverste slidser", "#22d36b", "Tema (eksempel)", [0, 90, -40]),
-    ("tema_vinge_v",  "x_tema_vinge_v", "Tema-vinge venstre (eksempel): 2 kroge", "#16a34a", "Tema (eksempel)", [-90, 0, -40]),
-    ("tema_vinge_h",  "x_tema_vinge_h", "Tema-vinge højre (eksempel): 2 kroge",   "#16a34a", "Tema (eksempel)", [90, 0, -40]),
+    ("tema_vinge_v",  "x_tema_vinge_v", "Tema-vinge venstre (eksempel): 2 kroge + tap i rillen forneden", "#16a34a", "Tema (eksempel)", [-90, 0, -40]),
+    ("tema_vinge_h",  "x_tema_vinge_h", "Tema-vinge højre (eksempel): 2 kroge + tap i rillen forneden",   "#16a34a", "Tema (eksempel)", [90, 0, -40]),
+    # v28 (Esben 27 Oct): the stand bracket the box sits on for the floor tripod, in place on the box (hidden; tick it and
+    # untick the wall cleat to see the box as it stands on the tripod)
+    ("stativbeslag",  "x_stand",       "Stativbeslag (sort ASA) til gulvstativet, i stedet for vægbeslaget", "#2b2b30", "Stativbeslag", [0, 0, -210]),
+    ("stativlogo_hvid", "x_stand_logo_w", "Stativbeslag: logo bagpå, hvidt",   "#f5f5f4", "Stativbeslag", [0, 0, -210]),
+    ("stativlogo_groen", "x_stand_logo_g", "Stativbeslag: logo bagpå, grønne prikker", "#22d36b", "Stativbeslag", [0, 0, -210]),
+    ("t_moetrik",     "x_tnut",        "Stativbeslag: T-møtrik 1/4\"-20 til kuglehovedet", "#9a9ea2", "Stativbeslag", [0, -60, -210]),
 ]
-OPTIONAL = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"}   # left out if the STL dir has none (versions before v21)
+OPTIONAL = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+            "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # left out if the STL dir has none (older versions)
+HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # off until ticked
 
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. v12: the display and the Pi sit 2.1 mm
 # further forward (glass at y 1.6), so every point at the Pi or the display back moved with them. Routed along the back wall
@@ -151,7 +161,7 @@ for node, view, label, hexc, group, ex in PARTS:
     m.apply_translation([0, Y0, 0])
     m.visual = trimesh.visual.TextureVisuals(material=material(hexc, 0.3 if group == "Skruer" else 0.55))
     scene.add_geometry(m, node_name=node, geom_name=node)
-    meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex, **({"hidden": True} if view in OPTIONAL else {})})
+    meta.append({"node": node, "label": label, "color": hexc, "group": group, "explode": ex, **({"hidden": True} if view in HIDDEN else {})})
 
 owners = {p[0]: p for p in PARTS}
 for i, (owner, label, d, pts) in enumerate(CABLES):

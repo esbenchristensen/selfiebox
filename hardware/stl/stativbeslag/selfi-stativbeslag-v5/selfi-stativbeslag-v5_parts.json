@@ -1,0 +1,580 @@
+[
+ {
+  "node": "lysring",
+  "label": "Lysring (mat translucent)",
+  "color": "#fbf8f1",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   170
+  ]
+ },
+ {
+  "node": "front",
+  "label": "Front (sort ASA)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   120
+  ]
+ },
+ {
+  "node": "logo_hvid",
+  "label": "Logo, hvidt (indlagt i fronten)",
+  "color": "#f5f5f4",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   120
+  ]
+ },
+ {
+  "node": "logo_groen",
+  "label": "Logo, grønne prikker",
+  "color": "#22d36b",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   120
+  ]
+ },
+ {
+  "node": "ledskinne",
+  "label": "Bagramme med reflektor, kantspor og knusknopper mod lysringen (hvid ASA)",
+  "color": "#e9e4da",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   25
+  ]
+ },
+ {
+  "node": "skal",
+  "label": "Skal (sort ASA)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "skaerm",
+  "label": "Skærm: glas med sort kant (ligger direkte på frontens 1,6 mm kant)",
+  "color": "#0b0b0d",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   65
+  ]
+ },
+ {
+  "node": "skaerm_billede",
+  "label": "Skærm: aktivt billede 1200 × 1920",
+  "color": "#4f7df0",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   65
+  ]
+ },
+ {
+  "node": "skaerm_bag",
+  "label": "Skærm: bagside med skrueører",
+  "color": "#8a8d94",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   65
+  ]
+ },
+ {
+  "node": "kamera",
+  "label": "Kamera (Wide)",
+  "color": "#9aa3b5",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   120
+  ]
+ },
+ {
+  "node": "ledhvid",
+  "label": "2 × hvid COB-strip Ra95 i kantspor på væggen",
+  "color": "#ffb000",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   60
+  ]
+ },
+ {
+  "node": "ledrgb",
+  "label": "RGB-strip 5 mm",
+  "color": "#a855f7",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   60
+  ]
+ },
+ {
+  "node": "klikstik",
+  "label": "3 klikstik til strips (ét pr. strip)",
+  "color": "#f5f5f4",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   60
+  ]
+ },
+ {
+  "node": "pi",
+  "label": "Raspberry Pi 5",
+  "color": "#2e9e5b",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "koeler",
+  "label": "Active Cooler (blæser bagud)",
+  "color": "#3b3e46",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "blaeser",
+  "label": "Blæser i Active Cooler",
+  "color": "#9ca3af",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "blaeserhegn",
+  "label": "Blæserhegn (sort ASA): klikkes på bagrammens øverste tværstykke, rist 3 mm over blæseren",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   -40
+  ]
+ },
+ {
+  "node": "stroem",
+  "label": "5 V-forsyning (Mean Well RSD-60G-5)",
+  "color": "#8b5cf6",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "ledstyring",
+  "label": "LED-styring RGB (Gledopto GL-C-016WL-D, 45,7 × 87,9 × 17,26, 108 over armene)",
+  "color": "#127a49",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "daemper",
+  "label": "Dæmper hvidt lys (DFRobot DFR0457)",
+  "color": "#0f766e",
+  "group": "Elektronik",
+  "explode": [
+   -90,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "stik",
+  "label": "Strømindgang i bunden, i midten: hunstik TRU DC-13F + GST-stik nedefra",
+  "color": "#e11d48",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "modem4g",
+  "label": "4G-modem med GPS",
+  "color": "#2563eb",
+  "group": "Tilvalg",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "lydkerne",
+  "label": "Mikrofon-kerne (XVF3800), standard",
+  "color": "#0ea5e9",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "mikrofoner",
+  "label": "Mikrofonstrip, standard",
+  "color": "#14b8a6",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "hoejttaler",
+  "label": "Højttaler (DFRobot FIT0502)",
+  "color": "#f97316",
+  "group": "Tilvalg",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "sensor",
+  "label": "Stødsensor",
+  "color": "#84cc16",
+  "group": "Tilvalg",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "reed",
+  "label": "Løftesensor (reed + magnet)",
+  "color": "#ec4899",
+  "group": "Tilvalg",
+  "explode": [
+   0,
+   0,
+   -90
+  ]
+ },
+ {
+  "node": "skruer_front",
+  "label": "4 skruer, front (4,0 × 50 T20, forsænket)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   0,
+   -150
+  ]
+ },
+ {
+  "node": "skruer_skaerm",
+  "label": "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   0,
+   40
+  ]
+ },
+ {
+  "node": "skrue_laas",
+  "label": "Låseskrue (4,2 × 25, forsænket)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -80,
+   -90
+  ]
+ },
+ {
+  "node": "tema_top",
+  "label": "Tema-top (eksempel): skilt + 2 kroge i de øverste slidser",
+  "color": "#22d36b",
+  "group": "Tema (eksempel)",
+  "explode": [
+   0,
+   90,
+   -40
+  ],
+  "hidden": true
+ },
+ {
+  "node": "tema_vinge_v",
+  "label": "Tema-vinge venstre (eksempel): 2 kroge + tap i rillen forneden",
+  "color": "#16a34a",
+  "group": "Tema (eksempel)",
+  "explode": [
+   -90,
+   0,
+   -40
+  ],
+  "hidden": true
+ },
+ {
+  "node": "tema_vinge_h",
+  "label": "Tema-vinge højre (eksempel): 2 kroge + tap i rillen forneden",
+  "color": "#16a34a",
+  "group": "Tema (eksempel)",
+  "explode": [
+   90,
+   0,
+   -40
+  ],
+  "hidden": true
+ },
+ {
+  "node": "kabel_0_stik",
+  "label": "24 V ind → Wago (sikring 5 A)",
+  "color": "#e11d48",
+  "group": "Kabler",
+  "owner": "stik",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_1_ledstyring",
+  "label": "5 V → WLED-styring (aldrig 24 V: styringen sender sin spænding videre til RGB-strippen)",
+  "color": "#127a49",
+  "group": "Kabler",
+  "owner": "ledstyring",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_2_daemper",
+  "label": "24 V → dæmper",
+  "color": "#0f766e",
+  "group": "Kabler",
+  "owner": "daemper",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_3_stroem",
+  "label": "5 V → Pi",
+  "color": "#8b5cf6",
+  "group": "Kabler",
+  "owner": "stroem",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_4_ledhvid",
+  "label": "Hvide strips ← dæmper",
+  "color": "#ffb000",
+  "group": "Kabler",
+  "owner": "ledhvid",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_5_ledrgb",
+  "label": "RGB-strip 5 V ← WLED-styring",
+  "color": "#a855f7",
+  "group": "Kabler",
+  "owner": "ledrgb",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_6_modem4g",
+  "label": "4G: USB → Pi",
+  "color": "#2563eb",
+  "group": "Kabler",
+  "owner": "modem4g",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_7_lydkerne",
+  "label": "Mikrofon-kerne: USB → Pi",
+  "color": "#0ea5e9",
+  "group": "Kabler",
+  "owner": "lydkerne",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_8_mikrofoner",
+  "label": "Mikrofonstrip → kerne",
+  "color": "#14b8a6",
+  "group": "Kabler",
+  "owner": "mikrofoner",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_9_hoejttaler",
+  "label": "Højttaler → kerne",
+  "color": "#f97316",
+  "group": "Kabler",
+  "owner": "hoejttaler",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_10_sensor",
+  "label": "Stødsensor → Pi (I2C)",
+  "color": "#84cc16",
+  "group": "Kabler",
+  "owner": "sensor",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "kabel_11_reed",
+  "label": "Løftesensor → Pi",
+  "color": "#ec4899",
+  "group": "Kabler",
+  "owner": "reed",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "fladkabel_0_kamera",
+  "label": "Kamerakabel (fladt, 16 mm)",
+  "color": "#c9a227",
+  "group": "Kabler",
+  "owner": "kamera",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "fladkabel_1_skaerm",
+  "label": "Skærmkabel (fladt, følger med skærmen)",
+  "color": "#c9a227",
+  "group": "Kabler",
+  "owner": "skaerm",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "stativbeslag",
+  "label": "Stativbeslag (sort ASA)",
+  "color": "#1d1d20",
+  "group": "Stativbeslag",
+  "explode": [
+   0,
+   0,
+   -120
+  ]
+ },
+ {
+  "node": "stativlogo_hvid",
+  "label": "Logo bagpå, hvidt (indlagt i beslaget)",
+  "color": "#f5f5f4",
+  "group": "Stativbeslag",
+  "explode": [
+   0,
+   0,
+   -120
+  ]
+ },
+ {
+  "node": "stativlogo_groen",
+  "label": "Logo bagpå, grønne prikker",
+  "color": "#22d36b",
+  "group": "Stativbeslag",
+  "explode": [
+   0,
+   0,
+   -120
+  ]
+ },
+ {
+  "node": "t_moetrik",
+  "label": "T-møtrik 1/4\"-20 (Einschlagmutter, stål), flangen opad",
+  "color": "#9a9ea2",
+  "group": "Stativbeslag",
+  "explode": [
+   0,
+   -60,
+   -120
+  ]
+ }
+]
