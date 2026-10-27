@@ -23,16 +23,18 @@ import trimesh
 
 SCAD = Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 
-PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_camsleeve", "x_fanguard"]   # v24: fan guard
-BOUGHT = ["x_seal", "x_camglass", "x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
+PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard"]   # v24: fan guard; v27: no camera sleeve
+BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
           "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "x_logo_w", "x_logo_g"]
 THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
+# v27: keep-out bodies for the camera (no glass, open window): the lens's field of view in front of it, and the barrel
+CAMERA = ["x_cam_fov", "x_cam_lens"]
 
 # pairs that touch by design: (a, b) -> largest overlap in mm3 that is still fine (contact faces render as slivers)
 CONTACT = {
     ("x_front3", "x_logo_w"): 1e9, ("x_front3", "x_logo_g"): 1e9, ("x_logo_w", "x_logo_g"): 1e9,
-    ("x_front3", "s_front3"): 1e9,          # thread-forming screws cut their thread
+    ("x_front3", "s_front3"): 1e9,          # the screws cut their thread (v27: 4.0 x 50 T20 in a Ø3.2 pilot)
     ("x_frame3", "s_display"): 1e9, ("x_dsp_back", "s_display"): 1e9,
     ("x_shell3", "s_lock"): 1e9, ("x_cleat", "s_lock"): 1e9,
     ("x_dsp_glass", "x_dsp_back"): 1e9, ("x_dsp_back", "c_pi_board"): 1e9, ("c_pi_board", "c_cooler"): 1e9,
@@ -40,23 +42,24 @@ CONTACT = {
     ("x_strip_w", "c_clips"): 1e9, ("x_strip_rgb", "c_clips"): 1e9,    # the clips sit on the strip ends
     ("x_frame3", "x_dsp_back"): 150, ("x_frame3", "x_dsp_glass"): 20,  # bosses and spring toes press the display 0.2 (PRELOAD, LK_TOE)
     ("x_shell3", "c_speaker"): 100, ("x_shell3", "c_mics"): 50,        # pegs through the ear / board holes (the block models have none)
-    ("x_ring3", "x_seal"): 40, ("x_front3", "x_seal"): 1,               # the cords lie on the faces they seal (0.01 mm modelling overlap)
+    ("x_cam_lens", "x_camera"): 1e9, ("x_cam_lens", "x_cam_fov"): 1e9, ("x_cam_fov", "x_camera"): 0.05,   # the barrel is part of the camera
     ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
-    ("x_camsleeve", "x_front3"): 0.5,       # the sleeve's 4 press ribs in the shroud's corners (v21: on its flats)
     ("x_ring3", "x_frame3"): 12,            # v24: the frame's crush bumps press the ring's flange forward (0.25 each)
     ("x_fanguard", "x_frame3"): 1e9,   # v24: the fan guard clicks onto the frame's upper cross bar
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
-    ("x_ring3", "x_front3", 0.0, "v22: ring shoulder on the pocket floor, 0.15 shadow gap in the slot"),
+    ("x_ring3", "x_front3", 0.0, "v27: ring flange on the front plate's back face, 0.15 shadow gap in the slot"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame (v24: pressed by crush bumps)"),
-    ("x_camsleeve", "x_camera", 0.6, "v24: sleeve 1.0 clear of the lens holder, bore 0.65 round the barrel: nothing touches the lens"),
-    ("x_camera", "x_camglass", 0.95, "v24: lens tip 1.0 behind the glass (it moves to focus)"),
+    ("x_cam_lens", "x_front3", 0.6, "v27: the front's Ø8.6 bore 0.65 round the lens barrel (Ø7.25), the tip 1.15 inside it, nothing in front"),
+    ("x_cam_fov", "x_front3", 0.1, "v27: the Wide lens's 120 deg field of view clears the Ø8.6 bore's edge (0.31 across, 0.15 square to the 60 deg cone)"),
     ("x_fanguard", "c_cooler", 0.75, "v24: the grille 3.0 over the Active Cooler, the stop pegs 0.8 over the heat sink"),
     ("x_fanguard", "c_pi_board", 0.5, "v24: the guard clear of the Pi and its ports"),
     ("x_fanguard", "x_shell3", 1.0, "v24: guard free of the shell (1.4 to the 5 V supply tray)"),
     ("x_fanguard", "c_mcore", 3.0, "v24: guard free of the mic core"),
     ("x_front3", "x_shell3", 0.0, "v21: front face on the shell face (no gap), rib in the groove"),
+    ("s_front3", "x_shell3", 0.1, "v27: 4.0 x 50 T20 front screws: 0.3 round the thread in the post, head 0.22 clear across in its countersink (0.16 square to the cone)"),
+    ("s_front3", "x_frame3", 0.15, "v27: front screws clear of the frame's ears (clamped, not threaded)"),
     ("x_dsp_glass", "x_frame3", 0.0, "display glass: the frame toes press it"),
     ("c_mics", "x_front3", 0.3, "mic board under the channel wall"),
     ("x_strip_w", "x_front3", 0.0, "white strips end at the camera caps"),
@@ -114,7 +117,7 @@ def main():
     ref = None
     if "--ref" in args:
         i = args.index("--ref"); ref = Path(args[i + 1]); del args[i:i + 2]
-    views = PRINTED + BOUGHT + THEME
+    views = PRINTED + BOUGHT + THEME + CAMERA
     if args:
         d = Path(args[0])
     else:

@@ -2,7 +2,7 @@
 """Shopping list for the Selfi printer as an xlsx: bought parts with prices, what each is for and whether it can be left
 out, and the printed parts with their ASA weight (the printing partner buys the filament himself).
 
-Usage: python3 hardware/tools/make_printer_bom.py <out.xlsx> [version]     (version: selfi-printer-v1 .. -v4, default v4)
+Usage: python3 hardware/tools/make_printer_bom.py <out.xlsx> [version]     (version: selfi-printer-v1 .. -v5, default v5)
 Prices are DKK incl. VAT and estimates ("skøn") until a Danish or EU dealer has quoted them.
 """
 import sys
@@ -11,7 +11,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 OUT = sys.argv[1]
-VER = sys.argv[2] if len(sys.argv) > 2 else "selfi-printer-v4"
+VER = sys.argv[2] if len(sys.argv) > 2 else "selfi-printer-v5"
 ASA_KR_G = 0.25   # kr per gram ASA (1 kg spool ca. 250 kr)
 
 # part, use, grams ASA (as sliced: walls 3.2 solid, infill as in the guide), colour
@@ -114,6 +114,11 @@ BOUGHT_V4 = [("SPUN+ Climate 4,0 × 25, undersænket", "B2B væg", 2, 2, "Højre
              else b for b in BOUGHT_V4]
 BOUGHT_V4.append(("Dyvelstift Ø6 × 16, stål", "B2B væg", 2, 2, "Samler de 2 L-beslag i enderne, så de sidder i lige linje og samme højde", "Ja, hvis den ikke hænger på væg"))
 BOUGHT_V4.insert(4, ("Silikonefedt, lille tube", "Alle", 1, 40, "En tynd smule på snoren om studsen, så den ikke ruller ud, når kappen skubbes på", "Ja, men snoren kan rulle ud"))
+# v5 (Esben 27 Oct 2026): no seals, so no cord and no grease; no hooks on the hood, no ramps in the base
+BOUGHT_V5 = [b for b in BOUGHT_V4 if not b[0].startswith(("Silikoneskum-snor", "Silikonefedt"))]
+PRINTED_V5 = [("Kappe med låsehul (flad top, lameller, knusekegler ved enden)", "Alle", 755, "sort ASA") if p[0].startswith("Kappe") else
+              ("Sokkel under printeren (kabelspor, lomme til dæmpepladen)", "Alle", 300, "sort ASA") if p[0].startswith("Sokkel") else p
+              for p in PRINTED_V4]
 
 
 def main():
@@ -124,10 +129,11 @@ def main():
     ws.append([f"{VER} · indkøbsliste (kr inkl. moms, skøn)"]); ws["A1"].font = Font(bold=True, size=14)
     ws.append([])
     v2 = VER != "selfi-printer-v1"
-    v4 = VER == "selfi-printer-v4"
+    v5 = VER == "selfi-printer-v5"
+    v4 = v5 or VER == "selfi-printer-v4"
     v3 = v4 or VER == "selfi-printer-v3"
-    bought = BOUGHT_V4 if v4 else BOUGHT_V3 if v3 else BOUGHT_V2 if v2 else [b + ("",) for b in BOUGHT]
-    printed = PRINTED_V4 if v4 else PRINTED_V3 if v3 else PRINTED_V2 if v2 else PRINTED
+    bought = BOUGHT_V5 if v5 else BOUGHT_V4 if v4 else BOUGHT_V3 if v3 else BOUGHT_V2 if v2 else [b + ("",) for b in BOUGHT]
+    printed = PRINTED_V5 if v5 else PRINTED_V4 if v4 else PRINTED_V3 if v3 else PRINTED_V2 if v2 else PRINTED
     ws.append(["Købedele", "Bruges til", "Antal", "Pris pr. stk.", "I alt", "Note"] + (["Kan den undværes?"] if v2 else []))
     for c in ws[3]: c.font = bold
     sums = {}
@@ -147,7 +153,7 @@ def main():
     if v2:
         ws.append(["B2B (bord/disk, skruet fast)", "", "", "", round(base + sums.get("B2B", 0)), "+ 2 skruer"])
         if v3:
-            ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ 2 L-beslag og skruer" if VER == "selfi-printer-v4" else "+ 2 konsoller, 2 vægskinner og skruer"])
+            ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ 2 L-beslag og skruer" if v4 else "+ 2 konsoller, 2 vægskinner og skruer"])
     else:
         ws.append(["B2B hylde/disk", "", "", "", round(base + sums.get("B2B", 0)), "+ lås og 2 skruer"])
         ws.append(["B2B væg", "", "", "", round(base + sums.get("B2B", 0) + sums.get("B2B væg", 0)), "+ konsol, vægplade og skruer"])

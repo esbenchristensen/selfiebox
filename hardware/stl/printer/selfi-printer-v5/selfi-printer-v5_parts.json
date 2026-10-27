@@ -1,0 +1,222 @@
+[
+ {
+  "node": "kappe",
+  "label": "Kappe (sort ASA): flad top, luftlameller, nøglelås og gribehak i venstre ende; ligger på soklen ved egen vægt",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   -10,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "logo_hvid",
+  "label": "Logo, hvidt (indlagt i kappen)",
+  "color": "#f5f5f4",
+  "group": "Kabinet",
+  "explode": [
+   -10,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "logo_groen",
+  "label": "Logo, grønne prikker",
+  "color": "#22d36b",
+  "group": "Kabinet",
+  "explode": [
+   -10,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "laas",
+  "label": "Kamlås Ø19 med nøgle (låser kappen til soklen)",
+  "color": "#c3c7cf",
+  "group": "Kabinet",
+  "explode": [
+   -60,
+   300,
+   0
+  ]
+ },
+ {
+  "node": "sokkel",
+  "label": "Sokkel: printerramme, låseholder, Pi-holder, kabelspor bagtil og lomme til dæmpepladen (sort ASA)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "daempeplade",
+  "label": "Dæmpeplade: printeren står på den, 56 knusekegler under tager stødet ved et fald (må knuses, udskiftes)",
+  "color": "#e07a1f",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   40
+  ]
+ },
+ {
+  "node": "udgang",
+  "label": "Udgangsmodul: papirrum, rutsjebane 30°, udtagslomme, skærm, \"Dit print\" og gribehak i højre ende (sort ASA)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   150,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "tekst_hvid",
+  "label": "\"Dit print\", hvidt (indlagt i udgangsmodulet)",
+  "color": "#f5f5f4",
+  "group": "Kabinet",
+  "explode": [
+   150,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "tekst_groen",
+  "label": "Pil ned mod lommen, grøn",
+  "color": "#22d36b",
+  "group": "Kabinet",
+  "explode": [
+   150,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "led",
+  "label": "RGB-LED-strip WS2812B, 9 LED (5 V fra Pi'en, lyser ned ad rutsjebanen)",
+  "color": "#22d36b",
+  "group": "Elektronik",
+  "explode": [
+   150,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "print",
+  "label": "Et 4×6-print i lommen",
+  "color": "#ffffff",
+  "group": "Elektronik",
+  "explode": [
+   150,
+   0,
+   140
+  ]
+ },
+ {
+  "node": "printer",
+  "label": "DNP QW410 drejet 90° (papirudgangen mod højre ende)",
+  "color": "#d9d9d6",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   150,
+   0
+  ]
+ },
+ {
+  "node": "pi",
+  "label": "Raspberry Pi Zero 2 W (printserver på wifi, styrer LED'en)",
+  "color": "#2e9e5b",
+  "group": "Elektronik",
+  "explode": [
+   -60,
+   60,
+   0
+  ]
+ },
+ {
+  "node": "kabel",
+  "label": "Strømkabel Schuko → C13 vinklet: ind bagfra under soklen, stikket kun indeni (trækaflastet med strip)",
+  "color": "#2b2b2f",
+  "group": "Elektronik",
+  "explode": [
+   -40,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "skruer_sokkel",
+  "label": "2 skruer, sokkel til bord/hylde/konsol (B2B, SPUN+ 4,0 × 16, sættes i før dæmpepladen)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -60,
+   0
+  ]
+ },
+ {
+  "node": "skruer_link",
+  "label": "2 skruer, soklens tunge til udgangsmodulet nedefra (3,5 × 12 til plast)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   80,
+   -40,
+   0
+  ]
+ },
+ {
+  "node": "konsoller",
+  "label": "2 skjulte L-beslag (B2B væg): hylde 15 under printeren, bagplade bag den, skruet i væggen dér; soklen og udgangsmodulet skrues fast indefra/nedefra",
+  "color": "#3a3a3f",
+  "group": "B2B væg",
+  "explode": [
+   0,
+   -110,
+   0
+  ]
+ },
+ {
+  "node": "skruer_konsol",
+  "label": "2 skruer op i udgangsmodulet (SPUN+ 4,0 × 25)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -60,
+   0
+  ]
+ },
+ {
+  "node": "skruer_vaeg",
+  "label": "8 skruer + dybler (5 × 50), skjult bag printeren",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -110,
+   -170
+  ]
+ },
+ {
+  "node": "dyvler",
+  "label": "2 dyvelstifter Ø6 × 16 (stål) samler de 2 L-beslag til én lige vinkel",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -110,
+   0
+  ]
+ }
+]

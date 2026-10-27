@@ -24,9 +24,6 @@ PARTS = [
     ("front",         "x_front3",      "Front (sort ASA)",                "#1d1d20", "Kabinet",    [0, 0, 120]),
     ("logo_hvid",     "x_logo_w",      "Logo, hvidt (indlagt i fronten)", "#f5f5f4", "Kabinet",    [0, 0, 120]),
     ("logo_groen",    "x_logo_g",      "Logo, grønne prikker",            "#22d36b", "Kabinet",    [0, 0, 120]),
-    ("pakninger",     "x_seal",        "Pakninger: O-ringsnor Ø1,5 i silikoneskum (skærm, lysring, kamera, højttaler; front/skal har ribbe og rille)", "#dc2626", "Kabinet", [0, 0, 95]),
-    ("kameraglas",    "x_camglass",    "Kameraglas Ø12 × 1,5",            "#bfe3f2", "Kabinet",    [0, 0, 140]),
-    ("kameraroer",    "x_camsleeve",   "Kamerarør (sort ASA): går fri af linsen, trykker pakningen mod glasset", "#1d1d20", "Kabinet", [0, 0, 110]),
     ("ledskinne",     "x_frame3",      "Bagramme med reflektor, kantspor og knusknopper mod lysringen (hvid ASA)", "#e9e4da", "Kabinet",  [0, 0, 25]),
     ("skal",          "x_shell3",      "Skal (sort ASA)",                 "#1d1d20", "Kabinet",    [0, 0, -90]),
     ("vaegbeslag",    "x_cleat",       "Vægbeslag",                       "#4a4a50", "Kabinet",    [0, 0, -210]),
@@ -51,7 +48,7 @@ PARTS = [
     ("hoejttaler",    "c_speaker",     "Højttaler (DFRobot FIT0502)",                       "#f97316", "Tilvalg",    [0, 0, -90]),
     ("sensor",        "c_imu",         "Stødsensor",                      "#84cc16", "Tilvalg",    [0, 0, -90]),
     ("reed",          "c_reed",        "Løftesensor (reed + magnet)",     "#ec4899", "Tilvalg",    [0, 0, -90]),
-    ("skruer_front",  "s_front3",      "4 skruer, front (3,0 × 15, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
+    ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
     # v21: example theme parts on the hooks (skjult som standard i admin; vises med fluebenet)
@@ -80,9 +77,9 @@ CABLES = [
 ]
 
 # flat cables (FFC): owner, label, width, thickness, sections [(point, width direction)].
-# They bend only about their width; the camera ribbon twists slowly behind the frame.
+# They bend only about their width; the camera ribbon twists slowly behind the frame (v27: its start 1.95 forward with the camera).
 RIBBONS = [
-    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 13.1, 290), (0, 0, 1)), ((11.5, 13.6, 290), (0, 0, 1)), ((12.6, 15.9, 290), (0, 0, 1)),
+    ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 11.15, 290), (0, 0, 1)), ((11.5, 11.65, 290), (0, 0, 1)), ((12.6, 13.95, 290), (0, 0, 1)),
         ((12.6, 34, 290), (0, 0, 1)), ((12.6, 44, 283), (0.5, 0, 0.87)), ((11, 48, 266), (1, 0, 0.2)), ((8, 46, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))]),
     ("skaerm", "Skærmkabel (fladt, følger med skærmen)", 11.5, 0.3, [((0, 10.8, 205), (1, 0, 0)), ((0, 11.3, 196), (1, 0, 0)), ((0, 13.9, 189.5), (1, 0, 0)),
         ((0, 17.4, 188), (1, 0, 0)), ((0, 19.4, 186.5), (1, 0, 0))]),

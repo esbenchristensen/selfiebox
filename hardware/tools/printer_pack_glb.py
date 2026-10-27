@@ -1,7 +1,7 @@
 """The printer for the packaging viewer in the admin (Hardware → Emballage): the cabinet and the printer from
 <ver>_3d.glb as shipped (no screws, no wall parts in place), plus one wall console and one wall cleat on their own.
 
-  python3 hardware/tools/printer_pack_glb.py [selfi-printer-v4] <out.glb>
+  python3 hardware/tools/printer_pack_glb.py [selfi-printer-v5] <out.glb>
 
 Millimetres, y up, the front at +z, like the admin model; the console and the cleat in their local frames.
 """
@@ -15,7 +15,7 @@ import numpy as np
 import trimesh
 
 ROOT = Path(__file__).resolve().parents[2]
-ver = sys.argv[1] if len(sys.argv) > 1 else "selfi-printer-v4"
+ver = sys.argv[1] if len(sys.argv) > 1 else "selfi-printer-v5"
 out = Path(sys.argv[2])
 src = ROOT / "hardware/stl/printer" / ver
 parts = json.loads((src / f"{ver}_parts.json").read_text())

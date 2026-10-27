@@ -7,11 +7,11 @@
 //  curvature corners, and every outline of the face is an exact offset of it.
 //  The border from box edge to light ring is the same 7.8 mm on all sides.
 //
-//  Fastening without visible screws: the 4 side screws of rev G are gone. Four 3.0 mm
-//  thread-forming screws from the back, in the 4 corners, run through shell posts and the
+//  Fastening without visible screws: the 4 side screws of rev G are gone. Four screws (v27: 4.0 x 50 T20,
+//  until v26 3.0 mm thread-forming) from the back, in the 4 corners, run through shell posts and the
 //  frame into bosses in the front (J2). Theme parts hook into closed pockets in the back
-//  wall (v21). No inserts. v20: one removable seal everywhere (silicone
-//  sponge cord Ø1.5 in 2 mm grooves) and a small camera window, see "v20 sealing" below.
+//  wall (v21). No inserts. v27 (Esben 27 Oct): no glass and no seals anywhere (v20-v26 had a seal cord in 4 joints and a
+//  glass in front of the camera); every opening is shaped so water runs back out, see "weather" and "v27: no seals" below.
 //  Print files: VIEW="p_<part>"; released sets live in hardware/stl/gen2/<version>/.
 //  3D viewer and checks: hardware/render/gen2_viewer.py, hardware/tools/check_fit_gen2.py
 // ============================================================================
@@ -33,6 +33,7 @@ W = 2*RING_X + RING_FACE + 2*(RING_Z0 - RING_FACE/2);   // 224.5 since v20 (222.
 R = 42.8;                                   // = SQ_A + RING_FACE/2 + BORDER: where the box's straight faces begin
 // v20 (Esben 23 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v20_skitse_taetning-v2.png): the light channel is
 // 1 mm wider each side (diffuser flange room 1.2 -> 2.2) so a seal cord fits beside the ring; the visible ring stays 14.
+// v27: no cord any more; the channel keeps this width, so the box, the frame and the ring keep their sizes.
 // The chin gives the 1 mm back at the bottom, so the border stays 7.8 all round: the box is 224.5 x 307 (v19: 222.5 x 306).
 DIFF_FLANGE = 2.2;  CHIN = 6;  H = RING_Z1 + RING_Z0;
 CLEAT_ZC = 274;                             // as v5-v19 (306 - 32): the wall cleat and its lock tongue stay exactly as they are
@@ -51,9 +52,11 @@ IF_SCREW = [];  IF_DOWEL = [[-18, 60], [18, 60]];  IF_CABLE = [-20, 38];  IF_CAB
 VENT_X = [];                                // rev G's four slots give way to the vent fields below
 UNIT_TOP = "closed";
 POWER_REVG = false;  CLIPS = [];   // v23: halo's cable-tie loops replaced by cable_loops() (see "cable routing"); until v22 [[-75, 90], [0, 110], [-98, 205], [88, 100]];   // v11: cable-tie loops moved clear of the upright PSU and the speaker; v21: [-98, 175] -> 205, clear of the wing pocket                         // v2: Mean Well RSD-60G-5, WLED controller and MOSFET in their own holders                        // nothing stacks on top in gen 2: no holes where the rain falls
-// camera (Esben 19 Oct, Wide chosen). v20 (Esben 23 Oct): a small glass window in front of the lens. The glass lies in a
-// pocket behind a 0.6 lip; the lens tip sits 0.6 behind the glass (v19: tip 0.3 behind the open face, so the camera moves 2.4 back)
-CAM_TIP_Y = 3.1;   // v24 (Esben 26 Oct: the Camera Module 3 lens moves to focus and must touch nothing): 1.0 mm air to the glass (v20-v23: 0.6)
+// camera (Esben 19 Oct, Wide chosen). v20-v26 had a small glass window in front of the lens (lens tip 3.1 behind the face in
+// v24-v26). v27 (Esben 27 Oct: no glass, and no big hole either, the camera must stay protected): the window is a plain
+// Ø8.6 bore round the lens barrel and the camera sits 1.95 further forward, so the lens tip is 1.15 inside the bore and the
+// Wide lens's 120 deg field of view clears the bore's edge at the face (see cam_window_cut). Nothing is in front of the lens.
+CAM_TIP_Y = 1.15;  // lens tip behind the front face (v24-v26: 3.1, 1.0 behind the glass; v19: 0.3)
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(
@@ -325,9 +328,9 @@ module stand_bracket() {
 }
 
 // ------------------------------------------------------------------ weather ----
-// Rain, sleet and spills from any side under a light roof. Until v19 with no added parts (Esben 19 Oct: no gaskets,
-// membranes, glass or glue); v20 (Esben 23 Oct) adds one removable seal cord in every joint and a small camera
-// window (see "v20 sealing"). Every opening is still shaped so water runs back out.
+// Rain, sleet and spills from any side under a light roof, with no added parts: no gaskets, membranes, glass or glue
+// (Esben 19 Oct, and again 27 Oct for v27: v20-v26's seal cords and camera glass are gone, they made the box too hard to
+// assemble). Every opening is shaped so water runs back out.
 // Front to shell (v21, Esben 23 Oct): no cord here any more (v20 had one, and it showed through the 0.2 mm joint gap).
 // The two faces now meet with no gap; a rib on the front's skirt enters a groove in the shell's front face, as in v19.
 // Water that passes the butt joint meets the rib, runs round the groove and leaves through two drain notches in the
@@ -341,8 +344,8 @@ module joint_groove() {
     for (x = DRAIN_X) translate([x - 0.8, SKIRT - 0.01, -0.01]) cube([1.6, JR[2] + 0.01, JR[0] + JR[1] - 0.2]);
 }
 module joint_rib() { c = JR[0] + (JR[1] - JR[3])/2;  ext_y(SKIRT - 0.01, SKIRT + JR[4]) lip_ring(c, c + JR[3]); }
-// camera: a printed sleeve round the lens holder, from the front to just short of the camera board. Since v20 a small
-// glass sits in front of the lens (see v20 sealing, 4); the sleeve still keeps the camera bay apart from the channel.
+// camera: the front's shroud round the lens holder, from the front plate to just short of the camera board, keeps the
+// camera bay apart from the light channel. v27: no loose sleeve in it any more (v20-v26 had one to press the glass's cord).
 // v24: the bay is 0.8 wider than the lens holder each side (v20-v23: 0.4), so the board always lies flat on its 4 bosses
 CAM_BAY = CAM_HOLDER + 1.6;
 // v24 (Esben 27 Oct: make sure the camera lies flat): the shroud's walls stop 1.2 in front of the board (v14-v23: 0.6), and
@@ -422,8 +425,7 @@ module services_cut() {
     // power: plug hole in the underside (0.8 chamfer), and the speaker grille
     translate([PWR_P[0], PWR_P[1], 0]) teardrop_z(PWR_BORE, -1, WALL + 1);
     translate([PWR_P[0], PWR_P[1], -0.01]) cylinder(d1 = PWR_BORE + 1.6, d2 = PWR_BORE, h = 0.8, $fn = 48);
-    for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);
-    ext_y(D - BACK_T - 0.01, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2);   // v20: seal round the grille
+    for (h = spk_holes()) cyl_y(2, D - BACK_T - 1, D + 1, SPK_P[0] + h[0], SPK_P[1] + h[1]);   // v27: no seal groove round it (v20-v26)
     both_locks() cyl_z(2, -1, 12, $lx - $lw/2 + 1.0, LOCK_DRAIN[1]);   // v20: drain out of the lock pocket; v21: up to z 12 (the rounded bottom makes the floor ~6 thick here, so v20 stopped at 4, blind)
 }
 function spk_holes() = [for (i = [-6:6], j = [-5:5]) let(x = 3.5*i + (j % 2 ? 1.75 : 0), z = 3.03*j) if (pow(x/17.5, 2) + pow(z/11.8, 2) < 1) [x, z]];   // inside the 38.5 x 27 opening
@@ -446,7 +448,7 @@ module services_add() {
         // v17: hooks with a flat catch 1.2 over the flange (until v16 a slope 0.3 above it, 0.8 in at the top)
         for (sz = [-1, 1]) translate([-6, sz > 0 ? SPK[1]/2 + 0.3 : -SPK[1]/2 - 1.8, 0]) {
             cube([12, 1.5, SPK_FL + 2.0]);
-            translate([0, sz > 0 ? 0 : 1.5, SPK_FL - 0.02]) snap_lip(12, 1.2, 1.6, sz > 0 ? 1 : 0);   // v21: no play (v17-v20: 0.1), the flange closes fully on the wall over the cord
+            translate([0, sz > 0 ? 0 : 1.5, SPK_FL - 0.02]) snap_lip(12, 1.2, 1.6, sz > 0 ? 1 : 0);   // v21: no play (v17-v20: 0.1), the flange lies fully on the wall
         }
     }
 }
@@ -664,58 +666,46 @@ module sweep3(p) {
 J_R = 10.6;                               // front screws: in the outer wall at the 4 corners. v20: 11.8 -> 10.6, so the bosses and the
                                           // shell's clearance (Ø6.4) stay inside the shell wall (13.8) and clear of the joint groove
 J2 = [for (j = JOINTS) [j[0] + sign(j[0])*J_R/sqrt(2), j[1] + sign(j[1] - (RING_Z0 + RING_Z1)/2)*J_R/sqrt(2)]];
+// v27 (Esben 27 Oct: the screws he has, so one T20 bit does it all): the 4 front screws are 4.0 x 50 countersunk T20
+// chipboard screws (measured: thread 3.77, head Ø7.75, 49.25 long, part thread). The head lies flush in a 90 deg
+// countersink in the back face, the shank runs through a clearance hole in the shell post and the frame's ear, and the
+// tip ends 50 in front of the back face (y 20), so the thread has 7 mm in the front boss's pilot. Until v26: 3.0 x 15
+// SPUN+ with the head 37 mm down a counterbore (needed a long bit).
+FS = [4.0, 50, 7.75];                     // screw: Ø, length, head Ø
+FS_CLR = 4.4;                             // through the post and the frame
+FS_PILOT = 3.2;                           // in the front's Ø6 boss (chipboard thread, core about 2.6)
+FS_CSK = 8.2;                             // countersink Ø at the back face
+FS_TIP = D - FS[1];
 
-// ======================================================================== v20 sealing ==
-// Esben 23 Oct (sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v20_skitse_taetning-v2.png): every joint where water can get
-// in has the same removable seal, a silicone sponge O-ring cord Ø1.5 ([A] RS 234-2906) cut to length, ends butted, no glue.
-// Sponge, not solid: 3.7 m of solid 60 Shore cord squeezed 33 % would push the parts apart with over 2 kN.
-// Grooves are 2.0 wide; each cord is squeezed to about 1.0. All seals sit behind faces, so tape, stickers or a theme on
-// the outside neither touch nor pull on them.
-SEAL = [1.5, 2.0, 1.0];                   // cord Ø, groove width, groove depth
-// 1 front to shell: v21 has no cord here, see "weather" (rib and groove, faces meet with no gap).
+// ================================================================= v27: no seals ==
+// v20-v26 (Esben 23 Oct) had a removable seal, a silicone sponge O-ring cord Ø1.5 (RS 234-2906), in 4 joints (display,
+// light ring, camera glass, speaker) and a Ø12 x 1.5 glass in front of the camera. v27 (Esben 27 Oct: we will not use them,
+// they make the box far too complex to assemble): all of it is gone, with the grooves and pockets it lay in. Every joint is
+// now a hard stop of printed faces (v22 already made every part sit the same without them):
+// 1 front to shell: rib and groove with 2 drain notches, faces meet with no gap (v21, see "weather").
 JOINT_GAP = 0;                            // v20: 0.2, the cord took up the tolerance
 // v21: crush bumps on each shell post's face against the frame: the front/shell faces are the stop, the bumps reach
 // CRUSH[0] past the frame's back face and are squeezed flat by the screw, so the frame stays clamped (front boss ->
 // frame -> post) whatever the print tolerance. The post face itself stays CRUSH[1] clear of the frame.
 CRUSH = [0.2, 0.1, 3, 1.6, 0.6, 3.1];     // reach, face clearance, count, base Ø, tip Ø, radius from the screw
-// 3 light ring: a pocket 1.0 deep in the back of the front plate, the full channel width (CH_IN): the cord lies beside
-// the ring's wall, under its flange. v22: the ring's shoulder stands on the pocket floor (hard stop) and the frame holds the
-// flange down, so the groove is closed and fixed and the ring is just as tight without a cord (v20/v21: it rested on the cord).
-RING_SEAL_Y = PT - 1.0;                   // 2.2: front face of the pocket
-RING_SH = S3 + 0.4;                       // v22: the ring's shoulder rests on the pocket floor from the slot edge (7.0) to 7.4
-// 4 camera: glass Ø12 x 1.5 ([C] AliExpress, ±0.3) in a Ø12.2 pocket behind a 0.6 lip; the lip opens 60 deg (Wide: 120 deg
-// diagonal) to Ø10.9 at the face. A cord ring sits in the corner behind the glass, pressed into it by the 45 deg front
-// of a printed sleeve: it seals the glass to the pocket wall. v21 (Esben 23 Oct: every seal closes fully, no gap): the
-// sleeve is pressed into the shroud on 4 ribs until its front face stops on the glass, so glass -> lip and sleeve ->
-// glass are both hard stops and the cord's corner is a closed, fixed gland (Ø1.5 squeezed to about 1.05). The sleeve
-// stays CAM_SLV_GAP clear of the lens holder (v20: it stood on the holder, 0.5 behind the glass).
-// v22 (Esben 23 Oct: everything must assemble and work without seals and without the glass): the 4 ribs sit in the corners of
-// the shroud's square bore and their front ends stop on the front plate's back face (y PT), where the square bore starts. That
-// is the sleeve's own hard stop; with a 1.5 mm glass the sleeve's front face meets the glass at the same time.
-// Field of view, front lens element Ø4 [C]: v24 (1.0 to the glass): r 3.73 at the glass back, 4.77 at its front, 5.81 at the face (lip: 5.01 / 6.05).
-CAM_GLASS = [12, 1.5];
-CAM_WIN = [12.2, 0.6, 12.1];              // pocket Ø, lip, face Ø (v24: 10.9 -> 12.1, the lens sits 0.4 further back; lip Ø10.0 at the glass, so the glass rests on 1 mm)
-CAM_SLV = [8.6, 11.2, 4.6];               // sleeve: bore (barrel Ø6.95-7.25; v24: 7.7 -> 8.6, 0.65 air round the lens), outside, r where the 45 deg front starts
-CAM_SLV_GAP = 1.0;                        // v24: 1.0 clear of the lens holder (v21-v23: 0.3)
-CAM_SLV_Y = [CAM_WIN[1] + CAM_GLASS[1], CAM_PCB_Y - CAM_HOLDER_H - CAM_SLV_GAP];   // front face on the glass, back clear of the lens holder
-CAM_SLV_RIB = [1.0, CAM_BAY/2*sqrt(2) - 0.5 + 0.05, PT];   // v22: corner ribs: width, reach (0.05 into the corner walls), front end y (stop)
-module cam_window_cut() {
-    cyl_y(CAM_WIN[0], CAM_WIN[1], PT + 1, 0, LENS_Z);
-    translate([0, -0.01, LENS_Z]) rotate([-90, 0, 0]) cylinder(d1 = CAM_WIN[2], d2 = CAM_WIN[2] - 2*(CAM_WIN[1] + 0.02)*tan(60), h = CAM_WIN[1] + 0.02, $fn = 64);
-}
-module cam_glass() cyl_y(CAM_GLASS[0], CAM_WIN[1], CAM_WIN[1] + CAM_GLASS[1], 0, LENS_Z);
-module cam_sleeve() translate([0, 0, LENS_Z]) {
-    rotate([-90, 0, 0]) rotate_extrude($fn = 64) polygon([
-        [CAM_SLV[0]/2, CAM_SLV_Y[0]], [CAM_SLV[2], CAM_SLV_Y[0]], [CAM_SLV[1]/2, CAM_SLV_Y[0] + CAM_SLV[1]/2 - CAM_SLV[2]],
-        [CAM_SLV[1]/2, CAM_SLV_Y[1]], [CAM_SLV[0]/2, CAM_SLV_Y[1]]]);
-    // 4 press ribs in the corners of the shroud's square bore (v21: on its flats); they hold the sleeve and stop it at y PT
-    for (a = [45, 135, 225, 315]) rotate([0, -a, 0]) translate([CAM_SLV[1]/2 - 0.3, CAM_SLV_RIB[2], -CAM_SLV_RIB[0]/2])
-        cube([CAM_SLV_RIB[1] - CAM_SLV[1]/2 + 0.3, CAM_SLV_Y[1] - CAM_SLV_RIB[2], CAM_SLV_RIB[0]]);
-}
-// the cord ring: inscribed in the corner of glass back, pocket wall and the sleeve's 45 deg face
-CAM_CORD = let(gb = CAM_WIN[1] + CAM_GLASS[1], L = CAM_WIN[0]/2 - (CAM_SLV[2] - (CAM_SLV_Y[0] - gb)), ri = L*(2 - sqrt(2))/2) [gb + ri, CAM_WIN[0]/2 - ri, ri];
-// 5 speaker: a groove in the back wall round the grille, inside the speaker's flange and outside its 38.5 x 27 opening
-module spk_seal2d(h) difference() { offset(r = 6 + h) square([31, 17], center = true); offset(r = max(6 - h, 0.01)) square([31, 17], center = true); }
+// 2 display: the glass lies straight on the front's 1.6 lip (v12); v27: the lip is solid (v20-v26: a 2 x 1 groove for the cord).
+// 3 light ring: v27 has no cord pocket beside the ring (v20-v26: 1.0 deep behind the front plate, with the ring's shoulder
+// standing on its floor). The ring's wall runs straight through the slot and its flange lies on the front plate's back face
+// (y PT): that is the ring's hard stop, and the frame's crush bumps (ring_bumps) press the flange onto it.
+// 4 camera: an open window, no glass, no cord ring and no sleeve. The window is one straight Ø8.6 bore through the front
+// plate, no bigger than the lens barrel needs (Ø6.95 at the tip, Ø7.25 at most: 0.65-0.8 air all round, so the focus
+// motor's barrel touches nothing, as in v24). The lens tip sits 1.15 inside it, so the plate's edge shields the lens.
+// Field of view, front lens element Ø4 [C] at the tip (y 1.15): r 3.99 at the face, 0.31 inside the bore (x_cam_fov in
+// the fit check). v27's first draft kept v24-v26's Ø12.1 face opening with a 60 deg cone: far too big without the glass.
+CAM_WIN = 8.6;                            // bore Ø round the lens barrel, also the opening in the face
+module cam_window_cut() cyl_y(CAM_WIN, -1, PT + 1, 0, LENS_Z);
+// the lens's field of view (120 deg diagonal, from the Ø4 front element) to just in front of the face, and the lens barrel
+// with its largest diameter: fit-check bodies, nothing may touch them
+CAM_FOV = [4, 60];
+module cam_fov() translate([0, -0.3, LENS_Z]) rotate([-90, 0, 0])
+    cylinder(d1 = CAM_FOV[0] + 2*(CAM_TIP_Y + 0.3)*tan(CAM_FOV[1]), d2 = CAM_FOV[0], h = CAM_TIP_Y + 0.3, $fn = 64);
+module cam_lens() cyl_y(7.25, CAM_TIP_Y, CAM_PCB_Y - CAM_HOLDER_H, 0, LENS_Z);
+// 5 speaker: the flange lies on the back wall round the grille; v27: no groove (v20-v26: 2 x 1 for the cord).
 // 6 lock: the slot for the cleat's tongue opens into a closed printed pocket (walls 1.6), so whatever gets in at the
 // back stays round the tongue and runs out of a Ø2 drain in the floor.
 LOCK_PK = [LOCK_W/2 + LOCK_C[0], LOCK_Y - 1, LOCK_TZ[1] + 0.8, 1.6];   // inner half width (v24: 0.2 beside the tongue, v20-v23: 0.6), front y, roof z, wall
@@ -796,30 +786,19 @@ module lock_pocket() intersection() {
     }
     ext_y(SKIRT, D) translate([0, 1]) rr(W - 2, H - 2, R - 1);
 }
-// front screw boss: where it reaches into the channel (r < CH_IN) it starts at y 4.5, clear of the ring's flange and its
-// cord, with a 45 deg underside (no overhang face down)
+// front screw boss: where it reaches into the channel (r < CH_IN) it starts at y 4.5, clear of the ring's flange, with a 45 deg underside (no overhang face down)
 module j2_boss(j) difference() {
     cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
     rfill(PT - 1, 4.5, CH_IN, CH_IN);
     rfill(4.49, 4.5 + 1.62, CH_IN, CH_IN - 1.62);
 }
-// the cords as they lie squeezed (3D viewer, fit check)
-module seal_cords() {
-    ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3) difference() { groove3_2d(LAND3 + GROOVE3[0] - 0.05); groove3_2d(LAND3 + 0.05); }            // 2
-    ext_y(RING_SEAL_Y, PT) difference() { ring3_2d(CH_IN - 0.05); ring3_2d(RING_SH + 0.05); }                                               // 3
-    translate([0, CAM_CORD[0], LENS_Z]) rotate([-90, 0, 0]) rotate_extrude($fn = 64) translate([CAM_CORD[1], 0]) circle(r = CAM_CORD[2], $fn = 16);   // 4
-    ext_y(D - BACK_T, D - BACK_T + SEAL[2]) translate([SPK_P[0], SPK_P[1]]) spk_seal2d(SEAL[1]/2 - 0.05);                                   // 5
-}
 // v12 (Esben 20 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v11_skitse_tyndere-front-og-rille.png):
 // the display stays behind the front, but the front is only 1.6 mm thick over the glass (v2-v11: 3.2 + a 0.5 land,
-// glass 3.7 in). The glass lies straight on the back of that lip, so there is no gap at the window edge. A groove
-// in the lip, 1 mm out from the window bevel, takes the seal cord round the picture (v12-v19: foam tape).
+// glass 3.7 in). The glass lies straight on the back of that lip, so there is no gap at the window edge. v27: the lip is
+// solid; v12-v26 had a groove in it, 1 mm out from the window bevel, for foam tape (v12-v19) or the seal cord (v20-v26).
 GLASS_Y3 = 1.6;                           // glass front face = lip thickness
 GLASS_C3 = 0.4;                           // the thin pocket clears the glass by 0.4 (the 8 ribs locate it, 0.2)
-LAND3 = 1.0;                              // flat land from the window bevel to the groove
-GROOVE3 = [2.0, 1.0];                     // groove width, depth; v20: seal cord Ø1.5 squeezed to 1.0 (v12-v19: foam tape 3 x 1 in 3.2 x 0.6)
 WIN3_BEVEL = [1.6, 0.6];                  // window grows 1.6 at the face, 0.6 at the glass (as v2-v11)
-module groove3_2d(g) translate([VIEW_X, GC]) offset(r = WIN3_BEVEL[1] + g) square([TD10_VIEW[0] + 1, TD10_VIEW[1] + 1], center = true);
 module pocket3_2d() translate([VIEW_X, GC]) offset(r = DSP_R + GLASS_C3) square([GW - 2*DSP_R, GH - 2*DSP_R], center = true);
 // [A] Touch Display 2 10" (RP-010276 physical spec): panel 7.05 deep incl. the 1.1 cover lens,
 // four M2.5 tabs 3 deep at 22.54 from the sides, 46.42 from the top and 41.68 from the bottom edge;
@@ -897,14 +876,12 @@ module front3() union() {
         }
         hull() { ext_y(-1, 0) window2d(WIN3_BEVEL[0]); ext_y(-1, GLASS_Y3 + 0.01) window2d(WIN3_BEVEL[1]); }
         ext_y(GLASS_Y3, PT + 0.01) pocket3_2d();                           // v12: thin lip over the glass
-        ext_y(GLASS_Y3 - GROOVE3[1], GLASS_Y3 + 0.01) difference() { groove3_2d(LAND3 + GROOVE3[0]); groove3_2d(LAND3); }
         ext_y(-1, LOGO_D) translate([0, LOGO_Z]) logo_all2d();   // pocket for the inlay
         ext_y(-1, PT + 0.01) ring3_2d(S3);
-        ext_y(RING_SEAL_Y, PT + 0.01) ring3_2d(CH_IN);                    // v20: seal pocket beside the ring (v19: a 45 deg seat)
         cam_window_cut();
         ext_y(SKIRT - JOINT_GAP, SKIRT + 0.02) difference() { offset(r = 1) rr(W, H, R); translate([0, WALL + FIT]) rr(W - 2*(WALL + FIT), H - 2*(WALL + FIT), R - WALL - FIT); }
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
-        for (j = J2) cyl_y(INS_M3_D, CH_BACK - 11, CH_BACK + 1, j[0], j[1]);
+        for (j = J2) cyl_y(FS_PILOT, FS_TIP - 1.5, CH_BACK + 1, j[0], j[1]);   // v27: 4.0 x 50 T20 (until v26: Ø2.4 for 3.0)
         snap_windows();
         translate([0, 0, LENS_Z]) ext_y(PT, CAM_PCB_Y) square(CAM_BAY, center = true);   // the caps keep clear of the lens holder
     }
@@ -914,12 +891,11 @@ module front3() union() {
 module ring3() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
     ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
-    // v22: the wall runs straight on to the pocket floor (2.2), where a shoulder (RING_SH) stands on the front plate: a hard
-    // stop, so the ring sits the same with or without its cord. The cord lies in the closed groove between the shoulder,
-    // the pocket floor, the channel wall and the flange (v20/v21: a 45 deg step from 2.6 and the flange rested on the cord).
-    ext_y(RING_Y[1] - 0.01, RING_SEAL_Y + 0.01) ring3_band(RF3 - RW3, RF3);
+    // v27: the wall runs straight through the slot to the front plate's back face (y PT), where the flange lies on the plate:
+    // the hard stop. (v22-v26: a 0.4 shoulder stood on the floor of a 1.0 deep cord pocket at 2.2; the pocket is gone.)
+    ext_y(RING_Y[1] - 0.01, PT + 0.01) ring3_band(RF3 - RW3, RF3);
     difference() {
-        union() { ext_y(RING_SEAL_Y, PT) ring3_2d(RING_SH); ext_y(PT - 0.01, PT + 1) ring3_2d(FL3); }
+        ext_y(PT, PT + 1) ring3_2d(FL3);
         ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
         translate([-7.8, PT - 2, LENS_Z - 8]) cube([15.6, 4, 16]);       // clear of the camera shroud (v24: 14.8 wide)
         for (h = CAM_HOLES_ROT) cyl_y(4.6 + 1.0, PT - 1, PT + 2, h[0], LENS_Z + h[1]);   // v20: the flange gives way round the camera bosses
@@ -1021,7 +997,7 @@ module frame3() {
         // camera ribbon (16 mm wide, does not like sharp folds): it leaves the connector sideways (+x),
         // takes one gentle 90 deg bend backwards and passes the frame here to the open space behind it
         translate([CAM_RIB[0], CAM_PCB_Y + CAM_PCB[2] + 0.5, LENS_Z - CAM_RIB[1]/2]) cube([CAM_RIB[2], FR_BACK, CAM_RIB[1]]);
-        for (j = J2) cyl_y(M3_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
+        for (j = J2) cyl_y(FS_CLR, CH_BACK - 1, FR_BACK + 1, j[0], j[1]);
         frame_loop_cut();                                                 // v23: service loop strap
         for (j = J2) cyl_y(6.2, REFL[0][0] - 1, CH_BACK + 0.01, j[0], j[1]);   // v20: the front's screw bosses (Ø6) reach into the channel corners; the strip wall keeps 0.6
         for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
@@ -1078,7 +1054,7 @@ module shell3(top = UNIT_TOP) {
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
-        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(M3_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(M3_HEAD_CB, FR_BACK + 2, D + 1, j[0], j[1]); csk_y(M3_HEAD_CB, M3_CLR, FR_BACK + 2, j[0], j[1]); }
+        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D, j[0], j[1]); }   // v27: head flush in the back face
     }
 }
 
@@ -1199,7 +1175,7 @@ if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MSTRIP_Y - MSTRIP[1]/2, WALL
 if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
 if (VIEW == "c_speaker")   speaker3();
 if (VIEW == "c_jack")      power_inlet();
-// screws: 4 front (3.0 x 14 thread-forming, heads in the back wall), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
+// screws: 4 front (v27: 4.0 x 50 T20 countersunk, heads flush in the back face), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
 if (VIEW == "s_camera")    for (h = CAM_HOLES_ROT) screw_y(2, 6, [3.8, 1.3], h[0], CAM_PCB_Y + CAM_PCB[2], LENS_Z + h[1], -1);
 if (VIEW == "s_lock")      both_locks() translate([$lx, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
 if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
@@ -1219,15 +1195,13 @@ if (VIEW == "x_frame3")    frame3();
 if (VIEW == "x_strip_w")   placed_strips3("w");
 if (VIEW == "x_strip_rgb") placed_strips3("rgb");
 if (VIEW == "x_display3")  placed_display3();
-if (VIEW == "x_seal")      seal_cords();                                                  // v20: every seal cord, squeezed
-if (VIEW == "x_camglass")  cam_glass();
-if (VIEW == "x_camsleeve") cam_sleeve();
+if (VIEW == "x_cam_fov")   cam_fov();                                                     // v27: fit check, the lens's field of view
+if (VIEW == "x_cam_lens")  cam_lens();                                                    // v27: fit check, the lens barrel (Ø7.25)
 if (VIEW == "x_fanguard")  fan_guard();                                                   // v24
 if (VIEW == "x_tema_top")   theme_top_demo();                                             // v21: example theme parts on the hooks
 if (VIEW == "x_tema_vinge_v") theme_wing_demo(-1);
 if (VIEW == "x_tema_vinge_h") theme_wing_demo(1);
 if (VIEW == "c_tema_demo")  { main_unit(); color("orange") { theme_top_demo(); theme_wing_demo(-1); theme_wing_demo(1); } }
-if (VIEW == "p_camsleeve") translate([0, 0, CAM_SLV_Y[1]]) rotate([-90, 0, 0]) translate([0, 0, -LENS_Z]) cam_sleeve();   // holder end down
 if (VIEW == "c_pi3")       placed_pi3();
 // the display and the Pi in their own materials for the 3D viewer: glass with its black border,
 // the active picture, the metal back; the Pi board and the Active Cooler
@@ -1260,7 +1234,10 @@ if (VIEW == "c_wled")      placed_wled();
 if (VIEW == "x_wled_holder") intersection() { shell3(); wled_frame() translate([-10, -15, -5]) cube([WLED_B[0] + 20, WLED_B[1] + 30, 40]); }
 if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
 if (VIEW == "x_shell3")    shell3();
-if (VIEW == "s_front3")    for (j = J2) screw_y(3, 15, [6, 2.3], j[0], FR_BACK + 2, j[1], -1);
+if (VIEW == "s_front3")    for (j = J2) {   // v27: 4.0 x 50 T20, countersunk head flush with the back face (thread drawn at its 3.77 crest)
+    cyl_y(3.77, FS_TIP, D - 1, j[0], j[1]);
+    translate([j[0], D, j[1]]) rotate([90, 0, 0]) cylinder(d1 = FS[2], d2 = 3.77, h = (FS[2] - 3.77)/2, $fn = 32);
+}
 if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 4, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + DSP_FLOOR - PRELOAD, GC + z, -1);   // v16: M2.5 x 4, head on the 1.6 mm floor
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
 if (VIEW == "p_ring3")     translate([0, 0, -RING_Y[0]]) rotate([90, 0, 0]) ring3();     // face down
