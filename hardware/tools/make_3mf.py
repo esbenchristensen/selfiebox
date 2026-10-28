@@ -89,6 +89,10 @@ MATERIALS = {
 }
 FILAMENT_COMMON = {"filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
 COLOUR_MATERIAL = {"sort": "PLA", "hvid": "PLA", "groen": "PLA", "natur": "PETG-T"}
+# what is actually printed (Esben 28 Oct): PLA, and PETG for the clear diffuser. Never write a preset of another type: an
+# ASA/ABS/PC preset heats the H2C's chamber (65 C), and PLA/PETG then soften in the extruder and fail late in the print.
+PRINTED_TYPES = {"PLA", "PETG"}
+assert all(m["filament_type"] in PRINTED_TYPES for m in MATERIALS.values()), "only PLA/PETG presets (heat creep, v34)"
 PLATES = {"glat": "High Temp Plate", "tekstureret": "Textured PEI Plate"}   # Bambu's names: smooth PEI, textured PEI
 
 
@@ -98,6 +102,8 @@ def project_settings(filaments, plate, tower=None, face_down=False):
     n = len(filaments)
     changes = {**(FACE_DOWN_CHANGES if face_down else {}), **ALWAYS_CHANGES}
     fil = [{**MATERIALS[COLOUR_MATERIAL[f]], **FILAMENT_COMMON} for f in filaments]
+    if any(d["filament_type"] not in PRINTED_TYPES for d in fil):
+        raise SystemExit(f"{filaments}: a filament preset that is not PLA/PETG (it would heat the chamber; see v34)")
     cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **changes,
            **{k: [d[k] for d in fil] for k in fil[0]},
            "filament_colour": [COLOURS[f] for f in filaments], "filament_self_index": [str(i + 1) for i in range(n)],
