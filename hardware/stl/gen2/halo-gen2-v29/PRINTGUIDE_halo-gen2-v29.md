@@ -12,10 +12,17 @@ Tegninger: **`halo-gen2-v29_ledningsplan.png`** (kassen åbnet, hver ledning i s
 
 - **Kassen åbnes som en bog over venstre side.** Skallen ligger på ryggen, og fronten (med lysring, bagramme, skærm og Pi) lægges med forsiden ned til venstre for den, op til 3 cm fra den. Alt, hvad der går mellem de to halvdele, går i **2 hængselbundter** i venstre side: **K1** foroven (strips, Pi'ens strøm, stødsensor) og **K2** i midten (de 3 USB-kabler, dæmperens styreledning, reed). Hvert bundt er stroppet på begge halvdele, og der er **200 mm** ledning mellem de to stropper. Det er regnet fra den åbne stilling (op ad bagvæggen til kanten, over venstre væg og hullet, ned til bagrammen, plus 15 % til bøjninger). Lukket folder løkken sig ned langs venstre side, mellem fronten og skallens moduler.
 - **Wago-rækken.** De 6 Wago-klemmer sidder i en række lommer på forsiden af vægbeslagets klods højt på bagvæggen, fra venstre: **W6** hvid + (dæmpet, 221-413), **W5** hvid − (221-413), **W3** 5 V + (221-414), **W4** 5 V GND (221-415), **W2** GND (221-415), **W1** 24 V + (221-413). Håndtagene vender mod dig, når fronten er af, og ledningerne går ind nedefra. Klemmerne trykkes ind i lommerne og holdes af små knusribber. Lige under rækken går **fordelingsbanen** (T) på tværs.
-- **Baner.** I skallen: **T** under Wago-rækken, **L** ned i venstre side forbi 4G og højttaler, **R** op i højre side fra 5 V-forsyningens klemmer, **M** op fra strømstikket, **RH** hen over 5 V-forsyningens klemmer, **H** på tværs i 112 mm til dæmperen og K2, **G** ned langs RGB-styringens venstre side. På fronten: **FT** langs toppen fra strip-hullerne, **FL** ned i venstre side til K1, **UB** langs det øverste tværstykke (over blæserhegnet), **GD** ned ved siden af GPIO-stikket, **LB** under USB-stikkene til K2. Ingen ledning går hen over et modul, over blæserhegnet eller i lyskanalen.
+- **Baner.** I skallen: **T** under Wago-rækken, **L** ned i venstre side forbi 4G og højttaler, **R** op i højre side over 5 V-forsyningen, **RS** fra forsyningens DC OUT i den nederste ende langs bunden og op i højre side, **M** op fra strømstikket, **RH** hen over 5 V-forsyningens klemmer, **H** på tværs i 112 mm til dæmperen og K2, **G** ned langs RGB-styringens venstre side. På fronten: **FT** langs toppen fra strip-hullerne, **FL** ned i venstre side til K1, **UB** langs det øverste tværstykke (over blæserhegnet), **GD** ned ved siden af GPIO-stikket, **LB** under USB-stikkene til K2. Ingen ledning går hen over et modul, over blæserhegnet eller i lyskanalen.
 - **Skallen:** 7 nye løkker til 10 mm velcrostrop (nu 15 i alt): 2 i venstre bane (170 og 222 mm), 2 i højre bane (200 og 245 mm), K1's skal-ende (240 mm i venstre side) og 2 under Wago-rækken. Og Wago-rækken selv på klodsen.
 - **Bagrammen:** strop-slidserne er flyttet ud til venstre (x −76) i begge tværstykker til K1 og K2, og et tredje par i det øverste tværstykke (x 34) holder Pi'ens strømkabel. **Hak i det nederste tværstykke** under Pi'ens USB-A-stik (8 mm dybt): før stod tværstykket 0,5 mm fra stikkenes åbning, så et lige USB-stik ikke kunne komme i. Brug **90° vinklede USB-A-stik, der vender til venstre**, så kablerne går direkte ud i bane LB.
 - **Kontrolleret i CAD:** alle dele skåret mod hinanden mod v28: ingen nye kollisioner (K1's skal-løkke flyttet 2 mm op fri af 4G-modulet). Alle 29 kabler er lagt som rør i 3D og tjekket fri af skal, bagramme, blæserhegn og alle moduler.
+
+### Delenes rigtige klemmer (rettet efter Esbens billeder 27. okt.)
+
+- **5 V-forsyningen (RSD-60G-5)** har DC IN (⏚, V−, V+) i den **øverste** ende og DC OUT (+V, −V) i den **nederste** ende, ikke alle klemmer øverst. P3/P4 går ned i DC IN fra bane RH; P5/P6 går fra DC OUT langs bunden af forsyningen (over bakkens stop) og op i bane RS i højre side.
+- **RGB-styringen (Gledopto)** har V+ og V− (ind) i den nederste ende og OUTPUT (V+, GPIO16, GPIO2, GND) og USB-C i den øverste ende. S3 (data) går i GPIO16 lige fra venstre bane; U1 går i USB-C ved siden af.
+- **Dæmperen (DFR0457)** har de 3 skrueklemmer øverst (VOUT forrest, GND, VIN bagerst mod bagvæggen) og Gravity-stikket nederst.
+- **Mikrofon-kernen (XVF3800)** har USB-C og aux-stikket i overkanten og SPEAKER-stikket og mikrofonkablet i underkanten. Højttaleren (A1) går i **SPEAKER**-stikket, ikke i aux. Den grønne PWR (12 V)-klemme bruges ikke; kernen får strøm over USB-C.
 
 ### Kabelliste
 
@@ -25,33 +32,33 @@ Klip-længden er ruten med 15 % til bøjninger, plus 15 mm til hver ende, der sk
 |---|---|---|---|---|
 | P1 | hunstik + → W1 | 1,0 mm² rød + sikringsholder | 350 | – |
 | P2 | hunstik − → W2 | 1,0 mm² sort | 400 | – |
-| P3 | W1 → RSD-60G-5 +Vin | 1,0 mm² rød | 250 | – |
+| P3 | W1 → RSD-60G-5 +Vin | 1,0 mm² rød | 300 | – |
 | P4 | W2 → RSD-60G-5 −Vin | 1,0 mm² sort | 300 | – |
-| P5 | RSD-60G-5 +V → W3 | 1,0 mm² rød, orange tape | 300 | – |
-| P6 | RSD-60G-5 −V → W4 | 1,0 mm² sort | 250 | – |
+| P5 | RSD-60G-5 +V → W3 | 1,0 mm² rød, orange tape | 500 | – |
+| P6 | RSD-60G-5 −V → W4 | 1,0 mm² sort | 450 | – |
 | P7 | W4 → W2 | 1,0 mm² sort | 100 | – |
 | P8 | W2 → W5 | 1,0 mm² sort | 200 | – |
 | P9 | W1 → DFR0457 VIN | 0,75 mm² rød | 450 | – |
 | P10 | W2 → DFR0457 GND | 0,75 mm² sort | 400 | – |
-| P11 | DFR0457 VOUT → W6 | 0,75 mm² rød, hvid tape | 300 | – |
+| P11 | DFR0457 VOUT → W6 | 0,75 mm² rød, hvid tape | 350 | – |
 | P12 | W3 + W4 → Pi 5 USB-C | USB-C-pigtail 2 × 0,75 mm² | 550 | K1 |
 | P13 | W3 → Gledopto V+ | 0,75 mm² rød, orange tape | 400 | – |
 | P14 | W4 → Gledopto V− | 0,75 mm² sort | 400 | – |
 | S1 | RGB-strip → W3 | strippens ledning | 450 | K1 |
 | S2 | RGB-strip → W4 | strippens ledning | 500 | K1 |
-| S3 | RGB-strip → Gledopto GPIO16 | strippens ledning | 600 | K1 |
+| S3 | RGB-strip → Gledopto GPIO16 | strippens ledning | 550 | K1 |
 | S4 | hvid strip 1 → W6 | strippens ledning | 400 | K1 |
 | S5 | hvid strip 1 → W5 | strippens ledning | 450 | K1 |
 | S6 | hvid strip 2 → W6 | strippens ledning | 450 | K1 |
 | S7 | hvid strip 2 → W5 | strippens ledning | 500 | K1 |
-| U1 | Pi 5 USB-A → Gledopto USB-C | USB-A 90° venstre → USB-C | 400 | K2 |
+| U1 | Pi 5 USB-A → Gledopto USB-C | USB-A 90° venstre → USB-C | 450 | K2 |
 | U2 | Pi 5 USB-A → XVF3800 USB-C | USB-A 90° venstre → USB-C | 550 | K2 |
 | U3 | Pi 5 USB-A → 4G-modem | USB-A 90° venstre → modemets stik | 450 | K2 |
 | G1 | Pi 5 GPIO → DFR0457 Gravity | 3 ledere: Gravity-kabel + forlænger | 400 | K2 |
 | G2 | Pi 5 GPIO → reed-modul | 3 dupont-ledere hun-hun | 400 | K2 |
 | G3 | Pi 5 GPIO → LIS3DH | 5 dupont-ledere hun-hun | 450 | K1 |
 | G4 | Pi 5 GPIO → Touch Display 2 | skærmens eget kabel | 100 | – |
-| A1 | FIT0502 → XVF3800 aux | højttalerens kabel | 150 | – |
+| A1 | FIT0502 → XVF3800 SPEAKER | højttalerens kabel | 100 | – |
 
 - **Strips:** strippenes egne ledninger skal være mindst **60 cm** (S3 er den længste). Er de kortere, forlænges de med en 221-412 lige under hullet i bagrammen, ikke i bundtet.
 - **USB:** U1 og U3: 50 cm, U2: 60 cm, alle med **90° USB-A, vinklet til venstre** (set bagfra med Pi'en som i boksen) og USB-C i den anden ende (4G: modemets stik).
@@ -550,7 +557,7 @@ Læg fronten med forsiden ned på et blødt underlag.
 5. **Bagrammen** lægges ned i fronten. Før kamerakablet gennem slidsen i bagrammen lige ved kameraet. Kablet laver én blød bue bagud og må ikke knækkes eller foldes skarpt. Tryk bagrammen ned, til alle 14 låse klikker (8 på indervæggen, 6 på ydervæggen). Tryk først midt på hver side, så låsene klikker parvis. Den trykker lysringens krave ned på frontpladen hele vejen rundt (v24: de 54 knusknopper bliver trykket flade, når frontskruerne spændes, så kraven sidder fast og lysfladen ikke kan trykkes ind), trykker kameraet mod forsiden, og de 8 fjedertæer trykker skærmglasset mod kanten. Nu kan front, skærm og bagramme vendes og bruges åben uden skal. Skal bagrammen af igen, stikkes en lille skruetrækker i slidsen ved hver lås bagfra, og armen vippes væk fra væggen.
 6. **Skærmen skrues fast** med 4 M2,5 × 3–4 mm skruer (fx fra skærmens egen pose), gennem bagrammen og ind i skærmens fire gevindører. Hovedet sidder ca. 18,6 mm nede i tårnet på en 1,6 mm bund, så brug en PH0/PH1-skruetrækker med et skaft under Ø5 mm og gerne magnetisk bit. Brug ikke 5 mm skruer: de rammer skærmens bagside. Spænd skiftevis over kryds, til glasset ligger helt ind mod frontens kant hele vejen rundt. Bagrammen trykker skærmen 0,2 mm mod kanten, så den sidder uden slør.
 7. **Pi'en:** Sæt skærmens korte flade kabel i skærmen og i Pi'ens DISP-stik, før Pi'en skrues på skærmens afstandsstykker med de 4 andre skruer fra posen. Kablet skal ligge i en blød bue rundt om Pi'ens kant. Kamerakablet føres i en løs bue bag bagrammen ned til Pi'ens CAM-stik. **Blæserhegnet (v24):** når Pi'en er skruet fast, klikkes hegnet på bagrammens øverste tværstykke midt over Pi'en: læg puden mod tværstykkets bagside med risten over Active Cooler, og tryk lige ned, til begge arme klikker bag tværstykkets forside. Tjek, at blæseren kan drejes frit med en finger gennem risten. **Fronten (v29):** sæt de 3 vinklede USB-A-stik i Pi'en, før bagrammen skrues fast, og læg kablerne i bane LB mod venstre. Strip-ledningerne går fra hullerne langs toppen (FT) og ned i venstre side (FL) til K1's slidser i det øverste tværstykke; Pi'ens strømkabel (P12) ligger i bane UB og stroppes i slidserne ved x 34. Se `halo-gen2-v29_ledningsplan.png`. Ingen ledning må ligge over hegnet.
-8. **Elektronik i skallen:** 5 V-forsyningen og WLED-styringen trykkes ned i deres lodrette bakker på bagvæggen på hver side af røret, forsyningen med skrueklemmerne opad og WLED-styringen med udgangen (4 klemmer + USB-C) opad, og dæmperen i bakken på venstre væg. Læberne på bakkerne holder dem. Tryk de 6 Wago-klemmer ind i rækken på vægbeslagets klods i rækkefølgen W6, W5, W3, W4, W2, W1 fra venstre (v29), håndtagene mod dig. Forbind alt **præcis som i `halo-gen2-v29_ledningsdiagram.png`** med Wago 221-41x (3 × 221-413, 1 × 221-414 og 2 × 221-415; ikke 221-6xx, som ikke tager de tynde ledninger fra strips) og klikstik, og læg hver ledning i sin bane som i `halo-gen2-v29_ledningsplan.png` med længden fra kabellisten. Sæt ledningstyller på alle fintrådede ledninger, der går i en skrueklemme. Vigtigst:
+8. **Elektronik i skallen:** 5 V-forsyningen og WLED-styringen trykkes ned i deres lodrette bakker på bagvæggen på hver side af røret, forsyningen med **DC IN-klemmerne opad og DC OUT nedad** og WLED-styringen med udgangen (4 klemmer + USB-C) opad, og dæmperen i bakken på venstre væg. Læberne på bakkerne holder dem. Tryk de 6 Wago-klemmer ind i rækken på vægbeslagets klods i rækkefølgen W6, W5, W3, W4, W2, W1 fra venstre (v29), håndtagene mod dig. Forbind alt **præcis som i `halo-gen2-v29_ledningsdiagram.png`** med Wago 221-41x (3 × 221-413, 1 × 221-414 og 2 × 221-415; ikke 221-6xx, som ikke tager de tynde ledninger fra strips) og klikstik, og læg hver ledning i sin bane som i `halo-gen2-v29_ledningsplan.png` med længden fra kabellisten. Sæt ledningstyller på alle fintrådede ledninger, der går i en skrueklemme. Vigtigst:
    - RGB-strippen får 5 V direkte fra W3 og GND fra W4, **aldrig 24 V**. RGB-styringen (Gledopto) giver kun data til strippen (v24, efter at dens sikring sprang); den styres fra Pi'en over USB-A til USB-C.
    - 5 V-forsyningens −V bindes til 24 V-GND (broen W4 → W2), ellers virker Pi'ens styresignal til dæmperen ikke.
    - Dæmperen (DFR0457) har kun 3 skrueklemmer: VIN fra W1, GND fra W2 og VOUT, som er det dæmpede **+**. VOUT går til W6, der giver + til de 2 hvide strips. Strips' − går i W5, som får GND fra W2. (Tidligere stod der, at dæmperen skiftede minus; det var forkert.)

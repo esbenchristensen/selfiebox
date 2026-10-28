@@ -49,10 +49,19 @@ I = lambda x: x
 shell = trimesh.load(STL / "x_shell3.stl")
 outline(shell, 66.0, I, color="#6e7781", lw=0.7)
 outline(shell, 40.0, I, color="#24292f", lw=1.3)
-for v, name, c in [("c_psu5", "5 V-forsyning\nRSD-60G-5\n(klemmer øverst)", "#e5dbff"), ("c_wled", "RGB-styring\nGledopto\n(ind forneden,\nud + USB-C foroven)", "#d3f9d8"),
+for v, name, c in [("c_psu5", "5 V-forsyning\nRSD-60G-5\n(DC IN øverst,\nDC OUT nederst)", "#e5dbff"), ("c_wled", "RGB-styring\nGledopto\n(ind forneden,\nud + USB-C foroven)", "#d3f9d8"),
                    ("c_mosfet", "dæm-\nper", "#c3fae8"), ("c_speaker", "højttaler (tilvalg)", "#ffe8cc"), ("c_mcore", "mikrofon-kerne\nXVF3800", "#d0ebff"),
                    ("c_4g", "4G\n(tilvalg)", "#dbe4ff"), ("c_imu", "stød-\nsensor", "#e9fac8"), ("c_reed", "reed", "#ffdeeb"), ("c_jack", "", "#ffc9c9")]:
     box(v, I, name, c)
+# the real terminals and plugs (Esben's photos 27 Oct)
+for key, txt, side in [("psu_vin-", "V−", "l"), ("psu_vin+", "V+", "r"), ("psu_v+", "+V", "l"), ("psu_v-", "−V", "r"),
+                       ("wled_in", "ind V+ V−", "r"), ("wled_out", "GPIO16", "l"), ("wled_usb", "USB-C", "r"),
+                       ("dim_vin", "VIN/GND/VOUT", "r"), ("dim_grav", "Gravity", "r"),
+                       ("core_usb", "USB-C", "r"), ("core_aux", "aux", "l"), ("core_spk", "SPEAKER", "r")]:
+    q = hz.P[key]
+    ax.add_patch(mp.Circle((q[0], q[2]), 2.2, fc="#fab005", ec=INK, lw=0.7, zorder=8))
+    ax.text(q[0] + (3.5 if side == "r" else -3.5), q[2] - 4, txt, fontsize=6.5, color=INK, ha="left" if side == "r" else "right",
+            va="top", zorder=8, bbox=dict(boxstyle="round,pad=0.1", fc="#fff9db", ec="none"))
 ax.text(0, 66, "strømstik\n+ sikring", ha="center", fontsize=8, color=INK, zorder=6)
 # Wago row
 for n, x in hz.WAGO.items():
