@@ -1,3 +1,5 @@
+import { contact, pricing, timeline } from "@/lib/erhverv/placeholder";
+
 // All copy and business rules for the site live here. Selfi only sells to places now: venues, clubs,
 // bars, hotels, festivals, parks and anywhere else guests gather. The box is designed for each place,
 // so there is no fixed box price on the site; it is agreed per customer.
@@ -26,15 +28,15 @@ export const quality: { title: string; icon: string; text: string; facts: string
     facts: ["12 MP med autofokus", "HDR til lyse og mørke rum", "120° vidvinkel, så hele gruppen kommer med"],
   },
   {
-    title: "Video i Full HD",
+    title: "Video i HD, stående",
     icon: "M7 14 H31 V34 H7 Z M31 21 L41 15 V33 L31 27",
-    text: "Videohilsner og udtalelser optages i Full HD i stående format, klar til stories, reels og skærme.",
-    facts: ["Full HD-video", "Stående 9:16 til sociale medier", "Studielys på ansigterne, også i mørke lokaler"],
+    text: "Videohilsner og udtalelser optages i HD i stående format, klar til stories, reels og skærme.",
+    facts: ["HD-video, 900 × 1600", "Stående 9:16 til sociale medier", "Studielys på ansigterne, også i mørke lokaler"],
   },
   {
     title: "Tydelig lyd",
     icon: "M19 8 a5 5 0 0 1 10 0 V24 a5 5 0 0 1 -10 0 Z M12 22 a12 12 0 0 0 24 0 M24 34 V41 M17 41 H31",
-    text: "Fire mikrofoner retter sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde.",
+    text: "Mikrofonmodulet sidder i alle bokse. Fire mikrofoner retter sig mod den, der taler, og fjerner støjen fra lokalet, så hilsner og udtalelser kan bruges uden efterarbejde.",
     facts: ["Fire mikrofoner, der finder den, der taler", "Støjfjernelse og ekkodæmpning", "Opfanger tale op til ca. 5 meter væk"],
   },
 ];
@@ -64,10 +66,14 @@ export type Feature = {
   lede: string;
   seo: { title: string; description: string };
   photo: { src: string; alt: string; pos?: string };
-  points: [string, string][]; // what it does, three or four
-  uses: [string, string][]; // how different places use it
+  points: Line[]; // what it does, three or four
+  uses: Line[]; // how different places use it
   faq: Faq[];
+  soon?: true; // the whole function is not built yet: "Kommer snart" on cards, menu and page
 };
+
+// [title, text] or [title, text, true] when that part is not built yet ("Kommer snart").
+export type Line = [string, string] | [string, string, true];
 
 export const features: Feature[] = [
   {
@@ -77,15 +83,15 @@ export const features: Feature[] = [
     short: "Autentiske billeder og videoer hver aften.",
     icon: "M8 12 H40 V38 H8 Z M8 19 H40 M15 12 L19 19 M25 12 L29 19 M35 12 L39 19 M21 24 V33 L29 28.5 Z",
     title: "Ikke bare en fotoboks. En contentmaskine.",
-    lede: "Selfi Boks laver autentiske billeder og videoer af jeres gæster hver eneste aften, uden at nogen skal stå med kameraet. Med samtykke kan I bruge dem på sociale medier, i nyhedsbreve, på hjemmesiden, på skærme og i annoncer.",
+    lede: "Selfi laver billeder og videoer af jeres gæster hver aften, I har åbent, uden at nogen skal stå med kameraet. Med samtykke kan I bruge dem på sociale medier, i nyhedsbreve, på hjemmesiden, på skærme og i annoncer.",
     seo: {
-      title: "Fotoboksen som contentmaskine: autentiske billeder og videoer | Selfi",
-      description: "Selfi Boks laver hundredvis af autentiske billeder og videoklip af jeres gæster hver måned, klar til jeres kanaler. Se, hvad det svarer til i medarbejdertimer.",
+      title: "Fotoboksen som contentmaskine: ægte billeder og videoer af gæsterne | Selfi",
+      description: "Selfi laver hundredvis af billeder og videoklip af jeres gæster hver måned, klar til jeres kanaler. Se, hvad det svarer til i medarbejdertimer.",
     },
-    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi Boks på en festival i skoven", pos: "50% 50%" },
+    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi på en festival i skoven", pos: "50% 50%" },
     points: [
-      ["Autentisk, ikke iscenesat", "Gæsterne tager billederne selv, midt i stemningen. Det er ægte mennesker, der har det sjovt hos jer, og det kan mærkes."],
-      ["Billeder og video i høj kvalitet", "12 MP-billeder, Full HD-video og tydelig lyd fra fire mikrofoner med støjfjernelse. Stående til stories og klar til feeds."],
+      ["Ægte, ikke iscenesat", "Gæsterne tager billederne selv, midt i aftenen. Det er rigtige mennesker, der har det sjovt hos jer, og det kan ses."],
+      ["Billeder og video i høj kvalitet", "12 MP-billeder og HD-video i stående format, klar til stories og feeds. Mikrofonmodulet gør lyden tydelig, også i et larmende lokale."],
       ["Samlet og med samtykke", "Alt ligger samlet i kontrolpanelet, og kun det, gæsten har sagt ja til, må bruges."],
       ["Hver aften, hele aftenen", "Boksen holder ikke fri, bliver ikke træt og skal ikke have løn. Den laver content, hver gang I har åbent."],
     ],
@@ -107,15 +113,16 @@ export const features: Feature[] = [
     short: "Boksen formet og farvet efter jeres sted.",
     icon: "M24 7 C14 7 7 14 7 23 C7 32 14 41 22 41 C25 41 25 38 23 36 C21 34 22 31 25 31 H31 C37 31 41 27 41 21 C41 13 33 7 24 7 Z M16 22 a2 2 0 1 0 0.1 0 M22 15 a2 2 0 1 0 0.1 0 M31 16 a2 2 0 1 0 0.1 0",
     title: "En fotoboks, der ligner jeres sted.",
-    lede: "Vi designer top, sider og kabinet sammen med jer og printer delene selv. Lysringen, skærmen og rammen på hvert foto får jeres farver, figurer og logo. Så ser boksen ud, som om den altid har hørt til hos jer.",
+    lede: "Vi designer top, sider og kabinet sammen med jer og printer delene selv. Skærmen og rammen på hvert foto får jeres farver, figurer og logo. Så ser boksen ud, som om den altid har hørt til hos jer.",
     seo: {
       title: "Fotoboks i jeres eget design til venue, klub og festival | Selfi",
-      description: "Selfi Boks designet til jeres sted: top, sider, lysring, skærm og fotoramme i jeres farver og med jeres logo. Vi printer delene selv.",
+      description: "Selfi designet til jeres sted: top, sider, skærm og fotoramme i jeres farver og med jeres logo. Vi printer delene selv.",
     },
-    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi Boks på en festival i skoven", pos: "50% 50%" },
+    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi på en festival i skoven", pos: "50% 50%" },
     points: [
       ["Formen", "Top og sider printes i præcis den form, stedet kalder på: et halstørklæde, en lysmast, et gevir eller en hel figur."],
-      ["Farverne", "Kabinettet og lysringen i jeres farver, så boksen kan ses og genkendes fra den anden ende af lokalet."],
+      ["Farverne", "Kabinettet i jeres farver, så boksen kan genkendes fra den anden ende af lokalet."],
+      ["Lysringen i jeres farver", "Ringen pulserer i jeres farve, når ingen bruger boksen.", true],
       ["Skærmen", "En velkomst i jeres stil, når gæsterne kommer hen til boksen, og tekster i jeres tone."],
       ["Fotoet", "En ramme med jeres navn og logo på hvert eneste billede, der bliver taget og delt."],
     ],
@@ -140,13 +147,14 @@ export const features: Feature[] = [
     lede: "Hvert foto fra boksen får en ramme med jeres navn og logo. Når gæsterne deler billedet, ser deres venner, hvor de var. Der er også plads til en sponsor ved siden af jeres eget navn.",
     seo: {
       title: "Logo og sponsorer på hvert foto fra fotoboksen | Selfi",
-      description: "Jeres logo og jeres sponsorer i rammen på hvert foto fra Selfi Boks. Hver deling på de sociale medier viser jeres sted frem.",
+      description: "Jeres logo og jeres sponsorer i rammen på hvert foto fra Selfi. Hver deling på de sociale medier viser jeres sted frem.",
     },
-    photo: { src: "/photos/print-club.jpg", alt: "Foto fra Selfi Boks med stedets navn i rammen", pos: "50% 50%" },
+    photo: { src: "/photos/print-club.jpg", alt: "Foto fra Selfi med stedets navn i rammen", pos: "50% 50%" },
     points: [
       ["Omtale, I ikke betaler for", "Gæsterne deler billederne samme aften, og hvert billede bærer jeres navn."],
       ["Plads til sponsorer", "Rammen designes frit, så en sponsor kan komme med på hvert billede, fx ved en scene eller en kamp."],
       ["Skift når I vil", "Ramme og tekst skifter I i kontrolpanelet, fx til en bestemt aften eller en kampagne."],
+      ["Sponsor efter plan", "Rammen skifter selv sponsor efter en plan, fx én pr. dag eller i en aftalt time.", true],
     ],
     uses: [
       ["Festivalen", "Festivalens navn og hovedsponsoren i rammen. Sponsoren får synlighed på tusindvis af delte billeder."],
@@ -154,26 +162,26 @@ export const features: Feature[] = [
       ["Hotellet", "Hotellets navn i rammen, så minderne fra opholdet viser vej tilbage."],
     ],
     faq: [
-      { q: "Kan vi have flere sponsorer?", a: "Ja. Rammen kan skifte mellem sponsorer, fx én pr. dag, pr. område eller pr. boks." },
+      { q: "Kan vi have flere sponsorer?", a: "Ja. Hver boks kan have sin egen ramme, fx én sponsor pr. område. En ramme, der skifter sponsor efter en plan, fx én pr. dag, kommer snart." },
       { q: "Hvem laver rammen?", a: "Vi laver den sammen med jer ud fra jeres logo og farver, og I kan selv rette tekster i kontrolpanelet bagefter." },
     ],
   },
   {
     slug: "deling",
     group: "content",
-    name: "Deling via QR og SMS",
+    name: "Deling via SMS",
     short: "Billedet på telefonen med det samme.",
     icon: "M17 24 L31 15 M17 24 L31 33 M11 24 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M29 13 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M29 35 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0",
     title: "Billedet på telefonen, før gæsterne går videre.",
-    lede: "Efter hvert billede viser skærmen en QR-kode, og gæsten kan også få billedet på SMS. Så ligger det klar til at blive delt, mens stemningen stadig er der.",
+    lede: "Gæsten skriver sit nummer på skærmen og får linket til billedet på SMS med det samme. Så ligger det klar til at blive delt, mens stemningen stadig er der.",
     seo: {
-      title: "Fotoboks med deling via QR-kode og SMS | Selfi",
-      description: "Gæsterne får billedet fra Selfi Boks på telefonen via QR-kode eller SMS og deler det samme aften, med jeres navn i rammen.",
+      title: "Fotoboks med deling via SMS | Selfi",
+      description: "Gæsterne får billedet fra Selfi på telefonen via SMS og deler det samme aften, med jeres navn i rammen.",
     },
-    photo: { src: "/photos/klub.jpg", alt: "Selfi Boks på en betonsøjle i en natklub med venner på skærmen", pos: "50% 40%" },
+    photo: { src: "/photos/klub.jpg", alt: "Selfi på en betonsøjle i en natklub med venner på skærmen", pos: "50% 40%" },
     points: [
-      ["QR-kode", "Gæsten scanner koden på skærmen og har billedet på få sekunder. Ingen app."],
-      ["SMS", "Vil gæsten hellere have et link på SMS, skriver de deres nummer. Siger de ja, lander nummeret på jeres gæsteliste."],
+      ["SMS", "Gæsten skriver sit nummer og har linket på få sekunder. Siger de ja til at høre fra jer, lander nummeret på jeres gæsteliste."],
+      ["Ingen app", "Linket åbner billedet direkte i browseren på telefonen, klar til at gemme og dele."],
       ["Klar til deling", "Billedet er i et format, der passer til stories og feeds, med jeres ramme på."],
     ],
     uses: [
@@ -182,7 +190,7 @@ export const features: Feature[] = [
       ["Firmaeventet", "Deltagerne får billedet med det samme og deler det på LinkedIn med firmaets navn på."],
     ],
     faq: [
-      { q: "Skal gæsterne hente en app?", a: "Nej. QR-koden åbner billedet direkte i browseren på telefonen." },
+      { q: "Skal gæsterne hente en app?", a: "Nej. Linket på SMS åbner billedet direkte i browseren på telefonen." },
     ],
   },
   {
@@ -195,13 +203,13 @@ export const features: Feature[] = [
     lede: "Boksen kan optage korte videoer. Gæsterne siger hej, sender en hilsen eller svarer på et spørgsmål, I har valgt, fx “Hvad er det sjoveste ved i aften?”. Det giver jer ægte udtalelser, der er klar til de sociale medier.",
     seo: {
       title: "Fotoboks med videohilsner og video-udtalelser fra gæster | Selfi",
-      description: "Selfi Boks optager korte videohilsner og svar på jeres spørgsmål. Ægte udtalelser fra gæsterne, klar til jeres sociale medier.",
+      description: "Selfi optager korte videohilsner og svar på jeres spørgsmål. Ægte udtalelser fra gæsterne, klar til jeres sociale medier.",
     },
-    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster foran Selfi Boks på en festival", pos: "50% 50%" },
+    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster foran Selfi på en festival", pos: "50% 50%" },
     points: [
       ["Jeres spørgsmål", "I vælger spørgsmålene på skærmen, og I kan skifte dem fra dag til dag."],
-      ["Færdigt content", "Korte, stående klip i Full HD med jeres ramme, som I kan bruge på de sociale medier, når gæsten har sagt ja."],
-      ["Klar lyd", "Fire mikrofoner med støjfjernelse fanger stemmen tydeligt, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
+      ["Færdigt content", "Korte, stående klip i HD med jeres ramme, som I kan bruge på de sociale medier, når gæsten har sagt ja."],
+      ["Klar lyd", "Mikrofonmodulet i boksen fanger stemmen tydeligt med fire mikrofoner, også i et larmende lokale, så klippene kan bruges uden efterarbejde."],
       ["Hilsner", "Gæsterne kan sende en hilsen til en ven, et band eller et hold, som I kan vise frem."],
     ],
     uses: [
@@ -224,9 +232,9 @@ export const features: Feature[] = [
     lede: "Hver aften eller hvert event får sin egen side med alle fotos. Billederne kan også køre på en fotovæg, en skærm i lokalet, så gæsterne ser sig selv og hinanden, mens festen er i gang.",
     seo: {
       title: "Fotogalleri og fotovæg til jeres sted | Selfi",
-      description: "Alle fotos fra Selfi Boks samles på en side for hver aften og kan vises på en fotovæg i lokalet.",
+      description: "Alle fotos fra Selfi samles på en side for hver aften og kan vises på en fotovæg i lokalet.",
     },
-    photo: { src: "/photos/sted-vaertshus.jpg", alt: "Venner på et værtshus foran Selfi Boks på murstensvæggen", pos: "60% 45%" },
+    photo: { src: "/photos/sted-vaertshus.jpg", alt: "Venner på et værtshus foran Selfi på murstensvæggen", pos: "60% 45%" },
     points: [
       ["En side pr. aften", "Gæsterne finder deres billeder bagefter og deler dem igen."],
       ["Fotovæg", "Nye billeder vises på en skærm i lokalet med det samme. Det skaber kø ved boksen."],
@@ -251,12 +259,13 @@ export const features: Feature[] = [
     lede: "Gæsten skriver sit nummer for at få billedet på SMS og kan samtidig sige ja til at høre fra jer. Kun dem, der har sagt ja, kommer på listen, så I kan sende et tilbud til næste weekend og holde jer inden for reglerne.",
     seo: {
       title: "Fotoboks, der samler en gæsteliste med samtykke | Selfi",
-      description: "Selfi Boks samler telefonnumre med samtykke, så I kan invitere gæsterne tilbage med SMS og nyhedsbrev og holde jer inden for reglerne.",
+      description: "Selfi samler telefonnumre med samtykke, så I kan invitere gæsterne tilbage med SMS og nyhedsbrev og holde jer inden for reglerne.",
     },
-    photo: { src: "/photos/sted-bodega.jpg", alt: "Selfi Boks fotoboks på væggen i en bodega", pos: "50% 45%" },
+    photo: { src: "/photos/sted-bodega.jpg", alt: "Selfi fotoboks på væggen i en bodega", pos: "50% 45%" },
     points: [
       ["Samtykke fra start", "Gæsten siger selv ja til at høre fra jer. Nej betyder bare billedet og intet andet."],
-      ["Klar til brug", "Listen ligger i kontrolpanelet og kan hentes ud til jeres SMS- eller nyhedsbrevsværktøj."],
+      ["Klar til brug", "Listen ligger i kontrolpanelet, og I sender SMS til den derfra."],
+      ["Eksport", "Hent listen ud til jeres eget SMS- eller nyhedsbrevsværktøj.", true],
       ["Sikker opbevaring", "Numre og billeder opbevares sikkert og bruges kun til det, gæsten har sagt ja til."],
     ],
     uses: [
@@ -266,50 +275,51 @@ export const features: Feature[] = [
     ],
     faq: [
       { q: "Er det lovligt at sende SMS til gæsterne?", a: "Ja, når gæsten selv har sagt ja til at modtage markedsføring fra jer. Boksen spørger om det, og kun dem, der har sagt ja, kommer på listen." },
-      { q: "Ejer vi listen?", a: "Ja. Det er jeres gæster og jeres liste, og I kan hente den ud, når I vil." },
+      { q: "Ejer vi listen?", a: "Ja. Det er jeres gæster og jeres liste. Eksport til jeres egne værktøjer kommer snart." },
     ],
   },
   {
     slug: "titler",
     group: "aktiviteter",
     name: "Titler",
-    short: "Aftenens største smil får sin titel.",
+    short: "Største smil og største gruppe stemplet på billedet.",
     icon: "M10 33 V17 L18 24 L24 13 L30 24 L38 17 V33 Z M10 38 H38",
-    title: "Aftenens største smil får sin titel.",
-    lede: "Boksen kårer aftenens største smil, største gruppe og andre titler, I vælger, og stempler titlen på billedet. Det giver gæsterne en grund til at prøve igen.",
+    title: "Største smil får sin titel på billedet.",
+    lede: "Boksen giver billedet en titel, fx største smil, største gruppe eller en titel, I selv vælger, og stempler den på fotoet. Det giver gæsterne en grund til at prøve igen.",
     seo: {
-      title: "Titler i fotoboksen: aftenens største smil og gruppe | Selfi",
-      description: "Selfi Boks kårer aftenens største smil og største gruppe og stempler titlen på billedet. En aktivitet, der får gæsterne til at prøve igen.",
+      title: "Titler i fotoboksen: største smil og største gruppe | Selfi",
+      description: "Selfi giver billedet en titel, fx største smil eller største gruppe, og stempler den på fotoet. En aktivitet, der får gæsterne til at prøve igen.",
     },
-    photo: { src: "/photos/klub.jpg", alt: "Selfi Boks i en natklub med venner på skærmen", pos: "50% 40%" },
+    photo: { src: "/photos/klub.jpg", alt: "Selfi i en natklub med venner på skærmen", pos: "50% 40%" },
     points: [
       ["Titler, I vælger", "Største smil, største gruppe eller en titel, der passer til jeres sted og jeres aften."],
+      ["Aftenens vinder", "Boksen kårer aftenens største smil på tværs af alle billeder.", true],
       ["Stemplet på billedet", "Titlen står på fotoet, så den bliver delt sammen med jeres navn."],
       ["Slå til og fra", "I bestemmer i kontrolpanelet, hvilke aftener titlerne kører."],
     ],
     uses: [
-      ["Natklubben", "Aftenens største gruppe vinder en flaske og får titlen på billedet."],
-      ["Klubben", "Dagens største fan kåres i pausen."],
+      ["Natklubben", "Den største gruppe på billedet får titlen stemplet på, og de deler det for at vise det."],
+      ["Klubben", "Dagens største fan kåres i pausen.", true],
       ["Firmafesten", "Kollegerne kæmper om at blive aftenens største smil."],
     ],
-    faq: [{ q: "Hvordan vælger boksen vinderen?", a: "Kameraet måler smil og tæller ansigter, så titlerne afgøres af billederne selv." }],
+    faq: [{ q: "Hvordan vælger boksen titlen?", a: "Kameraet måler smil og tæller ansigter, så titlen afgøres af billedet selv. En kåring på tværs af hele aftenen kommer snart." }],
   },
   {
     slug: "missioner",
     group: "aktiviteter",
     name: "Missioner",
-    short: "Små opgaver, som kameraet tjekker.",
+    short: "Små opgaver, der får gæsterne til at mødes.",
     icon: "M19 7 H29 A9 9 0 0 1 38 16 V32 A9 9 0 0 1 29 41 H19 A9 9 0 0 1 10 32 V16 A9 9 0 0 1 19 7 Z M18 24 l4 4 8-9",
     title: "Små missioner, der får gæsterne til at mødes.",
-    lede: "Skærmen giver gæsterne små opgaver, fx at tage et billede med en, de ikke kender, eller at få fem personer med på billedet. Kameraet tjekker, om de klarede den.",
+    lede: "Skærmen giver gæsterne små opgaver, fx at tage et billede med en, de ikke kender, eller at få fem personer med på billedet.",
     seo: {
       title: "Missioner i fotoboksen, der får gæsterne til at mødes | Selfi",
-      description: "Selfi Boks giver gæsterne små missioner, som kameraet tjekker. En nem måde at få liv i lokalet og gæsterne til at blive.",
+      description: "Selfi giver gæsterne små missioner. En nem måde at få liv i lokalet og gæsterne til at blive.",
     },
-    photo: { src: "/photos/sted-vaertshus.jpg", alt: "Venner på et værtshus griner foran Selfi Boks", pos: "60% 45%" },
+    photo: { src: "/photos/sted-vaertshus.jpg", alt: "Venner på et værtshus griner foran Selfi", pos: "60% 45%" },
     points: [
       ["Jeres missioner", "Vælg fra vores liste eller skriv jeres egne, der passer til stedet."],
-      ["Kameraet tjekker", "Boksen ser, om missionen er klaret, og viser det på billedet."],
+      ["Kameraet tjekker", "Boksen ser, om missionen er klaret, og viser det på billedet.", true],
       ["En grund til at blive", "Der er altid en mission mere at klare."],
     ],
     uses: [
@@ -329,20 +339,20 @@ export const features: Feature[] = [
     lede: "Gæsterne stemmer på aftenens bedste billede, og vinderen får en præmie, I vælger. Det får folk til at tage et billede mere og dele det for at få stemmer.",
     seo: {
       title: "Fotokonkurrence i fotoboksen med præmie | Selfi",
-      description: "Lad gæsterne stemme på aftenens bedste billede fra Selfi Boks. Vinderen får en præmie, og alle deler for at få stemmer.",
+      description: "Lad gæsterne stemme på aftenens bedste billede fra Selfi. Vinderen får en præmie, og alle deler for at få stemmer.",
     },
-    photo: { src: "/photos/sted-julefrokost.jpg", alt: "Gæster til et selskab foran Selfi Boks", pos: "55% 40%" },
+    photo: { src: "/photos/sted-julefrokost.jpg", alt: "Gæster til et selskab foran Selfi", pos: "55% 40%" },
     points: [
       ["Alle kan stemme", "Gæsterne stemmer på de billeder, de bedst kan lide."],
       ["Jeres præmie", "En drink, en billet, en trøje. I vælger præmien og hvornår vinderen kåres."],
       ["Flere delinger", "Gæsterne deler deres billede for at få stemmer, og jeres navn følger med."],
     ],
     uses: [
-      ["Baren", "Månedens bedste billede vinder en bordreservation med en flaske."],
-      ["Klubben", "Sæsonens bedste fanbillede vinder en signeret trøje."],
+      ["Baren", "Aftenens bedste billede vinder en flaske til bordet."],
+      ["Klubben", "Sæsonens bedste fanbillede vinder en signeret trøje.", true],
       ["Festivalen", "Dagens bedste billede vinder billetter til næste år."],
     ],
-    faq: [{ q: "Hvor længe kører en konkurrence?", a: "Så længe I vil, en aften, en weekend eller en hel sæson." }],
+    faq: [{ q: "Hvor længe kører en konkurrence?", a: "En aften ad gangen, og I bestemmer, hvornår vinderen kåres. Konkurrencer over en weekend eller en hel sæson kommer snart." }],
   },
   {
     slug: "guldtid",
@@ -354,9 +364,9 @@ export const features: Feature[] = [
     lede: "I korte, synlige vinduer vinder næste billede en præmie, fx en gratis øl. Alle i lokalet kan se, når det er guldtid, og det skaber kø på få sekunder.",
     seo: {
       title: "Guldtid i fotoboksen: skab kø på få sekunder | Selfi",
-      description: "Med Guldtid vinder næste billede fra Selfi Boks en præmie. Lysringen viser det, og der er kø på få sekunder.",
+      description: "Med Guldtid vinder næste billede fra Selfi en præmie. Lysringen viser det, og der er kø på få sekunder.",
     },
-    photo: { src: "/photos/sted-bodega.jpg", alt: "Selfi Boks på væggen i en bodega", pos: "50% 45%" },
+    photo: { src: "/photos/sted-bodega.jpg", alt: "Selfi på væggen i en bodega", pos: "50% 45%" },
     points: [
       ["Kø på sekunder", "Guldtiden er synlig for hele lokalet, så alle ved, at nu gælder det."],
       ["En præmie, I alligevel sælger", "En øl eller en shot, der koster jer lidt og giver meget liv."],
@@ -379,9 +389,9 @@ export const features: Feature[] = [
     lede: "Med flere bokse på området følger gæsterne spor fra boks til boks gennem en lille historie. I bestemmer ruten, fx forbi en scene, et dyreanlæg eller en butik, og hvilken præmie der venter til sidst.",
     seo: {
       title: "Skattejagt med fotobokse til festival, park og zoo | Selfi",
-      description: "Med flere Selfi Bokse bliver området en skattejagt. Gæsterne følger spor fra boks til boks, og I bestemmer ruten og præmien.",
+      description: "Med flere Selfi-bokse bliver området en skattejagt. Gæsterne følger spor fra boks til boks, og I bestemmer ruten og præmien.",
     },
-    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi Boks på en festival i skoven", pos: "50% 50%" },
+    photo: { src: "/photos/sted-festival.jpg", alt: "Gæster ved Selfi på en festival i skoven", pos: "50% 50%" },
     points: [
       ["Jeres historie", "Sporene bygger på jeres univers, jeres figurer og jeres sted."],
       ["Jeres rute", "Send gæsterne forbi de steder, I gerne vil vise frem."],
@@ -401,46 +411,47 @@ export const features: Feature[] = [
     short: "Et stempel ved hver boks på ruten.",
     icon: "M15 11 H33 A8 8 0 0 1 41 19 V29 A8 8 0 0 1 33 37 H15 A8 8 0 0 1 7 29 V19 A8 8 0 0 1 15 11 Z M12.5 24 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0 M20.5 24 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0 M28.5 24 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0",
     title: "En rundtur med et stempel ved hver boks.",
-    lede: "Gæsterne samler et stempel ved hver boks på ruten. Fuldt kort giver en præmie. Det virker på en barrunde i byen, på en festival og på tværs af flere steder i samme kæde.",
+    lede: "Gæsterne samler et stempel ved hver boks på ruten. Fuldt kort giver en præmie. Det virker på en festival, i en park og overalt, hvor der står flere bokse.",
     seo: {
-      title: "Rundtur med fotobokse: barrunde, festival og kæder | Selfi",
-      description: "Gæsterne samler et stempel ved hver Selfi Boks på ruten og vinder en præmie. Til barrunder, festivaler og kæder med flere steder.",
+      title: "Rundtur med fotobokse: festival, park og flere bokse | Selfi",
+      description: "Gæsterne samler et stempel ved hver Selfi på ruten og vinder en præmie. Til festivaler, parker og steder med flere bokse.",
     },
-    photo: { src: "/photos/sted-hotel.jpg", alt: "Selfi Boks på væggen i en hotelbar", pos: "30% 50%" },
+    photo: { src: "/photos/sted-hotel.jpg", alt: "Selfi på væggen i en hotelbar", pos: "30% 50%" },
     points: [
       ["Et stempel pr. boks", "Hvert billede ved en boks på ruten giver et stempel."],
-      ["Flere steder sammen", "Barer i samme gade eller en kæde kan dele ruten og sende gæsterne videre til hinanden."],
+      ["Flere steder sammen", "Barer i samme gade eller en kæde kan dele ruten og sende gæsterne videre til hinanden.", true],
       ["Præmie ved fuldt kort", "I bestemmer præmien og hvor den hentes."],
     ],
     uses: [
-      ["Barrunden", "Fem barer i samme gade deler en rute, og fuldt kort giver en drink på den sidste."],
+      ["Barrunden", "Fem barer i samme gade deler en rute, og fuldt kort giver en drink på den sidste.", true],
       ["Festivalen", "Et stempel ved hver scene sender publikum rundt på hele pladsen."],
-      ["Hotelkæden", "Et stempel på hvert hotel i kæden giver en overnatning."],
+      ["Hotelkæden", "Et stempel på hvert hotel i kæden giver en overnatning.", true],
     ],
     faq: [{ q: "Skal alle bokse på ruten være ens?", a: "Nej. Hver boks kan have sit eget design, så længe de er på samme rute." }],
   },
   {
     slug: "printede-fotos",
     group: "drift",
+    soon: true,
     name: "Printede fotos",
     short: "Et ægte foto i hånden, også mod betaling.",
     icon: "M11 7 H37 V41 H11 Z M15 11 H33 V30 H15 Z",
     title: "Et ægte foto i hånden.",
-    lede: "Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens gæsten står og venter. Rammen bærer jeres navn. Vil I, kan gæsterne betale for de printede fotos, så boksen tjener penge.",
+    lede: "Med fotomodulet printer boksen et Instax-foto, der fremkalder, mens gæsten står og venter. Vil I, kan gæsterne betale for de printede fotos, så boksen tjener penge.",
     seo: {
       title: "Fotoboks med printede Instax-fotos og betaling pr. foto | Selfi",
-      description: "Selfi Boks kan printe Instax-fotos med jeres navn i rammen. Gæsterne kan betale pr. foto, og I sætter selv prisen.",
+      description: "Selfi kan printe Instax-fotos, som gæsterne tager med hjem. Gæsterne kan betale pr. foto, og I sætter selv prisen.",
     },
     photo: { src: "/photos/instax-haand.jpg", alt: "Hænder holder et frisk Instax-foto af tre venner på en bar", pos: "50% 50%" },
     points: [
-      ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere, med jeres navn i rammen."],
+      ["Et minde med hjem", "Fotoet hænger på køleskabet en måned senere. Den digitale udgave med jeres logo har gæsten på telefonen."],
       ["Betaling pr. foto", `I sætter prisen pr. foto. Alt over ${business.costPerPhoto} kr. pr. foto går til jer.`],
-      ["Kun når I vil", "Printet er et tilvalg. Den digitale udgave kommer altid via QR-kode eller SMS."],
+      ["Kun når I vil", "Printet er et tilvalg. Den digitale udgave kommer altid på SMS."],
     ],
     uses: [
       ["Baren", "Gæsterne betaler for et print, og baren tjener på hvert foto."],
       ["Hotellet", "Et printet foto som minde fra opholdet eller brylluppet i festsalen."],
-      ["Lanceringen", "Hver gæst går hjem med et foto med produktet og jeres navn."],
+      ["Lanceringen", "Hver gæst går hjem med et foto med produktet i hånden."],
     ],
     faq: [{ q: "Hvad koster et print for os?", a: `Papir og drift koster ${business.costPerPhoto} kr. pr. foto. Tager I mere for det, går forskellen til jer.` }],
   },
@@ -451,20 +462,20 @@ export const features: Feature[] = [
     short: "Tema, tekster og aktiviteter fra nettet.",
     icon: "M10 14 H38 M10 24 H38 M10 34 H38 M28 11 V17 M17 21 V27 M32 31 V37",
     title: "Styr boksen fra et kontrolpanel på nettet.",
-    lede: "Tema, tekster, priser og aktiviteter styrer I fra et kontrolpanel på nettet. Her finder I også gæstelisten, billederne og videoerne. Vil I ikke selv, gør vi det for jer.",
+    lede: "Tema, tekster og aktiviteter styrer I fra et kontrolpanel på nettet. Her finder I også gæstelisten, billederne og videoerne. Vil I ikke selv, gør vi det for jer.",
     seo: {
       title: "Kontrolpanel til jeres fotobokse | Selfi",
-      description: "Styr tema, tekster, priser og aktiviteter i jeres Selfi Bokse fra et kontrolpanel på nettet, og find gæsteliste, billeder og videoer.",
+      description: "Styr tema, tekster og aktiviteter i jeres Selfi-bokse fra et kontrolpanel på nettet, og find gæsteliste, billeder og videoer.",
     },
-    photo: { src: "/photos/sted-hotel.jpg", alt: "Selfi Boks på væggen i en hotelbar", pos: "30% 50%" },
+    photo: { src: "/photos/sted-hotel.jpg", alt: "Selfi på væggen i en hotelbar", pos: "30% 50%" },
     points: [
       ["Alle bokse ét sted", "Har I flere bokse, styrer I dem samlet eller hver for sig."],
       ["Skift på sekunder", "Ny ramme, nyt spørgsmål eller guldtid i aften. Det slår igennem med det samme."],
-      ["Gæsteliste og billeder", "Hent gæstelisten, billederne og videoerne ud, når I skal bruge dem."],
+      ["Gæsteliste og billeder", "Hent billederne og videoerne ud, når I skal bruge dem, og send SMS til gæstelisten."],
     ],
     uses: [
       ["Kæden", "Hovedkontoret sætter kampagnen i alle bokse, og hvert sted retter sine egne tekster."],
-      ["Festivalen", "Dagens program og sponsor skifter i rammen hver morgen."],
+      ["Festivalen", "Dagens program og sponsor skifter i rammen hver morgen.", true],
       ["Baren", "Guldtid slås til en stille tirsdag med et par tryk på telefonen."],
     ],
     faq: [{ q: "Skal vi bruge kontrolpanelet?", a: "Nej. Boksen kører af sig selv, og vi hjælper gerne med ændringer. Kontrolpanelet er der, når I vil gøre det selv." }],
@@ -473,24 +484,24 @@ export const features: Feature[] = [
     slug: "fuld-service",
     group: "drift",
     name: "Fuld service",
-    short: "Vi monterer, overvåger og bytter boksen.",
+    short: "Vi overvåger, opdaterer og bytter boksen.",
     icon: "M24 6 L39 12 V23 C39 32 32 39 24 42 C16 39 9 32 9 23 V12 Z M17 24 l5 5 9-10",
     title: "I holder åbent. Vi tager os af boksen.",
-    lede: "Vi monterer boksen, holder øje med den, opdaterer den og sender en ny, hvis noget går galt. I kan ringe til os døgnet rundt.",
+    lede: "I hænger boksen op med vægbeslaget og vores korte guide. Vi holder øje med den, opdaterer den og sender en ny, hvis den går i stykker. I kan ringe til os døgnet rundt.",
     seo: {
       title: "Fotoboks med fuld service, overvågning og døgnsupport | Selfi",
-      description: "Selfi monterer, overvåger og opdaterer jeres fotobokse og sender en ny, hvis noget går galt. Support døgnet rundt.",
+      description: "Selfi overvåger og opdaterer jeres fotobokse og sender en ny, hvis noget går galt. Support døgnet rundt.",
     },
-    photo: { src: "/photos/klub.jpg", alt: "Selfi Boks på en betonsøjle i en natklub", pos: "50% 40%" },
+    photo: { src: "/photos/klub.jpg", alt: "Selfi på en betonsøjle i en natklub", pos: "50% 40%" },
     points: [
-      ["Montering", "Vi hænger boksen op med tyverilås eller stiller den på en stander, tilslutter og tester den."],
-      ["Overvågning", "Boksen melder sig til os hele tiden. Driller den, får vi en alarm, ofte før I opdager det."],
-      ["Ny boks", "Går en boks i stykker, sender vi en ny med det samme. I betaler ikke for reparation."],
+      ["Nem opsætning", "Boksen kommer med vægbeslag, tyverilås og en kort guide. I hænger den selv op på ca. 20 minutter."],
+      ["Overvågning", "Boksen melder sig til os hele tiden. Driller den, får vi en alarm."],
+      ["Ny boks", "Går en boks i stykker, sender vi en ny. Fejl og slitage koster jer ikke noget."],
       ["Support døgnet rundt", "Ring eller skriv, også lørdag kl. 01."],
     ],
     uses: [
       ["Natklubben", "Ingen personale ved boksen. Den kører hele natten, og vi har øje på den."],
-      ["Festivalen", "Vi sætter boksene op før åbning og tager dem ned igen bagefter."],
+      ["Festivalen", "Boksene hænges op på få minutter før åbning, og vi har øje på dem hele festivalen."],
       ["Hotellet", "Boksen hænger fast i lobbyen eller baren, og opdateringer kommer af sig selv."],
     ],
     faq: [{ q: "Kommer der regninger ud over den aftalte pris?", a: "Nej. Service, opdateringer, support og en ny boks, hvis noget går galt, er med i den pris, vi aftaler." }],
@@ -504,59 +515,70 @@ export const featureBySlug = (slug: string) => features.find((f) => f.slug === s
 export type ActivityId = "titler" | "missioner" | "skattejagt" | "rundtur" | "konkurrence" | "guldtid";
 
 export const activities: { id: ActivityId; name: string; text: string }[] = [
-  { id: "titler", name: "Titler", text: "Boksen kårer aftenens største smil og største gruppe og stempler titlen på billedet." },
-  { id: "missioner", name: "Missioner", text: "Små opgaver på skærmen, fx at tage et billede med en, man ikke kender. Kameraet tjekker, om I klarede den." },
+  { id: "titler", name: "Titler", text: "Største smil, største gruppe eller en titel, I vælger, stemplet på billedet." },
+  { id: "missioner", name: "Missioner", text: "Små opgaver på skærmen, fx at tage et billede med en, man ikke kender." },
   { id: "skattejagt", name: "Skattejagt", text: "Gæsterne følger spor fra boks til boks gennem en lille historie. Kræver flere bokse." },
   { id: "rundtur", name: "Rundtur", text: "Gæsterne samler et stempel ved hver boks på ruten, fx på en barrunde eller en festival." },
   { id: "konkurrence", name: "Konkurrence", text: "Gæsterne stemmer på aftenens bedste billede, og vinderen får en præmie." },
   { id: "guldtid", name: "Guldtid", text: "I korte, synlige vinduer vinder næste billede en præmie, fx en gratis øl. Det skaber kø på få sekunder." },
 ];
 
-// ---------- Front page FAQ ----------
-// Every kind of place: design, reach, games, data, service. The price is agreed per place.
+// ---------- /erhverv FAQ ----------
+// The questions an owner asks before saying yes: price, terms, time, setup, internet, failure, staff, data,
+// SMS, marketing use, several boxes, print, outdoors, size. Answers that are not decided yet take their
+// numbers from lib/erhverv/placeholder.ts and are marked on the page.
+
 export const faq: Faq[] = [
   {
-    q: "Kan boksen laves i vores design?",
-    a: "Ja, det er det, vi gør. Vi designer top, sider og kabinet sammen med jer og printer delene selv. Lysringen, skærmen og rammen på hvert foto får jeres farver, figurer og logo.",
-  },
-  {
-    q: "Hvilke steder passer Selfi Boks til?",
-    a: "Til alle steder, hvor gæster samles: barer, natklubber, sportsklubber, hoteller, restauranter, festivaler, forlystelsesparker, zoo, biografer, messer og konferencer.",
-  },
-  {
-    q: "Hvad gør boksen for os?",
-    a: "Den giver gæsterne noget at samles om og en grund til at blive. Jeres navn står i rammen på hvert foto, så hver deling er omtale, og gæstelisten giver jer en direkte vej til at invitere dem igen.",
-  },
-  {
-    q: "Kan vi bruge billederne og videoerne i vores egen markedsføring?",
-    a: "Ja, når gæsten har sagt ja til det. Boksen laver autentiske billeder og videoklip hver aften, som I kan bruge på sociale medier, i nyhedsbreve, på hjemmesiden og i annoncer.",
-  },
-  {
-    q: "Hvor god er kvaliteten af billeder, video og lyd?",
-    a: "Høj nok til at bruge i jeres egen markedsføring. Boksen tager billeder med et 12 MP-kamera med autofokus og HDR, optager video i Full HD og har fire mikrofoner med støjfjernelse, der fanger stemmerne tydeligt, også når der er larm i lokalet. Lysringen bliver til studielys, så ansigterne står skarpt, også i et mørkt lokale.",
-  },
-  {
-    q: "Kan en sponsor komme med på billederne?",
-    a: "Ja. Rammen på hvert foto designes frit, så der er plads til en sponsor ved siden af jeres eget navn.",
-  },
-  {
-    q: "Kan vi samle kontakter til SMS og nyhedsbrev?",
-    a: "Ja. Gæsten skriver sit nummer for at få billedet og kan samtidig sige ja til at høre fra jer. Kun dem, der har sagt ja, kan bruges til markedsføring, så I holder jer inden for reglerne.",
-  },
-  {
-    q: "Skal personalet passe boksen?",
-    a: "Nej. Gæsterne trykker, tager billedet og får det selv. I styrer tema, tekster og aktiviteter fra et kontrolpanel på nettet, eller vi gør det for jer.",
-  },
-  {
-    q: "Hvem sætter boksene op og passer dem?",
-    a: "Det gør vi. Vi monterer og tester boksene, holder øje med dem hele tiden og sender en ny, hvis en går i stykker.",
-  },
-  {
-    q: "Kan boksen stå udendørs?",
-    a: "Den skal stå under tag, fx i et telt, ved en indgang eller under et halvtag. Så stopper regnen den ikke.",
-  },
-  {
     q: "Hvad koster det?",
-    a: "Prisen afhænger af designet, antal bokse og perioden. Book en snak, så laver vi et tilbud til jer.",
+    a: `${pricing.fromPerMonth.toLocaleString("da-DK")} kr. om måneden pr. boks ekskl. moms. Prisen for designet aftales, og det hele står i tilbuddet, før I siger ja. Vægbeslag, kontrolpanel, overvågning, opdateringer, support og en ny boks ved fejl er altid med. 4G og print er tilvalg.`,
+  },
+  {
+    q: "Hvor lang tid går der, fra vi siger ja, til boksen hænger?",
+    a: `${timeline.total}: designet tager ${timeline.design}, print og test ${timeline.print}, og boksen sendes med posten dagen efter. Skal den hænge til en bestemt dato, så sig det i snakken.`,
+  },
+  {
+    q: "Hvem hænger den op?",
+    a: "Det gør I, på ca. 20 minutter. Boksen kommer med vægbeslag, tyverilås og en guide på én side. Når den er tændt, tjekker vi på afstand, at alt virker.",
+  },
+  {
+    q: "Skal den have internet?",
+    a: `Ja. Boksen skal på jeres wifi for at sende billederne på SMS og melde sig til os. Falder nettet ud, tager den stadig billeder og sender dem, så snart den er på igen. ${pricing.fourG}, hvis I ikke har wifi, hvor den skal hænge.`,
+  },
+  {
+    q: "Hvad hvis den går i stykker?",
+    a: "Så sender vi en ny og tager den gamle retur. Fejl og almindelig slitage koster jer ikke noget. Tyveri og hærværk aftaler vi i tilbuddet, så I ved det, før I siger ja.",
+  },
+  {
+    q: "Skal personalet gøre noget?",
+    a: "Nej. Gæsterne trykker, tager billedet og får det på SMS selv. Vil I skifte ramme, spørgsmål eller præmie, gør I det i kontrolpanelet på to minutter, eller I skriver til os, så gør vi det.",
+  },
+  {
+    q: "Hvem ejer billederne og telefonnumrene?",
+    a: "Det gør I. I er dataansvarlige for jeres gæsters billeder og numre, og vi opbevarer dem for jer efter en databehandleraftale. Vi bruger dem ikke selv. Billeder, gæsten ikke har sagt ja til at dele, slettes efter 30 dage.",
+  },
+  {
+    q: "Må vi sende SMS til gæsterne?",
+    a: "Ja. Boksen spørger gæsten, når nummeret er skrevet, og dem, der siger ja, kommer på gæstelisten. Så er listen jeres at bruge til tilbud og invitationer. Hver SMS har en afmelding, så listen holder sig selv ren.",
+  },
+  {
+    q: "Må vi bruge billederne og videoerne i vores egen markedsføring?",
+    a: "Ja, dem hvor gæsten har sagt ja til det. Boksen spørger efter hvert billede, og det, gæsten har sagt ja til, ligger klar i kontrolpanelet til opslag, nyhedsbrev, skærme og annoncer.",
+  },
+  {
+    q: "Kan vi have flere bokse, eller flere steder i en kæde?",
+    a: "Ja. Alle bokse styres samlet eller hver for sig i kontrolpanelet, og med to eller flere bokse kan I køre skattejagt og rundtur. En rundtur på tværs af flere steder kommer snart.",
+  },
+  {
+    q: "Kan gæsterne få et printet foto?",
+    a: "Det kommer snart. Printmodulet laver et Instax-foto, gæsten kan tage med hjem, og I kan vælge, at gæsten betaler for det.",
+  },
+  {
+    q: "Kan boksen hænge udendørs?",
+    a: "Under tag, fx i et telt, ved en indgang eller under et halvtag, og ved 0 til 30 grader. Strømforsyningen skal ligge tørt, og boksen må ikke hænge i direkte sol.",
+  },
+  {
+    q: "Hvor stor er den, og hvad skal den bruge?",
+    a: `22,5 × 30,6 × 7 cm og 1,6 kg, lidt større end et A4-ark. Den skal hænge i øjenhøjde på en væg eller en søjle, have en stikkontakt inden for kablets rækkevidde og være på wifi. Spørgsmål: ring på ${contact.phone} eller skriv til ${contact.email}.`,
   },
 ];

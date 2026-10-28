@@ -1,0 +1,51 @@
+{
+  "name": "Carlsberg",
+  "event": "Carlsberg – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#00703c",
+      "filament": "ASA green"
+    },
+    "deep": {
+      "hex": "#004d29",
+      "filament": "ASA dark green"
+    },
+    "glass": {
+      "hex": "#2c9a46",
+      "filament": "ASA light green"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "ASA white"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#00703c",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#2c9a46"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ffffff"
+  },
+  "screen": {
+    "ticker": "Carlsberg  •  Probably the best beer in the world  •  Skål fra Carlsberg og baren  •",
+    "cta": "Sig «Skål!»",
+    "background": "base",
+    "accent": "white"
+  }
+}

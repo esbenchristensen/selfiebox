@@ -1,41 +1,44 @@
-// Full service for every place. It answers the question every owner asks after the design:
-// "what else will this cost me in time and trouble?". The answer is shown,
-// not claimed: our list is long, theirs has one line. Then each fear is named and answered
-// with a concrete promise. See TEKSTSTRATEGI.md, "Tryghed".
+import { contact } from "@/lib/erhverv/placeholder";
+
+// Full service for every place. It answers the question every owner asks right after the price:
+// "what else will this cost me in time and trouble?". The answer is shown, not claimed: our list is
+// long, theirs has one line. Then each fear is named and answered with a concrete promise, and only
+// promises the terms can carry (no response times, no "at once", theft agreed in the offer).
+// See TEKSTSTRATEGI.md, "Tryghed".
 
 const ours = [
-  ["Montering", "Vi hænger boksen op, tilslutter og tester den."],
+  ["Nem opsætning", "Boksen kommer med vægbeslag, tyverilås og en guide på én side. I hænger den selv op på ca. 20 minutter."],
   ["Overvågning", "Boksen melder sig til os hele tiden. Driller den, får vi en alarm."],
-  ["Opdateringer", "Nye funktioner og rettelser kommer af sig selv."],
-  ["Ny boks", "Går en boks i stykker, sender vi en ny med det samme."],
+  ["Opdateringer", "Nye funktioner og rettelser kommer af sig selv. Boksen kører kun software, vi har signeret."],
+  ["Ny boks", "Går en boks i stykker, sender vi en ny. Fejl og slitage koster jer ikke noget."],
   ["Support døgnet rundt", "Ring eller skriv, også lørdag kl. 01."],
-  ["Gæsternes data", "Billeder og numre opbevares sikkert og bruges kun med samtykke."],
+  ["Gæsternes data", "Billeder og numre opbevares i EU efter en databehandleraftale og bruges kun til det, gæsten har sagt ja til."],
 ] as const;
 
 const fears = [
   {
     q: "Hvad hvis boksen går i stykker?",
-    a: "Så sender vi en ny med det samme og tager den gamle med retur. I betaler ikke for reparation eller ny boks.",
+    a: "Så sender vi en ny og tager den gamle retur. Fejl og almindelig slitage koster jer ikke noget. Tyveri og hærværk aftaler vi i tilbuddet, så I ved det, før I siger ja.",
   },
   {
     q: "Hvad hvis den holder op med at virke midt på aftenen?",
-    a: "Boksen melder sig til os hele tiden. Går den ned, får vi en alarm og går i gang, ofte før I selv har set det.",
+    a: "Boksen melder sig til os hele tiden. Går den ned, får vi en alarm og går i gang, tit før I selv har set det. Falder jeres net ud, tager den stadig billeder og sender dem, når nettet er tilbage.",
   },
   {
-    q: "Hvem skal jeg ringe til?",
-    a: "Til os, når som helst på døgnet. I skal ikke selv finde fejlen eller forklare noget teknisk.",
+    q: "Hvem skal jeg kontakte?",
+    a: "Os. Skriv til kontakt@selfi.dk eller i chatten, så er det os, der svarer. I skal ikke finde fejlen selv eller forklare noget teknisk.",
   },
   {
     q: "Skal personalet lære noget?",
-    a: "Nej. Gæsterne klarer det selv, og alt det tekniske er vores. Vil I ændre tema eller tekster, gør vi det for jer, eller I gør det selv i kontrolpanelet.",
+    a: "Nej. Gæsterne klarer det selv, og det tekniske er vores. Vil I skifte ramme eller tekster, tager det to minutter i kontrolpanelet, eller I skriver til os.",
   },
   {
     q: "Hvad med gæsternes billeder og numre?",
-    a: "Boksen kører kun software, vi har signeret, og billeder og numre opbevares sikkert. Telefonnumre bruges kun til tilbud, hvis gæsten selv har sagt ja, så I holder jer inden for reglerne.",
+    a: "I ejer dem. Vi opbevarer dem for jer efter en databehandleraftale, og boksen spørger gæsten, før et billede må bruges, og før et nummer må få tilbud. Billeder uden et ja slettes efter 30 dage.",
   },
   {
     q: "Kommer der regninger ud over den aftalte pris?",
-    a: "Nej. Service, opdateringer, support og en ny boks, hvis noget går galt, er med i den pris, vi aftaler.",
+    a: "Nej. Service, opdateringer, support og en ny boks ved fejl er med i prisen. Tilvalg som 4G og print står i tilbuddet, før I siger ja.",
   },
 ];
 
@@ -57,7 +60,7 @@ export function Care() {
             I betaler én fast pris. Vi tager os af resten.
           </h2>
           <p className="lede">
-            Selfi Boks er ikke endnu en ting, I skal passe. Det er en service, vi leverer. Vi monterer den, holder øje med den, opdaterer den og bytter den, hvis noget går galt.
+            Selfi er ikke endnu en ting, I skal passe. I hænger den op, og vi holder øje med den, opdaterer den og bytter den, hvis den går i stykker.
           </p>
         </div>
 
@@ -79,29 +82,32 @@ export function Care() {
           <div className="care-card care-yours">
             <span className="label">Det klarer I</span>
             <p className="care-one">Holder åbent, som I plejer.</p>
-            <p className="muted">Der er ingen manual, ingen opsætning og ingen leverandør, I skal jagte. Boksen er klar, når I åbner.</p>
+            <p className="muted">Boksen hænges op én gang på ca. 20 minutter. Derefter er der ingen software at passe og ingen leverandør, I skal jagte.</p>
           </div>
         </div>
 
         <div className="care-fears">
           <h3 className="h-m">Det, I måske tænker på.</h3>
-          <dl>
-            {fears.map((f) => (
-              <div key={f.q}>
-                <dt>{f.q}</dt>
-                <dd>{f.a}</dd>
-              </div>
+          <div className="care-fears-list">
+            {fears.map((f, i) => (
+              <details key={f.q} open={i === 0}>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
             ))}
-          </dl>
+          </div>
         </div>
 
         <div className="care-promise">
           <p>
-            <b>Fast pris. Ingen regninger ved siden af. Ingen ting at passe.</b>
-            <span className="muted">Hvis noget går galt, er det vores problem, ikke jeres.</span>
+            <b>Fast pris. Ingen regninger ved siden af. Intet at passe.</b>
+            <span className="muted">
+              Går noget galt, er det vores problem, ikke jeres. Skriv til{" "}
+              <a href={`mailto:${contact.email}`}>{contact.email}</a>.
+            </span>
           </p>
           <a className="btn btn-primary" href="#kontakt">
-            Book en uforpligtende snak
+            Book en snak
           </a>
         </div>
       </div>

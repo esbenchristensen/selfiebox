@@ -180,7 +180,7 @@ export default function FlyingHirschKatalog() {
             <div><b>1</b><h3>Tryk</h3><p>Lysringen kalder. Et tryk på skærmen starter.</p></div>
             <div><b>2</b><h3>Vælg</h3><p>Foto, videohilsen eller aftenens spørgsmål.</p></div>
             <div><b>3</b><h3>3-2-1 Prost</h3><p>Ringen tæller ned og giver studielys, også midt på dansegulvet.</p></div>
-            <div><b>4</b><h3>Del</h3><p>En QR-kode sender det til telefonen med Flying Hirschs ramme.</p></div>
+            <div><b>4</b><h3>Del</h3><p>Billedet kommer på SMS med Flying Hirschs ramme.</p></div>
           </div>
           <Folio n={3} />
         </Page>
@@ -380,7 +380,7 @@ export default function FlyingHirschKatalog() {
         <Page n={11} cap="Opsætning">
           <span className="kat-kicker">Opsætning og drift</span>
           <h2>Hvor boksene står i hytten</h2>
-          <p className="kat-lede">Boksene hænger på væggen eller står på en stander. Vi monterer, passer og opdaterer dem, så I kun skal tænke på gæsterne.</p>
+          <p className="kat-lede">Boksene hænger på væggen. I hænger dem selv op med vægbeslaget og vores korte guide, og vi passer og opdaterer dem, så I kun skal tænke på gæsterne.</p>
           <div className="kat-setup2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="kat-box" src={`${IMG}/boks-flying-hirsch.png`} alt="Selfi Boks i Flying Hirsch-design" />
@@ -393,7 +393,7 @@ export default function FlyingHirschKatalog() {
             </div>
           </div>
           <div className="kat-specs kat-specs--light kat-push" style={{ marginBottom: 80 }}>
-            <div>Montering<span>Væg eller stander</span></div>
+            <div>Montering<span>Vægbeslag, I hænger den selv op</span></div>
             <div>Strøm<span>230 V, én stikkontakt pr. boks</span></div>
             <div>Service<span>Vi passer boksene og skifter design til hver fest</span></div>
           </div>

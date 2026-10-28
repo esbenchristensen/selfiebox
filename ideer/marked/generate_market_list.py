@@ -1,8 +1,10 @@
 import csv
 UNIT_PRICE = 25000  # DKK per unit (assumption - edit and re-run)
 # (name, category, city, region, season, visitors/yr approx, low, realistic, high, fit 1-10, yes 1-10, theme & placement idea, why they'd say yes / risk, website)
+# Optional keyword extras (empty columns for rows without them): photobooth, address, contact, note, lat, lon, source_id
+EXTRA = ["photobooth","address","contact","note","lat","lon","source_id"]
 R = []
-def add(*a): R.append(a)
+def add(*a, **kw): R.append((a, kw))
 
 # ================= THEME PARKS & RESORTS =================
 add("Tivoli Gardens","Theme park","Copenhagen","Hovedstaden","Summer + Halloween + Christmas",4500000,15,20,30,9,4,"Tivoli guard/peacock frames, new frame each season; at main gate, Plænen, Nimb","Huge reach, but big corporate with strict brand control and existing photo partners","tivoli.dk")
@@ -94,7 +96,7 @@ add("Student bars & university parties (group)","Student events","Various","Nati
 add("Aalborg Karneval","Carnival","Aalborg","Nordjylland","Late May",100000,5,8,12,9,7,"Costume/carnival frames; along parade + Kildeparken","Costumes = everyone wants a photo","aalborgkarneval.dk")
 add("Copenhagen Carnival (Pinsekarneval)","Carnival","Copenhagen","Hovedstaden","Whitsun",80000,5,6,8,8,6,"Carnival frames","Street carnival","copenhagencarnival.dk")
 add("Aalborg nightlife / Jomfru Ane Gade venues (group)","Nightlife","Aalborg","Nordjylland","All year",500000,5,5,8,8,6,"Bar/club logo frames, permanent","Night out photos are natural","-")
-add("Nightclub & bar chains (Heidi's Bier Bar, Kongebar etc. - group)","Nightlife chain","National","National","All year",2000000,5,10,20,8,6,"Bar brand frames, permanent per venue","Chains with 5-10 venues","-")
+add("Nightclub & bar chains (Heidi's Bier Bar, Kongebar etc. - group; venues with Lightbooth are listed one by one)","Nightlife chain","National","National","All year",2000000,5,10,20,8,6,"Bar brand frames, permanent per venue","Chains with 5-10 venues","-")
 add("City festivals / byfester (group)","City festival group","Various","National","Summer",300000,5,8,12,7,5,"Town logo frames","Via municipalities / town associations","-")
 
 # ================= MARKETS & SHOWS =================
@@ -419,6 +421,73 @@ add("Department stores (Magasin, Illum, Salling - group)","Retail","Various","Na
 add("Car dealers & brand showrooms (launch events - group)","Car dealers","Various","National","All year",500000,3,6,12,8,6,"New-model launch overlay at open-house weekends","Dealers run launch events several times a year","-")
 add("TV & streaming launches (TV 2, DR, Viaplay, Netflix DK - group)","Media / streaming","Copenhagen","National","All year",0,0,3,6,8,4,"Series-launch overlays at premieres and in cinemas/malls","Campaign budget per series launch","-")
 
+# ================= LIGHTBOOTH CUSTOMERS (bars & venues with a competitor photobooth today) =================
+# Source: Lightbooth's venue map (list from Esben, 19 Oct 2026). Coordinates and ids are Lightbooth's own; address and website were looked up (OSM + venue sites).
+# They already pay for a photobooth, so the pitch is a switch: own custom theme/top on the wall box, own content and SoMe reach.
+LB_THEME = "Bar logo/brand overlay and custom top; wall-mounted box where the Lightbooth stands today"
+LB_WHY = "Lightbooth customer - already pays for a photobooth; win them with own theme, content and SoMe data (risk: running contract)"
+def lb(name, cat, city, region, address, web, lat, lon, ids, note="", contact="", lo=1, re=1, hi=1, fit=9, yes=6, why=LB_WHY, theme=LB_THEME):
+    add(name, cat, city, region, "All year", 0, lo, re, hi, fit, yes, theme, why, web,
+        photobooth="Lightbooth", address=address, contact=contact, note=note, lat=lat, lon=lon, source_id=ids)
+CHAIN = "Chain - one deal can cover all venues"
+lb("4tallet","Bar / live music","Copenhagen","Hovedstaden","Højbro Plads 3A, 1200 København K","4tallet.dk",55.67873943046423,12.58005842138107,"3054e859-fd2f-4cfc-b7ce-477a1b986d74",note="Also rents the bar out for private parties")
+lb("Axelborg Bodega","Bodega / bar","Copenhagen","Hovedstaden","Axeltorv, 1609 København V","axelborgbodega.dk",55.675495001993,12.564856249723,"e754fa4c-9210-47cc-9cf4-c632a430e5a9",contact="+45 33 11 06 38")
+lb("Bar 3","Cocktail bar","Aarhus","Midtjylland","Klostergade, 8000 Aarhus C (from coordinates; one guide says Mejlgade 53)","-",56.158925,10.206724,"4dfeb264-cf95-40ca-8f25-47bac03c7ae3",note="Address not confirmed")
+lb("Barcelona Bar","Bar","Copenhagen","Hovedstaden","Gothersgade 35, 1123 København K","barcelonabar.dk",55.68214377537641,12.582120821303407,"bddb77ea-1d74-4c2c-a0ef-9fd7333dedc8")
+lb("Baren Herning","Bar","Herning","Midtjylland","Østergade 11, 7400 Herning","barenherning.dk",56.1361,8.97771,"92020bdd-1457-4fc4-9556-69ecbaba579c",contact="+45 50 74 28 85")
+lb("Barkaden Aalborg","Bar","Aalborg","Nordjylland","Jomfru Ane Gade 5, 9000 Aalborg","barkaden-aalborg.dk",57.04970918781013,9.918631581079714,"6f8f631c-0024-43f0-bcf6-9c30f63e54d8",note="Same name as Barkaden Odense")
+lb("Barkaden Odense","Bar","Odense","Syddanmark","Klingenberg 6, 5000 Odense C","-",55.39491293498516,10.387110841572548,"1c4066d3-a0c7-4b54-9040-a360a9c15f8a",note="Same name as Barkaden Aalborg")
+lb("Baronen Bar & Bodega","Bodega / bar","Odense","Syddanmark","Jernbanegade 3, 5000 Odense C (from coordinates)","-",55.39621808349421,10.386098349862486,"bf9cd7ff-2785-4f1d-8fcd-8ca6e1d66fc5",note="Address not confirmed")
+lb("Bootleggers Odense","Craft beer bar","Odense","Syddanmark","Gråbrødre Plads 4, 5000 Odense C","bootleggers.dk",55.3964226311216,10.386220739713146,"7d429c3f-932e-4f6e-aa4a-145776ff9f3f",note="Quiz nights, sports and seasonal parties")
+lb("Buddy Holly Hobro","Bar","Hobro","Nordjylland","Adelgade, 9500 Hobro","-",56.63875997277511,9.793074641449005,"fc9df52c-3bd7-4a4f-ad09-026d654b9c3b")
+lb("Butchers Odense","Bar","Odense","Syddanmark","Overgade, 5000 Odense C (from coordinates)","butchersclub.dk/odense",55.3977,10.39364,"8086e526-f3dc-4198-8573-769e4d60ab23")
+lb("Café Guldhornene","Bar / pub","Aalborg","Nordjylland","Jomfru Anes Gård, 9000 Aalborg","cafeguldhornene.dk",57.0499052,9.9193802,"c139d96d-8ab4-428b-9af9-562d013593a0")
+lb("Café Kræz","Café / bar","Odense","Syddanmark","Jernbanegade, 5000 Odense C","kraez.dk",55.39634008346452,10.386000778908905,"f8dd31ad-6fe7-482d-8376-2023f71c2d79")
+lb("Café Ludwigsen","Bar / nightclub","Copenhagen","Hovedstaden","Vesterbrogade, 1752 København V","cafeludwigsen.dk",55.67095037327566,12.543711592455882,"9ca65bb6-4213-49ca-9a74-5597a7f12dd8",contact="+45 33 23 77 20")
+lb("Citizen Cocktailbar","Cocktail bar","Copenhagen","Hovedstaden","Valkendorfsgade 22, 1154 København K","citizencph.dk",55.6794182,12.5762989,"c4c5062e-db64-4b5c-9ab4-447b7198a4fa",contact="+45 31 58 01 12")
+lb("Crazy Daisy Næstved","Nightclub","Næstved","Sjælland","Grønnegade, 4700 Næstved","-",55.2309134,11.7616634,"5d079114-8526-4279-9da9-f563cbae2020",note="Part of the Crazy Daisy nightclub chain")
+lb("Dansebar Roskilde","Nightclub","Roskilde","Sjælland","Toldbodgade 8B, 4000 Roskilde","dansebarroskilde.dk",55.6386367,12.0843332,"2f279fa2-29ca-403a-9de4-1d51d05c3480")
+lb("Delulu","Bar","Silkeborg","Midtjylland","Nygade 43, 8600 Silkeborg","-",56.16673408224963,9.54571779739208,"0ad071a2-561d-4d8e-853c-1834c6f6e293")
+lb("Esbjerg Street Food","Street food hall","Esbjerg","Syddanmark","Kongensgade (Det Gamle Teater), 6700 Esbjerg","esbjergstreetfood.com",55.46576640550903,8.452819426031335,"682af68c-25a9-449f-beef-c053fd06312b",note="Food hall, not a bar - families and groups")
+lb("GLØD Næstved","Bar","Næstved","Sjælland","Grønnegade 2, 4700 Næstved (from coordinates)","-",55.230984694287166,11.761754674600338,"3f2abfde-afce-46b9-9ce7-d1689f971932",note="Address not confirmed; neighbour of Crazy Daisy")
+lb("HIVE","Nightclub","Copenhagen","Hovedstaden","Skindergade 45, 1162 København K","hivecph.dk",55.67863,12.57304,"d226b186-8b6a-452c-9f21-260efea18d37")
+lb("Halvandet","Beach bar / event venue","Copenhagen","Hovedstaden","Refshalevej 325, 1432 København K","halvandet.dk",55.69556226473714,12.609326233572627,"56eb435f-9a95-4abe-8887-0b8062229fea",note="Summer beach bar + company events")
+lb("Heidi's Bier Bar Aalborg","Bar (chain)","Aalborg","Nordjylland","Kattesundet 8, 9000 Aalborg","heidisbierbar.dk/aalborg",57.0500167,9.9173659,"ee717b4e-e37b-487d-bcb1-260204665766",note=CHAIN+"; see heidis/ folder for the Heidi's top")
+lb("Heidi's Bier Bar Herning","Bar (chain)","Herning","Midtjylland","Smallegade 1C, 7400 Herning","heidisbierbar.dk/herning",56.13664391929188,8.969740752595095,"23d1c4ff-4021-4db3-96e6-397d85673728",note=CHAIN)
+lb("Heidi's Bier Bar Thisted","Bar (chain)","Thisted","Nordjylland","Munkevej 7C, 7700 Thisted","heidisbierbar.dk/byer/thisted",56.95569797959703,8.698081269011167,"4e68824c-c8eb-47ff-8ab0-c2e7abb706f7",note=CHAIN)
+lb("LA Tequila Bar","Bar","Copenhagen","Hovedstaden","Sværtegade 11, 1118 København K","latequilabar.dk",55.681278,12.5811143,"858248e3-0b40-4896-94e0-88c767b26a84")
+lb("Lumskebuksen","Bodega / bar","Copenhagen","Hovedstaden","Lersø Parkallé 23, 2200 København","lumskebuksen.dk",55.70395174935954,12.55710714290926,"3614b33a-60ad-4ce9-af38-79cacc9ffa5d",contact="+45 39 29 87 59")
+lb("MIPE CPH","Bar","Copenhagen","Hovedstaden","Lavendelstræde 14, 1462 København K (from coordinates)","-",55.6762837,12.5713,"7a5a2e41-3cd3-4605-a3b5-108c52af3909",note="Not found online; mipecph.dk is a hair salon, not this place")
+lb("NOHO","Bar / restaurant / club","Copenhagen","Hovedstaden","Flæsketorvet 28, 1711 København V","noho.bar",55.6676696713357,12.55800636841608,"282e45d4-f80c-4675-bf57-73d87fec22d5",contact="booking@noho.bar")
+lb("Proud Mary Copenhagen","Pub (chain)","Copenhagen","Hovedstaden","Vesterbrogade 2A, 1620 København V","proudmarypub.dk",55.67578,12.5671,"e477fcf4-3a67-472d-93fe-f81f8c9c8b2f",contact="+45 31 34 18 76",note=CHAIN)
+lb("Proud Mary Odense","Pub (chain)","Odense","Syddanmark","Vestergade 77, 5000 Odense C","proudmarypub.dk/odense",55.3944169,10.3814219,"06f89d81-cd5f-4750-9fda-f5a5cdc39399; 3b8d67d7-a194-44cc-b765-568d65a324e0",note=CHAIN+"; listed twice by Lightbooth (same place)")
+lb("Rabalder Bar Kolding","Bar (chain)","Kolding","Syddanmark","Slotsgade, 6000 Kolding","rabalderbar.dk/kolding",55.4905557,9.4754575,"d1d201f6-b80c-4f32-a69b-464d541f1f46",contact="+45 53 53 66 61",note=CHAIN)
+lb("Rabalder Bar Silkeborg","Bar (chain)","Silkeborg","Midtjylland","Hostrupsgade 33A, 8600 Silkeborg","rabalderbar.dk/silkeborg",56.16698236489333,9.545241047484007,"c015ea42-aef5-491e-82bc-961581ea24ec",note=CHAIN)
+lb("Roxy Malt Viborg","Bar","Viborg","Midtjylland","Vesterbrogade, 8800 Viborg","roxymalt.dk/viborg",56.44966957996101,9.40181054403707,"f1a55824-dfeb-4eb4-8b16-f46130e93387")
+lb("Rustik - Bar & Natklub","Nightclub","Esbjerg","Syddanmark","Skolegade, 6700 Esbjerg","rustikbar.dk",55.466569661359,8.4541511535645,"41d79d60-5c20-4e6d-a971-05c5cb19744b")
+lb("Tartan Pub","Pub","Vejle","Syddanmark","Dæmningen 40, 7100 Vejle","tartanpub.dk",55.708276262640844,9.536320209325599,"17e35db7-1f46-42d1-80ec-8c11dc1e75d6")
+OIP = "Old Irish Pub is Denmark's largest pub chain (18 pubs) - one deal can cover all"
+lb("The Old Irish Pub Aalborg","Pub (chain)","Aalborg","Nordjylland","Jomfru Ane Gade 19, 9000 Aalborg","oldirishpub.dk/pub/aalborg",57.05025929139995,9.918863809750851,"b509324d-fb27-47dd-a3f8-5cb736dc5bf5",contact="+45 53 82 45 54",note=OIP)
+lb("The Old Irish Pub Frederiksberg","Pub (chain)","Frederiksberg","Hovedstaden","Smallegade, 2000 Frederiksberg","oldirishpub.dk",55.6787787077427,12.532613927895854,"0bb79e56-743b-4a90-94e3-e3f6b7123f0e",contact="+45 51 89 77 13",note=OIP)
+lb("The Old Irish Pub Holbæk","Pub (chain)","Holbæk","Sjælland","Vestergade 5, 4300 Holbæk","oldirishpub.dk/da/holbaek",55.71708757151464,11.70816575593595,"13aae7c0-0749-4489-8970-ccd093c83dbe",note=OIP)
+lb("The Old Irish Pub Køge","Pub (chain)","Køge","Sjælland","Havnen, 4600 Køge","oldirishpub.dk/pub/koege",55.45541161589506,12.188087783702452,"884e0a7b-0197-4586-b42e-8feaf159ad12",contact="+45 42 95 62 32",note=OIP)
+lb("The Old Irish Pub Randers","Pub (chain)","Randers","Midtjylland","Storegade 1, 8900 Randers","oldirishpub.dk/da/randers",56.45851080040191,10.037849426063257,"560e760f-77b2-47aa-b233-45a4d5bb0d4c",note=OIP)
+lb("The Old Irish Pub Vesterbrogade","Pub (chain)","Copenhagen","Hovedstaden","Vesterbrogade 2D, 1620 København V","oldirishpub.dk",55.67565301789259,12.566298812552136,"9ad535a0-2a69-436e-af9e-c69e4e2bc55c",contact="+45 51 26 84 97",note=OIP)
+lb("Vintapper Odense","Wine bar","Odense","Syddanmark","Vintapperstræde 39, 5000 Odense C","vintapper.dk/odense",55.39584975310724,10.383489383698729,"2378f622-3668-4406-8ddf-7b989c76e273",contact="+45 20 24 14 07")
+lb("Wall Street Pub","Pub","Copenhagen","Hovedstaden","Gothersgade 8B, 1104 København K","-",55.68178435664033,12.584801398592383,"894acc92-853a-4a39-be2d-db4113ffb747",contact="+45 33 14 77 42")
+lb("Zwei Grosse Bier Bar Vejle","Bar (chain)","Vejle","Syddanmark","Dæmningen 34D, 7100 Vejle","zweigrosse.dk",55.7079201,9.5360003,"394d88a4-a503-44bb-956e-5eb8f8bae9d1",note=CHAIN)
+lb("Zwei Grosse Bier Bar Viborg","Bar (chain)","Viborg","Midtjylland","Fælledvej 7, 8800 Viborg","zweigrosse.dk",56.45347,9.4047,"3c2c889e-0b9f-4bf1-bce4-f35ab5e88d89",note=CHAIN)
+# Not a bar: Lightbooth lists five party buses that all belong to Gallakørsel.dk (same coordinate in Ishøj, except Brandbussen on Amager).
+lb("Gallakørsel.dk party buses (Brandbussen, Ceresbussen, VIP-Bussen, Rudi + Gallakørsel Sjælland)","Party bus","Ishøj","Hovedstaden","Ishøj Bygade 2, 2635 Ishøj (from coordinates)","gallakorsel.dk",55.6299486952522,12.284159484886072,
+   "7988e7bb-443f-4249-a7dd-208aded947f1; c1b82b05-3ed9-4b6b-95de-2a2f0b87e0d9; 6390dfe0-25b3-4614-93bb-da2861608a04; 8a6f4f06-64d4-44f9-a96c-799a468420ac; a83a65a1-19aa-40fd-8c11-f9337d71831c",
+   lo=2,re=4,hi=12,fit=6,yes=5,note="Not a bar: party buses (student, gala, polterabend); 12 buses in total. Brandbussen at 55.6413,12.6046 (Amager)",
+   theme="Bus-specific overlay (student caps, gala, polterabend); box mounted inside the bus",
+   why="Lightbooth customer on several buses - but vibration, 12 V power and moving use are a risk for the wall box")
+# Outside Denmark
+lb("Enoteca Maglia","Wine bar / restaurant","Gothenburg (Sweden)","Sverige","Slottsskogsgatan 46, 414 70 Göteborg","enotecamaglia.se",57.6874744,11.9214066,"2430a7b8-7c12-4747-b951-71aa714901fd",contact="+46 31 14 24 00",fit=7,yes=4,note="Sweden - outside the Danish market")
+lb("HYTTA","Bar","Kristiansand (Norway)","Norge","Kvadraturen, 4612 Kristiansand (from coordinates)","-",58.143766,7.9902415,"2f7a4c49-1bcf-43a9-8698-48bf9003ea83",fit=7,yes=4,note="Norway - outside the Danish market; not found online")
+lb("The Old Irish Pub Kristiansand","Pub (chain)","Kristiansand (Norway)","Norge","Vestre Strandgate 23, 4611 Kristiansand","oldirishpub.no",58.14378161898578,7.992447905459262,"3a39bf6d-40eb-436e-8a6e-54eea99d41cc",fit=7,yes=4,note="Norway - Norwegian arm of the Old Irish Pub chain")
+
 # ================= SHOPPING, CHAINS, OTHER =================
 add("Field's","Shopping centre","Copenhagen","Hovedstaden","All year",9000000,5,6,10,7,5,"Campaign & Christmas frames","Mall activations","fields.dk")
 add("Klépierre Danmark (Field's, Bruun's, Kolding Storcenter...)","Shopping centre group","National","National","All year",30000000,8,15,25,7,4,"Seasonal campaign frames","International owner","klepierre.dk")
@@ -442,23 +511,24 @@ add("Brand sponsors (Carlsberg, Tuborg, Coca-Cola, Red Bull, banks - group)","Br
 
 out="/home/user/selfiebox/ideer/marked/danish_market_selfiebox.csv"
 rows=[]
-for r in R:
+for r,kw in R:
     n,c,ci,rg,s,v,l,m,h,fit,yes,theme,why,web=r
     prio=round(0.4*fit+0.6*yes,1)
-    rows.append([n,c,ci,rg,s,v,l,m,h,fit,yes,prio,UNIT_PRICE,l*UNIT_PRICE,m*UNIT_PRICE,h*UNIT_PRICE,theme,why,web])
+    rows.append([n,c,ci,rg,s,v,l,m,h,fit,yes,prio,UNIT_PRICE,l*UNIT_PRICE,m*UNIT_PRICE,h*UNIT_PRICE,theme,why,web]+[kw.get(k,"") for k in EXTRA])
 rows.sort(key=lambda x:(-x[11],-x[14]))
 cols=["Rank","Name","Category","City","Region","Season / Duration","Visitors per year (approx.)",
       "Units - low","Units - realistic","Units - high","Fit score (1-10)","Yes likelihood (1-10)","Priority score (1-10)",
       "Unit price DKK","Value low DKK","Value realistic DKK","Value high DKK",
-      "Theme & placement idea","Why they would say yes / risk","Website"]
+      "Theme & placement idea","Why they would say yes / risk","Website",
+      "Current photobooth","Address","Contact","Note","Latitude","Longitude","Source id"]
 tot=[sum(r[i] for r in rows) for i in (6,7,8,13,14,15)]
 with open(out,"w",newline="",encoding="utf-8-sig") as f:
     w=csv.writer(f,delimiter=";")
     w.writerow(cols)
     for i,r in enumerate(rows,1): w.writerow([i]+r)
     w.writerow([])
-    w.writerow(["","TOTAL (all rows)","","","","","",tot[0],tot[1],tot[2],"","","","",tot[3],tot[4],tot[5],"","",""])
-    w.writerow(["","Priority score = 40% fit + 60% yes-likelihood. Unit price is an assumption - edit UNIT_PRICE.","","","","","","","","","","","","","","","","","",""])
+    w.writerow(["","TOTAL (all rows)","","","","","",tot[0],tot[1],tot[2],"","","","",tot[3],tot[4],tot[5],"","",""]+[""]*len(EXTRA))
+    w.writerow(["","Priority score = 40% fit + 60% yes-likelihood. Unit price is an assumption - edit UNIT_PRICE.","","","","","","","","","","","","","","","","","",""]+[""]*len(EXTRA))
 print(len(rows),tot)
 import collections
 s=collections.defaultdict(lambda:[0,0])

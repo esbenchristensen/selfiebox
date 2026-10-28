@@ -1,6 +1,6 @@
 # Sidestruktur: hvorfor privat og erhverv har hver sin side
 
-> **Historik.** Den 18. oktober 2026 droppede Selfi privatudlejningen og satser kun på erhverv. Forsiden `/` er nu fotobokse i eget design til alle slags steder, `/erhverv` og `/events` sender videre til `/`, og hver funktion har sin egen side under `/funktioner`. Kundesiderne `/erhverv/<sted>`, `/events/smukfest` og `/kataloger/<slug>` er uændrede. Resten af dokumentet beskriver den gamle opdeling.
+> **Historik.** Den 18. oktober 2026 droppede Selfi privatudlejningen og satser kun på erhverv. Forsiden `/` er nu fotobokse i eget design til alle slags steder, `/erhverv` og `/events` sender videre til `/`, og hver funktion har sin egen side under `/funktioner`. Kundesiderne `/erhverv/<sted>` og `/events/smukfest` er uændrede og er også katalogerne; `/kataloger/<slug>` sender videre til `/erhverv/<slug>` (20. okt. 2026). Resten af dokumentet beskriver den gamle opdeling.
 
 Oktober 2026. Erstatter den gamle forside, hvor privat og erhverv delte én side med en Privat/Erhverv-knap i toppen.
 
@@ -14,7 +14,7 @@ Selfi sælger ét produkt, men to forretninger: **en leje til én fest** og **et
 | Udløser | En fest med en dato | Et ønske om flere gæster, mere omsætning, noget at tale om |
 | Det vil de have | Minder, alle med på billedet, nemt og billigt | Omtale, gæster der bliver og kommer igen, en gæsteliste |
 | Det frygter de | At den ikke virker på dagen, levering, skjulte priser | Binding, personaletid, tyveri, bøder for SMS-markedsføring |
-| Pris | 495 / 750 / 1.250 kr. **inkl. moms** pr. leje | 995 kr./md. **ekskl. moms** pr. boks |
+| Pris | 895 / 895 / 1.395 kr. **inkl. moms** pr. leje | 995 kr./md. **ekskl. moms** pr. boks |
 | Beslutning | Én person, få dage, ofte på mobilen om aftenen | Ejer, ofte efter en snak eller demo, uger |
 | Konvertering | Selvbetjening: kalender og booking | Samtale: "Book en snak" |
 | Søger på | "lej fotoboks", "fotoboks til bryllup", "photo booth leje" | "fotoboks til bar", "photo booth natklub", sjældent; mest via opsøgende salg |
@@ -29,7 +29,7 @@ Google rangerer en side efter, hvad den svarer på. En side, der både vil være
 Privat/Erhverv-knappen skiftede H1 og hero-tekst i browseren (`useState`). Serveren sendte kun privatudgaven, så den eneste H1 Google så, var privat. Erhvervsbudskabet stod aldrig i HTML'en. Nu er begge sider statisk renderet med egen H1, title, canonical, OG-billede, `Service`- og `FAQPage`-strukturdata og står i `sitemap.xml`.
 
 **3. Prisen ødelagde sig selv.**
-495 kr. for en weekend og 995 kr. om måneden på samme side. Barejeren tænker "hvorfor ikke bare leje den tre fredage for 495?". Den private gæst ser "995 kr./md. ekskl. moms" og bliver i tvivl om, hvad festen koster. Inkl. og ekskl. moms på samme side er forvirrende og et forbrugerretligt minefelt: over for forbrugere skal prisen være den samlede pris inkl. moms.
+895 kr. for en weekend og 995 kr. om måneden på samme side. Barejeren tænker "hvorfor ikke bare leje den tre fredage for 895?". Den private gæst ser "995 kr./md. ekskl. moms" og bliver i tvivl om, hvad festen koster. Inkl. og ekskl. moms på samme side er forvirrende og et forbrugerretligt minefelt: over for forbrugere skal prisen være den samlede pris inkl. moms.
 
 **4. Budskaberne skader hinanden.**
 "Saml gæsternes telefonnumre og send dem tilbud" er det stærkeste argument over for en bar, men det får et brudepar til at tænke "skal mine gæster spammes?". Omvendt får bryllupsbilleder og en bookingkalender boksen til at ligne festudlejning over for en barejer, der skal købe et fast stykke inventar med afkast.
@@ -67,6 +67,6 @@ Langt de fleste søgninger er private ("lej fotoboks", "fotoboks til bryllup"), 
 
 ## Skal afklares (står ikke på siderne, før det er besluttet)
 
-- **Erhverv:** binding og opsigelse, internet (wifi eller 4G), prøveperiode, og om en ny boks også gælder ved tyveri og skader fra gæster. Installation og service er besluttet: Vi monterer, overvåger, opdaterer, har døgnsupport og sender en ny boks ved fejl (se sektionen Fuld service).
+- **Erhverv:** binding og opsigelse, internet (wifi eller 4G), prøveperiode, og om en ny boks også gælder ved tyveri og skader fra gæster. Installation og service er besluttet: Stedet hænger selv boksen op efter monteringsguiden (19. okt. 2026), og vi overvåger, opdaterer, har døgnsupport og sender en ny boks ved fejl (se sektionen Fuld service).
 - **Privat:** hvad ombooking og afbestilling koster, leveringsområde og -pris, om Instax-film er med eller tilvalg, depositum.
 - **Anmeldelser:** begge sider mangler social proof. Saml anmeldelser fra de første private lejere og citater fra de første steder.

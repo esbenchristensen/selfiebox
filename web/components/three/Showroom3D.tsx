@@ -1,16 +1,22 @@
 "use client";
 
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { HaloBox, VENUES } from "./HaloBox";
-import { radialTexture } from "./textures";
+import { HaloBox } from "./HaloBox";
+import { SHOWROOM as VENUES } from "./showroom";
 
-// All venue designs side by side on one wall. The camera glides to the chosen one,
-// and its printed parts are bolted on again as it arrives.
+// All venue designs side by side, standing on the page itself. The row has no ends: each box takes the
+// place nearest the camera, so going past the last design comes round to the first again. The boxes hold
+// still at one angle; only the camera glides from one to the next.
 
 const GAP = 5.2;
+const N = VENUES.length;
+// A little from the left, so the side wings and the depth show.
+const TURN = -0.2;
+
+const mod = (n: number) => ((n % N) + N) % N;
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -21,7 +27,7 @@ function useReducedMotion() {
   return reduced;
 }
 
-function Rig({ focus, motion }: { focus: number; motion: boolean }) {
+function Rig({ focus, motion, light, back }: { focus: number; motion: boolean; light: React.RefObject<THREE.DirectionalLight | null>; back: React.RefObject<THREE.Mesh | null> }) {
   const { camera, size } = useThree();
   const x = useRef(focus * GAP);
   useFrame((_, dt) => {
@@ -34,58 +40,41 @@ function Rig({ focus, motion }: { focus: number; motion: boolean }) {
     x.current = motion ? THREE.MathUtils.damp(x.current, target, 3.2, dt) : target;
     cam.position.set(x.current, 0.9, dist * 1.02);
     cam.lookAt(x.current, 0.72, 0);
+    // The light and the wall that catches the shadows go along with the camera.
+    if (light.current) {
+      light.current.position.set(x.current - 4, 7, 9);
+      light.current.target.position.set(x.current, 0, 0);
+      light.current.target.updateMatrixWorld();
+    }
+    back.current?.position.setX(x.current);
   });
   return null;
 }
 
-function Wall({ colors }: { colors: string[] }) {
-  const tex = useMemo(() => radialTexture(), []);
-  return (
-    <group>
-      <mesh position={[(VENUES.length - 1) * GAP * 0.5, 0, -1.2]} receiveShadow>
-        <planeGeometry args={[VENUES.length * GAP + 40, 30]} />
-        <meshStandardMaterial color="#141516" roughness={0.95} />
-      </mesh>
-      {colors.map((c, i) => (
-        <mesh key={i} position={[i * GAP, 0, -1.18]}>
-          <planeGeometry args={[8, 9]} />
-          <meshBasicMaterial map={tex} color={c} transparent opacity={0.32} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
-function Slot({ i, focus, motion, onPick }: { i: number; focus: number; motion: boolean; onPick: (i: number) => void }) {
+function Slot({ i, onPick }: { i: number; onPick: (k: number) => void }) {
   const g = useRef<THREE.Group>(null);
-  const [bornAt, setBornAt] = useState(-10);
-  const clock = useThree((s) => s.clock);
-  useEffect(() => {
-    if (i === focus) setBornAt(clock.elapsedTime);
-  }, [focus, i, clock]);
-  useFrame((state, dt) => {
+  const k = useRef(i);
+  useFrame((state) => {
     if (!g.current) return;
-    const t = state.clock.elapsedTime;
-    const off = i - focus;
-    // Neighbours turn a little towards the middle; the chosen one sways.
-    const turn = THREE.MathUtils.clamp(-off * 0.35, -0.6, 0.6);
-    const sway = i === focus && motion ? Math.sin(t * 0.5) * 0.18 : 0;
-    g.current.rotation.y = THREE.MathUtils.damp(g.current.rotation.y, turn + sway, 4, dt);
-    g.current.scale.setScalar(THREE.MathUtils.damp(g.current.scale.x, i === focus ? 1 : 0.9, 4, dt));
+    // The copy of this design nearest the camera
+    const c = state.camera.position.x / GAP;
+    k.current = i + N * Math.round((c - i) / N);
+    g.current.position.x = k.current * GAP;
   });
   return (
     <group
       ref={g}
       position={[i * GAP, 0, 0]}
+      rotation={[0, TURN, 0]}
       onClick={(e) => {
         e.stopPropagation();
-        onPick(i);
+        onPick(k.current);
       }}
       onPointerOver={() => (document.body.style.cursor = "pointer")}
       onPointerOut={() => (document.body.style.cursor = "")}
     >
       <Suspense fallback={null}>
-        <HaloBox venue={VENUES[i]} module={false} motion={motion} bornAt={bornAt} />
+        <HaloBox venue={VENUES[i]} module={false} motion={false} />
       </Suspense>
     </group>
   );
@@ -102,8 +91,21 @@ function Ready({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
-export default function Showroom3D({ focus, onPick, onReady }: { focus: number; onPick: (i: number) => void; onReady?: () => void }) {
+// focus counts on past the last design (and below the first): design focus mod N, at x = focus * GAP.
+export default function Showroom3D({ focus, onPick, onReady }: { focus: number; onPick: (k: number) => void; onReady?: () => void }) {
   const reduced = useReducedMotion();
+  const light = useRef<THREE.DirectionalLight>(null);
+  const back = useRef<THREE.Mesh>(null);
+  // Models are fetched for the chosen design and its two neighbours, and kept once fetched. The whole
+  // wall is 5 MB of parts, screens and prints; a visitor who never clicks past the first design gets 1.5 MB.
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([mod(focus)]));
+  useEffect(() => {
+    setLoaded((prev) => {
+      const next = new Set(prev);
+      for (const k of [focus - 1, focus, focus + 1]) next.add(mod(k));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [focus]);
   const wrap = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   useEffect(() => {
@@ -124,23 +126,22 @@ export default function Showroom3D({ focus, onPick, onReady }: { focus: number; 
         shadows
         style={{ touchAction: "pan-y" }}
       >
-        <Rig focus={focus} motion={!reduced} />
+        <Rig focus={focus} motion={!reduced} light={light} back={back} />
         <ambientLight intensity={0.4} />
-        <directionalLight position={[-4, 7, 9]} intensity={1.6} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-20} shadow-camera-right={40} shadow-camera-top={8} shadow-camera-bottom={-8} />
+        <directionalLight ref={light} position={[-4, 7, 9]} intensity={1.6} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-12} shadow-camera-right={12} shadow-camera-top={8} shadow-camera-bottom={-8} />
         <directionalLight position={[6, 2, -3]} intensity={0.9} color="#dfefff" />
         <Environment resolution={256} frames={1}>
           <Lightformer form="rect" intensity={2.2} position={[0, 5, 6]} scale={[14, 2, 1]} />
           <Lightformer form="rect" intensity={1.4} position={[-7, 1, 3]} rotation-y={Math.PI / 2.4} scale={[6, 4, 1]} />
           <Lightformer form="rect" intensity={1.1} position={[7, 0, 2]} rotation-y={-Math.PI / 2.4} scale={[6, 4, 1]} color="#dfefff" />
         </Environment>
-        <Wall colors={VENUES.map((v) => v.ring.glow)} />
-        {VENUES.map((_, i) => (
-          <Slot key={i} i={i} focus={focus} motion={!reduced} onPick={onPick} />
-        ))}
-        <Suspense fallback={null}>
-          <ContactShadows position={[(VENUES.length - 1) * GAP * 0.5, -1.8, 0]} opacity={0.35} scale={[VENUES.length * GAP + 6, 6]} blur={2.4} far={4} resolution={1024} frames={1} />
-          <Ready onReady={onReady} />
-        </Suspense>
+        {/* No wall of its own: the page shows through, and only the boxes' shadows land on it. */}
+        <mesh ref={back} position={[0, 0, -1.2]} receiveShadow>
+          <planeGeometry args={[60, 30]} />
+          <shadowMaterial transparent opacity={0.1} />
+        </mesh>
+        {VENUES.map((_, i) => loaded.has(i) && <Slot key={i} i={i} onPick={onPick} />)}
+        <Ready onReady={onReady} />
       </Canvas>
     </div>
   );

@@ -1,0 +1,87 @@
+{
+  "name": "Frederikshavn White Hawks",
+  "event": "Frederikshavn White Hawks – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#011a3f",
+      "filament": "ASA navy"
+    },
+    "navy2": {
+      "hex": "#163463",
+      "filament": "ASA blue"
+    },
+    "red": {
+      "hex": "#a61d26",
+      "filament": "ASA red"
+    },
+    "lamp": {
+      "hex": "#e0262f",
+      "filament": "ASA bright red"
+    },
+    "glow": {
+      "hex": "#f2685f",
+      "filament": "ASA coral"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "ASA white"
+    },
+    "grey": {
+      "hex": "#cdcccc",
+      "filament": "ASA light grey"
+    },
+    "ink": {
+      "hex": "#121417",
+      "filament": "ASA black"
+    },
+    "gold": {
+      "hex": "#f7a60b",
+      "filament": "ASA yellow"
+    },
+    "ice": {
+      "hex": "#e6f1f8",
+      "filament": "ASA white"
+    },
+    "iceline": {
+      "hex": "#2a5fa8",
+      "filament": "ASA blue"
+    },
+    "steel": {
+      "hex": "#8d939b",
+      "filament": "ASA silver"
+    },
+    "sky": {
+      "hex": "#0d2f63",
+      "filament": "ASA blue"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#011a3f",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#a61d26"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#e0262f"
+  },
+  "screen": {
+    "ticker": "Frederikshavn White Hawks  •  Sammen er vi White Hawks  •  Nordjyske Bank Arena  •  Kom så Hawks!  •",
+    "cta": "Råb «Kom så Hawks!»",
+    "background": "white",
+    "accent": "red"
+  }
+}

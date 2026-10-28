@@ -1,6 +1,6 @@
 # selfi.dk
 
-Hjemmesiden for Selfi Boks, kun til erhverv: fotobokse i stedets eget design til venues, klubber, barer, hoteller og festivaler. Next.js (App Router). MongoDB bruges kun til katalogerne. Design og tekst følger Selfis brandguide.
+Hjemmesiden for Selfi Boks, kun til erhverv: fotobokse i stedets eget design til venues, klubber, barer, hoteller og festivaler. Next.js (App Router). Design og tekst følger Selfis brandguide.
 
 ## Kør lokalt
 
@@ -18,7 +18,9 @@ npm run lint       # typecheck
 |---|---|
 | `content.ts` | Funktionerne (menu og sider), aktiviteter, contentregneren og FAQ |
 | `app/globals.css` | Tokens (farver, afstande, radier) og al styling |
-| `app/page.tsx` | Forsiden: fotobokse i eget design og contentmaskinen. Tekster, billeder og rækkefølge |
+| `app/page.tsx` | Forsiden: leje til private fester (se nedenfor) |
+| `app/erhverv/page.tsx` | Erhvervssiden: rækkefølge og tekster. Nye sektioner ligger i `components/erhverv/` |
+| `lib/erhverv/placeholder.ts` | Alt på erhvervssiden, der er opdigtet eller ikke besluttet (pris, binding, telefon, citater, tal). Markeres gult på siden, indtil `PLACEHOLDERS_VISIBLE` sættes til false. Se `ERHVERV-GENNEMGANG.md` |
 | `app/funktioner/` | Oversigten og én side pr. funktion, bygget fra `features` i `content.ts` |
 | `components/Nav.tsx` | Headeren med Funktioner-megamenuen |
 | `components/` | Én fil pr. sektion. Sektionerne tager deres tekst fra siden |
@@ -26,7 +28,7 @@ npm run lint       # typecheck
 | `app/api/kontakt/route.ts` | Kontaktformularen |
 | `components/three/` | 3D-boksen (React Three Fiber): den rigtige Halo-kasse og stedernes printede dele. `venues.json` er stederne, `themes.ts` er privattemaerne |
 | `public/models/` | 3D-modeller, skærme, fotorammer og logoer. Bygges fra hardware-branchen, se nedenfor |
-| `app/kataloger/[slug]/` | Kataloger fra MongoDB, se nedenfor |
+| `app/erhverv/<slug>/` | Salgskatalogerne, ét pr. kunde, se nedenfor |
 | `components/Outline.tsx` | Stregtegninger af boksen: sort streg med grønne detaljer |
 
 ## Før lancering
@@ -36,22 +38,23 @@ npm run lint       # typecheck
 - **Temaer i 3D:** designene til Smukfest, Roskilde, Nibe, Fårup, LEGOLAND og Aalborg Zoo er konceptdesigns uden aftale med stederne. Få en tilladelse, eller skift dem ud med rigtige kunder, før siden bruges i markedsføring.
 - **Juridisk:** cookie- og privatlivstekst mangler, hvis der tilføjes analyse eller tracking.
 
-## Kataloger fra databasen
+## Udlejning til private (/lej)
 
-Salgskataloger ligger i MongoDB og vises på `selfi.dk/kataloger/<slug>`. Et nyt eller rettet katalog er online, så snart det er gemt, uden at siden skal deployes. Siderne er skjult for Google og står ikke i menuen eller sitemap.
+Forsiden selfi.dk er landingssiden for B2C-udlejning (/lej sender dertil, og erhverv ligger på /erhverv). Kunden vælger datoer i kalenderen i toppen, så om printeren skal med og i så fald printtypen (fotostrimmel eller polaroid), og betaler i Stripe Checkout. Boksen sendes altid med posten. Bookingerne ligger i MongoDB (database `selfiebox`, samlingerne `rentals`, `rental_settings` og `rental_blocks`) og styres i admin.selfi.dk under Udlejning, hvor også priser, antal bokse og printere og reglerne for forsendelse ligger.
 
-1. Sæt `MONGODB_URI` i Vercel (og i `web/.env.local` på din egen maskine, se `.env.example`). Uden den viser alle katalog-URL'er en pæn "ikke tilgængeligt"-side. Vercel læser kun miljøvariabler ved deploy, så redeploy efter du har sat eller ændret den. Giv Vercel en databasebruger med kun `read` på databasen `selfi`; brugeren med skriveadgang hører kun til i `.env.local` til scriptet.
-2. Læg et katalog ind:
+- `lib/udlejning/core.ts`: priser og ledighed. En kopi ligger i selfiebox-platform (`web/src/lib/udlejning.ts`), så hold dem ens.
+- `/api/udlejning/ledighed`, `/api/udlejning/checkout`, `/api/udlejning/annuller` og `/api/stripe/webhook`.
+- Miljøvariabler i Vercel: `MONGODB_URI`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (fra webhooket i Stripe til `https://www.selfi.dk/api/stripe/webhook`), valgfrit `MONGODB_DB` (standard `selfiebox`), `SITE_URL` (standard `https://www.selfi.dk`) og `BOOKING_WEBHOOK_URL` til en besked, når en booking er betalt (ellers bruges `CONTACT_WEBHOOK_URL`).
 
-```bash
-cd web
-node scripts/katalog.mjs gem smukfest-2027 kataloger/smukfest.html --titel "Selfi × Smukfest | Salgskatalog" --udloeber 2027-12-31
-node scripts/katalog.mjs liste
-node scripts/katalog.mjs skjul smukfest-2027   # viser 404 igen
-node scripts/katalog.mjs slet smukfest-2027
-```
+## Supportchatten (Sif)
 
-Et katalog er HTML med én `<div class="kat-slot"><section class="kat-pg">…</section></div>` pr. A4-side. Det får stylingen fra `components/katalog/katalog.css`, og `--css fil.css` lægger katalogets egne regler ovenpå. `kataloger/smukfest.html` er Smukfest-kataloget fra `/events/smukfest` i det format, klar til at lægge ind. `kataloger/flying-hirsch.html` og `.css` er Flying Hirsch-kataloget fra `/erhverv/flying-hirsch` (gem med `--css kataloger/flying-hirsch.css`); designet bruger barens eget logo, så det kræver deres accept. `kataloger/aab.html` og `.css` er AaB-kataloget fra `/erhverv/aab` (gem med `--css kataloger/aab.css`); det bruger klubbens logo og kræver også deres accept. `kataloger/palads.html` og `.css` er Palads Teatret-kataloget fra `/erhverv/palads` (gem med `--css kataloger/palads.css`); boksen er tegnet på gen 2, og designet bruger biografens logo, så det kræver også deres accept. `kataloger/meny.html` og `.css` er MENY Fjerritslev-kataloget fra `/erhverv/meny-fjerritslev` (gem med `--css kataloger/meny.css`); det bruger MENYs logo og kræver også deres accept. `kataloger/heidis.html` og `.css` er Heidi's Bier Bar-kataloget fra `/erhverv/heidis` (gem med `--css kataloger/heidis.css`); boksen er tegnet på gen 2, og designet bruger barens logo, så det kræver deres accept. `--udloeber` gør linket dødt efter datoen, `--index` lader Google finde det. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
+Knappen "Spørg os" nederst til højre på alle sider er en AI-supportchat (OpenAI Responses API), der slår kundens bookinger op efter verificering med bookingnummer og e-mail, flytter datoer efter et klart ja, søger på nettet og sender sagen videre til Esben med SMS, når den ikke må svare. Esben overtager fra admin.selfi.dk → Support. Prompt, stilguide og vidensbase ligger som tekstfiler i `support/`, testsættet i `support/tests/`. Alt om opsætning, sikkerhed, miljøvariabler og tests står i [`support/README.md`](support/README.md).
+
+## Kataloger
+
+Et salgskatalog er kundens side på `selfi.dk/erhverv/<slug>` (Smukfest ligger på `/erhverv/smukfest`; `/events/<slug>` sender videre dertil): en `page.tsx`, der viser A4-siderne med `components/katalog/Viewer` og `components/katalog/katalog.css`, plus kundens egen CSS i samme mappe. Siderne er skjult for Google og står ikke i menuen eller sitemap. Der er kun den ene version: de gamle MongoDB-kopier på `/kataloger/<slug>` sender videre til erhvervssiden (`next.config.ts`).
+
+`selfi.dk/api/kataloger` lister alle sider, der bruger katalog-vieweren, med titel og beskrivelse fra sidens metadata. Admin (`admin.selfi.dk/admin/kataloger`) viser den liste, så et nyt katalog dukker op der ved næste deploy uden flere skridt. Katalogerne bruger kundens logo og kræver deres accept. Husk: ingen standardrenders, tekniske tegninger eller boks-pris i festivalmateriale.
 
 ## Hosting på Vercel
 

@@ -1,4 +1,5 @@
 import { FeatureIcon } from "./FeatureIcon";
+import { Soon } from "./Soon";
 import { featureGroups, features } from "@/content";
 
 // Every function as a card with its icon, grouped like the mega menu. Each card opens its own page.
@@ -24,7 +25,7 @@ export function Features({ label = "Funktioner", title, lede, skip }: { label?: 
                   <a className="fcard" key={f.slug} href={`/funktioner/${f.slug}`}>
                     <FeatureIcon d={f.icon} />
                     <span>
-                      <b>{f.name}</b>
+                      <b>{f.name}{f.soon && <Soon />}</b>
                       <span className="muted">{f.short}</span>
                     </span>
                   </a>

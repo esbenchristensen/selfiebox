@@ -173,7 +173,7 @@ export default function MenyKatalog() {
             <div><b>1</b><h3>Tryk</h3><p>Lysringen kalder. Et tryk på skærmen starter.</p></div>
             <div><b>2</b><h3>Vælg</h3><p>Et billede, eller fortæl og vind ugens kurv.</p></div>
             <div><b>3</b><h3>Sig »Ost!«</h3><p>Ringen tæller ned og giver studielys.</p></div>
-            <div><b>4</b><h3>Del</h3><p>En QR-kode sender billedet til telefonen med jeres ramme.</p></div>
+            <div><b>4</b><h3>Del</h3><p>Billedet kommer på SMS med jeres ramme.</p></div>
           </div>
           <Folio n={3} />
         </Page>
@@ -422,7 +422,7 @@ export default function MenyKatalog() {
             </div>
           </div>
           <div className="kat-specs kat-specs--light kat-push" style={{ marginBottom: 80 }}>
-            <div>Montering<span>Stander, væg eller transportkasse</span></div>
+            <div>Montering<span>Vægbeslag, I hænger den selv op</span></div>
             <div>Strøm<span>230 V, én almindelig stikkontakt</span></div>
             <div>Service<span>Vi skifter rammer, spørgsmål og design fra kontrolpanelet</span></div>
           </div>

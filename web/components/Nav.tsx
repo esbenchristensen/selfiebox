@@ -4,16 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { FeatureIcon } from "./FeatureIcon";
 import { Logo } from "./Logo";
 import { featureGroups, features } from "@/content";
+import { Soon } from "./Soon";
 
 type Link = { label: string; href: string };
 
 const HOVER_CLOSE_MS = 180;
 
-// The same header on every page: section links, the "Funktioner" mega menu and one call to action.
+// The same header on every page: section links, the "Funktioner" mega menu (business pages) and one call to action.
 // The menu opens on hover with a mouse and on tap or click everywhere else; Escape and a click outside close it.
-export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }: { links: Link[]; cta?: Link }) {
+// On narrow screens the section links move into a small menu behind a "Menu" button, with `extra` links
+// (other pages) under them, so a phone can jump to price, service and questions too.
+export function Nav({ links, extra = [], cta = { label: "Book en snak", href: "#kontakt" }, mega = true }: { links: Link[]; extra?: Link[]; cta?: Link; mega?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState(false);
   const ref = useRef<HTMLElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   // A mouse opens the menu on hover, so the click that follows must not close it again.
@@ -27,16 +31,24 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
   }, []);
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    const onDown = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    if (!open && !menu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      setMenu(false);
+    };
+    const onDown = (e: PointerEvent) => {
+      if (ref.current?.contains(e.target as Node)) return;
+      setOpen(false);
+      setMenu(false);
+    };
     window.addEventListener("keydown", onKey);
     window.addEventListener("pointerdown", onDown);
     return () => {
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onDown);
     };
-  }, [open]);
+  }, [open, menu]);
 
   const hoverOpen = (e: React.PointerEvent) => {
     if (e.pointerType !== "mouse") return;
@@ -53,7 +65,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
   };
 
   return (
-    <header ref={ref} className={`nav${scrolled || open ? " scrolled" : ""}`}>
+    <header ref={ref} className={`nav${scrolled || open || menu ? " scrolled" : ""}`}>
       <div className="wrap nav-inner">
         <Logo />
         <nav className="nav-links" aria-label="Sektioner">
@@ -64,6 +76,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
           ))}
         </nav>
         <div className="nav-end">
+          {mega && (
           <div className="mega-wrap" onPointerEnter={hoverOpen} onPointerLeave={hoverClose}>
             <button type="button" className="nav-mega" aria-expanded={open} aria-controls="mega" onClick={() => {
                 if (byHover.current) byHover.current = false;
@@ -75,11 +88,46 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
               </svg>
             </button>
           </div>
+          )}
           <a className="btn btn-primary" href={cta.href}>
             {cta.label}
           </a>
+          {links.length > 0 && (
+            <button type="button" className="nav-menu-btn" aria-expanded={menu} aria-controls="nav-menu" onClick={() => {
+                setMenu((m) => !m);
+                setOpen(false);
+              }}>
+              <span className="sr-only">Menu</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                {menu ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+              </svg>
+            </button>
+          )}
         </div>
       </div>
+      {links.length > 0 && (
+        <div id="nav-menu" className="nav-menu" hidden={!menu}>
+          <nav className="wrap nav-menu-inner" aria-label="Sidens afsnit">
+            {links.map((l) => (
+              <a key={l.href} href={l.href} onClick={() => setMenu(false)}>
+                {l.label}
+              </a>
+            ))}
+            {(extra.length > 0 || mega) && <span className="nav-menu-sep" />}
+            {mega && (
+              <a href="/funktioner" onClick={() => setMenu(false)}>
+                Funktioner
+              </a>
+            )}
+            {extra.map((l) => (
+              <a key={l.href} href={l.href} className="muted" onClick={() => setMenu(false)}>
+                {l.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
+      {mega && (
       <div id="mega" className="mega" hidden={!open} onPointerEnter={hoverOpen} onPointerLeave={hoverClose}>
         <div className="wrap mega-inner">
           {featureGroups.map((g) => (
@@ -93,7 +141,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
                       <a href={`/funktioner/${f.slug}`} onClick={() => setOpen(false)}>
                         <FeatureIcon d={f.icon} />
                         <span>
-                          <b>{f.name}</b>
+                          <b>{f.name}{f.soon && <Soon />}</b>
                           <span className="muted">{f.short}</span>
                         </span>
                       </a>
@@ -107,6 +155,7 @@ export function Nav({ links, cta = { label: "Book en snak", href: "#kontakt" } }
           </a>
         </div>
       </div>
+      )}
     </header>
   );
 }

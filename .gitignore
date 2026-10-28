@@ -1,1 +1,5 @@
 __pycache__/
+
+# Logo-free website examples (venue_themes.py --uden-logo): only the web files are kept, the print files are not for printing
+themes/*/build-eksempel/*
+!themes/*/build-eksempel/web/

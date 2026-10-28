@@ -1,0 +1,37 @@
+{
+  "id": "red_bull",
+  "name": "Red Bull",
+  "place": "Bars, klubber og studenterbarer",
+  "palette": {
+    "base": "#0e1d48",
+    "blue": "#14275e",
+    "blue2": "#22407f",
+    "silver": "#c9ced6",
+    "red": "#d2003c",
+    "yellow": "#ffd300",
+    "white": "#ffffff",
+    "grey": "#9ea8b8",
+    "ink": "#070c1f"
+  },
+  "casing": "#0e1d48",
+  "ring": {
+    "idle": [
+      "#ffffff",
+      "#ffd300"
+    ],
+    "glow": "#d2003c"
+  },
+  "frame": {
+    "bg": "silver",
+    "ink": "base",
+    "caption": ""
+  },
+  "photo": "print-club",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ],
+  "unit": "gen2",
+  "dir": "eksempel/red_bull"
+}

@@ -12,7 +12,7 @@ Tiden spares tre steder, i denne rækkefølge:
 
 1. **Print kun det, der skal prøves (prøvestykker).** Et prøvestykke er en kasse skåret ud af den rigtige del rundt om det sted, hvor noget skal passe. Det tager typisk 10–45 minutter, hvor hele delen tager 3–16 timer.
 2. **Kladdeprofil.** 0,28 mm lag, 2 vægge, 3 top- og bundlag og 10 % fyld. Det giver ca. halv tid på hele dele.
-3. **PLA i stedet for ASA.** Der er ingen opvarmning af kammeret, ingen afkøling og intet AMS-logo.
+3. **PLA i stedet for ASA.** Der er ingen opvarmning af kammeret og ingen afkøling.
 
 ## 2. Prøvestykker
 
@@ -26,6 +26,7 @@ Tiden spares tre steder, i denne rækkefølge:
 
 - Mappe: `hardware/stl/gen2-hurtig/<version>-hurtig/` i repoet og `/mnt/project-files/gen2-hurtigprint/<version>-hurtig/` i projektmappen. Aldrig i `hardware/stl/gen2/` eller `gen2-printfiler/`, så de normale printfiler ikke bliver blandet sammen med dem.
 - Filnavne: `<version>-hurtig_<del>.stl` for hele dele og `<version>-hurtig_proeve-<navn>[_<del>].stl` for prøvestykker. Printguide: `PRINTGUIDE_<version>-hurtig.md`.
+- Logoet er ikke en del af `_front.stl`. Det ligger som én STL pr. farve (`_logo-hvid.stl`, `_logo-groen.stl`) med frontens nulpunkt, og samlet med fronten i `<version>-hurtig_front_flerfarvet.3mf` (AMS-plads 1 sort, 2 hvid, 3 grøn). Printes `_front.stl` alene, kommer fronten ud uden logo.
 - De normale printfiler ændres aldrig af hurtigsættet.
 
 ## 4. Ny version
@@ -45,7 +46,7 @@ Find en fejl på et hurtigprint, så ret den i CAD og lav en ny version. Ret ald
 | Top/bund | 3/3 | 5–6 |
 | Fyld | 10 % Grid | 20 % gyroid, beslag 100 % |
 | Filament | PLA, låge/top åben | ASA, kammer 60 °C |
-| Logo | Intet (én farve) | AMS, 3 farver |
+| Logo | Valgfrit: AMS, 3 farver i PLA (`_front_flerfarvet.3mf`), eller fronten alene i én farve | AMS, 3 farver i ASA (`_front_flerfarvet.3mf`) |
 | Support | Kun skallen, tree fra pladen | Samme |
 
 - Brug 0,2 mm lag til front, lysring og `proeve-skaerm-lysring`, når lysringens skyggefuge eller kravens trin skal vurderes. Ved 0,28 mm kan højder i Z flytte sig op til et halvt lag.

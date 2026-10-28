@@ -1,0 +1,79 @@
+{
+  "name": "Tuborg",
+  "event": "Tuborg – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#2e9a48",
+      "filament": "ASA green"
+    },
+    "band": {
+      "hex": "#1a8a3c",
+      "filament": "ASA dark green"
+    },
+    "deep": {
+      "hex": "#1a3a30",
+      "filament": "ASA forest green"
+    },
+    "lime": {
+      "hex": "#80e040",
+      "filament": "ASA lime green"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "ASA white"
+    },
+    "silver": {
+      "hex": "#8f8f93",
+      "filament": "ASA silver"
+    },
+    "cream": {
+      "hex": "#f4ead2",
+      "filament": "ASA cream"
+    },
+    "beer": {
+      "hex": "#e7a21f",
+      "filament": "ASA yellow"
+    },
+    "sky": {
+      "hex": "#3aa852",
+      "filament": "ASA light green"
+    },
+    "ink": {
+      "hex": "#1a3a30",
+      "filament": "ASA forest green"
+    },
+    "shine": {
+      "hex": "#5cbf6a",
+      "filament": "ASA light green"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#2e9a48",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#80e040"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#5fd36a"
+  },
+  "screen": {
+    "ticker": "Grøn Tuborg  •  Hele Danmarks pilsner  •  Drik med respekt  •  Kun for 18+  •",
+    "cta": "Sig «Skål!»",
+    "background": "base",
+    "accent": "lime"
+  }
+}

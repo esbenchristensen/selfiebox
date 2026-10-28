@@ -32,9 +32,12 @@ does not change. The STL files in `stl/` are still rev G until gen 2 gets its ow
 | `tools/check_bodies.py` | Every gen 2 print file is one solid body (no loose pieces in the slicer) |
 | `tools/check_fit.py` | No part overlaps another, and every critical clearance is met |
 | `tools/make_hurtig.py` | Hurtigprint set for a gen 2 version (draft profile + fit-test pieces cut from the released parts) in `stl/gen2-hurtig/<version>-hurtig/`. Rules: `docs/HURTIGPRINT.md` |
+| `tools/make_3mf.py` | Bambu Studio projects (3MF) with the print settings inside for every printed part of a release: printer H2C, process, the filament preset of the material on each slot (PLA, PETG for the clear light ring; never ASA, see halo-gen2-v34) and the front + logo as one three-colour object. `tools/check_3mf.py` checks them against Bambu Studio's source; `tools/copy_release.py` makes a settings-only release |
 | `bom/indkobsliste.csv` | Shopping list with prices (DKK incl. VAT) and filament per part. Only the main unit is in the main price; attachments, themes and tools have their own sums. Regenerate with `python3 tools/make_bom.py` |
 | `cad/gen2_concept.scad` | Gen 2 (current design), built on top of `halo.scad` |
-| `docs/gen2/` | Gen 2 renders (`render/render_gen2.py`) and the CAD line sheet (`tools/gen2_sketches/make_cad_sheet.sh`) |
+| `stl/stativbeslag/<version>/` | Stand bracket for the B2C floor tripod (gen 2 on the wall cleat, shelf with a 1/4"-20 T-nut under the centre of gravity, logo on the back): `tools/make_stativbeslag.py`, drawing `render/drawing/draw_stativbeslag.py` |
+| `docs/gen2/` | Early gen 2 concept renders and line sheet (v1, with the dropped printer module; their scripts were removed in v21) |
+| `tools/check_fit_gen2.py`, `tools/make_gen2_release.py` | Gen 2: collision/clearance check, and the release set (print files, 3D, PRINTGUIDE) in `stl/gen2/<version>/` |
 
 ```sh
 python3 tools/make_bom.py

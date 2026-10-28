@@ -87,7 +87,7 @@ module rpi5() {
 CAM_PCB = [25, 23.862, 1.12];
 CAM_HOLES = [[-10.5, -0.1], [10.5, -0.1], [-10.5, 12.4], [10.5, 12.4]];   // relative to lens centre (x, z)
 CAM_LENS_FROM_EDGE = 9.462;   // [A] CM3 Wide drawing: lens 14.4 from the far edge (23.862 - 14.4)
-CAM_HOLDER = 10.8;  CAM_HOLDER_H = 4.07;  CAM_LENS_H = 8.3;  CAM_BARREL = 6.95;   // RP-008155 (Wide): tip Ø6.95, 8.3 above the board  CAM_CONN_H = 2.75;
+CAM_HOLDER = 10.8;  CAM_HOLDER_H = 4.07;  CAM_LENS_H = 8.3;  CAM_BARREL = 6.95;  CAM_CONN_H = 2.75;   // RP-008155 (Wide): tip Ø6.95, 8.3 above the board; ribbon connector 2.75 on the back
 // Lens centre at x = 0, z = 0; PCB front face at y = 0, lens pointing to -y; flex edge at -z.
 // Rotated 90 deg (flex edge to +x): the sensor's long side runs vertically -> native portrait.
 CAM_HOLES_ROT = [for (h = CAM_HOLES) [-h[1], h[0]]];
@@ -102,6 +102,8 @@ module camera_module3_wide() {
         translate([0, -CAM_LENS_H, 0]) rotate([-90, 0, 0]) cylinder(d1 = CAM_BARREL, d2 = CAM_BARREL + 0.3, h = CAM_LENS_H - CAM_HOLDER_H + 0.01, $fn = 32);
     }
     color([0.85, 0.85, 0.8]) translate([-10, CAM_PCB[2], -CAM_LENS_FROM_EDGE]) cube([20, CAM_CONN_H, 5.5]);
+    // [A] sensor flex under the lens holder, towards the far edge: 8.9 wide, 7.3 out (height not given; 0.4 assumed)
+    color([0.6, 0.45, 0.1]) translate([-4.45, -0.4, CAM_HOLDER/2 - 0.01]) cube([8.9, 0.4, 7.3]);
 }
 
 // ---------------------------------------------------- DFRobot DFR0503 embedded thermal printer
