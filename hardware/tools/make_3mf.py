@@ -24,7 +24,8 @@ config, so Bambu Studio 2.8.2 said "The 3mf file has invalid config, load geomet
 settings (Plater::priv::load_files: a config without a Bambu printer_model or nozzle_diameter is invalid, and with
 load_config off the objects' configs are reset, only the extruder is kept). Now every file is a Bambu Studio project:
 Application "BambuStudio-<version>" in the model and Metadata/project_settings.config naming Bambu's own system presets
-(Bambu Lab H2C 0.4 nozzle, 0.20mm Standard @BBL H2C, Bambu ASA @BBL H2C per filament slot) with the bed type. On loading,
+(Bambu Lab H2C 0.4 nozzle, 0.20mm Standard @BBL H2C, and per filament slot the material on the spool: Bambu PLA Basic,
+PETG Translucent for the clear light ring, MATERIALS; v31-v33 said Bambu ASA) with the bed type. On loading,
 PresetCollection::load_external_preset() restores every key not listed in different_settings_to_system from the
 installed system preset, so the file only has to carry the names, the structure the loader checks (filament_diameter,
 filament_extruder_variant and filament_self_index sized to the filaments, the extruder variants) and the few process
@@ -70,25 +71,41 @@ PRINTER = {"printer_settings_id": "Bambu Lab H2C 0.4 nozzle", "printer_model": "
            "printer_extruder_id": ["1", "1", "1", "2", "2"]}
 PROCESS = {"print_settings_id": "0.20mm Standard @BBL H2C",
            "print_extruder_variant": PRINTER["printer_extruder_variant"], "print_extruder_id": PRINTER["printer_extruder_id"]}
-# the plate-wide process values the box changes from Bambu's 0.20mm Standard (one value per extruder variant), for parts
-# seen from outside; a hidden part keeps Bambu's own values (v32: the slow first layer and the travel round the walls only
-# cost time there)
-# plate-wide extras (PrintConfig, not per object): a slow first layer where the first layer is the visible face
-# ("_face_down"), and avoid crossing walls where the sides are seen ("_visible"); v33: nowhere else
+# the plate-wide process values the box changes from Bambu's 0.20mm Standard (one value per extruder variant):
+# a slow first layer where the first layer is the visible face ("_face_down"), and avoid crossing walls on every part
+# (v34: v32/v33 left it off on hidden parts, so the nozzle travelled over the open frame and the ring and left strings)
 FACE_DOWN_CHANGES = {"initial_layer_speed": ["30"] * 5, "initial_layer_infill_speed": ["30"] * 5}
-VISIBLE_CHANGES = {"reduce_crossing_wall": "1"}
-FILAMENT = {"filament_settings_id": "Bambu ASA @BBL H2C", "filament_ids": "GFB01", "filament_type": "ASA",
-            "filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
+ALWAYS_CHANGES = {"reduce_crossing_wall": "1"}
+# v34 (28 Oct; Esben: "vi printer alt undtagen diffuseren i PLA"): the filament preset on each slot is the material that is
+# really on the spool. v31-v33 named Bambu ASA on every slot: 270 C nozzle, 100 C bed, part fan 10-35 % and, on the H2C,
+# chamber_temperatures 65, so the start G-code heats the chamber to 65 C (M141/M191) with the chamber fans off. PLA softens
+# at 55-60 C, so as the chamber warmed up the filament swelled in the extruder (heat creep) and the prints choked, strung
+# and blobbed late in the print. PLA Basic and PETG Translucent keep the chamber unheated (H2C chamber auto-cooling).
+MATERIALS = {
+    "PLA": {"filament_settings_id": "Bambu PLA Basic @BBL H2C", "filament_ids": "GFA00", "filament_type": "PLA"},
+    # the clear diffuser (light ring); Bambu's 0.4 mm variant of the preset (the plain one is for the 0.6 nozzle)
+    "PETG-T": {"filament_settings_id": "Bambu PETG Translucent @BBL H2C 0.4 nozzle", "filament_ids": "GFG01",
+               "filament_type": "PETG"},
+}
+FILAMENT_COMMON = {"filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
+COLOUR_MATERIAL = {"sort": "PLA", "hvid": "PLA", "groen": "PLA", "natur": "PETG-T"}
+# what is actually printed (Esben 28 Oct): PLA, and PETG for the clear diffuser. Never write a preset of another type: an
+# ASA/ABS/PC preset heats the H2C's chamber (65 C), and PLA/PETG then soften in the extruder and fail late in the print.
+PRINTED_TYPES = {"PLA", "PETG"}
+assert all(m["filament_type"] in PRINTED_TYPES for m in MATERIALS.values()), "only PLA/PETG presets (heat creep, v34)"
 PLATES = {"glat": "High Temp Plate", "tekstureret": "Textured PEI Plate"}   # Bambu's names: smooth PEI, textured PEI
 
 
-def project_settings(filaments, plate, tower=None, visible=True, face_down=False):
+def project_settings(filaments, plate, tower=None, face_down=False):
     """Metadata/project_settings.config: the project config Bambu Studio writes (PresetBundle::full_fff_config, keys
     that equal Bambu's own defaults left out; the loader puts them back). filaments: COLOURS keys, slot 1 first."""
     n = len(filaments)
-    changes = {**(FACE_DOWN_CHANGES if face_down else {}), **(VISIBLE_CHANGES if visible else {})}
+    changes = {**(FACE_DOWN_CHANGES if face_down else {}), **ALWAYS_CHANGES}
+    fil = [{**MATERIALS[COLOUR_MATERIAL[f]], **FILAMENT_COMMON} for f in filaments]
+    if any(d["filament_type"] not in PRINTED_TYPES for d in fil):
+        raise SystemExit(f"{filaments}: a filament preset that is not PLA/PETG (it would heat the chamber; see v34)")
     cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **changes,
-           **{k: [v] * n for k, v in FILAMENT.items()},
+           **{k: [d[k] for d in fil] for k in fil[0]},
            "filament_colour": [COLOURS[f] for f in filaments], "filament_self_index": [str(i + 1) for i in range(n)],
            "different_settings_to_system": [";".join(sorted(changes))] + [""] * (n + 1),
            "curr_bed_type": PLATES[plate], "flush_multiplier": ["1", "1"],
@@ -116,15 +133,18 @@ SOLID_FACE = {   # the visible face is the first layer (printed face down): one 
     "_face_down": True, "bottom_surface_pattern": "monotonicline", "only_one_wall_first_layer": "1"}
 SEAM = {"seam_position": "back", "seam_slope_type": "external"}   # scarf seam on the outer contour, at the box's underside
 NO_SUPPORT = {"enable_support": "0"}
-# v33 (Esben 27 Oct: "ikke bruge tid på at få indvendige ting og indersider flotte"): Bambu's own 2 walls and 15 % grid,
-# sparse infill only every second layer (infill_combination), and no more top layers than asked for: the profile's
-# top_shell_thickness 1.0 otherwise adds layers (5 at 0.2 mm), and every top face here is an inside face
-INSIDE = {"wall_loops": "2", "top_shell_layers": "3", "top_shell_thickness": "0", "bottom_shell_layers": "3",
-          "sparse_infill_density": "15%", "infill_combination": "1"}
+# v33 (Esben 27 Oct: "ikke bruge tid på at få indvendige ting og indersider flotte"): Bambu's own 2 walls and 15 % infill.
+# v34 (28 Oct, failed prints): crosshatch instead of grid (grid crosses its own lines in every layer, and the nozzle hits
+# the crossings), infill every layer again (infill_combination laid 0.4-0.56 mm thick infill lines that the thin layers
+# above drag over), and 4 top layers / at least 0.8 mm: 3 thin layers over 15 % infill sagged between the infill lines and
+# curled up, and the nozzle caught them on the last layers of every part
+INSIDE = {"wall_loops": "2", "top_shell_layers": "4", "top_shell_thickness": "0.8", "bottom_shell_layers": "3",
+          "sparse_infill_density": "15%", "sparse_infill_pattern": "crosshatch", "infill_combination": "0"}
 SETTINGS = {
     # v33: only what is seen from outside is printed for looks: 0.2 mm layers on the shell, front and theme parts (they
     # match), the visible face (first layer) slow and in one direction, scarf seam and avoid crossing walls on the outside.
-    # Parts inside the box or behind it ("_visible": False) get 0.28 mm and Bambu's own seam and first layer.
+    # Parts inside the box or behind it ("_visible": False) get 0.28 mm and Bambu's own seam and first layer (v34: and
+    # avoid crossing walls like the rest).
     # front: 0.2 so the logo is exactly the first 4 layers; 0.15 elephant foot so the 0.15 shadow gap stays open;
     # 4 bottom layers under the visible face, its back is inside the box
     "front": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "elefant_foot_compensation": "0.15",
@@ -155,8 +175,9 @@ SETTINGS = {
     # printer hood and exit module (selfi-printer-v5): stood on an end, logo and text on the vertical front. Its panels
     # are 3.2 mm, so they are solid with 4 walls as with 8 (v32 review: 2 % faster at most, not changed)
     "printerkappe": {"layer_height": "0.2", "wall_loops": "8", "sparse_infill_density": "15%", **NO_SUPPORT},
-    # stand bracket: carries the whole box; the logo panel lies on the plate. v6: 3 walls, 30 % gyroid, 3 top layers
-    "stativbeslag": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "3", "top_shell_thickness": "0",
+    # stand bracket: carries the whole box; the logo panel lies on the plate. v6: 3 walls, 30 % gyroid; v7: 4 top layers
+    # (3 sagged over the infill, see INSIDE)
+    "stativbeslag": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "4", "top_shell_thickness": "0.8",
                      "bottom_shell_layers": "4", "sparse_infill_density": "30%", "sparse_infill_pattern": "gyroid",
                      **SOLID_FACE, **SEAM, **NO_SUPPORT},
 }
@@ -182,9 +203,8 @@ def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filamen
 
 def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=None):
     """objects: list of (name, parts, settings, (dx, dy) from the bed centre, turn). One plate, each object as in
-    write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default. Settings keys "_visible" (default
-    True) and "_face_down" (default False) on any object turn on VISIBLE_CHANGES and FACE_DOWN_CHANGES for the plate."""
-    visible = any(st.get("_visible", True) for _, _, st, _, _ in objects)
+    write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default. The settings key "_face_down"
+    (default False) on any object turns on FACE_DOWN_CHANGES for the plate ("_visible" only documents the part)."""
     face_down = any(st.get("_face_down", False) for _, _, st, _, _ in objects)
     ns = ('xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" '
           'xmlns:BambuStudio="http://schemas.bambulab.com/package/2021" '
@@ -252,7 +272,7 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
         "3D/3dmodel.model": main,
         **files,
         "Metadata/model_settings.config": "\n".join(cfg),
-        "Metadata/project_settings.config": project_settings(filaments, plate, tower, visible, face_down),
+        "Metadata/project_settings.config": project_settings(filaments, plate, tower, face_down),
     }
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
         for name, text in out.items():
@@ -313,7 +333,7 @@ def skal_3mf(folder, prefix=None):
 
 
 # the other parts: (file suffix, settings, turn, filament, plate); the frame lies like the shell (box underside at -y), so
-# it is turned too. The light ring's own translucent material goes on slot 1 instead of the ASA preset if it is not ASA.
+# it is turned too. The light ring is the clear diffuser: PETG Translucent on its slot (COLOUR_MATERIAL "natur").
 SINGLE = [("lysring", "lysring", False, "natur", "tekstureret"), ("bagramme", "bagramme", True, "hvid", "glat"),
           ("vaegbeslag", "vaegbeslag", False, "sort", "glat"), ("tema-top-eksempel", "tema", False, "sort", "glat"),
           ("tema-vinge-venstre-eksempel", "tema", False, "sort", "glat"),

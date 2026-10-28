@@ -209,7 +209,9 @@ P["kappe"][2] = "Kappe (sort ASA): flad top, luftlameller, nøglelås og gribeha
 P["sokkel"][2] = "Sokkel: printerramme, låseholder, Pi-holder, kabelspor bagtil og lomme til dæmpepladen (sort ASA)"
 v5["coupons"] = [c for c in v5["coupons"] if c[0] not in ("taetning", "kappekrog", "studs")] + [
     ["fuge", "sokkel", [0, 0, 0, 45, 45, 24], "Hjørnet af soklen med læben indenfor kappens væg (v5: ingen rille): kappens kant skal stå fladt på soklen og læben gå fri indenfor."]]
-NEWEST = "selfi-printer-v5"
+# v6 (28 Oct 2026, failed PLA prints): the same parts; only the 3MFs' settings (make_3mf.py: PLA preset, not ASA)
+VERSIONS["selfi-printer-v6"] = json.loads(json.dumps(v5))
+NEWEST = "selfi-printer-v6"
 
 M = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # scad -> glTF
 
