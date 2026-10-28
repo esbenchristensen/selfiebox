@@ -35,7 +35,7 @@ export function PhotoStrip({ prints }: { prints: [string, string][] }) {
   const all = [...prints, ...prints, ...prints, ...prints].slice(0, 12);
   const loop = [...all, ...all];
   return (
-    <section className="strip" aria-label="Fotos fra Selfi Bokse">
+    <section className="strip" aria-label="Fotos fra Selfi-bokse">
       <div className="strip-track">
         {loop.map(([src, cap], i) => (
           <div

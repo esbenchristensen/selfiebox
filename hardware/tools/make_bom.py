@@ -108,7 +108,7 @@ add(S, "Skrue M3 x 8 Torx linsehoved (ISO 7380), sort", "Kabinet til front, 2 pr
 add(S, "Skrue M2 x 6 gevinddannende (plast)", "Kamera", 4, "stk", 0.8, 100, "Skruer.dk / AliExpress", "Estimat", "", True)
 add(S, "Skrue M2,5 x 6 gevinddannende (plast)", "LED-skinne", 4, "stk", 0.8, 100, "Skruer.dk / AliExpress", "Estimat", "", True)
 add(S, "Skrue M4 x 10 Torx", "Låseskrue vægbeslag", 1, "stk", 1, 50, "Skruer.dk", "Estimat", "", True)
-add(S, "Vægskrue 4,5 x 50 undersænket + dybel", "Vægbeslag til væg (4 huller Ø5, undersænket)", 4, "stk", 1.5, 50, "Jem & Fix / Bauhaus", "Estimat", "", True)
+add(S, "Vægskrue 4,0 x 50 undersænket T20 + dybel", "Vægbeslag til væg (v28: 6 huller Ø5, forsænket Ø8,6; samme skrue som fronten)", 6, "stk", 1.5, 50, "Jem & Fix / Bauhaus", "Estimat", "", True)
 add(S, "Styrestift Ø6 x 20 stål", "Til samlinger mellem moduler (2 pr. samling)", 0, "stk", 1.5, 20, "Skruer.dk / AliExpress", "Estimat", "Købes med det samme, så de er klar til tilbehør", True)
 add(S, "Skrue M3 x 16 Torx linsehoved", "Til samlinger mellem moduler (2 pr. samling)", 0, "stk", 1, 100, "Skruer.dk", "Estimat", "", True)
 add(S, "Sekundlim (CA) gel", "Sikrer diffuserringen i slidserne", 0.05, "tube", 39, 1, "Jem & Fix", "Estimat", "", True)

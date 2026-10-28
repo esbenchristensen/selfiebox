@@ -1,15 +1,17 @@
 // Line drawings of the box: an ink outline with green details. Drawn in code from the real
-// proportions (234 × 306 × 66 mm), so they stay sharp at any size and follow the light/dark theme.
+// proportions of gen 2 (222,5 × 306 × 70 mm), so they stay sharp at any size and follow the light/dark theme.
 
 type P = [number, number];
 
-function rr(x: number, y: number, w: number, h: number, r: number) {
+export const BOX_W = 222.5; // mm; the height is 306
+
+export function rr(x: number, y: number, w: number, h: number, r: number) {
   return `M${x + r} ${y} H${x + w - r} A${r} ${r} 0 0 1 ${x + w} ${y + r} V${y + h - r} A${r} ${r} 0 0 1 ${x + w - r} ${y + h} H${x + r} A${r} ${r} 0 0 1 ${x} ${y + h - r} V${y + r} A${r} ${r} 0 0 1 ${x + r} ${y} Z`;
 }
 
 // A rounded slab seen at an angle: the back face shifted by `d`, joined to the front at the two corners
 // where the outline turns, and the front face filled so it hides the lines behind it.
-function Slab({ x, y, w, h, r, d, fill = "var(--surface)" }: { x: number; y: number; w: number; h: number; r: number; d: P; fill?: string }) {
+export function Slab({ x, y, w, h, r, d, fill = "var(--surface)" }: { x: number; y: number; w: number; h: number; r: number; d: P; fill?: string }) {
   const len = Math.hypot(d[0], d[1]);
   const n: P = [-d[1] / len, d[0] / len]; // perpendicular to the depth direction
   const a: P = [x + r - Math.abs(n[0]) * r, y + r - Math.abs(n[1]) * r];
@@ -23,7 +25,7 @@ function Slab({ x, y, w, h, r, d, fill = "var(--surface)" }: { x: number; y: num
   );
 }
 
-function Sparkle({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
+export function Sparkle({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
   const k = s * 0.22;
   return (
     <path
@@ -34,9 +36,9 @@ function Sparkle({ x, y, s = 10 }: { x: number; y: number; s?: number }) {
 }
 
 // The front of the box: ring, camera notch with a green lens, and a screen with the Selfi smile.
-function Front({ x, y, w, screen = "smile" }: { x: number; y: number; w: number; screen?: "smile" | "count" }) {
-  const h = w * (306 / 234);
-  const s = w / 234;
+export function Front({ x, y, w, screen = "smile" }: { x: number; y: number; w: number; screen?: "smile" | "count" }) {
+  const h = w * (306 / BOX_W);
+  const s = w / BOX_W;
   const ri = 11 * s, rb = 7 * s;
   const sx = x + 37 * s, sy = y + 40 * s, sw = w - 74 * s, sh = h - 80 * s;
   const cx = x + w / 2;
@@ -64,8 +66,8 @@ function Front({ x, y, w, screen = "smile" }: { x: number; y: number; w: number;
 }
 
 // Short dashes of light around the ring.
-function Rays({ x, y, w, n = 10, len = 16, gap = 14 }: { x: number; y: number; w: number; n?: number; len?: number; gap?: number }) {
-  const h = w * (306 / 234);
+export function Rays({ x, y, w, n = 10, len = 16, gap = 14 }: { x: number; y: number; w: number; n?: number; len?: number; gap?: number }) {
+  const h = w * (306 / BOX_W);
   const cx = x + w / 2, cy = y + h / 2;
   const rays = Array.from({ length: n }, (_, i) => {
     const a = (i / n) * Math.PI * 2 + 0.3;
@@ -73,18 +75,19 @@ function Rays({ x, y, w, n = 10, len = 16, gap = 14 }: { x: number; y: number; w
     // Point on the outline in this direction, roughly: scale to the box edge.
     const k = Math.min((w / 2 + gap) / Math.abs(ex || 1e-6), (h / 2 + gap) / Math.abs(ey || 1e-6));
     const px = cx + ex * k, py = cy + ey * k;
-    return `M${px} ${py} l${ex * len} ${ey * len}`;
+    // Rounded, so the server and the browser write the same path (their cos/sin can differ in the last digits).
+    return `M${px.toFixed(2)} ${py.toFixed(2)} l${(ex * len).toFixed(2)} ${(ey * len).toFixed(2)}`;
   });
   return <path className="o-green" d={rays.join(" ")} />;
 }
 
 export function OutlineStand({ className }: { className?: string }) {
   const x = 120, y = 54, w = 180;
-  const h = w * (306 / 234);
+  const h = w * (306 / BOX_W);
   const d: P = [24, -13];
   const pole = x + w / 2 + d[0] / 2;
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 440 540" role="img" aria-label="Tegning af Selfi Boks på en stander med strømkabel til stikkontakten">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 440 540" role="img" aria-label="Tegning af Selfi på en stander med strømkabel til stikkontakten">
       {/* Stand and cable, behind the box */}
       <path d={`M${pole} ${y + h - 10} V472 M${pole} 472 L${pole - 70} 520 M${pole} 472 L${pole + 64} 518 M${pole} 472 L${pole + 6} 508`} />
       <path d={`M${pole - 6} 300 h12 M${pole - 6} 410 h12`} />
@@ -105,11 +108,11 @@ export function OutlineStand({ className }: { className?: string }) {
 
 export function OutlineWall({ className }: { className?: string }) {
   const x = 140, y = 50, w = 168;
-  const h = w * (306 / 234);
+  const h = w * (306 / BOX_W);
   const d: P = [22, -12];
   const my = y + h + 6;
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 460 560" role="img" aria-label="Tegning af Selfi Boks på væggen med fotomodul, der printer et billede">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 460 560" role="img" aria-label="Tegning af Selfi på væggen med fotomodul, der printer et billede">
       {/* Wall and floor */}
       <path className="o-faint" d="M24 30 V490 L436 520 M24 490 L-10 540" />
       {Array.from({ length: 6 }, (_, i) => (
@@ -138,12 +141,12 @@ export function OutlineWall({ className }: { className?: string }) {
 
 // The box pulled apart into its layers, from the back cover to the front.
 export function OutlineExploded({ className }: { className?: string }) {
-  const w = 170, h = w * (306 / 234);
+  const w = 170, h = w * (306 / BOX_W);
   const step: P = [66, -34];
   const t: P = [9, -5];
   const base: P = [40, 230];
   const at = (i: number): P => [base[0] + step[0] * (4 - i), base[1] + step[1] * (4 - i)];
-  const s = w / 234;
+  const s = w / BOX_W;
   const labels: [number, string][] = [
     [0, "Robust og tyverisikret"],
     [1, "Hurtig og altid opdateret"],
@@ -153,7 +156,7 @@ export function OutlineExploded({ className }: { className?: string }) {
   ];
   const [x0, y0] = at(0), [x1, y1] = at(1), [x2, y2] = at(2), [x3, y3] = at(3), [x4, y4] = at(4);
   return (
-    <svg className={`outline ${className ?? ""}`} viewBox="0 0 560 520" role="img" aria-label="Selfi Boks skilt ad: robust og tyverisikret, hurtig, stor touchskærm, professionelt studielys og billeder i høj kvalitet">
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 560 520" role="img" aria-label="Selfi skilt ad: robust og tyverisikret, hurtig, stor touchskærm, professionelt studielys og billeder i høj kvalitet">
       {/* Back cover with keyholes and the power socket */}
       <Slab x={x0} y={y0} w={w} h={h} r={28} d={t} />
       <path d={`M${x0 + w / 2 - 40} ${y0 + 40} v14 M${x0 + w / 2 + 40} ${y0 + 40} v14`} />
@@ -203,9 +206,48 @@ export function OutlinePoster() {
   const x = 110, y = 70, w = 200;
   return (
     <svg className="outline" viewBox="0 0 420 480" aria-hidden="true">
-      <Slab x={x} y={y} w={w} h={w * (306 / 234)} r={30} d={[24, -13]} />
+      <Slab x={x} y={y} w={w} h={w * (306 / BOX_W)} r={30} d={[24, -13]} />
       <Front x={x} y={y} w={w} />
       <Rays x={x} y={y} w={w} n={12} len={14} gap={22} />
+    </svg>
+  );
+}
+
+// The printer (selfi-printer-v5, 476 × 222,5 × 217 mm): a long, flat cabinet, the printer under the hood on the
+// left with the Selfi mark, and the exit module on the right with "Dit print" over the pocket a print lies in.
+// `poster` draws it alone, for the 3D viewer while it loads; otherwise with sparkles, as a small picture.
+export function OutlinePrinter({ className, poster }: { className?: string; poster?: boolean }) {
+  const x = 30, y = 120, w = 430, s = w / 476, h = 217 * s, r = 10;
+  const d: P = [24, -12];
+  const joint = x + 287.7 * s;
+  const ox = x + 381.9 * s, ow = 170 * s, oh = 54 * s, oy = y + h - 85 * s;
+  const lx = x + (287.7 / 2) * s;
+  return (
+    <svg className={`outline ${className ?? ""}`} viewBox="0 0 500 400" role={poster ? undefined : "img"} aria-hidden={poster ? true : undefined} aria-label={poster ? undefined : "Tegning af Selfi printer med et print i lommen"}>
+      {/* Cabinet, seen a little from the right */}
+      <Slab x={x} y={y} w={w} h={h} r={r} d={d} />
+      {/* Shadow joint between the hood and the exit module */}
+      <path className="o-faint" d={`M${joint} ${y + 3} V${y + h - 3}`} />
+      {/* The Selfi mark on the hood */}
+      <path d={rr(lx - 30, y + h - 128 * s, 22, 30, 7)} />
+      <circle className="o-green-fill" cx={lx - 19} cy={y + h - 128 * s + 7} r={3} />
+      <path className="o-green" d={`M${lx - 25} ${y + h - 128 * s + 18} a6 6 0 0 0 12 0`} />
+      <path d={`M${lx + 2} ${y + h - 128 * s + 22} h40`} />
+      {/* "Dit print" and the arrow over the pocket */}
+      <path d={`M${ox - 30} ${y + h - 122 * s} h60`} />
+      <path className="o-green" d={`M${ox} ${y + h - 110 * s} v12 m-5 -5 l5 5 l5 -5`} />
+      {/* The pocket with a print lying in it */}
+      <path d={rr(ox - ow / 2, oy, ow, oh, 7)} fill="var(--ink)" />
+      <path d={`M${ox - 62} ${oy + oh - 6} L${ox - 52} ${oy + 14} H${ox + 52} L${ox + 62} ${oy + oh - 6} Z`} fill="var(--surface)" />
+      <path d={`M${ox - 50} ${oy + oh - 11} L${ox - 46} ${oy + 18} H${ox - 8} L${ox - 8} ${oy + oh - 11} Z`} />
+      <path className="o-green" d={`M${ox + 6} ${oy + oh - 18} h34`} />
+      {!poster && (
+        <>
+          <Sparkle x={44} y={86} s={11} />
+          <Sparkle x={470} y={70} s={13} />
+          <Sparkle x={478} y={330} s={8} />
+        </>
+      )}
     </svg>
   );
 }

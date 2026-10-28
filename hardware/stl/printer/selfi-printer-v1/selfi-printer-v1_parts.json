@@ -1,0 +1,145 @@
+[
+ {
+  "node": "kappe",
+  "label": "Kappe (sort ASA; B2B-udgaven med hul til skabslås, B2C-kappen er uden hul)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   260,
+   0
+  ]
+ },
+ {
+  "node": "logo_hvid",
+  "label": "Logo, hvidt (indlagt i kappen)",
+  "color": "#f5f5f4",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   260,
+   0
+  ]
+ },
+ {
+  "node": "logo_groen",
+  "label": "Logo, grønne prikker",
+  "color": "#22d36b",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   260,
+   0
+  ]
+ },
+ {
+  "node": "sokkel",
+  "label": "Sokkel med 4 klikkanter, printerramme og bagrum (mørk ASA)",
+  "color": "#2b2b2f",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "node": "bakke",
+  "label": "Opsamlingsbakke (klik-på)",
+  "color": "#1d1d20",
+  "group": "Kabinet",
+  "explode": [
+   0,
+   0,
+   110
+  ]
+ },
+ {
+  "node": "printer",
+  "label": "DNP QW410 (fotoprinter, rulle 150 × 4×6 / 300 striber)",
+  "color": "#d9d9d6",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   130,
+   0
+  ]
+ },
+ {
+  "node": "pi",
+  "label": "Raspberry Pi Zero 2 W (printserver på wifi, strøm fra printerens 5 V-udgang)",
+  "color": "#2e9e5b",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   60,
+   -60
+  ]
+ },
+ {
+  "node": "inlet",
+  "label": "Strømindgang C14 (panelkabel, snap-in, videre til printerens eget C14-stik)",
+  "color": "#e11d48",
+  "group": "Elektronik",
+  "explode": [
+   0,
+   0,
+   -40
+  ]
+ },
+ {
+  "node": "laas",
+  "label": "Skabslås Ø19 med kam (B2B)",
+  "color": "#c3c7cf",
+  "group": "B2B",
+  "explode": [
+   60,
+   260,
+   0
+  ]
+ },
+ {
+  "node": "konsol",
+  "label": "Vægkonsol med 2 massive knægte (B2B væg)",
+  "color": "#3a3a3f",
+  "group": "B2B",
+  "explode": [
+   0,
+   -110,
+   0
+  ]
+ },
+ {
+  "node": "vaegplade",
+  "label": "Vægplade med 45° skinne (B2B væg)",
+  "color": "#4a4a50",
+  "group": "B2B",
+  "explode": [
+   0,
+   -110,
+   -110
+  ]
+ },
+ {
+  "node": "skruer_sokkel",
+  "label": "2 skruer, sokkel til hylde/konsol (SPUN+ 4,0 × 30, undersænket)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -60,
+   0
+  ]
+ },
+ {
+  "node": "skruer_vaeg",
+  "label": "4 skruer + dybler, vægplade (5 × 50)",
+  "color": "#c3c7cf",
+  "group": "Skruer",
+  "explode": [
+   0,
+   -110,
+   -170
+  ]
+ }
+]

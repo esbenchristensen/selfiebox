@@ -34,7 +34,8 @@
       "wing_right",
       "wing_left",
       "topper"
-    ]
+    ],
+    "unit": "gen2"
   },
   {
     "id": "aab",
@@ -70,7 +71,8 @@
       "wing_right",
       "wing_left",
       "topper"
-    ]
+    ],
+    "unit": "gen2"
   },
   {
     "id": "palads",
@@ -184,7 +186,7 @@
       "ink": "base",
       "caption": "Fjerritslev"
     },
-    "photo": "print-club",
+    "photo": "print-birthday",
     "parts": [
       "wing_right",
       "wing_left",
@@ -223,6 +225,141 @@
       "bg": "base",
       "ink": "white",
       "caption": "Kom så Hawks!"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
+  },
+  {
+    "id": "carlsberg",
+    "name": "Carlsberg",
+    "place": "Brand-boks i baren",
+    "palette": {
+      "base": "#00703c",
+      "deep": "#004d29",
+      "glass": "#2c9a46",
+      "white": "#ffffff"
+    },
+    "casing": "#00703c",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#2c9a46"
+      ],
+      "glow": "#ffffff"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": "Probably the best night in town"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
+  },
+  {
+    "id": "red_bull",
+    "name": "Red Bull",
+    "place": "Bars, klubber og studenterbarer",
+    "palette": {
+      "base": "#0e1d48",
+      "blue": "#14275e",
+      "blue2": "#22407f",
+      "silver": "#c9ced6",
+      "red": "#d2003c",
+      "yellow": "#ffd300",
+      "white": "#ffffff",
+      "grey": "#9ea8b8",
+      "ink": "#070c1f"
+    },
+    "casing": "#0e1d48",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#ffd300"
+      ],
+      "glow": "#d2003c"
+    },
+    "frame": {
+      "bg": "silver",
+      "ink": "base",
+      "caption": "Red Bull giver viiinger"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
+  },
+  {
+    "id": "tuborg",
+    "name": "Tuborg",
+    "place": "Danmarks barer",
+    "palette": {
+      "base": "#2e9a48",
+      "band": "#1a8a3c",
+      "deep": "#1a3a30",
+      "lime": "#80e040",
+      "white": "#ffffff",
+      "silver": "#8f8f93",
+      "cream": "#f4ead2",
+      "beer": "#e7a21f",
+      "sky": "#3aa852",
+      "ink": "#1a3a30",
+      "shine": "#5cbf6a"
+    },
+    "casing": "#2e9a48",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#80e040"
+      ],
+      "glow": "#5fd36a"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "lime",
+      "caption": "Skål for i aften"
+    },
+    "photo": "print-club",
+    "parts": [
+      "wing_right",
+      "wing_left",
+      "topper"
+    ],
+    "unit": "gen2"
+  },
+  {
+    "id": "airtox_dominance",
+    "name": "Airtox Dominance",
+    "place": "MMA-ligaens boks",
+    "palette": {
+      "base": "#141414",
+      "orange": "#ee3e15",
+      "white": "#ffffff"
+    },
+    "casing": "#141414",
+    "ring": {
+      "idle": [
+        "#ffffff",
+        "#ee3e15"
+      ],
+      "glow": "#ffffff"
+    },
+    "frame": {
+      "bg": "base",
+      "ink": "white",
+      "caption": "Fear nothing"
     },
     "photo": "print-club",
     "parts": [

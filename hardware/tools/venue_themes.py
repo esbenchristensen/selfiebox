@@ -17,7 +17,11 @@ Output per theme, in themes/<id>/build/:
   web/logo.svg       the logo in colour
   web/theme.json     palette, casing colour and ring light for the viewer
 
-Usage: python3 hardware/tools/venue_themes.py [theme-id ...]       (all themes when none given)
+Usage: python3 hardware/tools/venue_themes.py [--uden-logo] [theme-id ...]       (all themes when none given)
+
+--uden-logo builds the website's concept examples (Esben 24. okt. 2026: no logos in the 3D theme examples): every
+traced logo, every brand name and slogan in the artwork is left out, every theme is drawn on the gen 2 unit, and the
+output goes to themes/<id>/build-eksempel/ so the printable parts and the catalogues' models in build/ stay as they are.
 Needs: trimesh, manifold3d, shapely, mapbox_earcut, cairosvg, matplotlib, opencv-python-headless
 Logos: logos/<id>.geo.json (traced, one geometry per colour) is used when present, otherwise the
 logo is drawn here. Replace it with the venue's official artwork before anything leaves the house.
@@ -52,9 +56,9 @@ G = dict(W=234.0, H=306.0, D=66.0, R=24.0, SIDE_Y=10.0, BZ0=66.8, BZ1=239.2, H_S
          PRN_FRONT_W=82.0, PRN_FRONT_H=58.0)
 HW = G["W"] / 2
 X0 = HW + 0.2                      # inner edge of a wing
-# Gen 2 (gen2_concept.scad): one concentric squircle outline, 222.5 wide with a 7.8 mm border to the light ring,
-# 70 mm deep since v5 (85 mm before), and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
-G2 = dict(G, W=222.5, D=70.0, R=42.8, WING_X=222.5 / 2 - 12)
+# Gen 2 (gen2_concept.scad): one concentric squircle outline, 224.5 x 307 since v20 (222.5 x 306 before) with a border to the
+# light ring, 70 mm deep since v5 (85 mm before), and no side screws: wings hang on two M3 inserts per side in the back wall at x = ±(W/2 - 12).
+G2 = dict(G, W=224.5, H=307.0, D=70.0, R=42.8, WING_X=224.5 / 2 - 12)
 
 
 def use_unit(unit):
@@ -120,6 +124,8 @@ _fonts = {}
 
 def text(s, font, cx, cz, height, width=None, anchor="middle"):
     """Text as polygons in mm: cap height about `height`, at most `width` wide, centred on (cx, cz)."""
+    if branded(s):
+        return Polygon()
     fp = _fonts.setdefault(font, FontProperties(fname=str(TOOLS / "fonts" / f"{font}.ttf")))
     tp = TextPath((0, 0), s, size=10, prop=fp)
     shape = Polygon()
@@ -138,6 +144,8 @@ def text(s, font, cx, cz, height, width=None, anchor="middle"):
 
 def fit(g, bounds, keep_aspect=True):
     """Scale and move geometry `g` into bounds (x0, z0, x1, z1), centred."""
+    if g.is_empty:
+        return g
     gx0, gz0, gx1, gz1 = g.bounds
     x0, z0, x1, z1 = bounds
     kx, kz = (x1 - x0) / (gx1 - gx0), (z1 - z0) / (gz1 - gz0)
@@ -153,8 +161,29 @@ def mirror(g):
 
 
 # ------------------------------------------------------------------- logos --
+# --uden-logo: no logos, and no brand names or slogans in any text drawn on the parts, the screen or the print.
+NO_LOGOS = False
+BRAND_WORDS = ["SMUKFEST", "ROSKILDE", "NIBE", "FÅRUP", "SOMMERLAND", "LEGOLAND", "BILLUND", "AALBORG ZOO", "AAB", "BOLDSPILKLUB",
+               "BOLCHESTRIBEDE", "HAWKS", "PALADS", "MENY", "FJERRITSLEV", "HEIDI", "TUBORG", "GRØN", "CARLSBERG", "PROBABLY THE BEST",
+               "RED BULL", "VIIINGER", "AIRTOX", "DOMINANCE", "FEAR NOTHING", "CRAZIEST AFTERSKIBAR", "FLYING HIRSCH", "HELE DANMARKS PILSNER",
+               "BRYGGET SIDEN", "1880", "1885", "1964", "SIDEN 1964", "SAMMEN ER VI", "SMUKKESTE", "SKALSKOVEN"]
+
+
+class _NoLogo(dict):
+    """A traced logo with nothing in it: any colour key gives an empty geometry."""
+
+    def __missing__(self, key):
+        return Polygon()
+
+
+def branded(s):
+    return NO_LOGOS and any(w in s.upper() for w in BRAND_WORDS)
+
+
 def traced_logo(tid):
     """A traced logo: {colour key: geometry} in image pixels (y down). None if there is none."""
+    if NO_LOGOS:
+        return _NoLogo()
     f = TOOLS / "logos" / f"{tid}.geo.json"
     if not f.exists():
         return None
@@ -163,6 +192,8 @@ def traced_logo(tid):
 
 def place_logo(layers_px, bounds, order):
     """Turn a traced logo into back-to-front (key, geometry) layers fitted into bounds (mm, z up)."""
+    if NO_LOGOS:
+        return []
     allg = U(*layers_px.values())
     flip = {k: affinity.scale(g, 1, -1, origin=(0, 0)) for k, g in layers_px.items()}
     allg = affinity.scale(allg, 1, -1, origin=(0, 0))
@@ -190,6 +221,8 @@ def legoland_logo(bounds):
 
 def smukfest_tree(cx, z0, h):
     """Beech with a heart-shaped crown: Smukfest's mark, drawn after the description in its design manual."""
+    if NO_LOGOS:
+        return Polygon()
     crown = heart(cx, z0 + h * 0.62, h * 0.78)
     trunk = Polygon([(cx - h * 0.045, z0 + h * 0.08), (cx + h * 0.045, z0 + h * 0.08), (cx + h * 0.03, z0 + h * 0.5), (cx - h * 0.03, z0 + h * 0.5)])
     roots = U(line([(cx, z0 + h * 0.12), (cx - h * 0.14, z0)], h * 0.035), line([(cx, z0 + h * 0.12), (cx + h * 0.14, z0)], h * 0.035),
@@ -290,14 +323,21 @@ def wing_body(outline):
     return tb.boolean("diff", [body] + holes), outline
 
 
-def topper_body(outline):
-    """theme_builder's topper, with a free outline. z = 0 is the top of the joint spacer."""
+def topper_outline(outline):
+    """The topper's printed outline: the theme's outline on the mounting strip, rounded at the box's top corners."""
     outline = U(outline, box(-HW, 0, HW, 14)).buffer(-2).buffer(2)
     r = G["R"]
     for sx in (-1, 1):   # follow the box's rounded top corners where the outline is as wide as the box
         corner = box(min(sx * HW, sx * (HW - r)), -1, max(sx * HW, sx * (HW - r)), r)
         if outline.bounds[0] > -HW - 1 and outline.bounds[2] < HW + 1:
             outline = outline.difference(corner.difference(Point(sx * (HW - r), r).buffer(r, 48)))
+    return outline
+
+
+def topper_body(outline):
+    """theme_builder's topper, with a free outline. z = 0 is the top of the joint spacer (gen 2: of the unit)."""
+    r = G["R"]
+    outline = topper_outline(outline)
     th = outline.bounds[3]
     face = tb.extrude_xz(outline, 0, tb.FACE_T)
     base = tb.cube(-(HW - r - 2), HW - r - 2, 3, 62, 0, 12)
@@ -361,12 +401,12 @@ def smukfest():
         rng = random.Random(3)
         crown = U(box(-HW, 0, HW, 62), *[Point(x, 48 + 22 * math.cos(x / HW * 1.4) + rng.uniform(-4, 4)).buffer(rng.uniform(22, 30), 48)
                                           for x in np.linspace(-HW + 16, HW - 16, 9)])
-        crown = U(crown, heart(0, 118, 74)).intersection(box(-HW - 14, 0, HW + 14, 152))
+        crown = U(crown, Polygon() if NO_LOGOS else heart(0, 118, 74)).intersection(box(-HW - 14, 0, HW + 14, 152))
         layers = [("base", crown)]
         layers += [("forest", U(*[Point(rng.uniform(-HW, HW), rng.uniform(55, 115)).buffer(rng.uniform(10, 18), 32) for _ in range(12)]))]
         layers += [("leaf", U(*[Point(rng.uniform(-HW, HW), rng.uniform(70, 130)).buffer(rng.uniform(6, 10), 32) for _ in range(14)]))]
         layers += [("lime", U(*[ell(rng.uniform(-HW, HW), rng.uniform(60, 140), rng.uniform(3, 5), 2, rng.uniform(0, 180)) for _ in range(40)]))]
-        layers += [("base", heart(0, 116, 66).buffer(2.5))]
+        layers += [] if NO_LOGOS else [("base", heart(0, 116, 66).buffer(2.5))]
         layers += [("red", smukfest_tree(0, 64, 86))]
         layers += [("cream", text("SMUKFEST", "outfit", 0, 36, 24, 196))]
         layers += [("lime", text("DANMARKS SMUKKESTE FESTIVAL", "outfit", 0, 13, 6.2, 170))]
@@ -1008,6 +1048,8 @@ def aab_logo(bounds):
 
 def flip_text(g):
     """Text that reads right after the left wing is mirrored."""
+    if g.is_empty:
+        return g
     c = g.centroid
     return affinity.scale(g, -1, 1, origin=(c.x, c.y))
 
@@ -1264,6 +1306,8 @@ def palads():
 
 def meny_logo(bounds, outline=True):
     """The MENY arch: red arch with white letters. With `outline`, a white edge 1.6 mm wide around it."""
+    if NO_LOGOS:
+        return []
     lg = traced_logo("meny")
     flip = {k: affinity.scale(g, 1, -1, origin=(0, 0)) for k, g in lg.items()}
     arch = U(*[Polygon(p.exterior) for p in getattr(flip["red"], "geoms", [flip["red"]])])
@@ -1770,6 +1814,388 @@ def white_hawks():
                 logo_png=dict(file="white_hawks-source.png", screen=(300, 860, 330), frame=(40, 170, 150)))
 
 
+# ------------------------------------------------------------------ tuborg --
+# Tuborg: the Danish beer brand, today brewed by Carlsberg Danmark. Business case: Tuborg pays for a box at a bar and
+# gets its wordmark on every photo. Danish branding only, drawn from the Grøn Tuborg can on tuborg.dk/gron-tuborg
+# (Esben, 20 Oct: no invented shapes). The topper is the top of the can's label: the royal crown (traced from the can,
+# logos/tuborg_crown-source.png) on the label's round head, TUBORG arched in lime on the green band, »Brygget siden
+# 1880« and »GRØN« in its striped band. The wings are a brown Grøn Tuborg bottle leaning on the box and a draught
+# glass, each outline hugging its object with no steps. The wordmark is traced from logos/tuborg-source.svg (the
+# vector on tuborg.dk). Crown and wordmark belong to Carlsberg: ask before anything is printed.
+
+def tuborg_logo(bounds, key="white"):
+    lg = traced_logo("tuborg")
+    placed = place_logo(lg, bounds, [("white", key)])
+    return [(k, shapely.set_precision(g.buffer(0), 0.05)) for k, g in placed]
+
+
+def tuborg_crown(bounds):
+    """The royal crown from the Grøn Tuborg can: the silver crown with its pearls and stones left white and the
+    velvet in lime. The silver grows 0.6 mm outward and the white stones shrink 0.55 mm, so the thin silver rings
+    round the pearls stay above theme_builder's MIN_FEATURE and print."""
+    if NO_LOGOS:
+        return []
+    lg = traced_logo("tuborg_crown")
+    placed = dict(place_logo(lg, bounds, [("silver", "silver"), ("white", "white"), ("velvet", "lime")]))
+    crown = U(*placed.values()).buffer(0.6).buffer(-0.6)
+    holes = crown.difference(placed["silver"]).difference(placed["lime"])
+    holes = U(*[g for g in getattr(holes, "geoms", [holes]) if g.area > 1.0]).buffer(-0.55)
+    crown = crown.buffer(0.6)
+    return [("silver", crown), ("white", holes), ("lime", placed["lime"].buffer(-0.3).buffer(0.3))]
+
+
+def tuborg_arched(cx, cz, radius, height, key="ink"):
+    """Tuborg's own wordmark bent over an arc like on the Grøn Tuborg label: each letter turned to the arc."""
+    if NO_LOGOS:
+        return [], height * 4
+    lg = traced_logo("tuborg")["white"]
+    letters = sorted([affinity.scale(g, 1, -1, origin=(0, 0)) for g in getattr(lg, "geoms", [lg])], key=lambda g: g.bounds[0])
+    x0, z0, x1, z1 = U(*letters).bounds
+    k = height / (z1 - z0)
+    width = (x1 - x0) * k
+    out = []
+    for g in letters:
+        g = affinity.scale(g, k, k, origin=(0, 0))
+        gx = (g.bounds[0] + g.bounds[2]) / 2 - (x0 + x1) / 2 * k
+        g = affinity.translate(g, -(g.bounds[0] + g.bounds[2]) / 2, -z0 * k)
+        ang = gx / radius
+        g = affinity.rotate(g, -math.degrees(ang), origin=(0, 0))
+        out.append(affinity.translate(g, cx + radius * math.sin(ang), cz - radius + radius * math.cos(ang)))
+    return [(key, U(*out))], width
+
+
+@theme
+def tuborg():
+    # Colours sampled from the Grøn Tuborg can on tuborg.dk: can green, the label's darker band, lime lettering,
+    # the dark green of »GRØN«, the grey crown. The bottle is the brown Grøn Tuborg bottle from tuborg.dk's photos.
+    pal = {"base": "#2e9a48", "band": "#1a8a3c", "deep": "#1a3a30", "lime": "#80e040", "white": "#ffffff", "silver": "#8f8f93",
+           "cream": "#f4ead2", "beer": "#e7a21f", "sky": "#3aa852", "ink": "#1a3a30", "shine": "#5cbf6a"}
+
+    def wing(side_seed):
+        # Each object stands right against the box and the outline only hugs it, so the side is the object itself.
+        strip = box(X0, 46, X0 + 4, 252)
+        if side_seed % 2 == 0:
+            # Right: a 50 cl Grøn Tuborg can as it looks on tuborg.dk: green can, silver top and foot, the white label
+            # with TUBORG in lime on its green band and »GRØN« under it.
+            cx = X0 + 38
+            body = box(cx - 36, 58, cx + 36, 238).buffer(4).buffer(-4)
+            top = Polygon([(cx - 36, 236), (cx + 36, 236), (cx + 31, 250), (cx - 31, 250)]).buffer(1.5).buffer(-1.5)
+            foot = Polygon([(cx - 33, 50), (cx + 33, 50), (cx + 36, 60), (cx - 36, 60)]).buffer(1.5).buffer(-1.5)
+            can = U(body, top, foot)
+            label = ell(cx, 150, 33, 46)
+            band = label.buffer(-2.5).difference(ell(cx, 150, 23, 29)).intersection(box(cx - 40, 160, cx + 40, 260))
+            outline = U(can.buffer(3), strip).buffer(10).buffer(-10).intersection(box(X0, 0, X0 + 80, 300))
+            L = [("base", outline), ("base", can), ("silver", top), ("silver", foot), ("white", label), ("band", band)]
+            arch, _ = tuborg_arched(cx, 179.8, 26, 8, "lime")
+            L += arch
+            L += [("deep", box(cx - 33, 158.6, cx + 33, 160.2).intersection(label)), ("deep", box(cx - 33, 139.8, cx + 33, 141.4).intersection(label))]
+            L += [("deep", text("GRØN", "poppins", cx, 150, 11, 46))]
+            L += [("band", label.buffer(-2.5).difference(ell(cx, 150, 23, 29)).intersection(box(cx - 40, 0, cx + 40, 138)))]
+        else:
+            # Left: a draught glass, golden beer under a cream head.
+            gx = X0 + 30
+            glass = Polygon([(gx - 21, 34), (gx + 21, 34), (gx + 27, 232), (gx - 27, 232)]).buffer(3).buffer(-3)
+            head = U(box(gx - 28, 226, gx + 28, 244), *[Point(gx + x, 245).buffer(8.5, 32) for x in np.linspace(-20, 20, 4)]).buffer(2).buffer(-2)
+            outline = U(U(glass, head).buffer(3), strip).buffer(10).buffer(-10).intersection(box(X0, 0, X0 + 80, 300))
+            L = [("base", outline), ("beer", glass), ("cream", head)]
+        return outline, L
+
+    def topper():
+        # The top half of the Grøn Tuborg label rising from behind the box: white rim, the darker green band with
+        # TUBORG arched in lime, the white field with »Brygget siden 1880«, the striped band with »GRØN«, and the
+        # label's round head carrying the royal crown.
+        cz = -6
+        rim = ell(0, cz, 111, 100)
+        band_o, band_i = ell(0, cz, 105, 94), ell(0, cz, 86, 68)
+        head = Point(0, 108).buffer(41, 96)
+        label = U(rim, head).buffer(6).buffer(-6)
+        outline = label.intersection(box(-HW, 0, HW, 150))
+        stripe = box(-HW, 8, HW, 36)
+        L = [("white", outline)]
+        L += [("band", band_o.difference(band_i).difference(box(-HW, -50, HW, 36)))]
+        arch, _ = tuborg_arched(0, 67, 92, 18.5, "lime")
+        L += arch
+        L += [("deep", text("BRYGGET SIDEN", "poppins", 0, 50.5, 6.5, 64)), ("deep", text("1880", "poppins", 0, 41.5, 7, 40))]
+        for zz in (9.2, 34.8):   # the two rules round the GRØN band, ending in points like on the can
+            rule = Polygon([(-100, zz - 1.2), (-90, zz - 1.2), (-86, zz), (86, zz), (90, zz - 1.2), (100, zz - 1.2), (90, zz + 1.2), (-90, zz + 1.2)])
+            L += [("deep", U(box(-92, zz - 1.1, 92, zz + 1.1), rule).intersection(rim.buffer(-5)))]
+        L += [("deep", text("GRØN", "poppins", 0, 22, 17, 120))]
+        L += tuborg_crown((-38, 87, 38, 141))
+        return outline, L
+
+    def screen(w, h):
+        L = [("band", box(0, 0, w, h))]   # a shade darker than the green casing, so the screen stands out
+        # Light from above and a row of Grøn Tuborg cans at the foot, the label colours only.
+        rays = U(*[Polygon([(w / 2, h + 40), (w / 2 + 1200 * math.cos(math.radians(a - 3)), h + 40 + 1200 * math.sin(math.radians(a - 3))),
+                            (w / 2 + 1200 * math.cos(math.radians(a + 3)), h + 40 + 1200 * math.sin(math.radians(a + 3)))]) for a in range(200, 345, 14)])
+        L += [("sky", rays.intersection(box(0, 0, w, h)))]
+        for i, x in enumerate(np.linspace(60, w - 60, 7)):
+            if i in (2, 3, 4):
+                continue
+            c = box(x - 24, 66, x + 24, 190).buffer(3).buffer(-3)
+            L += [("deep", c.buffer(3)), ("band", c), ("silver", box(x - 22, 182, x + 22, 192)), ("white", ell(x, 126, 17, 32))]
+        L += [("deep", box(0, 0, w, 64)), ("lime", box(0, 60, w, 66))]
+        L += tuborg_logo((90, 760, w - 90, 860))
+        L += [("lime", text("HELE DANMARKS PILSNER", "archivo-black", w / 2, 700, 22, w * 0.7))]
+        return L
+
+    return dict(name="Tuborg", place="Danmarks barer", font="archivo-black", pal=pal, unit="gen2",
+                filament={"base": "ASA green", "band": "ASA dark green", "deep": "ASA forest green", "lime": "ASA lime green", "white": "ASA white",
+                          "silver": "ASA silver", "cream": "ASA cream", "beer": "ASA yellow", "sky": "ASA light green",
+                          "ink": "ASA forest green", "shine": "ASA light green"},
+                casing="#2e9a48", ring={"idle": ["#ffffff", "#80e040"], "glow": "#5fd36a"},
+                screen=dict(bg="base", ink="white", accent="lime", cta="Sig «Skål!»",
+                            ticker="Grøn Tuborg  •  Hele Danmarks pilsner  •  Drik med respekt  •  Kun for 18+  •"),
+                frame=dict(bg="base", ink="lime", caption="Skål for i aften"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: tuborg_logo((-60, 0, 60, 30)))
+
+
+# --------------------------------------------------------------- brewery --
+# Carlsberg, in the brand's current packaging look (the Taxi Studio identity on today's Danish Pilsner, 0.0 and Nordic):
+# the white wordmark on Carlsberg green, the royal warrant crown above it and the hop leaf as the one icon. The brand
+# pays for a box in a bar and has its logo on every photo. The topper is a green panel as wide as the box with the
+# wordmark and the crown on top, the left wing the green Danish Pilsner bottle, the right wing the hop leaf, large.
+# Drawn for the gen 2 unit. The logo is traced from logos/carlsberg-source.png (a vector copy of the wordmark):
+# ask Carlsberg for the official artwork and permission before printing.
+
+def carlsberg_logo(bounds, key="white"):
+    lg = traced_logo("carlsberg")
+    placed = place_logo(lg, bounds, [("green", key)])
+    return [(k, shapely.set_precision(g.buffer(0), 0.05).buffer(0.2).buffer(-0.2)) for k, g in placed]
+
+
+def carlsberg_hop(bounds, key="white"):
+    """The hop leaf on its own, as the brand uses it, traced from a large render of the leaf over the g."""
+    return place_logo(traced_logo("carlsberg_hop"), bounds, [("green", key)])
+
+
+def royal_crown(cx, z0, w):
+    """The royal warrant crown from the cans, drawn as the brand draws it: a band, arches that bow out and meet under the
+    orb, and a cross. Returns (outline, lines): the solid outline to build the part around and the white lines, so the
+    open spaces between the arches stay in the panel colour and nothing thin stands free."""
+    if NO_LOGOS:
+        return Polygon(), Polygon()
+    t = max(3.2, w * 0.06)                                      # line weight, printable
+    band = box(cx - w * 0.42, z0, cx + w * 0.42, z0 + w * 0.17).buffer(w * 0.02).buffer(-w * 0.02)
+    top = (cx, z0 + w * 0.66)
+    arches = []
+    for x0, bow in ((-0.4, -0.52), (-0.14, -0.2), (0.14, 0.2), (0.4, 0.52)):
+        pts = catmull([(cx + x0 * w, z0 + w * 0.17), (cx + bow * w, z0 + w * 0.42), (cx + bow * w * 0.45, z0 + w * 0.6), top], 10)
+        arches.append(LineString(pts).buffer(t / 2, cap_style="round"))
+    pearls = U(*[Point(cx + x * w, z0 + w * 0.2).buffer(t * 0.75, 24) for x in (-0.4, -0.14, 0.14, 0.4)])
+    orb = Point(cx, z0 + w * 0.72).buffer(w * 0.09, 48)
+    cross = U(box(cx - t / 2, z0 + w * 0.76, cx + t / 2, z0 + w * 1.0), box(cx - w * 0.1, z0 + w * 0.86, cx + w * 0.1, z0 + w * 0.86 + t))
+    lines = U(band, *arches, pearls, orb, cross)
+    outline = U(lines, lines.convex_hull.difference(box(cx - w, z0 + w * 0.74, cx + w, z0 + w * 2))).buffer(1).buffer(-1)
+    return outline, lines
+
+
+def bottle(cx, z0, w, h):
+    """A long-neck Carlsberg bottle, `w` wide and `h` tall, standing at z0. Returns (glass, label, cap)."""
+    n = w * 0.42
+    prof = [(w / 2, 0), (w / 2, h * 0.58), (w * 0.44, h * 0.66), (n / 2 + 1, h * 0.76), (n / 2, h * 0.8), (n / 2, h * 0.94)]
+    glass = Polygon([(cx + x, z0 + z) for x, z in prof] + [(cx - x, z0 + z) for x, z in reversed(prof)]).buffer(2).buffer(-2)
+    cap = box(cx - n / 2 - 1, z0 + h * 0.93, cx + n / 2 + 1, z0 + h).buffer(1).buffer(-0.5)
+    label = box(cx - w / 2, z0 + h * 0.12, cx + w / 2, z0 + h * 0.54)
+    return glass, label.intersection(glass), cap
+
+
+@theme
+def carlsberg():
+    # Carlsberg green from today's labels, a deeper green, the bottle's glass green and white. Nothing else.
+    pal = {"base": "#00703c", "deep": "#004d29", "glass": "#2c9a46", "white": "#ffffff"}
+
+    def wing(side_seed):
+        if side_seed % 2 == 0:
+            # Right: the hop leaf, large and white, at the top of a plain green panel.
+            leaf_box = (X0 + 4, 196, X0 + 60, 262)
+            leaf = carlsberg_hop(leaf_box)
+            leaf_all = U(*[g for _, g in leaf])
+            outline = U(wing_strip(14, 24, 290), box(X0, 26, X0 + 30, 288), leaf_all.buffer(6)).buffer(8).buffer(-8)
+            outline = outline.intersection(box(X0, 22, X0 + 66, 294))
+            L = [("base", outline)] + leaf
+        else:
+            # Left: the green Danish Pilsner bottle, its green label with the white wordmark running up it.
+            cx = X0 + 29
+            glass, label, cap = bottle(cx, 34, 48, 248)
+            outline = U(wing_strip(12, 24, 270), box(X0, 26, X0 + 30, 250), glass.buffer(3), cap.buffer(3)).buffer(5).buffer(-5)
+            outline = outline.intersection(box(X0, 22, X0 + 64, 294))
+            L = [("base", outline), ("glass", glass), ("base", label), ("base", cap)]
+            word = affinity.rotate(U(*[g for _, g in carlsberg_logo((0, 0, 100, 40))]), -90, origin=(0, 0))
+            L += [("white", flip_text(fit(word, label.buffer(-4).bounds)))]
+        return outline, L
+
+    def topper():
+        # One green panel as wide as the box with the white wordmark, and the crown standing on it.
+        ph = 92
+        panel = U(box(-HW, 0, HW, ph - 24), box(-HW + 24, 0, HW - 24, ph), *[Point(sx * (HW - 24), ph - 24).buffer(24, 64) for sx in (-1, 1)])
+        cr, lines = royal_crown(0, ph - 2, 56)
+        outline = U(panel, cr.buffer(4)).buffer(6).buffer(-6)
+        L = [("base", outline)]
+        L += carlsberg_logo((-92, 12, 92, ph - 14))
+        L += [("white", lines)]
+        return outline, L
+
+    def screen(w, h):
+        # Flat Carlsberg green with the crown, the wordmark (pasted from the artwork) and the brand line.
+        L = [("base", box(0, 0, w, h))]
+        _, lines = royal_crown(w / 2, 760, 110)
+        L += [("white", lines)]
+        L += [("white", text("PROBABLY THE BEST BEER IN THE WORLD", "outfit", w / 2, 420, 15, w * 0.78))]
+        return L
+
+    return dict(name="Carlsberg", place="Brand-boks i baren", font="outfit", pal=pal, unit="gen2",
+                filament={"base": "ASA green", "deep": "ASA dark green", "glass": "ASA light green", "white": "ASA white"},
+                casing="#00703c", ring={"idle": ["#ffffff", "#2c9a46"], "glow": "#ffffff"},
+                screen=dict(bg="base", ink="white", accent="white", cta="Sig «Skål!»",
+                            ticker="Carlsberg  •  Probably the best beer in the world  •  Skål fra Carlsberg og baren  •"),
+                frame=dict(bg="base", ink="white", caption="Probably the best night in town"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: carlsberg_logo((-60, 0, 60, 50)),
+                logo_png=dict(file="carlsberg-white.png", screen=(300, 650, 440), frame=(40, 170, 110)))
+# --------------------------------------------------------------- red bull --
+# Red Bull: the energy drink brand sponsors a box at a venue (a bar, a club, a student bar, a skate hall) and puts
+# its logo on every photo. »Red Bull giver viiinger« (the Danish line, spelt as on redbull.com/dk-da) made literal and kept calm: the box gets a pair of plain white
+# wings, one folded down each side, and the topper is the sun with the two charging bulls over a silver board with
+# the wordmark. Drawn for the gen 2 unit. The logo is traced from logos/red_bull-source.png (the vector logo on
+# Wikipedia): Red Bull's permission and artwork are needed before anything is printed.
+
+def red_bull_logo(bounds, parts=("word", "emblem")):
+    """The traced logo, split by rows of the lockup: the wordmark, the sun with the bulls, and »Energy drink« (left out
+    by default). The ® is dropped."""
+    lg = traced_logo("red_bull")
+    rows = {"word": (0, 600), "emblem": (600, 1160), "energy": (1160, 1400)}
+    keep = U(*[box(0, rows[p][0], 2290, rows[p][1]) for p in parts])
+    lg = {k: g.intersection(keep) for k, g in lg.items()}
+    return place_logo(lg, bounds, [("yellow", "yellow"), ("red", "red")])
+
+
+def folded_wing(x0, z_top, tips, w=26):
+    """A white wing folded down the side of the box, right side: broad feathers from the shoulder at (x0, z_top) to
+    `tips`, overlapping so the outline only gets shallow notches, under a round covert. Returns (wing, grooves)."""
+    root = (x0 + 14, z_top - 16)
+    feathers = [U(Point(*root).buffer(w * 0.7, 64), Point(*tip).buffer(w / 2, 64)).convex_hull for tip in tips]
+    covert = ell(x0 + 30, z_top - 34, 30, 34)
+    wing = U(*feathers, covert).buffer(3).buffer(-3)
+    grooves = []
+    for a, b in zip(tips, tips[1:]):
+        m = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+        grooves.append(LineString([root, m]).interpolate(0.45, normalized=True))
+        grooves[-1] = line([grooves[-1].coords[0], (root[0] + (m[0] - root[0]) * 0.9, root[1] + (m[1] - root[1]) * 0.9)], 2.6)
+    return wing, grooves
+
+
+def checks(region, cell, cols=("blue2", "silver")):
+    """Red Bull's can pattern: a checkerboard of blue and silver cells, cut to `region`."""
+    x0, z0, x1, z1 = region.bounds
+    cells = {c: [] for c in cols}
+    for i, x in enumerate(np.arange(x0, x1, cell)):
+        for j, z in enumerate(np.arange(z0, z1, cell * 0.62)):
+            cells[cols[(i + j) % 2]].append(box(x, z, x + cell, z + cell * 0.62))
+    return [(c, U(*g).intersection(region)) for c, g in cells.items()]
+
+
+@theme
+def red_bull():
+    # Red Bull's blue and silver from the can, and the logo's red and yellow.
+    pal = {"base": "#0e1d48", "blue": "#14275e", "blue2": "#22407f", "silver": "#c9ced6", "red": "#d2003c",
+           "yellow": "#ffd300", "white": "#ffffff", "grey": "#9ea8b8", "ink": "#070c1f"}
+
+    def wing(side_seed):
+        # Both sides: one plain white wing folded down along the box, the same on each side, on a navy strip.
+        wg, grooves = folded_wing(X0 + 12, 282, [(X0 + 22, 44), (X0 + 44, 92), (X0 + 62, 150), (X0 + 72, 210)])
+        outline = U(wing_strip(14, 24, 288), wg.buffer(3)).buffer(5).buffer(-5).intersection(box(X0, 22, X0 + 88, 294))
+        L = [("base", outline), ("red", box(X0 + 4, 32, X0 + 8, 278))]
+        L += [("ink", wg.buffer(1.4)), ("white", wg), ("grey", U(*grooves).intersection(wg.buffer(-4)))]
+        return outline, L
+
+    def topper():
+        # The sun with the charging bulls over a silver board with the wordmark. Nothing else.
+        p = 34
+        sun = Point(0, p + 60).buffer(54, 128)
+        emblem = red_bull_logo((-100, p + 20, 100, p + 106), parts=("emblem",))
+        em_all = U(*[g for _, g in emblem])
+        board = box(-HW, 0, HW, p + 2)
+        outline = U(board, sun.buffer(4), em_all.buffer(4), box(-96, p, 96, p + 30)).buffer(8).buffer(-8)
+        outline = outline.intersection(box(-HW - 18, 0, HW + 18, 150))
+        L = [("base", outline), ("yellow", sun)] + [(k, g) for k, g in emblem]
+        L += [("silver", box(-HW + 4, 4, HW - 4, p - 2))]
+        L += red_bull_logo((-60, 8, 60, p - 6), parts=("word",))
+        return outline, L
+
+    def screen(w, h):
+        L = [("base", box(0, 0, w, h))]
+        # The can's checks up top, a big sun with the bulls, the wordmark and the line under it.
+        L += checks(box(0, 760, w, h), 50, ("blue", "blue2"))
+        L += [("base", box(0, 742, w, 762))]
+        L += [("yellow", Point(w / 2, 600).buffer(120, 128))]
+        L += red_bull_logo((40, 540, w - 40, 680), parts=("emblem",))
+        L += [("silver", box(60, 404, w - 60, 486).buffer(10).buffer(-10))]
+        L += red_bull_logo((110, 416, w - 110, 474), parts=("word",))
+        L += [("white", text("GIVER VIIINGER", "outfit", w / 2, 372, 22, w * 0.6))]
+        return L
+
+    return dict(name="Red Bull", place="Bars, klubber og studenterbarer", font="outfit", pal=pal, unit="gen2",
+                filament={"base": "ASA navy", "blue": "ASA dark blue", "blue2": "ASA blue", "silver": "ASA silver",
+                          "red": "ASA red", "yellow": "ASA yellow", "white": "ASA white", "grey": "ASA light grey", "ink": "ASA black"},
+                casing="#0e1d48", ring={"idle": ["#ffffff", "#ffd300"], "glow": "#d2003c"},
+                screen=dict(bg="base", ink="white", accent="red", cta="Hop – og få viiinger!",
+                            ticker="Red Bull giver viiinger  •  Hop når lyset blinker, så fanger vi dig i luften  •  Nattens højeste hop vinder  •"),
+                frame=dict(bg="silver", ink="base", caption="Red Bull giver viiinger"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: red_bull_logo((-60, 0, 60, 120)))
+
+
+# ------------------------------------------------------------------- MMA --
+# Airtox Dominance Fighting Championship (ADFC), Denmark's largest MMA league, title sponsor Airtox (safety shoes).
+# Its current look, from the league's logo and the cage at K.B. Hallen: white on black with the orange bar. The topper is
+# one black plate with the cage's octagon corners and the logo, wide enough to cover the two side parts too; the sides
+# are the cage's corner posts, black pads with an orange cap and the name running up them. The name sits in the outer
+# half so nothing white comes within 30 mm of the light ring. The topper is wider than the plate, so it prints in two
+# halves (topper_venstre/topper_hoejre) that join in the middle. Logo traced from logos/airtox_dominance-source.png
+# (the league's own artwork from airtox.com): ask ADFC and Airtox for the official files and permission before printing.
+
+AD_POST_W = 58.0
+
+
+def airtox_dominance_logo(bounds):
+    return place_logo(traced_logo("airtox_dominance"), bounds, [("orange", "orange"), ("white", "white")])
+
+
+@theme
+def airtox_dominance():
+    # Black, the logo's orange bar and white. Nothing else.
+    pal = {"base": "#141414", "orange": "#ee3e15", "white": "#ffffff"}
+
+    def wing(side_seed):
+        # A cage corner post: black pad, orange cap, AIRTOX DOMINANCE up the outer half.
+        z0, z1, cap = 40, 305, 30
+        outline = U(box(X0, z0, X0 + AD_POST_W - 4, z1), box(X0, z0 + 4, X0 + AD_POST_W, z1 - 4),
+                    *[Point(X0 + AD_POST_W - 4, z).buffer(4, 24) for z in (z0 + 4, z1 - 4)])
+        L = [("base", outline), ("orange", outline.intersection(box(X0, z1 - cap, X0 + 100, z1 + 1)))]
+        word = U(*[g for _, g in place_logo(traced_logo("airtox_dominance_word"), (0, 0, 200, 10), [("white", "white")])])
+        word = affinity.rotate(word, 90, origin=(0, 0))
+        word = fit(word, (X0 + 31, z0 + 12, X0 + AD_POST_W - 9, z1 - cap - 12))
+        L += [("white", word if side_seed % 2 == 0 else flip_text(word))]
+        return outline, L
+
+    def topper():
+        # Half an octagon over the box and both posts, 100 mm high, the logo 24 mm above the box.
+        hw, top_hw, h = X0 + AD_POST_W, 75, 100
+        ch = (hw - top_hw) * 0.6
+        outline = Polygon([(-hw, 0), (-hw, h - ch), (-top_hw, h), (top_hw, h), (hw, h - ch), (hw, 0)])
+        return outline, [("base", outline)] + airtox_dominance_logo((-98, 24, 98, 84))
+
+    def screen(w, h):
+        return [("base", box(0, 0, w, h))]
+
+    return dict(name="Airtox Dominance", place="MMA-ligaens boks", font="outfit", pal=pal, unit="gen2", split_topper=True,
+                filament={"base": "ASA black", "orange": "ASA orange", "white": "ASA white"},
+                casing="#141414", ring={"idle": ["#ffffff", "#ee3e15"], "glow": "#ffffff"},
+                screen=dict(bg="base", ink="white", accent="orange", cta="Stil dig op til face-off",
+                            ticker="Airtox Dominance FC  •  Fear nothing  •  Del dit billede  •  Airtox Dominance FC  •"),
+                frame=dict(bg="base", ink="white", caption="Fear nothing"), photo="print-club",
+                wing=wing, topper=topper, screen_art=screen, logo=lambda: airtox_dominance_logo((-60, 0, 60, 34)),
+                logo_png=dict(file="airtox_dominance-source.png", screen=(300, 700, 460), frame=(40, 160, 90)))
+
 # ------------------------------------------------------------------ build --
 TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js (x, up, -depth)
 
@@ -1823,8 +2249,9 @@ def logo_png_svg(src, size=480):
 
 def build(tid):
     t = THEMES[tid]
-    use_unit(t.get("unit"))
-    out = ROOT / "themes" / tid / "build"
+    # Rev G is retired: every theme is drawn on the gen 2 unit, the one that is printed (Esben 24. okt. 2026).
+    use_unit("gen2")
+    out = ROOT / "themes" / tid / ("build-eksempel" if NO_LOGOS else "build")
     web = out / "web"
     (out / "preview").mkdir(parents=True, exist_ok=True)
     web.mkdir(parents=True, exist_ok=True)
@@ -1833,15 +2260,25 @@ def build(tid):
     view = trimesh.Scene()
     report = []
 
-    def make(name, body, outline, layers, place):
+    def make(name, body, outline, layers, place, split=False):
         region = outline.buffer(-tb.EDGE_KEEP)
         colours = tb.resolve(layers, region)
         colours.pop("base", None)
         base, inlays = tb.inlay(body, colours)
+        prints = [(name, base, inlays)]
+        if split:
+            # Wider than the plate: print it as a left and a right half that join at x = 0.
+            def half(m, sx):
+                return m.slice_plane([0, 0, 0], [sx, 0, 0], cap=True)
+            prints = [(f"{name}_{nm}", half(base, sx), {k: h for k, m in inlays.items() if not (h := half(m, sx)).is_empty})
+                      for nm, sx in (("venstre", -1), ("hoejre", 1))]
+        for pname, pbase, pinlays in prints:
+            lo, hi = pbase.bounds
+            size = sorted([hi[0] - lo[0], hi[2] - lo[2]])
+            assert size[0] <= BED[0] + 0.5 and size[1] <= BED[1] + 0.5, f"{pname} is {size} mm, larger than the plate"
+            tb.export_part(pname, pbase, pinlays, pal, out)
         lo, hi = base.bounds
         size = sorted([hi[0] - lo[0], hi[2] - lo[2]])
-        assert size[0] <= BED[0] + 0.5 and size[1] <= BED[1] + 0.5, f"{name} is {size} mm, larger than the plate"
-        tb.export_part(name, base, inlays, pal, out)
         tb.preview_svg(name, region, colours, pal, out / "preview")
         for key, m in {"base": base, **inlays}.items():
             v = m.copy()
@@ -1871,7 +2308,7 @@ def build(tid):
             c = tb.cyl_z(14, 128, 136, x, 14)
             studs.append(c)
         body = tb.boolean("union", [body] + studs)
-    make("topper", body, outline, layers, np.eye(4))
+    make("topper", body, outline, layers, np.eye(4), split=t.get("split_topper", False))
 
     view.export(web / "parts.glb")
 
@@ -1886,7 +2323,7 @@ def build(tid):
     tick_text = text(sc["ticker"], "poppins", 12, 23, 14, None, anchor="start")
     sl += [("base", box(0, 0, 0, 0)), (sc["accent"], btn), (sc["ink"], cta), (sc["accent"], tick), (sc["bg"] if spal[sc["bg"]] != spal[sc["accent"]] else "base", tick_text.intersection(tick))]
     png(layers_svg(sl, spal, sw, sh), web / "screen.png", 600, 960)
-    art = t.get("logo_png")
+    art = None if NO_LOGOS else t.get("logo_png")
     if art:
         paste_logo(web / "screen.png", art["file"], art["screen"][0], sh - art["screen"][1], width=art["screen"][2])
 
@@ -1894,17 +2331,18 @@ def build(tid):
     fr = t["frame"]
     fw, fh = 720.0, 860.0
     frame = box(0, 0, fw, fh).difference(box(50, 190, 670, 810))
-    logo = t["logo"]()
+    logo = [(k, g) for k, g in t["logo"]() if not g.is_empty]
     lg = U(*[g for _, g in logo])
     fl = [(fr["bg"], frame)]
     placed = []
-    lx0, lz0, lx1, lz1 = lg.bounds
-    k = min(150 / (lx1 - lx0), 100 / (lz1 - lz0))
-    for key, g in logo:
-        g = affinity.scale(g, k, k, origin=(0, 0))
-        placed.append((key, g))
-    pb = U(*[g for _, g in placed]).bounds
-    placed = [(key, affinity.translate(g, 60 - pb[0], 95 - (pb[1] + pb[3]) / 2)) for key, g in placed]
+    if logo:
+        lx0, lz0, lx1, lz1 = lg.bounds
+        k = min(150 / (lx1 - lx0), 100 / (lz1 - lz0))
+        for key, g in logo:
+            g = affinity.scale(g, k, k, origin=(0, 0))
+            placed.append((key, g))
+        pb = U(*[g for _, g in placed]).bounds
+        placed = [(key, affinity.translate(g, 60 - pb[0], 95 - (pb[1] + pb[3]) / 2)) for key, g in placed]
     cap = text(fr["caption"].upper(), "poppins", 685, 95, 18, 440, anchor="end")
     fl += placed + [(fr["ink"], cap)]
     if art:
@@ -1914,7 +2352,7 @@ def build(tid):
         paste_logo(web / "print.png", art["file"], art["frame"][0], fh - art["frame"][1], height=art["frame"][2], anchor="left")
 
     # Logo on its own, for the site
-    lb = lg.bounds
+    lb = lg.bounds if logo else (0, 0, 1, 1)
     pad = 4
     logo_svg = layers_svg([(key, affinity.translate(g, -lb[0] + pad, -lb[1] + pad)) for key, g in logo], spal, lb[2] - lb[0] + pad * 2, lb[3] - lb[1] + pad * 2, scale=4)
     if art:
@@ -1922,8 +2360,16 @@ def build(tid):
     (web / "logo.svg").write_text(logo_svg)
 
     meta = dict(id=tid, name=t["name"], place=t["place"], palette=t["pal"], casing=t["casing"], ring=t["ring"],
-                frame=fr, photo=t["photo"], parts=[r[0] for r in report], **({"unit": t["unit"]} if t.get("unit") else {}))
+                frame=fr, photo=t["photo"], parts=[r[0] for r in report], unit="gen2")
+    if NO_LOGOS:
+        # The example on the website: gen 2, its files in /models/eksempel/<id>/, and no brand slogan under the photo.
+        meta.update(dir=f"eksempel/{tid}", frame=dict(fr, caption=""))
     (web / "theme.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    if NO_LOGOS:
+        print(f"{t['name']} (uden logo):")
+        for name, cols, size in report:
+            print(f"  {name:11s} {size[1]} × {size[0]} mm   base + {', '.join(cols)}")
+        return
     theme_json = dict(name=t["name"], event=f"{t['name']} – concept design (venue artwork, internal use)", palette=pal,
                       casing={"style": "venue", "colour": t["casing"], "built_by": "hardware/tools/venue_themes.py"},
                       light={"idle": {"animation": "slow-wave", "colors": t["ring"]["idle"], "period_s": 8}, "countdown": {"color": "#ffffff"},
@@ -1936,5 +2382,9 @@ def build(tid):
 
 
 if __name__ == "__main__":
-    for tid in sys.argv[1:] or list(THEMES):
+    args = sys.argv[1:]
+    if "--uden-logo" in args:
+        args.remove("--uden-logo")
+        NO_LOGOS = True
+    for tid in args or list(THEMES):
         build(tid)

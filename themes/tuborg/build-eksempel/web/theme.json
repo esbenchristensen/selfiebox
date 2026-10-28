@@ -1,0 +1,39 @@
+{
+  "id": "tuborg",
+  "name": "Tuborg",
+  "place": "Danmarks barer",
+  "palette": {
+    "base": "#2e9a48",
+    "band": "#1a8a3c",
+    "deep": "#1a3a30",
+    "lime": "#80e040",
+    "white": "#ffffff",
+    "silver": "#8f8f93",
+    "cream": "#f4ead2",
+    "beer": "#e7a21f",
+    "sky": "#3aa852",
+    "ink": "#1a3a30",
+    "shine": "#5cbf6a"
+  },
+  "casing": "#2e9a48",
+  "ring": {
+    "idle": [
+      "#ffffff",
+      "#80e040"
+    ],
+    "glow": "#5fd36a"
+  },
+  "frame": {
+    "bg": "base",
+    "ink": "lime",
+    "caption": ""
+  },
+  "photo": "print-club",
+  "parts": [
+    "wing_right",
+    "wing_left",
+    "topper"
+  ],
+  "unit": "gen2",
+  "dir": "eksempel/tuborg"
+}

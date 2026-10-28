@@ -376,3 +376,85 @@ export function radialTexture() {
   tex.colorSpace = THREE.NoColorSpace;
   return tex;
 }
+
+// The countdown on the screen while a photo is being taken: the theme dimmed, a big number in a ring.
+export function countdownTexture(n: number) {
+  return canvasTexture(
+    400,
+    638,
+    (ctx, w, h) => {
+      ctx.fillStyle = "rgba(8, 10, 8, 0.55)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.arc(w / 2, h * 0.46, 128, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = font("display", 190, 700);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(n), w / 2, h * 0.46 + 8);
+      ctx.font = bodyFont(30, 600);
+      ctx.fillText("Smil!", w / 2, h * 0.78);
+    },
+    [fontReady("display")],
+  );
+}
+
+// The photo just taken, shown on the screen after the flash: `src` cropped to fill the screen.
+export function shotTexture(src: string) {
+  return canvasTexture(
+    400,
+    638,
+    (ctx, w, h) => {
+      ctx.fillStyle = "#111311";
+      ctx.fillRect(0, 0, w, h);
+      const img = imageNow(src);
+      if (!img) return;
+      const s = Math.max(w / img.width, h / img.height);
+      ctx.drawImage(img, (w - img.width * s) / 2, (h - img.height * s) / 2, img.width * s, img.height * s);
+    },
+    [imageReady(src)],
+  );
+}
+
+// Oiled oak: light honey base, long fine grain lines and a few darker rays, along the texture's x.
+export function oakTexture() {
+  const tex = canvasTexture(1024, 512, (ctx, w, h) => {
+    ctx.fillStyle = "#c79a62";
+    ctx.fillRect(0, 0, w, h);
+    const r = rng(11);
+    for (let i = 0; i < 260; i++) {
+      const y0 = r() * h, amp = 2 + r() * 10, len = 0.004 + r() * 0.01, ph = r() * 6;
+      const dark = r() < 0.35;
+      ctx.strokeStyle = dark ? `rgba(110,72,36,${0.12 + r() * 0.2})` : `rgba(235,200,150,${0.08 + r() * 0.14})`;
+      ctx.lineWidth = 0.6 + r() * (dark ? 2.2 : 1.4);
+      ctx.beginPath();
+      for (let x = 0; x <= w; x += 8) {
+        const y = y0 + Math.sin(x * len + ph) * amp;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    for (let i = 0; i < 40; i++) {
+      ctx.fillStyle = `rgba(150,105,60,${0.1 + r() * 0.15})`;
+      ctx.fillRect(r() * w, r() * h, 6 + r() * 30, 1 + r() * 2);
+    }
+  });
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+// Dannebrog in its official proportions: 3 + 1 + 3 high, 3 + 1 + 4.5 long (white cross 1/7 of the height).
+export function dannebrogTexture() {
+  return canvasTexture(340, 280, (ctx, w, h) => {
+    const u = h / 7;
+    ctx.fillStyle = "#c8102e";
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(3 * u, 0, u, h);
+    ctx.fillRect(0, 3 * u, w, u);
+  });
+}

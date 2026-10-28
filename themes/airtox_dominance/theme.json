@@ -1,0 +1,47 @@
+{
+  "name": "Airtox Dominance",
+  "event": "Airtox Dominance – concept design (venue artwork, internal use)",
+  "palette": {
+    "base": {
+      "hex": "#141414",
+      "filament": "ASA black"
+    },
+    "orange": {
+      "hex": "#ee3e15",
+      "filament": "ASA orange"
+    },
+    "white": {
+      "hex": "#ffffff",
+      "filament": "ASA white"
+    }
+  },
+  "casing": {
+    "style": "venue",
+    "colour": "#141414",
+    "built_by": "hardware/tools/venue_themes.py"
+  },
+  "light": {
+    "idle": {
+      "animation": "slow-wave",
+      "colors": [
+        "#ffffff",
+        "#ee3e15"
+      ],
+      "period_s": 8
+    },
+    "countdown": {
+      "color": "#ffffff"
+    },
+    "photo": {
+      "cob": 1.0,
+      "rgbw": "#fff1de"
+    },
+    "glow": "#ffffff"
+  },
+  "screen": {
+    "ticker": "Airtox Dominance FC  •  Fear nothing  •  Del dit billede  •  Airtox Dominance FC  •",
+    "cta": "Stil dig op til face-off",
+    "background": "base",
+    "accent": "orange"
+  }
+}

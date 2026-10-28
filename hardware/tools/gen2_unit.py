@@ -1,69 +1,88 @@
 #!/usr/bin/env python3
-"""The gen 2 main unit as a simple mesh for the website's 3D viewer: web/public/models/unit_gen2.glb.
+"""The gen 2 main unit for the website's 3D viewer and the theme sketches, taken straight from the CAD.
 
-Not a print file. The outlines follow gen2_concept.scad: every outline of the face is an offset of the light
-ring's squircle centre line (188.9 x 272.4, corner extent 26, exponent 3), the box edge is 7.8 mm outside the
-ring, and the unit is 222.5 x 306 x 85 mm. Node names match unit.glb, so HaloBox can use either.
+Reads the newest hardware/stl/gen2/halo-gen2-v*/halo-gen2-v*_3d.glb (the assembly the print files come from) and
+writes web/public/models/unit_gen2.glb with only what shows from outside: front, light ring, shell, glass, camera
+and the Selfi logo in the front. Node names match unit.glb (bezel, diffuser_ring, shell_closed, v_display,
+v_camera) so HaloBox can use either; the logo is logo_white / logo_green. There is no side light band and no
+joint spacer on gen 2.
+
+The stand bracket for the floor tripod (web/public/models/stand_gen2.glb) comes from its own release:
+hardware/tools/make_stativbeslag.py.
+
+front_layers() gives the same parts as flat front-view outlines (unit coordinates: x centred, z up from the
+bottom of the unit), so a theme sketch draws the real unit instead of a stand-in.
 
 Usage: python3 hardware/tools/gen2_unit.py
 """
-import math
+import re
+from functools import lru_cache
 from pathlib import Path
 
-import numpy as np
+import shapely
 import trimesh
-from shapely.geometry import Point, Polygon, box
-
-import theme_builder as tb
+from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parents[2]
-TO_VIEW = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)   # (x, depth, up) -> three.js
+# Assembly part -> site node. The assembly has x right, y up (centred) and the front face at z = 0, facing +z.
+NODES = {"front": "bezel", "lysring": "diffuser_ring", "skal": "shell_closed", "skaerm": "v_display", "kamera": "v_camera",
+         "logo_hvid": "logo_white", "logo_groen": "logo_green"}
+# Colours from the assembly's parts.json: black ASA front and shell, natural ASA ring, the logo inlays.
+COLOURS = {"skal": "#1d1d20", "skaerm": "#0a0a0c", "kamera": "#2b2f33", "front": "#1d1d20", "lysring": "#fbf8f1",
+           "logo_hvid": "#f5f5f4", "logo_groen": "#22d36b"}
+DRAW_ORDER = ["skal", "skaerm", "kamera", "front", "lysring", "logo_hvid", "logo_groen"]
 
-D, PT = 85.0, 3.2
-RING_Z0, RING_Z1, RING_FACE, BORDER = 16.8, 289.2, 18.0, 7.8
-GLASS = box(-83.45, 27.8, 83.45, 275.9)
-CAM_GAP = 38.0
+
+def latest_assembly():
+    found = sorted(ROOT.glob("hardware/stl/gen2/halo-gen2-v*/halo-gen2-v*_3d.glb"),
+                   key=lambda p: int(re.search(r"-v(\d+)_3d", p.name).group(1)))
+    return found[-1]
 
 
-def master(a=26.0, w=188.9, h=272.4, n=3, steps=48):
-    zc = (RING_Z0 + RING_Z1) / 2
-    hx, hz, pts = w / 2 - a, h / 2 - a, []
-    for sx, sz, rev in ((1, 1, False), (-1, 1, True), (-1, -1, False), (1, -1, True)):
-        ts = [i * math.pi / 2 / steps for i in range(steps + 1)]
-        for t in (reversed(ts) if rev else ts):
-            px, pz = max(math.cos(t), 0) ** (2 / n), max(math.sin(t), 0) ** (2 / n)
-            pts.append((sx * (hx + a * px), zc + sz * (hz + a * pz)))
-    return Polygon(pts).buffer(0)
+def _parts(names=NODES):
+    scene = trimesh.load(latest_assembly())
+    out = {}
+    for part in names:
+        T, geom = scene.graph[part]
+        m = scene.geometry[geom].copy()
+        m.apply_transform(T)
+        out[part] = m
+    T, geom = scene.graph["skal"]
+    shell = scene.geometry[geom].copy()
+    shell.apply_transform(T)
+    h = shell.bounds[1][1] - shell.bounds[0][1]
+    lift = trimesh.transformations.translation_matrix([0, -shell.bounds[0][1], 0])   # bottom of the unit at y = 0
+    for m in out.values():
+        m.apply_transform(lift)
+    return out, h, -shell.bounds[0][1]
+
+
+@lru_cache(maxsize=1)
+def front_layers():
+    """[(colour, outline)] back to front, as seen from the front, in unit coordinates (mm)."""
+    parts, _, _ = _parts()
+    layers = []
+    for part in DRAW_ORDER:
+        m = parts[part]
+        tri = m.vertices[m.faces[m.face_normals[:, 2] > 0.05]][:, :, :2]
+        polys = shapely.polygons(tri)
+        g = unary_union(polys[shapely.area(polys) > 1e-6]).buffer(0.05).buffer(-0.05)
+        layers.append((COLOURS[part], g))
+    return layers
 
 
 def main():
-    M = master()
-    outer = M.buffer(RING_FACE / 2 + BORDER, 64)
-    channel = M.buffer(RING_FACE / 2, 64).difference(M.buffer(-RING_FACE / 2, 64))
-    gap = box(-CAM_GAP / 2, RING_Z1 - 20, CAM_GAP / 2, RING_Z1 + 20)
-    face = outer.difference(channel).difference(GLASS.buffer(1.2, join_style="mitre"))
-    parts = {
-        # Front with a 1 mm edge break, then the shell with the side light band set into it.
-        "bezel": [tb.extrude_xz(face.intersection(outer.buffer(-1.0, 64)), 0, 1.0), tb.extrude_xz(face, 1.0, PT)],
-        # The shell's front stays open behind the glass and the ring, so the display shows through.
-        "shell_closed": [tb.extrude_xz(outer.difference(GLASS).difference(channel), PT, 6.5), tb.extrude_xz(outer, 6.5, 22), tb.extrude_xz(outer.buffer(-0.4, 64), 22, 32), tb.extrude_xz(outer, 32, D - 1),
-                         tb.extrude_xz(outer.buffer(-1.0, 64), D - 1, D)],
-        "shell_closed_band": [tb.extrude_xz(outer.difference(outer.buffer(-3, 64)), 22.2, 31.8)],
-        "diffuser_ring": [tb.extrude_xz(channel.difference(gap), -1.6, 2.0)],
-        "v_display": [tb.extrude_xz(GLASS, 3.7, 6.0)],
-        "v_camera": [tb.extrude_xz(Point(0, RING_Z1).buffer(12, 64).difference(Point(0, RING_Z1).buffer(5, 48)), -0.6, 2.5),
-                     tb.extrude_xz(Point(0, RING_Z1).buffer(5, 48), 0.6, 2.5)],
-        # Sits on the unit's top face (z = 0 here); HaloBox lifts it to the top of the unit.
-        "joint_spacer": [tb.cube(-80, 80, 3, 62, 0, 6)],
-    }
+    parts, h, _ = _parts()
     scene = trimesh.Scene()
-    for name, ms in parts.items():
-        m = trimesh.util.concatenate([x for x in ms if x is not None])
-        m.apply_transform(TO_VIEW)
-        scene.add_geometry(m, node_name=name, geom_name=name)
+    for part, node in NODES.items():
+        m = parts[part]
+        if len(m.faces) > 6000:
+            m = m.simplify_quadric_decimation(face_count=6000)
+        m.visual = trimesh.visual.ColorVisuals(m)
+        scene.add_geometry(m, node_name=node, geom_name=node)
     out = ROOT / "web/public/models/unit_gen2.glb"
     scene.export(out)
-    print(out, f"{out.stat().st_size // 1024} kB")
+    print(latest_assembly().name, f"-> {out} ({out.stat().st_size // 1024} kB, unit {h:.1f} mm high)")
 
 
 if __name__ == "__main__":

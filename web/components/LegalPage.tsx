@@ -23,7 +23,7 @@ export function LegalPage({
           { label: "Forside", href: "/" },
           { label: "Dokumentation", href: "/dokumentation" },
         ]}
-        cta={{ label: "Book en snak", href: "/#kontakt" }}
+        cta={{ label: "Book en snak", href: "/erhverv#kontakt" }}
       />
       <main className="legal-main">
         <article className="wrap legal">

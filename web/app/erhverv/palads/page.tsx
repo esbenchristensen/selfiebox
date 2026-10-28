@@ -201,7 +201,7 @@ export default function PaladsKatalog() {
             <div><b>1</b><h3>Tryk</h3><p>Lysringen kalder. Et tryk på skærmen starter.</p></div>
             <div><b>2</b><h3>Vælg</h3><p>Foto, anmeldelse på video eller dagens spørgsmål.</p></div>
             <div><b>3</b><h3>Sig »Popcorn!«</h3><p>Ringen tæller ned og giver studielys, også i den mørke foyer.</p></div>
-            <div><b>4</b><h3>Del</h3><p>En QR-kode sender det til telefonen med filmens ramme.</p></div>
+            <div><b>4</b><h3>Del</h3><p>Billedet kommer på SMS med filmens ramme.</p></div>
           </div>
           <Folio n={4} />
         </Page>
