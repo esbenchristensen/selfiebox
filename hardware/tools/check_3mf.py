@@ -99,10 +99,14 @@ def check(path):
     for k in ("print_extruder_variant", "print_extruder_id"):
         if proc.get(k) != cfg.get(k): errs.append(f"{k} differs from system preset")
     if cfg["printer_settings_id"] not in proc["compatible_printers"]: errs.append("process not compatible")
-    for fname in set(cfg["filament_settings_id"]):
+    for i, fname in enumerate(cfg["filament_settings_id"]):
         fil = resolved("filament", fname)
         if cfg["printer_settings_id"] not in fil["compatible_printers"]: errs.append(f"{fname} not compatible")
-        if fil["filament_id"] != cfg["filament_ids"][0] or fil["filament_extruder_variant"] != fev[:1]: errs.append("filament id/variant")
+        if fil["filament_id"] != cfg["filament_ids"][i] or fil["filament_extruder_variant"] != fev[i:i + 1]: errs.append("filament id/variant")
+        if fil["filament_type"] != [cfg["filament_type"][i]]: errs.append(f"{fname}: filament_type {cfg['filament_type'][i]}")
+        # v34: a PLA/PETG preset must never heat the chamber (heat creep: ASA's 65 C on PLA ruined the v31-v33 prints)
+        if fil["filament_type"][0] in ("PLA", "PETG") and int(fil.get("chamber_temperatures", ["0"])[0]) >= 40:
+            errs.append(f"{fname} heats the chamber")
     # model_settings
     ms = ET.fromstring(z.read("Metadata/model_settings.config"))
     for obj in ms.findall("object"):
