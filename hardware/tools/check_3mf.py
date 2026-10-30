@@ -116,6 +116,8 @@ def check(path):
             if k == "extruder":
                 if not 1 <= int(v) <= n: errs.append("object extruder out of range")
                 continue
+            if k in ("support_filament", "support_interface_filament") and not 0 <= int(v) <= n:
+                errs.append(f"{k} {v}: no such slot (0 = the object's own)")
             c = cls(k)
             if not ({"PrintObjectConfig", "PrintRegionConfig"} & set(c)): errs.append(f"object key {k} not object/region config ({c})")
             typ, ev = defs[k]
