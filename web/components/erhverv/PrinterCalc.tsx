@@ -20,6 +20,7 @@ export function PrinterCalc() {
   const margin = net - printer.paperPerPrint;
   const evenPrinter = Math.ceil(printer.fromPerMonth / margin);
   const evenBoth = Math.ceil((printer.fromPerMonth + pricing.fromPerMonth) / margin);
+  const credit = Math.min(prints * printer.creditPerPrint, pricing.fromPerMonth);
 
   return (
     <div className="calc pr-calc">
@@ -71,7 +72,7 @@ export function PrinterCalc() {
           <sup>kr./md.</sup>
         </b>
         <span className="fine">
-          Printeren er tjent hjem ved {n(evenPrinter)} print om måneden. Boks og printer tilsammen ved {n(evenBoth)} print, ca. {n(Math.ceil(evenBoth / nights))} pr. aften. Et regneeksempel ud fra jeres tal, ikke en garanti. Alle beløb er ekskl. moms.
+          Printeren er tjent hjem ved {n(evenPrinter)} print om måneden. Boks og printer tilsammen ved {n(evenBoth)} print, ca. {n(Math.ceil(evenBoth / nights))} pr. aften. Med Print-kredit giver de samme {n(prints)} print {n(credit)} kr. af boksens pris. Et regneeksempel ud fra jeres tal, ikke en garanti. Alle beløb er ekskl. moms.
         </span>
       </div>
     </div>

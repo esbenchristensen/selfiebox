@@ -1,13 +1,14 @@
 import { Ph } from "@/components/Placeholder";
 import { PrinterViewer } from "@/components/lej/PrinterViewer";
-import { printer } from "@/lib/erhverv/placeholder";
+import { pricing, printer } from "@/lib/erhverv/placeholder";
 import { PrinterCalc } from "./PrinterCalc";
 
 const n = (v: number) => Math.round(v).toLocaleString("da-DK");
 const net = printer.pricePerPrint / (1 + printer.vat);
+const freeAt = Math.ceil(pricing.fromPerMonth / printer.creditPerPrint);
 
-// The printer next to the box: the two ways to have it (rent it and keep the sales, or free with a box and Selfi
-// keeps the sales), what it earns with the owner's own numbers, and ideas that sell prints, each with its sum.
+// The printer next to the box: the two ways to have it (rent it and keep the sales, or Print-kredit: free with a box,
+// Selfi keeps the sales and the place gets a fixed amount per print off the box's bill), what it earns with the owner's own numbers, and ideas that sell prints, each with its sum.
 // Prices come from lib/erhverv/placeholder.ts.
 
 type Idea = { title: string; text: string; sum: string; prints: number };
@@ -81,11 +82,13 @@ export function PrinterOffer() {
               </p>
             </div>
             <div className="pr-offer">
-              <span className="label">Gratis med boksen</span>
+              <span className="label">Print-kredit</span>
               <p className="pr-price">
                 0<sup>kr./md.</sup>
               </p>
-              <p className="muted">Har I en boks, kan I få printeren med uden at betale for den. Vi sætter prisen, fylder papir på og tager salget fra printeren. Gæsterne får et print med hjem, og I har ingen udgift.</p>
+              <p className="muted">
+                Har I en boks, får I printeren med uden at betale for den. Vi sætter prisen, fylder papir på og tager salget, og I får {n(printer.creditPerPrint)} kr. for hvert solgt print trukket fra regningen for boksen. Ved {n(freeAt)} print om måneden er boksen gratis.
+              </p>
             </div>
           </div>
         </div>
@@ -93,7 +96,7 @@ export function PrinterOffer() {
           <div className="pr-calc-head">
             <h3>Regn på jeres eget sted.</h3>
             <p className="muted">
-              Et print sælger typisk for {n(printer.pricePerPrint)} kr. Sæt jeres aftener og et realistisk antal print ind, så kan I se, om printeren betaler både sig selv og boksen. Sælger I færre print end det, den koster, er gratis-printeren det bedste valg.
+              Et print sælger typisk for {n(printer.pricePerPrint)} kr. Sæt jeres aftener og et realistisk antal print ind, så kan I se, om printeren betaler både sig selv og boksen. Sælger I færre print end det, den koster, er Print-kredit det bedste valg.
             </p>
           </div>
           <PrinterCalc />
