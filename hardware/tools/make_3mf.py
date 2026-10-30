@@ -149,11 +149,19 @@ SETTINGS = {
     # 4 bottom layers under the visible face, its back is inside the box
     "front": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "elefant_foot_compensation": "0.15",
               "brim_type": "no_brim", **SOLID_FACE, **SEAM, **NO_SUPPORT},
-    # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes
+    # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes.
+    # v35 (Kasper 30 Oct: "den printer bare ved siden af når den prøver at lave de sidste kanter"): the flange on top of the
+    # walls (the last 1 mm, 3.7-4.7 on the plate) reaches 2.25 mm past the wall on both sides, flat over air, so its outer
+    # lines had nothing under them and the last ~25 minutes failed every time. Now support from the plate holds it, only at
+    # the enforcer under the flange (lysring_3mf), with a solid interface in PLA on slot 2: PLA does not bond to PETG, so
+    # it peels off clean, and the flange's underside lies on the front plate's back face, inside the box.
     "lysring": {"_face_down": True, "layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%",
                 "bottom_surface_pattern": "concentric", "top_surface_pattern": "concentric",
                 "internal_solid_infill_pattern": "concentric", "elefant_foot_compensation": "0.15", "brim_type": "no_brim",
-                **SEAM, **NO_SUPPORT},
+                "enable_support": "1", "support_type": "normal(manual)", "support_on_build_plate_only": "1",
+                "support_interface_filament": "2", "support_interface_not_for_body": "1",
+                "support_interface_top_layers": "2", "support_interface_spacing": "0", "support_top_z_distance": "0",
+                **SEAM},
     # frame: inside the box; the reflector's steps at 0.28 are behind the 1 mm diffuser
     "bagramme": {"_visible": False, "layer_height": "0.28", **INSIDE, **NO_SUPPORT},
     # shell: the sides are seen, so 0.2 like the front; its back lies on the plate (to the wall, not seen), so Bambu's
@@ -332,9 +340,35 @@ def skal_3mf(folder, prefix=None):
     return out
 
 
+# v35: the light ring's flange (see SETTINGS["lysring"]): an enforcer from just under the flange's underside (z 3.7 on the
+# plate) to its top, over the whole ring. In manual mode Bambu Studio supports only the overhangs inside it, so the face's
+# 0.3 mm elephant-foot step at the plate gets none. The ring is clear PETG on slot 1, the interface white PLA on slot 2.
+LYSRING_ENFORCE = ("support: under flangen", (3.4, 4.0))
+
+
+def lysring_3mf(folder, prefix=None):
+    """<prefix>_lysring.3mf: the clear ring with the support enforcer under its flange, checked against the ring's own
+    downward faces (the flange's underside must be inside the enforcer, and nothing else that faces down above the plate)."""
+    folder = Path(folder)
+    prefix = prefix or folder.name
+    ring = trimesh.load(folder / f"{prefix}_lysring.stl")
+    name, (z0, z1) = LYSRING_ENFORCE
+    c = ring.triangles_center
+    down = (ring.face_normals[:, 2] < -0.9) & (c[:, 2] > 0.5)
+    inside = down & (c[:, 2] > z0) & (c[:, 2] < z1)
+    if ring.area_faces[inside].sum() < 1000 or ring.area_faces[down & ~inside].sum() > 1:
+        raise SystemExit(f"{name}: the flange's underside is not inside z {z0}-{z1}; the ring has moved, fix the enforcer")
+    lo, hi = ring.bounds
+    enforcer = _box([lo[0], hi[0], lo[1], hi[1], z0, z1])
+    out = folder / f"{prefix}_lysring.3mf"
+    write_bambu_3mf(out, [("lysring", ring, 1), (name, enforcer, 1, "support_enforcer")], f"{prefix}_lysring",
+                    SETTINGS["lysring"], filaments=("natur", "hvid"), plate="tekstureret")
+    return out
+
+
 # the other parts: (file suffix, settings, turn, filament, plate); the frame lies like the shell (box underside at -y), so
-# it is turned too. The light ring is the clear diffuser: PETG Translucent on its slot (COLOUR_MATERIAL "natur").
-SINGLE = [("lysring", "lysring", False, "natur", "tekstureret"), ("bagramme", "bagramme", True, "hvid", "glat"),
+# it is turned too. The light ring (the clear diffuser, PETG Translucent, COLOUR_MATERIAL "natur") has its own lysring_3mf.
+SINGLE = [("bagramme", "bagramme", True, "hvid", "glat"),
           ("vaegbeslag", "vaegbeslag", False, "sort", "glat"), ("tema-top-eksempel", "tema", False, "sort", "glat"),
           ("tema-vinge-venstre-eksempel", "tema", False, "sort", "glat"),
           ("tema-vinge-hoejre-eksempel", "tema", False, "sort", "glat"),
@@ -348,6 +382,8 @@ def part_3mfs(folder, prefix=None):
     folder = Path(folder)
     prefix = prefix or folder.name
     outs = []
+    if (folder / f"{prefix}_lysring.stl").exists():
+        outs.append(lysring_3mf(folder, prefix))
     for suffix, key, turn, colour, plate in SINGLE:
         stl = folder / f"{prefix}_{suffix}.stl"
         if stl.exists():
