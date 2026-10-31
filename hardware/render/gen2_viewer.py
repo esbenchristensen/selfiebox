@@ -33,7 +33,7 @@ PARTS = [
     ("kamera",        "x_camera",      "Kamera (Wide)",                   "#9aa3b5", "Elektronik", [0, 0, 120]),
     ("ledhvid",       "x_strip_w",     "2 × hvid COB-strip Ra95 i kantspor på væggen",         "#ffb000", "Elektronik", [0, 0, 60]),
     ("ledrgb",        "x_strip_rgb",   "RGB-strip 5 mm",                  "#a855f7", "Elektronik", [0, 0, 60]),
-    ("klikstik",      "c_clips",       "3 klikstik til strips (ét pr. strip)", "#f5f5f4", "Elektronik", [0, 0, 60]),
+    ("klikstik",      "c_clips",       "3 loddesteder med krympeflex (ét pr. strip, v36)", "#f5f5f4", "Elektronik", [0, 0, 60]),
     ("pi",            "c_pi_board",    "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
     ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
     ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),
@@ -41,7 +41,8 @@ PARTS = [
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
     ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto GL-C-016WL-D, 45,7 × 87,9 × 17,26, 108 over armene)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (DFRobot DFR0457)",       "#0f766e", "Elektronik", [-90, 0, 0]),
-    ("stik",          "c_jack",        "Strømindgang i bunden, i midten: hunstik TRU DC-13F + GST-stik nedefra",                  "#e11d48", "Elektronik", [0, 0, -90]),
+    ("stik",          "c_jack",        "Strømindgang i bunden, i midten: hunstik med skrueklemmer i åben kanal (sættes ind forfra), stik nedefra", "#e11d48", "Elektronik", [0, 0, -90]),
+    ("sikring",       "c_fuse",        "Sikringsholder (inline, 3 A) i højre side ved bagvæggen", "#facc15", "Elektronik", [0, 0, -90]),
     ("modem4g",       "c_4g",          "4G-modem med GPS",                "#2563eb", "Tilvalg",    [0, 0, -90]),
     ("lydkerne",      "c_mcore",       "Mikrofon-kerne (XVF3800), standard", "#0ea5e9", "Elektronik",    [0, 0, -90]),
     ("mikrofoner",    "c_mics",        "Mikrofonstrip, standard",         "#14b8a6", "Elektronik",    [0, 0, -90]),
@@ -65,10 +66,22 @@ PARTS = [
     ("stativlogo_hvid", "x_stand_logo_w", "Stativbeslag: logo bagpå, hvidt",   "#f5f5f4", "Stativbeslag", [0, 0, -210]),
     ("stativlogo_groen", "x_stand_logo_g", "Stativbeslag: logo bagpå, grønne prikker", "#22d36b", "Stativbeslag", [0, 0, -210]),
     ("t_moetrik",     "x_tnut",        "Stativbeslag: T-møtrik 1/4\"-20 til kuglehovedet", "#9a9ea2", "Stativbeslag", [0, -60, -210]),
+    # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test (skjult; vis det i stedet for eksempel-temaet)
+    ("dom_top",       "x_dom_top",     "Dominance-top (sort) med logo",  "#1d1d20", "Tema Dominance", [0, 90, -40]),
+    ("dom_top_hvid",  "x_dom_top_hvid", "Dominance-top: hvidt indlæg",    "#f5f5f4", "Tema Dominance", [0, 90, -40]),
+    ("dom_top_orange", "x_dom_top_orange", "Dominance-top: orange indlæg", "#ee3e15", "Tema Dominance", [0, 90, -40]),
+    ("dom_stolpe_v",  "x_dom_vinge_v", "Dominance-stolpe venstre (sort)", "#1d1d20", "Tema Dominance", [-90, 0, -40]),
+    ("dom_stolpe_v_hvid", "x_dom_vinge_v_hvid", "Dominance-stolpe venstre: navn", "#f5f5f4", "Tema Dominance", [-90, 0, -40]),
+    ("dom_stolpe_v_orange", "x_dom_vinge_v_orange", "Dominance-stolpe venstre: hætte", "#ee3e15", "Tema Dominance", [-90, 0, -40]),
+    ("dom_stolpe_h",  "x_dom_vinge_h", "Dominance-stolpe højre (sort)",   "#1d1d20", "Tema Dominance", [90, 0, -40]),
+    ("dom_stolpe_h_hvid", "x_dom_vinge_h_hvid", "Dominance-stolpe højre: navn", "#f5f5f4", "Tema Dominance", [90, 0, -40]),
+    ("dom_stolpe_h_orange", "x_dom_vinge_h_orange", "Dominance-stolpe højre: hætte", "#ee3e15", "Tema Dominance", [90, 0, -40]),
 ]
-OPTIONAL = {"c_wagos", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
-            "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # left out if the STL dir has none (older versions)
-HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # off until ticked
+DOM_VIEWS = {"x_dom_top", "x_dom_top_hvid", "x_dom_top_orange", "x_dom_vinge_v", "x_dom_vinge_v_hvid", "x_dom_vinge_v_orange",
+             "x_dom_vinge_h", "x_dom_vinge_h_hvid", "x_dom_vinge_h_orange"}
+OPTIONAL = {"c_wagos", "c_fuse", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+            "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"} | DOM_VIEWS   # left out if the STL dir has none (older versions)
+HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"} | DOM_VIEWS   # off until ticked
 
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. v12: the display and the Pi sit 2.1 mm
 # further forward (glass at y 1.6), so every point at the Pi or the display back moved with them. Routed along the back wall
@@ -100,7 +113,7 @@ RIBBONS = [
 # v29: the cables come from the harness model (render/harness_gen2.py), every one in its lane. The two hinge bundles are shown
 # closed: their slack folds into a U along the left side between the front unit and the shell.
 HARNESS = (STL / "c_wagos.stl").exists()
-H_OWNER = {"P1": "stik", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
+H_OWNER = {"P1": "stik", "P1b": "sikring", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
            "P9": "daemper", "P10": "daemper", "P11": "daemper", "P12": "stroem", "P13": "ledstyring", "P14": "ledstyring",
            "S1": "ledrgb", "S2": "ledrgb", "S3": "ledrgb", "S4": "ledhvid", "S5": "ledhvid", "S6": "ledhvid", "S7": "ledhvid",
            "U1": "ledstyring", "U2": "lydkerne", "U3": "modem4g", "G1": "daemper", "G2": "reed", "G3": "sensor", "G4": "skaerm",

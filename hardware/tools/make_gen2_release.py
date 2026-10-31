@@ -2,8 +2,9 @@
 """Print files for a gen 2 version from cad/gen2_concept.scad: hardware/stl/gen2/<version>/.
 
 Takes each printed part in its assembled position (VIEW="x_*"), turns it into its print orientation (the same turn as
-its p_* view), centres it on the bed (x/y round 0, z from 0) and writes <version>_<name>.stl. The logo inlays get the front's print orientation and offset, so they keep their place
-in the front (make_3mf.py puts the three into <version>_front_flerfarvet.3mf). Then the 3D model for the admin
+its p_* view), centres it on the bed (x/y round 0, z from 0) and writes <version>_<name>.stl. The logo inlays get their part's print orientation and offset, so they keep their place
+in the front or the stand bracket (make_3mf.py puts each three into <version>_front_flerfarvet.3mf and
+<version>_stativbeslag_flerfarvet.3mf; v36: the stand bracket is in every package). Then the 3D model for the admin
 viewer (render/gen2_viewer.py, from the x_/c_/s_ views in assembled position) and a check that every part is one
 closed body (check_bodies.py). The PRINTGUIDE, wiring diagram and zip are made afterwards.
 
@@ -27,6 +28,7 @@ D = 70
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
 FLIP = np.diag([1.0, -1.0, -1.0, 1.0])   # v29: upside down, the Wago row's end wall on the plate
+TURN_Z = np.array([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], float)   # v36: a quarter turn on the plate
 SIDE = np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]], float)   # v26: on its side, the -x face on the bed
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
          "vaegbeslag": ("x_cleat", DOWN),   # v27: no camera sleeve (v20-v26: "kameraroer", x_camsleeve)
@@ -35,8 +37,22 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          "tema-top-eksempel": ("x_tema_top", UP), "tema-vinge-venstre-eksempel": ("x_tema_vinge_v", UP),
          "tema-vinge-hoejre-eksempel": ("x_tema_vinge_h", UP),
          # v29: the Wago row alone, to glue (VHB) on the wall cleat's block in a v24-v28 shell; v29 has it in the shell
-         "wagoraekke-eftermontering": ("x_wagorow", FLIP)}
-LOGOS = {"logo-hvid": "x_logo_w", "logo-groen": "x_logo_g"}   # with the front's orientation and offset
+         "wagoraekke-eftermontering": ("x_wagorow", FLIP),
+         # v36 (Esben 31 Oct): the stand bracket for the floor tripod is a fixed part of every print package, fit-checked
+         # against this shell (check_fit_gen2.py); its logo panel on the plate as in make_stativbeslag.py's p_stand
+         "stativbeslag": ("x_stand", DOWN),
+         # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test, face down; the top is 289 wide, so it lies
+         # turned, along the plate's 320 mm
+         "tema-dominance-top": ("x_dom_top", TURN_Z @ UP), "tema-dominance-stolpe-venstre": ("x_dom_vinge_v", UP),
+         "tema-dominance-stolpe-hoejre": ("x_dom_vinge_h", UP)}
+# inlays with their part's orientation and offset: name -> (view, part)
+LOGOS = {"logo-hvid": ("x_logo_w", "front"), "logo-groen": ("x_logo_g", "front"),
+         "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag"),
+         "tema-dominance-top_hvid": ("x_dom_top_hvid", "tema-dominance-top"), "tema-dominance-top_orange": ("x_dom_top_orange", "tema-dominance-top"),
+         "tema-dominance-stolpe-venstre_hvid": ("x_dom_vinge_v_hvid", "tema-dominance-stolpe-venstre"),
+         "tema-dominance-stolpe-venstre_orange": ("x_dom_vinge_v_orange", "tema-dominance-stolpe-venstre"),
+         "tema-dominance-stolpe-hoejre_hvid": ("x_dom_vinge_h_hvid", "tema-dominance-stolpe-hoejre"),
+         "tema-dominance-stolpe-hoejre_orange": ("x_dom_vinge_h_orange", "tema-dominance-stolpe-hoejre")}
 
 
 def render(view, out):
@@ -51,26 +67,25 @@ def main():
     out = HW / "stl" / "gen2" / ver
     out.mkdir(parents=True, exist_ok=True)
     src = Path(sys.argv[2]) if len(sys.argv) > 2 else Path(tempfile.mkdtemp())
-    views = [v for v, _ in PRINT.values()] + list(LOGOS.values())
+    views = [v for v, _ in PRINT.values()] + [v for v, _ in LOGOS.values()]
     if len(sys.argv) <= 2:
         with ThreadPoolExecutor(4) as ex:
             list(ex.map(lambda v: render(v, src / f"{v}.stl"), views))
-    front = None
+    placed = {}
     for name, (view, rot) in PRINT.items():
         m = trimesh.load(src / f"{view}.stl")
         m.apply_transform(rot)
         lo, hi = m.bounds
         # whole 0.01 mm: an odd offset (153.700005) rounds near-coincident vertices together in the float32 STL
         off = np.round([-(lo[0] + hi[0]) / 2, -(lo[1] + hi[1]) / 2, -lo[2]], 2)
-        if name == "front":
-            front = (rot, off)
+        placed[name] = (rot, off)
         m.apply_translation(off)
         m.export(out / f"{ver}_{name}.stl")
         print(f"{ver}_{name}.stl  {np.round(m.extents, 1).tolist()}  {m.volume / 1000:.1f} cm3")
-    for name, view in LOGOS.items():
+    for name, (view, part) in LOGOS.items():
         m = trimesh.load(src / f"{view}.stl")
-        m.apply_transform(front[0])
-        m.apply_translation(front[1])
+        m.apply_transform(placed[part][0])
+        m.apply_translation(placed[part][1])
         m.export(out / f"{ver}_{name}.stl")
     subprocess.run([sys.executable, str(HW / "tools" / "make_3mf.py"), str(out)], check=True)
     if len(sys.argv) > 2:

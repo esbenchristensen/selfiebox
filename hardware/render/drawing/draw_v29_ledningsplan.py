@@ -57,12 +57,14 @@ for v, name, c in [("c_psu5", "5 V-forsyning\nRSD-60G-5\n(DC IN øverst,\nDC OUT
 for key, txt, side in [("psu_vin-", "V−", "l"), ("psu_vin+", "V+", "r"), ("psu_v+", "+V", "l"), ("psu_v-", "−V", "r"),
                        ("wled_in", "ind V+ V−", "r"), ("wled_out", "GPIO16", "l"), ("wled_usb", "USB-C", "r"),
                        ("dim_vin", "VIN/GND/VOUT", "r"), ("dim_grav", "Gravity", "r"),
-                       ("core_usb", "USB-C", "r"), ("core_aux", "aux", "l"), ("core_spk", "SPEAKER", "r")]:
+                       ("core_usb", "USB-C", "r"), ("core_aux", "aux", "l"), ("core_spk", "SPEAKER", "r"),
+                       ("fuse_lo", "P1", "l"), ("fuse_hi", "P1b", "l"), ("imu", "IMU", "l")]:
     q = hz.P[key]
     ax.add_patch(mp.Circle((q[0], q[2]), 2.2, fc="#fab005", ec=INK, lw=0.7, zorder=8))
     ax.text(q[0] + (3.5 if side == "r" else -3.5), q[2] - 4, txt, fontsize=6.5, color=INK, ha="left" if side == "r" else "right",
             va="top", zorder=8, bbox=dict(boxstyle="round,pad=0.1", fc="#fff9db", ec="none"))
-ax.text(0, 66, "strømstik\n+ sikring", ha="center", fontsize=8, color=INK, zorder=6)
+ax.text(0, 66, "strømstik", ha="center", fontsize=8, color=INK, zorder=6)
+ax.text(99, 69, "sikring", ha="center", fontsize=7, color=INK, zorder=6, rotation=90)   # v36: on the right wall
 # Wago row
 for n, x in hz.WAGO.items():
     w = {"221-413": 18.8, "221-414": 24.4, "221-415": 30.0}[hz.WAGO_TYPE[n]]

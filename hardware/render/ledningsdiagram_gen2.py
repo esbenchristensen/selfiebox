@@ -29,15 +29,15 @@ out.append('<text x="40" y="84" font-size="17" fill="#444">Kun købedele, ingen 
 
 # 24 V in, left column
 box(40, 140, 270, 100, "Strømforsyning", "Mean Well GST90A24|24 V, lige stik nedefra")
-box(40, 290, 270, 100, "Hunstik 5,5/2,5", "TRU DC-13F, i røret i bunden|skrueklemmer + og −")
-box(40, 450, 270, 80, "Sikring 3 A", "fladsikring ATO (violet), kun på +")
+box(40, 290, 270, 100, "Hunstik 5,5/2,5", "i den åbne kanal i bunden (v36)|skrueklemmer + og −")
+box(40, 450, 270, 80, "Sikring 3 A", "inline-holder på højre væg (v36)|fladsikring ATO (violet), kun på +")
 wire([(175, 240), (175, 290)], C["v24"], 6); lab(185, 270, "24 V", C["v24"])
 w1 = wago(560, 150, 3, "W1 · 24 V + ", C["v24"])
 w2 = wago(560, 430, 5, "W2 · GND ", C["gnd"], (550, 480, "end"))
-wire([(120, 390), (120, 450)], C["v24"]); lab(130, 425, "+", C["v24"])
-wire([(120, 530), (120, 600), (420, 600), (420, w1[0]), (560, w1[0])], C["v24"]); lab(430, w1[0]-6, "P1 · fra sikring", C["v24"])
+wire([(120, 390), (120, 450)], C["v24"]); lab(130, 425, "P1 · +", C["v24"])
+wire([(120, 530), (120, 600), (420, 600), (420, w1[0]), (560, w1[0])], C["v24"]); lab(430, w1[0]-6, "P1b · fra sikring", C["v24"])
 wire([(250, 390), (250, 420), (460, 420), (460, w2[0]), (560, w2[0])], C["gnd"]); lab(470, w2[0]-6, "P2 · fra hunstik −")
-lab(40, 640, "Strøm: 1,0 mm² silikone", "#444")
+lab(40, 640, "Strøm: 1,5 mm² RKUB (Biltema), v36", "#444")
 
 # RSD
 box(840, 130, 300, 210, "5 V-forsyning", "Mean Well RSD-60G-5|DC IN øverst: V+ · V−|DC OUT nederst: +V · −V|isoleret: −V bindes til|GND (bro W4 → W2)")
