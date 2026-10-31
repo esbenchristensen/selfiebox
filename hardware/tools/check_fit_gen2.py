@@ -29,6 +29,7 @@ BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "
           "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g",
           "c_wagos"]   # v28: wall screws; v29: the 6 Wago clamps in their row
 THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
+DOM = ["x_dom_top", "x_dom_vinge_v", "x_dom_vinge_h"]          # v36: the Airtox Dominance theme kit (an alternative to THEME)
 # v27: keep-out bodies for the camera (no glass, open window): the lens's field of view in front of it, and the barrel
 CAMERA = ["x_cam_fov", "x_cam_lens"]
 
@@ -88,9 +89,21 @@ CLEARANCES = [
     ("c_wagos", "x_fanguard", 10.0, "v29: the Wago row above the fan guard"),
     ("c_wagos", "c_imu", 5.0, "v36: the IMU moved beside the mic board (x 80-98), clear of the Wago row"),
     ("x_stand", "x_shell3", 0.0, "v36: the stand bracket on the box's back (tongues in the lock pockets)"),
-    ("x_stand", "x_tema_vinge_v", 0.3, "v36: the stand bracket beside the left wing strap"),
-    ("x_stand", "x_tema_vinge_h", 0.3, "v36: the stand bracket beside the right wing strap"),
-    ("x_stand", "x_tema_top", 0.3, "v36: the stand bracket beside the top straps"),
+    ("x_stand", "x_tema_vinge_v", 0.3, "v36: the stand bracket's arm 0.4 behind the left wing's thinned strap (locks it on the stand)"),
+    ("x_stand", "x_tema_vinge_h", 0.3, "v36: the stand bracket's arm 0.4 behind the right wing's thinned strap"),
+    ("x_stand", "x_tema_top", 0.3, "v36: the stand bracket's arms 0.4 behind the top's thinned straps"),
+    ("x_dom_top", "x_shell3", 0.0, "v36: Dominance top on the top face, hooks on the slot floors"),
+    ("x_dom_vinge_v", "x_shell3", 0.0, "v36: Dominance left post"),
+    ("x_dom_vinge_h", "x_shell3", 0.0, "v36: Dominance right post"),
+    ("x_dom_top", "x_dom_vinge_v", 0.2, "v36: Dominance top and left post share the upper slot"),
+    ("x_dom_top", "x_dom_vinge_h", 0.2, "v36: Dominance top and right post"),
+    ("x_dom_top", "x_front3", 0.15, "v36: Dominance top over the front"),
+    ("x_dom_vinge_v", "x_front3", 0.15, "v36: Dominance left post beside the front"),
+    ("x_dom_vinge_h", "x_front3", 0.15, "v36: Dominance right post beside the front"),
+    ("x_stand", "x_dom_top", 0.3, "v36: the stand bracket's arms 0.4 behind the Dominance top's straps"),
+    ("x_stand", "x_dom_vinge_v", 0.3, "v36: the stand bracket's arm behind the Dominance left post's strap"),
+    ("x_stand", "x_dom_vinge_h", 0.3, "v36: the stand bracket's arm behind the Dominance right post's strap"),
+    ("x_dom_top", "x_cleat", 0.5, "v36: Dominance top straps beside the wall cleat"),
 ]
 
 
@@ -136,7 +149,7 @@ def main():
     ref = None
     if "--ref" in args:
         i = args.index("--ref"); ref = Path(args[i + 1]); del args[i:i + 2]
-    views = PRINTED + BOUGHT + THEME + CAMERA
+    views = PRINTED + BOUGHT + THEME + DOM + CAMERA
     if args:
         d = Path(args[0])
     else:
@@ -152,6 +165,8 @@ def main():
     for k in sorted(set(new) | set(old), key=lambda k: -new.get(k, (0,))[0]):
         v, bb = new.get(k, (0.0, None))
         allowed = CONTACT.get(k, CONTACT.get(k[::-1], 0.0))
+        if {k[0], k[1]} & set(THEME) and {k[0], k[1]} & set(DOM):
+            allowed = 1e9                   # the example theme and the Dominance kit are never fitted together
         flag = "ok  " if v <= allowed else "FAIL"
         if v > allowed:
             ok = False

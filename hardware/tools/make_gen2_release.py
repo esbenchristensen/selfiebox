@@ -28,6 +28,7 @@ D = 70
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
 FLIP = np.diag([1.0, -1.0, -1.0, 1.0])   # v29: upside down, the Wago row's end wall on the plate
+TURN_Z = np.array([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], float)   # v36: a quarter turn on the plate
 SIDE = np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]], float)   # v26: on its side, the -x face on the bed
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
          "vaegbeslag": ("x_cleat", DOWN),   # v27: no camera sleeve (v20-v26: "kameraroer", x_camsleeve)
@@ -39,10 +40,19 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          "wagoraekke-eftermontering": ("x_wagorow", FLIP),
          # v36 (Esben 31 Oct): the stand bracket for the floor tripod is a fixed part of every print package, fit-checked
          # against this shell (check_fit_gen2.py); its logo panel on the plate as in make_stativbeslag.py's p_stand
-         "stativbeslag": ("x_stand", DOWN)}
+         "stativbeslag": ("x_stand", DOWN),
+         # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test, face down; the top is 289 wide, so it lies
+         # turned, along the plate's 320 mm
+         "tema-dominance-top": ("x_dom_top", TURN_Z @ UP), "tema-dominance-stolpe-venstre": ("x_dom_vinge_v", UP),
+         "tema-dominance-stolpe-hoejre": ("x_dom_vinge_h", UP)}
 # inlays with their part's orientation and offset: name -> (view, part)
 LOGOS = {"logo-hvid": ("x_logo_w", "front"), "logo-groen": ("x_logo_g", "front"),
-         "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag")}
+         "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag"),
+         "tema-dominance-top_hvid": ("x_dom_top_hvid", "tema-dominance-top"), "tema-dominance-top_orange": ("x_dom_top_orange", "tema-dominance-top"),
+         "tema-dominance-stolpe-venstre_hvid": ("x_dom_vinge_v_hvid", "tema-dominance-stolpe-venstre"),
+         "tema-dominance-stolpe-venstre_orange": ("x_dom_vinge_v_orange", "tema-dominance-stolpe-venstre"),
+         "tema-dominance-stolpe-hoejre_hvid": ("x_dom_vinge_h_hvid", "tema-dominance-stolpe-hoejre"),
+         "tema-dominance-stolpe-hoejre_orange": ("x_dom_vinge_h_orange", "tema-dominance-stolpe-hoejre")}
 
 
 def render(view, out):

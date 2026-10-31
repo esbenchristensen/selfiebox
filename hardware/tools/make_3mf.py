@@ -59,7 +59,8 @@ BOTH_EXTRUDERS_X = (30.0, 325.0)
 PRIME_TOWER = (60.0, 110.0)   # width, y of its front edge
 
 # the filament on each slot of a file: colour (as in the AMS) and Bambu's system preset for it
-COLOURS = {"sort": "#1D1D20", "hvid": "#F5F5F4", "groen": "#22D36B", "natur": "#E8E4D8"}
+COLOURS = {"sort": "#1D1D20", "hvid": "#F5F5F4", "groen": "#22D36B", "natur": "#E8E4D8",
+           "orange": "#EE3E15"}   # v36: the Airtox Dominance logo's orange-red
 BAMBU_VERSION = "02.08.02.61"   # the Bambu Studio whose loader and H2C presets these files are written for
 PRINTER = {"printer_settings_id": "Bambu Lab H2C 0.4 nozzle", "printer_model": "Bambu Lab H2C", "printer_variant": "0.4",
            "printer_technology": "FFF", "nozzle_diameter": ["0.4", "0.4"], "extruder_type": ["Direct Drive", "Direct Drive"],
@@ -88,7 +89,7 @@ MATERIALS = {
                "filament_type": "PETG"},
 }
 FILAMENT_COMMON = {"filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
-COLOUR_MATERIAL = {"sort": "PLA", "hvid": "PLA", "groen": "PLA", "natur": "PETG-T"}
+COLOUR_MATERIAL = {"sort": "PLA", "hvid": "PLA", "groen": "PLA", "natur": "PETG-T", "orange": "PLA"}
 # what is actually printed (Esben 28 Oct): PLA, and PETG for the clear diffuser. Never write a preset of another type: an
 # ASA/ABS/PC preset heats the H2C's chamber (65 C), and PLA/PETG then soften in the extruder and fail late in the print.
 PRINTED_TYPES = {"PLA", "PETG"}
@@ -403,6 +404,23 @@ def stand_3mf(folder, prefix=None):
     return out
 
 
+def dominance_3mfs(folder, prefix=None):
+    """v36: <prefix>_tema-dominance-<part>_flerfarvet.3mf for the Airtox Dominance theme kit (top, left and right post), each
+    with its white and orange inlays: AMS 1 sort, 2 hvid, 3 orange; face down like every theme part (SETTINGS["tema"])."""
+    folder = Path(folder)
+    prefix = prefix or folder.name
+    outs = []
+    for part in ("top", "stolpe-venstre", "stolpe-hoejre"):
+        base = folder / f"{prefix}_tema-dominance-{part}"
+        if not base.with_suffix(".stl").exists():
+            continue
+        parts = [(f"dominance {part} (sort)", trimesh.load(base.with_suffix(".stl")), 1),
+                 ("hvid", trimesh.load(f"{base}_hvid.stl"), 2), ("orange", trimesh.load(f"{base}_orange.stl"), 3)]
+        outs.append(Path(f"{base}_flerfarvet.3mf"))
+        write_bambu_3mf(outs[-1], parts, base.name, SETTINGS["tema"], filaments=("sort", "hvid", "orange"), plate="glat")
+    return outs
+
+
 def part_3mfs(folder, prefix=None):
     """<prefix>_<part>.3mf for each part in SINGLE that the release has, and the fan guard: on its own (v27, which has no
     camera sleeve) or, in a release with the sleeve (v24-v26), <prefix>_smaadele.3mf with both small black parts on one
@@ -414,6 +432,7 @@ def part_3mfs(folder, prefix=None):
         outs.append(lysring_3mf(folder, prefix))
     if (folder / f"{prefix}_stativbeslag.stl").exists():
         outs.append(stand_3mf(folder, prefix))
+    outs += dominance_3mfs(folder, prefix)
     for suffix, key, turn, colour, plate in SINGLE:
         stl = folder / f"{prefix}_{suffix}.stl"
         if stl.exists():

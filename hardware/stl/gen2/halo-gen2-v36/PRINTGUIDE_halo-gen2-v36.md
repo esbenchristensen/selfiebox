@@ -40,7 +40,21 @@ Den fælles årsag til de fleste problemer: skallen printes med bagsiden ned, s�
 
 ### Stativbeslaget er med i pakken
 
-`halo-gen2-v36_stativbeslag.stl` med logo-indlæg og `halo-gen2-v36_stativbeslag_flerfarvet.3mf` (sort, hvid, grøn på AMS-plads 1/2/3, tekstureret plade). Det er samme beslag som selfi-stativbeslag-v7, tjekket mod v36-skallen: tungerne sidder i låselommerne uden overlap, stikkets slids i hylden går fri af stikket, og der er 3,9 mm til tema-toppens stropper. Fra nu af er stativbeslaget med i hver version.
+`halo-gen2-v36_stativbeslag.stl` med logo-indlæg og `halo-gen2-v36_stativbeslag_flerfarvet.3mf` (sort, hvid, grøn på AMS-plads 1/2/3, tekstureret plade). Det er selfi-stativbeslag-v7 med to arme, der låser temadelene (se nedenfor; svarer til stativbeslag v8), tjekket mod v36-skallen: tungerne sidder i låselommerne uden overlap, stikkets slids i hylden går fri af stikket, og der er 3,9 mm til tema-toppens stropper. Fra nu af er stativbeslaget med i hver version.
+
+### Airtox Dominance: temaets testkit (fast i pakken)
+
+Esben 31. okt.: Dominance er vores faste test af temaer og ligger i hver printpakke herfra. Det skal holde både på væggen (B2B) og på gulvstativet (B2C).
+
+- **Dele:** en top (289 × 92 mm, halv ottekant med ligaens logo) og to stolper (32 mm brede, orange hætte, AIRTOX DOMINANCE op ad stolpen). De hænger i de samme kroge og den samme rille som eksempel-temaet.
+- **Farver:** Selfi sort (samme filament som boksen), logoets orange-røde (#ee3e15) og hvid. Farverne er 0,8 mm indlæg i forsiden, og hver del er én 3MF med tre farver: **AMS 1 sort, 2 hvid, 3 orange**. Glat plade, forsiden ned, tree-support kun under stropperne (som tema-eksemplet).
+- **Toppen ligger på tværs** af pladen (de 289 mm langs pladens 320 mm), så den kan printes i ét stykke.
+- **Rækkefølge:** sæt top og stolper på, før boksen hænges op (på væg eller stativ): løft 3 mm, skub ind, slip.
+- **Logoet** er sporet fra ligaens eget materiale. Få de officielle filer og tilladelse fra ADFC og Airtox, før en boks med logoet bruges ude.
+
+### Temaerne sidder fast på gulvstativet
+
+Uden væg bag boksen kunne et tema før løftes af krogene bagfra. Nu har **stativbeslaget (v8) en arm på hver side** af logopanelet, og alle temadeles stropper er 2 mm tyndere netop dér, så armen ligger 0,4 mm bag dem, ligesom væggen gør. Krogene kan derfor ikke komme fri, mens boksen sidder på stativet. På væggen er der som før 0,4 mm til væggen. Eksempel-temaet har fået de samme tynde stropper.
 
 ## Hvad var nyt i v35: lysringens krave printes på support
 
@@ -620,13 +634,15 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 | `halo-gen2-v36_tema-top-eksempel.stl` (+ `.3mf`) | Eksempel på en tema-top med 2 kroge og stropper 3,9 × 10 mm (v25; kun til at prøve krogene, et rigtigt tema laves pr. kunde) | 224,5 × 154 × 77,1 | PLA, valgfri farve | ca. 75 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stropperne |
 | `halo-gen2-v36_tema-vinge-venstre-eksempel.stl` / `..._hoejre-eksempel.stl` (+ `.3mf`) | Eksempel på tema-vinger med 2 kroge hver og en strop 3,9 mm tyk (v25); går ned til bunden med en tap i rillen forneden (v28) | 61,9 × 270 × 77,1 | PLA, valgfri farve | ca. 75 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stroppen |
 | `halo-gen2-v36_wagoraekke-eftermontering.stl` (+ `.3mf`) | **Kun til en skal fra v24–v28** (v29 har den i skallen): Wago-rækken alene, sættes på vægbeslagets klods med VHB-tape | 161,4 × 15,7 × 21,1 | PLA sort | 17 g | Glat PEI, enden ned | Nej |
-| `halo-gen2-v36_stativbeslag.stl` + `..._stativbeslag_logo-hvid.stl` / `..._logo-groen.stl` (+ `halo-gen2-v36_stativbeslag_flerfarvet.3mf`) | **Stativbeslag til gulvstativet (v36: fast del af pakken)**, i stedet for vægbeslaget; samme som selfi-stativbeslag-v7, tjekket mod v36-skallen. Logo-indlæg bagpå | 189 × 304 × 54 | PLA sort + hvid + grøn | se Bambu Studio | Tekstureret PEI | Nej |
+| `halo-gen2-v36_tema-dominance-top.stl` + `_hvid` / `_orange` (+ `halo-gen2-v36_tema-dominance-top_flerfarvet.3mf`) | **Airtox Dominance-top** (testkit, v36): halv ottekant med logo, 2 kroge, ligger på tværs af pladen | 166 × 288,9 × 77,1 | PLA sort + hvid + orange | ca. 80 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stropperne |
+| `halo-gen2-v36_tema-dominance-stolpe-venstre.stl` / `..._hoejre.stl` + `_hvid` / `_orange` (+ `_flerfarvet.3mf`) | **Airtox Dominance-stolper** (testkit, v36): 32 mm brede, orange hætte og navnet, 2 kroge + tap med tå i rillen | 43,8 × 285 × 77,1 | PLA sort + hvid + orange | ca. 60 g ved 15 % fyld | Glat PEI, forsiden ned | Ja, under stroppen |
+| `halo-gen2-v36_stativbeslag.stl` + `..._stativbeslag_logo-hvid.stl` / `..._logo-groen.stl` (+ `halo-gen2-v36_stativbeslag_flerfarvet.3mf`) | **Stativbeslag til gulvstativet (v36: fast del af pakken)**, i stedet for vægbeslaget; som selfi-stativbeslag-v7 + 2 arme, der låser temadelene på stativet, tjekket mod v36-skallen. Logo-indlæg bagpå | 222,5 × 304 × 54 | PLA sort + hvid + grøn | se Bambu Studio | Tekstureret PEI | Nej |
 
 Vægtene er skøn ud fra rumfanget. Bambu Studio viser den rigtige vægt og tid, når delene er skåret.
 
 **Pladen:** front og skal er 307 mm lange og ligger med 6,5 mm fri til pladens kant foran og bagved (H2C-pladen er 320 mm). Det er 0,5 mm under vores egen margin på 7 mm, så flyt dem ikke frem eller tilbage, og brug ikke skirt. Skallens brim på 3 mm (v26) er inden for. 3MF'erne lægger delene midt på pladen; fronten (flere farver) ligger til venstre, fra 30 mm, med prime tower til højre for.
 
-Tre farver PLA: **sort** (skal, front, beslag, blæserhegn), **hvid** (bagrammen og logoet), **grøn** (prikkerne i logoet), og lysringen i klart materiale (PETG; v34). Logoet skal være PLA ligesom fronten, ellers hæfter lagene ikke.
+Tre farver PLA (fire med Dominance-temaets **orange**): **sort** (skal, front, beslag, blæserhegn), **hvid** (bagrammen og logoet), **grøn** (prikkerne i logoet), og lysringen i klart materiale (PETG; v34). Logoet skal være PLA ligesom fronten, ellers hæfter lagene ikke.
 
 ## Indstillinger (Bambu Studio)
 

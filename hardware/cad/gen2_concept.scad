@@ -336,6 +336,12 @@ module stand_bracket() {
             }
             // logo panel and spine
             ext_y(yb, yf) { translate([0, ST_LOGO_Z]) rrc(ST_PANEL[0], ST_PANEL[1], ST_PANEL[2]); translate([0, (zs + CLEAT_ZC)/2]) rrc(ST_SPINE, CLEAT_ZC - zs, 6); }
+            // v8 (v36 package): an arm out from each side of the logo panel, 0.4 behind the theme parts' thinned straps (ST_ARM),
+            // so a theme hangs as fast on the stand as on the wall; inside the box's outline
+            intersection() {
+                for (sx = [-1, 1]) translate([sx > 0 ? ST_ARM[0] : -W/2, yf - ST_ARM[3], ST_ARM[1]]) cube([W/2 - ST_ARM[0], ST_ARM[3], ST_ARM[2] - ST_ARM[1]]);
+                ext_y(yf - ST_ARM[3] - 1, yf + 1) translate([0, 1]) rr(W - 2, H - 2, R - 1);
+            }
             // shelf under the unit, rounded front corners
             translate([0, 0, zs]) linear_extrude(ST_SHELF[2]) hull() {
                 for (sx = [-1, 1]) translate([sx*(ST_SHELF[0] - 6), ST_SHELF[1] + 6]) circle(r = 6, $fn = 32);
@@ -597,7 +603,8 @@ module snap_lip(len, inw, rh, side) translate([0, 0, 0]) rotate([90, 0, 90]) lin
 module lips_along(sz, t, lip, fl = 1.2, at = [], catch = 0.1) {   // lips on both long walls (along x) of an inner box sz[0] x sz[1] + 0.3
     for (sy = [0, 1], i = [0 : lip[2] - 1]) {
         x = len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2;
-        translate([x, sy > 0 ? sz[1] + 0.3 : 0, fl + t + catch]) snap_lip(lip[1], lip[0], lip[3], sy);
+        translate([x, sy > 0 ? sz[1] + 0.3 + (catch > 0.1 ? 0.01 : 0) : (catch > 0.1 ? -0.01 : 0), fl + t + catch])   // v36: 0.01 into the wall, one body
+            snap_lip(lip[1], lip[0] + (catch > 0.1 ? 0.01 : 0), lip[3], sy);
     }
 }
 // v36 (Esben 30 Oct, samlenoter 4 and 7: the teeth did not reach over the 5 V supply and the WLED controller, they pushed the walls
@@ -620,7 +627,7 @@ module wall_tray(sz, lip, wt = 1.6, end_h = 5, catch = 0.1, at = []) {   // sz =
     // so the walls are not higher than they need to be: the fan guard is 3.3 from the 5 V supply tray's top end, was 1.4)
     for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) {
         cube([sz[0] + 0.3, wt, catch > 0.1 ? 1.2 + sz[2] + 0.5 : hgt]);
-        if (catch > 0.1) for (i = [0 : lip[2] - 1]) let(x = (len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2) - 2) translate([x, sy > 0 ? -0.01 : 0, 0]) cube([lip[1] + 4, wt + 0.01, hgt]);   // 0.01 into the lips: one body
+        if (catch > 0.1) for (i = [0 : lip[2] - 1]) let(x = (len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2) - 2) translate([x, 0, 0]) cube([lip[1] + 4, wt, hgt]);
     }
     lips_along(sz, sz[2], lip, at = at, catch = catch);
     if (catch > 0.1) for (sy = [0, 1], i = [0 : lip[2] - 1]) let(x = len(at) ? at[i] + lip[1]/2 : (i + 0.5)*(sz[0] + 0.3)/lip[2])   // v36: a rib behind each lip
@@ -883,11 +890,22 @@ module wing_groove_bosses() intersection() {
         cube([WING_GROOVE[0] + 2*WG_BOSS, WING_GROOVE[1] + WG_BOSS - BACK_T + 0.01, WING_GROOVE[3] - WING_GROOVE[2] + WG_LOCK[0] + 2*WG_BOSS]);
     ext_y(SKIRT, D) translate([0, 1]) rr(W - 2, H - 2, R - 1);
 }
-// example top: a 6 mm sign over the front, a 4 mm base on the top face, ribs, and two straps 4 x 10 down to the upper slots
-module theme_top_demo() {
+// v36 (Esben 31 Oct: the theme parts must hold on the floor stand too, where no wall stands behind the straps): the stand bracket
+// has an arm on each side of its logo panel (ST_ARM), and every theme part's straps are 2 mm thinner where that arm lies, so the
+// arm sits 0.4 behind them as the wall does on the wall cleat: a hook cannot go back the 8.25 it needs to come free. The thin
+// stretch is DROP longer upwards, since the box drops 9 onto the bracket's bar; the arms end below the bar, where the box's
+// back only moves forwards as its bottom swings in.
+ST_ARM = [85.9, 232, 266, 2.0];           // inner x (the logo panel's edge, 86), z bottom, z top, thickness (y): flush with the bracket's back
+THEME_THIN_Y = D + GAP_WALL - ST_ARM[3] - 0.4;   // 72.1: the straps' back face where they are thin
+module theme_lock_cut() for (sx = [-1, 1]) let(x0 = ST_ARM[0] - 1, x1 = W/2 + 0.15)
+    translate([sx > 0 ? x0 : -x1, THEME_THIN_Y, ST_ARM[1] - 0.5]) cube([x1 - x0, 10, ST_ARM[2] - ST_ARM[1] + DROP + 1]);
+// a theme top: a 6 mm sign over the front (children(0): its 2D outline, x and z from TOP_Z0), a 4 mm base on the top face, ribs,
+// and two straps 4 x 10 down to the upper slots
+module theme_top_demo() theme_top() translate([0, 40]) offset(r = 14) square([W - 28, 80 - 28], center = true);
+module theme_top() difference() { union() {
     zf = WING_P[1][1] - 4;
     translate([0, 0, TOP_Z0]) {
-        translate([0, 3, 0]) rotate([90, 0, 0]) linear_extrude(6) translate([0, 40]) offset(r = 14) square([W - 28, 80 - 28], center = true);
+        translate([0, 3, 0]) rotate([90, 0, 0]) linear_extrude(6) children(0);
         translate([-(W/2 - 14), 0, 0]) cube([W - 28, D + 0.2, 4]);
         for (x = [-60, 0, 60]) translate([x - 2, 2.9, 3.9]) rotate([90, 0, 90]) linear_extrude(4) polygon([[0, 0], [30, 0], [0, 36]]);
     }
@@ -899,21 +917,24 @@ module theme_top_demo() {
         translate([xs, D - 14, TOP_Z0]) cube([TOP_STRAP[1], STRAP_Y + TOP_STRAP[0] - (D - 14), 4]);   // ties the strap to the base
         hook(x0, zf);
     }
-}
+} theme_lock_cut(); }
 // example wing: a 6 mm panel beside the front, a 4 mm rib along the side, and a strap 9 thick behind the back wall that
 // carries a hook into both slots on that side
 // v28 (Esben 27 Oct): the wing reaches down to the bottom of the box (until v27 its panel stopped at z 120 and the strap at
 // 162): panel from z WING_BOT, rib and strap down to the groove, and the tab in the groove steadies the lower end.
 // Behind the box the strap is clipped 1 mm inside the box's outline, so it does not show at the round bottom corner.
 WING_BOT = 20;
-module theme_wing_demo(sx) {
+module theme_wing_demo(sx) theme_wing(sx, 290) offset(r = 12) translate([12, 12]) square([50 - 24, 290 - WING_BOT - 24]);
+// a theme wing: children(0) is the panel's 2D outline (x from the rib's inner face, z from WING_BOT, drawn for the right side;
+// the left is mirrored), zt the panel's top (the rib ends 10 under it)
+module theme_wing(sx, zt) difference() { union() {
     xe = W/2 + 0.2;                       // inner face of the rib (0.2 off the side wall)
     zs = [for (p = WING_P) if (p[0]*sx > 0) p[1] - 4];
     z0 = WING_TAB[2] - 4;  z1 = max(zs) + HOOK[1] + 8;
     xh = hook_x(1, false) - HOOK[0]/2;
     mirror([sx < 0 ? 1 : 0, 0, 0]) {
-        translate([xe, -3, WING_BOT]) rotate([90, 0, 0]) mirror([0, 0, 1]) linear_extrude(6) offset(r = 12) translate([12, 12]) square([50 - 24, 290 - WING_BOT - 24]);
-        translate([xe, -3, WING_BOT + 4]) cube([4, D + 3.2, 280 - WING_BOT - 4]);
+        translate([xe, -3, WING_BOT]) rotate([90, 0, 0]) mirror([0, 0, 1]) linear_extrude(6) children(0);
+        translate([xe, -3, WING_BOT + 4]) cube([4, D + 3.2, zt - 10 - WING_BOT - 4]);
         intersection() {   // ends flush with the hook, 0.7 from the top's strap
             translate([xh, STRAP_Y, z0]) cube([xe + 4 - xh, WING_STRAP, z1 - z0]);
             union() { ext_y(STRAP_Y - 1, STRAP_Y + WING_STRAP + 1) translate([0, 1]) rr(W - 2, H - 2, R - 1); translate([W/2 - 2, STRAP_Y - 1, R]) cube([20, WING_STRAP + 2, H]); translate([xe - 0.01, STRAP_Y - 1, 0]) cube([10, WING_STRAP + 2, H]); }
@@ -923,6 +944,19 @@ module theme_wing_demo(sx) {
         translate([WG_X0, D - WING_TAB[1], WING_TAB[2]]) cube([WING_TAB[0], STRAP_Y - D + WING_TAB[1] + 0.01, WING_TAB[3] - WING_TAB[2]]);   // v28: tab in the groove (v30: 5 x 3.3 x 10)
         translate([WG_X0, D - WING_TAB[1], WING_TAB[2] - (WG_LOCK[0] - 0.5)]) cube([WING_TAB[0], WG_LOCK[2], WG_LOCK[0] - 0.5 + 0.01]);         // v36: toe behind the ledge
     }
+} theme_lock_cut(); }
+// ------------------------------------------------- Airtox Dominance theme (v36) --
+// Esben 31 Oct: the main theme test kit, in every print package: a topper with the league's logo and two cage posts with an
+// orange cap and the name, in Selfi black, the logo's orange-red and white (tools/make_tema_dominance.py draws the 2D shapes
+// into tema_dominance.scad). Colours are 0.8 mm inlays in the face, printed face down like every theme part.
+include <tema_dominance.scad>
+DOM_INLAY = 0.8;
+module dom_top_inlay(c) translate([0, -3 + DOM_INLAY, TOP_Z0]) rotate([90, 0, 0]) linear_extrude(DOM_INLAY + 0.01) { if (c == "white") dom_top_white(); else dom_top_orange(); }
+module dom_wing_inlay(sx, c) translate([0, -3 + DOM_INLAY, 0]) rotate([90, 0, 0]) linear_extrude(DOM_INLAY + 0.01) { if (c == "white") dom_wing_white(sx); else dom_wing_orange(sx); }
+module dom_top() difference() { theme_top() dom_top_sign(); for (c = ["white", "orange"]) translate([0, -0.005, 0]) dom_top_inlay(c); }
+module dom_wing(sx) difference() {
+    theme_wing(sx, DOM_POST_Z[1]) translate([0, DOM_POST_Z[0] - WING_BOT]) offset(r = 4) translate([4, 4]) square([DOM_POST_W - 8, DOM_POST_Z[1] - DOM_POST_Z[0] - 8]);
+    for (c = ["white", "orange"]) translate([0, -0.005, 0]) dom_wing_inlay(sx, c);
 }
 // v21: clipped to 1 mm inside the shell's outer skin (until now its bottom-left corner stood up to 1 mm out of the round bottom edge)
 module lock_pocket() intersection() {
@@ -1505,6 +1539,15 @@ if (VIEW == "x_fanguard")  fan_guard();                                         
 if (VIEW == "x_tema_top")   theme_top_demo();                                             // v21: example theme parts on the hooks
 if (VIEW == "x_tema_vinge_v") theme_wing_demo(-1);
 if (VIEW == "x_tema_vinge_h") theme_wing_demo(1);
+if (VIEW == "x_dom_top")      dom_top();                                                    // v36: Airtox Dominance theme kit
+if (VIEW == "x_dom_top_hvid") dom_top_inlay("white");
+if (VIEW == "x_dom_top_orange") dom_top_inlay("orange");
+if (VIEW == "x_dom_vinge_v")  dom_wing(-1);
+if (VIEW == "x_dom_vinge_h")  dom_wing(1);
+if (VIEW == "x_dom_vinge_v_hvid") dom_wing_inlay(-1, "white");
+if (VIEW == "x_dom_vinge_h_hvid") dom_wing_inlay(1, "white");
+if (VIEW == "x_dom_vinge_v_orange") dom_wing_inlay(-1, "orange");
+if (VIEW == "x_dom_vinge_h_orange") dom_wing_inlay(1, "orange");
 if (VIEW == "c_tema_demo")  { main_unit(); color("orange") { theme_top_demo(); theme_wing_demo(-1); theme_wing_demo(1); } }
 if (VIEW == "c_pi3")       placed_pi3();
 // the display and the Pi in their own materials for the 3D viewer: glass with its black border,
