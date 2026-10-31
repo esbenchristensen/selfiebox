@@ -699,7 +699,12 @@ XB3_Y = CH_BACK - 4;                      // 23.7: front face of the frame's cro
 FR_T = 4;                                 // frame back plate
 FR_BACK = CH_BACK + FR_T;                 // 31.7: flat back of the frame
 RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
-CAM_END = 16.775;                         // slot end centres (v19: 14.675); v20: 1.5 further out, so the wider window keeps 3.7 mm black; v24: 0.6 more (window Ø12.1)
+// slot end centres (v19: 14.675; v20: 1.5 further out, so the wider window kept 3.7 mm black; v24-v35: 16.775).
+// v36 (Esben 31 Oct, assembly note 14, his idea B): the ring's ends lay 7 mm out over the camera bay, where neither the frame
+// nor the strips can be (CAM_KEEP), so they stayed dark and loose, and they had to be tucked in under the caps' back plates.
+// Now the black round the camera reaches 7.1 mm further each side and the ring's face ends at |x| = CAM_KEEP[0] = 17,
+// exactly where the reflector and the strips begin: 12.55 black from the Ø8.6 window to the slot, a bridge 33.7 wide.
+CAM_END = 17 + 6.85;                      // 23.85 = CAM_KEEP[0] + RF3
 CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
 // v36 (Esben 30 Oct, samlenoter 9: the RGB strip had to be forced in and got hard kinks): the reflector's foot moves 1.4 mm in
 // (r 4.4 -> 3.0); its front edge, which clamps the ring's inner flange, stays. The RGB strip (face at r 4.7) now has 1.7 mm in
@@ -923,10 +928,13 @@ module lock_pocket() intersection() {
     ext_y(SKIRT, D) translate([0, 1]) rr(W - 2, H - 2, R - 1);
 }
 // front screw boss: where it reaches into the channel (r < CH_IN) it starts at y 4.5, clear of the ring's flange, with a 45 deg underside (no overhang face down)
+// the boss stays clear of the ring's flange (v27-v35: to y 4.5) and, v36, of its rims (to PT + 1 + RIM[1] + RIM[2] = 6.3),
+// then narrows back at 45 deg
+J2_CUT = PT + 1 + RIM[1] + RIM[2];
 module j2_boss(j) difference() {
     cyl_y(6, PT - 0.01, CH_BACK, j[0], j[1]);
-    rfill(PT - 1, 4.5, CH_IN, CH_IN);
-    rfill(4.49, 4.5 + 1.62, CH_IN, CH_IN - 1.62);
+    rfill(PT - 1, J2_CUT, CH_IN, CH_IN);
+    rfill(J2_CUT - 0.01, J2_CUT + 1.62, CH_IN, CH_IN - 1.62);
 }
 // v12 (Esben 20 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v11_skitse_tyndere-front-og-rille.png):
 // the display stays behind the front, but the front is only 1.6 mm thick over the glass (v2-v11: 3.2 + a 0.5 land,
@@ -986,9 +994,12 @@ module logo_inlay(c) ext_y(0, LOGO_D) translate([0, LOGO_Z]) if (c == "green") l
 // v14 (Esben 21 Oct): the ring's round ends lie over the camera board (left) and the ribbon (right), and the
 // channel walls stopped 17 mm either side of the lens, so the dark camera bay showed through the diffuser.
 // The walls now follow the ring's ends round, and a 1.2 mm back closes each end 1 mm in front of the board.
-CAP_Y = CAM_PCB_Y - 2.0;  CAP_T = 1.2;     // v24: 2.0 in front of the board (v14-v23: 0.8), nothing near its front face but the 4 bosses
+// v36: no back plates any more (v14-v35 had a 1.2 back at CAP_Y): the slot now ends at |x| 16.85, so the front plate itself
+// is solid over the camera bay and nothing needs hiding; the plates kept the frame off the ring's ends and the ring had to be
+// tucked in under them. Only the walls round the ends stay, so the channel is closed at its ends.
+CAP_Y = CAM_PCB_Y - 2.0;                  // v24: 2.0 in front of the board (v14-v23: 0.8), nothing near its front face but the 4 bosses
 module cam_caps() intersection() {
-    union() { ext_y(PT - 0.01, CAP_Y) ring3_band(CH_IN, CH_HALF); ext_y(CAP_Y - CAP_T, CAP_Y) ring3_2d(CH_HALF); }
+    ext_y(PT - 0.01, CAP_Y) ring3_band(CH_IN, CH_HALF);
     ext_y(PT - 1, CAP_Y + 1) cam_keep2d();
 }
 // v13 had 4 pegs Ø2.0 in the board's Ø2.2 holes; some printed a little fat and had to be trimmed with a knife.
@@ -1014,6 +1025,7 @@ module front3() union() {
         ext_y(GLASS_Y3, PT + 0.01) pocket3_2d();                           // v12: thin lip over the glass
         ext_y(-1, LOGO_D) translate([0, LOGO_Z]) logo_all2d();   // pocket for the inlay
         ext_y(-1, PT + 0.01) ring3_2d(S3);
+        ring3_bevel(RING_BEV, PT + 0.01, S3, S3 + PT + 0.01 - RING_BEV, 24);   // v36: v18's 45 deg seat for the ring's bevel
         cam_window_cut();
         ext_y(SKIRT - JOINT_GAP, SKIRT + 0.02) difference() { offset(r = 1) rr(W, H, R); translate([0, WALL + FIT]) rr(W - 2*(WALL + FIT), H - 2*(WALL + FIT), R - WALL - FIT); }
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
@@ -1024,18 +1036,35 @@ module front3() union() {
     glass_ribs();
     joint_rib();                                                          // v21: into the shell's groove
 }
+// v36 (Esben 31 Oct, assembly notes 15/15b: v35's ring is unusable, base it on v18): v20 widened the flange (8.1 -> 9.1, for
+// the seal cord) and v27 took away its 45 deg underside and the front's seat, so the flange stood 2.25 mm flat over air when
+// printed face down; it failed, and v35's support made it jagged and ~5 mm wider. Back to v18's section: the walls run
+// straight to RING_BEV, then go out at 45 deg, here all the way to FL3 at the flange's back (PT + 1), so it fills the cavity
+// (CH_IN, 0.1 clear) and nothing on the ring is flatter than 45 deg: no support. Esben: support all round, inner and outer,
+// out to the ends (v18's wedge was on the inner side only and stopped 9.5 / 27 mm short of the ends): a rim on each edge of
+// the flange, round the round ends too, standing back into a notch in the frame (ring_rim_notch). Inside the rims the
+// flange's back is flat, and the frame's crush bumps press it there as before.
+RING_BEV = 1.95;                          // walls straight to here, then 45 deg (v18)
+RIM = [1.2, 2.0, 0.1];                    // rim width, height behind the flange, notch clearance (each side and at the floor)
 module ring3() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
     ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
-    // v27: the wall runs straight through the slot to the front plate's back face (y PT), where the flange lies on the plate:
-    // the hard stop. (v22-v26: a 0.4 shoulder stood on the floor of a 1.0 deep cord pocket at 2.2; the pocket is gone.)
-    ext_y(RING_Y[1] - 0.01, PT + 0.01) ring3_band(RF3 - RW3, RF3);
+    ext_y(RING_Y[1] - 0.01, RING_BEV + 0.01) ring3_band(RF3 - RW3, RF3);
     difference() {
-        ext_y(PT, PT + 1) ring3_2d(FL3);
+        ring3_bevel(RING_BEV, PT + 1, RF3, FL3, 45);
         ext_y(0, PT + 2) ring3_2d(RF3 - RW3);
-        translate([-7.8, PT - 2, LENS_Z - 8]) cube([15.6, 4, 16]);       // clear of the camera shroud (v24: 14.8 wide)
-        for (h = CAM_HOLES_ROT) cyl_y(4.6 + 1.0, PT - 1, PT + 2, h[0], LENS_Z + h[1]);   // v20: the flange gives way round the camera bosses
     }
+    difference() { ext_y(PT + 1 - 0.01, PT + 1 + RIM[1]) ring3_band(FL3 - RIM[0], FL3); rim_end_cut(); }
+}
+// Round each end the rim follows the arc, but on the outer half, from the tip to |x| RIM_END, the arc would run into the
+// strips' ends and their clips/leads on the strip wall (from |x| 17, r 2.4-6.9), so it stops there; the inner half and the
+// tip go all the way round. At RIM_END the arc is 7.5 out from the centre line, clear of the strip wall's face (6.9).
+RIM_END = 21.5;
+module rim_end_cut() translate([-RIM_END, PT, RING_Z1]) cube([2*RIM_END, RIM[1] + 3, 20]);
+// the room for the rims in the frame's front edge (reflector inside, strip wall outside), used in frame3
+module ring_rim_notch() difference() {
+    ext_y(PT + 1 - 0.01, PT + 1 + RIM[1] + RIM[2]) ring3_band(FL3 - RIM[0] - RIM[2], FL3 + RIM[2] + 0.5);
+    rim_end_cut();
 }
 // v6 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v5_skitse_snaplaase-front.png):
 // the light-ring slot leaves the inner plate (window + logo) hanging on the bridge at the camera only.
@@ -1133,6 +1162,7 @@ module frame3() {
         }
         snap_slots();
         lead_slots();                                                     // v36 (v18-v35: clip pockets)
+        ring_rim_notch();                                                 // v36: room for the light ring's rims
         for (t = tabs2) {
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + DSP_FLOOR - PRELOAD, FR_BACK + 1, t[0] + dx, z + dz);   // screw head well
@@ -1156,7 +1186,7 @@ module frame3() {
 RB = [0.25, 1.4, 0.5, -7.05, 7.35];       // reach, base Ø, tip Ø, r inside (reflector), r outside (strip wall)
 RB_V = [52, 80, 98, 128, 150, 172, 208, 232, 256];   // z on the side runs (clear of the snap arms at 110 and 190)
 RB_B = [-45, -22, 0, 22, 45];             // x on the bottom run (clear of the snap arms at +-60/62)
-RB_T = [42, 50];                          // |x| on the top runs (clear of the strip clips and the snap arms)
+RB_T = [22, 42, 50];                      // |x| on the top runs (clear of the strip clips and the snap arms); v36: 22 presses the ring's end
 function rb_pts() = concat(
     [for (sx = [-1, 1], z = RB_V, r = [RB[3], RB[4]]) [sx*(RING_X + r), z]],
     [for (x = RB_B, r = [RB[3], RB[4]]) [x, RING_Z0 - r]],
