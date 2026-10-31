@@ -117,7 +117,8 @@ module shell2(top = UNIT_TOP) {
 // [C] reed module OKY3440-1 32 x 19 x 7 (retailer; one M3 hole), [C] neodymium magnet Ø8 x 3 (retailer)
 HAT4G = [32, 65, 12];   HAT4G_P = [-88, 166];      // w (x), h (z), thickness (y); bottom-left on the back wall
 MCORE = [70.5, 52.2, 12.2]; MCORE_P = [5 - 70.5/2, 148];  // v9: lying (long edge horizontal, FPC socket at the bottom), right behind the Pi above the WLED controller: the 20 cm FPC needs ~16 cm (v8's spot needed ~29)
-IMU   = [17.8, 25.4, 4.6];  IMU_P = [-8.9, 205];
+IMU   = [17.8, 25.4, 4.6];  IMU_P = [80, 135];   // v36 (Esben 30 Oct, samlenoter 2): from [-8.9, 205], 3 mm over the mic core's USB-C / aux edge,
+                                                 // to the free right side above the 5 V supply's lane (nothing within 10 mm but the wing pocket's wall)
 MSTRIP = [110, 11, 3.0];  MIC_HOLES = [-49.5, -16.5, 16.5, 49.5];
 // v8 (Esben 19 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v8_skitse_mikrofon-underside.png):
 // the mic strip moves from under the top to a recess in the floor right behind the front, under the light
@@ -160,6 +161,10 @@ module electronics_holders() {
 MC_PAD = [6, 2.6];                         // pad Ø, height (pins 2.1 under the board)
 MC_HOLES = [[4, 4], [66.5, 4], [4, 48.2], [66.5, 48.2]];
 MC_NOTCH = [[6, 18.5], [30.5, 42.5]];      // top wall cut to the PCB: aux jack 8.4-16.1, USB-C 32-41.1
+// v36 (Esben 30 Oct, samlenoter 2): the lips stopped the board going down (he cut them off: the 4 pegs and the walls hold it), and
+// the aux jack did not fit with the board the drawn way round. No lips now, and both long walls are cut down to the PCB at the
+// aux, USB-C and FPC places for either way round (the notches mirrored), so the board fits whichever way its jacks really are.
+MC_CUTS = [[6, 18.5], [25.4, 45.4], [52.3, 64.8]];   // tray x, both long walls
 MC_LIPS = [[[21.5, 5.5], [44, 7.5]], [[19, 11], [62.5, 7]]];   // [x, length]: bottom (FPC) wall, top wall, clear of the edge parts
 // the board on its pads for the fit check: the 1.2 PCB with its 4 holes, and the parts (up to 9 over it) 1.4 in from the long
 // edges, where the lips catch the PCB (the DXF has no parts there at the lips' places)
@@ -173,14 +178,14 @@ module mcore_cradle() {
         translate([-1.6, -1.6, 0]) cube([sz[0] + 3.2, sz[1] + 3.2, hgt]);
         translate([0, 0, fl]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
         for (sx = [0, 1]) translate([sx > 0 ? sz[0] + 0.3 - 0.01 : -2, -2, pcb - 0.2]) cube([2.01, sz[1] + 4.3, hgt]);   // low ends
-        for (n = MC_NOTCH) translate([n[0], sz[1] - 1, pcb]) cube([n[1] - n[0], 4, hgt]);
+        for (n = MC_CUTS, sy = [0, 1]) translate([n[0], sy > 0 ? sz[1] - 1 : -2, pcb]) cube([n[1] - n[0], 4, hgt]);   // v36: both walls
         translate([sz[0]/2 - 10 + 0.15, -2, fl]) cube([20, 4, hgt]);                 // FPC socket
     }
     for (h = MC_HOLES) translate([h[0] + 0.15, h[1] + 0.15, fl - 0.01]) {
         cylinder(d = MC_PAD[0], h = MC_PAD[1] + 0.01, $fn = 32);
         cylinder(d = 3.0, h = MC_PAD[1] + 1.2 + 1.5, $fn = 24);
     }
-    for (sy = [0, 1], l = MC_LIPS[sy]) translate([l[0], sy > 0 ? sz[1] + 0.3 : 0, pcb + 0.1]) snap_lip(l[1], BOARD_LIP[0], BOARD_LIP[3], sy);
+    // v36: no lips (v24-v35: MC_LIPS)
 }
 
 // ------------------------------------------------------------ wall lock ----
@@ -430,16 +435,9 @@ function vent_y(sx) = VENT_Y0 + 2 + vent_l(sx)/2;
 // the barrel bore (plug pulled out) and two snap fingers catch the top of its body (plug pushed in).
 // [C] Body ~13 square (photo); [C] plug grip Ø<=12, <=38 long under the barrel (no Mean Well drawing): measure.
 PWR_P = [0, 60];                                // column axis (x, y): v11 in the middle (v10: x -49)
-// v24 (Esben 26 Oct: the socket was too big to go all the way down; Conrad lists the body as 14 x 13, not 13 square): the
-// cavity is 14.6 square, so the socket goes in either way round, the barrel bore 0.5 wider, and the catches reach 1.6 over
-// the body (1.3 on the 14 side, 1.8 on the 13 side) so pressing the plug in from below cannot push it out of the top.
-PWR_SOCK = [10, 12, 14, 22.8, 10, 5];           // barrel Ø, length; body width (Conrad: 14 x 13), length; terminal block width, length
+// v24-v35 had a closed square column for the Conrad socket (14.6 cavity, 2 snap fingers): see v36 below power_column().
 PWR_MOUTH = 38;                                 // socket mouth z: plug space below it
-PWR_BORE = 12.5;  PWR_CAV = 14.6;  PWR_WALLT = 2;  // plug bore Ø, body cavity, column wall
-PWR_CATCH = 1.6;                                // catch over the body's top edge
-PWR_BODY_TOP = PWR_MOUTH + PWR_SOCK[1] + PWR_SOCK[3];   // 72.8: the fingers catch here
-PWR_TOP = PWR_BODY_TOP + 2;                      // column top; the terminal block stands 3 mm above it
-PWR_OUT = PWR_CAV + 2*PWR_WALLT;                 // column outside, square
+PWR_BORE = 12.5;                                // plug bore Ø
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
 // [A] DFRobot FIT0502 3 W 8 ohm enclosed speaker (drawing KN-SP4030-05): 69.9 x 31, flange 3.7,
 //     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
@@ -486,38 +484,53 @@ module speaker3() translate([SPK_P[0] - SPK[0]/2, D - BACK_T - SPK[2], SPK_P[1] 
 // and its bores are horizontal holes whose roof is their front (-y) side. Every bore is now a teardrop with a 45 deg peak
 // towards -y, and the body's square cavity has a 45 deg gable there (the column grows a matching ridge), so the column prints
 // without support. Block support in the column in the slicer.
-module teardrop_z(d, z0, z1) translate([0, 0, z0]) linear_extrude(z1 - z0) hull() {
+module teardrop_z(d, z0, z1, x = 0, y = 0) translate([x, y, z0]) linear_extrude(z1 - z0) hull() {
     circle(d = d, $fn = 48); translate([0, -d/2*sqrt(2)]) square(0.01, center = true); }
-module power_column() translate([PWR_P[0], PWR_P[1], 0]) {
-    c = PWR_CAV;  o = PWR_OUT;  fz = PWR_BODY_TOP - 16;   // fingers: the ±x walls, free above fz
+// v36 (Esben 30 Oct, samlenoter 6/6b): the socket he has is not the Conrad DC-13F the column was drawn for. It is the common
+// "DC female with screw terminal": barrel in front, a square ribbed body, the green 2-pole terminal at the back end with its screws
+// on one face, standing ~1 mm over it. [M] Esben: 11.92 face to back (13 with the terminal), 37.96 from the mouth to the terminal's
+// back; [M] width 14.25 (dictated, read back as "1/4 mm"). It could not go down the 14.6 square cavity past the catches, and a strain
+// clip 9 mm over the column sat on its axis. Now the column is a channel open to the front: the socket goes in from the front with
+// its screws facing the opening (the leads can be screwed in with it in place), its body stands on two side ledges, a bar behind
+// the terminal's wire entries stops it when the plug is pushed in from below, and two lips on the channel's front edges hold it in.
+// The barrel's length is not measured: the ledges assume >= 10 (a longer barrel just reaches further down the plug bore).
+PWR_JACK = [14.25, 11.92, 13.0, 37.96, 10];     // width, body face-to-back, with the terminal, mouth to terminal back, barrel length (est.)
+PWR_CH = [PWR_JACK[0] + 0.5, 2.0, 1.4, 3.5];    // channel width, side wall, ledge reach, bar depth (behind the wire entries)
+PWR_BACK = D - BACK_T - 1.0;                    // the body's back face: 1 mm of column wall in front of the back wall
+PWR_LEDGE = PWR_MOUTH + PWR_JACK[4];            // 48: the body stands here
+PWR_JTOP = PWR_LEDGE + PWR_JACK[3] - PWR_JACK[4];   // 75.96 with a 10 mm barrel: the terminal's back end
+PWR_TOP = PWR_JTOP + 0.3 + 2.5;                 // column top (the bar)
+module power_column() translate([PWR_P[0], 0, 0]) {
+    w = PWR_CH[0]/2;  t = PWR_CH[1];  yf = PWR_BACK - PWR_JACK[2] - 0.4;   // side walls' front edge
     difference() {
-        translate([0, 0, WALL - 0.01]) linear_extrude(PWR_TOP - WALL + 0.01) hull() {
-            rrc(o, o, 2); translate([0, -o]) square(0.01, center = true); }        // v24: ridge in front
-        teardrop_z(PWR_BORE, -1, PWR_MOUTH);                                        // plug
-        teardrop_z(PWR_SOCK[0] + 1.0, PWR_MOUTH - 0.01, PWR_MOUTH + PWR_SOCK[1]);   // barrel; its top is the step the body rests on
-        translate([0, 0, PWR_MOUTH + PWR_SOCK[1]]) linear_extrude(PWR_TOP) hull() {   // body, with its gable
-            translate([-c/2, -c/2]) square([c, c]); translate([0, -c]) square(0.01, center = true); }
-        for (sx = [-1, 1], sy = [-1, 1]) translate([sx > 0 ? c/2 - 0.5 : -o/2 - 0.5, sy > 0 ? c/2 - 0.8 : -c/2, fz])
-            cube([PWR_WALLT + 1, 0.8, PWR_TOP]);                                      // slots free the fingers
+        union() {
+            translate([-w - t, PWR_P[1] - PWR_BORE/2*sqrt(2) - 2, WALL - 0.01]) cube([2*(w + t), D - BACK_T - (PWR_P[1] - PWR_BORE/2*sqrt(2) - 2) + 0.01, PWR_MOUTH - WALL + 0.01]);   // closed foot round the plug bore (2 in front of the teardrop's peak)
+            for (sx = [-1, 1]) translate([sx > 0 ? w : -w - t, yf, WALL - 0.01]) cube([t, D - BACK_T - yf + 0.01, PWR_TOP - WALL]);              // side walls
+            translate([-w - 0.01, PWR_BACK, WALL - 0.01]) cube([2*w + 0.02, D - BACK_T - PWR_BACK + 0.01, PWR_TOP - WALL]);                       // back
+            for (sx = [-1, 1]) translate([sx > 0 ? w - PWR_CH[2] : -w, PWR_P[1] - PWR_JACK[1]/2, PWR_LEDGE - 4]) cube([PWR_CH[2] + 0.01, PWR_BACK - PWR_P[1] + PWR_JACK[1]/2 + 0.01, 4]);   // ledges
+            translate([-w - 0.01, PWR_BACK - PWR_CH[3], PWR_JTOP + 0.3]) cube([2*w + 0.02, PWR_CH[3] + 0.01, PWR_TOP - PWR_JTOP - 0.3]);      // bar
+            // lips over the body's face (it stands PWR_JACK[1] in front of PWR_BACK), ramped towards the front
+            for (sx = [-1, 1]) let(yl = PWR_BACK - PWR_JACK[1] - 0.25) translate([0, 0, PWR_LEDGE + 3]) linear_extrude(10)
+                polygon([[sx*(w + 0.01), yl], [sx*(w - 0.8), yl], [sx*(w + 0.01), yl - 1.6]]);
+        }
+        teardrop_z(PWR_BORE, -1, PWR_MOUTH + 0.01, PWR_P[0], PWR_P[1]);
     }
-    // catches: PWR_CATCH into the cavity over the body's top edge, ramped above so the socket pushes past them
-    for (sx = [-1, 1]) translate([sx*c/2, -c/2 + 1.5, PWR_BODY_TOP + 0.2]) rotate([-90, 0, 0]) linear_extrude(c - 3)
-        polygon([[0, 0], [-sx*PWR_CATCH, 0], [-sx*PWR_CATCH, -0.4], [0, -(PWR_TOP - PWR_BODY_TOP - 0.2)]]);
 }
-module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // socket mouth down, and the PSU plug pushed in from below
-    s = PWR_SOCK;  z1 = PWR_MOUTH + s[1];
-    cyl_z(s[0], PWR_MOUTH, z1, 0, 0);
-    hull() { translate([-(s[2] - 1.5)/2, -(s[2] - 1.5)/2, z1]) cube([s[2] - 1.5, s[2] - 1.5, 0.01]); translate([-s[2]/2, -s[2]/2, z1 + s[3] - 0.01]) cube([s[2], s[2], 0.01]); }
-    translate([-s[4]/2, -s[4]/2, z1 + s[3]]) cube([s[4], s[4], s[5]]);
-    cyl_z(10, 9, PWR_MOUTH, 0, 0);                                   // plug grip
-    translate([0, 0, 1]) cylinder(d1 = 6, d2 = 8.5, h = 8.01, $fn = 32);  // strain relief, inside the bore
-    cyl_z(4, -60, 1.01, 0, 0);                                       // lead, straight down
+module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // the socket in its channel, screws to the front, and the PSU plug from below
+    j = PWR_JACK;  yb = PWR_BACK - PWR_P[1];
+    cyl_z(10.8, PWR_LEDGE - j[4], PWR_LEDGE, 0, 0);                                              // barrel
+    translate([-j[0]/2, yb - j[1], PWR_LEDGE]) cube([j[0], j[1], PWR_JTOP - PWR_LEDGE - 8]);      // body
+    translate([-5.1, yb - j[2], PWR_JTOP - 8]) cube([10.2, j[2], 8]);                             // terminal (2 x 5.08)
+    cyl_z(10, 9, PWR_LEDGE - j[4], 0, 0);                                                         // plug grip
+    translate([0, 0, 1]) cylinder(d1 = 6, d2 = 8.5, h = 8.01, $fn = 32);                          // strain relief, inside the bore
+    cyl_z(4, -60, 1.01, 0, 0);                                                                    // lead, straight down
 }
 module placed_services() {
     // socket (mouth down) in its column and the PSU's straight plug from below
     color([0.2, 0.2, 0.2]) power_inlet();
     // speaker
     color([0.2, 0.2, 0.22]) speaker3();
+    color([0.1, 0.1, 0.1]) fuse_model();   // v36
 }
 
 
@@ -544,23 +557,59 @@ WLED_ARM = [(WLED_L - WLED_B[1])/2, 2.0, 11.6, 3.5, 4.5];   // arms: length past
 WLED_ARMS = [[24.12, 45.7, 45.7 - 11.2, -1], [45.7 - 20.43 - 21.3, 45.7 - 20.43, 11.2, 1]];
 WLED_C = [0.25, 0.3];                     // clearance: per side across, at each arm tip
 WLED_FL = 1.2;                            // floor, as the v2-v16 trays
+WLED_WT = 2.4;                            // v36: long walls (v17-v35: 1.6)
 WLED_X0 = -34.5 - WLED_B[0]/2;  WLED_Z0 = 70 - WLED_B[1]/2;   // same centre as the v11-v16 tray
 WLED = [WLED_B[0], WLED_B[1], WLED_B[2]];  WLED_P = [WLED_X0, WLED_Z0];
 PSU_LIP = [1.6, 20, 3, 2.0];  BOARD_LIP = [1.2, 12, 2, 1.6];   // v17: snap lips [in, length, per side, ramp]
 MOSF = [44, 32, 16];   MOSF_P = [34.5, 64];                  // on the left wall; [A] DFR0457 PCB 44 x 32 (drawing), [C] ~16 high with the screw terminal
+// v36 (Esben 30 Oct, samlenoter 3: the holder was built from the board's tallest point, its long walls and teeth stood ~15 mm over the
+// PCB and touched nothing, and you could not see what you put it into). Now a holder for the board itself ([A] DFRobot drawing
+// halo-gen2-v2_maalskitse_dfrobot_dfr0457.pdf): PCB 44 x 32 x 1.6, 4 x Ø3.1 at x 20.4 / 40.4 (from the terminal end), y 3.5 / 28.5;
+// [M] Esben: about 5 mm high in all. It lies on 4 pads (the through-hole pins under it stay free), 2 pegs through two holes
+// locate it, and the walls stand MOSF_CATCH + a 1.6 ramp over the PCB's top face, with one short lip per long wall over the PCB
+// edge between the holes (no parts there). Both ends are only as high as the PCB, so the screw terminal (top) and the Gravity
+// plug (bottom) stay free. Local frame as wall_tray: x along the 44 (0 = terminal end, top), y along the 32, z out of the wall.
+MOSF_PCB = [44, 32, 1.6];  MOSF_PAD = [5.5, 2.4];  MOSF_HOLES = [[20.4, 3.5], [40.4, 3.5], [20.4, 28.5], [40.4, 28.5]];
+MOSF_CATCH = 0.3;  MOSF_LIP = [1.2, 9, 1.6];             // lip: in, length, ramp (a 1.2 overhang sags little)
+module mosfet_holder() {
+    c = 0.15;  wt = 1.6;  fl = 1.2;  pcb = fl + MOSF_PAD[1];  top = pcb + MOSF_PCB[2];  hw = top + MOSF_CATCH + MOSF_LIP[2] + 0.2;
+    difference() {
+        translate([-c - wt, -c - wt, 0]) cube([MOSF_PCB[0] + 2*(c + wt), MOSF_PCB[1] + 2*(c + wt), hw]);
+        translate([-c, -c, fl]) cube([MOSF_PCB[0] + 2*c, MOSF_PCB[1] + 2*c, hw]);
+        for (x = [-c - wt - 1, MOSF_PCB[0] + c - 0.01]) translate([x, -c - wt - 1, top]) cube([wt + 1.01, MOSF_PCB[1] + 2*(c + wt) + 2, hw]);   // low ends
+        translate([8, 6, -1]) cube([MOSF_PCB[0] - 16, MOSF_PCB[1] - 12, fl + 2]);                                                         // open floor
+    }
+    for (h = MOSF_HOLES) translate([h[0], h[1], fl - 0.01]) {
+        cylinder(d = MOSF_PAD[0], h = MOSF_PAD[1] + 0.01, $fn = 32);
+        if (h[1] < 10) cylinder(d = 2.8, h = MOSF_PAD[1] + MOSF_PCB[2] + 1.2, $fn = 24);   // 2 pegs, on the hole pair nearest the wall's edge
+    }
+    for (sy = [0, 1]) translate([25.5, sy > 0 ? MOSF_PCB[1] + c : -c, top + MOSF_CATCH]) snap_lip(MOSF_LIP[1], MOSF_LIP[0], MOSF_LIP[2], sy);
+}
+module mosfet_model() {   // the board in its holder, for the fit check and the 3D model: PCB + parts (up to Esben's ~5 mm)
+    translate([0, 0, 1.2 + MOSF_PAD[1]]) { cube(MOSF_PCB); translate([0.5, 3, MOSF_PCB[2]]) cube([14, 26, 5 - MOSF_PCB[2]]); translate([22, 4, MOSF_PCB[2]]) cube([21, 24, 2.5]); }
+}
+module mosf_frame() translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) children();
 // v17 (Esben 22 Oct: the teeth were too small, above all for the 5 V supply): every tray lip now has a flat catch 0.1 over the part's
 // top edge and a ramp above it. Until v16 the lips started 0.3 above the part and leaned in only 0.6 at their top, so a sloped face was
 // all that held the part. lip = [in, length, count per side, ramp height]
 module snap_lip(len, inw, rh, side) translate([0, 0, 0]) rotate([90, 0, 90]) linear_extrude(len)   // profile in (y, z), y inwards
     polygon(side > 0 ? [[0, 0], [-inw, 0], [0, rh]] : [[0, 0], [inw, 0], [0, rh]]);
-module lips_along(sz, t, lip, fl = 1.2, at = []) {   // lips on both long walls (along x) of an inner box sz[0] x sz[1] + 0.3
+module lips_along(sz, t, lip, fl = 1.2, at = [], catch = 0.1) {   // lips on both long walls (along x) of an inner box sz[0] x sz[1] + 0.3
     for (sy = [0, 1], i = [0 : lip[2] - 1]) {
         x = len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2;
-        translate([x, sy > 0 ? sz[1] + 0.3 : 0, fl + t + 0.1]) snap_lip(lip[1], lip[0], lip[3], sy);
+        translate([x, sy > 0 ? sz[1] + 0.3 : 0, fl + t + catch]) snap_lip(lip[1], lip[0], lip[3], sy);
     }
 }
-module wall_tray(sz, lip, wt = 1.6, end_h = 5) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
-    hgt = 1.2 + sz[2] + 0.1 + lip[3] + 0.3;
+// v36 (Esben 30 Oct, samlenoter 4 and 7: the teeth did not reach over the 5 V supply and the WLED controller, they pushed the walls
+// out): a lip's flat catch is a 1.6-2.0 mm overhang when the shell prints back down, and it sags 0.2-0.4 mm, so a catch drawn 0.1 over
+// the part's top edge printed level with it. Mean Well also gives the RSD-60G's 25 mm with +-1 mm. Now the catch stands CATCH over the
+// part's nominal top (the walls 0.8 mm higher, Esben: 0.5-1), and every long wall has buttress ribs outside so it cannot bend away.
+CATCH = 0.9;                              // catch over the part's nominal top (v17-v35: 0.1)
+TRAY_RIB = [1.6, 4];                      // outside buttress: thickness, reach at the foot
+module tray_rib(h, side) translate([0, side > 0 ? 0 : -TRAY_RIB[1], 0]) rotate([90, 0, 90]) linear_extrude(TRAY_RIB[0], center = true)
+    polygon(side > 0 ? [[0, 0], [TRAY_RIB[1], 0], [0, h]] : [[0, 0], [TRAY_RIB[1], 0], [TRAY_RIB[1], h]]);
+module wall_tray(sz, lip, wt = 1.6, end_h = 5, catch = 0.1) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+    hgt = 1.2 + sz[2] + catch + lip[3] + 0.3;
     difference() {
         translate([-wt, -wt, 0]) cube([sz[0] + 0.3 + 2*wt, sz[1] + 0.3 + 2*wt, hgt]);
         translate([0, 0, 1.2]) cube([sz[0] + 0.3, sz[1] + 0.3, hgt + 1]);
@@ -568,7 +617,9 @@ module wall_tray(sz, lip, wt = 1.6, end_h = 5) {   // sz = [x, y, z-thickness]: 
         translate([-wt - 1, -wt - 1, end_h]) cube([sz[0] + 2*wt + 2.3, sz[1] + 2*wt + 2.3, hgt]);   // ends cut down ...
     }
     for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) cube([sz[0] + 0.3, wt, hgt]);   // ... long walls stay full height
-    lips_along(sz, sz[2], lip);
+    lips_along(sz, sz[2], lip, catch = catch);
+    if (catch > 0.1) for (sy = [0, 1], i = [0 : lip[2] - 1]) let(x = (i + 0.5)*(sz[0] + 0.3)/lip[2])   // v36: a rib behind each lip
+        translate([x, sy > 0 ? sz[1] + 0.3 + wt : -wt, 0]) tray_rib(hgt - 1, sy > 0 ? 1 : -1);
 }
 // v17: cradle for the small boards (4G, mic core, IMU, reed): walls all round, a finger notch in the middle of each long wall and a lip
 // on each side of it. The Pololu cradle from gen 1 (until v16) had 2 lips, both at one end.
@@ -591,7 +642,7 @@ module wled_arm2d(a) {   // arm outline in u, v (base on the case end, tip outwa
     polygon([[a[0], v0], [a[1], v0], [a[2] + WLED_ARM[2]/2, t], [a[2] - WLED_ARM[2]/2, t]]);
 }
 module wled_holder() wled_frame() {
-    B = WLED_B; c = WLED_C[0]; wt = 1.6; hw = WLED_FL + B[2] + 1.8;
+    B = WLED_B; c = WLED_C[0]; wt = WLED_WT; hw = WLED_FL + B[2] + CATCH + 1.6 + 0.3;   // v36: walls 1.0 higher, 2.4 thick (v17-v35: 1.6)
     difference() {
         union() {
             translate([-c, 0, 0]) cube([B[0] + 2*c, B[1], WLED_FL]);                                   // floor under the case
@@ -604,8 +655,10 @@ module wled_holder() wled_frame() {
             }
             for (su = [-c - wt, B[0] + c]) translate([su, 0, 0]) cube([wt, B[1], hw]);                 // long walls
             // snap lips: catch 0.1 over the lid, 2.0 in (the top edge is 0.75 in from the wall, so 1.25 over it), ramp on top
-            for (sd = [0, 1], v = [B[1]*0.15, B[1]*0.7]) translate([sd ? B[0] + c : -c, v, WLED_FL + B[2] + 0.1]) hull() {
+            for (sd = [0, 1], v = [B[1]*0.15, B[1]*0.7]) translate([sd ? B[0] + c : -c, v, WLED_FL + B[2] + CATCH]) hull() {
                 translate([sd ? -2.0 : 0, 0, 0]) cube([2.0, 10, 0.01]); translate([sd ? -0.01 : 0, 0, 1.6]) cube([0.01, 10, 0.1]); }
+            // v36: a buttress outside each lip, so the wall cannot bend away from the case
+            for (sd = [0, 1], v = [B[1]*0.15 + 5, B[1]*0.7 + 5]) translate([sd ? B[0] + c + wt : -c - wt, v, 0]) rotate([0, 0, 90]) tray_rib(hw - 1, sd ? -1 : 1);
         }
         translate([6, 8, -1]) cube([B[0] - 12, B[1] - 16, WLED_FL + 2]);                              // open floor: less print, air
     }
@@ -621,14 +674,14 @@ module placed_wled() wled_frame() translate([0, 0, WLED_FL]) {   // the controll
 }
 module power_holders() {
     // v11: both stand up; the trays turn with them, so the low end stops stay at the terminal ends (top and bottom)
-    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU_LIP, 2.2);   // v17: 3 lips 20 long, 1.6 in, per side
+    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU_LIP, 2.2, catch = CATCH);   // v17: 3 lips 20 long, 1.6 in, per side; v36: CATCH
     wled_holder();
-    translate([-(HW - WALL) - 0.01, MOSF_P[0], MOSF_P[1] + MOSF[0]]) rotate([0, 90, 0]) wall_tray([MOSF[0], MOSF[1], MOSF[2]], [1.2, 10, 2, 1.6]);
+    mosf_frame() mosfet_holder();   // v36 (until v35: wall_tray([44, 32, 16]), walls 19.2 high)
 }
 module placed_power3() {
     color([0.75, 0.76, 0.78]) translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
     color([0.9, 0.9, 0.92]) placed_wled();
-    color([0.1, 0.3, 0.6]) translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
+    color([0.1, 0.3, 0.6]) mosf_frame() mosfet_model();
 }
 
 // ================================================== v2c: light channel, ring, frame ==
@@ -804,12 +857,20 @@ WG_X0 = hook_x(1, false) - HOOK[0]/2;
 WING_TAB = [5, 3.3, 24, 34];                            // width, depth into the groove (0.2 off its floor), z bottom, z top
 WING_GROOVE = [WING_TAB[0] + 0.5, WING_TAB[1] + 0.2, WING_TAB[2] - 0.5, WING_TAB[3] + HOOK[3] + 1];   // width, depth, z bottom, z top
 WG_BOSS = 1.6;                                          // wall round the groove inside the box
+// v36 (Esben 30 Oct, samlenoter 12: the two low notches looked like they had no function; they only steadied the wing): now a lock
+// like the upper hooks. Under the groove a pocket runs on down WG_LOCK[0] behind the back wall's outer WG_LOCK[1] (a ledge), and the
+// wing's tab has a toe that goes down behind that ledge when the wing drops into place (lift 3, push in, drop), so the lower end
+// cannot be pulled out either. The tab enters 3 higher, where the groove is open, so the toe passes. Prints without support
+// (back down: the ledge is the first layers, the pocket's roof is the same 5.5 mm bridge as the groove's).
+WG_LOCK = [3.5, 1.5, 1.6];                              // pocket depth below the groove, ledge thickness, toe thickness (y)
 function wg_xc(sx) = sx*(WG_X0 + WING_TAB[0]/2);
-module wing_grooves() for (sx = [-1, 1]) translate([wg_xc(sx) - WING_GROOVE[0]/2, D - WING_GROOVE[1], WING_GROOVE[2]])
-    cube([WING_GROOVE[0], WING_GROOVE[1] + 1, WING_GROOVE[3] - WING_GROOVE[2]]);
+module wing_grooves() for (sx = [-1, 1]) {
+    translate([wg_xc(sx) - WING_GROOVE[0]/2, D - WING_GROOVE[1], WING_GROOVE[2]]) cube([WING_GROOVE[0], WING_GROOVE[1] + 1, WING_GROOVE[3] - WING_GROOVE[2]]);
+    translate([wg_xc(sx) - WING_GROOVE[0]/2, D - WING_GROOVE[1], WING_GROOVE[2] - WG_LOCK[0]]) cube([WING_GROOVE[0], WING_GROOVE[1] - WG_LOCK[1], WG_LOCK[0] + 0.01]);   // v36: lock pocket
+}
 module wing_groove_bosses() intersection() {
-    for (sx = [-1, 1]) translate([wg_xc(sx) - WING_GROOVE[0]/2 - WG_BOSS, D - WING_GROOVE[1] - WG_BOSS, WING_GROOVE[2] - WG_BOSS])
-        cube([WING_GROOVE[0] + 2*WG_BOSS, WING_GROOVE[1] + WG_BOSS - BACK_T + 0.01, WING_GROOVE[3] - WING_GROOVE[2] + 2*WG_BOSS]);
+    for (sx = [-1, 1]) translate([wg_xc(sx) - WING_GROOVE[0]/2 - WG_BOSS, D - WING_GROOVE[1] - WG_BOSS, WING_GROOVE[2] - WG_LOCK[0] - WG_BOSS])
+        cube([WING_GROOVE[0] + 2*WG_BOSS, WING_GROOVE[1] + WG_BOSS - BACK_T + 0.01, WING_GROOVE[3] - WING_GROOVE[2] + WG_LOCK[0] + 2*WG_BOSS]);
     ext_y(SKIRT, D) translate([0, 1]) rr(W - 2, H - 2, R - 1);
 }
 // example top: a 6 mm sign over the front, a 4 mm base on the top face, ribs, and two straps 4 x 10 down to the upper slots
@@ -850,6 +911,7 @@ module theme_wing_demo(sx) {
         translate([xe, D - 10, z0]) cube([4, 10.21 + WING_STRAP, z1 - z0]);
         for (z = zs) hook(hook_x(1, false), z);
         translate([WG_X0, D - WING_TAB[1], WING_TAB[2]]) cube([WING_TAB[0], STRAP_Y - D + WING_TAB[1] + 0.01, WING_TAB[3] - WING_TAB[2]]);   // v28: tab in the groove (v30: 5 x 3.3 x 10)
+        translate([WG_X0, D - WING_TAB[1], WING_TAB[2] - (WG_LOCK[0] - 0.5)]) cube([WING_TAB[0], WG_LOCK[2], WG_LOCK[0] - 0.5 + 0.01]);         // v36: toe behind the ledge
     }
 }
 // v21: clipped to 1 mm inside the shell's outer skin (until now its bottom-left corner stood up to 1 mm out of the round bottom edge)
@@ -1133,7 +1195,8 @@ module shell3(top = UNIT_TOP) {
             power_holders();
             if (WING_POCKET) wing_pockets();
             wing_groove_bosses();   // v30
-            cable_loops(); strain_clip();                          // v23: cable routing
+            for (p = CABLE_LOOPS) cable_clip(p); strain_clip();   // v23: cable routing; v36: open clips
+            fuse_holder();                                         // v36
             wago_row();                                            // v29
         }
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_SLOT/2, D - BACK_T - 1, p[1] - 4]) cube([WING_SLOT, BACK_T + 2, 14]);   // keep the slots open (9 wide)
@@ -1162,13 +1225,49 @@ CABLE_LOOPS = [[0, 112, "h"], [0, 136, "h"],                  // main bundle; 13
                // v29 (Esben 27 Oct: "baner og ruter frem for overalt"): the left lane up past the speaker and the 4G, the right lane
                // from the PSU's terminals up to the Wago row, and the shell end of the top hinge bundle K1 (K2's shell end is [-80, 72])
                [-45, 170, "h"], [-45, 222, "h"], [72, 200, "h"], [72, 245, "h"], [-85, 240, "h"],
-               [-30, 243, "v"], [30, 243, "v"]];                   // ... and two under the Wago row for the distribution lane
+               [-30, 232, "v"], [30, 232, "v"]];                   // ... and two under the Wago row for the distribution lane (v36: z 243 -> 232, 15 mm free under the block)
 LOOP = [10.4, 2.2, 1.6, 2.0, 5];          // tunnel width (strap 10), tunnel height (strap 2), bridge, side posts, length
 module cable_loop(p) translate([p[0], D - BACK_T + 0.01, p[1]]) rotate([0, p[2] == "h" ? 0 : 90, 0]) difference() {
     translate([-LOOP[4]/2, -(LOOP[1] + LOOP[2]), -LOOP[0]/2 - LOOP[3]]) cube([LOOP[4], LOOP[1] + LOOP[2] + 0.01, LOOP[0] + 2*LOOP[3]]);
     translate([-LOOP[4]/2 - 1, -LOOP[1], -LOOP[0]/2]) cube([LOOP[4] + 2, LOOP[1] + 0.02, LOOP[0]]);
 }
 module cable_loops() for (p = CABLE_LOOPS) cable_loop(p);
+// v36 (Esben 31 Oct, samlenoter 13: the fuse holder had no place). [M] Esben's waterproof inline ATO holder: body 34.19 along the
+// leads, 13.38 thick, 23.94 from its base to the top of the lid; a lead out of each end, the lid pulls off square to the leads and
+// hangs on a strap. It stands on edge low on the right wall, in the largest free spot in the shell, beside the right lane that
+// P1 (24 V +) runs up anyway: base against the back wall, lid to the front, so with the front off the lid comes straight off.
+// A pocket the body's size with 2 crush ribs per side (as the Wago row), end walls slotted for the lead stubs.
+FUSE = [13.38, 34.19, 23.94];             // [M] thickness (x), length along the leads (z), base to lid top (y)
+FUSE_P = [99, 69];                        // centre x, z
+FUSE_C = [0.15, 1.6, 9, 9];               // clearance per side, wall, wall height, lead slot width
+module fuse_holder() translate([FUSE_P[0], D - BACK_T + 0.01, FUSE_P[1]]) rotate([90, 0, 0]) {   // local: x across, y = z of the box, z out of the wall
+    a = FUSE[0]/2 + FUSE_C[0];  b = FUSE[1]/2 + FUSE_C[0];  t = FUSE_C[1];
+    difference() {
+        translate([-a - t, -b - t, 0]) cube([2*(a + t), 2*(b + t), FUSE_C[2]]);
+        translate([-a, -b, -1]) cube([2*a, 2*b, FUSE_C[2] + 2]);
+        translate([-FUSE_C[3]/2, -b - t - 1, -1]) cube([FUSE_C[3], 2*(b + t) + 2, FUSE_C[2] + 2]);   // lead slots in both ends
+    }
+    for (sx = [-1, 1], y = [-b/2, b/2]) translate([sx*a, y, 0]) cylinder(d = 2*(FUSE_C[0] + 0.1), h = FUSE_C[2], $fn = 12);   // crush ribs
+}
+module fuse_model() translate([FUSE_P[0], D - BACK_T, FUSE_P[1]]) rotate([90, 0, 0]) {
+    translate([-FUSE[0]/2, -FUSE[1]/2, 0]) cube([FUSE[0], FUSE[1], 12]);           // base
+    translate([-FUSE[0]/2, -11, 12 - 0.01]) cube([FUSE[0], 22, FUSE[2] - 12]);      // lid
+    for (sy = [-1, 1]) translate([0, sy*(FUSE[1]/2 + 4), 6]) rotate([90, 0, 0]) cylinder(d = 6, h = 8, center = true, $fn = 24);   // lead stubs
+}
+// v36 (Esben 30 Oct, samlenoter 11: two strap loops under the Wago row stood 1-2 mm from it, no room to pull a strap through with
+// the fingers; the same held for 3 more loops). Every loop is now an open clip: a C round the bundle, open to the front, so the
+// bundle is pressed in from the front and nothing has to be threaded. [x, z, dir] as before: "h" = the bundle runs up/down,
+// "v" = sideways. The main bundle's clips (x 0) are bigger.
+CLIP = [9, 1.6, 6.5, 8];                  // inner Ø, wall, opening, length along the bundle
+function clip_d(p) = p[0] == 0 ? 12 : CLIP[0];
+module cable_clip(p) translate([p[0], D - BACK_T, p[1]]) rotate([0, p[2] == "h" ? 0 : 90, 0]) {
+    d = clip_d(p);  r = d/2 + CLIP[1];  yc = -(d/2 + 0.5);
+    translate([0, 0, -CLIP[3]/2]) linear_extrude(CLIP[3]) difference() {
+        hull() { translate([0, yc]) circle(r = r, $fn = 40); translate([-r, -0.01]) square([2*r, 0.02]); }
+        translate([0, yc]) circle(d = d, $fn = 40);
+        translate([-CLIP[2]/2, yc - r - 1]) square([CLIP[2], r]);
+    }
+}
 // v29: the Wago row. Until v28 the Wago clamps hung loose in the bundle (Esben's photo 27 Oct: wires everywhere). Now all six sit
 // in one row of press-fit pockets on the front face of the wall cleat's block high on the back wall (y 58, z 247-286): levers to
 // the front, so with the front off every lever and every entry is in reach, and the wire entries face down into a 20 mm
@@ -1178,7 +1277,14 @@ module cable_loops() for (p = CABLE_LOOPS) cable_loop(p);
 //     221-414 by the 5.6 mm pitch: 24.4. The pockets take the largest figure + WG_C, and 2 crush ribs per side press it in.
 WAGOS = [["W6", 3, 18.8], ["W5", 3, 18.8], ["W3", 4, 24.4], ["W4", 5, 30.0], ["W2", 5, 30.0], ["W1", 3, 18.8]];
 WG = [18.8, 8.6];                          // depth (entry face to back), height (lever side up)
-WG_C = 0.2;  WG_GAP = 3;  WG_WALL = [1.6, 5.5];   // clearance per side, wall between pockets, outer wall, wall height over the floor
+// v36 (Esben 30 Oct, samlenoter 1: the pockets were ~0.5 too big and nothing held the clamps, they could fall out): no clearance
+// any more (the crush ribs give the press fit), and Esben's hooks: one per wire entry, from the pocket's open end it reaches 1.5 mm
+// into the bottom of the entry (the floor side) and holds the clamp's entry end down. The clamp goes in entry end first, slides
+// under the hooks and is laid down; its back end presses against the end wall. The hook takes only WG_HOOK[2] of the entry's
+// height, so the stripped wire still goes in over it. [C] entries: one per pole, centred, about WG_HOLE over the floor.
+WG_C = 0;  WG_GAP = 3;  WG_WALL = [1.6, 5.5];   // clearance per side (v29-v35: 0.2), wall between pockets, outer wall, wall height over the floor
+WG_HOLE = [4.3, 3.4];                      // [C] wire entry: centre over the floor, size
+WG_HOOK = [1.6, 1.5, 0.7, 1.4];            // width (x), reach into the entry, nose thickness, post thickness (z)
 WG_Z = 262;                                // entry face (down); the backs rest on an end wall
 WG_FL = [1.2, CLEAT_ZC - 27 + 39];         // floor on the block face, block top (286)
 function wg_w(i) = WAGOS[i][2] + 2*WG_C;
@@ -1191,7 +1297,7 @@ module wago_row() {
     z1 = WG_Z + WG[0] + WG_C + 1.6;
     difference() {
         union() {
-            translate([x0, WG_Y - WG_FL[0], WG_Z - 0.5]) cube([x1 - x0, WG_FL[0] + 0.01, z1 - WG_Z + 0.5]);                 // floor
+            translate([x0, WG_Y - WG_FL[0], WG_Z - WG_HOOK[3] - 0.5]) cube([x1 - x0, WG_FL[0] + 0.01, z1 - WG_Z + WG_HOOK[3] + 0.5]);   // floor (v36: on down under the hooks)
             for (sx = [-1, 1]) translate([sx > 0 ? CLEAT_L/2 + 3 - 0.01 : x0, WG_Y - WG_FL[0], WG_Z - 0.5])                // feet past the block
                 cube([sx > 0 ? x1 - CLEAT_L/2 - 3 + 0.01 : -CLEAT_L/2 - 3 - x0 + 0.01, D - BACK_T - WG_Y + WG_FL[0] + 0.01, z1 - WG_Z + 0.5]);
             translate([x0, WG_Y - WG_FL[0] - WG_WALL[1], z1 - 1.6]) cube([x1 - x0, WG_WALL[1] + 0.01, 1.6]);                // end wall at the backs
@@ -1200,14 +1306,20 @@ module wago_row() {
                 translate([xa, WG_Y - WG_FL[0] - WG_WALL[1], WG_Z + 3]) cube([t, WG_WALL[1] + 0.01, z1 - WG_Z - 3]);
             }
             for (i = [0 : len(WAGOS) - 1], sx = [0, 1], z = [WG_Z + 7, WG_Z + 15])                                             // crush ribs
-                translate([sx ? wg_x(i) + wg_w(i) : wg_x(i), WG_Y - WG_FL[0] - 4, z]) cylinder(d = 2*(WG_C + 0.05) + 0.01, h = 3, $fn = 12);
+                translate([sx ? wg_x(i) + wg_w(i) : wg_x(i), WG_Y - WG_FL[0] - 4, z]) cylinder(d = 2*(WG_C + 0.1) + 0.01, h = 3, $fn = 12);
+            // v36: the hooks, one per entry; the post stands on the floor below the entry face, the nose reaches up into the entry
+            for (i = [0 : len(WAGOS) - 1], k = [0 : WAGOS[i][1] - 1]) let(xc = wg_x(i) + WG_C + WAGOS[i][2]*(k + 0.5)/WAGOS[i][1],
+                    yf = WG_Y - WG_FL[0], yn = yf - (WG_HOLE[0] - WG_HOLE[1]/2)) {
+                translate([xc - WG_HOOK[0]/2, yn - WG_HOOK[2], WG_Z - WG_HOOK[3]]) cube([WG_HOOK[0], yf - yn + WG_HOOK[2] + 0.01, WG_HOOK[3]]);
+                translate([xc - WG_HOOK[0]/2, yn - WG_HOOK[2], WG_Z - 0.01]) cube([WG_HOOK[0], WG_HOOK[2], WG_HOOK[1] + 0.01]);
+            }
         }
     }
 }
 module placed_wagos() for (i = [0 : len(WAGOS) - 1]) translate([wg_x(i) + WG_C, WG_Y - WG_FL[0] - WG[1], WG_Z]) cube([WAGOS[i][2], WG[1], WG[0]]);
 // strain relief: a snap clip just above the power inlet holds the two leads from the jack (together up to Ø5.4), so a pull on
 // the bundle never reaches the jack's terminals. It opens towards the front; the leads click in from the front.
-STRAIN = [5.4, 1.6, 6, 3.8, 84];          // bore, wall, height (z), opening, z bottom
+STRAIN = [6.4, 1.6, 6, 4.6, 92];          // bore, wall, height (z), opening, z bottom (v36: 16 over the socket, which goes in from the front; for 2 x 1.5 mm2; v23-v35: Ø5.4 at z 84)
 module strain_clip() translate([PWR_P[0], PWR_P[1], STRAIN[4]]) difference() {
     union() {
         cylinder(d = STRAIN[0] + 2*STRAIN[1], h = STRAIN[2], $fn = 40);
@@ -1330,6 +1442,7 @@ if (VIEW == "c_mics")      translate([-MSTRIP[0]/2, MSTRIP_Y - MSTRIP[1]/2, WALL
 if (VIEW == "c_reed")      { back_part(REED_P, REED, "red"); translate([LOCK_X, LOCK_SY, LOCK_TZ[1] - 3]) cylinder(d = 8, h = 3, $fn = 24); }
 if (VIEW == "c_speaker")   speaker3();
 if (VIEW == "c_jack")      power_inlet();
+if (VIEW == "c_fuse")      fuse_model();                                                 // v36
 // screws: 4 front (v27: 4.0 x 50 T20 countersunk, heads flush in the back face), 4 camera (M2 x 6), 1 lock (4 x 25 Torx pin)
 if (VIEW == "s_camera")    for (h = CAM_HOLES_ROT) screw_y(2, 6, [3.8, 1.3], h[0], CAM_PCB_Y + CAM_PCB[2], LENS_Z + h[1], -1);
 if (VIEW == "s_lock")      both_locks() translate([$lx, LOCK_SY, LOCK_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
@@ -1388,7 +1501,7 @@ if (VIEW == "c_fan")        translate([0, PI_Y3, GC + DSP_PI_DZ]) translate([PI_
 if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
 if (VIEW == "c_wled")      placed_wled();
 if (VIEW == "x_wled_holder") intersection() { shell3(); wled_frame() translate([-10, -15, -5]) cube([WLED_B[0] + 20, WLED_B[1] + 30, 40]); }
-if (VIEW == "c_mosfet")    translate([-(HW - WALL) + 1.2, MOSF_P[0], MOSF_P[1]]) cube([MOSF[2], MOSF[1], MOSF[0]]);
+if (VIEW == "c_mosfet")    mosf_frame() mosfet_model();
 if (VIEW == "x_shell3")    shell3();
 if (VIEW == "s_front3")    for (j = J2) {   // v27: 4.0 x 50 T20, countersunk head flush with the back face (thread drawn at its 3.77 crest)
     cyl_y(3.77, FS_TIP, D - 1, j[0], j[1]);

@@ -132,6 +132,11 @@ def _mesh_xml(oid, mesh, name):
 SOLID_FACE = {   # the visible face is the first layer (printed face down): one direction, one outline, no wall rings
     "_face_down": True, "bottom_surface_pattern": "monotonicline", "only_one_wall_first_layer": "1"}
 SEAM = {"seam_position": "back", "seam_slope_type": "external"}   # scarf seam on the outer contour, at the box's underside
+# v36 (Esben 31 Oct, samlenoter 17: an ugly seam line across the underside of the shell and the front, from the power hole to the
+# tip; v18, sliced from plain STLs with Bambu's defaults, had none). "back" on the flat underside put every layer's start on one
+# straight line across it. The shell and the front now use Bambu's default: "aligned" (the seam goes into a corner or edge of each
+# layer), no scarf.
+SEAM_ALIGNED = {"seam_position": "aligned", "seam_slope_type": "none"}
 NO_SUPPORT = {"enable_support": "0"}
 # v33 (Esben 27 Oct: "ikke bruge tid på at få indvendige ting og indersider flotte"): Bambu's own 2 walls and 15 % infill.
 # v34 (28 Oct, failed prints): crosshatch instead of grid (grid crosses its own lines in every layer, and the nozzle hits
@@ -148,7 +153,7 @@ SETTINGS = {
     # front: 0.2 so the logo is exactly the first 4 layers; 0.15 elephant foot so the 0.15 shadow gap stays open;
     # 4 bottom layers under the visible face, its back is inside the box
     "front": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "elefant_foot_compensation": "0.15",
-              "brim_type": "no_brim", **SOLID_FACE, **SEAM, **NO_SUPPORT},
+              "brim_type": "no_brim", **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
     # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes.
     # v35 (Kasper 30 Oct: "den printer bare ved siden af når den prøver at lave de sidste kanter"): the flange on top of the
     # walls (the last 1 mm, 3.7-4.7 on the plate) reaches 2.25 mm past the wall on both sides, flat over air, so its outer
@@ -167,7 +172,7 @@ SETTINGS = {
     # shell: the sides are seen, so 0.2 like the front; its back lies on the plate (to the wall, not seen), so Bambu's
     # first layer. Support only at its 2 enforcers (tree, manual, also from the model), 3 mm brim against corner lift
     "skal": {"layer_height": "0.2", **INSIDE, "enable_support": "1", "support_type": "tree(manual)",
-             "support_on_build_plate_only": "0", "brim_type": "outer_only", "brim_width": "3", **SEAM},
+             "support_on_build_plate_only": "0", "brim_type": "outer_only", "brim_width": "3", **SEAM_ALIGNED},
     # wall cleat: behind the box and carries it: 3 walls and 40 % gyroid round the tongues
     "vaegbeslag": {"_visible": False, "layer_height": "0.28", **INSIDE, "wall_loops": "3",
                    "sparse_infill_density": "40%", "sparse_infill_pattern": "gyroid", "infill_combination": "0",
