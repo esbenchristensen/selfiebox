@@ -36,7 +36,7 @@ in the slicer itself.
 Usage:  python3 hardware/tools/make_3mf.py <version folder> [<file prefix>]
         e.g. python3 hardware/tools/make_3mf.py hardware/stl/gen2/halo-gen2-v26
              python3 hardware/tools/make_3mf.py hardware/stl/gen2-hurtig/halo-gen2-v12-hurtig
-Needs:  trimesh, numpy
+Needs:  trimesh, numpy, shapely (the light ring's overhang check)
 """
 import json
 import sys
@@ -155,18 +155,13 @@ SETTINGS = {
     "front": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "elefant_foot_compensation": "0.15",
               "brim_type": "no_brim", **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
     # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes.
-    # v35 (Kasper 30 Oct: "den printer bare ved siden af når den prøver at lave de sidste kanter"): the flange on top of the
-    # walls (the last 1 mm, 3.7-4.7 on the plate) reaches 2.25 mm past the wall on both sides, flat over air, so its outer
-    # lines had nothing under them and the last ~25 minutes failed every time. Now support from the plate holds it, only at
-    # the enforcer under the flange (lysring_3mf), with a solid interface in PLA on slot 2: PLA does not bond to PETG, so
-    # it peels off clean, and the flange's underside lies on the front plate's back face, inside the box.
+    # v35 printed the flange on support (a solid PLA interface on slot 2): it came out jagged, ~5 mm wider and with a rough
+    # face, and would not go in (Esben 31 Oct). v36 has v18's section again, where nothing is flatter than 45 deg, so it
+    # prints with no support at all, like v18; lysring_3mf checks that every layer stands on the one below.
     "lysring": {"_face_down": True, "layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%",
                 "bottom_surface_pattern": "concentric", "top_surface_pattern": "concentric",
                 "internal_solid_infill_pattern": "concentric", "elefant_foot_compensation": "0.15", "brim_type": "no_brim",
-                "enable_support": "1", "support_type": "normal(manual)", "support_on_build_plate_only": "1",
-                "support_interface_filament": "2", "support_interface_not_for_body": "1",
-                "support_interface_top_layers": "2", "support_interface_spacing": "0", "support_top_z_distance": "0",
-                **SEAM},
+                **SEAM, **NO_SUPPORT},
     # frame: inside the box; the reflector's steps at 0.28 are behind the 1 mm diffuser
     "bagramme": {"_visible": False, "layer_height": "0.28", **INSIDE, **NO_SUPPORT},
     # shell: the sides are seen, so 0.2 like the front; its back lies on the plate (to the wall, not seen), so Bambu's
@@ -345,29 +340,43 @@ def skal_3mf(folder, prefix=None):
     return out
 
 
-# v35: the light ring's flange (see SETTINGS["lysring"]): an enforcer from just under the flange's underside (z 3.7 on the
-# plate) to its top, over the whole ring. In manual mode Bambu Studio supports only the overhangs inside it, so the face's
-# 0.3 mm elephant-foot step at the plate gets none. The ring is clear PETG on slot 1, the interface white PLA on slot 2.
-LYSRING_ENFORCE = ("support: under flangen", (3.4, 4.0))
+# v36: the light ring prints with no support (see SETTINGS["lysring"]), so no layer may reach past the one below by more
+# than a 45 deg step (one 0.16 layer) plus a little: OVERHANG_MAX. v35's flat flange reached 2.25.
+OVERHANG_MAX = 0.3
+
+
+def overhang_check(mesh, name, layer=0.16, reach=OVERHANG_MAX):
+    """Slice mesh (in print orientation) every layer and fail if any layer reaches more than reach past the layer below:
+    the area of (layer - (layer below grown by reach)) must be ~0."""
+    from shapely.geometry import Polygon
+    from shapely.ops import unary_union
+
+    def section(z):
+        s = mesh.section(plane_origin=[0, 0, z], plane_normal=[0, 0, 1])
+        if s is None:
+            return Polygon()
+        planar, _ = s.to_planar(to_2D=np.eye(4))
+        return unary_union(list(planar.polygons_full))
+
+    zs = np.arange(layer / 2, mesh.bounds[1][2], layer)
+    below = section(zs[0])
+    for z in zs[1:]:
+        cur = section(z)
+        bad = cur.difference(below.buffer(reach)).area
+        if bad > 0.5:
+            raise SystemExit(f"{name}: {bad:.1f} mm2 of the layer at z {z:.2f} hangs more than {reach} mm past the one below")
+        below = cur
 
 
 def lysring_3mf(folder, prefix=None):
-    """<prefix>_lysring.3mf: the clear ring with the support enforcer under its flange, checked against the ring's own
-    downward faces (the flange's underside must be inside the enforcer, and nothing else that faces down above the plate)."""
+    """<prefix>_lysring.3mf: the clear ring on its own, no support; checked for overhangs first (overhang_check)."""
     folder = Path(folder)
     prefix = prefix or folder.name
     ring = trimesh.load(folder / f"{prefix}_lysring.stl")
-    name, (z0, z1) = LYSRING_ENFORCE
-    c = ring.triangles_center
-    down = (ring.face_normals[:, 2] < -0.9) & (c[:, 2] > 0.5)
-    inside = down & (c[:, 2] > z0) & (c[:, 2] < z1)
-    if ring.area_faces[inside].sum() < 1000 or ring.area_faces[down & ~inside].sum() > 1:
-        raise SystemExit(f"{name}: the flange's underside is not inside z {z0}-{z1}; the ring has moved, fix the enforcer")
-    lo, hi = ring.bounds
-    enforcer = _box([lo[0], hi[0], lo[1], hi[1], z0, z1])
+    overhang_check(ring, f"{prefix}_lysring")
     out = folder / f"{prefix}_lysring.3mf"
-    write_bambu_3mf(out, [("lysring", ring, 1), (name, enforcer, 1, "support_enforcer")], f"{prefix}_lysring",
-                    SETTINGS["lysring"], filaments=("natur", "hvid"), plate="tekstureret")
+    write_bambu_3mf(out, [("lysring", ring, 1)], f"{prefix}_lysring", SETTINGS["lysring"], filaments=("natur",),
+                    plate="tekstureret")
     return out
 
 

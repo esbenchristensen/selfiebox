@@ -1057,7 +1057,7 @@ module ring3() {
     difference() { ext_y(PT + 1 - 0.01, PT + 1 + RIM[1]) ring3_band(FL3 - RIM[0], FL3); rim_end_cut(); }
 }
 // Round each end the rim follows the arc, but on the outer half, from the tip to |x| RIM_END, the arc would run into the
-// strips' ends and their clips/leads on the strip wall (from |x| 17, r 2.4-6.9), so it stops there; the inner half and the
+// strips' soldered ends on the strip wall (from |x| 17, r 4.7-6.9), so it stops there; the inner half and the
 // tip go all the way round. At RIM_END the arc is 7.5 out from the centre line, clear of the strip wall's face (6.9).
 RIM_END = 21.5;
 module rim_end_cut() translate([-RIM_END, PT, RING_Z1]) cube([2*RIM_END, RIM[1] + 3, 20]);
@@ -1186,7 +1186,7 @@ module frame3() {
 RB = [0.25, 1.4, 0.5, -7.05, 7.35];       // reach, base Ø, tip Ø, r inside (reflector), r outside (strip wall)
 RB_V = [52, 80, 98, 128, 150, 172, 208, 232, 256];   // z on the side runs (clear of the snap arms at 110 and 190)
 RB_B = [-45, -22, 0, 22, 45];             // x on the bottom run (clear of the snap arms at +-60/62)
-RB_T = [22, 42, 50];                      // |x| on the top runs (clear of the strip clips and the snap arms); v36: 22 presses the ring's end
+RB_T = [22, 42, 50];                      // |x| on the top runs (clear of the snap arms); v36: 22 presses the ring's end
 function rb_pts() = concat(
     [for (sx = [-1, 1], z = RB_V, r = [RB[3], RB[4]]) [sx*(RING_X + r), z]],
     [for (x = RB_B, r = [RB[3], RB[4]]) [x, RING_Z0 - r]],
