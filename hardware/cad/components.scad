@@ -66,6 +66,15 @@ module rpi_touch_display2_10() {
 // [A] Active Cooler 63.5 x 42.5 x 13.7
 // [B] USB/Ethernet stack ~16 mm above the PCB (NopSCADlib RPI4 data; Pi 5 is the same form)
 PI_L = 85;  PI_W = 56;  PI_T = 1.6;  PI_HOLE = 2.7;  PI_PORT_H = 16;  PI_COOLER = [63.5, 42.5, 13.7];
+// [A] Active Cooler drawing + Pi 5 drawing (hardware/datablade): its two push pins sit in the Pi's Ø3 holes 6 mm inside the
+// top-right and bottom-left mounting holes, so the cooler covers the board from 0.5 to 64 along it (from the end away from the
+// ports) and 7 to 49.5 across (from the GPIO edge). The 30 x 30 blower sits at the PORT end, with its Ø21.4 intake 41.8 along and 23
+// across; the fins are at the other end. In this frame (GPIO edge at x -28, ports down) that puts the fan centre 9.3 BELOW the hole
+// centre and 5 towards the GPIO side. Until v35 the model had the cooler 8 mm up and the fan 14 above the centre, a guess that put
+// the fan guard's grille over the fins (Esben 30 Oct, samlenoter 8).
+PI_COOLER_P = [-21, -31.5];                // cooler corner x, z (relative to the hole centre)
+PI_FAN = [-5.0, -9.3, 10.7];               // intake centre x, z and radius
+PI_FAN_BOX = [-20.1, -24.9, 30];           // blower housing: x, z of its lower corner, side
 // Portrait, PCB underside at y = 0, hole pattern centred on x = 0, z = 0, ports facing down (-z).
 module rpi5() {
     // holes at z = +/-29 (58 pattern), x = +/-24.5; board runs 3.5 past the top holes and
@@ -75,7 +84,7 @@ module rpi5() {
         for (sx = [-1, 1], sz = [-1, 1]) translate([sx*24.5, -1, sz*29]) rotate([-90, 0, 0]) cylinder(d = PI_HOLE, h = 4, $fn = 16);
     }
     color([0.75, 0.76, 0.8]) translate([-PI_W/2 + 1.5, PI_T, -29 - 23.5 - 2.5]) cube([PI_W - 3, PI_PORT_H, 21]);     // USB x2 + Ethernet
-    color([0.2, 0.2, 0.22]) translate([-PI_COOLER[1]/2, PI_T, -PI_COOLER[0]/2 + 8]) cube([PI_COOLER[1], PI_COOLER[2], PI_COOLER[0]]);
+    color([0.2, 0.2, 0.22]) translate([PI_COOLER_P[0], PI_T, PI_COOLER_P[1]]) cube([PI_COOLER[1], PI_COOLER[2], PI_COOLER[0]]);
 }
 
 // ---------------------------------------------------- Camera Module 3 Wide

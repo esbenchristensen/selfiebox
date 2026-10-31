@@ -1224,23 +1224,34 @@ module frame_loop_cut() for (f = FRAME_LOOPS, dz = [-1, 1]) translate([f[0] - LO
 // so on the bed they are upright slits with only a 2.5 mm bridge at their ends.
 COOLER_TOP = PI_Y3 + PI_T + PI_COOLER[2];  // 32.45
 PI_C = [0, GC + DSP_PI_DZ];               // Pi centre (x, z); holes at +-24.5, +-29
-FAN_Z = PI_C[1] + 14;                     // fan axis z (the Active Cooler's fan sits towards the top holes)
-FG = [3.0, 1.6, 2.5, 2.0, 15.5, 20.5];    // gap over the cooler, grille thickness, slot, bar, slotted r round the fan, half width
+// v36 (Esben 30 Oct, samlenoter 8/8b: the grille's hole sat 80 mm down the guard, over the fins; the fan is ~100 down): the
+// Active Cooler is now drawn from its data sheet (components.scad, PI_COOLER_P / PI_FAN). Its blower is at the PORT end,
+// 9.3 below the Pi's hole centre and 5 towards the GPIO side (v24-v35 had it 14 above the centre), 104 mm below the guard's top.
+// So the grille now runs down to 3 mm above the USB/Ethernet stack (it is only 0.7 mm behind the stack's top, so it must not
+// overlap it) and is slotted over the WHOLE cooler, fins included: the fan is covered whatever the tolerance, and the fins'
+// warm air gets out upwards too (until v35 a solid plate lay 3 mm over the fins). A rib down the middle keeps the slots short.
+FAN_Z = PI_C[1] + PI_FAN[1];              // fan axis z (135.1)
+COOLER_Z0 = PI_C[1] + PI_COOLER_P[1];     // 114.4: port end of the cooler
+COOLER_Z1 = COOLER_Z0 + PI_COOLER[0];     // 177.9: fin end of the cooler
+PORTS_Z1 = PI_C[1] - 29 - 23.5 - 2.5 + 21;   // 111.9: top of the USB/Ethernet stack
+FG = [3.0, 1.6, 2.5, 2.0, 19, 20.5];      // gap over the cooler, grille thickness, slot, bar, slotted half width, half width
+FG_Z0 = PORTS_Z1 + 3;                     // grille's lower edge, 3 mm above the ports
+FG_SLOTS = [COOLER_Z0 + 2.5, COOLER_Z1 - 2, 2.0];   // slotted field z from, to; middle rib width
 FG_CLIP = [2.0, 0.8, 1.3, 0.1];           // arm thickness, catch behind the bar, lip depth, play at the catch
-FG_PEG = [4, 0.8, 15, [-18, 22]];         // stop pegs: d, gap to the heat sink, x, z from the Pi centre (outside the fan)
+// stop pegs 0.8 over the cooler, all >= 6 mm outside the intake: 4 on the fins, 2 on the blower housing's lower corners
+FG_PEG = [4, 0.8, [[-15, 10], [15, 10], [-15, 22], [15, 22], [-17, -22], [7, -22]]];   // d, gap, [x, z from the Pi centre]
 FG_Y = COOLER_TOP + FG[0];
 XB_UP = GC + DSP_XB_Z[0];                 // 230.5: the upper cross bar, 16 high, from XB3_Y to FR_BACK
-COOLER_Z1 = PI_C[1] + 8 + PI_COOLER[0]/2; // 185.7: top end of the cooler
 module fan_guard() {
     zb = [XB_UP - 8, XB_UP + 8];
     y1 = FG_Y + FG[1];
     ytip = XB3_Y - FG_CLIP[2];
     difference() {
         union() {
-            ext_y(FG_Y, y1) translate([-FG[5], PI_C[1] - 26]) square([2*FG[5], zb[1] + FG_CLIP[0] - PI_C[1] + 26]);
+            ext_y(FG_Y, y1) translate([-FG[5], FG_Z0]) square([2*FG[5], zb[1] + FG_CLIP[0] - FG_Z0]);
             ext_y(FR_BACK, FG_Y + 0.01) translate([-FG[5], zb[0] + 1.5]) square([2*FG[5], zb[1] - zb[0] - 3]);   // pad on the bar
-            ext_y(FR_BACK, FG_Y + 0.01) translate([-FG[5], COOLER_Z1 + 1]) square([2*FG[5], zb[0] - FG_CLIP[0] - 1 - COOLER_Z1 - 1]);   // stiff web above the cooler
-            for (sx = [-1, 1], dz = FG_PEG[3]) cyl_y(FG_PEG[0], COOLER_TOP + FG_PEG[1], FG_Y + 0.01, sx*FG_PEG[2], PI_C[1] + dz);
+            // stiff web above the cooler; it starts 8 mm past the fin end, where the warm air leaves the fins
+            ext_y(FR_BACK, FG_Y + 0.01) translate([-FG[5], COOLER_Z1 + 8]) square([2*FG[5], zb[0] - FG_CLIP[0] - 1 - COOLER_Z1 - 8]);
             for (s = [-1, 1]) {
                 zo = s < 0 ? zb[0] : zb[1];                         // the bar face the arm runs along
                 ext_y(ytip, y1) translate([-FG[5], s < 0 ? zo - FG_CLIP[0] : zo]) square([2*FG[5], FG_CLIP[0]]);
@@ -1251,11 +1262,12 @@ module fan_guard() {
                 }
             }
         }
-        ext_y(FG_Y - 1, y1 + 1) intersection() {
-            translate([0, FAN_Z]) circle(r = FG[4], $fn = 64);
-            for (i = [-3:3]) translate([-FG[4], FAN_Z + i*(FG[2] + FG[3]) - FG[2]/2]) square([2*FG[4], FG[2]]);   // v26: slots along x
-        }
+        // slots along x (upright slits on the bed, v26), in two fields either side of the middle rib
+        ext_y(FG_Y - 1, y1 + 1) for (sx = [-1, 1], i = [0 : floor((FG_SLOTS[1] - FG_SLOTS[0] - FG[2])/(FG[2] + FG[3]))])
+            translate([sx > 0 ? FG_SLOTS[2]/2 : -FG[4], FG_SLOTS[0] + i*(FG[2] + FG[3])]) square([FG[4] - FG_SLOTS[2]/2, FG[2]]);
     }
+    // the pegs run up into the grille, so a peg closes the slot it stands on for 4 mm
+    for (p = FG_PEG[2]) cyl_y(FG_PEG[0], COOLER_TOP + FG_PEG[1], y1, p[0], PI_C[1] + p[1]);
 }
 
 // ------------------------------------------------------------ main unit ----
@@ -1333,13 +1345,13 @@ if (VIEW == "c_pi_board")   translate([0, PI_Y3, GC + DSP_PI_DZ]) {
     }
     translate([-PI_W/2 + 1.5, PI_T, -29 - 23.5 - 2.5]) cube([PI_W - 3, PI_PORT_H, 21]);
 }
-if (VIEW == "c_cooler")     translate([0, PI_Y3, GC + DSP_PI_DZ]) difference() {     // Active Cooler with its fan
-    translate([-PI_COOLER[1]/2, PI_T, -PI_COOLER[0]/2 + 8]) cube([PI_COOLER[1], PI_COOLER[2], PI_COOLER[0]]);
-    translate([0, PI_T + PI_COOLER[2] - 2, 8 + 6]) rotate([-90, 0, 0]) cylinder(d = 34, h = 3, $fn = 48);
+if (VIEW == "c_cooler")     translate([0, PI_Y3, GC + DSP_PI_DZ]) difference() {     // Active Cooler with its fan (v36: real position)
+    translate([PI_COOLER_P[0], PI_T, PI_COOLER_P[1]]) cube([PI_COOLER[1], PI_COOLER[2], PI_COOLER[0]]);
+    translate([PI_FAN[0], PI_T + PI_COOLER[2] - 2, PI_FAN[1]]) rotate([-90, 0, 0]) cylinder(r = PI_FAN[2], h = 3, $fn = 48);
 }
-if (VIEW == "c_fan")        translate([0, PI_Y3, GC + DSP_PI_DZ]) translate([0, PI_T + PI_COOLER[2] - 2, 8 + 6]) rotate([-90, 0, 0]) {
-    cylinder(d = 12, h = 1.8, $fn = 32);
-    for (a = [0:30:330]) rotate([0, 0, a]) translate([6, -1, 0]) cube([10.5, 2, 1.6]);
+if (VIEW == "c_fan")        translate([0, PI_Y3, GC + DSP_PI_DZ]) translate([PI_FAN[0], PI_T + PI_COOLER[2] - 2, PI_FAN[1]]) rotate([-90, 0, 0]) {
+    cylinder(d = 8, h = 1.8, $fn = 32);
+    for (a = [0:30:330]) rotate([0, 0, a]) translate([4, -1, 0]) cube([PI_FAN[2] - 4.5, 2, 1.6]);
 }
 if (VIEW == "c_psu5")      translate([PSU5_P[0], D - BACK_T - 1.2 - PSU5[2], PSU5_P[1]]) cube([PSU5[0], PSU5[2], PSU5[1]]);
 if (VIEW == "c_wled")      placed_wled();
