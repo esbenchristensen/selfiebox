@@ -608,7 +608,7 @@ CATCH = 0.9;                              // catch over the part's nominal top (
 TRAY_RIB = [1.6, 4];                      // outside buttress: thickness, reach at the foot
 module tray_rib(h, side) translate([0, side > 0 ? 0 : -TRAY_RIB[1], 0]) rotate([90, 0, 90]) linear_extrude(TRAY_RIB[0], center = true)
     polygon(side > 0 ? [[0, 0], [TRAY_RIB[1], 0], [0, h]] : [[0, 0], [TRAY_RIB[1], 0], [TRAY_RIB[1], h]]);
-module wall_tray(sz, lip, wt = 1.6, end_h = 5, catch = 0.1) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
+module wall_tray(sz, lip, wt = 1.6, end_h = 5, catch = 0.1, at = []) {   // sz = [x, y, z-thickness]: long walls with snap lips, low end stops (terminals stay free)
     hgt = 1.2 + sz[2] + catch + lip[3] + 0.3;
     difference() {
         translate([-wt, -wt, 0]) cube([sz[0] + 0.3 + 2*wt, sz[1] + 0.3 + 2*wt, hgt]);
@@ -616,9 +616,14 @@ module wall_tray(sz, lip, wt = 1.6, end_h = 5, catch = 0.1) {   // sz = [x, y, z
         translate([6, 6, -1]) cube([sz[0] - 12, sz[1] - 12, 3]);                   // open floor: less print, air
         translate([-wt - 1, -wt - 1, end_h]) cube([sz[0] + 2*wt + 2.3, sz[1] + 2*wt + 2.3, hgt]);   // ends cut down ...
     }
-    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) cube([sz[0] + 0.3, wt, hgt]);   // ... long walls stay full height
-    lips_along(sz, sz[2], lip, catch = catch);
-    if (catch > 0.1) for (sy = [0, 1], i = [0 : lip[2] - 1]) let(x = (i + 0.5)*(sz[0] + 0.3)/lip[2])   // v36: a rib behind each lip
+    // ... long walls stay full height (v36: full height only at the lips, 2 past each end; between them 0.5 over the part,
+    // so the walls are not higher than they need to be: the fan guard is 3.3 from the 5 V supply tray's top end, was 1.4)
+    for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) {
+        cube([sz[0] + 0.3, wt, catch > 0.1 ? 1.2 + sz[2] + 0.5 : hgt]);
+        if (catch > 0.1) for (i = [0 : lip[2] - 1]) let(x = (len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2) - 2) translate([x, 0, 0]) cube([lip[1] + 4, wt, hgt]);
+    }
+    lips_along(sz, sz[2], lip, at = at, catch = catch);
+    if (catch > 0.1) for (sy = [0, 1], i = [0 : lip[2] - 1]) let(x = len(at) ? at[i] + lip[1]/2 : (i + 0.5)*(sz[0] + 0.3)/lip[2])   // v36: a rib behind each lip
         translate([x, sy > 0 ? sz[1] + 0.3 + wt : -wt, 0]) tray_rib(hgt - 1, sy > 0 ? 1 : -1);
 }
 // v17: cradle for the small boards (4G, mic core, IMU, reed): walls all round, a finger notch in the middle of each long wall and a lip
@@ -674,7 +679,7 @@ module placed_wled() wled_frame() translate([0, 0, WLED_FL]) {   // the controll
 }
 module power_holders() {
     // v11: both stand up; the trays turn with them, so the low end stops stay at the terminal ends (top and bottom)
-    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU_LIP, 2.2, catch = CATCH);   // v17: 3 lips 20 long, 1.6 in, per side; v36: CATCH
+    translate([PSU5_P[0] + PSU5[0], D - BACK_T + 0.01, PSU5_P[1]]) rotate([0, -90, 0]) rotate([90, 0, 0]) wall_tray([PSU5[1], PSU5[0], PSU5[2]], PSU_LIP, 2.2, catch = CATCH, at = [11.4, 44, 75]);   // v17: 3 lips 20 long, 1.6 in, per side; v36: CATCH, lips at z 21-111 (the fan guard reaches down to z 115 in front of the tray's top end)
     wled_holder();
     mosf_frame() mosfet_holder();   // v36 (until v35: wall_tray([44, 32, 16]), walls 19.2 high)
 }

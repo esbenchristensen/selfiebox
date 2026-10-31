@@ -100,7 +100,7 @@ RIBBONS = [
 # v29: the cables come from the harness model (render/harness_gen2.py), every one in its lane. The two hinge bundles are shown
 # closed: their slack folds into a U along the left side between the front unit and the shell.
 HARNESS = (STL / "c_wagos.stl").exists()
-H_OWNER = {"P1": "stik", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
+H_OWNER = {"P1": "stik", "P1b": "stik", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
            "P9": "daemper", "P10": "daemper", "P11": "daemper", "P12": "stroem", "P13": "ledstyring", "P14": "ledstyring",
            "S1": "ledrgb", "S2": "ledrgb", "S3": "ledrgb", "S4": "ledhvid", "S5": "ledhvid", "S6": "ledhvid", "S7": "ledhvid",
            "U1": "ledstyring", "U2": "lydkerne", "U3": "modem4g", "G1": "daemper", "G2": "reed", "G3": "sensor", "G4": "skaerm",

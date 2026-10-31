@@ -389,6 +389,20 @@ SINGLE = [("bagramme", "bagramme", True, "hvid", "glat"),
           ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat")]
 
 
+def stand_3mf(folder, prefix=None):
+    """v36: <prefix>_stativbeslag_flerfarvet.3mf, the stand bracket with its logo inlays (black, white, green), as in
+    make_stativbeslag.py. The stand bracket is part of every gen 2 print package from v36 (Esben 31 Oct)."""
+    folder = Path(folder)
+    prefix = prefix or folder.name
+    parts = [(name, trimesh.load(folder / f"{prefix}_{suffix}.stl"), slot) for suffix, name, slot in
+             (("stativbeslag", "stativbeslag (sort)", 1), ("stativbeslag_logo-hvid", "logo hvid", 2),
+              ("stativbeslag_logo-groen", "logo groen", 3))]
+    out = folder / f"{prefix}_stativbeslag_flerfarvet.3mf"
+    write_bambu_3mf(out, parts, f"{prefix}_stativbeslag", SETTINGS["stativbeslag"], filaments=("sort", "hvid", "groen"),
+                    plate="tekstureret")
+    return out
+
+
 def part_3mfs(folder, prefix=None):
     """<prefix>_<part>.3mf for each part in SINGLE that the release has, and the fan guard: on its own (v27, which has no
     camera sleeve) or, in a release with the sleeve (v24-v26), <prefix>_smaadele.3mf with both small black parts on one
@@ -398,6 +412,8 @@ def part_3mfs(folder, prefix=None):
     outs = []
     if (folder / f"{prefix}_lysring.stl").exists():
         outs.append(lysring_3mf(folder, prefix))
+    if (folder / f"{prefix}_stativbeslag.stl").exists():
+        outs.append(stand_3mf(folder, prefix))
     for suffix, key, turn, colour, plate in SINGLE:
         stl = folder / f"{prefix}_{suffix}.stl"
         if stl.exists():

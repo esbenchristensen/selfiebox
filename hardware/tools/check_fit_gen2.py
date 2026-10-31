@@ -23,7 +23,7 @@ import trimesh
 
 SCAD = Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 
-PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard"]   # v24: fan guard; v27: no camera sleeve
+PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard", "x_stand"]   # v24: fan guard; v27: no camera sleeve; v36: stand bracket
 BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
           "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g",
@@ -48,7 +48,13 @@ CONTACT = {
     ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
     ("x_ring3", "x_frame3"): 12,            # v24: the frame's crush bumps press the ring's flange forward (0.25 each)
     ("x_fanguard", "x_frame3"): 1e9,   # v24: the fan guard clicks onto the frame's upper cross bar
-    ("x_shell3", "c_wagos"): 2,        # v29: 2 crush ribs per side press each Wago 0.05 into its pocket
+    ("x_shell3", "c_wagos"): 45,       # v29: crush ribs press each Wago 0.05 into its pocket; v36: plus a hook nose (1.7 mm3) in each
+                                       # pole's wire entry (the Wago model has no entries)
+    ("x_shell3", "c_mosfet"): 25,      # v36: the 2 pegs go through the dimmer PCB's holes (the board model has none)
+    ("x_stand", "s_lock"): 1e9,        # v36: the security screws go through the stand bracket's tongues, as through the cleat's
+    ("x_shell3", "c_fuse"): 2,         # v36: crush ribs press the fuse holder into its cradle
+    ("x_stand", "x_cleat"): 1e9,       # v36: the stand bracket and the wall cleat are alternatives (never fitted together)
+    ("x_stand", "s_wall"): 1e9,
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
@@ -80,7 +86,11 @@ CLEARANCES = [
     ("x_tema_vinge_v", "x_front3", 0.15, "left wing beside the front"),
     ("c_wagos", "x_frame3", 14.0, "v29: Wago levers face the front: 16.5 to the frame, so a closed lever never touches it"),
     ("c_wagos", "x_fanguard", 10.0, "v29: the Wago row above the fan guard"),
-    ("c_wagos", "c_imu", 20.0, "v29: the distribution lane (z 240-262) between the IMU and the Wago entries"),
+    ("c_wagos", "c_imu", 5.0, "v36: the IMU moved beside the mic board (x 80-98), clear of the Wago row"),
+    ("x_stand", "x_shell3", 0.0, "v36: the stand bracket on the box's back (tongues in the lock pockets)"),
+    ("x_stand", "x_tema_vinge_v", 0.3, "v36: the stand bracket beside the left wing strap"),
+    ("x_stand", "x_tema_vinge_h", 0.3, "v36: the stand bracket beside the right wing strap"),
+    ("x_stand", "x_tema_top", 0.3, "v36: the stand bracket beside the top straps"),
 ]
 
 

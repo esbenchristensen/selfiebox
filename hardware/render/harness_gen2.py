@@ -84,7 +84,10 @@ P = {
     "reed": (-66.0, 58.0, 46.0), "g4_usb": (-72.0, 58.0, 166.0),
     # XVF3800 lying, FPC down (photo 27 Oct): USB-C and aux jack on the top edge, SPEAKER plug and the mic FPC on the bottom edge
     "core_usb": (3.0, 56.0, 200.0), "core_aux": (-23.0, 56.0, 196.0), "core_spk": (22.0, 54.0, 150.0),
-    "spk": (-41.0, 58.0, 143.0), "imu": (0.0, 62.0, 231.0),
+    "spk": (-41.0, 58.0, 143.0),
+    "imu": (89.0, 62.0, 160.0),                    # v36: right of the 5 V supply, pins on its top edge (until v35: (0, 62, 231))
+    # v36: inline fuse holder on the right wall (x 92-106, z 52-86), leads out of both ends
+    "fuse_lo": (99.0, 58.0, 44.0), "fuse_hi": (99.0, 58.0, 94.0),
     # front unit
     "usb_a1": (-19.0, 26.0, 84.0), "usb_a2": (-1.0, 26.0, 84.0), "usb_a3": (-19.0, 30.0, 82.0),   # 90 deg plugs, cable out to the left
     "usb_c_pi": (50.0, 20.0, 167.0),               # Pi's power socket on its right edge, straight plug
@@ -115,7 +118,12 @@ BLU = "#1c7ed6"
 TRUNK = [P["jack"], P["strain"], M(112.0), M(124.0), M(136.0), M(156.0)]
 CABLES = [
     # 24 V side
-    ("P1", "24 V", "hunstik + → sikring 3 A → W1", "hunstik +", "W1", "1,0 mm² rød + sikringsholder", RED, TRUNK + UP_R + w("W1"), 15),
+    # v36: the fuse holder sits low on the right wall; P1 comes over the 5 V supply and down the right edge to its lower lead,
+    # P1b leaves its upper lead up the right lane (until v35 the holder hung loose in P1)
+    ("P1", "24 V", "hunstik + → sikringsholder (nederste ledning)", "hunstik +", "sikring 3 A", "1,5 mm² rød", RED,
+     TRUNK + [RH(72.0), (104.0, 50.0, 156.0), (104.0, 50.0, 96.0), (106.0, 52.0, 40.0), P["fuse_lo"]], 15),
+    ("P1b", "24 V", "sikringsholder (øverste ledning) → W1", "sikring 3 A", "W1", "1,5 mm² rød", RED,
+     [P["fuse_hi"], RS(100.0), RS(140.0), (80.0, 50.0, 154.0)] + UP_R + w("W1"), 15),
     ("P2", "24 V", "hunstik − → W2", "hunstik −", "W2", "1,0 mm² sort", BLK, TRUNK + UP_R + w("W2"), 15),
     ("P3", "24 V", "W1 → 5 V-forsyning +Vin", "W1", "RSD-60G-5 +Vin", "1,0 mm² rød", RED, rev(w("W1", -3)) + rev(UP_R) + [RH(18.0), P["psu_vin+"]], 15),
     ("P4", "24 V", "W2 → 5 V-forsyning −Vin", "W2", "RSD-60G-5 −Vin", "1,0 mm² sort", BLK, rev(w("W2", -3)) + rev(UP_R) + [RH(26.0), P["psu_vin-"]], 15),
@@ -160,7 +168,7 @@ CABLES = [
     ("G2", "GPIO", "Pi ben 13, 17, 20 → reed (tilvalg)", "Pi 5 GPIO", "reed-modul", "3 dupont-ledere hun-hun", BLU,
      [pin(17), GD(146.0), GD(78.0), (-76.0, 34.0, 78.0), K2f, "K2", K2s, (-64.0, 56.0, 64.0), (-64.0, 56.0, 50.0), P["reed"]], 0),
     ("G3", "GPIO", "Pi ben 3, 4, 5, 7, 9 → stødsensor (tilvalg)", "Pi 5 GPIO", "LIS3DH", "5 dupont-ledere hun-hun", BLU,
-     [pin(5), (-34.0, 36.0, 176.0), UB(-34.0), K1f, "K1", K1s, T(-85.0), T(0.0), P["imu"]], 0),
+     [pin(5), (-34.0, 36.0, 176.0), UB(-34.0), K1f, "K1", K1s, T(-85.0), T(72.0), R(200.0), R(166.0), (89.0, 56.0, 166.0), P["imu"]], 0),
     ("G4", "GPIO", "Pi ben 2, 6 → skærmens strøm", "Pi 5 GPIO", "Touch Display 2", "skærmens eget kabel", BLU,
      [pin(2), (-20.0, 30.0, 190.0), P["dsp_pwr"]], 0),
     ("A1", "lyd", "højttaler → mikrofon-kernens SPEAKER-stik (tilvalg)", "FIT0502", "XVF3800 SPEAKER", "højttalerens kabel", "#f97316",
