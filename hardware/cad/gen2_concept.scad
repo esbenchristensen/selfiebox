@@ -648,28 +648,44 @@ FR_BACK = CH_BACK + FR_T;                 // 31.7: flat back of the frame
 RING_Y = [-0.5, 0.5];                     // ring face: 0.5 proud, 1 mm thick
 CAM_END = 16.775;                         // slot end centres (v19: 14.675); v20: 1.5 further out, so the wider window keeps 3.7 mm black; v24: 0.6 more (window Ø12.1)
 CAM_KEEP = [17, 14];                      // no channel behind the camera board: half x, half z
-REFL = [[4.2, -6.0], [26.45, 4.4]];       // reflector line (y, r): from the ring flange to the floor
-FLOOR3 = 27.4;                            // v18: 0.95 deeper (v2-v17: 26.45) for the strip lanes; the reflector stops at r 4.4 as before
+// v36 (Esben 30 Oct, samlenoter 9: the RGB strip had to be forced in and got hard kinks): the reflector's foot moves 1.4 mm in
+// (r 4.4 -> 3.0); its front edge, which clamps the ring's inner flange, stays. The RGB strip (face at r 4.7) now has 1.7 mm in
+// front of it at the floor (v18-v35: 0.3, a wedge it had to be pressed into) and 3.4 at its front edge; white 2 gains 1 mm too.
+// The slope gets 3 deg steeper, which hardly changes the light. The RGB strip is held by short nubs instead (RGB_NUBS).
+REFL = [[4.2, -6.0], [26.45, 3.0]];       // reflector line (y, r): from the ring flange to the floor (v18-v35: r 4.4 at the floor)
+FLOOR3 = 27.4;                            // v18: 0.95 deeper (v2-v17: 26.45) for the strip lanes
 // [y0, y1, kind, thickness, end |x| left, end |x| right] (strip ends next to the camera)
 // [C] white: Ledproff COB Ra95 24 V, 8 x 2 mm; RGB: Ledprodukter WS2812b COB 5 V, 5 x 2.2 mm (dimension sheet)
-// Each strip is fed from ONE end. The clip connectors are wider than the strips (white 9.6, RGB 6.8,
-// up to 4.4 high), so they cannot sit side by side: white 1 and RGB take their clips at the left end,
-// white 2 at the right end, and the strip next to a clip stops 17 mm further out.
-CLIP_L = 17;                              // clip zone along the strip, from the camera keep-out
+// Each strip is fed from ONE end: white 1 and RGB at the left end, white 2 at the right end.
+// v36 (Esben 31 Oct): no clip connectors. Until v35 they took 16 mm of the strip end and up to 9.6 x 4.4, so they could not sit side
+// by side and the strip next to a clip stopped 17 mm short (a dark patch at the ring's ends). Now the leads are soldered on (or
+// the strips are bought with soldered leads), all three strips run right up to the camera keep-out at x +-17, and the leads leave
+// through an open slot at each end of the top run (LEAD_SLOT).
 // v18 (Esben 22 Oct, sketch /mnt/project-files/gen2-gennemgang/halo-gen2-v18_skitse_led-fastholdelse.png): no adhesive. Each strip has
 // its own lane on the strip wall; its back edge goes in under a lip, its front edge presses down against the wall. The frame
 // prints back down, so a lip can only point forward. [M] Esben: white 8.1 wide with a 3.7 yellow (lit) stripe in the middle,
 // so 2.2 is dark each side and the lips take 1.0 of it; the RGB strip is lit right across, so it gets no lip (snug lane, reflector 0.3 above).
-STRIPS3 = [[4.7, 12.7, "w", 2.0, 17, 34], [13.5, 21.5, "w", 2.0, 34, 17], [22.3, 27.3, "rgb", 2.2, 17, 34]];
+STRIPS3 = [[4.7, 12.7, "w", 2.0, 17, 17], [13.5, 21.5, "w", 2.0, 17, 17], [22.3, 27.3, "rgb", 2.2, 17, 17]];   // v35: 17/34 by the clips
 STRIP_T3 = [4.7, 6.9];                    // strip wall face at r 6.9; thickest strip reaches r 4.7
 // The white strip is thinner out at the dark edge than over the yellow stripe. The stems and lips only reach over that thin
 // edge, so a stem stands at most ~1.1 out from the wall (a flat shelf in the print; 2.5 in the first v18 draft was too much).
 T_EDGE = 0.5;                             // [A] white strip thickness at the dark edge, until Esben has measured it
 LANE_STEMS = [12.8, 21.6];                // stem front faces: 0.6 wide, lip 1.1 forward over the strip in front
 LANE_LIP = [STRIP_T3[1] - T_EDGE - 0.6, STRIP_T3[1] - T_EDGE - 0.1];   // lip r: 0.5 thick, 0.1 clear of the edge
-// [C] Ledproff low-profile start clip 8 mm COB: 9.6 wide (retailer), ~15.5 x 4.3 (comparable LinearLux, unconfirmed)
-// [C] Ledprodukter MiniClip 5 mm 3-pole: 16.53 x 6.8 x 4.4 (retailer table)
-CLIPS3 = [[-1, 9.1, [16, 9.6, 4.3]], [1, 17.5, [16, 9.6, 4.3]], [-1, 24.8, [16.6, 6.8, 4.4]]];   // side, strip centre y, [l, w, h]
+// soldered joints on the strip ends: side, strip, [length along the strip, height over the strip face incl. heat shrink]
+JOINTS3 = [[-1, 0, [6, 1.6]], [1, 1, [6, 1.6]], [-1, 2, [6, 1.6]]];
+// lead slot at each end of the top run, straight through the floor and the back plate: x from, x to (|x|), r from, y from. It
+// starts behind white 2's lane (its stem and lip stay) and runs from the strip wall in to r 0.5, so the joints of all three strips sit
+// over it and the leads go straight back in a soft bend (20+ mm of depth to bend in). Nothing is threaded through a hole: each lead
+// is laid into the slot from the front before its strip is pressed in. (v14-v35: a Ø4 hole at x +-19.5, r 4, which the clips
+// covered on the left and the reflector half covered on the right, samlenoter 9.) The front's camera end caps stop outside it.
+LEAD_SLOT = [CAM_KEEP[0], CAM_KEEP[0] + 4, 0.5, 22.4];
+// RGB retaining nubs on the reflector, facing the RGB strip: y from (the strip's front edge), r of the face (0.2 mm off the strip
+// face), length along the run.
+// Only on the straight runs, none in the corners; the strip slides past them and they keep it within 0.2 of the wall, so the
+// top run's strip cannot sag off the wall. [x, z] points on the ring centre line, and whether the run is a side ("v") or not.
+RGB_NUB = [22.3, STRIP_T3[1] - 2.2 - 0.2, 3, 1.2];   // ... and the lead-in length at the front end
+RGB_NUBS = concat([for (sx = [-1, 1], z = [60, 125, 175, 240]) [sx, z, "v"]], [for (x = [-55, -30, 30, 55]) [x, 1, "t"]], [for (x = [-45, 0, 45]) [x, -1, "b"]]);
 // v24 (Esben 26 Oct: two white strips give plenty of light): v18-v23's third white strip in a pocket at the front of the
 // sloping reflector is gone, with its pocket, lips, clip and lead hole, and the light ring's wedge that held its front edge.
 // The reflector's front face clamps the ring's inner flange again, as in v2-v17.
@@ -1003,7 +1019,18 @@ module snap_slots() if (SNAP) for (s = concat(SNAPS, SNAPS_OUT)) snap_place(s) s
 function refl_r(y) = REFL[0][1] + (y - REFL[0][0])*(REFL[1][1] - REFL[0][1])/(REFL[1][0] - REFL[0][0]);
 REFL_STEP = 0.5;
 CAM_RIB = [9.3, 17.5, 6.5];               // ribbon slot: x start (connector edge at 9.53), width (z), depth (x)
-STRIP_LEAD_X = CAM_KEEP[0] + 2.5;         // v14: 19.5 (v13: 15.5 ran into the ribbon slot on the right)
+module rgb_nub_place() for (n = RGB_NUBS)
+    if (n[2] == "v") translate([n[0]*RING_X, n[1]]) square([30, RGB_NUB[2]], center = true);
+    else translate([n[0], n[1] > 0 ? RING_Z1 : RING_Z0]) square([RGB_NUB[2], 30], center = true);
+module rgb_nubs() intersection() {
+    // a lead-in at the nub's front end, so a tilted strip edge is steered past it (the hull of the two slices is filled, so
+    // the band below keeps it between the reflector and the nub face)
+    hull() { ext_y(RGB_NUB[0], RGB_NUB[0] + 0.01) offset(r = refl_r(RGB_NUB[0]) + 0.01) ring_centre2d();
+             ext_y(RGB_NUB[0] + RGB_NUB[3], FLOOR3 + 0.01) offset(r = RGB_NUB[1]) ring_centre2d(); }
+    ext_y(RGB_NUB[0] - 1, FLOOR3 + 1) intersection() { ring_band2d(refl_r(RGB_NUB[0]) - 1, RGB_NUB[1]); rgb_nub_place(); }
+}
+module lead_slots() for (sx = [-1, 1]) translate([sx > 0 ? LEAD_SLOT[0] : -LEAD_SLOT[1], LEAD_SLOT[3], RING_Z1 + LEAD_SLOT[2]])
+    cube([LEAD_SLOT[1] - LEAD_SLOT[0], FR_BACK + 1 - LEAD_SLOT[3], STRIP_T3[1] - LEAD_SLOT[2]]);
 module frame3() {
     tabs = [for (sx = [-1, 1], z = DSP_TAB_Z) [sx*DSP_TAB_X, GC + z]];
     tabs2 = [for (sx = [-1, 1], i = [0, 1]) [sx*DSP_TAB_X, GC + DSP_TAB_Z[i], GC + DSP_TAB_Z[i]]];
@@ -1029,9 +1056,8 @@ module frame3() {
                     for (y = LANE_STEMS) { ext_y(y, y + 0.6) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01); ext_y(y - 1.1, y + 0.01) ring_band2d(LANE_LIP[0], LANE_LIP[1]); }
                 }
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
-                for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
-                    cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);       // room for the clips
             }
+            difference() { rgb_nubs(); ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); } }   // v36
             ring_bumps();                                                 // v24: press the ring's flange forward all round
             // cross bars at the display tabs, with bosses down to the tabs
             // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
@@ -1044,9 +1070,7 @@ module frame3() {
             snap_arms();
         }
         snap_slots();
-        // v18: the RGB lane ends 0.4 short of the frame plate, so its clip (6.8 wide) runs 0.5 into the plate: room for it there too
-        for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2 - 0.2])
-            cube([c[2][0] + 1, c[2][1] + 0.6, c[2][2] + 0.4], center = true);
+        lead_slots();                                                     // v36 (v18-v35: clip pockets)
         for (t = tabs2) {
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(5.6, TAB_Y + DSP_FLOOR - PRELOAD, FR_BACK + 1, t[0] + dx, z + dz);   // screw head well
@@ -1061,7 +1085,6 @@ module frame3() {
         // USB leads (cable out to the left, towards K2) have 20 mm below the ports; the bar stays 8 mm tall there
         translate([USB_NOTCH[0], XB3_Y - 1, GC + DSP_XB_Z[1] + 8 - USB_NOTCH[2]]) cube([USB_NOTCH[1] - USB_NOTCH[0], FR_BACK - XB3_Y + 2, USB_NOTCH[2] + 1]);
         for (j = J2) cyl_y(6.2, REFL[0][0] - 1, CH_BACK + 0.01, j[0], j[1]);   // v20: the front's screw bosses (Ø6) reach into the channel corners; the strip wall keeps 0.6
-        for (sx = [-1, 1]) cyl_y(4, CH_BACK - 1, FR_BACK + 1, sx*STRIP_LEAD_X, RING_Z1 + 4);   // strip leads, straight out of the clips
     }
 }
 // v24 (Esben 26 Oct: the diffuser gave a little when pressed, which feels cheap): small cones on the frame's two faces that
@@ -1088,10 +1111,9 @@ module placed_strips3(kind) {
     for (s = STRIPS3) if (s[2] == kind && kind == "w")
         ext_y(s[0] + (s[1] - s[0] - 4.7)/2, s[1] - (s[1] - s[0] - 4.7)/2) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
 }
-// clip connectors on the strip ends (on the top run, next to the camera); cable leaves towards the camera
-module placed_clips3() {
-    for (c = CLIPS3) translate([c[0]*(CAM_KEEP[0] + c[2][0]/2), c[1], RING_Z1 + STRIP_T3[1] - c[2][2]/2]) cube([c[2][0], c[2][1], c[2][2]], center = true);
-}
+// v36: soldered joints with heat shrink on the strip ends (on the top run, at the camera), over the lead slot
+module placed_clips3() for (j = JOINTS3) let(s = STRIPS3[j[1]], t = s[2] == "w" ? 2.0 : s[3])
+    translate([j[0] > 0 ? CAM_KEEP[0] : -CAM_KEEP[0] - j[2][0], s[0], RING_Z1 + STRIP_T3[1] - t - j[2][1]]) cube([j[2][0], s[1] - s[0], j[2][1]]);
 module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
@@ -1206,7 +1228,17 @@ FRAME_LOOP = [30, GC + DSP_XB_Z[1], 7.6];  // x, z centre (lower cross bar, z 62
 // lower bar (the v23-v28 service loop) is gone.
 FRAME_LOOPS = [[-76, GC + DSP_XB_Z[1]], [-76, GC + DSP_XB_Z[0]], [34, GC + DSP_XB_Z[0]]];   // K2, K1, Pi power
 USB_NOTCH = [-32, 10, 8];                  // x from, x to, depth from the lower bar's top
-module frame_loop_cut() for (f = FRAME_LOOPS, dz = [-1, 1]) translate([f[0] - LOOP[0]/2, CH_BACK - 1, f[1] + dz*FRAME_LOOP[2]/2 - 1.2]) cube([LOOP[0], FR_T + 2, 2.4]);
+// v36 (Esben 30 Oct, samlenoter 10: nothing went through): v29-v35's slot pairs were cut from CH_BACK - 1 (y 26.7), but the cross
+// bars start at XB3_Y (23.7), so 3 mm of solid bar was left in front of them. Even cut through, a strap would have had to be
+// threaded blind down one slot, into the 6.6 mm gap to the display's back and up the other. Now the strap (cable tie or 10 mm
+// hook-and-loop) goes round the whole bar: down past its front face in that gap and out under it, both ends in sight. A groove
+// STRAP_GROOVE wide and deep over the bar's top, front and bottom faces keeps it from sliding along the bar; the bundle lies on
+// the bar's back face as before. No slots, so the bar keeps its full section.
+STRAP_GROOVE = [11, 1];
+module frame_loop_cut() for (f = FRAME_LOOPS) translate([f[0] - STRAP_GROOVE[0]/2, 0, 0]) difference() {
+    translate([0, XB3_Y - 1, f[1] - 8 - 1]) cube([STRAP_GROOVE[0], FR_BACK - XB3_Y + 2, 18]);
+    translate([-1, XB3_Y + STRAP_GROOVE[1], f[1] - 8 + STRAP_GROOVE[1]]) cube([STRAP_GROOVE[0] + 2, FR_BACK, 16 - 2*STRAP_GROOVE[1]]);
+}
 
 // ------------------------------------------------------------ fan guard ----
 // v24 (Esben 26 Oct: the Pi's fan stopped because of the wires in the box; it must have a fence so nothing can stop it). A

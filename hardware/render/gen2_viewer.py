@@ -33,7 +33,7 @@ PARTS = [
     ("kamera",        "x_camera",      "Kamera (Wide)",                   "#9aa3b5", "Elektronik", [0, 0, 120]),
     ("ledhvid",       "x_strip_w",     "2 × hvid COB-strip Ra95 i kantspor på væggen",         "#ffb000", "Elektronik", [0, 0, 60]),
     ("ledrgb",        "x_strip_rgb",   "RGB-strip 5 mm",                  "#a855f7", "Elektronik", [0, 0, 60]),
-    ("klikstik",      "c_clips",       "3 klikstik til strips (ét pr. strip)", "#f5f5f4", "Elektronik", [0, 0, 60]),
+    ("klikstik",      "c_clips",       "3 loddesteder med krympeflex (ét pr. strip, v36)", "#f5f5f4", "Elektronik", [0, 0, 60]),
     ("pi",            "c_pi_board",    "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
     ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
     ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),

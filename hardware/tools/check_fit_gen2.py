@@ -41,7 +41,7 @@ CONTACT = {
     ("x_cleat", "s_wall"): 1e9,             # v28: the wall screws' heads in the cleat's countersinks
     ("x_dsp_glass", "x_dsp_back"): 1e9, ("x_dsp_back", "c_pi_board"): 1e9, ("c_pi_board", "c_cooler"): 1e9,
     ("x_camera", "x_front3"): 1e9,          # the pegs go through the board's holes (the board model has them)
-    ("x_strip_w", "c_clips"): 1e9, ("x_strip_rgb", "c_clips"): 1e9,    # the clips sit on the strip ends
+    ("x_strip_w", "c_clips"): 1e9, ("x_strip_rgb", "c_clips"): 1e9,    # the solder joints (v35: clips) sit on the strip ends
     ("x_frame3", "x_dsp_back"): 150, ("x_frame3", "x_dsp_glass"): 20,  # bosses and spring toes press the display 0.2 (PRELOAD, LK_TOE)
     ("x_shell3", "c_speaker"): 100, ("x_shell3", "c_mics"): 50,        # pegs through the ear / board holes (the block models have none)
     ("x_cam_lens", "x_camera"): 1e9, ("x_cam_lens", "x_cam_fov"): 1e9, ("x_cam_fov", "x_camera"): 0.05,   # the barrel is part of the camera

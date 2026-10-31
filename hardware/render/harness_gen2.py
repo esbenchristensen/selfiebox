@@ -88,7 +88,9 @@ P = {
     # front unit
     "usb_a1": (-19.0, 26.0, 84.0), "usb_a2": (-1.0, 26.0, 84.0), "usb_a3": (-19.0, 30.0, 82.0),   # 90 deg plugs, cable out to the left
     "usb_c_pi": (50.0, 20.0, 167.0),               # Pi's power socket on its right edge, straight plug
-    "hole_l": (-19.5, 33.0, 300.2), "hole_r": (19.5, 33.0, 300.2),   # strip leads through the frame (white 1 + RGB left, white 2 right)
+    # strip leads through the frame's lead slots at the ends of the top run (v36; until v35 a Ø4 hole at x +-19.5),
+    # white 1 + RGB left, white 2 right
+    "hole_l": (-19.0, 33.0, 293.9), "hole_r": (19.0, 33.0, 293.9),
     "dsp_pwr": (12.0, 18.0, 205.0),                # Touch Display 2: power plug beside its flat cable
 }
 TO_K1 = [T(-85.0), K1s, "K1", K1f]                 # shell -> front through K1 (reversed for the other way)
