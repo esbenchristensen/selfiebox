@@ -307,8 +307,8 @@ def front_3mf(folder, prefix=None):
 # Boxes in the shell's print coordinates (as in <version>_skal.stl): x, y on the bed, z up; [x0, x1, y0, y1, z0, z1].
 SKAL_ENFORCE = [("support: skinnens udsparing", [-59.5, 59.5, 97.0, 129.0, 7.5, 9.5]),
                 ("support: dæmperbakkens forvæg", [-108.0, -90.0, -89.8, -45.5, 33.0, 36.0])]
-SKAL_BLOCK = [("ingen support: strømrør", [-10.0, 10.0, -153.5, -78.0, 0.0, 26.0]),
-              ("ingen support: låselomme venstre", [-91.6, -72.4, -153.5, -116.3, 0.0, 16.6]),
+# v36: no blocker at the power inlet: its open channel has no roof left (only the 0.8 mm catch lips), and the bore is a teardrop
+SKAL_BLOCK = [("ingen support: låselomme venstre", [-91.6, -72.4, -153.5, -116.3, 0.0, 16.6]),
               ("ingen support: låselomme højre", [77.4, 90.6, -153.5, -116.3, 0.0, 16.6])] + \
              [(f"ingen support: vingelomme {i + 1}", [x0, x0 + 10.2, y0, y0 + 19.8, 0.0, 10.1])
               for i, (x0, y0) in enumerate([(-105.35, 13.1), (-105.35, 78.3), (95.15, 13.1), (95.15, 78.3)])]

@@ -620,7 +620,7 @@ module wall_tray(sz, lip, wt = 1.6, end_h = 5, catch = 0.1, at = []) {   // sz =
     // so the walls are not higher than they need to be: the fan guard is 3.3 from the 5 V supply tray's top end, was 1.4)
     for (sy = [0, 1]) translate([0, sy > 0 ? sz[1] + 0.3 : -wt, 0]) {
         cube([sz[0] + 0.3, wt, catch > 0.1 ? 1.2 + sz[2] + 0.5 : hgt]);
-        if (catch > 0.1) for (i = [0 : lip[2] - 1]) let(x = (len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2) - 2) translate([x, 0, 0]) cube([lip[1] + 4, wt, hgt]);
+        if (catch > 0.1) for (i = [0 : lip[2] - 1]) let(x = (len(at) ? at[i] : (i + 0.5)*(sz[0] + 0.3)/lip[2] - lip[1]/2) - 2) translate([x, sy > 0 ? -0.01 : 0, 0]) cube([lip[1] + 4, wt + 0.01, hgt]);   // 0.01 into the lips: one body
     }
     lips_along(sz, sz[2], lip, at = at, catch = catch);
     if (catch > 0.1) for (sy = [0, 1], i = [0 : lip[2] - 1]) let(x = len(at) ? at[i] + lip[1]/2 : (i + 0.5)*(sz[0] + 0.3)/lip[2])   // v36: a rib behind each lip

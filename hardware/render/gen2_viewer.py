@@ -41,7 +41,8 @@ PARTS = [
     ("stroem",        "c_psu5",        "5 V-forsyning (Mean Well RSD-60G-5)", "#8b5cf6", "Elektronik", [0, 0, -90]),
     ("ledstyring",    "c_wled",        "LED-styring RGB (Gledopto GL-C-016WL-D, 45,7 × 87,9 × 17,26, 108 over armene)", "#127a49", "Elektronik", [0, 0, -90]),
     ("daemper",       "c_mosfet",      "Dæmper hvidt lys (DFRobot DFR0457)",       "#0f766e", "Elektronik", [-90, 0, 0]),
-    ("stik",          "c_jack",        "Strømindgang i bunden, i midten: hunstik TRU DC-13F + GST-stik nedefra",                  "#e11d48", "Elektronik", [0, 0, -90]),
+    ("stik",          "c_jack",        "Strømindgang i bunden, i midten: hunstik med skrueklemmer i åben kanal (sættes ind forfra), stik nedefra", "#e11d48", "Elektronik", [0, 0, -90]),
+    ("sikring",       "c_fuse",        "Sikringsholder (inline, 3 A) i højre side ved bagvæggen", "#facc15", "Elektronik", [0, 0, -90]),
     ("modem4g",       "c_4g",          "4G-modem med GPS",                "#2563eb", "Tilvalg",    [0, 0, -90]),
     ("lydkerne",      "c_mcore",       "Mikrofon-kerne (XVF3800), standard", "#0ea5e9", "Elektronik",    [0, 0, -90]),
     ("mikrofoner",    "c_mics",        "Mikrofonstrip, standard",         "#14b8a6", "Elektronik",    [0, 0, -90]),
@@ -66,7 +67,7 @@ PARTS = [
     ("stativlogo_groen", "x_stand_logo_g", "Stativbeslag: logo bagpå, grønne prikker", "#22d36b", "Stativbeslag", [0, 0, -210]),
     ("t_moetrik",     "x_tnut",        "Stativbeslag: T-møtrik 1/4\"-20 til kuglehovedet", "#9a9ea2", "Stativbeslag", [0, -60, -210]),
 ]
-OPTIONAL = {"c_wagos", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+OPTIONAL = {"c_wagos", "c_fuse", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
             "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # left out if the STL dir has none (older versions)
 HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"}   # off until ticked
 
@@ -100,7 +101,7 @@ RIBBONS = [
 # v29: the cables come from the harness model (render/harness_gen2.py), every one in its lane. The two hinge bundles are shown
 # closed: their slack folds into a U along the left side between the front unit and the shell.
 HARNESS = (STL / "c_wagos.stl").exists()
-H_OWNER = {"P1": "stik", "P1b": "stik", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
+H_OWNER = {"P1": "stik", "P1b": "sikring", "P2": "stik", "P3": "stroem", "P4": "stroem", "P5": "stroem", "P6": "stroem", "P7": "wago", "P8": "wago",
            "P9": "daemper", "P10": "daemper", "P11": "daemper", "P12": "stroem", "P13": "ledstyring", "P14": "ledstyring",
            "S1": "ledrgb", "S2": "ledrgb", "S3": "ledrgb", "S4": "ledhvid", "S5": "ledhvid", "S6": "ledhvid", "S7": "ledhvid",
            "U1": "ledstyring", "U2": "lydkerne", "U3": "modem4g", "G1": "daemper", "G2": "reed", "G3": "sensor", "G4": "skaerm",

@@ -58,7 +58,7 @@ CONTACT = {
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
-    ("x_ring3", "x_front3", 0.0, "v27: ring flange on the front plate's back face, 0.15 shadow gap in the slot"),
+    ("x_ring3", "x_front3", 0.0, "v36: the ring's 45 deg collar in the front's seat"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame (v24: pressed by crush bumps)"),
     ("x_cam_lens", "x_front3", 0.6, "v27: the front's Ø8.6 bore 0.65 round the lens barrel (Ø7.25), the tip 1.15 inside it, nothing in front"),
     ("x_cam_fov", "x_front3", 0.1, "v27: the Wide lens's 120 deg field of view clears the Ø8.6 bore's edge (0.31 across, 0.15 square to the 60 deg cone)"),
