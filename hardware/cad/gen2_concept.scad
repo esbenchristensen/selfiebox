@@ -512,35 +512,56 @@ module teardrop_z(d, z0, z1, x = 0, y = 0) translate([x, y, z0]) linear_extrude(
 // clip 9 mm over the column sat on its axis. Now the column is a channel open to the front: the socket goes in from the front with
 // its screws facing the opening (the leads can be screwed in with it in place), its body stands on two side ledges, a bar behind
 // the terminal's wire entries stops it when the plug is pushed in from below, and two lips on the channel's front edges hold it in.
-// The barrel's length is not measured: the ledges assume >= 10 (a longer barrel just reaches further down the plug bore).
-PWR_JACK = [14.25, 11.92, 13.0, 37.96, 10];     // width, body face-to-back, with the terminal, mouth to terminal back, barrel length (est.)
-PWR_CH = [PWR_JACK[0] + 0.5, 2.0, 1.4, 3.5];    // channel width, side wall, ledge reach, bar depth (behind the wire entries)
+// v37 (Esben 1 Nov, measured from the drawing hunstik-maal.png and 2 photos; it is a Delock 2-pole screw-terminal socket): from the
+// mouth up, a metal tip Ø6.97 x 2.3, a round plastic neck (Ø10.7 x 9.7, from the photo at 15 px/mm), a ribbed taper (9.3, 11.3 ->
+// 13.8 wide), the square body 14.00 x 11.92 (10.3 long) and the terminal 10.00 wide x 5.56 [M], 38 overall [M]. v36 had guessed a
+// Ø10.8 x 10 barrel and side ledges 11.7 apart under the body: the real ribs are 13.8 wide there, so the socket would have sat on
+// the ledges with its ribs, 3.5 mm lower than drawn, half under the lips and 3.8 off the stop bar. Now the socket stands on its
+// neck's flat underside on a 2 mm floor, the metal tip in a slot through it that is open to the front (so the socket still slides
+// in from the front with nothing to lift over), and the PSU's plug (grip Ø10.15 [M]) comes up the Ø12.5 bore to the floor.
+PWR_JACK = [14.0, 11.92, 13.0, 38.0, 2.3];      // [M] width, body face-to-back, with the terminal, overall length, metal tip length
+PWR_TIP = 6.97;  PWR_NECK = [10.7, 9.7];  PWR_RIBS = [9.3, 11.3, 13.8];  PWR_TERM = [10.0, 5.56];   // [M] tip Ø, terminal; [photo] neck, ribs
+PWR_CH = [PWR_JACK[0] + 0.5, 2.0, 2.0, 3.5];    // channel width, side wall, floor under the neck, bar depth (behind the wire entries)
 PWR_BACK = D - BACK_T - 1.0;                    // the body's back face: 1 mm of column wall in front of the back wall
-PWR_LEDGE = PWR_MOUTH + PWR_JACK[4];            // 48: the body stands here
-PWR_JTOP = PWR_LEDGE + PWR_JACK[3] - PWR_JACK[4];   // 75.96 with a 10 mm barrel: the terminal's back end
+PWR_LEDGE = PWR_MOUTH + PWR_JACK[4];            // 40.3: the neck's underside stands here (the metal tip reaches down to PWR_MOUTH)
+PWR_JTOP = PWR_LEDGE + PWR_JACK[3] - PWR_JACK[4];   // 76.0: the terminal's back end
+PWR_BODY0 = PWR_LEDGE + PWR_NECK[1] + PWR_RIBS[0];  // 59.3: the square body starts here
 PWR_TOP = PWR_JTOP + 0.3 + 2.5;                 // column top (the bar)
 module power_column() translate([PWR_P[0], 0, 0]) {
     w = PWR_CH[0]/2;  t = PWR_CH[1];  yf = PWR_BACK - PWR_JACK[2] - 0.4;   // side walls' front edge
+    y0 = PWR_P[1] - PWR_BORE/2*sqrt(2) - 2;                                 // the foot's front face
     difference() {
         union() {
-            translate([-w - t, PWR_P[1] - PWR_BORE/2*sqrt(2) - 2, WALL - 0.01]) cube([2*(w + t), D - BACK_T - (PWR_P[1] - PWR_BORE/2*sqrt(2) - 2) + 0.01, PWR_MOUTH - WALL + 0.01]);   // closed foot round the plug bore (2 in front of the teardrop's peak)
+            translate([-w - t, y0, WALL - 0.01]) cube([2*(w + t), D - BACK_T - y0 + 0.01, PWR_LEDGE - WALL + 0.01]);   // closed foot round the plug bore, its top is the floor
             for (sx = [-1, 1]) translate([sx > 0 ? w : -w - t, yf, WALL - 0.01]) cube([t, D - BACK_T - yf + 0.01, PWR_TOP - WALL]);              // side walls
             translate([-w - 0.01, PWR_BACK, WALL - 0.01]) cube([2*w + 0.02, D - BACK_T - PWR_BACK + 0.01, PWR_TOP - WALL]);                       // back
-            for (sx = [-1, 1]) translate([sx > 0 ? w - PWR_CH[2] : -w, PWR_P[1] - PWR_JACK[1]/2, PWR_LEDGE - 4]) cube([PWR_CH[2] + 0.01, PWR_BACK - PWR_P[1] + PWR_JACK[1]/2 + 0.01, 4]);   // ledges
             translate([-w - 0.01, PWR_BACK - PWR_CH[3], PWR_JTOP + 0.3]) cube([2*w + 0.02, PWR_CH[3] + 0.01, PWR_TOP - PWR_JTOP - 0.3]);      // bar
-            // lips over the body's face (it stands PWR_JACK[1] in front of PWR_BACK), ramped towards the front
-            for (sx = [-1, 1]) let(yl = PWR_BACK - PWR_JACK[1] - 0.25) translate([0, 0, PWR_LEDGE + 3]) linear_extrude(10)
+            // lips over the square body's face (it stands PWR_JACK[1] in front of PWR_BACK), ramped towards the front
+            for (sx = [-1, 1]) let(yl = PWR_BACK - PWR_JACK[1] - 0.25) translate([0, 0, PWR_BODY0 + 1]) linear_extrude(PWR_JTOP - PWR_TERM[1] - PWR_BODY0 - 2)
                 polygon([[sx*(w + 0.01), yl], [sx*(w - 0.8), yl], [sx*(w + 0.01), yl - 1.6]]);
         }
-        teardrop_z(PWR_BORE, -1, PWR_MOUTH + 0.01, PWR_P[0], PWR_P[1]);
+        teardrop_z(PWR_BORE, -1, PWR_LEDGE - PWR_CH[2], PWR_P[0], PWR_P[1]);   // the PSU plug's bore, up to the floor
+        // the metal tip's slot through the floor, open to the front (0.6 play on Ø)
+        hull() { cyl_z(PWR_TIP + 0.6, PWR_LEDGE - PWR_CH[2] - 1, PWR_LEDGE + 1, 0, PWR_P[1]); cyl_z(PWR_TIP + 0.6, PWR_LEDGE - PWR_CH[2] - 1, PWR_LEDGE + 1, 0, y0 - 1); }
     }
 }
+// v37: nothing from a neighbour may reach into the socket's room (the 5 V tray's rib at z 69-71 stood 1.6 into the channel; v36's
+// guessed socket was only 10.2 wide there, the real body is 14)
+module power_channel_keep() translate([PWR_P[0], 0, 0]) {
+    translate([-PWR_CH[0]/2, PWR_BACK - PWR_JACK[1], PWR_LEDGE]) cube([PWR_CH[0], PWR_JACK[1] + 0.01, PWR_JTOP - PWR_LEDGE]);
+    translate([-PWR_CH[0]/2, PWR_BACK - PWR_JACK[2], PWR_JTOP - PWR_TERM[1] - 0.5]) cube([PWR_CH[0], PWR_JACK[2] + 0.01, PWR_TERM[1] + 0.5]);
+}
 module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // the socket in its channel, screws to the front, and the PSU plug from below
-    j = PWR_JACK;  yb = PWR_BACK - PWR_P[1];
-    cyl_z(10.8, PWR_LEDGE - j[4], PWR_LEDGE, 0, 0);                                              // barrel
-    translate([-j[0]/2, yb - j[1], PWR_LEDGE]) cube([j[0], j[1], PWR_JTOP - PWR_LEDGE - 8]);      // body
-    translate([-5.1, yb - j[2], PWR_JTOP - 8]) cube([10.2, j[2], 8]);                             // terminal (2 x 5.08)
-    cyl_z(10, 9, PWR_LEDGE - j[4], 0, 0);                                                         // plug grip
+    j = PWR_JACK;  yb = PWR_BACK - PWR_P[1];  yc = yb - j[1]/2;
+    cyl_z(PWR_TIP, PWR_MOUTH, PWR_LEDGE + 0.01, 0, 0);                                              // metal tip
+    cyl_z(PWR_NECK[0], PWR_LEDGE, PWR_LEDGE + PWR_NECK[1] + 0.01, 0, 0);                             // neck
+    translate([0, yc, PWR_LEDGE + PWR_NECK[1]]) hull() {                                           // ribbed taper
+        translate([0, 0, 0.005]) cube([PWR_RIBS[1], min(PWR_RIBS[1], j[1]), 0.01], center = true);
+        translate([0, 0, PWR_RIBS[0] - 0.005]) cube([PWR_RIBS[2], j[1], 0.01], center = true);
+    }
+    translate([-j[0]/2, yb - j[1], PWR_BODY0]) cube([j[0], j[1], PWR_JTOP - PWR_TERM[1] - PWR_BODY0]);      // body
+    translate([-PWR_TERM[0]/2, yb - j[2], PWR_JTOP - PWR_TERM[1]]) cube([PWR_TERM[0], j[2], PWR_TERM[1]]);   // terminal
+    cyl_z(10.15, 9, PWR_LEDGE - PWR_CH[2], 0, 0);                                                    // PSU plug grip [M] Ø10.15
     translate([0, 0, 1]) cylinder(d1 = 6, d2 = 8.5, h = 8.01, $fn = 32);                          // strain relief, inside the bore
     cyl_z(4, -60, 1.01, 0, 0);                                                                    // lead, straight down
 }
@@ -1322,6 +1343,7 @@ module shell3(top = UNIT_TOP) {
         if (WING_POCKET) { wing_drains(); wing_slot_chamfers(); }
         wing_grooves();   // v28
         shell_snap_grooves();   // v37
+        power_channel_keep();   // v37
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
         for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D, j[0], j[1]); }   // v27: head flush in the back face
     }
@@ -1395,7 +1417,8 @@ module cable_clip(p) translate([p[0], D - BACK_T, p[1]]) rotate([0, p[2] == "h" 
 // above it. Order from the left (seen from the front): W6 white + (dimmed), W5 white -, W3 5 V +, W4 5 V GND, W2 GND, W1 24 V +.
 // [A] WAGO data sheets 221-413 / 221-415: 18.7-18.8 wide (3 poles) / 29.9-30 (5 poles), 18.6-18.8 deep, 8.3-8.6 high;
 //     221-414 by the 5.6 mm pitch: 24.4. The pockets take the largest figure + WG_C, and 2 crush ribs per side press it in.
-WAGOS = [["W6", 3, 18.8], ["W5", 3, 18.8], ["W3", 4, 24.4], ["W4", 5, 30.0], ["W2", 5, 30.0], ["W1", 3, 18.8]];
+// v37 (Esben 1 Nov: "vi har kun 3 og 5 stik versioner"): W3 is a 221-415 too (v29-v36: a 221-414 pocket); its 5th entry is spare.
+WAGOS = [["W6", 3, 18.8], ["W5", 3, 18.8], ["W3", 5, 30.0], ["W4", 5, 30.0], ["W2", 5, 30.0], ["W1", 3, 18.8]];
 WG = [18.8, 8.6];                          // depth (entry face to back), height (lever side up)
 // v36 (Esben 30 Oct, samlenoter 1: the pockets were ~0.5 too big and nothing held the clamps, they could fall out): no clearance
 // any more (the crush ribs give the press fit), and Esben's hooks: one per wire entry, from the pocket's open end it reaches 1.5 mm
