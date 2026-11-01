@@ -202,7 +202,8 @@ def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filamen
     With more than one filament the object lies from x = 30 with the prime tower to its right (BOTH_EXTRUDERS_X)."""
     dx, tower = 0.0, None
     if len(filaments) > 1:
-        width = max(m.bounds[1][0] for _, m, *_ in parts) - min(m.bounds[0][0] for _, m, *_ in parts)
+        solid = [m for _, m, _, *kind in parts if not kind or kind[0] == "normal_part"]   # v37: not the modifier volumes
+        width = max(m.bounds[1][0] for m in solid) - min(m.bounds[0][0] for m in solid)
         x0, x1 = BOTH_EXTRUDERS_X
         if x0 + width + 10 + PRIME_TOWER[0] <= x1:
             dx = x0 + width / 2 - BED_CENTRE[0]
@@ -229,16 +230,17 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
     cfg = ['<?xml version="1.0" encoding="UTF-8"?>', "<config>"]
     files, main_objs, nid = {}, [], 0
     for k, (object_name, parts, settings, (dx, dy), turn) in enumerate(objects):
-        parts = [tuple(q) + ("normal_part",) * (4 - len(q)) for q in parts]
-        lo = np.min([m.bounds[0] for _, m, _, _ in parts], axis=0)
-        hi = np.max([m.bounds[1] for _, m, _, _ in parts], axis=0)
+        parts = [tuple(q) + (("normal_part", {})[len(q) - 3:]) for q in parts]
+        solid = [m for _, m, _, kind, _ in parts if kind == "normal_part"]   # modifiers never move the object
+        lo = np.min([m.bounds[0] for m in solid], axis=0)
+        hi = np.max([m.bounds[1] for m in solid], axis=0)
         shift = np.array([-(lo[0] + hi[0]) / 2, -(lo[1] + hi[1]) / 2, -lo[2]])
         ids = list(range(nid + 1, nid + len(parts) + 1))
         nid += len(parts) + 1
         obj = nid
         sub_path = f"/3D/Objects/object_{k + 1}.model"
         files[sub_path[1:]] = head + " <resources>\n" + "\n".join(
-            _mesh_xml(i, m.copy().apply_translation(shift), n) for i, (n, m, _, _) in zip(ids, parts)) + \
+            _mesh_xml(i, m.copy().apply_translation(shift), n) for i, (n, m, *_) in zip(ids, parts)) + \
             "\n </resources>\n <build/>\n</model>\n"
         meshes.append(sub_path)
         comps = "\n".join(f'    <component p:path="{sub_path}" objectid="{i}" p:UUID="{_uuid()}" '
@@ -251,10 +253,11 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
         cfg += [f'  <object id="{obj}">', f'    <metadata key="name" value="{escape(object_name)}"/>',
                 '    <metadata key="extruder" value="1"/>']
         cfg += [f'    <metadata key="{key}" value="{escape(v)}"/>' for key, v in settings.items() if not key.startswith("_")]
-        for i, (n, m, slot, kind) in zip(ids, parts):
+        for i, (n, m, slot, kind, own) in zip(ids, parts):
             cfg += [f'    <part id="{i}" subtype="{kind}">', f'      <metadata key="name" value="{escape(n)}"/>',
                     '      <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>',
-                    f'      <metadata key="extruder" value="{slot}"/>',
+                    f'      <metadata key="extruder" value="{slot}"/>'] + \
+                   [f'      <metadata key="{key}" value="{escape(v)}"/>' for key, v in own.items()] + [
                     f'      <mesh_stat face_count="{len(m.faces)}" edges_fixed="0" degenerate_facets="0" '
                     'facets_removed="0" facets_reversed="0" backwards_edges="0"/>', "    </part>"]
         cfg.append("  </object>")
@@ -292,6 +295,7 @@ def front_3mf(folder, prefix=None):
     folder = Path(folder)
     prefix = prefix or folder.name
     parts = [(name, trimesh.load(folder / f"{prefix}_{suffix}.stl"), slot) for suffix, name, slot, _ in FRONT_PARTS]
+    parts += corner_modifiers(parts[0][1])   # v37
     out = folder / f"{prefix}_front_flerfarvet.3mf"
     write_bambu_3mf(out, parts, f"{prefix}_front", SETTINGS["front"], filaments=("sort", "hvid", "groen"),
                     plate="tekstureret")
@@ -320,6 +324,20 @@ def _box(b):
     return trimesh.creation.box(bounds=[[x0, y0, z0], [x1, y1, z1]])
 
 
+# v37 (durability analysis 31 Oct, change 5; Esben 1 Nov "lav de ting der skal laves"): a drop lands on a corner. Each of the 4
+# corners of the shell and the front gets a modifier volume (CORNER mm square, the part's full height on the plate) with
+# 4 walls and 40 % infill, so the 3 mm walls there print solid; everything else keeps INSIDE's 2 walls and 15 %.
+CORNER = 35.0
+CORNER_SET = {"wall_loops": "4", "sparse_infill_density": "40%"}
+
+
+def corner_modifiers(mesh):
+    (x0, y0, z0), (x1, y1, z1) = mesh.bounds
+    c = CORNER
+    return [(f"forstærkning: hjørne {i + 1}", _box([xa, xa + c, ya, ya + c, z0, z1]), 1, "modifier_part", CORNER_SET)
+            for i, (xa, ya) in enumerate([(x0, y0), (x1 - c, y0), (x0, y1 - c), (x1 - c, y1 - c)])]
+
+
 def skal_3mf(folder, prefix=None):
     """<prefix>_skal_support.3mf: the shell with the support enforcers and blockers above, each box checked against the
     shell's own downward faces (an enforcer must hold a flat roof, a blocker the roofs it keeps clean)."""
@@ -336,6 +354,7 @@ def skal_3mf(folder, prefix=None):
     parts = [("skal", skal, 1, "normal_part")]
     parts += [(n, _box(b), 1, "support_enforcer") for n, b in SKAL_ENFORCE]
     parts += [(n, _box(b), 1, "support_blocker") for n, b in SKAL_BLOCK]
+    parts += corner_modifiers(skal)   # v37
     out = folder / f"{prefix}_skal_support.3mf"
     write_bambu_3mf(out, parts, f"{prefix}_skal", SETTINGS["skal"], turn=True, filaments=("sort",))
     return out
@@ -398,6 +417,12 @@ def stand_3mf(folder, prefix=None):
     parts = [(name, trimesh.load(folder / f"{prefix}_{suffix}.stl"), slot) for suffix, name, slot in
              (("stativbeslag", "stativbeslag (sort)", 1), ("stativbeslag_logo-hvid", "logo hvid", 2),
               ("stativbeslag_logo-groen", "logo groen", 3))]
+    # v37 (selfi-stativbeslag-v9): the shelf and the foot of the spine carry the box on the ball head; with the heat-set insert
+    # they print solid (6 walls, 100 %), so the insert's knurls melt into solid plastic and the shelf cannot flex
+    lo, hi = parts[0][1].bounds   # the modifier stays inside the bracket's own box
+    b = np.clip(trimesh.load(folder / f"{prefix}_stativbeslag_forstaerkning.stl").bounds, lo, hi)
+    parts.append(("forstærkning: hylde og gevindindsats", _box([b[0][0], b[1][0], b[0][1], b[1][1], b[0][2], b[1][2]]), 1,
+                  "modifier_part", {"wall_loops": "6", "sparse_infill_density": "100%"}))
     out = folder / f"{prefix}_stativbeslag_flerfarvet.3mf"
     write_bambu_3mf(out, parts, f"{prefix}_stativbeslag", SETTINGS["stativbeslag"], filaments=("sort", "hvid", "groen"),
                     plate="tekstureret")

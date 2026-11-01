@@ -34,7 +34,7 @@ SCAD = ROOT / "hardware/cad/gen2_concept.scad"
 PARTS = [("stativbeslag", "x_stand", "Stativbeslag (sort ASA)", "#1d1d20", "Stativbeslag", [0, 0, -120]),
          ("stativlogo_hvid", "x_stand_logo_w", "Logo bagpå, hvidt (indlagt i beslaget)", "#f5f5f4", "Stativbeslag", [0, 0, -120]),
          ("stativlogo_groen", "x_stand_logo_g", "Logo bagpå, grønne prikker", "#22d36b", "Stativbeslag", [0, 0, -120]),
-         ("t_moetrik", "x_tnut", "T-møtrik 1/4\"-20 (Einschlagmutter, stål), flangen opad", "#9a9ea2", "Stativbeslag", [0, -60, -120])]
+         ("gevindindsats", "x_insert", "Gevindindsats 1/4\"-20 (messing, CNC Kitchen 12,7 mm), sat ind med loddekolben", "#c9a227", "Stativbeslag", [0, -60, -120])]
 PRINT = [("", "p_stand", "stativbeslag (sort)", 1), ("_logo-hvid", "p_stand_logo_w", "logo hvid", 2),
          ("_logo-groen", "p_stand_logo_g", "logo groen", 3)]
 

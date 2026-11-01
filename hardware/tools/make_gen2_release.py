@@ -48,6 +48,8 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
 # inlays with their part's orientation and offset: name -> (view, part)
 LOGOS = {"logo-hvid": ("x_logo_w", "front"), "logo-groen": ("x_logo_g", "front"),
          "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag"),
+         # v37: not an inlay but the 3MF's modifier volume (solid shelf round the heat-set insert), placed the same way
+         "stativbeslag_forstaerkning": ("x_stand_mod", "stativbeslag"),
          "tema-dominance-top_hvid": ("x_dom_top_hvid", "tema-dominance-top"), "tema-dominance-top_orange": ("x_dom_top_orange", "tema-dominance-top"),
          "tema-dominance-stolpe-venstre_hvid": ("x_dom_vinge_v_hvid", "tema-dominance-stolpe-venstre"),
          "tema-dominance-stolpe-venstre_orange": ("x_dom_vinge_v_orange", "tema-dominance-stolpe-venstre"),

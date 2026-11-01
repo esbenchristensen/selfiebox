@@ -65,7 +65,7 @@ PARTS = [
     ("stativbeslag",  "x_stand",       "Stativbeslag (sort ASA) til gulvstativet, i stedet for vægbeslaget", "#2b2b30", "Stativbeslag", [0, 0, -210]),
     ("stativlogo_hvid", "x_stand_logo_w", "Stativbeslag: logo bagpå, hvidt",   "#f5f5f4", "Stativbeslag", [0, 0, -210]),
     ("stativlogo_groen", "x_stand_logo_g", "Stativbeslag: logo bagpå, grønne prikker", "#22d36b", "Stativbeslag", [0, 0, -210]),
-    ("t_moetrik",     "x_tnut",        "Stativbeslag: T-møtrik 1/4\"-20 til kuglehovedet", "#9a9ea2", "Stativbeslag", [0, -60, -210]),
+    ("gevindindsats", "x_insert",      "Stativbeslag: gevindindsats 1/4\"-20 til kuglehovedet", "#c9a227", "Stativbeslag", [0, -60, -210]),
     # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test (skjult; vis det i stedet for eksempel-temaet)
     ("dom_top",       "x_dom_top",     "Dominance-top (sort) med logo",  "#1d1d20", "Tema Dominance", [0, 90, -40]),
     ("dom_top_hvid",  "x_dom_top_hvid", "Dominance-top: hvidt indlæg",    "#f5f5f4", "Tema Dominance", [0, 90, -40]),
@@ -80,8 +80,8 @@ PARTS = [
 DOM_VIEWS = {"x_dom_top", "x_dom_top_hvid", "x_dom_top_orange", "x_dom_vinge_v", "x_dom_vinge_v_hvid", "x_dom_vinge_v_orange",
              "x_dom_vinge_h", "x_dom_vinge_h_hvid", "x_dom_vinge_h_orange"}
 OPTIONAL = {"c_wagos", "c_fuse", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
-            "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"} | DOM_VIEWS   # left out if the STL dir has none (older versions)
-HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_tnut"} | DOM_VIEWS   # off until ticked
+            "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # left out if the STL dir has none (older versions)
+HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # off until ticked
 
 # cables (OpenSCAD coordinates): owner node, label, diameter, points. v12: the display and the Pi sit 2.1 mm
 # further forward (glass at y 1.6), so every point at the Pi or the display back moved with them. Routed along the back wall
