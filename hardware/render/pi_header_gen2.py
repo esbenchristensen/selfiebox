@@ -1,9 +1,10 @@
 """Raspberry Pi 5's 40-polede GPIO-stik for Halo gen 2: hvilket ben hver ledning skal på.
 
 v39 (Esben 1. nov.: "Hvorfor er pins på pi ikke med i ledningsdiagram så man kan se hvor controller pins skal sidde"):
-v29-v38 skrev kun benumrene i en tekstboks. Her tegnes stikket ben for ben, som det sidder i boksen (fronten med forsiden
-nedad, Pi'ens USB-porte nedad, stikket i Pi'ens venstre kant, ben 1 øverst; se harness_gen2.pin()), med GPIO-navn, kabel-id
-og hvor lederen går hen. Bruges af ledningsdiagram_gen2.py og draw_v29_ledningsplan.py.
+v29-v38 skrev kun benumrene i en tekstboks. Her tegnes stikket ben for ben, som Esben og Claude satte det 26.-27. okt.
+(tråden "Midlertidigt ledningsdiagram til samling", efter Esbens billede af den samlede boks): Pi'en med USB-portene opad,
+GPIO-stikket i venstre side, ben 1 og 2 nederst (enden længst væk fra USB), lige ben yderst. Kun de 5 ben, der bruges, er
+mærket: dæmperen på 1, 12, 14 og skærmen på 2, 6. Bruges af ledningsdiagram_gen2.py og draw_v29_ledningsplan.py.
 
 Kontrolleret mod boksens software (esbenchristensen/selfiebox-platform, box/):
 - lys: config.py light_pin = 18 (GPIO18 = ben 12), hardware.py PWM på GPIO18; install.sh sætter
@@ -24,35 +25,27 @@ NAMES = {1: "3V3", 2: "5V", 3: "GPIO2 SDA", 4: "5V", 5: "GPIO3 SCL", 6: "GND", 7
 COL = dict(v5="#e67700", v3="#d6336c", gnd="#222222", sig="#1c7ed6", opt="#74c0fc", res="#adb5bd")
 # ben: (kabel, hvad, farve). Kablerne er de samme som i harness_gen2.CABLES (G1-G4).
 USE = {
-    1: ("G1", "dæmper DFR0457, rød (3V3)", "v3"),
-    12: ("G1", "dæmper, grøn: lysstyrke (PWM 20 kHz)", "sig"),
-    14: ("G1", "dæmper, sort (GND)", "gnd"),
-    2: ("G4", "skærm, rød (5 V)", "v5"),
-    6: ("G4", "skærm, sort (GND)", "gnd"),
-    3: ("G3", "stødsensor SDA (tilvalg)", "opt"),
-    4: ("G3", "stødsensor VIN (tilvalg)", "opt"),
-    5: ("G3", "stødsensor SCL (tilvalg)", "opt"),
-    7: ("G3", "stødsensor INT (tilvalg)", "opt"),
-    9: ("G3", "stødsensor GND (tilvalg)", "opt"),
-    13: ("G2", "reed, signal (tilvalg)", "opt"),
-    17: ("G2", "reed, + 3V3 (tilvalg)", "opt"),
-    20: ("G2", "reed, GND (tilvalg)", "opt"),
-    11: ("fri", "softwarens knap-ben, lad det være", "res"),
-    35: ("fri", "optaget af PWM-overlay, brug ikke", "res"),
+    1: ("G1", "dæmper: VCC (rød)", "v3"),
+    12: ("G1", "dæmper: signal (grøn)", "sig"),
+    14: ("G1", "dæmper: GND (sort)", "gnd"),
+    2: ("G4", "skærm + (rød)", "v5"),
+    6: ("G4", "skærm − (sort)", "gnd"),
 }
 
 
 def svg(x0, y0, title=True):
-    """the header as SVG elements; returns (elements, width, height). Even pins (board edge) left, odd right, pin 1 at top."""
+    """the header as SVG elements; returns (elements, width, height). Even pins (board edge) left, odd right, pin 1 at the bottom."""
     o, rh, cx = [], 30, x0 + 450
     if title:
         o.append(f'<text x="{x0}" y="{y0+24}" font-size="21" font-weight="700">Raspberry Pi 5: GPIO-stikket, ben for ben</text>')
-        o.append(f'<text x="{x0}" y="{y0+48}" font-size="14" fill="#444">Set bagfra som i boksen: fronten med forsiden nedad, Pi\'ens USB-porte nedad.</text>')
-        o.append(f'<text x="{x0}" y="{y0+67}" font-size="14" fill="#444">Stikket sidder i Pi\'ens venstre kant. Ben 1 er øverst (firkantet lodning), lige ben yderst mod kanten.</text>')
+        o.append(f'<text x="{x0}" y="{y0+48}" font-size="14" fill="#444">Som på dit billede: Pi\'en med USB-portene opad og GPIO-stikket i venstre side.</text>')
+        o.append(f'<text x="{x0}" y="{y0+67}" font-size="14" fill="#444">Kun 5 ben bruges. Ben 1 og 2 er nederst, i enden længst væk fra USB. Lige ben yderst mod kanten.</text>')
         y0 += 88
+    o.append(f'<text x="{cx+32}" y="{y0+6}" font-size="14" text-anchor="middle" fill="#444">↑ USB-portene</text>')
+    y0 += 22
     o.append(f'<rect x="{cx-6}" y="{y0-4}" width="64" height="{20*rh+8}" rx="6" fill="#222"/>')
     for n in range(1, 41):
-        r = (n - 1) // 2
+        r = 19 - (n - 1) // 2
         even = n % 2 == 0
         px, py = cx + (13 if even else 39), y0 + r*rh + rh/2
         u = USE.get(n)
@@ -60,25 +53,24 @@ def svg(x0, y0, title=True):
         shape = (f'<rect x="{px-9}" y="{py-9}" width="18" height="18" fill="{fill}" stroke="#fff" stroke-width="1.5"/>' if n == 1
                  else f'<circle cx="{px}" cy="{py}" r="9" fill="{fill}" stroke="#fff" stroke-width="1.5"/>')
         o.append(shape)
-        weight = "700" if u and u[2] != "res" else "400"
+        weight = "700" if u else "400"
         ink = "#111" if u else "#999"
         if even:   # number and labels to the left
-            o.append(f'<text x="{cx-12}" y="{py+5}" font-size="15" text-anchor="end" font-weight="800" fill="#111">{n}</text>')
+            o.append(f'<text x="{cx-12}" y="{py+5}" font-size="{15 if u else 13}" text-anchor="end" font-weight="{800 if u else 400}" fill="{"#111" if u else "#999"}">{n}</text>')
             o.append(f'<text x="{cx-42}" y="{py+5}" font-size="14" text-anchor="end" fill="{ink}" font-weight="{weight}">'
-                     + (f'{u[0]} · {u[1]} · ' if u else "") + f'{NAMES[n]}</text>')
+                     + (f'{u[1]} · ben {n} · {NAMES[n]}' if u else "") + '</text>')
         else:
-            o.append(f'<text x="{cx+64}" y="{py+5}" font-size="15" font-weight="800" fill="#111">{n}</text>')
-            o.append(f'<text x="{cx+94}" y="{py+5}" font-size="14" fill="{ink}" font-weight="{weight}">{NAMES[n]}'
-                     + (f' · {u[0]} · {u[1]}' if u else "") + '</text>')
+            o.append(f'<text x="{cx+64}" y="{py+5}" font-size="{15 if u else 13}" font-weight="{800 if u else 400}" fill="{"#111" if u else "#999"}">{n}</text>')
+            o.append(f'<text x="{cx+94}" y="{py+5}" font-size="14" fill="{ink}" font-weight="{weight}">'
+                     + (f'{u[1]} · ben {n} · {NAMES[n]}' if u else "") + '</text>')
     y = y0 + 20*rh + 26
-    o.append(f'<text x="{cx+32}" y="{y}" font-size="14" text-anchor="middle" fill="#444">↓ USB-portene</text>')
-    notes = ["Fast: G1 dæmperen (ben 1, 12, 14) og G4 skærmen (ben 2, 6). Lyseblå = tilvalg, som softwaren ikke læser endnu.",
-             "Grå: ben 11 er softwarens knap-ben og ben 35 er taget af PWM-overlayet. Sæt intet på dem.",
-             "RGB-styringen (Gledopto) går i USB (U1). Dens GPIO16 er Gledopto'ens eget data-ben til stripen, ikke Pi'ens.",
-             "Hver leder crimpes for sig på sit ben (dupont hun). Tæl fra ben 1, og tjek mod tallene her, før der tændes."]
+    o.append(f'<text x="{cx+32}" y="{y}" font-size="14" text-anchor="middle" fill="#444">ben 1 og 2: enden længst væk fra USB</text>')
+    notes = ["G1 dæmperen: hver crimp for sig, grøn på ben 12, rød på ben 1, sort på ben 14. G4 skærmen: ben 2 og 6.",
+             "RGB-styringen (Gledopto) bruger ingen Pi-ben; den får USB-kablet (U1). Dens GPIO16 er dens eget ben til stripen.",
+             "Tilvalg, ikke tegnet her: reed (G2) og stødsensor (G3). Softwaren læser dem ikke endnu."]
     for i, t in enumerate(notes):
         o.append(f'<text x="{x0}" y="{y+28+i*21}" font-size="14" fill="#333">{t}</text>')
-    return o, 990, (y + 28 + len(notes)*21) - (y0 - (88 if title else 0))
+    return o, 990, (y + 28 + len(notes)*21) - (y0 - 22 - (88 if title else 0))
 
 
 if __name__ == "__main__":

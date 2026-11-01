@@ -6,23 +6,19 @@ Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filern
 
 ## Hvad er nyt i v39: Pi-benene i tegningerne
 
-Esben 1. nov.: "Hvorfor er pins på pi ikke med i ledningsdiagram så man kan se hvor controller pins skal sidde". Indtil nu stod benumrene kun som tekst i en boks ("G1 ben 1 · 12 · 14" osv.), og selve stikket var ikke tegnet. Nu er Pi 5's 40-polede stik tegnet **ben for ben, som det sidder i boksen** (fronten med forsiden nedad, Pi'ens USB-porte nedad, ben 1 øverst, lige ben yderst mod kanten), med GPIO-navn, kabel-id og hvor hver leder går hen. Tegningen er i `halo-gen2-v39_ledningsdiagram.png` (til højre), i `halo-gen2-v39_ledningsplan.png` (til højre) og alene i `halo-gen2-v39_pi-ben.png`.
+Esben 1. nov.: "Hvorfor er pins på pi ikke med i ledningsdiagram så man kan se hvor controller pins skal sidde". Indtil nu stod benumrene kun som tekst i en boks. Nu er Pi 5's stik tegnet **ben for ben, som vi satte det 26.-27. okt.** efter Esbens billede af den samlede boks: Pi'en med USB-portene opad, GPIO-stikket i venstre side, ben 1 og 2 nederst (enden længst væk fra USB), lige ben yderst. Kun de 5 ben, der bruges, er mærket. Tegningen er i `halo-gen2-v39_ledningsdiagram.png` (til højre), i `halo-gen2-v39_ledningsplan.png` (til højre) og alene i `halo-gen2-v39_pi-ben.png`.
 
 | Ben | Pi | Kabel | Til |
 |---|---|---|---|
-| 1 | 3V3 | G1 | dæmper DFR0457, rød |
-| 12 | GPIO18 (PWM) | G1 | dæmper, grøn: lysstyrke |
-| 14 | GND | G1 | dæmper, sort |
-| 2 | 5V | G4 | skærm, rød |
-| 6 | GND | G4 | skærm, sort |
-| 3, 4, 5, 7, 9 | SDA, 5V, SCL, GPIO4, GND | G3 | stødsensor (tilvalg) |
-| 13, 17, 20 | GPIO27, 3V3, GND | G2 | reed (tilvalg) |
-| 11 | GPIO17 | – | fri: softwarens knap-ben |
-| 35 | GPIO19 | – | fri: taget af PWM-overlayet |
+| 1 | 3V3 | G1 | dæmper DFR0457, VCC (rød) |
+| 12 | GPIO18 | G1 | dæmper, signal (grøn) |
+| 14 | GND | G1 | dæmper, GND (sort) |
+| 2 | 5V | G4 | skærm + (rød) |
+| 6 | GND | G4 | skærm − (sort) |
 
-- **Tjekket mod boksens software** (selfiebox-platform `box/`): lyset er GPIO18 (`light_pin = 18`), og `install.sh` sætter `dtoverlay=pwm-2chan,pin=18,func=2,pin2=19,func2=2`, så GPIO19 (ben 35) er også taget. Knappen er GPIO17 (`button_pin = 17`, ben 11); gen 2 har ingen knap, men lad benet være frit.
-- **Reed og stødsensor er tilvalg**, og softwaren læser dem ikke endnu (I2C er ikke slået til i `install.sh`). Benene er reserveret til dem.
-- **RGB-styringen (Gledopto) sidder ikke på Pi'ens ben.** Den styres over USB (U1). "GPIO16" på den er Gledopto'ens eget ben, hvor strippens data-ledning (S3) går i.
+- Det er de samme ben som i den midlertidige ledningstegning 26. okt. og i diagrammet siden v27. Boksens software bruger GPIO18 (ben 12) til lyset.
+- **RGB-styringen (Gledopto) bruger ingen Pi-ben.** Den får USB-kablet (U1). "GPIO16" på den er dens eget ben, hvor strippens data-ledning (S3) går i.
+- Reed (G2) og stødsensor (G3) er tilvalg og er ikke tegnet på stikket; softwaren læser dem ikke endnu.
 - Ledningsdiagrammet tegner nu også W3 med 5 klemmer (221-415, v37).
 
 ## Hvad var nyt i v38: klik i top og bund
