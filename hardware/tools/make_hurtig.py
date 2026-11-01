@@ -119,6 +119,10 @@ COUPONS = [
      "v37: frontens nederste venstre klikkant (95 mm oppe) og skallens rille. Tryk de to stykker sammen, til det klikker, "
      "og træk dem fra hinanden igen med hånden. Klikker det tydeligt, og kan det skilles uden værktøj? Stykket er kort, så "
      "det er stivere end den hele væg; bedøm kraften på det hele print."),
+    # v38 (Esben 1 Nov): the front also snaps into the shell's top and bottom wall at x +-50; the bottom left one here
+    ("klik-bund", ["skal", "front"], ((-72, -154), (-28, -128)), 0, "fuld",
+     "v38: frontens klikkant i bunden (x −50) og rillen i skallens bundvæg. Tryk sammen, til det klikker, og træk fra hinanden "
+     "med hånden. Kanten er 0,45 mm her (0,6 i siderne), så klikket skal være lettere end i `klik`."),
     # ---- front + frame
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
      "v37: kameraet på frontens tappe, linsen midt i hullet (Ø8,6 i den yderste 1 mm, Ø10 bagved), bagrammens 4 rør med "
@@ -153,10 +157,10 @@ COUPONS = [
 
 # The plates, in the order to print them: 1 = what v37 changed (print this first), 2 = the other fits, 3 = options and
 # the big screen/ring piece. Every piece is also its own 3MF.
-GROUP = {"stroemindgang": 1, "wago-loekker": 1, "kabelloekker": 1, "klik": 1, "kamera": 1, "laas-reed": 1,
+GROUP = {"stroemindgang": 1, "wago-loekker": 1, "kabelloekker": 1, "klik": 1, "klik-bund": 1, "kamera": 1, "laas-reed": 1,
          "laasetunge": 1, "stativ-hylde": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
-GROUP_NAME = {1: "nyt-i-v37", 2: "resten", 3: "ekstra"}
-GROUP_TEXT = {1: "det, v37 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
+GROUP_TEXT = {1: "det, v37 og v38 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
@@ -429,7 +433,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt-i-v37`, ca. {fmt_t(plate_total[1])}): alt det, v37 har ændret. Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v37 og v38 har ændret. Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",
