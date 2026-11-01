@@ -56,12 +56,13 @@ CONTACT = {
     ("x_shell3", "c_fuse"): 2,         # v36: crush ribs press the fuse holder into its cradle
     ("x_stand", "x_cleat"): 1e9,       # v36: the stand bracket and the wall cleat are alternatives (never fitted together)
     ("x_stand", "s_wall"): 1e9,
+    ("x_frame3", "x_camera"): 1.5,     # v37: 3 crush tips on each camera tube reach 0.2 into the board's back (CAM_TUBE)
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
     ("x_ring3", "x_front3", 0.0, "v36: the ring's 45 deg collar in the front's seat"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame (v24: pressed by crush bumps)"),
-    ("x_cam_lens", "x_front3", 0.6, "v27: the front's Ø8.6 bore 0.65 round the lens barrel (Ø7.25), the tip 1.15 inside it, nothing in front"),
+    ("x_cam_lens", "x_front3", 0.6, "v37: the bore Ø10 behind a 1.0 lip of Ø8.6: 1.4 round the lens barrel (Ø7.25), 0.69 from the tip's edge to the lip"),
     ("x_cam_fov", "x_front3", 0.1, "v27: the Wide lens's 120 deg field of view clears the Ø8.6 bore's edge (0.31 across, 0.15 square to the 60 deg cone)"),
     ("x_fanguard", "c_cooler", 0.75, "v24: the grille 3.0 over the Active Cooler, the stop pegs 0.8 over the heat sink"),
     ("x_fanguard", "c_pi_board", 0.5, "v24: the guard clear of the Pi and its ports"),

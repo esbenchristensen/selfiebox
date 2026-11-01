@@ -88,7 +88,7 @@ wire([(758, w5[1]), (800, w5[1]), (800, 1080), (1100, 1080)], C["gnd"]); lab(810
 wire([(758, w5[2]), (780, w5[2]), (780, 1180), (1100, 1180)], C["gnd"]); lab(790, 1174, "S7 · strip 2 −", "#222")
 
 # legend + notes
-for i, t in enumerate(["W1 24 V +: 221-413", "W2 GND: 221-415", "W3 5 V +: 221-414", "W4 5 V GND: 221-415", "W5 hvid −: 221-413", "W6 hvid + dæmpet: 221-413"]):
+for i, t in enumerate(["W1 24 V +: 221-413", "W2 GND: 221-415", "W3 5 V +: 221-415", "W4 5 V GND: 221-415", "W5 hvid −: 221-413", "W6 hvid + dæmpet: 221-413"]):
     lab(40, 980 + i*22, t, "#333", size=15)
 lx, ly = 40, 740
 for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip +, dæmpet (VOUT)"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
