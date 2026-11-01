@@ -1335,7 +1335,7 @@ module shell3(top = UNIT_TOP) {
             power_holders();
             if (WING_POCKET) wing_pockets();
             wing_groove_bosses();   // v30
-            for (p = CABLE_LOOPS) cable_clip(p); strain_clip();   // v23: cable routing; v36: open clips
+            cable_loops(); strain_clip();                          // v23: cable routing (v37: strap loops again, v36 had round clips)
             fuse_holder();                                         // v36
             wago_row();                                            // v29
         }
@@ -1367,7 +1367,7 @@ CABLE_LOOPS = [[0, 112, "h"], [0, 136, "h"],                  // main bundle; 13
                // v29 (Esben 27 Oct: "baner og ruter frem for overalt"): the left lane up past the speaker and the 4G, the right lane
                // from the PSU's terminals up to the Wago row, and the shell end of the top hinge bundle K1 (K2's shell end is [-80, 72])
                [-45, 170, "h"], [-45, 222, "h"], [72, 200, "h"], [72, 245, "h"], [-85, 240, "h"],
-               [-30, 232, "v"], [30, 232, "v"]];                   // ... and two under the Wago row for the distribution lane (v36: z 243 -> 232, 15 mm free under the block)
+               [-30, 232, "v"], [30, 232, "v"]];                   // ... and two under the Wago row for the distribution lane (v36: z 243 -> 232, room for the fingers under the row)
 LOOP = [10.4, 2.2, 1.6, 2.0, 5];          // tunnel width (strap 10), tunnel height (strap 2), bridge, side posts, length
 module cable_loop(p) translate([p[0], D - BACK_T + 0.01, p[1]]) rotate([0, p[2] == "h" ? 0 : 90, 0]) difference() {
     translate([-LOOP[4]/2, -(LOOP[1] + LOOP[2]), -LOOP[0]/2 - LOOP[3]]) cube([LOOP[4], LOOP[1] + LOOP[2] + 0.01, LOOP[0] + 2*LOOP[3]]);
@@ -1396,20 +1396,9 @@ module fuse_model() translate([FUSE_P[0], D - BACK_T, FUSE_P[1]]) rotate([90, 0,
     translate([-FUSE[0]/2, -11, 12 - 0.01]) cube([FUSE[0], 22, FUSE[2] - 12]);      // lid
     for (sy = [-1, 1]) translate([0, sy*(FUSE[1]/2 + 4), 6]) rotate([90, 0, 0]) cylinder(d = 6, h = 8, center = true, $fn = 24);   // lead stubs
 }
-// v36 (Esben 30 Oct, samlenoter 11: two strap loops under the Wago row stood 1-2 mm from it, no room to pull a strap through with
-// the fingers; the same held for 3 more loops). Every loop is now an open clip: a C round the bundle, open to the front, so the
-// bundle is pressed in from the front and nothing has to be threaded. [x, z, dir] as before: "h" = the bundle runs up/down,
-// "v" = sideways. The main bundle's clips (x 0) are bigger.
-CLIP = [9, 1.6, 6.5, 8];                  // inner Ø, wall, opening, length along the bundle
-function clip_d(p) = p[0] == 0 ? 12 : CLIP[0];
-module cable_clip(p) translate([p[0], D - BACK_T, p[1]]) rotate([0, p[2] == "h" ? 0 : 90, 0]) {
-    d = clip_d(p);  r = d/2 + CLIP[1];  yc = -(d/2 + 0.5);
-    translate([0, 0, -CLIP[3]/2]) linear_extrude(CLIP[3]) difference() {
-        hull() { translate([0, yc]) circle(r = r, $fn = 40); translate([-r, -0.01]) square([2*r, 0.02]); }
-        translate([0, yc]) circle(d = d, $fn = 40);
-        translate([-CLIP[2]/2, yc - r - 1]) square([CLIP[2], r]);
-    }
-}
+// v37 (Esben 1 Nov: "De var fin før hvor man kunne stripe fast med velcrobånd"): the strap loops are back everywhere. v36 had
+// turned every loop into a round open clip (12 mm on the main bundle), which nobody asked for: samlenoter 11 only asked for room
+// to pull a strap under the Wago row, and that is solved by the two loops there sitting at z 232 (v35: 243), 25 mm under the row.
 // v29: the Wago row. Until v28 the Wago clamps hung loose in the bundle (Esben's photo 27 Oct: wires everywhere). Now all six sit
 // in one row of press-fit pockets on the front face of the wall cleat's block high on the back wall (y 58, z 247-286): levers to
 // the front, so with the front off every lever and every entry is in reach, and the wire entries face down into a 20 mm

@@ -4,7 +4,7 @@
 
 Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filerne ligger også i printretning. Én del pr. plade, 1 stk. af hver. Alle dele i PLA, lysringen i klart materiale.
 
-## Hvad er nyt i v37: holdbarhed, gevindindsats, fokus og klik
+## Hvad er nyt i v37: holdbarhed, gevindindsats, fokus, klik og velcroløkkerne tilbage
 
 ### Stativbeslaget har en gevindindsats (stativbeslag v9)
 
@@ -49,6 +49,10 @@ Esben målte hunstikket 1. nov. (Delock med 2 skrueklemmer): spids af metal Ø6,
 
 Esben har kun 221-413 (3 polet) og 221-415 (5 polet). **W3 (5 V +) er nu en 221-415** (v29–v36: lomme til en 221-414); den 5. indgang er fri. Rækken er 5,6 mm bredere. Køb: **3 × 221-413 og 3 × 221-415**.
 
+### Kabelløkkerne til velcrobånd er tilbage
+
+v36 lavede alle 15 løkker om til runde, åbne clips (12 mm på hovedbundtet). Det havde ingen bedt om, og de kan ikke bruges. **I v37 er alle løkker igen de flade broer fra v23–v35** med en fri åbning på 10 × 2 mm til en **10 mm velcrostrop** (eller en kabelbinder). De sidder samme steder som før. De to under Wago-rækken bliver i z 232 (v35: 243), så der er ca. 25 mm fri op til rækken til at føre og stramme stroppen med fingrene (samlenote 11). Trækaflastningen lige over strømstikket er den samme lille snapklemme som i v23–v36.
+
 ### Det samme som før
 
 Lysring, vægbeslag, blæserhegn, eksempel-tema og Dominance-tema er de samme dele som i v36 (3MF'erne er lavet igen). Ledningsplanen og -diagrammet er lavet igen med W3 som 221-415.
@@ -66,7 +70,7 @@ Den fælles årsag til de fleste problemer: skallen printes med bagsiden ned, s�
 5. **Ledninger:** Biltema har ikke 1,0 mm². Brug **RKUB 1,5 mm²** (rød 2000049852, sort 2000049851, 10 m) til hele 24 V- og 5 V-delen (P1–P8). 0,75 mm² som før til dæmper og RGB-styring.
 6. **Strømindgangen:** dit hunstik med skrueklemmer (ca. 14,25 × 11,9, 38 mm højt) sidder nu i en **åben U-kanal, der er åben fremad**. Skru ledningerne i stikket først, sæt stikket ind i kanalen forfra med åbningen nedad, til det står på hylderne, og det holdes af læberne i kanalens forkant. Ingen snaplåse ovenfra mere. Trækaflastningen er flyttet op (z 92–98) og er nu Ø6,4 til 2 × 1,5 mm², så den ikke spærrer for stikket.
 7. **RGB-styringen (Gledopto):** vægge 2,4 mm tykke, tænderne 0,9 mm over låget, ribbe bag hver tand.
-11. **Kabelløkkerne** er nu **åbne clips**, så ledningerne lægges ind fra siden i stedet for at trækkes igennem. Løkkerne under Wago-rækken er flyttet ned til z 232, så der er plads til fingrene.
+11. **Kabelløkkerne** blev lavet om til **åbne clips** (fjernet igen i v37, se øverst). Løkkerne under Wago-rækken er flyttet ned til z 232, så der er plads til fingrene.
 12. **Hakkene i bagsiden** er rillerne til tema-vingernes tap. Nu er der en lomme under rillen, og vingernes tap har en lille tå, der går ned i den, så vingen ikke kan vippe ud forneden. (Eksempel-vingerne i pakken har tåen.)
 13. **Sikringsholderen** har fået sin egen holder på højre væg ved bagvæggen (x 92–106, z 52–86) med låget fremad, så sikringen kan skiftes, når fronten er af. Ledningen er delt i **P1** (hunstik + → sikringens nederste ledning) og **P1b** (sikringens øverste ledning → W1). Se ledningsplanen.
 16. **Ingen nye skruer** (Esben 31. okt.: dropper de ekstra skruer). Fronten holdes som før af de 4 frontskruer.
@@ -672,7 +676,7 @@ Alle købedele er tjekket mod producentens tegninger (ligger under "Datablade og
 
 | Fil | Del | Mål på pladen (mm) | Materiale | Ca. vægt | Plade | Support |
 |---|---|---|---|---|---|---|
-| `halo-gen2-v37_skal.stl` (+ `halo-gen2-v37_skal_support.3mf`) | **v36: holderne efter samlenoterne (se øverst), åben kanal til hunstikket, sikringsholder, åbne kabelclips, lomme til vingernes tå.** Skal med Wago-række på vægbeslagets klods og 15 kabelløkker i baner (v29), rille forneden i bagsiden i hver side til vingernes tap (v28), uden rille om højttalergitteret (v27), stolper under luftskærmene (v26), 2 låseslidser, -lommer og bundknaster (v25), trækaflastning over strømstikket, strømrør uden support med plads til hunstikket på 14 × 13, lav mikrofonbakke med plads til aux, rille til frontens ribbe, knusribber på stolperne og 4 lukkede vingelommer | 224,5 × 307 × 64 | PLA sort | ca. 350 g | Glat PEI | **Kun de 2 steder i 3MF'en** (Tree, manuel); v37: forstærkede hjørner og riller til frontens klik |
+| `halo-gen2-v37_skal.stl` (+ `halo-gen2-v37_skal_support.3mf`) | **v36: holderne efter samlenoterne (se øverst), åben kanal til hunstikket, sikringsholder, lomme til vingernes tå.** Skal med Wago-række på vægbeslagets klods og 15 kabelløkker i baner (v29), rille forneden i bagsiden i hver side til vingernes tap (v28), uden rille om højttalergitteret (v27), stolper under luftskærmene (v26), 2 låseslidser, -lommer og bundknaster (v25), trækaflastning over strømstikket, strømrør uden support med plads til hunstikket på 14 × 13, lav mikrofonbakke med plads til aux, rille til frontens ribbe, knusribber på stolperne og 4 lukkede vingelommer | 224,5 × 307 × 64 | PLA sort | ca. 350 g | Glat PEI | **Kun de 2 steder i 3MF'en** (Tree, manuel); v37: forstærkede hjørner, riller til frontens klik, ny strømkanal og velcroløkkerne tilbage |
 | `halo-gen2-v37_front.stl` (+ `halo-gen2-v37_front_flerfarvet.3mf`) | **v37: klikkanter på tungen, Ø10 bag kameravinduets 1 mm kant, forstærkede hjørner.** Front uden glas og pakninger (v27): åbent kameravindue Ø8,6 med linsen 1,15 mm inde i hullet, kamerakassen 1,95 mm længere fremme, hel frontplade om lysringen og massiv skærmkant; ribbe mod skallen | 224,5 × 307 × 27,7 | PLA sort | 110 g | **Tekstureret PEI** | Nej |
 | `halo-gen2-v37_logo-hvid.stl` | Logo, hvide dele (farvedel til fronten) | 27,5 × 9,9 × 0,8 | PLA hvid | under 1 g | Sammen med fronten | Nej |
 | `halo-gen2-v37_logo-groen.stl` | Logo, grønne prikker (farvedel til fronten) | 24,6 × 2,6 × 0,8 | PLA grøn | under 1 g | Sammen med fronten | Nej |
