@@ -167,4 +167,17 @@ ax.legend(handles=[mp.Patch(color=hz.RED, label="24 V + / hvid +"), mp.Patch(col
           loc="lower center", bbox_to_anchor=(0.5, -0.07), ncol=7, fontsize=9, frameon=False)
 ax.set_xlim(FX(115) - 5, 118); ax.set_ylim(-30, 318); ax.set_aspect("equal"); ax.axis("off")
 fig.savefig(OUT, dpi=110, bbox_inches="tight")
+# v39 (Esben 1 Nov): the Pi's GPIO header pin by pin beside the plan (render/pi_header_gen2.py, the same as in the diagram)
+import io  # noqa: E402
+import cairosvg  # noqa: E402
+from PIL import Image  # noqa: E402
+import pi_header_gen2 as ph  # noqa: E402
+els, pw, phh = ph.svg(20, 20)
+hdr = Image.open(io.BytesIO(cairosvg.svg2png(bytestring=(f'<svg xmlns="http://www.w3.org/2000/svg" width="{pw + 40}" height="{phh + 40}" '
+      f'font-family="Inter, Helvetica, Arial, sans-serif"><rect width="100%" height="100%" fill="#fff"/>' + "".join(els) + "</svg>").encode(),
+      scale=1.4))).convert("RGB")
+plan = Image.open(OUT).convert("RGB")
+both = Image.new("RGB", (plan.width + hdr.width + 20, max(plan.height, hdr.height)), "white")
+both.paste(plan, (0, 0)); both.paste(hdr, (plan.width + 20, (plan.height - hdr.height) // 2 if plan.height > hdr.height else 0))
+both.save(OUT)
 print("wrote", OUT)
