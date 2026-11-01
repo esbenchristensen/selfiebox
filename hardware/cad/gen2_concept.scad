@@ -1313,19 +1313,32 @@ module placed_pi3() translate([0, PI_Y3, GC + DSP_PI_DZ]) rpi5();
 SNAP_F = [7.4, 0.6, 0.6, 30, 30];         // ridge: front edge (y), 45 deg rise, height, lead angle, length (z)
 SNAP_G = [7.6, 0.7, 1.0];                 // groove: front edge (y; its 45 deg face lies on the ridge's, 0.05 play), depth, floor length
 SNAP_FZ = [95, 215];                      // centres (z) on both long sides, clear of the screw posts at the corners
+// v38 (Esben 1 Nov: "Hvorfor har du ikke lavet så kassen klikker sammen med front i top og bund?"): the same ridge and groove on
+// the top and the bottom too, 2 on each at x +-50 (v37 had them on the long sides only, because the side walls are the longest
+// straight spans and flex the most; the top and bottom are 139 mm straight between the corners, and the front's top tongue is
+// cut away at |x| < 25 for the camera). x 35-65 is clear tongue at the top and at the bottom; the screw bosses sit at the corners.
+SNAP_FX = [-50, 50];
+SNAP_FH_TB = 0.45;                        // ridge height at the top and bottom: those walls are about 4x stiffer than the long sides
+                                          // (139 vs 221 mm straight), so 0.25 over the fit there (sides: 0.6, 0.4 over)
+// placements: local X = y, Y = outward from the tongue face, Z = along the edge
+function snap_m(f, c, o) = f == "side" ? [[0, sign(c[0]), 0, c[0] + sign(c[0])*o], [1, 0, 0, 0], [0, 0, 1, c[1]], [0, 0, 0, 1]]
+    : f == "top" ? [[0, 0, 1, c[0]], [1, 0, 0, 0], [0, 1, 0, H - o], [0, 0, 0, 1]]
+    : [[0, 0, 1, c[0]], [1, 0, 0, 0], [0, -1, 0, o], [0, 0, 0, 1]];
+function snap_spots() = concat([for (sx = [-1, 1], z = SNAP_FZ) ["side", [sx*HW, z]]], [for (f = ["top", "bot"], x = SNAP_FX) [f, [x, 0]]]);
+// tongue face: HW - WALL - FIT from the middle at the sides, WALL + FIT in from the top and bottom
+function snap_face_o(f, w) = f == "side" ? -w : w;
 module snap_profile(pts, len) translate([0, 0, -len/2]) linear_extrude(len) polygon(pts);
-// in (y, outward) at |x| = the tongue's outer face, with 45 deg ends along z so it slides in at the ends too
-module front_snaps() for (sx = [-1, 1], z = SNAP_FZ)
-    let(y0 = SNAP_F[0], h = SNAP_F[2], y1 = y0 + SNAP_F[1], y2 = y1 + 0.4, y3 = y2 + h/tan(SNAP_F[3]), xo = HW - WALL - FIT)
-    intersection() {
-        translate([sx*xo, 0, z]) rotate([0, 0, 0]) multmatrix([[0, sx, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-            snap_profile([[y0, -0.5], [y0, 0], [y1, h], [y2, h], [y3, 0], [y3, -0.5]], SNAP_F[4]);
-        translate([sx*xo, (y0 + y3)/2, z]) rotate([90, 0, 0]) linear_extrude(y3 - y0 + 2, center = true)
-            polygon([[-sx*1, -SNAP_F[4]/2 - 1], [-sx*1, SNAP_F[4]/2 + 1], [sx*(h + 0.01), SNAP_F[4]/2 - h], [sx*(h + 0.01), -SNAP_F[4]/2 + h]]);
+// in (y, outward) at the tongue's outer face, with 45 deg ends along the edge so it slides in at the ends too
+module front_snaps() for (s = snap_spots())
+    let(y0 = SNAP_F[0], h = s[0] == "side" ? SNAP_F[2] : SNAP_FH_TB, y1 = y0 + (s[0] == "side" ? SNAP_F[1] : h), y2 = y1 + 0.4, y3 = y2 + h/tan(SNAP_F[3]), L = SNAP_F[4])
+    multmatrix(snap_m(s[0], s[1], snap_face_o(s[0], WALL + FIT))) intersection() {
+        snap_profile([[y0, -0.5], [y0, 0], [y1, h], [y2, h], [y3, 0], [y3, -0.5]], L);
+        translate([(y0 + y3)/2, 0, 0]) rotate([0, 90, 0]) linear_extrude(y3 - y0 + 2, center = true)
+            polygon([[-L/2 - 1, -1], [L/2 + 1, -1], [L/2 - h, h + 0.01], [-(L/2 - h), h + 0.01]]);
     }
-module shell_snap_grooves() for (sx = [-1, 1], z = SNAP_FZ)
-    let(y0 = SNAP_G[0], d = SNAP_G[1], y1 = y0 + d, y2 = y1 + SNAP_G[2], y3 = y2 + d, xi = HW - WALL)
-    translate([sx*xi, 0, z]) multmatrix([[0, sx, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+module shell_snap_grooves() for (s = snap_spots())
+    let(y0 = SNAP_G[0], d = SNAP_G[1], y1 = y0 + d, y2 = y1 + SNAP_G[2], y3 = y2 + d)
+    multmatrix(snap_m(s[0], s[1], snap_face_o(s[0], WALL)))
         snap_profile([[y0, -0.5], [y0, 0], [y1, d], [y2, d], [y3, 0], [y3, -0.5]], SNAP_F[4] + 4);
 module shell3(top = UNIT_TOP) {
     difference() {
