@@ -8,11 +8,12 @@ Hurtigsættet er de normale printfiler 1:1. Al pasform bevares: huller, skruesto
 
 **Hvorfor:** en særskilt hurtigmodel ville glide væk fra den rigtige, og så tester man noget andet end det, der skal leveres.
 
-Tiden spares tre steder, i denne rækkefølge:
+Tiden spares to steder, i denne rækkefølge:
 
 1. **Print kun det, der skal prøves (prøvestykker).** Et prøvestykke er en kasse skåret ud af den rigtige del rundt om det sted, hvor noget skal passe. Det tager typisk 10–45 minutter, hvor hele delen tager 3–16 timer.
 2. **Kladdeprofil.** 0,28 mm lag, 2 vægge, 3 top- og bundlag og 10 % fyld. Det giver ca. halv tid på hele dele.
-3. **PLA i stedet for ASA.** Der er ingen opvarmning af kammeret og ingen afkøling.
+
+Fra v34 printes alle dele i PLA (lysringen i klar PETG), også de normale, så hurtigprint og normalt print er samme materiale.
 
 ## 2. Prøvestykker
 
@@ -20,20 +21,22 @@ Tiden spares tre steder, i denne rækkefølge:
 - Kassen går mindst 8 mm uden om købedelen. Den går altid helt ned til den flade, delen står på i sin printretning. Stykket printes derfor fladt, uden support og i den samme retning som den rigtige del.
 - Dele, der hænger i luften efter snittet, fjernes automatisk. Værktøjet skriver, hvor meget der blev fjernet.
 - Skal noget prøves mod en anden printet del (fx kamera mod bagramme, eller hjørnet med frontskruen), skæres samme kasse ud af begge dele, så stykkerne kan lægges sammen.
-- Når en ny bakke eller lomme kommer til, tilføjes en linje i `COUPONS` med navn, del, købedelens node i 3D-modellen og hvad der prøves.
+- Når en ny bakke eller lomme kommer til, tilføjes en linje i `COUPONS` med navn, del, købedelens node i 3D-modellen og hvad der prøves. Er stedet ændret i den nye version, kommer det også i `GROUP` (plade 1).
+- Hvert prøvestykke og hver hel del er et Bambu Studio-projekt (3MF) med kladdeindstillingerne indbygget, som de normale 3MF'er fra `make_3mf.py`. Skallens support-enforcere og -blockere og stativbeslagets massive hylde følger med ind i de stykker, de rører; de forstærkede hjørner (v37) gør ikke, for de ændrer ikke pasformen.
+- **Prøveplader** (fra v37): alle stykker af samme farve og gruppe ligger på én plade (`<version>-hurtig_plade<N>-<gruppe>_<farve>.3mf`), så en plade er ét print. Plade 1 er det, versionen har ændret, plade 2 resten, plade 3 tilvalg og skærmens kant.
 
 ## 3. Navne og mapper
 
 - Mappe: `hardware/stl/gen2-hurtig/<version>-hurtig/` i repoet og `/mnt/project-files/gen2-hurtigprint/<version>-hurtig/` i projektmappen. Aldrig i `hardware/stl/gen2/` eller `gen2-printfiler/`, så de normale printfiler ikke bliver blandet sammen med dem.
-- Filnavne: `<version>-hurtig_<del>.stl` for hele dele og `<version>-hurtig_proeve-<navn>[_<del>].stl` for prøvestykker. Printguide: `PRINTGUIDE_<version>-hurtig.md`.
-- Logoet er ikke en del af `_front.stl`. Det ligger som én STL pr. farve (`_logo-hvid.stl`, `_logo-groen.stl`) med frontens nulpunkt, og samlet med fronten i `<version>-hurtig_front_flerfarvet.3mf` (AMS-plads 1 sort, 2 hvid, 3 grøn). Printes `_front.stl` alene, kommer fronten ud uden logo.
+- Filnavne: `<version>-hurtig_<del>.stl/.3mf` for hele dele og `<version>-hurtig_proeve-<navn>[_<del>].stl/.3mf` for prøvestykker. Printguide: `PRINTGUIDE_<version>-hurtig.md`, alt samlet i `<version>-hurtig.zip`.
+- Fronten og stativbeslaget er uden logo i hurtigsættet (fordybningen står tom). Skal logoet med, bruges versionens normale `_flerfarvet.3mf`.
 - De normale printfiler ændres aldrig af hurtigsættet.
 
 ## 4. Ny version
 
 1. Ret CAD (`hardware/cad/gen2_concept.scad`) og udgiv den normale version som altid (`hardware/stl/gen2/halo-gen2-vN/`).
-2. Kør `python3 hardware/tools/make_hurtig.py halo-gen2-vN`. Med `prusa-slicer` installeret skriver værktøjet også skønnede printtider i printguiden.
-3. Se prøvestykkerne igennem (fx i Bambu Studio). Kopier mappen til projektmappen.
+2. Ret `COUPONS` og `GROUP` i `make_hurtig.py` til det, versionen har ændret, og kør `python3 hardware/tools/make_hurtig.py halo-gen2-vN`. Med `prusa-slicer` installeret skriver værktøjet også skønnede printtider i printguiden.
+3. Tjek 3MF'erne med `hardware/tools/check_3mf.py` og se prøvestykkerne igennem (fx i Bambu Studio). Kopier mappen til projektmappen.
 
 Find en fejl på et hurtigprint, så ret den i CAD og lav en ny version. Ret aldrig en hurtigfil.
 
@@ -41,13 +44,13 @@ Find en fejl på et hurtigprint, så ret den i CAD og lav en ny version. Ret ald
 
 | | Hurtig | Normal (til sammenligning) |
 |---|---|---|
-| Profil | 0.28mm Extra Draft | 0,16–0,2 mm |
-| Vægge | 2 | 4–6 |
-| Top/bund | 3/3 | 5–6 |
-| Fyld | 10 % Grid | 20 % gyroid, beslag 100 % |
-| Filament | PLA, låge/top åben | ASA, kammer 60 °C |
-| Logo | Valgfrit: AMS, 3 farver i PLA (`_front_flerfarvet.3mf`), eller fronten alene i én farve | AMS, 3 farver i ASA (`_front_flerfarvet.3mf`) |
-| Support | Kun skallen, tree fra pladen | Samme |
+| Lag | 0,28 mm (lysringen 0,2) | 0,2 mm (bagramme og vægbeslag 0,28, lysring 0,16) |
+| Vægge | 2 | 2–3 (hjørner 4, stativbeslagets hylde 6) |
+| Top/bund | 3/3 (mindst 0,8 mm) | 4/3–4 |
+| Fyld | 10 % crosshatch | 15 % crosshatch, beslag 30–40 % gyroid |
+| Filament | PLA (lysringen klar PETG) | Samme |
+| Logo | Ingen (brug den normale `_flerfarvet.3mf`) | AMS, 3 farver |
+| Support | Kun skallen, ved de samme enforcere | Samme |
 
 - Brug 0,2 mm lag til front, lysring og `proeve-skaerm-lysring`, når lysringens skyggefuge eller kravens trin skal vurderes. Ved 0,28 mm kan højder i Z flytte sig op til et halvt lag.
 - En 0,6-dyse giver kun lidt (skallen ca. 7–8 t mod 8,5 t) og er ikke besværet med at skifte dyse værd.
@@ -55,7 +58,7 @@ Find en fejl på et hurtigprint, så ret den i CAD og lav en ny version. Ret ald
 
 ## 6. Hvad hurtigprint ikke kan vise
 
-- **PLA krymper mindre end ASA.** En PLA-lomme bliver ca. 0,2–0,3 % større end den samme lomme i ASA, hvilket er ca. 0,3 mm på en 108 mm bakke. Stram pasform (0,3 mm luft eller mindre) tjekkes til sidst i ASA med den normale fil.
-- Bland ikke PLA- og ASA-dele i samme samling. Over 300 mm kan forskellen blive op til ca. 1 mm.
-- Styrke, vejr/sprøjtetest, lys gennem lysringen (natur-ASA) og reflektorens hvidhed testes kun på normale print.
+- 0,28 mm lag kan flytte en højde op til et halvt lag (0,14 mm). En pasform på 0,2 mm eller mindre i højden (klik, skyggefuge) bedømmes til sidst på et normalt print.
+- Et prøvestykke er stivere end den hele del, så klikkraft og hvor meget en væg giver efter bedømmes på det hele print.
+- Styrke, fald (de forstærkede hjørner), lys gennem lysringen og reflektorens hvidhed testes kun på normale print.
 - Skruer kan skrues i PLA til prøve, men ikke ind og ud mange gange.

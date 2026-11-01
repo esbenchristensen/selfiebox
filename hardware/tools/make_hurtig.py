@@ -11,9 +11,16 @@ each one is a box round one or more bought parts (node names from render/gen2_vi
 region, cut out of each printed part listed with it. The box always runs down to the face the part
 stands on in its print orientation, so the piece prints flat and in one body.
 
+v37 (Esben 1 Nov: "Lav et hurtig print sæt, så vi kan få testet fit og alt det andet uden at skulle bruge dage på at
+printe"): the set had not been made since v23, and the test pieces named parts that are gone (camera glass and sleeve,
+gasket cord). COUPONS now covers v37 (power inlet, fuse, Wago row and the strap loops under it, front/shell snap, both
+wall locks, the stand bracket's shelf with the heat-set insert, the theme groove and so on), and every piece and part
+is a Bambu Studio project (make_3mf.write_bambu_objects) with the draft settings inside, PLA as everything is printed,
+plus a few full plates with all the test pieces of one colour, so a plate is one press on Print.
+
 Usage:  python3 hardware/tools/make_hurtig.py [version]   (default: the newest hardware/stl/gen2/halo-gen2-v<N>)
-Output: hardware/stl/gen2-hurtig/<version>-hurtig/ with the STLs, the multi-colour front as a 3MF
-        (<version>-hurtig_front_flerfarvet.3mf, see make_3mf.py) and PRINTGUIDE_<version>-hurtig.md.
+Output: hardware/stl/gen2-hurtig/<version>-hurtig/ with the STLs, a 3MF for each, the plates
+        (<version>-hurtig_plade-<farve>-<n>.3mf), PRINTGUIDE_<version>-hurtig.md and <version>-hurtig.zip.
         With prusa-slicer on the PATH it also estimates print times (draft profile, H2C-like speeds).
 Needs:  trimesh, manifold3d, numpy, networkx
 """
@@ -22,91 +29,139 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 import numpy as np
 import trimesh
 
-from make_3mf import FRONT_PARTS, front_3mf
+from make_3mf import NO_SUPPORT, SETTINGS, SKAL_BLOCK, SKAL_ENFORCE, write_bambu_objects
 
 HW = Path(__file__).resolve().parents[1]
 GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 
-# print file suffix -> node in <version>_3d.glb. The logo inlays (LOGO) are copied as well, as separate colour
-# bodies with the front's origin, and put together with the front in one 3MF; a slicer needs one body per colour.
-PARTS = {"skal": "skal", "front": "front", "bagramme": "ledskinne", "lysring": "lysring",
-         "vaegbeslag": "vaegbeslag", "kameraroer": "kameraroer",   # v19: no printer cap; v20: the camera sleeve
-         "tema-vinge-venstre-eksempel": "tema_vinge_v"}             # v21: an example wing to try the hooks
-LOGO = [suffix for suffix, *_ in FRONT_PARTS if suffix != "front"]
+# print file suffix -> (node in <version>_3d.glb or None, filament colour as in the release, settings key below).
+# Only parts with a node can have test pieces; the others (the fan guard lies on its side) are printed whole.
+PARTS = {"skal": ("skal", "sort", "skal"), "front": ("front", "sort", "front"),
+         "bagramme": ("ledskinne", "hvid", "bagramme"), "lysring": ("lysring", "natur", "lysring"),
+         "vaegbeslag": ("vaegbeslag", "sort", "hurtig"), "stativbeslag": ("stativbeslag", "sort", "hurtig"),
+         "blaeserhegn": (None, "sort", "blaeserhegn"),
+         "tema-vinge-venstre-eksempel": ("tema_vinge_v", "sort", "hurtig")}
 
-# Corner region (glTF x, y; seen from the front, bottom left): one front screw, the shell/front joint and the ring corner.
-CORNER = ((-200, -200), (-46, -88))
-# name, parts, box (glTF x/y from these nodes + margin, or a fixed region), height, what it tests
+# The draft profile (HURTIGPRINT.md section 5): 0.28 mm, 2 walls, 3 top/bottom layers (0.84 mm, at least 0.8), 10 %.
+# Crosshatch, not grid, and infill every layer: grid crossings and combined infill made the nozzle catch in v31-v33 (v34).
+HURTIG = {"layer_height": "0.28", "wall_loops": "2", "top_shell_layers": "3", "top_shell_thickness": "0.8",
+          "bottom_shell_layers": "3", "sparse_infill_density": "10%", "sparse_infill_pattern": "crosshatch",
+          "infill_combination": "0", "brim_type": "no_brim", **NO_SUPPORT}
+BRIM = {"brim_type": "outer_only", "brim_width": "3"}
+HSET = {
+    "hurtig": HURTIG,
+    # shell: tree support only at the release's enforcers, as the normal shell; the brim only on the whole part (corner lift)
+    "skal": {**HURTIG, "enable_support": "1", "support_type": "tree(manual)", "support_on_build_plate_only": "0"},
+    # front: face down; keep the release's 0.15 elephant foot so the 0.15 shadow gap at the light ring stays open
+    "front": {**HURTIG, "elefant_foot_compensation": "0.15"},
+    "bagramme": HURTIG,
+    # light ring: the release's settings (solid, concentric, clear PETG) at 0.2 instead of 0.16. Its 45 deg collar steps
+    # 0.2 per layer, still under make_3mf.OVERHANG_MAX, and the ring is thin, so draft walls and infill would save nothing
+    "lysring": {**SETTINGS["lysring"], "layer_height": "0.2"},
+    "blaeserhegn": {**HURTIG, **BRIM},
+}
+# Modifier volumes the release 3MFs carry that change what a fit test shows (in the part's print coordinates): the shell's
+# support enforcers/blockers (make_3mf.SKAL_*) and the stand bracket's solid shelf round the heat-set insert (the insert
+# must melt into solid plastic as in the real part). The corner modifiers (v37, drop strength) are left out: they do not
+# change the fit and only cost time.
+SOLID_SHELF = {"wall_loops": "6", "sparse_infill_density": "100%"}
+
+# glTF coordinates (assembled box): x across (seen from the front, + = right), y up (bottom of the box at -153.5),
+# z depth (front face at 0, back at -70). CAD z (height above the bottom) = y + 153.5.
+CORNER = ((-200, -200), (-46, -88))   # one front screw, the shell/front joint and the ring corner (bottom left)
+# name, parts, where (bought-part nodes + margin, or a fixed glTF x/y region), margin, height, what it tests
 #   height: "fuld" = the whole part; a number = mm above the plate in print orientation;
 #           "+m" = up to the top of the listed nodes in print orientation + m mm
 COUPONS = [
-    ("stroem-ledstyring", ["skal"], ["stroem", "ledstyring"], 8, "+6",
-     "5 V-forsyningen og WLED-styringen klikkes i deres bakker. v17: WLED-styringen med udgangen opad; går den ned, klikker kanterne over låget, og står den fast på langs mellem de 2 stop ved armspidserne? Sidder begge fast, også når stykket vendes?"),
+    # ---- shell (printed back down: the height is from the outside of the back wall)
+    ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 24,
+     "v37: kanalen efter dine mål af hunstikket og trækaflastningen over det. Skru ledningerne i stikket, skub det ind "
+     "forfra med spidsen i slidsen, til det står på halsen på bunden, og læberne holder det firkantede hus. Går det ind "
+     "uden at ramme noget? Stik strømforsyningens stik op gennem hullet nedefra: stopper bøjlen stikket? Klik 2 ledninger "
+     "i trækaflastningen."),
+    ("sikring", ["skal"], ["sikring"], 8, "+6",
+     "v36: sikringsholderen på højre væg. Sidder den fast, og kan låget åbnes, så sikringen kan skiftes?"),
+    ("wago-loekker", ["skal"], ((-90, 68), (90, 136)), 0, 28,
+     "v37: Wago-rækken med 3 × 221-413 og 3 × 221-415 (W3 er nu 5-polet) og de 2 velcroløkker under rækken (z 232). "
+     "Tryk klemmerne ind: griber krogen i ledningsindgangen, og går en afisoleret ledning stadig ind over den? Kan en 10 mm "
+     "velcrostrop trækkes gennem løkkerne og strammes med fingrene under rækken?"),
+    ("kabelloekker", ["skal"], ((-26, -50), (26, -8)), 0, 14,
+     "v37: de 2 flade velcroløkker midt på bagvæggen (som v23–v35). Går en 10 mm velcrostrop igennem begge?"),
+    ("stroem", ["skal"], ["stroem"], 8, "+6",
+     "v36: 5 V-forsyningen i sin bakke. Tænderne skal holde den, uden at væggene skubbes ud."),
+    ("ledstyring", ["skal"], ["ledstyring"], 8, "+6",
+     "v36: WLED-styringen (Gledopto) i sin bakke med 2,4 mm vægge. Klikker den på plads og sidder fast?"),
     ("daemper", ["skal"], ["daemper"], 8, "+6",
-     "Dæmperen (DFR0457) i bakken på venstre væg. Er der plads til skrueklemmen?"),
-    ("stroemindgang", ["skal"], ["stik"], 8, "+6",
-     "Røret i bunden: hunstikket (TRU DC-13F) trykkes ned ovenfra og klikker under de 2 snaplåse, og GST-proppen går "
-     "helt op i røret nedefra."),
-    ("hoejttaler", ["skal"], ["hoejttaler"], 8, "+6", "Højttaleren (FIT0502) i sin bakke bag gitteret. v20: læg snoren i rillen "
-     "rundt om gitteret først. Klikker krogene stadig over flangen, og ligger flangen helt inde mod væggen (v21: intet slør)?"),
-    ("laas-reed", ["skal"], ["skrue_laas", "reed"], 10, "+6",
-     "Låseslidsen, låseskruens hul i bunden og reed-modulets bakke. Prøves med vægbeslagets låsetunge. v20: lommen inde om "
-     "tungen er lukket; går tungen frit ind og op, og er drænhullet i bunden åbent?"),
-    ("laasetunge", ["vaegbeslag"], ["skrue_laas"], 14, "fuld",
-     "Låsetungen på vægbeslaget. Den skal gå ind i skallens låseslids, og låseskruen skal kunne skrues i."),
+     "v36: dæmperens printkort (DFR0457) på de 4 puder, 2 pinde i hullerne, én tand pr. side. Klikker kortet på plads?"),
+    ("hoejttaler", ["skal"], ["hoejttaler"], 8, "+6", "Højttaleren (FIT0502) i sin bakke bag gitteret."),
+    ("laas-reed", ["skal"], ((-104, -154), (-58, -88)), 0, 22,
+     "Venstre låseslids i bunden, låseskruens hul og reed-modulets bakke. Prøves med `proeve-laasetunge` og "
+     "`proeve-stativ-hylde`: går tungen ind og op, og kan låseskruen skrues i?"),
+    ("laas-hoejre", ["skal"], ((72, -154), (100, -110)), 0, 22,
+     "Højre låseslids (12 mm tunge). Prøves med `proeve-laasetunge-hoejre` og `proeve-stativ-hylde`."),
     ("4g", ["skal"], ["modem4g"], 8, "+6", "4G-modemet i sin bakke (tilvalg)."),
     ("mikrofonkerne", ["skal"], ["lydkerne"], 8, "+6",
-     "Mikrofon-kernen (XVF3800) ligger ned i sin bakke, og stikket i underkanten går fri gennem åbningen (tilvalg)."),
-    ("stoedsensor", ["skal"], ["sensor"], 8, "+6", "Stødsensoren (LIS3DH) i sin bakke (tilvalg)."),
+     "v36: mikrofonkernen (XVF3800) i holderen. Kan USB-C, AUX og fladkablet sættes i, mens kortet ligger i holderen?"),
+    ("stoedsensor", ["skal"], ["sensor"], 8, "+6", "v36: stødsensoren (LIS3DH) i sin bakke til højre for 5 V-forsyningen."),
     ("mikrofonstrip", ["skal"], ["mikrofoner"], 8, "+6",
-     "Mikrofonkortet i lommen i bunden med Seeed-logoet nedad: pindene gennem hullerne, kortet fladt på de 4 ringe, "
-     "kablet fladt ud bagtil (tilvalg)."),
-    ("vingelomme", ["skal"], ((-116, 70), (-84, 104)), 0, 14,
-     "v21: den øverste venstre vingeslids (9 × 14) med den lukkede lomme bagved og drænhullet i bunden. Prøv eksempelvingens "
-     "øverste krog: løft 3 mm, skub ind og lad den falde ned på slidsens bund. Går krogen ind uden at tvinge, står tungen på bunden, "
-     "og sidder læben bag væggen, så den ikke kan trækkes lige ud? Hæld lidt vand i slidsen: løber det ud af drænet?"),
-    ("kabelloekke", ["skal"], ((-26, -78), (26, -10)), 0, 14,
-     "v23: de 2 kabelløkker midt på bagvæggen (112 og 136 mm over bunden) og trækaflastningen over strømstikket. "
-     "Kan en 10 mm velcrostrop trækkes gennem begge løkker, og klikker 2 ledninger (ca. Ø2,5 hver) fast i trækaflastningen "
-     "fra siden? Træk i ledningerne: bliver de siddende?"),
-    ("kameravindue", ["front", "kameraroer"], ["kameraglas"], 6, "fuld",
-     "v20: kameravinduet. Glasset Ø12 × 1,5 lægges i lommen bag den 0,6 mm kant, snor-ringen (ca. 35 mm snor, enderne stødt "
-     "sammen) i hjørnet bag glasset. v22: tryk røret ind med ribberne i hjørnerne, til det stopper. Prøv også uden glas: står røret samme sted? Sidder røret fast, "
-     "og ligger glasset uden slør? Ses snoren ikke forfra? Mål glassets tykkelse: 1,2–1,8 mm går."),
+     "Mikrofonkortet i lommen i bunden: pindene gennem hullerne og kortet fladt på de 4 ringe (tilvalg)."),
+    ("vingerille", ["skal"], ((-113, -142), (-90, -106)), 0, 14,
+     "v36: rillen bag på skallen med lommen under. Prøv med den hele `tema-vinge-venstre-eksempel`: går tappen i rillen, "
+     "og falder tåen ned i lommen, så vingen ikke kan vippe ud forneden?"),
+    # ---- shell + front: the snap (v37)
+    ("klik", ["skal", "front"], ((-114, -78), (-92, -39)), 0, "fuld",
+     "v37: frontens nederste venstre klikkant (95 mm oppe) og skallens rille. Tryk de to stykker sammen, til det klikker, "
+     "og træk dem fra hinanden igen med hånden. Klikker det tydeligt, og kan det skilles uden værktøj? Stykket er kort, så "
+     "det er stivere end den hele væg; bedøm kraften på det hele print."),
+    # ---- front + frame
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
-     "Kameraet på frontens tappe med glas, snor og rør foran linsen, linsen midt i hullet, bagrammens rør trykker printet ned, "
-     "kamerakablet gennem slidsen og de fire klikstik i deres lommer (v18: hvid 3's stik i reflektoren til højre). Front og bagramme lægges sammen."),
-    ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
-     "v18: lyskanalen uden klister, nederste venstre hjørne med ca. 10 cm strip-bane. Hvid 1 og 2: bagkanten ind under læben, "
-     "forkanten trykkes ned mod væggen. RGB i den tætte bane bagerst. Hvid 3 i lommen i den skrå reflektor, bagkanten ind under "
-     "læben. Læg lysringens stykke i, og pres bagrammen på: trykker ringens kile forkanten af hvid 3 ned? Kør en finger langs alle "
-     "strips, også i hjørnet: bliver de liggende? Tænd strips og se efter skygger eller striber i lysringen."),
-    ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
-     "Ét hjørne af hele stakken: skal over front, lysringens hjørne i slidsen, bagrammens øre og én frontskrue "
-     "(v27: 4,0 × 50 T20, før 3,0 × 15) skruet i bagfra. Lysringens skulder står på frontpladen, og snoren ligger i rillen ved siden af (v22; prøv også uden snor: rasler ringen?). Ingen snor mellem skal og front (frontens ribbe går i "
-     "skallens rille). Lukker skal og front helt (ingen fuge), sidder bagrammen fast (knusribberne på stolpen trykkes flade), og er "
-     "snoren ved lysringen klemt?"),
+     "v37: kameraet på frontens tappe, linsen midt i hullet (Ø8,6 i den yderste 1 mm, Ø10 bagved), bagrammens 4 rør med "
+     "knusspidser trykker kortet let ned, kablet gennem slidsen og klikstikkene i deres lommer. Læg front og bagramme "
+     "sammen med kameraet imellem: rører linsen ingenting, og sidder kortet fast uden at bøje?"),
     ("laas", ["front", "bagramme"], ((-116, -64), (-64, -22)), 0, "fuld",
-     "v14: en sidelås (venstre side, nederste par): vinduet i indervæggen og i ydervæggen og bagrammens 2 arme. "
-     "Klikker begge arme, kan de vippes fri med en lille skruetrækker, og ligger fjedertåen ned på et stykke glas "
-     "eller plastik (1,1 mm) i frontens skærmlomme?"),
+     "En sidelås mellem front og bagramme (venstre side): klikker begge arme, og kan de vippes fri med en lille skruetrækker?"),
     ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
-     "v16: bagrammens nederste tværbjælke med de 2 nederste skruetårne (hele tårne, 1,6 mm bund, hul 3,5 mm på tværs). "
-     "Læg den på skærmens bagside: står begge tårne ned på beslagene? Skru en M2,5 × 3-4 mm i hvert med en PH0/PH1. "
-     "Går begge i uden at skulle tvinges, og tager de fat?"),
+     "Bagrammens nederste tværbjælke med de 2 nederste skruetårne til skærmen. Skru en M2,5 × 3–4 mm i hvert."),
+    ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
+     "Lyskanalen nederst til venstre med ca. 10 cm strip-bane: RGB i bunden, så hvid 2, så hvid 1, og lysringens 45° krave. "
+     "Pres bagrammen på ringen: står ringens skulder fast, og bliver strippene liggende?"),
+    ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
+     "Ét hjørne af hele stakken med én frontskrue (4,0 × 50 T20) skruet i bagfra: lukker skal og front uden fuge, sidder "
+     "bagrammen fast (knusribberne trykkes flade), og ligger ringen stille?"),
     ("skaerm-lysring", ["front"], None, 0, 7.0,
-     "De nederste 7 mm af fronten: den 1,6 mm tynde kant foran skærmen, rillen med snoren (v20: 2,0 × 1,0), skærmglasset mellem "
-     "de 8 ribber, lysringen i slidsen (skyggefuge 0,15 mm) med snoren i lommen ved siden af, og kameravinduet. Læg snoren i rillen, "
-     "læg skærmen i og tryk den ned: ligger glasset helt ind mod kanten hele vejen rundt? Lysringen printes hel."),
+     "De nederste 7 mm af fronten med lysringens sæde og skærmlommen. Læg skærmen og den hele lysring i: ligger glasset ind "
+     "mod kanten hele vejen rundt, og er skyggefugen ved ringen jævn? Lysringen printes hel."),
+    # ---- wall cleat and stand bracket
+    ("laasetunge", ["vaegbeslag"], ((-104, -154), (-60, -110)), 0, "fuld",
+     "Vægbeslagets venstre låsetunge. Prøves i `proeve-laas-reed`: går den ind i låseslidsen, og kan låseskruen skrues i?"),
+    ("laasetunge-hoejre", ["vaegbeslag"], ((72, -154), (100, -110)), 0, "fuld",
+     "Vægbeslagets højre låsetunge. Prøves i `proeve-laas-hoejre`."),
+    ("skinne", ["vaegbeslag", "stativbeslag"], ((-66, 100), (66, 137)), 0, "fuld",
+     "Skinnen øverst på vægbeslaget og stativbeslaget, som boksen hænger på. Prøves i `proeve-wago-loekker` (skallens "
+     "udsparing til skinnen ligger i det stykke): glider skinnen ind uden at tvinge, og sidder den uden slør?"),
+    ("stativ-hylde", ["stativbeslag"], ((-112, -168), (112, -108)), 0, "fuld",
+     "v37: stativbeslagets hylde med hullet til gevindindsatsen (massiv som i den rigtige 3MF) og tungerne til skallens låse. "
+     "Smelt indsatsen (1/4\"-20 × 12,7) i med loddekolben: går den lige ned og flugter med hylden? Skru kuglehovedets "
+     "lynplade i, og prøv tungerne i `proeve-laas-reed` og `proeve-laas-hoejre`."),
 ]
+
+# The plates, in the order to print them: 1 = what v37 changed (print this first), 2 = the other fits, 3 = options and
+# the big screen/ring piece. Every piece is also its own 3MF.
+GROUP = {"stroemindgang": 1, "wago-loekker": 1, "kabelloekker": 1, "klik": 1, "kamera": 1, "laas-reed": 1,
+         "laasetunge": 1, "stativ-hylde": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+GROUP_NAME = {1: "nyt-i-v37", 2: "resten", 3: "ekstra"}
+GROUP_TEXT = {1: "det, v37 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
+PROFILE_LYSRING = ["--layer-height", "0.2", "--first-layer-height", "0.2", "--perimeters", "3",
+                   "--fill-density", "100%", "--fill-pattern", "concentric"]
 SUPPORT = ["--support-material", "--support-material-style", "organic", "--support-material-buildplate-only"]
 # H2C-like speeds and Bambu PLA Basic flow, only for the time estimate
 SLICER_INI = """bed_shape = -160x-160,160x-160,160x160,-160x160
@@ -144,6 +199,8 @@ center_object = 1
 gcode_flavor = marlin2
 skirts = 0
 """
+# the plate (H2C 330 x 320; one filament, so the left nozzle's x 0-325) less 5 mm all round, and the gap between pieces
+PLATE, GAP = (315.0, 310.0), 8.0
 
 
 def newest():
@@ -196,54 +253,111 @@ def cut(stl, lo, hi):
     return piece, len(keep), dropped
 
 
-def estimate(stl, support):
+def part_modifiers(src, ver, part, stl):
+    """(name, [x0, x1, y0, y1, z0, z1] in the part's print coordinates, subtype, settings) for the release's modifier
+    volumes that matter for the fit (see SOLID_SHELF)."""
+    if part == "skal":
+        return [(n, b, "support_enforcer", {}) for n, b in SKAL_ENFORCE] + [(n, b, "support_blocker", {}) for n, b in SKAL_BLOCK]
+    if part == "stativbeslag":
+        lo, hi = stl.bounds
+        b = np.clip(trimesh.load(src / f"{ver}_stativbeslag_forstaerkning.stl").bounds, lo, hi)
+        return [("forstærkning: hylde og gevindindsats", [b[0][0], b[1][0], b[0][1], b[1][1], b[0][2], b[1][2]],
+                 "modifier_part", SOLID_SHELF)]
+    return []
+
+
+def clip_modifiers(mods, lo, hi, shift):
+    """the modifier boxes that reach into the piece's box lo-hi, clipped to it and moved with the piece"""
+    out = []
+    for n, b, kind, st in mods:
+        a = np.maximum([b[0], b[2], b[4]], lo)
+        c = np.minimum([b[1], b[3], b[5]], hi)
+        if np.all(c - a > 0.5):
+            out.append((n, trimesh.creation.box(bounds=[a + shift, c + shift]), 1, kind, st))
+    return out
+
+
+def estimate(stl, support, profile=PROFILE):
     if not shutil.which("prusa-slicer"):
         return None
     with tempfile.TemporaryDirectory() as d:
         ini, gc = Path(d) / "h.ini", Path(d) / "h.gcode"
         ini.write_text(SLICER_INI)
-        cmd = ["prusa-slicer", "--export-gcode", "--load", str(ini), *PROFILE, *(SUPPORT if support else []), "-o", str(gc), str(stl)]
+        cmd = ["prusa-slicer", "--export-gcode", "--load", str(ini), *profile, *(SUPPORT if support else []), "-o", str(gc), str(stl)]
         if subprocess.run(cmd, capture_output=True).returncode or not gc.exists():
             return None
         txt = gc.read_text(errors="ignore")
     t = re.search(r"estimated printing time \(normal mode\) = (.*)", txt)
     g = re.search(r"filament used \[g\] = ([\d.]+)", txt)
-    return (t.group(1).strip() if t else "?"), (float(g.group(1)) if g else 0)
+    return (minutes(t.group(1).strip()) if t else None), (float(g.group(1)) if g else 0)
 
 
-def fmt_t(t):
-    if t is None:
+def minutes(t):
+    d, h, m = (re.search(rf"(\d+){u}", t) for u in ("d", "h", "m"))
+    return sum(int(x.group(1)) * k for x, k in ((d, 1440), (h, 60), (m, 1)) if x) or 1
+
+
+def fmt_t(m):
+    if m is None:
         return "–"
-    h = re.search(r"(\d+)h", t)
-    m = re.search(r"(\d+)m", t)
-    hh, mm = int(h.group(1)) if h else 0, int(m.group(1)) if m else 0
-    return f"{hh} t {mm:02d} min" if hh else f"{mm} min"
+    return f"{m // 60} t {m % 60:02d} min" if m >= 60 else f"{m} min"
+
+
+def write_3mf(path, name, parts, settings, colour):
+    plate = "tekstureret" if colour == "natur" else "glat"
+    write_bambu_objects(path, [(name, parts, settings, (0.0, 0.0), False)], filaments=(colour,), plate=plate)
+
+
+def pack(items):
+    """shelf packing of (name, parts, settings, extents) on PLATE: returns a list of plates, each a list of
+    (name, parts, settings, (dx, dy) from the bed centre, turn) for write_bambu_objects. Deepest first."""
+    plates, cur, x, y, row = [], [], 0.0, 0.0, 0.0
+    for name, parts, st, ext in sorted(items, key=lambda i: (-i[3][1], -i[3][0])):
+        w, d = ext[0], ext[1]
+        if w > PLATE[0] or d > PLATE[1]:
+            raise SystemExit(f"{name}: {w:.0f} x {d:.0f} does not fit on a plate")
+        if x + w > PLATE[0]:
+            x, y, row = 0.0, y + row + GAP, 0.0
+        if y + d > PLATE[1]:
+            plates.append(cur)
+            cur, x, y, row = [], 0.0, 0.0, 0.0
+        cur.append((name, parts, st, (x + w / 2 - PLATE[0] / 2, PLATE[1] / 2 - (y + d / 2)), False))
+        x, row = x + w + GAP, max(row, d)
+    if cur:
+        plates.append(cur)
+    return plates
 
 
 def main():
     ver = sys.argv[1] if len(sys.argv) > 1 else newest()
     src, out = GEN2 / ver, OUT_ROOT / f"{ver}-hurtig"
     out.mkdir(parents=True, exist_ok=True)
-    for f in out.glob("*.stl"):
+    for f in [*out.glob("*.stl"), *out.glob("*.3mf"), *out.glob("*.zip")]:
         f.unlink()
+    pre = f"{ver}-hurtig"
     nodes = glb_nodes(src / f"{ver}_3d.glb")
-    stls, T = {}, {}
-    for part, node in PARTS.items():
+    stls, T, mods = {}, {}, {}
+    for part, (node, _, _) in PARTS.items():
         stls[part] = trimesh.load(src / f"{ver}_{part}.stl")
-        T[part] = to_print(nodes[node], stls[part])
+        if node:
+            T[part] = to_print(nodes[node], stls[part])
+        mods[part] = part_modifiers(src, ver, part, stls[part])
 
     rows = []
-    for part in PARTS:
-        dst = out / f"{ver}-hurtig_{part}.stl"
+    for part, (_, colour, key) in PARTS.items():
+        stl = stls[part]
+        st = {**HSET[key], **(BRIM if part == "skal" else {})}
+        dst = out / f"{pre}_{part}.stl"
         shutil.copyfile(src / f"{ver}_{part}.stl", dst)
-        rows.append(("del", dst.name, part, stls[part], "", estimate(dst, part == "skal")))
-        print(dst.name)
-    for suffix in LOGO:
-        shutil.copyfile(src / f"{ver}_{suffix}.stl", out / f"{ver}-hurtig_{suffix}.stl")
-    print(front_3mf(out, f"{ver}-hurtig").name)
+        write_3mf(dst.with_suffix(".3mf"), f"{pre}_{part}", [(part, stl, 1)] + clip_modifiers(mods[part], *stl.bounds, 0), st, colour)
+        est = estimate(dst, part == "skal", PROFILE_LYSRING if part == "lysring" else PROFILE)
+        rows.append(("del", dst.with_suffix(".3mf").name, part, stl, colour, "", est))
+        print(dst.with_suffix(".3mf").name, fmt_t(est[0]) if est else "")
+
+    pieces = {}   # (group, colour) -> [(name, parts, settings, extents)]
     for name, parts, where, margin, height, what in COUPONS:
         for part in parts:
-            stl = stls[part]
+            stl, (_, colour, key) = stls[part], PARTS[part]
             if where is None:
                 lo, hi = stl.bounds[0].copy(), stl.bounds[1].copy()
             else:
@@ -260,74 +374,108 @@ def main():
             if isinstance(height, (int, float)):
                 hi[2] = stl.bounds[0][2] + height
             piece, n, dropped = cut(stl, lo, hi)
-            piece.apply_translation([-(piece.bounds[0][0] + piece.bounds[1][0]) / 2, -(piece.bounds[0][1] + piece.bounds[1][1]) / 2, -piece.bounds[0][2]])
+            shift = np.array([-(piece.bounds[0][0] + piece.bounds[1][0]) / 2, -(piece.bounds[0][1] + piece.bounds[1][1]) / 2, -piece.bounds[0][2]])
+            mod = clip_modifiers(mods[part], np.maximum(lo, piece.bounds[0]), np.minimum(hi, piece.bounds[1]), shift)
+            piece.apply_translation(shift)
             suffix = f"_{part}" if len(parts) > 1 else ""
-            dst = out / f"{ver}-hurtig_proeve-{name}{suffix}.stl"
+            dst = out / f"{pre}_proeve-{name}{suffix}.stl"
             piece.export(dst)
+            st = dict(HSET[key])
+            if key == "skal" and not any(q[3] == "support_enforcer" for q in mod):
+                st.update(NO_SUPPORT)
+            ext = piece.extents
+            if ext[2] > 2.5 * min(ext[0], ext[1]):   # tall and thin: a brim keeps it on the plate
+                st.update(BRIM)
+            parts3 = [(f"proeve-{name}{suffix}", piece, 1)] + mod
+            write_3mf(dst.with_suffix(".3mf"), dst.stem, parts3, st, colour)
+            pad = 6.0 if st.get("brim_type", "no_brim") != "no_brim" else 0.0
+            pieces.setdefault((GROUP.get(name, 2), colour), []).append((dst.stem, parts3, st, ext + pad))
             note = f" ({n} krop(pe), {dropped / 1000:.1f} cm3 svævende fjernet)" if dropped > 1 or n != 1 else ""
-            print(f"{dst.name}: {np.round(piece.extents, 1).tolist()}{note}")
-            rows.append(("proeve", dst.name, part, piece, what if part == parts[0] else "", estimate(dst, False)))
-    write_guide(ver, out, rows)
+            est = estimate(dst, False, PROFILE_LYSRING if part == "lysring" else PROFILE)
+            print(f"{dst.name}: {np.round(ext, 1).tolist()} {fmt_t(est[0]) if est else ''}{note}")
+            rows.append(("proeve", dst.with_suffix(".3mf").name, part, piece, colour, what if part == parts[0] else "", est))
+
+    est_of = {r[1][:-4]: r[6] for r in rows if r[0] == "proeve"}
+    plates = []
+    for (g, colour), items in sorted(pieces.items(), key=lambda kv: (kv[0][0], ["sort", "hvid", "natur"].index(kv[0][1]))):
+        packed = pack(items)
+        for i, plate in enumerate(packed):
+            f = out / f"{pre}_plade{g}-{GROUP_NAME[g]}_{colour}{f'-{i + 1}' if len(packed) > 1 else ''}.3mf"
+            write_bambu_objects(f, plate, filaments=(colour,), plate="tekstureret" if colour == "natur" else "glat")
+            t = [est_of[name] for name, *_ in plate]
+            tot = (sum(e[0] for e in t), sum(e[1] for e in t)) if all(t) else None
+            plates.append((f.name, colour, [name for name, *_ in plate], tot, g))
+            print(f.name, len(plate), "stk.", fmt_t(tot[0]) if tot else "")
+    write_guide(ver, out, rows, plates)
+    with zipfile.ZipFile(out / f"{pre}.zip", "w", zipfile.ZIP_DEFLATED) as z:
+        for f in sorted(out.iterdir()):
+            if f.suffix in (".3mf", ".stl", ".md"):
+                z.write(f, f.name)
+    print(out / f"{pre}.zip")
 
 
-def logo_section(ver, tag, material):
-    """Guide text for printing the front with the logo inlays (3MF or the three STLs)."""
-    p = f"{ver}{tag}"
-    return [
-        "## Front med logo", "",
-        "Logoet er ikke en del af `_front.stl`. Fronten har en 0,8 mm fordybning, og logoet ligger i to separate filer, én pr. farve, "
-        "fordi en slicer skal have én krop for hver farve. Printes `_front.stl` alene, kommer fronten ud uden logo.", "",
-        f"**Nemmest: åbn `{p}_front_flerfarvet.3mf`** i Bambu Studio (File > Open Project, eller træk den ind). Den indeholder fronten "
-        "og logoet som ét objekt med tre dele, der allerede ligger på plads, og farverne er sat til AMS-plads 1 = sort (front), "
-        "2 = hvid (logo) og 3 = grøn (prikkerne). Læg filamentet i de pladser og tryk på synk-knappen ved \"Filament\" (Sync AMS), så alle tre pladser får de rigtige spoler. Filen har ingen materialer, så uden synk bruger Bambu de filamenter, der tilfældigvis står på plads 1–3, og de kan være forskellige. Vælg printer og profil som normalt, og slice. "
-        "Der er ingen printer- eller profilindstillinger i filen.", "",
-        f"**Alternativt med STL:** træk `{p}_front.stl`, `{p}_logo-hvid.stl` og `{p}_logo-groen.stl` ind på én gang og svar **Ja**, "
-        "når Bambu Studio spørger, om de skal indlæses som ét objekt med flere dele. De har samme nulpunkt, så logoet lander præcis i "
-        "fordybningen. Flyt ikke delene hver for sig. Giv derefter hver del sin farve i objektlisten.", "",
-        "- Lag på 0,2 mm (ikke 0,28), så logoet er præcis de første 4 lag. Brug 0,4-dysen; logoets mindste detalje er ca. 1 mm.",
-        "- Prime tower til og \"Flush into object's infill\" til. Ca. 12 farveskift og 10–15 g spild.",
-        f"- Alle tre dele skal være samme materiale ({material}), ellers hæfter logoet ikke i fronten.",
-        "- Hvis I ikke har brug for logoet på prøven, kan `_front.stl` printes alene i én farve uden AMS.",
-    ]
+COLOUR_NAME = {"sort": "PLA sort", "hvid": "PLA hvid", "natur": "klar PETG"}
 
 
-def write_guide(ver, out, rows):
+def write_guide(ver, out, rows, plates):
+    pre = f"{ver}-hurtig"
     full = [r for r in rows if r[0] == "del"]
     tests = [r for r in rows if r[0] == "proeve"]
-    L = [f"# Selfi Halo {ver}, hurtigprint: printguide", "",
-         f"**Version:** {ver}-hurtig. Kun til prototype- og pasformsprøver. Geometrien er den samme som i de normale printfiler for {ver} "
+    plate_total = {g: sum(p[3][0] for p in plates if p[3] and p[4] == g) for g in GROUP_NAME}
+    L = [f"# Selfi Halo gen 2, version {ver.rsplit('-', 1)[-1]}: hurtigprint", "",
+         f"**Version:** {pre}. Kun til pasformsprøver. Geometrien er den samme som i de normale printfiler for {ver} "
          f"(`hardware/stl/gen2/{ver}/`); kun printindstillingerne er anderledes, og der er små prøvestykker skåret ud af delene. "
          "Reglerne står i `hardware/docs/HURTIGPRINT.md`. **Brug aldrig disse filer til en boks, der skal ud til en kunde.**", "",
-         "Lavet med `python3 hardware/tools/make_hurtig.py " + ver + "`. Tiderne er skøn fra PrusaSlicer med H2C-lignende hastigheder; "
-         "Bambu Studio viser de rigtige tider.", "",
-         "## Hele dele", "",
-         "| Fil | Mål på pladen (mm) | Ca. tid | Ca. PLA |", "|---|---|---|---|"]
-    for _, f, part, m, _, est in full:
-        L.append(f"| `{f}` | {' × '.join(f'{v:.1f}' for v in m.extents)} | {fmt_t(est[0]) if est else '–'} | {f'{est[1]:.0f} g' if est else '–'} |")
-    L += ["", *logo_section(ver, "-hurtig", "PLA"), "",
-          "## Prøvestykker", "",
-          "Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til denne version. Det står på den samme flade som "
-          "delen, så det printes uden support. Prøvestykker med samme navn og flere dele (fx `kamera`, `hjoerne`) lægges sammen.", "",
-          "| Fil | Mål (mm) | Ca. tid | Hvad prøves |", "|---|---|---|---|"]
-    for _, f, part, m, what, est in tests:
-        L.append(f"| `{f}` | {' × '.join(f'{v:.0f}' for v in m.extents)} | {fmt_t(est[0]) if est else '–'} | {what} |")
-    L += ["", "## Indstillinger (Bambu Studio)", "",
-          "Start fra **0.28mm Extra Draft** til H2C og **Bambu PLA Basic** (eller anden PLA). Ret dette:", "",
-          "- Vægge (wall loops): **2**. Top- og bundlag: **3**.",
-          "- Fyld (sparse infill): **10 %, Grid**.",
-          "- Første lag 0,2 mm. Ingen ironing, ingen musøre, ingen brim.",
-          "- Support kun til skallen: *Tree*, kun fra pladen (som den normale skal).",
-          "- Ingen \"hole compensation\" eller skalering.",
-          "- PLA: lågen eller toppen må gerne stå åben. Ingen opvarmning af kammeret.",
-          "- Front, lysring og `skaerm-lysring`: print med **0,2 mm** lag, når lysringens skyggefuge eller kravens trin skal vurderes.",
+         f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
+         "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
+         "## Sådan bruges sættet", "",
+         f"1. **Print plade 1 først** (`plade1-nyt-i-v37`, ca. {fmt_t(plate_total[1])}): alt det, v37 har ændret. Plade 2 "
+         f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
+         "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
+         "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",
+         "2. Saml stykkerne med de rigtige købedele, og gå listen \"Hvad prøves\" igennem.",
+         "3. Passer det hele, så print de hele dele med kladdeindstillinger (eller de normale filer), og saml en hel boks.",
+         "4. Passer noget ikke, så skriv det i en samlenote. Rettelsen laves i CAD og bliver en ny version; ret aldrig en hurtigfil.", "",
+         "Tiderne er skøn fra PrusaSlicer med H2C-lignende hastigheder og kan afvige 20–40 %; Bambu Studio viser den rigtige tid, "
+         "når pladen er slicet.", "",
+         "## Prøveplader", "",
+         "| Fil | Hvad | Filament | Stykker | Ca. tid | Ca. filament |", "|---|---|---|---|---|---|"]
+    for f, colour, names, tot, g in plates:
+        short = ", ".join(n.replace(f"{pre}_proeve-", "") for n in names)
+        L.append(f"| `{f}` | {GROUP_TEXT[g]} | {COLOUR_NAME[colour]} | {short} | {fmt_t(tot[0]) if tot else '–'} | {f'{tot[1]:.0f} g' if tot else '–'} |")
+    L += ["", "## Prøvestykker", "",
+          "Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til denne version. Det står på den samme flade "
+          "som delen og printes i den samme retning. Stykker med samme navn og flere dele (fx `kamera`, `hjoerne`, `klik`) lægges sammen.", "",
+          "| Fil | Filament | Mål (mm) | Ca. tid | Hvad prøves |", "|---|---|---|---|---|"]
+    for _, f, part, m, colour, what, est in tests:
+        L.append(f"| `{f}` | {COLOUR_NAME[colour]} | {' × '.join(f'{v:.0f}' for v in m.extents)} | {fmt_t(est[0]) if est else '–'} | {what} |")
+    L += ["", "## Hele dele (kladde)", "",
+          "De normale dele, 1:1, med kladdeindstillingerne. Til den første hele samling efter prøverne.", "",
+          "| Fil | Filament | Mål på pladen (mm) | Ca. tid | Ca. filament |", "|---|---|---|---|---|"]
+    for _, f, part, m, colour, _, est in full:
+        L.append(f"| `{f}` | {COLOUR_NAME[colour]} | {' × '.join(f'{v:.1f}' for v in m.extents)} | {fmt_t(est[0]) if est else '–'} | {f'{est[1]:.0f} g' if est else '–'} |")
+    L += ["", "Fronten og stativbeslaget er uden logo i hurtigsættet (fordybningen står tom). Skal logoet med, så brug de normale "
+          f"`{ver}_front_flerfarvet.3mf` og `{ver}_stativbeslag_flerfarvet.3mf`. Dominance-temaet og eksempeltoppen er ikke med her; "
+          "brug de normale filer.", "",
+          "## Indstillinger (ligger i 3MF'erne)", "",
+          "- **Kladde (alle sorte og hvide dele):** 0,28 mm lag, 2 vægge, 3 top- og bundlag (mindst 0,8 mm), 10 % crosshatch, "
+          "ingen brim. Bambu PLA Basic, glat PEI. Ingen opvarmning af kammeret.",
+          "- **Skallen** har support kun ved de samme enforcere som den normale skal (tree, manuel); prøvestykker uden et af de "
+          "steder har ingen support. Den hele skal har 3 mm brim.",
+          "- **Fronten** har elefantfodskompensation 0,15 som den normale, så skyggefugen ved lysringen bliver åben.",
+          "- **Lysringen** printes som den normale (klar PETG, massiv, koncentriske baner, tekstureret PEI), men med 0,2 mm lag i "
+          "stedet for 0,16.",
+          "- **Stativbeslagets hylde** er massiv (6 vægge, 100 %) som i den normale 3MF, så gevindindsatsen prøves i den rigtige plast.",
+          "- Høje, smalle prøvestykker har 3 mm brim.",
+          "- De forstærkede hjørner fra v37 er ikke med: de ændrer ikke pasformen, kun styrken ved et fald.",
           "- Printretning som filerne ligger. Flyt eller vend dem ikke.", "",
           "## Husk", "",
-          "- PLA krymper mindre end ASA. En lomme, der lige netop passer i PLA, kan blive for stram i ASA. Er en pasform stram (0,3 mm luft "
-          "eller mindre), så tjek den til sidst i ASA med den normale printfil.",
-          "- Bland ikke PLA- og ASA-dele i samme samling. Over 300 mm kan forskellen i krympning blive op til ca. 1 mm.",
-          "- Skruer: frontskruer og låseskrue kan skrues i PLA til prøve, men skru dem ikke i og ud mange gange.",
+          "- Kladdeindstillingerne ændrer ikke målene, men 0,28 mm lag kan flytte en højde op til et halvt lag (0,14 mm). En "
+          "pasform på 0,2 mm eller mindre i højden (fx klikket og skyggefugen) bedømmes til sidst på et normalt print.",
+          "- Et prøvestykke er stivere end den hele del. Bedøm klikkraft og hvor meget en væg giver efter på det hele print.",
+          "- Skruer kan skrues i til prøve, men ikke ind og ud mange gange.",
           "- Ret aldrig en fejl i en hurtigfil. Ret CAD (`hardware/cad/gen2_concept.scad`), lav en ny version og kør værktøjet igen."]
-    (out / f"PRINTGUIDE_{ver}-hurtig.md").write_text("\n".join(L) + "\n")
+    (out / f"PRINTGUIDE_{pre}.md").write_text("\n".join(L) + "\n")
 
 
 if __name__ == "__main__":
