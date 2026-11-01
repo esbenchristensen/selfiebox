@@ -12,6 +12,7 @@ Usage:  python3 hardware/tools/make_gen2_release.py <version> [stl dir with the 
         and then there is no 3D model]
 Needs:  openscad, trimesh, manifold3d, numpy, networkx
 """
+import os
 import subprocess
 import sys
 import tempfile
@@ -22,7 +23,8 @@ import numpy as np
 import trimesh
 
 HW = Path(__file__).resolve().parents[1]
-SCAD = HW / "cad" / "gen2_concept.scad"
+# GEN2_SCAD=<file> checks/builds a variant instead (kb1: cad/gen2_kamera_bund.scad, camera at the bottom)
+SCAD = Path(os.environ["GEN2_SCAD"]).resolve() if os.environ.get("GEN2_SCAD") else HW / "cad" / "gen2_concept.scad"
 D = 70
 
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
@@ -83,6 +85,12 @@ def main():
         placed[name] = (rot, off)
         m.apply_translation(off)
         m.export(out / f"{ver}_{name}.stl")
+        # kb1: in the float32 STL a few face pairs can collapse to zero area and come loose (the turned frame, at the ring's
+        # ends by the camera): they are no material, so drop pieces without area instead of letting the slicer see an open mesh
+        bits = trimesh.load(out / f"{ver}_{name}.stl").split(only_watertight=False)
+        if len(bits) > 1 and sum(b.area > 1e-6 for b in bits) == 1:
+            m = next(b for b in bits if b.area > 1e-6)
+            m.export(out / f"{ver}_{name}.stl")
         print(f"{ver}_{name}.stl  {np.round(m.extents, 1).tolist()}  {m.volume / 1000:.1f} cm3")
     for name, (view, part) in LOGOS.items():
         m = trimesh.load(src / f"{view}.stl")

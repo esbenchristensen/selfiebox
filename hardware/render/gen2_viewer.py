@@ -126,16 +126,22 @@ def k_fold(hz, k, i):
     the shell's strap, as long as the open bundle (hz.k_loop)."""
     import math
     (xs, ys, zs), (xf, yf, zf) = hz.K[k]["shell"], hz.K[k]["frame"]
-    x, sgn = K_FOLD[k]
+    x, sgn = getattr(hz, "K_FOLD", K_FOLD)[k]   # kb1: the harness module has its own (K1 low, K2 high)
     x += 0.8 * (i % 4)
     ends = math.dist((xf, yf, zf), (x, 38.0, zf)) + 7.0 + math.dist((x, 45.0, zs), (xs, ys, zs))
     zt = (zf + zs) / 2 + sgn * max(0.0, (hz.k_loop(k) - ends - abs(zs - zf)) / 2)
     return [(x, 38.0, zf), (x, 38.0, zt), (x, 45.0, zt), (x, 45.0, zs)]
 
 
-def harness_cables():
+def harness_module():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    import harness_gen2 as hz
+    import importlib
+    import os
+    return importlib.import_module(os.environ.get("GEN2_HARNESS", "harness_gen2"))   # kb1: harness_kb1 (camera at the bottom)
+
+
+def harness_cables():
+    hz = harness_module()
     out = []
     for i, c in enumerate(hz.CABLES):
         pts, k_prev = [], None
@@ -205,7 +211,10 @@ def tube(points, d):
 
 scene = trimesh.Scene()
 meta = []
+# kb1: a variant's harness module may rename parts (LABELS) and turn the front unit's flat cables over (front, front_dir)
+HZ = harness_module() if HARNESS else None
 for node, view, label, hexc, group, ex in PARTS:
+    label = getattr(HZ, "LABELS", {}).get(node, label)
     if view in OPTIONAL and not (STL / f"{view}.stl").exists():
         continue
     m = trimesh.load(STL / f"{view}.stl")
@@ -218,10 +227,12 @@ for node, view, label, hexc, group, ex in PARTS:
 
 owners = {p[0]: p for p in PARTS}
 if HARNESS:
-    CABLES = harness_cables() + [c for c in CABLES if c[0] == "mikrofoner"]
+    CABLES = harness_cables() + ([HZ.MIC_FPC] if hasattr(HZ, "MIC_FPC") else [c for c in CABLES if c[0] == "mikrofoner"])
     RIBBONS[0] = ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 11.15, 290), (0, 0, 1)), ((11.5, 11.65, 290), (0, 0, 1)),
         ((12.6, 13.95, 290), (0, 0, 1)), ((12.6, 34, 290), (0, 0, 1)), ((12.6, 40, 283), (0.5, 0, 0.87)), ((11, 42, 266), (1, 0, 0.2)),
         ((8, 42, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))])   # v29: in front of the Wago row (y 48), not through it
+    if hasattr(HZ, "front_dir"):   # kb1: both flat cables belong to the front unit, which is turned over
+        RIBBONS = [(o, lb, w, th, [(HZ.front(p), HZ.front_dir(wd)) for p, wd in secs]) for o, lb, w, th, secs in RIBBONS]
 for i, (owner, label, d, pts) in enumerate(CABLES):
     m = tube([(x, y if HARNESS else back_y(y), z) for x, y, z in pts], d)
     m.apply_transform(M)
