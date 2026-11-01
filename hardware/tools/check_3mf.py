@@ -142,11 +142,16 @@ def check(path):
             for o in r.iter("{%s}object" % ns["m"]):
                 vs = np.array([[float(v.get(a)) for a in "xyz"] for v in o.iter("{%s}vertex" % ns["m"])])
                 sub[(name, o.get("id"))] = vs
+    # each item moves only its own object's components (a plate with several objects, e.g. make_hurtig.py's plates)
+    pns = "http://schemas.microsoft.com/3dmanufacturing/production/2015/06"
+    comps = {o.get("id"): [(c.get("{%s}path" % pns).lstrip("/"), c.get("objectid")) for c in o.iter("{%s}component" % ns["m"])]
+             for o in main.iter("{%s}object" % ns["m"])}
     allv = []
     for it in main.iter("{%s}item" % ns["m"]):
         t = [float(x) for x in it.get("transform").split()]
         R = np.array(t[:9]).reshape(3, 3); T = np.array(t[9:])
-        for vs in sub.values(): allv.append(vs @ R + T)
+        own = [sub[c] for c in comps.get(it.get("objectid"), []) if c in sub] or list(sub.values())
+        for vs in own: allv.append(vs @ R + T)
     allv = np.vstack(allv); lo, hi = allv.min(0), allv.max(0)
     if lo[0] < 0 or hi[0] > 330 or lo[1] < 0 or hi[1] > 320 or abs(lo[2]) > 1e-6: errs.append(f"off the bed {lo.round(1)} {hi.round(1)}")
     if n > 1:
