@@ -26,6 +26,7 @@ export async function autoMail(d: Db, kind: MailKind, b: RentalDoc, opts: { key?
   try {
     if (!(await autoOn(d, kind))) return null;
     const m = await composeMail(d, kind, await mailContext(d, b, opts.extra), mailCompany);
+    if (b.test) m.subject = `[TEST] ${m.subject}`; // testbooking fra admin
     return await sendMail(d, { rental: b._id, kind, to: b.contact.email, ...m, by: opts.by ?? "auto", key: opts.key ?? `${b._id}:${kind}` });
   } catch (e) {
     console.error("autoMail", kind, b._id, e);
