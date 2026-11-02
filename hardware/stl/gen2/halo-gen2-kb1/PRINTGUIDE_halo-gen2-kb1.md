@@ -43,7 +43,7 @@ Boksen står altid helt lodret (Esben 1. nov.: den bliver aldrig vippet). Linsen
 
 ### Ledninger: nye længder
 
-Ledningsplan: `halo-gen2-kb1_ledningsplan.png`. Ledningsdiagrammet er elektrisk det samme som i v38: `halo-gen2-kb1_ledningsdiagram.png` (kopi). Alle ledninger i skallen har samme længde som i v38. Det, der ændrer sig, er ledningerne fra fronten:
+Ledningsplan: `halo-gen2-kb1_ledningsplan.png` (med Pi'ens GPIO-stik ben for ben til højre, som i v39). Ledningsdiagrammet er elektrisk det samme som i v38/v39: `halo-gen2-kb1_ledningsdiagram.png`. Stikket alene: `halo-gen2-kb1_pi-ben.png`. Alle ledninger i skallen har samme længde som i v38. Det, der ændrer sig, er ledningerne fra fronten:
 
 | Id | Ledning | kb1 | v38 | Hvorfor |
 |---|---|---|---|---|
@@ -58,7 +58,7 @@ Ledningsplan: `halo-gen2-kb1_ledningsplan.png`. Ledningsdiagrammet er elektrisk 
 | K1, K2 | Hængselbundterne | 200 mm mellem stropperne | 200 | |
 
 - **Strip-ledninger:** 70 cm-ledningerne fra LEDprodukter.dk rækker lige akkurat (S2 og S4 bruger 700 mm). **Bestil 80 cm** til de næste strips til kb1.
-- **USB-A-stikkene:** Pi'ens USB-porte vender nu **opad**. De 3 vinklede USB-A-stik skal stadig sende kablet **mod venstre** (som boksen står), mod K2 i det øverste tværstykke. Det er **den modsatte vinkel af v38's kabler**: sættes et v38-kabel i, peger kablet mod højre. Køb USB-A 90° i den anden vinkel (venstre/højre-vinklet, ikke op/ned).
+- **USB-A-stikkene:** Pi'ens USB-porte vender nu **opad** (mod logoet). Kablerne skal stadig hen mod hængslet, til K2 i det øverste tværstykke. Set bagfra (som på ledningsplanen og pi-ben-tegningen) er det **til højre**, hvor v38/v39 siger "vinklet til venstre (set bagfra)". Det er **den modsatte vinkel af v38's kabler**: sættes et v38-kabel i, peger det væk fra hængslet. Køb USB-A 90° i den anden vinkel (venstre/højre-vinklet, ikke op/ned).
 - **K1 og K2 har byttet plads:** K1 (strips, Pi-strøm, dæmper, reed) går fra bagrammens **nederste** tværstykke til skallens nederste løkke (72 mm oppe i venstre side). K2 (de 3 USB-kabler og stødsensoren) går fra det **øverste** tværstykke til skallens øverste løkke (240 mm). Begge sidder ude til venstre ved hængslet.
 - **Mikrofonens flade kabel** (20 cm): lige bagud ud af lommen under pladen bag kameraet, op mellem RGB-styringen og 5 V-bakken ca. 8 mm bag blæserhegnet, og ind i kernens underkant. Ruten er 159 mm. Det må ikke ligge hen over hegnet.
 
@@ -215,9 +215,9 @@ Læg fronten med forsiden ned på et blødt underlag.
 4. **Kameraet:** sæt kamerakablet (300 mm) i kameraet først og tryk kameraet på de 4 tappe, til kortet ligger fladt. Intet må røre linsen. **kb1:** kameraet sidder forneden; kablet går ud til siden mod slidsen som i v38.
 5. **Bagrammen** lægges ned i fronten; kamerakablet gennem slidsen ved kameraet i én blød bue. Tryk ned, til alle 14 låse klikker.
 6. **Skærmen skrues fast** med 4 M2,5 × 3–4 mm skruer, som i v38.
-7. **Pi'en:** skærmens flade kabel i skærmen og Pi'ens DISP-stik, Pi'en på skærmens afstandsstykker, kamerakablet i en løs bue til CAM-stikket. **kb1:** Pi'ens USB-porte vender nu **mod logoet** (opad), og GPIO-stikket sidder i højre side med ben 1 nederst.
+7. **Pi'en:** skærmens flade kabel i skærmen og Pi'ens DISP-stik, Pi'en på skærmens afstandsstykker, kamerakablet i en løs bue til CAM-stikket. **kb1:** set bagfra med boksen stående sidder Pi'en nu præcis som på v39's tegning af stikket (`halo-gen2-kb1_pi-ben.png`): **USB-portene opad** mod logoet, **GPIO-stikket i venstre side**, ben 1 og 2 nederst. I v38/v39 viser tegningen Pi'en set bagfra med boksens bund opad (som når fronten ligger på bordet); i kb1 passer den, når boksen står. Benene er de samme: dæmperen på 1, 12, 14, skærmen på 2, 6.
    - **Blæserhegnet** klikkes på det **nederste tværstykke** (det nærmest kameraet) midt over Pi'en: puden mod tværstykkets bagside med risten over Active Cooleren, tryk lige ned, til begge arme klikker. Tjek, at blæseren kan drejes frit med en finger gennem risten.
-   - **USB-A:** sæt de 3 vinklede USB-A-stik i Pi'en **før** bagrammen skrues fast. **kb1:** stik vinklet den modsatte vej af v38, så kablet går mod venstre i bane UB over portene, til K2's slidser i det **øverste** tværstykke.
+   - **USB-A:** sæt de 3 vinklede USB-A-stik i Pi'en **før** bagrammen skrues fast. **kb1:** stik vinklet den modsatte vej af v38 (til højre set bagfra), så kablet går hen mod hængslet i bane UB over portene, til K2's slidser i det **øverste** tværstykke.
    - **Strip-ledningerne** går fra hullerne forneden langs bunden (bane FB) og op i venstre side (FL) til **K1's slidser i det nederste tværstykke**. Pi'ens strømkabel (P12) ligger i bane LB langs det nederste tværstykke og stroppes i slidserne ved x −34. GPIO-ledningerne går ned langs bane GD i højre side. Se `halo-gen2-kb1_ledningsplan.png`. Ingen ledning må ligge over hegnet.
 8. **Elektronik i skallen:** præcis som v38 (5 V-forsyning, WLED-styring, dæmper, Wago-rækken W6 W5 W3 W4 W2 W1, forbindelser efter `halo-gen2-kb1_ledningsdiagram.png`, mål 24 V / 5 V før strips og Pi sættes i).
    - **Hængselbundterne (kb1, byttet om):** K1 stroppes i skallens løkke **72 mm oppe** i venstre side og i bagrammens nederste slidser; K2 i løkken **240 mm oppe** og i bagrammens øverste slidser. Mål **200 mm mellem de to stropper** på hvert bundt. Åbn kassen helt: intet må stramme. Luk den: løkkerne folder sig ind mod midten langs venstre side.

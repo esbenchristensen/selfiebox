@@ -98,7 +98,7 @@ ax.add_patch(mp.Rectangle((FX(22.0) - 2.5, HH - 120.6 - 50.8), 5, 50.8, fc="#343
 ax.text(FX(22.0), HH - 117, "GPIO\n(ben 1 nederst)", fontsize=7, color=INK, ha="center", va="bottom", zorder=6)
 for x in (19.0, 1.0):
     ax.add_patch(mp.Rectangle((FX(x) - 7, HH - 97), 14, 6, fc="#adb5bd", ec=INK, lw=0.6, zorder=5))
-ax.text(FX(10.0), HH - 54, "USB-A: 90° vinklede stik,\nkablet mod venstre (modsat v38)", fontsize=7, ha="center", va="bottom", color=INK, zorder=6)
+ax.text(FX(10.0), HH - 54, "USB-A: 90° vinklede stik, kablet mod hængslet:\ntil højre set bagfra (v38/v39: til venstre)", fontsize=7, ha="center", va="bottom", color=INK, zorder=6)
 ax.add_patch(mp.Rectangle((FX(-28.0), HH - 171), 4, 8, fc="#495057", zorder=5))
 ax.text(FX(-30.0) + 6, HH - 158, "USB-C\n(strøm)", fontsize=7, ha="left", va="bottom", color=INK, zorder=6)
 for x in (-19.5, 19.5):
@@ -171,4 +171,19 @@ ax.legend(handles=[mp.Patch(color=hz.RED, label="24 V + / hvid +"), mp.Patch(col
           loc="lower center", bbox_to_anchor=(0.5, -0.07), ncol=7, fontsize=9, frameon=False)
 ax.set_xlim(FX(115) - 5, 118); ax.set_ylim(-34, 318); ax.set_aspect("equal"); ax.axis("off")
 fig.savefig(OUT, dpi=110, bbox_inches="tight")
+# v39 (Esben 1 Nov): the Pi's GPIO header pin by pin beside the plan (render/pi_header_gen2.py, as in v39's plan). In kb1 the
+# front unit is turned over, so seen from behind with the box standing the Pi sits exactly as that drawing shows it (USB up,
+# header on the left, pin 1 and 2 at the bottom), and as the front unit is drawn here.
+import io  # noqa: E402
+import cairosvg  # noqa: E402
+from PIL import Image  # noqa: E402
+import pi_header_gen2 as ph  # noqa: E402
+els, pw, phh = ph.svg(20, 20)
+hdr = Image.open(io.BytesIO(cairosvg.svg2png(bytestring=(f'<svg xmlns="http://www.w3.org/2000/svg" width="{pw + 40}" height="{phh + 40}" '
+      f'font-family="Inter, Helvetica, Arial, sans-serif"><rect width="100%" height="100%" fill="#fff"/>' + "".join(els) + "</svg>").encode(),
+      scale=1.4))).convert("RGB")
+plan = Image.open(OUT).convert("RGB")
+both = Image.new("RGB", (plan.width + hdr.width + 20, max(plan.height, hdr.height)), "white")
+both.paste(plan, (0, 0)); both.paste(hdr, (plan.width + 20, (plan.height - hdr.height) // 2 if plan.height > hdr.height else 0))
+both.save(OUT)
 print("wrote", OUT)
