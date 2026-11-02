@@ -53,7 +53,11 @@ export function dynamicContext(chat: SupportChatDoc, settings: RentalSettings, n
     lines.push(`Kunden skrev sig ind som ${chat.contact.name}. E-mail og telefon er gemt og bruges af værktøjerne (verificering, SMS-kode, designudkast, eskalering). Tiltal kunden ved fornavn. Gentag ikke e-mail eller telefonnummer, og brug dem ikke til at slå noget op, før kunden selv spørger til en ordre eller noget personligt.`);
   }
   if (chat.customer) {
-    lines.push(`Kunden er verificeret (${chat.customer.via === "sms" ? "med SMS-kode" : "med bookingnummer"}) som ${chat.customer.name || chat.contact?.name || "kunden"}. Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i værktøjssvaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
+    const how = { sms: "med SMS-kode", email: "med kode på mail", booking: "med bookingnummer" }[chat.customer.via ?? "booking"];
+    const venues = chat.customer.venues ?? [];
+    lines.push(`Kunden er verificeret (${how}) som ${chat.customer.name || chat.contact?.name || "kunden"}. Bookinger: ${chat.customer.bookings.join(", ") || "ingen"}. Detaljerne står i værktøjssvaret tidligere i samtalen; kald get_bookings kun, hvis de mangler eller kan have ændret sig.`);
+    if (venues.length) lines.push(`Kunden er også verificeret som kontakt for disse steder (erhverv): ${venues.map((v) => `${v.name} (id ${v.id})`).join(", ")}. Brug id'et i get_venue_overview, get_box_status og get_photos.`);
+    if (chat.customer.phone) lines.push("Kundens telefonnummer er bekræftet med SMS-kode, så get_photos med target \"mine\" viser gæstens egne billeder.");
   } else if (chat.verifyLockedAt) {
     lines.push("Kunden er IKKE verificeret, og verificeringen er låst efter for mange forsøg. Eskalér, hvis kunden vil have hjælp med en booking.");
   } else if (chat.smsCode && chat.smsCode.expiresAt > now) {

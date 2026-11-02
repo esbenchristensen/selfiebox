@@ -11,6 +11,7 @@ import { writeFileSync } from "node:fs";
 import { MongoClient } from "mongodb";
 import OpenAI from "openai";
 
+import { fakeOps, opsLog } from "../support/tests/fake-ops";
 import { MODEL, runTurn, type TurnEvent } from "../lib/support/agent";
 import { addMessage, supportCollections, type SupportChatDoc, type SupportMessageDoc } from "../lib/support/db";
 import { createChat } from "../lib/support/session";
@@ -69,6 +70,9 @@ async function judge(transcript: string, criterion: string): Promise<{ pass: boo
 
 async function runCase(c: Case): Promise<CaseResult> {
   await seed(d);
+  const ops = fakeOps();
+  opsLog.calls.length = 0;
+  opsLog.executed.length = 0;
   await d.collection("leads").deleteMany({});
   const chat = await createChat(d, fakeReq(), "/", MODEL, c.contact ?? DEFAULT_CONTACT);
   if (c.verified) await verifyAs(chat, c.verified);
@@ -92,6 +96,7 @@ async function runCase(c: Case): Promise<CaseResult> {
       // No receipt, no SMS to Selfi and no draft from the tests; the lead itself is saved and checked.
       later: () => undefined,
       client: openai,
+      ops,
     });
     const ms = Date.now() - t0;
     const toolMsgs = await messages.find({ chatId: chat._id, role: "tool", seq: { $gt: before } }).toArray();
