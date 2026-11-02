@@ -12,6 +12,7 @@ Usage:  python3 hardware/tools/check_fit_gen2.py [stl dir] [--ref old stl dir]
 Needs:  openscad (without a dir), trimesh, manifold3d, rtree, scipy
 """
 import itertools
+import os
 import subprocess
 import sys
 import tempfile
@@ -21,7 +22,8 @@ from pathlib import Path
 import numpy as np
 import trimesh
 
-SCAD = Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
+# GEN2_SCAD=<file> checks/builds a variant instead (kb1: cad/gen2_kamera_bund.scad, camera at the bottom)
+SCAD = Path(os.environ["GEN2_SCAD"]).resolve() if os.environ.get("GEN2_SCAD") else Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 
 PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard", "x_stand"]   # v24: fan guard; v27: no camera sleeve; v36: stand bracket
 BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
@@ -105,6 +107,9 @@ CLEARANCES = [
     ("x_stand", "x_dom_vinge_v", 0.3, "v36: the stand bracket's arm behind the Dominance left post's strap"),
     ("x_stand", "x_dom_vinge_h", 0.3, "v36: the stand bracket's arm behind the Dominance right post's strap"),
     ("x_dom_top", "x_cleat", 0.5, "v36: Dominance top straps beside the wall cleat"),
+    # kb1 (camera at the bottom, cad/gen2_kamera_bund.scad): the mic board in the shell's floor now lies under the camera
+    ("c_mics", "x_camera", 1.0, "kb1: the camera board's lower edge 1.25 in front of the mic board"),
+    ("c_mics", "x_frame3", 1.0, "kb1: the lower camera tubes cut flat 1.0 over the mic board (MIC_TUBE_Z)"),
 ]
 
 
