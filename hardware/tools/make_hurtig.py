@@ -81,16 +81,18 @@ CORNER = ((-200, -200), (-46, -88))   # one front screw, the shell/front joint a
 COUPONS = [
     # ---- shell (printed back down: the height is from the outside of the back wall)
     ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 24,
-     "v37: kanalen efter dine mål af hunstikket og trækaflastningen over det. Skru ledningerne i stikket, skub det ind "
-     "forfra med spidsen i slidsen, til det står på halsen på bunden, og læberne holder det firkantede hus. Går det ind "
-     "uden at ramme noget? Stik strømforsyningens stik op gennem hullet nedefra: stopper bøjlen stikket? Klik 2 ledninger "
-     "i trækaflastningen."),
+     "v40: bøjlen over hunstikket sidder 0,9 mm lavere, så stikket ikke kan gå op og ned (v38: ca. 1 mm), og hullet til "
+     "strømforsyningens stik er Ø10,8 med flad top i stedet for den store dråbe (Ø12,5). Skub hunstikket ind forfra: går det "
+     "ind uden at tvinge, og sidder det nu uden slør op og ned? Kør strømforsyningens stik op nedefra: rammer det hunstikket "
+     "uden at lede efter det?"),
     ("sikring", ["skal"], ["sikring"], 8, "+6",
-     "v36: sikringsholderen på højre væg. Sidder den fast, og kan låget åbnes, så sikringen kan skiftes?"),
+     "v40: sikringsholderen på højre væg, nu uden luft og med knusribber på alle 4 vægge (0,5 i siderne, 0,4 i enderne) og "
+     "5,6 mm slidser, der klemmer om ledningstylerne (v38: 9 mm). Trykkes den ned og sidder fast? Kan låget stadig åbnes?"),
     ("wago-loekker", ["skal"], ((-90, 68), (90, 136)), 0, 28,
-     "v37: Wago-rækken med 3 × 221-413 og 3 × 221-415 (W3 er nu 5-polet) og de 2 velcroløkker under rækken (z 232). "
-     "Tryk klemmerne ind: griber krogen i ledningsindgangen, og går en afisoleret ledning stadig ind over den? Kan en 10 mm "
-     "velcrostrop trækkes gennem løkkerne og strammes med fingrene under rækken?"),
+     "v40: Wago-lommerne efter dine mål (18,6 / 29,6 brede, 18,0 lange): skrå tænder med bred fod, der går 1,2 mm op over "
+     "hullets 0,5 mm kant og 2 mm ind, knusribber i siderne (0,5) og bagved, og en lille kant over klemmens bagende i hvert "
+     "hjørne. Sæt indgangsenden ind over tænderne og læg klemmen ned, til den klikker under kanterne bagved: sidder den uden "
+     "slør i alle retninger, og går en afisoleret ledning stadig ind over tanden? Velcroløkkerne under rækken er som v37."),
     ("kabelloekker", ["skal"], ((-26, -50), (26, -8)), 0, 14,
      "v37: de 2 flade velcroløkker midt på bagvæggen (som v23–v35). Går en 10 mm velcrostrop igennem begge?"),
     ("stroem", ["skal"], ["stroem"], 8, "+6",
@@ -107,7 +109,9 @@ COUPONS = [
      "Højre låseslids (12 mm tunge). Prøves med `proeve-laasetunge-hoejre` og `proeve-stativ-hylde`."),
     ("4g", ["skal"], ["modem4g"], 8, "+6", "4G-modemet i sin bakke (tilvalg)."),
     ("mikrofonkerne", ["skal"], ["lydkerne"], 8, "+6",
-     "v36: mikrofonkernen (XVF3800) i holderen. Kan USB-C, AUX og fladkablet sættes i, mens kortet ligger i holderen?"),
+     "v40: mikrofonkernen (XVF3800) i holderen med 1 mm højere sider og en fjedrende tand midt på hver kort ende. Tryk kortet "
+     "ned over pindene, til begge tænder klikker over printet: sidder det fast, når du vender stykket og banker det? Kan "
+     "USB-C, AUX og fladkablet stadig sættes i?"),
     ("stoedsensor", ["skal"], ["sensor"], 8, "+6", "v36: stødsensoren (LIS3DH) i sin bakke til højre for 5 V-forsyningen."),
     ("mikrofonstrip", ["skal"], ["mikrofoner"], 8, "+6",
      "Mikrofonkortet i lommen i bunden: pindene gennem hullerne og kortet fladt på de 4 ringe (tilvalg)."),
@@ -157,10 +161,10 @@ COUPONS = [
 
 # The plates, in the order to print them: 1 = what v37 changed (print this first), 2 = the other fits, 3 = options and
 # the big screen/ring piece. Every piece is also its own 3MF.
-GROUP = {"stroemindgang": 1, "wago-loekker": 1, "kabelloekker": 1, "klik": 1, "klik-bund": 1, "kamera": 1, "laas-reed": 1,
-         "laasetunge": 1, "stativ-hylde": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v40 (Esben 2 Nov, after printing v38's set): plate 1 is only what v40 changed, the rest of the v37/v38 news is on plate 2
+GROUP = {"stroemindgang": 1, "wago-loekker": 1, "sikring": 1, "mikrofonkerne": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
-GROUP_TEXT = {1: "det, v37 og v38 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "det, v40 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
@@ -433,7 +437,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v37 og v38 har ændret. Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v40 har ændret (Wago, sikring, mikrofonkerne og strømindgang). Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",

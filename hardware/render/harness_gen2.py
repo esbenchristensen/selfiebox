@@ -19,7 +19,7 @@ BEND = 1.15                # bends and slack on top of the straight path
 
 # ---------------------------------------------------------------- fixed points ----
 # Wago row on the wall cleat's block (wago_row): pocket centres, entry face z 262, levers to the front
-WAGO = {"W6": -71.3, "W5": -49.5, "W3": -22.1, "W4": 10.9, "W2": 43.9, "W1": 71.3}   # v37: centres from wago_info (W3 a 221-415)
+WAGO = {"W6": -70.5, "W5": -48.9, "W3": -21.8, "W4": 10.8, "W2": 43.4, "W1": 70.5}   # v40: centres from wago_info (measured widths)
 WAGO_TYPE = {"W6": "221-413", "W5": "221-413", "W3": "221-415", "W4": "221-415", "W2": "221-415", "W1": "221-413"}
 WAGO_NAME = {"W6": "hvid + (dæmpet)", "W5": "hvid −", "W3": "5 V +", "W4": "5 V GND", "W2": "GND", "W1": "24 V +"}
 
