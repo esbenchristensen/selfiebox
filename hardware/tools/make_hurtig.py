@@ -103,8 +103,9 @@ COUPONS = [
      "v36: dæmperens printkort (DFR0457) på de 4 puder, 2 pinde i hullerne, én tand pr. side. Klikker kortet på plads?"),
     ("hoejttaler", ["skal"], ["hoejttaler"], 8, "+6", "Højttaleren (FIT0502) i sin bakke bag gitteret."),
     ("laas-reed", ["skal"], ((-104, -154), (-58, -88)), 0, 22,
-     "Venstre låseslids i bunden, låseskruens hul og reed-modulets bakke. Prøves med `proeve-laasetunge` og "
-     "`proeve-stativ-hylde`: går tungen ind og op, og kan låseskruen skrues i?"),
+     "v41: venstre låseslids i bunden, låseskruens hul og reed-modulets bakke. Skruehovedet sidder nu 3 mm oppe i bunden "
+     "(v40: 0,3). Prøves med `proeve-laasetunge` og `proeve-stativ-hylde`: går tungen ind og op, kan låseskruen skrues i, "
+     "og ligger hovedet helt skjult inde i hullet?"),
     ("laas-hoejre", ["skal"], ((72, -154), (100, -110)), 0, 22,
      "Højre låseslids (12 mm tunge). Prøves med `proeve-laasetunge-hoejre` og `proeve-stativ-hylde`."),
     ("4g", ["skal"], ["modem4g"], 8, "+6", "4G-modemet i sin bakke (tilvalg)."),
@@ -120,13 +121,14 @@ COUPONS = [
      "og falder tåen ned i lommen, så vingen ikke kan vippe ud forneden?"),
     # ---- shell + front: the snap (v37)
     ("klik", ["skal", "front"], ((-114, -78), (-92, -39)), 0, "fuld",
-     "v37: frontens nederste venstre klikkant (95 mm oppe) og skallens rille. Tryk de to stykker sammen, til det klikker, "
-     "og træk dem fra hinanden igen med hånden. Klikker det tydeligt, og kan det skilles uden værktøj? Stykket er kort, så "
-     "det er stivere end den hele væg; bedøm kraften på det hele print."),
+     "v41: frontens nederste venstre klikkant (95 mm oppe) og skallens rille. Kanten sidder 0,3 mm længere inde på tungen "
+     "end i v40, så den kan nå ned i rillen. Tryk de to stykker sammen: ligger front og skal helt sammen uden fuge, når det "
+     "klikker? Træk dem fra hinanden igen med hånden. Stykket er kort, så det er stivere end den hele væg; bedøm kraften "
+     "på det hele print."),
     # v38 (Esben 1 Nov): the front also snaps into the shell's top and bottom wall at x +-50; the bottom left one here
     ("klik-bund", ["skal", "front"], ((-72, -154), (-28, -128)), 0, "fuld",
-     "v38: frontens klikkant i bunden (x −50) og rillen i skallens bundvæg. Tryk sammen, til det klikker, og træk fra hinanden "
-     "med hånden. Kanten er 0,45 mm her (0,6 i siderne), så klikket skal være lettere end i `klik`."),
+     "v41: frontens klikkant i bunden (x −50, 0,3 mm længere inde end i v40) og rillen i skallens bundvæg. Tryk sammen: ligger "
+     "front og skal helt sammen, når det klikker? Kanten er 0,45 mm her (0,6 i siderne), så klikket skal være lettere end i `klik`."),
     # ---- front + frame
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
      "v37: kameraet på frontens tappe, linsen midt i hullet (Ø8,6 i den yderste 1 mm, Ø10 bagved), bagrammens 4 rør med "
@@ -136,12 +138,16 @@ COUPONS = [
      "En sidelås mellem front og bagramme (venstre side): klikker begge arme, og kan de vippes fri med en lille skruetrækker?"),
     ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
      "Bagrammens nederste tværbjælke med de 2 nederste skruetårne til skærmen. Skru en M2,5 × 3–4 mm i hvert."),
-    ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
-     "Lyskanalen nederst til venstre med ca. 10 cm strip-bane: RGB i bunden, så hvid 2, så hvid 1, og lysringens 45° krave. "
-     "Pres bagrammen på ringen: står ringens skulder fast, og bliver strippene liggende?"),
+    # v41 (Esben 2 Nov: "så vi kan teste lysring, front og LED-holder-modulet"): the front's piece joins the frame and the ring
+    ("lyskanal", ["front", "bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
+     "v41: hele lysstakken nederst til venstre: frontens stykke med lysringens 45° sæde, lysringens stykke og bagrammens "
+     "lyskanal (LED-holderen) med ca. 10 cm strip-bane: RGB i bunden, så hvid 2, så hvid 1. Læg ringen i fronten, strippene i "
+     "bagrammens baner, og pres bagrammen ned på fronten: ligger ringen fast i sædet uden at kunne rasle, er skyggefugen jævn, "
+     "står ringens skulder mod bagrammen, og bliver strippene liggende?"),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
-     "Ét hjørne af hele stakken med én frontskrue (4,0 × 50 T20) skruet i bagfra: lukker skal og front uden fuge, sidder "
-     "bagrammen fast (knusribberne trykkes flade), og ligger ringen stille?"),
+     "v41: ét hjørne af hele stakken med én frontskrue (4,0 × 50 T20) skruet i bagfra. Hovedet skal nu ligge 2 mm under "
+     "bagsiden (v40: plant). Lukker skal og front uden fuge, sidder bagrammen fast (knusribberne trykkes flade), og ligger "
+     "ringen stille?"),
     ("skaerm-lysring", ["front"], None, 0, 7.0,
      "De nederste 7 mm af fronten med lysringens sæde og skærmlommen. Læg skærmen og den hele lysring i: ligger glasset ind "
      "mod kanten hele vejen rundt, og er skyggefugen ved ringen jævn? Lysringen printes hel."),
@@ -162,9 +168,10 @@ COUPONS = [
 # The plates, in the order to print them: 1 = what v37 changed (print this first), 2 = the other fits, 3 = options and
 # the big screen/ring piece. Every piece is also its own 3MF.
 # v40 (Esben 2 Nov, after printing v38's set): plate 1 is only what v40 changed, the rest of the v37/v38 news is on plate 2
-GROUP = {"stroemindgang": 1, "wago-loekker": 1, "sikring": 1, "mikrofonkerne": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v41 (Esben 2 Nov, after printing v40's set): plate 1 is the snap and the deeper screw heads
+GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
-GROUP_TEXT = {1: "det, v40 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "det, v41 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
@@ -437,7 +444,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v40 har ændret (Wago, sikring, mikrofonkerne og strømindgang). Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v41 har ændret (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",

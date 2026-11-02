@@ -228,7 +228,12 @@ LOCK_X = -82;  LOCK_W = 18;  LOCK_TZ = [LOCK_BOSS[1] + 0.3, 36];  LOCK_Y = D - 1
 LOCK_C = [0.2, 1.0, 2.0];                           // v24: slot clearance per side, lead-in chamfer, tongue nose chamfer
 LOCK_SY = (LOCK_Y + D - BACK_T)/2;                  // screw axis, y
 REED_P = [LOCK_X - REED[0]/2, LOCK_TZ[1] + 4];      // reed module tray, bottom-left on the back wall
-LOCK_HEAD = [8.6, 0.3];                             // [A] Bolte 88115 = DIN 7982 ST4.2 countersunk (head Ø8.1, ISO 14586 max 8.4), 90°; head 0.3 below the bottom
+LOCK_HEAD = [8.6, 3.0];                             // [A] Bolte 88115 = DIN 7982 ST4.2 countersunk (head Ø8.1, ISO 14586 max 8.4), 90°; head face at z 3.0
+// v41 (Esben 2 Nov: the screw heads should be hidden deeper, not flush): the head's face sits at z 3.0 in a Ø8.6 counterbore
+// (v24-v40: 0.3). The bottom is already curving up into the corner there (z 0.2-1.8 at the left head's rim, 0.3-2.4 at the
+// right one's, measured on v40), so v40's heads stood up to 2 mm out on the outer side; now every part of them lies at least
+// 0.6 inside the surface (outer edge of the right head; 2.8 at the inner edges). The 25 mm screw reaches z 28.3 in the tongue
+// (pilot to 31.6), and the cone still has 2.9 of the 8 mm floor boss above it.
 // v25 (Esben 27 Oct): a second lock in the other bottom corner: tongue, slot, pocket, drain, floor boss and security screw.
 // The corner there is tight: the 5 V supply's tray wall stands at x 74.2 and the box's 42.8 corner radius rises from x 68.5,
 // so the right tongue is 12 wide (left: 18) at x +84, and both tongues are clipped 0.5 inside the shell's inner corner.
@@ -506,6 +511,7 @@ module services_add() {
     both_locks() difference() {
         cyl_z(LOCK_BOSS[0], WALL - 0.01, LOCK_BOSS[1], $lx, LOCK_SY);
         cyl_z(4.5, -1, LOCK_BOSS[1] + 1, $lx, LOCK_SY);
+        translate([$lx, LOCK_SY, LOCK_HEAD[1] - 0.01]) cylinder(d1 = LOCK_HEAD[0], d2 = 4.4, h = (LOCK_HEAD[0] - 4.4)/2, $fn = 32);   // v41: the head's cone now reaches up into the boss
         translate([$lx - $lw/2 - 0.6, D - BACK_T - 0.01, 0]) cube([$lw + 1.2, 5, 20]);
     }
     power_column();
@@ -857,7 +863,10 @@ FS = [4.0, 50, 7.75];                     // screw: Ø, length, head Ø
 FS_CLR = 4.4;                             // through the post and the frame
 FS_PILOT = 3.2;                           // in the front's Ø6 boss (chipboard thread, core about 2.6)
 FS_CSK = 8.2;                             // countersink Ø at the back face
-FS_TIP = D - FS[1];
+// v41 (Esben 2 Nov: hide the heads deeper): the head lies FS_SINK under the back face in a Ø8.2 counterbore (v27-v40: flush).
+// The cone is then in the back wall and the Ø9 post, and the tip goes 2 further into the front's boss (thread 9 mm, was 7).
+FS_SINK = 2.0;
+FS_TIP = D - FS_SINK - FS[1];
 
 // ================================================================= v27: no seals ==
 // v20-v26 (Esben 23 Oct) had a removable seal, a silicone sponge O-ring cord Ø1.5 (RS 234-2906), in 4 joints (display,
@@ -1346,8 +1355,13 @@ module placed_pi3() translate([0, PI_Y3, GC + DSP_PI_DZ]) rpi5();
 // has to bend further than the 0.35 the walls flex in their middles. Seated, the ridge stands 0.35 off the groove's floor, so
 // nothing is under load while the box hangs. Both print without support: the ridge is a 45 deg overhang on the standing
 // tongue (front face down) and the groove's upper face is 45 deg in the standing wall (shell back down).
-SNAP_F = [7.4, 0.6, 0.6, 30, 30];         // ridge: front edge (y), 45 deg rise, height, lead angle, length (z)
-SNAP_G = [7.6, 0.7, 1.0];                 // groove: front edge (y; its 45 deg face lies on the ridge's, 0.05 play), depth, floor length
+// v41 (Esben 2 Nov, v40 hurtigprint photos: the click does not reach its notch, the front stops short of the shell): the ridge
+// sits 0.3 further back on the tongue (v37-v40: 7.4). Its holding 45 deg face lay only 0.05 from the groove's, so any droop on
+// the printed overhang (ridge or groove) held the front out. Now 0.35: the ridge drops into the groove even printed a little
+// fat, the butt joint is the stop, and the front can only be pulled 0.35 out before it catches (the 4 screws close that).
+// The groove is unchanged; the ridge's 30 deg lead still ends inside it (at y 9.3, where the groove's back face begins).
+SNAP_F = [7.7, 0.6, 0.6, 30, 30];         // ridge: front edge (y), 45 deg rise, height, lead angle, length (z)
+SNAP_G = [7.6, 0.7, 1.0];                 // groove: front edge (y; v41: 0.35 in front of the ridge's 45 deg face, v37-v40: 0.05), depth, floor length
 SNAP_FZ = [95, 215];                      // centres (z) on both long sides, clear of the screw posts at the corners
 // v38 (Esben 1 Nov: "Hvorfor har du ikke lavet så kassen klikker sammen med front i top og bund?"): the same ridge and groove on
 // the top and the bottom too, 2 on each at x +-50 (v37 had them on the long sides only, because the side walls are the longest
@@ -1394,7 +1408,7 @@ module shell3(top = UNIT_TOP) {
         shell_snap_grooves();   // v37
         power_channel_keep();   // v37
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
-        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D, j[0], j[1]); }   // v27: head flush in the back face
+        for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(FS_CSK, D - FS_SINK, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D - FS_SINK, j[0], j[1]); }   // v27: head in the back face; v41: FS_SINK under it
     }
 }
 
@@ -1745,8 +1759,8 @@ if (VIEW == "x_wled_holder") intersection() { shell3(); wled_frame() translate([
 if (VIEW == "c_mosfet")    mosf_frame() mosfet_model();
 if (VIEW == "x_shell3")    shell3();
 if (VIEW == "s_front3")    for (j = J2) {   // v27: 4.0 x 50 T20, countersunk head flush with the back face (thread drawn at its 3.77 crest)
-    cyl_y(3.77, FS_TIP, D - 1, j[0], j[1]);
-    translate([j[0], D, j[1]]) rotate([90, 0, 0]) cylinder(d1 = FS[2], d2 = 3.77, h = (FS[2] - 3.77)/2, $fn = 32);
+    cyl_y(3.77, FS_TIP, D - FS_SINK - 1, j[0], j[1]);
+    translate([j[0], D - FS_SINK, j[1]]) rotate([90, 0, 0]) cylinder(d1 = FS[2], d2 = 3.77, h = (FS[2] - 3.77)/2, $fn = 32);
 }
 if (VIEW == "s_display")   for (sx = [-1, 1], z = DSP_TAB_Z) screw_y(2.5, 4, [4.5, 1.8], sx*DSP_TAB_X, TAB_Y + DSP_FLOOR - PRELOAD, GC + z, -1);   // v16: M2.5 x 4, head on the 1.6 mm floor
 if (VIEW == "p_front3")    rotate([90, 0, 0]) front3();                                   // face down
