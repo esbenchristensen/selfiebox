@@ -1,7 +1,10 @@
 """Ledningsdiagram for Halo gen 2. Usage: python3 hardware/render/ledningsdiagram_gen2.py out.svg [halo-gen2-vN]"""
 import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import pi_header_gen2 as ph   # noqa: E402
 VER = sys.argv[2] if len(sys.argv) > 2 else "halo-gen2-v3"
-W, H = 1800, 1360
+W, H = 2800, 1360   # v39: + the Pi header on the right (pi_header_gen2.py)
 C = dict(v24="#d62828", v5="#e67700", gnd="#222222", sig="#1c7ed6", data="#9c36b5", sw="#868e96")
 out = []
 def box(x, y, w, h, title, sub="", fill="#f5f5f4"):
@@ -43,7 +46,7 @@ lab(40, 640, "Strøm: 1,5 mm² RKUB (Biltema), v36", "#444")
 box(840, 130, 300, 210, "5 V-forsyning", "Mean Well RSD-60G-5|DC IN øverst: V+ · V−|DC OUT nederst: +V · −V|isoleret: −V bindes til|GND (bro W4 → W2)")
 wire([(618, w1[1]), (840, w1[1])], C["v24"]); lab(830, w1[1]-6, "P3 · Vin+", C["v24"], "end")
 wire([(618, w2[1]), (800, w2[1]), (800, 310), (840, 310)], C["gnd"]); lab(830, 304, "P4 · Vin−", "#222", "end")
-w3 = wago(1230, 150, 4, "W3 · 5 V + ", C["v5"])
+w3 = wago(1230, 150, 5, "W3 · 5 V + ", C["v5"])   # v37: 221-415, 5th entry spare
 w4 = wago(1230, 370, 5, "W4 · 5 V GND ", C["gnd"])
 wire([(1140, 180), (1180, 180), (1180, w3[0]), (1230, w3[0])], C["v5"]); lab(1150, 172, "+V · P5", C["v5"])
 wire([(1140, 250), (1200, 250), (1200, w4[0]), (1230, w4[0])], C["gnd"]); lab(1150, 242, "−V · P6", "#222")
@@ -54,13 +57,13 @@ wire([(1288, w3[1]), (1440, w3[1])], C["v5"]); lab(1300, w3[1]-6, "P12 · USB-C 
 wire([(1288, w4[1]), (1440, w4[1])], C["gnd"]); lab(1300, w4[1]-6, "P12 · USB-C sort")
 
 # Gledopto + RGB
-box(1440, 560, 320, 150, "RGB-styring", "Gledopto GL-C-016WL-D|5 V, ALDRIG 24 V|ind V+ V− nederst|GPIO16 og USB-C øverst", fill="#fff4e6")
+box(1440, 560, 320, 165, "RGB-styring", "Gledopto GL-C-016WL-D|5 V, ALDRIG 24 V|ind V+ V− nederst|GPIO16 (Gledopto'ens eget ben)|og USB-C øverst", fill="#fff4e6")
 wire([(1288, w3[2]), (1320, w3[2]), (1320, 600), (1440, 600)], C["v5"]); lab(1430, 594, "P13 · V+", C["v5"], "end")
 wire([(1288, w4[2]), (1340, w4[2]), (1340, 650), (1440, 650)], C["gnd"]); lab(1430, 644, "P14 · V−", "#222", "end")
 # v24 (26 Oct 2026, first assembly): the strip takes its power straight from W3/W4; the controller only drives DATA (GPIO16)
 box(1440, 860, 320, 100, "RGB-strip 5 V", "WS2812b COB 5 mm, MiniClip i IN-enden|strømloft 2 A (2000 mA) i WLED", fill="#f3e8ff")
 wire([(1288, w3[3]), (1400, w3[3]), (1400, 790), (1500, 790), (1500, 860)], C["v5"]); lab(1492, 820, "S1 · 5 V fra W3", C["v5"], "end")
-wire([(1600, 710), (1600, 860)], C["data"]); lab(1608, 790, "S3 · DATA (GPIO16)", C["data"])
+wire([(1600, 710), (1600, 860)], C["data"]); lab(1608, 790, "S3 · DATA (Gledopto GPIO16)", C["data"])
 wire([(1288, w4[4]), (1380, w4[4]), (1380, 840), (1700, 840), (1700, 860)], C["gnd"]); lab(1708, 832, "S2 · GND")
 lab(1600, 990, "RGB: strippens egne ledninger direkte i W3/W4", "#444", "middle")
 # control: a short USB-A to USB-C cable from the Pi (WLED JSON over serial), so it works without wifi at the venue
@@ -100,5 +103,8 @@ for i, t in enumerate(["Kabel-id'erne (P, S, U, G, A, F) er de samme som i ledni
                        "Skærmen får strøm fra Pi'ens ben 2 (5 V, yderst i hjørnet) og 6 (GND) med sit eget kabel (G4).",
                        "Mærkningen på dæmperen og styringen gælder: tjek den, før der tændes."]):
     lab(40, 1285 + i*22, t, "#444", size=15)
+# v39 (Esben 1 Nov): the Pi's GPIO header pin by pin, as it sits in the box
+out.append('<line x1="1800" y1="110" x2="1800" y2="1330" stroke="#ddd" stroke-width="2"/>')
+out.extend(ph.svg(1830, 110)[0])
 svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="Inter, Helvetica, Arial, sans-serif">' + "".join(out) + "</svg>"
 open(sys.argv[1], "w").write(svg)
