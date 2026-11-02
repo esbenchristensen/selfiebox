@@ -51,11 +51,14 @@ CONTACT = {
     ("x_frame3", "x_shell3"): 2,            # v21: crush bumps on the shell posts, squeezed 0.2 by the front screws
     ("x_ring3", "x_frame3"): 12,            # v24: the frame's crush bumps press the ring's flange forward (0.25 each)
     ("x_fanguard", "x_frame3"): 1e9,   # v24: the fan guard clicks onto the frame's upper cross bar
-    ("x_shell3", "c_wagos"): 45,       # v29: crush ribs press each Wago 0.05 into its pocket; v36: plus a hook nose (1.7 mm3) in each
-                                       # pole's wire entry (the Wago model has no entries)
+    ("x_shell3", "c_wagos"): 200,      # v29: crush ribs press each Wago 0.05 into its pocket; v36: plus a hook nose (1.7 mm3) in each
+                                       # pole's wire entry (the Wago model has no entries); v40: the teeth 2 mm into each entry (~6 mm3,
+                                       # 24 entries), ribs 0.5 / 0.25 and the back lips 0.6 over the clamp
+    ("x_shell3", "c_jack"): 30,        # v40: the bar 0.6 under the socket's drawn end (Esben: the printed socket had ~1 mm play)
     ("x_shell3", "c_mosfet"): 25,      # v36: the 2 pegs go through the dimmer PCB's holes (the board model has none)
     ("x_stand", "s_lock"): 1e9,        # v36: the security screws go through the stand bracket's tongues, as through the cleat's
-    ("x_shell3", "c_fuse"): 2,         # v36: crush ribs press the fuse holder into its cradle
+    ("x_shell3", "c_fuse"): 40,        # v36: crush ribs press the fuse holder into its cradle; v40: ribs on all 4 walls (0.5 / 0.4),
+                                       # no clearance, 5.6 lead slots round the Ø6 lead stubs (Esben: soft plastic, squeeze it)
     ("x_stand", "x_cleat"): 1e9,       # v36: the stand bracket and the wall cleat are alternatives (never fitted together)
     ("x_stand", "s_wall"): 1e9,
     ("x_frame3", "x_camera"): 1.5,     # v37: 3 crush tips on each camera tube reach 0.2 into the board's back (CAM_TUBE)
