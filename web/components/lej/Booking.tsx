@@ -63,6 +63,12 @@ export function Booking() {
   const [accepted, setAccepted] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [notice, setNotice] = useState<string | null>(null);
+  // Testbooking fra admin (Privat › Bookinger › Ny testbooking): samme booking, men uden betaling.
+  const [test, setTest] = useState<string | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get("testbooking");
+    if (q && /^[a-f0-9]{24}$/.test(q)) setTest(q);
+  }, []);
 
   // Back from Stripe without paying: release the dates at once and bring the choices back.
   useEffect(() => {
@@ -117,7 +123,7 @@ export function Booking() {
       const res = await fetch("/api/udlejning/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...s, accepted }),
+        body: JSON.stringify({ ...s, accepted, ...(test ? { test } : {}) }),
       });
       const body = (await res.json().catch(() => ({}))) as { url?: string; error?: string; taken?: boolean };
       if (!res.ok || !body.url) {
@@ -146,7 +152,7 @@ export function Booking() {
     );
   }
   if (!settings || !data || !win) return <p className="muted" aria-live="polite">Henter ledige datoer …</p>;
-  if (!settings.open) {
+  if (!settings.open && !test) {
     return (
       <div className="bk-sum">
         <b>Vi tager ikke imod bookinger lige nu.</b>
@@ -160,6 +166,11 @@ export function Booking() {
 
   return (
     <div className="bk">
+      {test && (
+        <p className="bk-notice" role="status">
+          Testbooking: alt kører som en rigtig booking, men der betales ikke. Bookingen får en boks og kan slettes i admin.
+        </p>
+      )}
       {notice && (
         <p className="bk-notice" role="status">
           {notice}
@@ -389,7 +400,7 @@ export function Booking() {
               <button type="button" className="btn btn-secondary" onClick={() => move(step - 1)}>Tilbage</button>
             )}
             <button type="button" className="btn btn-primary" onClick={next} disabled={status.kind === "sending"}>
-              {status.kind === "sending" ? "Åbner betaling …" : ["Fortsæt", "Fortsæt til kontakt", "Gennemse booking", `Betal ${s.range ? kr(sum) : ""}`][step]}
+              {status.kind === "sending" ? (test ? "Booker …" : "Åbner betaling …") : ["Fortsæt", "Fortsæt til kontakt", "Gennemse booking", test ? "Book som test (ingen betaling)" : `Betal ${s.range ? kr(sum) : ""}`][step]}
             </button>
           </div>
         </div>
@@ -433,7 +444,7 @@ export function Booking() {
           <span className="muted">{s.range ? kr(sum) : `Fra ${kr(fromPrice(settings))}`}</span>
         </div>
         <button type="button" className="btn btn-primary" onClick={next} disabled={status.kind === "sending"}>
-          {step === STEPS.length - 1 ? "Betal" : "Fortsæt"}
+          {step === STEPS.length - 1 ? (test ? "Book som test" : "Betal") : "Fortsæt"}
         </button>
       </div>
     </div>

@@ -2,12 +2,15 @@ import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { nights } from "@/lib/dates";
 import { chargeLines, priceLines, problem, total, usage, type Choice, type Delivery, type PhotoType } from "@/lib/udlejning/core";
-import { db, getHolds, getSettings, todayDK, type RentalDoc } from "@/lib/udlejning/db";
+import { db, getHolds, getSettings, testLinkValid, todayDK, type RentalDoc } from "@/lib/udlejning/db";
+import { autoMail } from "@/lib/udlejning/mails";
 import { stripe, type CheckoutSession } from "@/lib/udlejning/stripe";
 
 // Turns the customer's choice into a booking that holds the dates for 30 minutes and a Stripe Checkout
 // page to pay it. Prices and availability are recomputed here; the browser's numbers are never trusted.
 // The webhook (/api/stripe/webhook) marks the booking paid; an unpaid one is released when it expires.
+// With a test link from admin (body.test, rental_test_links) the booking skips Stripe and is paid at once,
+// so the whole flow (box, setup, mails, return) can be tried without money. It is marked test: true.
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const HOLD_MIN = 30; // Stripe's shortest Checkout lifetime
@@ -63,7 +66,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Bookingen er ikke åben lige nu. Prøv igen om lidt." }, { status: 503 });
   }
   const settings = await getSettings(d);
-  if (!settings.open) return NextResponse.json({ error: "Vi tager ikke imod bookinger lige nu. Skriv til os." }, { status: 503 });
+  const test = typeof body.test === "string" && (await testLinkValid(d, body.test));
+  if (typeof body.test === "string" && !test) {
+    return NextResponse.json({ error: "Testlinket er udløbet. Lav et nyt i admin." }, { status: 403 });
+  }
+  if (!settings.open && !test) return NextResponse.json({ error: "Vi tager ikke imod bookinger lige nu. Skriv til os." }, { status: 503 });
 
   const today = todayDK();
   const { holds, blocks } = await getHolds(d, today);
@@ -101,6 +108,7 @@ export async function POST(req: Request) {
     history: [{ at: now, status: "pending", by: "kunde" }],
     createdAt: now,
     updatedAt: now,
+    ...(test ? { test: true } : {}),
   };
   const rentals = d.collection<RentalDoc>("rentals");
   await rentals.insertOne(doc);
@@ -111,6 +119,17 @@ export async function POST(req: Request) {
   if (problem(settings, usage(settings, again.holds, again.blocks), choice, today)) {
     await rentals.updateOne({ _id: doc._id }, { $set: { status: "expired", expiresAt: null, updatedAt: new Date() }, $push: { history: { at: new Date(), status: "expired", by: "system", note: "Datoerne blev taget samtidig" } } });
     return NextResponse.json({ error: "Nogen nåede at booke de dage lige før jer. Vælg andre datoer.", taken: true }, { status: 409 });
+  }
+
+  if (test) {
+    // Testbooking: betalt med det samme, præcis som webhooket gør det, men uden Stripe.
+    const at = new Date();
+    await rentals.updateOne({ _id: doc._id, status: "pending" }, {
+      $set: { status: "paid", expiresAt: null, conflict: false, "stripe.paymentStatus": "test", "stripe.amountPaid": 0, updatedAt: at },
+      $push: { history: { at, status: "paid", by: "test", note: "Testbooking uden betaling" } },
+    });
+    await autoMail(d, "bekraeftelse", { ...doc, status: "paid" }, { by: "test" });
+    return NextResponse.json({ ok: true, ref: doc._id, url: `${site()}/lej/tak?id=${doc._id}&t=${doc.token}` });
   }
 
   try {

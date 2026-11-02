@@ -45,6 +45,7 @@ export type RentalDoc = {
   stripe: { sessionId?: string; paymentIntent?: string | null; paymentStatus?: string; amountPaid?: number; refunded?: number };
   expiresAt: Date | null;
   conflict?: boolean; // paid while the dates were taken by someone else: admin must sort it out
+  test?: boolean; // made with a test link from admin: no payment, left out of the accounts, can be deleted in admin
   history: { at: Date; status: RentalStatus; by: string; note?: string }[];
   createdAt: Date;
   updatedAt: Date;
@@ -101,4 +102,10 @@ export async function getHolds(d: Db, from: DayKey, olderThan?: { id: string; at
 /** Today in Denmark, as a day key. The server runs in UTC. */
 export function todayDK(): DayKey {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Copenhagen" }).format(new Date());
+}
+
+/** Is this test link from admin (rental_test_links, made in admin › Bookinger › Ny testbooking) still valid? */
+export async function testLinkValid(d: Db, token: string): Promise<boolean> {
+  if (!/^[a-f0-9]{24}$/.test(token)) return false;
+  return !!(await d.collection<{ _id: string; expiresAt: Date }>("rental_test_links").findOne({ _id: token, expiresAt: { $gt: new Date() } }));
 }
