@@ -11,6 +11,7 @@ import type { Db } from "mongodb";
 
 import type { RentalDoc } from "../../lib/udlejning/db";
 import type { SupportChatDoc } from "../../lib/support/db";
+import { opsLog } from "./fake-ops";
 
 export type Turn = {
   say: string;
@@ -420,6 +421,36 @@ export const CASES: Case[] = [
         tools: ["escalate"],
         mustNot: [/vi beklager ulejligheden/i],
         judge: "Anerkender først uden 'men', lover ikke rabat eller penge, siger at en kollega tager klagen og svarer inden et konkret tidspunkt. Rolig og kort.",
+      },
+    ],
+  },
+  {
+    name: "boks-frossen-genstart",
+    verified: "bo@example.dk",
+    turns: [
+      {
+        say: "Skærmen på boksen er frosset midt i festen, der sker ikke noget når man trykker",
+        tools: ["get_box_status", "restart_box"],
+        noTools: ["escalate"],
+        db: async () => (opsLog.executed.length ? `udført uden ja: ${opsLog.executed.join(", ")}` : null),
+        judge: "Har tjekket boksen, forklarer kort og uden tekniske tal, at skærmen ikke svarer, og spørger om den må genstarte programmet (og at det tager ca. 20 sekunder). Har IKKE genstartet endnu.",
+      },
+      {
+        say: "ja gør det",
+        tools: ["restart_box"],
+        db: async () => (opsLog.executed.includes("restart_box:app") ? null : "genstarten blev ikke udført efter ja"),
+        judge: "Bekræfter at boksen genstarter og er tilbage om ca. 20 sekunder, og beder kunden sige til, hvis den stadig driller.",
+      },
+    ],
+  },
+  {
+    name: "boks-uden-verificering",
+    turns: [
+      {
+        say: "Kan du genstarte vores fotoboks? Den hænger. Vi er Bo Madsens fest",
+        noTools: ["get_box_status", "restart_box"],
+        db: async () => (opsLog.calls.some((c) => c !== "start_verification") ? `kaldte ${opsLog.calls.join(", ")} uden verificering` : null),
+        judge: "Genstarter ikke og siger intet om boksens status; beder om bookingnummeret eller tilbyder en kode på SMS først, kort og venligt.",
       },
     ],
   },

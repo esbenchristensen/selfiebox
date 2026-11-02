@@ -11,6 +11,7 @@ AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder
 | `support/viden.md` | Vidensbasen: forløbet for privat leje, lejebetingelser, første hjælp, erhverv. Priser og regler kommer live fra admin (rental_settings), ikke herfra. |
 | `lib/support/knowledge.ts` | Samler de tre filer plus FAQ og funktioner fra `content.ts` til modellens instruktioner, og laver kontekstbeskeden pr. tur (dato, åbningstid, verificering, priser). |
 | `lib/support/tools.ts` | Værktøjerne: `verify_customer`, `send_sms_code`, `verify_sms_code`, `register_business_lead` (designudkast, se `lib/erhverv/leads.ts`), `get_bookings`, `check_availability`, `propose_date_change`, `commit_date_change`, `escalate`, og OpenAI's indbyggede `web_search`. Kundeafgrænsningen håndhæves her. |
+| `lib/support/ops.ts` | De tekniske værktøjer fra selfiebox-platform (boksstatus, genstart, vække, sende billeder, opsætning til boksen, wifi-opsætning, mails og links igen, verificering af steder og gæster med kode). Hentes fra `SUPPORT_OPS_URL` og kaldes med chattens scope; se selfiebox-platform `docs/sif-vaerktoejer.md`. |
 | `lib/support/agent.ts` | Én tur: OpenAI Responses API med streaming og function calling, værktøjsløkke, logning. |
 | `lib/support/db.ts` | Collections `support_chats`, `support_messages` (TTL 90 dage) og `support_audit` (gemmes). Samme typer i selfiebox-platform `web/src/lib/types.ts`. |
 | `lib/support/session.ts` | Cookie med chat-id og hemmelig token. |
@@ -19,7 +20,7 @@ AI-supportchat på selfi.dk, der kan det samme som en erfaren supportmedarbejder
 | `app/api/support/chat/route.ts` | GET (hent beskeder), POST (ny besked, svar som SSE), DELETE (ny samtale). |
 | `app/api/support/human/route.ts` | "Tal med et menneske" uden om modellen. |
 | `components/support/ChatWidget.tsx` + `support.css` | Widget'en på alle sider (lagt ind i `app/layout.tsx`). |
-| `support/tests/cases.ts` | 29 testsamtaler, inkl. forsøg på at få andre kunders data og omgå reglerne. |
+| `support/tests/cases.ts` | 31 testsamtaler, inkl. forsøg på at få andre kunders data og omgå reglerne. |
 | `scripts/support-test.mts` | Kører testsamtalerne mod den rigtige model og skriver `support/tests/last-run.md`. |
 | `scripts/support-seed.mts` | Testbookinger i en lokal udviklingsdatabase. |
 
@@ -33,6 +34,7 @@ Admin-siden ligger i selfiebox-platform: `web/src/app/admin/(panel)/support/` (l
 - **Afgrænsning i backend:** alle opslag og ændringer går gennem `myRental()` i `tools.ts`, som kun accepterer bookingnumre fra `chat.customer.bookings`. Prompten kan ikke udvide det.
 - **Bindende bookinger:** Senest `rules.changeDays` (30) dage før første lejedag kan en booking flyttes gratis eller annulleres med `rules.refundPercent` (50 %) tilbage; derefter intet (lejebetingelserne punkt 8, `canChange` i `lib/udlejning/core.ts`).
 - **Ændringer kræver ja:** `propose_date_change` gemmer et forslag og afviser flytninger efter fristen; `commit_date_change` afvises, medmindre kunden har skrevet en ny besked efter forslaget (og inden en time). Alt logges i bookingens `history` og i `support_audit` med tid og aktør. Verificering og eskalering logges i `support_audit` med tid og aktør.
+- **Teknik:** boksstatus og handlinger kører i selfiebox-platform og afviser alt uden for chattens scope (`scopeOf` i `ops.ts`, bygget af `chat.customer`). Genstart og wifi-opsætning kræver et ja i en ny besked (samme mekanik som datoflyt). Et grant fra `check_verification` lægges på `chat.customer` (bookinger, `venues`, bevist `phone`).
 - **Penge, klager, jura, skade:** aldrig i chatten; `escalate`.
 - **Prompt injection:** reglerne står i `instructions`, kundens tekst er altid `user`-beskeder, værktøjs- og websvar mærkes som data. Modellen får `store: false`, så OpenAI gemmer intet; `safety_identifier` er en hash af chat-id'et.
 - **Rate limits:** 1.500 tegn pr. besked, 30 beskeder pr. 10 min. pr. chat, 20 nye chats pr. time pr. IP (pseudonymiseret).
@@ -50,6 +52,8 @@ LEADS_SMS_TO          +45… det nummer, der får nye leads (standard SUPPORT_SM
 LEADS_MAIL_TO         den adresse, der får nye leads på mail (standard company.email)
 RESEND_API_KEY        bekræftelsen til leadet (fra booking@mail.selfi.dk)
 ADMIN_URL             https://admin.selfi.dk (linket i SMS'en)
+SUPPORT_OPS_URL       https://admin.selfi.dk (Sifs tekniske værktøjer; uden den har Sif dem ikke)
+SUPPORT_OPS_TOKEN     samme værdi som SUPPORT_API_TOKEN i selfiebox-platform
 ```
 
 Uden Twilio-variablerne sendes ingen SMS, men chatten markeres stadig som "venter på menneske" i admin.

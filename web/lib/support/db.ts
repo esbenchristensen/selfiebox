@@ -34,7 +34,9 @@ export type SupportChatDoc = {
   // the customer asks about an order or something personal, and then only through verification.
   contact?: { name: string; email: string; phone: string; at: Date } | null;
   // via "booking": booking number matching the contact's e-mail or phone. via "sms": a code sent to the contact's phone.
-  customer: { email: string; name: string; bookings: string[]; verifiedAt: Date; via?: "booking" | "sms"; phone?: string } | null;
+  // via "email": a code sent to the contact's e-mail (selfiebox-platform, check_verification). phone is only set when
+  // proven by an SMS code. venues: places (erhverv) the customer is a contact or staff user for, from the platform.
+  customer: { email: string; name: string; bookings: string[]; verifiedAt: Date; via?: "booking" | "sms" | "email"; phone?: string; venues?: { id: string; name: string }[] } | null;
   smsCode?: { hash: string; to: string; sentAt: Date; expiresAt: Date; sends: number; attempts: number } | null;
   lead?: { id: string; at: Date } | null; // a business that asked for a design proposal in the chat
   verifyAttempts: number;
@@ -64,6 +66,7 @@ export type SupportAuditDoc = {
   chatId: string;
   actor: "ai" | "human" | "customer" | "system";
   actorName: string;
+  // The technical actions (box_restart, mail_resent, link_sms, …) are written by selfiebox-platform's support tools.
   action: "verify" | "verify_failed" | "verify_locked" | "sms_code_sent" | "lead" | "date_change_proposed" | "date_change" | "escalate" | "takeover" | "give_back" | "close";
   bookingId: string | null;
   before?: unknown;

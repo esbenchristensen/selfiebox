@@ -18,6 +18,7 @@ import { addMessage, audit, supportCollections, type SupportChatDoc } from "./db
 import { hoursText, isOpen, replyPromise } from "./hours";
 import { hostOf, normalizePhone, notifyLead, parseLead, saveLead } from "../erhverv/leads";
 import type { CodeSender, SmsSender } from "./sms";
+import { runOps, type OpsClient } from "./ops";
 
 export type ToolContext = {
   d: Db;
@@ -30,6 +31,8 @@ export type ToolContext = {
   later?: (job: () => Promise<void>) => void; // work that may finish after the reply (the lead's draft)
   adminUrl: string;
   setupUrl: string;
+  /** The technical tools in selfiebox-platform (lib/support/ops.ts); names of the ones offered this turn. */
+  ops?: { client: OpsClient; names: Set<string> };
 };
 
 const MAX_VERIFY = 5;
@@ -294,7 +297,7 @@ async function verifyCustomer(ctx: ToolContext, a: { bookingNo: string }): Promi
     .find({ "contact.email": { $regex: `^${escapeRe(email)}$`, $options: "i" }, status: { $nin: ["pending", "expired"] } })
     .sort({ from: 1 })
     .toArray();
-  const customer = { email, name: r!.contact.name, bookings: all.map((b) => b._id), verifiedAt: ctx.now, via: "booking" as const };
+  const customer = { email, name: r!.contact.name, bookings: all.map((b) => b._id), verifiedAt: ctx.now, via: "booking" as const, ...(chat.customer?.venues ? { venues: chat.customer.venues } : {}) };
   await setChat(ctx, { customer, smsCode: null });
   await audit(ctx.d, { chatId: chat._id, actor: "customer", actorName: customer.name, action: "verify", bookingId: id, note: `Verificeret med bookingnummer og oplyst e-mail/telefon. Bookinger: ${customer.bookings.join(", ")}` });
   // The details come along at once, so the model can answer without a second round trip.
@@ -348,7 +351,7 @@ async function verifySmsCode(ctx: ToolContext, a: { code: string }): Promise<Res
       .toArray()
   ).filter((r) => normalizePhone(r.contact.phone ?? "") === c.to);
   const name = all[0]?.contact.name ?? chat.contact?.name ?? "";
-  const customer = { email: all[0]?.contact.email.toLowerCase() ?? "", name, bookings: all.map((b) => b._id), verifiedAt: ctx.now, via: "sms" as const, phone: c.to };
+  const customer = { email: all[0]?.contact.email.toLowerCase() ?? "", name, bookings: all.map((b) => b._id), verifiedAt: ctx.now, via: "sms" as const, phone: c.to, ...(chat.customer?.venues ? { venues: chat.customer.venues } : {}) };
   await setChat(ctx, { customer, smsCode: null });
   await audit(ctx.d, { chatId: chat._id, actor: "customer", actorName: name || "kunde", action: "verify", bookingId: all[0]?._id ?? null, note: `Verificeret med SMS-kode til …${c.to.slice(-4)}. Bookinger: ${customer.bookings.join(", ") || "ingen"}` });
   if (!all.length) return { ok: true, name, bookings: [], message: "Telefonnummeret er bekræftet, men der er ingen bookinger lavet med det nummer. Spørg, om bookingen kan være lavet med et andet nummer eller en anden e-mail, og tilbyd bookingnummeret som alternativ." };
@@ -496,7 +499,7 @@ async function escalate(ctx: ToolContext, a: { reason: string; summary: string; 
   const chat = ctx.chat;
   const urgent = !!a.urgent;
   const promise = replyPromise(urgent, ctx.now);
-  const who = chat.customer ? `${chat.customer.name}, ${chat.customer.bookings.join("/")}` : `${chat.contact?.name ?? "ukendt"}, ikke verificeret`;
+  const who = chat.customer ? `${chat.customer.name}, ${[...chat.customer.bookings, ...(chat.customer.venues ?? []).map((v) => v.name)].join("/")}` : `${chat.contact?.name ?? "ukendt"}, ikke verificeret`;
   const phone = a.phone || chat.contact?.phone || null;
   const summary = String(a.summary ?? "").trim().slice(0, 200) || "Kunden vil have et menneske";
   const text = `Selfi-chat${urgent ? " AKUT" : ""}: ${summary} (${who}${phone ? `, tlf. ${phone}` : ""}) ${ctx.adminUrl}/admin/support/${chat._id}`;
@@ -539,6 +542,7 @@ export async function runTool(ctx: ToolContext, name: string, rawArgs: string): 
       case "escalate":
         return await escalate(ctx, args as { reason: string; summary: string; urgent: boolean; phone: string | null });
       default:
+        if (ctx.ops?.names.has(name)) return await runOps(ctx.d, ctx.chat, ctx.ops.client, name, args, ctx.now);
         return { ok: false, message: `Ukendt værktøj: ${name}` };
     }
   } catch (e) {
