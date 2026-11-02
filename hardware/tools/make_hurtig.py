@@ -138,9 +138,12 @@ COUPONS = [
      "En sidelås mellem front og bagramme (venstre side): klikker begge arme, og kan de vippes fri med en lille skruetrækker?"),
     ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
      "Bagrammens nederste tværbjælke med de 2 nederste skruetårne til skærmen. Skru en M2,5 × 3–4 mm i hvert."),
-    ("lyskanal", ["bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
-     "Lyskanalen nederst til venstre med ca. 10 cm strip-bane: RGB i bunden, så hvid 2, så hvid 1, og lysringens 45° krave. "
-     "Pres bagrammen på ringen: står ringens skulder fast, og bliver strippene liggende?"),
+    # v41 (Esben 2 Nov: "så vi kan teste lysring, front og LED-holder-modulet"): the front's piece joins the frame and the ring
+    ("lyskanal", ["front", "bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
+     "v41: hele lysstakken nederst til venstre: frontens stykke med lysringens 45° sæde, lysringens stykke og bagrammens "
+     "lyskanal (LED-holderen) med ca. 10 cm strip-bane: RGB i bunden, så hvid 2, så hvid 1. Læg ringen i fronten, strippene i "
+     "bagrammens baner, og pres bagrammen ned på fronten: ligger ringen fast i sædet uden at kunne rasle, er skyggefugen jævn, "
+     "står ringens skulder mod bagrammen, og bliver strippene liggende?"),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "v41: ét hjørne af hele stakken med én frontskrue (4,0 × 50 T20) skruet i bagfra. Hovedet skal nu ligge 2 mm under "
      "bagsiden (v40: plant). Lukker skal og front uden fuge, sidder bagrammen fast (knusribberne trykkes flade), og ligger "
@@ -166,7 +169,7 @@ COUPONS = [
 # the big screen/ring piece. Every piece is also its own 3MF.
 # v40 (Esben 2 Nov, after printing v38's set): plate 1 is only what v40 changed, the rest of the v37/v38 news is on plate 2
 # v41 (Esben 2 Nov, after printing v40's set): plate 1 is the snap and the deeper screw heads
-GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 GROUP_TEXT = {1: "det, v41 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
@@ -441,7 +444,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v41 har ændret (klikket mellem front og skal i siden og i bunden, låseskruens hul og et hjørne med en frontskrue). Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v41 har ændret (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",
