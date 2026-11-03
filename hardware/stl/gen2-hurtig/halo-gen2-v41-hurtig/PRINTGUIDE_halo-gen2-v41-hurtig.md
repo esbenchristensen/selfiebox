@@ -6,7 +6,7 @@ Lavet med `python3 hardware/tools/make_hurtig.py halo-gen2-v41`. Alle filer er B
 
 ## Sådan bruges sættet
 
-1. **Print plade 1 først** (`plade1-nyt`, ca. 4 t 35 min): alt det, v41 har ændret (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 (ca. 10 t 21 min) er resten af holderne og samlingerne, plade 3 (ca. 3 t 09 min) tilvalg og skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.
+1. **Print plade 1 først** (`plade1-nyt`, ca. 7 t 14 min): alt det, v40 og v41 har ændret (Wago-holderen, sikringen, mikrofonkernen og strømindgangen fra v40; klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 (ca. 7 t 42 min) er resten af holderne og samlingerne, plade 3 (ca. 3 t 10 min) tilvalg og skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.
 2. Saml stykkerne med de rigtige købedele, og gå listen "Hvad prøves" igennem.
 3. Passer det hele, så print de hele dele med kladdeindstillinger (eller de normale filer), og saml en hel boks.
 4. Passer noget ikke, så skriv det i en samlenote. Rettelsen laves i CAD og bliver en ny version; ret aldrig en hurtigfil.
@@ -17,14 +17,14 @@ Tiderne er skøn fra PrusaSlicer med H2C-lignende hastigheder og kan afvige 20�
 
 | Fil | Hvad | Filament | Stykker | Ca. tid | Ca. filament |
 |---|---|---|---|---|---|
-| `halo-gen2-v41-hurtig_plade1-nyt_sort.3mf` | det, v41 har ændret: print den først | PLA sort | hjoerne_skal, hjoerne_front, laas-reed, lyskanal_front, klik_skal, klik_front, klik-bund_skal, klik-bund_front | 3 t 20 min | 117 g |
-| `halo-gen2-v41-hurtig_plade1-nyt_hvid.3mf` | det, v41 har ændret: print den først | PLA hvid | lyskanal_bagramme, hjoerne_bagramme | 1 t 04 min | 41 g |
-| `halo-gen2-v41-hurtig_plade1-nyt_natur.3mf` | det, v41 har ændret: print den først | klar PETG | lyskanal_lysring, hjoerne_lysring | 11 min | 8 g |
-| `halo-gen2-v41-hurtig_plade2-resten_sort-1.3mf` | de andre holdere og samlinger | PLA sort | stroem, ledstyring, stroemindgang, mikrofonkerne, wago-loekker, sikring, daemper, stativ-hylde, hoejttaler | 6 t 18 min | 249 g |
-| `halo-gen2-v41-hurtig_plade2-resten_sort-2.3mf` | de andre holdere og samlinger | PLA sort | laas-hoejre, kabelloekker, laas_front, laasetunge, stoedsensor, laasetunge-hoejre, kamera_front, skinne_stativbeslag, vingerille, skinne_vaegbeslag | 2 t 39 min | 88 g |
+| `halo-gen2-v41-hurtig_plade1-nyt_sort.3mf` | det, v40 og v41 har ændret: print den først | PLA sort | stroemindgang, mikrofonkerne, wago-loekker, sikring, hjoerne_skal, hjoerne_front, laas-reed, lyskanal_front, klik_skal, klik_front, klik-bund_skal, klik-bund_front | 5 t 59 min | 221 g |
+| `halo-gen2-v41-hurtig_plade1-nyt_hvid.3mf` | det, v40 og v41 har ændret: print den først | PLA hvid | lyskanal_bagramme, hjoerne_bagramme | 1 t 04 min | 41 g |
+| `halo-gen2-v41-hurtig_plade1-nyt_natur.3mf` | det, v40 og v41 har ændret: print den først | klar PETG | lyskanal_lysring, hjoerne_lysring | 11 min | 8 g |
+| `halo-gen2-v41-hurtig_plade2-resten_sort-1.3mf` | de andre holdere og samlinger | PLA sort | stroem, ledstyring, daemper, stativ-hylde, hoejttaler, laas-hoejre, kabelloekker, laas_front, laasetunge, stoedsensor, laasetunge-hoejre, kamera_front, skinne_stativbeslag, vingerille | 5 t 59 min | 217 g |
+| `halo-gen2-v41-hurtig_plade2-resten_sort-2.3mf` | de andre holdere og samlinger | PLA sort | skinne_vaegbeslag | 19 min | 16 g |
 | `halo-gen2-v41-hurtig_plade2-resten_hvid.3mf` | de andre holdere og samlinger | PLA hvid | laas_bagramme, kamera_bagramme, skaermhuller | 1 t 24 min | 29 g |
 | `halo-gen2-v41-hurtig_plade3-ekstra_sort-1.3mf` | tilvalg og skærmens kant | PLA sort | skaerm-lysring, 4g | 2 t 05 min | 97 g |
-| `halo-gen2-v41-hurtig_plade3-ekstra_sort-2.3mf` | tilvalg og skærmens kant | PLA sort | mikrofonstrip | 1 t 04 min | 29 g |
+| `halo-gen2-v41-hurtig_plade3-ekstra_sort-2.3mf` | tilvalg og skærmens kant | PLA sort | mikrofonstrip | 1 t 05 min | 29 g |
 
 ## Prøvestykker
 
@@ -45,7 +45,7 @@ Hvert prøvestykke er en kasse skåret ud af en del, så det passer præcis til 
 | `halo-gen2-v41-hurtig_proeve-4g.3mf` | PLA sort | 48 × 81 × 18 | 22 min | 4G-modemet i sin bakke (tilvalg). |
 | `halo-gen2-v41-hurtig_proeve-mikrofonkerne.3mf` | PLA sort | 86 × 68 × 23 | 31 min | v40: mikrofonkernen (XVF3800) i holderen med 1 mm højere sider og en fjedrende tand midt på hver kort ende. Tryk kortet ned over pindene, til begge tænder klikker over printet: sidder det fast, når du vender stykket og banker det? Kan USB-C, AUX og fladkablet stadig sættes i? |
 | `halo-gen2-v41-hurtig_proeve-stoedsensor.3mf` | PLA sort | 34 × 41 × 15 | 12 min | v36: stødsensoren (LIS3DH) i sin bakke til højre for 5 V-forsyningen. |
-| `halo-gen2-v41-hurtig_proeve-mikrofonstrip.3mf` | PLA sort | 126 × 13 × 64 | 1 t 04 min | Mikrofonkortet i lommen i bunden: pindene gennem hullerne og kortet fladt på de 4 ringe (tilvalg). |
+| `halo-gen2-v41-hurtig_proeve-mikrofonstrip.3mf` | PLA sort | 126 × 13 × 64 | 1 t 05 min | Mikrofonkortet i lommen i bunden: pindene gennem hullerne og kortet fladt på de 4 ringe (tilvalg). |
 | `halo-gen2-v41-hurtig_proeve-vingerille.3mf` | PLA sort | 22 × 36 × 14 | 8 min | v36: rillen bag på skallen med lommen under. Prøv med den hele `tema-vinge-venstre-eksempel`: går tappen i rillen, og falder tåen ned i lommen, så vingen ikke kan vippe ud forneden? |
 | `halo-gen2-v41-hurtig_proeve-klik_skal.3mf` | PLA sort | 20 × 39 × 64 | 23 min | v41: frontens nederste venstre klikkant (95 mm oppe) og skallens rille. Kanten sidder 0,3 mm længere inde på tungen end i v40, så den kan nå ned i rillen. Tryk de to stykker sammen: ligger front og skal helt sammen uden fuge, når det klikker? Træk dem fra hinanden igen med hånden. Stykket er kort, så det er stivere end den hele væg; bedøm kraften på det hele print. |
 | `halo-gen2-v41-hurtig_proeve-klik_front.3mf` | PLA sort | 10 × 39 × 28 | 9 min |  |

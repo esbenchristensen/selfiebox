@@ -169,9 +169,11 @@ COUPONS = [
 # the big screen/ring piece. Every piece is also its own 3MF.
 # v40 (Esben 2 Nov, after printing v38's set): plate 1 is only what v40 changed, the rest of the v37/v38 news is on plate 2
 # v41 (Esben 2 Nov, after printing v40's set): plate 1 is the snap and the deeper screw heads
-GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v41b (Esben 3 Nov: v40 is not printed yet): v40's 4 holders are on plate 1 too
+GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "lyskanal": 1,
+         "stroemindgang": 1, "wago-loekker": 1, "sikring": 1, "mikrofonkerne": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
-GROUP_TEXT = {1: "det, v41 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "det, v40 og v41 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
@@ -444,7 +446,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v41 har ændret (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v40 og v41 har ændret (Wago-holderen, sikringen, mikrofonkernen og strømindgangen fra v40; klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",
