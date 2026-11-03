@@ -58,7 +58,9 @@ const g = globalThis as unknown as { __rentalMongo?: Promise<MongoClient> };
 export async function db(): Promise<Db> {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error("MONGODB_URI mangler");
-  g.__rentalMongo ??= new MongoClient(uri, { appName: "selfi-web-udlejning", maxPoolSize: 5 }).connect();
+  // MONGODB_CA: the Mac mini MongoDB's CA (PEM), used when Vercel connects through ngrok with tls=true. Not secret.
+  const ca = process.env.MONGODB_CA;
+  g.__rentalMongo ??= new MongoClient(uri, { appName: "selfi-web-udlejning", maxPoolSize: 5, ...(ca ? { ca } : {}) }).connect();
   return (await g.__rentalMongo).db(process.env.MONGODB_DB || "selfiebox");
 }
 
