@@ -61,7 +61,7 @@ HSET = {
     # front: face down; keep the release's 0.15 elephant foot so the 0.15 shadow gap at the light ring stays open
     "front": {**HURTIG, "elefant_foot_compensation": "0.15"},
     "bagramme": HURTIG,
-    # light ring: the release's settings (solid, concentric, clear PETG) at 0.2 instead of 0.16. Its 45 deg collar steps
+    # light ring: the release's settings (solid, clear PETG; v42 Bambu's own patterns and aligned seam) at 0.2 instead of 0.16. Its 45 deg collar steps
     # 0.2 per layer, still under make_3mf.OVERHANG_MAX, and the ring is thin, so draft walls and infill would save nothing
     "lysring": {**SETTINGS["lysring"], "layer_height": "0.2"},
     "blaeserhegn": {**HURTIG, **BRIM},
@@ -171,12 +171,14 @@ COUPONS = [
 # v41 (Esben 2 Nov, after printing v40's set): plate 1 is the snap and the deeper screw heads
 GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
-GROUP_TEXT = {1: "det, v41 har ændret: print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+# v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
+# still v41's, and its natural-colour plate is the ring test
+GROUP_TEXT = {1: "v42: lysringens søm, v41: klikket og skruerne; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
 PROFILE_LYSRING = ["--layer-height", "0.2", "--first-layer-height", "0.2", "--perimeters", "3",
-                   "--fill-density", "100%", "--fill-pattern", "concentric"]
+                   "--fill-density", "100%", "--fill-pattern", "rectilinear"]
 SUPPORT = ["--support-material", "--support-material-style", "organic", "--support-material-buildplate-only"]
 # H2C-like speeds and Bambu PLA Basic flow, only for the time estimate
 SLICER_INI = """bed_shape = -160x-160,160x-160,160x160,-160x160
@@ -444,7 +446,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): alt det, v41 har ændret (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue og lysstakken: front, lysring og bagrammens LED-kanal). Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): lysstakken (front, lysring og bagrammens LED-kanal; v42: lysringens stykker printes uden den streg på tværs, som søm og koncentriske baner gav i v41) og det, v41 ændrede (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue). Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",
