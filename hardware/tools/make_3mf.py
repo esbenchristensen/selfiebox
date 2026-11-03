@@ -3,7 +3,7 @@
 
 v26 print settings (Esben 27 Oct, second round: "the best possible settings for a clean result without faults, that looks moulded but
 is durable"): every part now has its own 3MF with the object's settings already set (layer height, walls, infill, the
-first-layer pattern of the visible face, scarf seam, support, brim), so a print looks the same from box to box and does
+first-layer pattern of the visible face, seam, support, brim), so a print looks the same from box to box and does
 not depend on what was last chosen in Bambu Studio. Only object-level settings are written (Bambu Studio's
 PrintObjectConfig / PrintRegionConfig keys, as <metadata> on the object in Metadata/model_settings.config, which the
 loader passes to the object's config). Since the third round the files also name the printer, process and filament presets and the
@@ -15,9 +15,10 @@ plate (see below); temperatures and the rest stay Bambu's own presets.
   <version>_lysring.3mf, _bagramme.3mf, _vaegbeslag.3mf, _blaeserhegn.3mf (v27; v26 had _smaadele.3mf with the camera
   sleeve and the fan guard on one plate), _tema-*.3mf   one object each, settings inside
 
-Seams: Bambu's "back" seam goes to the part's rear (+y on the plate). Every part is placed so that +y is the box's
-underside (the front and the ring already lie that way; the shell and the frame are turned 180 degrees on the plate),
-so what is left of a seam ends up under the box, and it is a scarf seam on the outer contour.
+Seams: v26-v35 used Bambu's "back" seam (+y on the plate) with a scarf seam, and every part was placed so that +y is the
+box's underside (the shell and the frame are still turned 180 degrees on the plate). That put every layer's start on one
+straight line across the part (v36 shell and front, v42 light ring), so since v42 every part has Bambu's default
+"aligned" seam with no scarf (SEAM_ALIGNED), as v18, which was sliced from plain STLs, had.
 
 Bambu projects (27 Oct, third round; Esben: "vi kan ikke loade de configs der er i 3mf filerne"): until then the files had no project
 config, so Bambu Studio 2.8.2 said "The 3mf file has invalid config, load geometry data only" and reset every object's
@@ -132,11 +133,12 @@ def _mesh_xml(oid, mesh, name):
 # src/libslic3r/PrintConfig.cpp, Oct 2026). Everything else comes from the chosen printer/filament/process profile.
 SOLID_FACE = {   # the visible face is the first layer (printed face down): one direction, one outline, no wall rings
     "_face_down": True, "bottom_surface_pattern": "monotonicline", "only_one_wall_first_layer": "1"}
-SEAM = {"seam_position": "back", "seam_slope_type": "external"}   # scarf seam on the outer contour, at the box's underside
 # v36 (Esben 31 Oct, samlenoter 17: an ugly seam line across the underside of the shell and the front, from the power hole to the
 # tip; v18, sliced from plain STLs with Bambu's defaults, had none). "back" on the flat underside put every layer's start on one
 # straight line across it. The shell and the front now use Bambu's default: "aligned" (the seam goes into a corner or edge of each
 # layer), no scarf.
+# v42 (Esben 3 Nov: the clear light ring now shows the same line, "den laver samlinger"; it was not there in the early versions):
+# the ring, the theme parts and the stand bracket still had "back" + scarf, so they get "aligned" too. No part uses "back" now.
 SEAM_ALIGNED = {"seam_position": "aligned", "seam_slope_type": "none"}
 NO_SUPPORT = {"enable_support": "0"}
 # v33 (Esben 27 Oct: "ikke bruge tid på at få indvendige ting og indersider flotte"): Bambu's own 2 walls and 15 % infill.
@@ -148,21 +150,22 @@ INSIDE = {"wall_loops": "2", "top_shell_layers": "4", "top_shell_thickness": "0.
           "sparse_infill_density": "15%", "sparse_infill_pattern": "crosshatch", "infill_combination": "0"}
 SETTINGS = {
     # v33: only what is seen from outside is printed for looks: 0.2 mm layers on the shell, front and theme parts (they
-    # match), the visible face (first layer) slow and in one direction, scarf seam and avoid crossing walls on the outside.
+    # match), the visible face (first layer) slow and in one direction, the aligned seam and avoid crossing walls on the outside.
     # Parts inside the box or behind it ("_visible": False) get 0.28 mm and Bambu's own seam and first layer (v34: and
     # avoid crossing walls like the rest).
     # front: 0.2 so the logo is exactly the first 4 layers; 0.15 elephant foot so the 0.15 shadow gap stays open;
     # 4 bottom layers under the visible face, its back is inside the box
     "front": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "elefant_foot_compensation": "0.15",
               "brim_type": "no_brim", **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
-    # light ring: solid, and every line runs round the ring (concentric), so the light through it is even, without stripes.
+    # light ring: solid. v26-v41 ran every line round the ring (concentric) for an even light, but each concentric ring
+    # starts and stops at the same place as the one beside it, so with the "back" seam the starts lay in one line across the
+    # clear ring, through the face and up the edge (Esben 3 Nov, photo). v42: Bambu's own patterns (monotonic face, as v18,
+    # which had no such line) and the "aligned" seam.
     # v35 printed the flange on support (a solid PLA interface on slot 2): it came out jagged, ~5 mm wider and with a rough
     # face, and would not go in (Esben 31 Oct). v36 has v18's section again, where nothing is flatter than 45 deg, so it
     # prints with no support at all, like v18; lysring_3mf checks that every layer stands on the one below.
     "lysring": {"_face_down": True, "layer_height": "0.16", "wall_loops": "3", "sparse_infill_density": "100%",
-                "bottom_surface_pattern": "concentric", "top_surface_pattern": "concentric",
-                "internal_solid_infill_pattern": "concentric", "elefant_foot_compensation": "0.15", "brim_type": "no_brim",
-                **SEAM, **NO_SUPPORT},
+                "elefant_foot_compensation": "0.15", "brim_type": "no_brim", **SEAM_ALIGNED, **NO_SUPPORT},
     # frame: inside the box; the reflector's steps at 0.28 are behind the 1 mm diffuser
     "bagramme": {"_visible": False, "layer_height": "0.28", **INSIDE, **NO_SUPPORT},
     # shell: the sides are seen, so 0.2 like the front; its back lies on the plate (to the wall, not seen), so Bambu's
@@ -180,7 +183,7 @@ SETTINGS = {
                     **NO_SUPPORT},
     # theme parts: face down too (their back lies against the box); tree support (auto) under the straps
     "tema": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "enable_support": "1",
-             "support_type": "tree(auto)", **SOLID_FACE, **SEAM},
+             "support_type": "tree(auto)", **SOLID_FACE, **SEAM_ALIGNED},
     # printer hood and exit module (selfi-printer-v5): stood on an end, logo and text on the vertical front. Its panels
     # are 3.2 mm, so they are solid with 4 walls as with 8 (v32 review: 2 % faster at most, not changed)
     "printerkappe": {"layer_height": "0.2", "wall_loops": "8", "sparse_infill_density": "15%", **NO_SUPPORT},
@@ -188,7 +191,7 @@ SETTINGS = {
     # (3 sagged over the infill, see INSIDE)
     "stativbeslag": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "4", "top_shell_thickness": "0.8",
                      "bottom_shell_layers": "4", "sparse_infill_density": "30%", "sparse_infill_pattern": "gyroid",
-                     **SOLID_FACE, **SEAM, **NO_SUPPORT},
+                     **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
 }
 TURN = np.diag([-1.0, -1.0, 1.0])   # 180 degrees on the plate: the box's underside to +y (Bambu's "back" seam)
 
