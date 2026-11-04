@@ -114,6 +114,29 @@ CLEARANCES = [
     ("c_mics", "x_camera", 1.0, "kb1: the camera board's lower edge 1.25 in front of the mic board"),
     ("c_mics", "x_frame3", 1.0, "kb1: the lower camera tubes cut flat 1.0 over the mic board (MIC_TUBE_Z)"),
 ]
+# slim1 (cad/gen2_slim.scad, 57 deep): the Pi on its own carrier, its 6 screws, and what the thin box changes in the list above
+if SCAD.stem == "gen2_slim":
+    PRINTED.append("x_piholder")
+    BOUGHT.append("s_pi")
+    CONTACT.update({
+        ("x_piholder", "x_dsp_back"): 1e9,    # the carrier's lips on the right stand-offs' tops, the left stand-offs through its holes
+        ("x_piholder", "c_pi_board"): 1e9,    # the Pi on the carrier's 4 bosses
+        ("x_piholder", "s_pi"): 1e9, ("c_pi_board", "s_pi"): 1e9, ("x_dsp_back", "s_pi"): 1e9,   # the screws through the Pi / lips
+        ("c_cooler", "s_pi"): 1e9,            # the heads beside the cooler (drawn as plain cylinders)
+    })
+    CLEARANCES[:] = [c for c in CLEARANCES if (c[0], c[1]) != ("c_wagos", "x_frame3")]
+    CLEARANCES += [
+        ("c_wagos", "x_frame3", 3.0, "slim1: closed Wago levers 4.1 from the frame's top band (the levers open only with the box opened up)"),
+        ("x_piholder", "c_pi_board", 0.0, "slim1: the Pi on its carrier"),
+        ("x_piholder", "x_frame3", 0.5, "slim1: the carrier clear of the frame (its snap arms at x -82.35)"),
+        ("c_pi_board", "x_frame3", 0.5, "slim1: the Pi's left edge clear of the frame's left inner snap arms"),
+        ("x_fanguard", "c_mosfet", 2.0, "slim1: the dimmer over the fan guard's solid web"),
+        ("c_psu5", "x_frame3", 1.0, "slim1: the 5 V supply between the cross bars"),
+        ("c_wled", "x_frame3", 1.0, "slim1: the Gledopto over the right snap arms' pads"),
+        ("c_mcore", "x_frame3", 1.0, "slim1: the mic board over the lower bar"),
+        ("c_speaker", "x_frame3", 1.0, "slim1: the speaker over the lower bar"),
+        ("c_4g", "x_frame3", 1.0, "slim1: the 4G HAT over the upper bar"),
+    ]
 
 
 def render(view, out):

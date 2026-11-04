@@ -25,7 +25,7 @@ import trimesh
 HW = Path(__file__).resolve().parents[1]
 # GEN2_SCAD=<file> checks/builds a variant instead (kb1: cad/gen2_kamera_bund.scad, camera at the bottom)
 SCAD = Path(os.environ["GEN2_SCAD"]).resolve() if os.environ.get("GEN2_SCAD") else HW / "cad" / "gen2_concept.scad"
-D = 70
+D = float(os.environ.get("GEN2_D", 70))   # slim1: GEN2_D=57
 
 # file suffix -> (assembled view, print orientation as in the p_* views: rotate([+-90, 0, 0]))
 UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], float), np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [0, 0, 0, 1]], float)
@@ -47,6 +47,9 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          # turned, along the plate's 320 mm
          "tema-dominance-top": ("x_dom_top", TURN_Z @ UP), "tema-dominance-stolpe-venstre": ("x_dom_vinge_v", UP),
          "tema-dominance-stolpe-hoejre": ("x_dom_vinge_h", UP)}
+# slim1 (cad/gen2_slim.scad): the Pi's own carrier, its front face on the plate
+if SCAD.stem == "gen2_slim":
+    PRINT["pi-holder"] = ("x_piholder", UP)
 # inlays with their part's orientation and offset: name -> (view, part)
 LOGOS = {"logo-hvid": ("x_logo_w", "front"), "logo-groen": ("x_logo_g", "front"),
          "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag"),
@@ -99,7 +102,7 @@ def main():
         m.export(out / f"{ver}_{name}.stl")
     subprocess.run([sys.executable, str(HW / "tools" / "make_3mf.py"), str(out)], check=True)
     if len(sys.argv) > 2:
-        subprocess.run([sys.executable, str(HW / "render" / "gen2_viewer.py"), str(src), str(out), ver, str(D)], check=True)
+        subprocess.run([sys.executable, str(HW / "render" / "gen2_viewer.py"), str(src), str(out), ver, f"{D:g}"], check=True)
     subprocess.run([sys.executable, str(HW / "tools" / "check_bodies.py"), str(out)], check=True)
 
 

@@ -175,6 +175,51 @@ GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # still v41's, and its natural-colour plate is the ring test
 GROUP_TEXT = {1: "v42: lysringens søm, v41: klikket og skruerne; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
+# slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
+# vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
+# turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
+PLATE1_TEXT = ("lysstakken (front, lysring og bagrammens LED-kanal; v42: lysringens stykker printes uden den streg på tværs, som søm "
+               "og koncentriske baner gav i v41) og det, v41 ændrede (klikket mellem front og skal i siden og i bunden, låseskruens "
+               "hul, et hjørne med en frontskrue)")
+CAD_FILE = "hardware/cad/gen2_concept.scad"
+
+
+def slim_set():
+    global COUPONS, GROUP, GROUP_TEXT, PLATE1_TEXT, CAD_FILE
+    PARTS["pi-holder"] = (None, "sort", "hurtig")
+    new = {
+        "stroemindgang": (((-5, -154), (40, -50)), "slim1: strømindgangen er flyttet til x 17,65, mellem mikrofonkernen og "
+                          "højttaleren; bøjlen og hullet er som v40. Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: "
+                          "går begge ind uden at tvinge, og sidder hunstikket uden slør?"),
+        "sikring": (None, "slim1: sikringsholderen ligger nu på siden, bunden ind mod venstre væg (v42: stående på højre væg), med "
+                    "de samme knusribber og 5,6 mm slidser. Trykkes den ind og sidder fast? Kan låget åbnes, og kommer ledningerne ud i begge ender?"),
+        "daemper": (None, "slim1: dæmperens printkort (DFR0457) ligger fladt på bagvæggen øverst til venstre (v42: på venstre væg), på de "
+                    "samme 4 puder med 2 pinde og en tand pr. side. Klikker kortet på plads, og kan skrueklemmerne og Gravity-stikket nås?"),
+        "4g": (None, "slim1: 4G-modemet ligger på tværs over 5 V-forsyningen (tilvalg). Klikker det i bakken?"),
+        "stoedsensor": (None, "slim1: stødsensoren (LIS3DH) i en bakke på højre sidevæg. Klikker den i, og kan stikket sættes på?"),
+        "kabelloekker": (((-12, -90), (8, -65)), "slim1: velcroløkken over mikrofonkernen ved strømindgangen. Går en 10 mm velcrostrop igennem?"),
+        "laas": (((-116, -36), (-64, 6)), "slim1: venstre sidelås mellem front og bagramme sidder nu 138 mm oppe (v42: 110), så Pi'ens "
+                 "USB-porte og GPIO-stikkets ledninger går fri. Klikker begge arme, og kan de vippes fri med en lille skruetrækker?"),
+        "hjoerne": (CORNER, "slim1: ét hjørne af hele stakken med én frontskrue, nu 4,0 × 40 T20 (v42: × 50). Hovedet skal ligge 2 mm "
+                    "under bagsiden. Lukker skal og front uden fuge, sidder bagrammen fast, og ligger ringen stille?"),
+    }
+    COUPONS = [(n, parts, new[n][0] if n in new and new[n][0] is not None else where, margin, height, new[n][1] if n in new else what)
+               for n, parts, where, margin, height, what in COUPONS]
+    COUPONS.insert(0, ("udluftning", ["skal", "vaegbeslag", "stativbeslag"], ((28, 78), (90, 96)), 0, "fuld",
+                       "slim1: den nye udluftning bagpå: en rende i bagsiden, der falder ud mod enderne, med slidser, der stiger 45° "
+                       "indad, og kanaler i vægbeslaget og stativbeslaget ud for dem. Læg skal-stykket på hvert beslag-stykke: står "
+                       "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
+                       "uden at komme ind gennem slidserne?"))
+    GROUP = {"udluftning": 1, "stroemindgang": 1, "sikring": 1, "daemper": 1, "4g": 1, "stoedsensor": 1, "laas": 1, "hjoerne": 1,
+             "mikrofonstrip": 3, "skaerm-lysring": 3}
+    GROUP_TEXT = {1: "slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
+                  3: "tilvalg og skærmens kant"}
+    PLATE1_TEXT = ("udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
+                   "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "
+                   "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på")
+    CAD_FILE = "hardware/cad/gen2_slim.scad"
+
+
 PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeters", "2",
            "--top-solid-layers", "3", "--bottom-solid-layers", "3", "--fill-density", "10%", "--fill-pattern", "grid"]
 PROFILE_LYSRING = ["--layer-height", "0.2", "--first-layer-height", "0.2", "--perimeters", "3",
@@ -274,7 +319,8 @@ def part_modifiers(src, ver, part, stl):
     """(name, [x0, x1, y0, y1, z0, z1] in the part's print coordinates, subtype, settings) for the release's modifier
     volumes that matter for the fit (see SOLID_SHELF)."""
     if part == "skal":
-        return [(n, b, "support_enforcer", {}) for n, b in SKAL_ENFORCE] + [(n, b, "support_blocker", {}) for n, b in SKAL_BLOCK]
+        enf = [e for e in SKAL_ENFORCE if not ("slim" in ver and e[0] == "support: dæmperbakkens forvæg")]   # slim1: no dimmer tray
+        return [(n, b, "support_enforcer", {}) for n, b in enf] + [(n, b, "support_blocker", {}) for n, b in SKAL_BLOCK]
     if part == "stativbeslag":
         lo, hi = stl.bounds
         b = np.clip(trimesh.load(src / f"{ver}_stativbeslag_forstaerkning.stl").bounds, lo, hi)
@@ -347,6 +393,8 @@ def pack(items):
 
 def main():
     ver = sys.argv[1] if len(sys.argv) > 1 else newest()
+    if "slim" in ver:
+        slim_set()
     src, out = GEN2 / ver, OUT_ROOT / f"{ver}-hurtig"
     out.mkdir(parents=True, exist_ok=True)
     for f in [*out.glob("*.stl"), *out.glob("*.3mf"), *out.glob("*.zip")]:
@@ -446,7 +494,7 @@ def write_guide(ver, out, rows, plates):
          f"Lavet med `python3 hardware/tools/make_hurtig.py {ver}`. Alle filer er Bambu Studio-projekter (3MF) til H2C med "
          "indstillingerne indbygget: åbn, tjek at spolen passer, og tryk Print. STL-filerne ligger ved siden af.", "",
          "## Sådan bruges sættet", "",
-         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): lysstakken (front, lysring og bagrammens LED-kanal; v42: lysringens stykker printes uden den streg på tværs, som søm og koncentriske baner gav i v41) og det, v41 ændrede (klikket mellem front og skal i siden og i bunden, låseskruens hul, et hjørne med en frontskrue). Plade 2 "
+         f"1. **Print plade 1 først** (`plade1-nyt`, ca. {fmt_t(plate_total[1])}): {PLATE1_TEXT}. Plade 2 "
          f"(ca. {fmt_t(plate_total[2])}) er resten af holderne og samlingerne, plade 3 (ca. {fmt_t(plate_total[3])}) tilvalg og "
          "skærmens kant. Hver plade har stykker i én farve, så det er ét print pr. plade, og de kan køre på flere printere på én gang. "
          "Hvert stykke ligger også som sin egen 3MF, hvis I kun vil prøve ét sted.",
@@ -491,7 +539,7 @@ def write_guide(ver, out, rows, plates):
           "pasform på 0,2 mm eller mindre i højden (fx klikket og skyggefugen) bedømmes til sidst på et normalt print.",
           "- Et prøvestykke er stivere end den hele del. Bedøm klikkraft og hvor meget en væg giver efter på det hele print.",
           "- Skruer kan skrues i til prøve, men ikke ind og ud mange gange.",
-          "- Ret aldrig en fejl i en hurtigfil. Ret CAD (`hardware/cad/gen2_concept.scad`), lav en ny version og kør værktøjet igen."]
+          f"- Ret aldrig en fejl i en hurtigfil. Ret CAD (`{CAD_FILE}`), lav en ny version og kør værktøjet igen."]
     (out / f"PRINTGUIDE_{pre}.md").write_text("\n".join(L) + "\n")
 
 

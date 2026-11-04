@@ -35,6 +35,8 @@ PARTS = [
     ("ledrgb",        "x_strip_rgb",   "RGB-strip 5 mm",                  "#a855f7", "Elektronik", [0, 0, 60]),
     ("klikstik",      "c_clips",       "3 loddesteder med krympeflex (ét pr. strip, v36)", "#f5f5f4", "Elektronik", [0, 0, 60]),
     ("pi",            "c_pi_board",    "Raspberry Pi 5",                  "#2e9e5b", "Elektronik", [0, 0, 0]),
+    # slim1: the Pi on its own carrier, screwed to the display's two right stand-offs
+    ("piholder",      "x_piholder",    "Pi-holder (sort): Pi'en skrues på den, den skrues på skærmens 2 højre afstandsstykker", "#2b2b30", "Kabinet", [0, 0, 20]),
     ("koeler",        "c_cooler",      "Active Cooler (blæser bagud)",    "#3b3e46", "Elektronik", [0, 0, 0]),
     ("blaeser",       "c_fan",         "Blæser i Active Cooler",          "#9ca3af", "Elektronik", [0, 0, 0]),
     ("blaeserhegn",   "x_fanguard",    "Blæserhegn (sort ASA): klikkes på bagrammens øverste tværstykke, rist 3 mm over blæseren", "#1d1d20", "Kabinet", [0, 0, -40]),
@@ -53,6 +55,7 @@ PARTS = [
     ("wago",          "c_wagos",       "6 Wago-klemmer i rækken på vægbeslagets klods (W6 W5 W3 W4 W2 W1)", "#ff922b", "Elektronik", [0, 0, -90]),
     ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
+    ("skruer_pi",     "s_pi",          "Skruer, Pi-holder: 4 × M2,5 × 6 (Pi'en på holderen) + skærmsættets 2 (holderen på afstandsstykkerne)", "#c3c7cf", "Skruer", [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
     # v28: the 6 wall screws (4.0 x 50 T20, the 2 new ones in the arms out to the locks)
     ("skruer_vaeg",   "s_wall",        "6 vægskruer i vægbeslaget (4,0 × 50 T20 + dybel), 2 af dem i armene ud mod låsene", "#c3c7cf", "Skruer", [0, 0, -260]),
@@ -79,7 +82,7 @@ PARTS = [
 ]
 DOM_VIEWS = {"x_dom_top", "x_dom_top_hvid", "x_dom_top_orange", "x_dom_vinge_v", "x_dom_vinge_v_hvid", "x_dom_vinge_v_orange",
              "x_dom_vinge_h", "x_dom_vinge_h_hvid", "x_dom_vinge_h_orange"}
-OPTIONAL = {"c_wagos", "c_fuse", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+OPTIONAL = {"c_wagos", "c_fuse", "x_piholder", "s_pi", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
             "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # left out if the STL dir has none (older versions)
 HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # off until ticked
 
@@ -231,7 +234,9 @@ if HARNESS:
     RIBBONS[0] = ("kamera", "Kamerakabel (fladt, 16 mm)", 16, 0.3, [((9.6, 11.15, 290), (0, 0, 1)), ((11.5, 11.65, 290), (0, 0, 1)),
         ((12.6, 13.95, 290), (0, 0, 1)), ((12.6, 34, 290), (0, 0, 1)), ((12.6, 40, 283), (0.5, 0, 0.87)), ((11, 42, 266), (1, 0, 0.2)),
         ((8, 42, 220), (1, 0, 0)), ((5, 37.9, 190), (1, 0, 0))])   # v29: in front of the Wago row (y 48), not through it
-    if hasattr(HZ, "front_dir"):   # kb1: both flat cables belong to the front unit, which is turned over
+    if hasattr(HZ, "RIBBONS"):     # slim1: the variant routes both flat cables itself (the Pi has moved)
+        RIBBONS = list(HZ.RIBBONS)
+    elif hasattr(HZ, "front_dir"):   # kb1: both flat cables belong to the front unit, which is turned over
         RIBBONS = [(o, lb, w, th, [(HZ.front(p), HZ.front_dir(wd)) for p, wd in secs]) for o, lb, w, th, secs in RIBBONS]
 for i, (owner, label, d, pts) in enumerate(CABLES):
     m = tube([(x, y if HARNESS else back_y(y), z) for x, y, z in pts], d)
