@@ -66,6 +66,10 @@ async function run(req: Request) {
     }
   }
 
+  // Bokse, der ikke er kommet hjem: 3 dage efter returfristen og stadig ude. Én alarm pr. morgen, til den er modtaget.
+  const late = bookings.filter((b) => OUT.includes(b.status) && addDays(returnBy(b.to), 3) <= today);
+  if (late.length) await alert(`${late.length === 1 ? "1 boks er" : `${late.length} bokse er`} ikke kommet retur: ${late.map((b) => `${b._id} (retur senest ${returnBy(b.to)})`).join(", ")}`);
+
   // Varsel 14 dage før billederne slettes. Gælder også bookinger, der er afsluttet for længst.
   const old = await d
     .collection<RentalDoc>("rentals")

@@ -102,6 +102,14 @@ async function handle(event: Event) {
       }
       break;
     }
+    case "charge.dispute.created": {
+      // Kunden har bestridt betalingen hos sin bank. Der er en frist for at svare i Stripe, så det skal ses med det samme.
+      const dp = event.data.object as { amount?: number; reason?: string; payment_intent?: string | null };
+      const b = dp.payment_intent ? await rentals.findOne({ "stripe.paymentIntent": dp.payment_intent }) : null;
+      if (b) await rentals.updateOne({ _id: b._id }, { $push: { history: log(b.status, `Indsigelse fra kunden: ${dp.reason ?? "ukendt grund"}`) }, $set: { updatedAt: new Date() } });
+      await alert(`Indsigelse i Stripe på ${((dp.amount ?? 0) / 100).toLocaleString("da-DK")} kr.${b ? ` (booking ${b._id})` : ""}: ${dp.reason ?? "ukendt grund"}. Svar i Stripe inden fristen.`);
+      break;
+    }
     case "charge.refunded": {
       const c = event.data.object as unknown as Charge;
       if (!c.payment_intent) break;
