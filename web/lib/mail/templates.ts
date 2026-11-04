@@ -412,7 +412,7 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
       break;
     case "ikke_gennemfoert":
       intro();
-      button(`${c.site}/`);
+      button(`${c.site}/#book`);
       break;
     case "fri_besked":
       intro();
