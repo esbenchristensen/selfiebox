@@ -141,17 +141,21 @@ COUPONS = [
      "Bagrammens nederste tværbjælke med de 2 nederste skruetårne til skærmen. Skru en M2,5 × 3–4 mm i hvert."),
     # v41 (Esben 2 Nov: "så vi kan teste lysring, front og LED-holder-modulet"): the front's piece joins the frame and the ring
     ("lyskanal", ["front", "bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
-     "v45: hele lysstakken nederst til venstre med hjørnet: bagrammens lyskanal har nu en tynd bro midt i hjørnet, 0,25 mm over "
-     "strippenes forside. Læg strippene i banerne (RGB i bunden, så hvid 2, så hvid 1) og træk hver strip ind under broen, så den "
-     "følger hjørnet tæt ind mod væggen: glider den ind uden at tage fat, og ligger den helt inde mod væggen hele vejen rundt? "
-     "Træk den ud igen: går det uden at skade strippen? Pres så bagrammen ned på fronten med ringen i sædet: ligger ringen fast, "
-     "og kan broen ses forfra gennem ringen, når der er lys på?"),
-    # v45 (Esben 4 Nov: the strips' clip connectors pushed the front off): the clip bay at the left end of the top run
+     "v46: hele lysstakken nederst til venstre med hjørnet, nu uden skråning: hvid 1 på ydervæggen med RGB bag, hvid 2 på "
+     "indervæggen og hvid 3 fladt på bunden under to læber. Læg hvid 3 først og bøj den fladt rundt om hjørnet under læberne: "
+     "kan den bøje i sit eget plan uden at slå bule eller løfte sig fra bunden? Læg så RGB, hvid 1 og hvid 2 i og træk dem ind "
+     "under broen i hjørnet: ligger de helt inde mod væggene hele vejen rundt, og glider de ud igen uden skade? Pres bagrammen ned "
+     "på fronten med ringen i sædet: ligger ringen fast, og kan broen ses forfra, når der er lys på?"),
+    # v45 (Esben 4 Nov: the strips' clip connectors pushed the front off): the clip bay at the left end of the top run;
+    # v46: both bays, as each side now takes two clips
     ("klipslomme", ["front", "bagramme", "lysring"], ((-50, 116), (-8, 154)), 0, "fuld",
-     "v45: lommen til strippenes klipstik ved kameraet (venstre ende af den øverste bane, hvor hvid 1 og RGB føres ind). Fra "
-     "kameraet og 21,5 mm ud er trin, skillevægge og knaster væk, bagrammen er 1,1 mm dybere bagest, og lysringen har et hak bag "
-     "på kanten, så klipsene ikke rører noget. Sæt klipsene på hvid 1 og RGB, læg dem i lommen med ledningerne bøjet ind i slidsen "
-     "ved kameraet, og læg front og ring på: ligger front, ring og bagramme helt sammen, uden at klipsene trykker dem fra hinanden?"),
+     "v46: venstre klipslomme ved kameraet, hvor hvid 1 (ydervæggen) og hvid 3 (bunden) føres ind. Fra kameraet og 21,5 mm ud er "
+     "hele kanalens bredde fri og bunden 1,1 mm dybere, og lysringen har et hak bag på ydersiden. Sæt klipsene på, læg dem i "
+     "lommen med ledningerne bøjet ind i slidsen ved kameraet, og læg front og ring på: ligger front, ring og bagramme helt "
+     "sammen, uden at klipsene trykker dem fra hinanden?"),
+    ("klipslomme-hoejre", ["front", "bagramme", "lysring"], ((8, 116), (50, 154)), 0, "fuld",
+     "v46: højre klipslomme, hvor hvid 2 (indervæggen) og RGB (ydervæggen, bagerst) føres ind. Lysringen har hakket på indersiden "
+     "fra x 21. Samme prøve: ligger klipsene i lommen og ledningerne i slidsen, og lukker front, ring og bagramme helt?"),
     ("hjoerne", ["skal", "front", "bagramme", "lysring"], CORNER, 0, "fuld",
      "v41: ét hjørne af hele stakken med én frontskrue (4,0 × 50 T20) skruet i bagfra. Hovedet skal nu ligge 2 mm under "
      "bagsiden (v40: plant). Lukker skal og front uden fuge, sidder bagrammen fast (knusribberne trykkes flade), og ligger "
@@ -180,18 +184,19 @@ COUPONS = [
 # v43 (Esben 4 Nov, after printing the mic holder and the power inlet): plate 1 is only the two v43 changes, the mic teeth's
 # tabs, the PSU plug's channel and the fuse holder's lead slots; v41/v42's snap, screws and light stack go to plate 2
 # v45 (Esben 4 Nov: clips and corners in the LED channel): plate 1 is the clip bay and the light stack with the corner bridge;
-# v43's three shell holders go to plate 2
-GROUP = {"lyskanal": 1, "klipslomme": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v43's three shell holders go to plate 2. v46 (no slope, four strips): the same, with the right clip bay too
+GROUP = {"lyskanal": 1, "klipslomme": 1, "klipslomme-hoejre": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v45: lommen til klipstikkene og broen i hjørnet af lyskanalen; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v46: lyskanalen uden skråning (hjørnet med alle fire strips) og begge klipslommer; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("det, v45 ændrede i lyskanalen: lommen til strippenes klipstik ved kameraet (front, lysring og bagramme) og "
-               "lysstakken nederst til venstre med den nye bro i hjørnet. Plade 2 har resten, også v43's mikrofonkerne, strømindgang og sikring")
+PLATE1_TEXT = ("det, v46 ændrede i lyskanalen: lysstakken nederst til venstre uden skråning, med alle fire baner, broen i hjørnet "
+               "og hvid 3's læber på bunden (prøv, om hvid 3 kan bøje fladt om hjørnet), og begge klipslommer ved kameraet. Plade 2 "
+               "har resten, også v43's mikrofonkerne, strømindgang og sikring")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
 
 
@@ -222,17 +227,17 @@ def slim_set():
                        "indad, og kanaler i vægbeslaget og stativbeslaget ud for dem. Læg skal-stykket på hvert beslag-stykke: står "
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
-    # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim's own moved parts stay on plate 1 too
-    GROUP = {"lyskanal": 1, "klipslomme": 1, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
+    # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
+    GROUP = {"lyskanal": 1, "klipslomme": 1, "klipslomme-hoejre": 1, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim4: klipslommen og broen i hjørnet, slim2: mikrofontænderne, strømstikkets kanal og sikringen, slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
+    GROUP_TEXT = {1: "slim5: lyskanalen uden skråning og begge klipslommer, slim2: mikrofontænderne, strømstikkets kanal og sikringen, slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
                   3: "tilvalg og skærmens kant"}
     PLATE1_TEXT = ("udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
                    "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "
                    "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på. slim2 (som v43): "
                    "mikrofonkernens holder med stærkere tappe under tænderne, 1 mm større kanal til strømforsyningens stik og 7,5 mm "
-                   "åbninger i sikringsholderens ender. slim4 (som v45): lommen til strippenes klipstik ved kameraet og lysstakken "
-                   "nederst til venstre med den nye bro i hjørnet")
+                   "åbninger i sikringsholderens ender. slim5 (som v46): lysstakken nederst til venstre uden skråning, med alle fire "
+                   "baner, broen i hjørnet og hvid 3's læber, og begge klipslommer ved kameraet")
     CAD_FILE = "hardware/cad/gen2_slim.scad"
 
 
