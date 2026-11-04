@@ -179,6 +179,8 @@ SETTINGS = {
     "kameraroer": {"layer_height": "0.16", "sparse_infill_density": "100%", **NO_SUPPORT},
     # v29: the Wago row on its own, for a v24-v28 shell (its end wall on the plate, every wall straight up)
     "wagoraekke": {"_visible": False, "layer_height": "0.28", **INSIDE, **NO_SUPPORT},
+    # slim1: the Pi's carrier, inside the box, its front face on the plate, bosses and ears straight up
+    "piholder": {"_visible": False, "layer_height": "0.2", **INSIDE, "wall_loops": "3", **NO_SUPPORT},
     "blaeserhegn": {"_visible": False, "layer_height": "0.2", **INSIDE, "brim_type": "outer_only", "brim_width": "3",
                     **NO_SUPPORT},
     # theme parts: face down too (their back lies against the box); tree support (auto) under the straps
@@ -348,14 +350,16 @@ def skal_3mf(folder, prefix=None):
     prefix = prefix or folder.name
     skal = trimesh.load(folder / f"{prefix}_skal.stl")
     down = (skal.face_normals[:, 2] < -0.9) & (skal.triangles_center[:, 2] > 0.5)
-    for name, b in SKAL_ENFORCE + SKAL_BLOCK:
+    # slim1: the dimmer lies flat on the back wall, so there is no dimmer tray and no front wall to hold up
+    enforce = [e for e in SKAL_ENFORCE if not (prefix.startswith("halo-gen2-slim") and e[0] == "support: dæmperbakkens forvæg")]
+    for name, b in enforce + SKAL_BLOCK:
         c = skal.triangles_center
         inside = down & np.all((c >= [b[0], b[2], b[4]]) & (c <= [b[1], b[3], b[5]]), axis=1)
         area = skal.area_faces[inside].sum()
         if area < 20:
             raise SystemExit(f"{name}: only {area:.1f} mm2 of roof inside {b}; the shell has moved, fix the box")
     parts = [("skal", skal, 1, "normal_part")]
-    parts += [(n, _box(b), 1, "support_enforcer") for n, b in SKAL_ENFORCE]
+    parts += [(n, _box(b), 1, "support_enforcer") for n, b in enforce]
     parts += [(n, _box(b), 1, "support_blocker") for n, b in SKAL_BLOCK]
     parts += corner_modifiers(skal)   # v37
     out = folder / f"{prefix}_skal_support.3mf"
@@ -409,7 +413,8 @@ SINGLE = [("bagramme", "bagramme", True, "hvid", "glat"),
           ("vaegbeslag", "vaegbeslag", False, "sort", "glat"), ("tema-top-eksempel", "tema", False, "sort", "glat"),
           ("tema-vinge-venstre-eksempel", "tema", False, "sort", "glat"),
           ("tema-vinge-hoejre-eksempel", "tema", False, "sort", "glat"),
-          ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat")]
+          ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat"),
+          ("pi-holder", "piholder", False, "sort", "glat")]   # slim1
 
 
 def stand_3mf(folder, prefix=None):
