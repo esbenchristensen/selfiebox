@@ -888,7 +888,7 @@ RGB_NUBS = concat([for (sx = [-1, 1], z = [60, 125, 175, 240]) [sx, z, "v"]], [f
 // to CLIP_BAY[3] (1.1 into the frame's back plate, for the RGB clip). The first 4 mm (the lead slot, x 17-21) is where the leads
 // leave each clip and bend back; the clip lies from x 21 on. Any strip's clip fits at either end, so a strip can be fed from either
 // side. The light ring gets the same notch at the back of its outer wall and flange (CLIP_BAY y 3.6-4.2): the clip no longer touches it.
-CLIP_BAY = [CAM_KEEP[0] + 4 + 16.6 + 0.9, STRIP_T3[1] - 4.4 - 0.4, 3.6, FLOOR3 + 1.1];   // |x| out to 38.5, r 2.1, y 3.6-28.5
+CLIP_BAY = [CAM_KEEP[0] + 4 + 16.6 + 0.9, STRIP_T3[1] - 4.4 - 0.4, 3.6, FLOOR3 + 1.1];   // v45: |x| out to 38.5, r 2.1, y 3.6-28.5
 // LED bridges (Esben 4 Nov: "en tynd bro, som vi kan køre det under"): a thin bar standing STRIP thickness + BRIDGE[2] off the strip
 // wall, across all three lanes, from the step in front of white 1 to the floor, tied to the frame at the step, at both stems (in the
 // dark gaps between the strips, so nothing crosses a strip) and at the floor. The strips are threaded under it (bare end first; the
@@ -897,6 +897,27 @@ CLIP_BAY = [CAM_KEEP[0] + 4 + 16.6 + 0.9, STRIP_T3[1] - 4.4 - 0.4, 3.6, FLOOR3 +
 // the diffuser. One at the 45 deg point of each corner (BRIDGES: ring-centre points, the normal points away from the box centre).
 BRIDGE = [1.6, 1.0, 0.25];                // width along the run, thickness, clearance over the strip's face
 BRIDGES = JOINTS;
+// slim5 (Esben 4 Nov: "vi bruger alle tre LED-bånd" + RGB, and "droppede skråningen helt"): no reflector any more. The channel is a
+// box section: white 1 on the outer wall with RGB behind it, white 2 on the inner wall facing it, white 3 flat on the floor facing the
+// light ring, and the floor 8.8 mm further forward (FLOOR46; v18-v45: 27.4 under the slope). A 2D ray count of the channel's section
+// (white walls 0.88, strips 0.65) gave 153 against 100 for v45's two strips on the slope (white 3 at 90 deg on the slope: 125, white 3
+// flat on the slope: 153 but it cannot lie round the corners). The space behind the floor is solid frame, as the slope was.
+FLOOR46 = 18.6;                           // floor (white 3's back) at y 18.6
+CLIP_BAY46 = [CLIP_BAY[0], 3.6, FLOOR46 + 1.1];   // slim5: |x| 17-38.5, the whole channel (r -6.9..6.9), y 3.6 to 1.1 under the floor
+// [kind, surface ("o" outer wall r +6.9, "i" inner wall r -6.9, "f" floor), from, to (y on a wall, r on the floor), thickness,
+//  end |x| left, end |x| right]. Fed ends: white 1 and white 3 left, white 2 and RGB right (their clips must not sit side by side).
+// White 2's bare end stops at |x| 21 (the light ring's collar round the camera fills the inner wall from 17 to 20).
+// White 3 and RGB stop at |x| 38.5 at their bare end: RGB's clip lies there on the outer wall, over white 3's edge.
+STRIPS46 = [["w", "o", 4.6, 12.7, 2.0, 21, 17], ["rgb", "o", 13.5, 18.5, 2.2, 38.5, 21], ["w", "i", 4.6, 12.7, 2.0, 21, 21],
+            ["w", "f", -4.05, 4.05, 2.0, 21, 38.5]];
+// white 3's lane on the floor: a rail each side with a lip 1.1 over its dark edge (2.2 dark each side, so no shade); the strip is
+// slid in under both lips from the front, or one edge under, then pressed flat. [lip r from, lip/rail r to, rail r to, lip y, lip thickness]
+FLOOR_LANE = [3.05, 4.15, 4.6, FLOOR46 - 0.6 - 0.5, 0.5];
+// bridges: the 4 corners (v45) and the middle of each side (Esben 4 Nov: "en i midten på hver side også"; the top's middle is the
+// camera, so one in the middle of each half): [x, z on the ring centre line, normal angle]
+BRIDGES46 = concat([for (p = JOINTS) [p[0], p[1], atan2(sign(p[1] - (RING_Z0 + RING_Z1)/2), sign(p[0]))]],
+                   [[-RING_X, (RING_Z0 + RING_Z1)/2, 180], [RING_X, (RING_Z0 + RING_Z1)/2, 0], [0, RING_Z0, -90],
+                    [-(CLIP_BAY[0] + RING_X - SQ_A)/2, RING_Z1, 90], [(CLIP_BAY[0] + RING_X - SQ_A)/2, RING_Z1, 90]]);
 // v24 (Esben 26 Oct: two white strips give plenty of light): v18-v23's third white strip in a pocket at the front of the
 // sloping reflector is gone, with its pocket, lips, clip and lead hole, and the light ring's wedge that held its front edge.
 // The reflector's front face clamps the ring's inner flange again, as in v2-v17.
@@ -1236,7 +1257,14 @@ module front3() union() {
 // flange's back is flat, and the frame's crush bumps press it there as before.
 RING_BEV = 1.95;                          // walls straight to here, then 45 deg (v18)
 RIM = [1.2, 2.0, 0.1];                    // rim width, height behind the flange, notch clearance (each side and at the floor)
-module ring3() difference() { ring3_body(); clip_bays(CLIP_BAY[2], PT + 2); }   // slim4: the clip bays' notch
+// slim5: the ring's notch only where a clip lies against the ring: white 1's clip on the outer wall at the left end, white 2's
+// on the inner wall at the right end (r 2.1-6.9 out resp. in; v45: the outer half at both ends). RGB and white 3 clip further back.
+// The inner one starts at x 21, where the clip starts: from 17 to 21 the ring's collar round the camera goes on back to its rear face,
+// and a notch under it would leave it hanging in the air when the ring prints (no support).
+module ring_notch46() for (sx = [-1, 1])
+    translate([sx > 0 ? LEAD_SLOT[1] : -CLIP_BAY46[0], CLIP_BAY46[1], sx > 0 ? RING_Z1 - STRIP_T3[1] : RING_Z1 + CLIP_BAY[1]])
+        cube([CLIP_BAY46[0] - (sx > 0 ? LEAD_SLOT[1] : CAM_KEEP[0] - 0.01), PT + 2 - CLIP_BAY46[1], STRIP_T3[1] - CLIP_BAY[1]]);
+module ring3() difference() { ring3_body(); ring_notch46(); }   // slim4: the clip bays' notch; slim5: ring_notch46
 module ring3_body() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
     ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
@@ -1317,20 +1345,27 @@ module rgb_nubs() intersection() {
 module lead_slots() for (sx = [-1, 1]) translate([sx > 0 ? LEAD_SLOT[0] : -LEAD_SLOT[1], LEAD_SLOT[3], RING_Z1 + LEAD_SLOT[2]])
     cube([LEAD_SLOT[1] - LEAD_SLOT[0], FR_BACK + 1 - LEAD_SLOT[3], STRIP_T3[1] - LEAD_SLOT[2]]);
 // slim4: clip bays (frame) and the same notch in the light ring
-module clip_bays(y0 = CLIP_BAY[2], y1 = CLIP_BAY[3]) for (sx = [-1, 1])
-    translate([sx > 0 ? CAM_KEEP[0] - 0.01 : -CLIP_BAY[0], y0, RING_Z1 + CLIP_BAY[1]])
-        cube([CLIP_BAY[0] - CAM_KEEP[0] + 0.01, y1 - y0, STRIP_T3[1] - CLIP_BAY[1] + 0.01]);
-// slim4: the LED bridges, one plan-view slice per bridge (normal from the box centre through the point)
-module bridge_slice2d(p) translate(p) rotate(atan2(p[1] - (RING_Z0 + RING_Z1)/2, p[0]) - 90) square([BRIDGE[0], 40], center = true);
-BR_RW = STRIP_T3[1] - 2.0 - BRIDGE[2];    // 4.65: bar face over the white lanes (COB dome at r 4.9)
+// slim5: clip bays at each end of the top run, across the whole channel: steps, stems, lips and rails are gone there, so any clip
+// (white 9.6 wide, RGB 6.8) lies on its wall or the floor; the first 4 mm (x 17-21) are open right through the frame's back for the
+// leads (v36-v45: LEAD_SLOT on the outer half only)
+module clip_bays(y0 = CLIP_BAY46[1], y1 = CLIP_BAY46[2]) for (sx = [-1, 1])
+    translate([sx > 0 ? CAM_KEEP[0] - 0.01 : -CLIP_BAY46[0], y0, RING_Z1 - STRIP_T3[1]])
+        cube([CLIP_BAY46[0] - CAM_KEEP[0] + 0.01, y1 - y0, 2*STRIP_T3[1]]);
+module lead_slots46() for (sx = [-1, 1]) translate([sx > 0 ? LEAD_SLOT[0] : -LEAD_SLOT[1], CLIP_BAY46[1], RING_Z1 - STRIP_T3[1]])
+    cube([LEAD_SLOT[1] - LEAD_SLOT[0], FR_BACK + 1 - CLIP_BAY46[1], 2*STRIP_T3[1]]);
+// v45: one plan-view slice per bridge; slim5: [x, z, normal angle]
+module bridge_slice2d(p) translate([p[0], p[1]]) rotate(p[2] - 90) square([BRIDGE[0], 40], center = true);
+BR_RW = STRIP_T3[1] - 2.0 - BRIDGE[2];    // 4.65: bar face over a white lane (COB dome at r 4.9)
 BR_RR = STRIP_T3[1] - 2.2 - BRIDGE[2];    // 4.45: over the RGB lane
-module led_bridges() for (p = BRIDGES) intersection() {
-    ext_y(REFL[0][0], FLOOR3 + 0.01) bridge_slice2d(p);
+// slim5: outer bar over white 1 and RGB, from the front step to white 3's rail; inner bar over white 2, from the step to its stem
+module led_bridges() for (p = BRIDGES46) intersection() {
+    ext_y(REFL[0][0], FLOOR46 + 0.01) bridge_slice2d(p);
     union() {
-        ext_y(REFL[0][0], LANE_STEMS[1] + 0.3) ring_band2d(BR_RW - BRIDGE[1], BR_RW);
-        ext_y(LANE_STEMS[1] + 0.3 - 0.01, FLOOR3 + 0.01) ring_band2d(BR_RR - BRIDGE[1], BR_RR);
-        ext_y(REFL[0][0], REFL[0][0] + 0.4) ring_band2d(BR_RW - BRIDGE[1], LANE_LIP[0] + 0.01);   // tie to the step in front of white 1
-        for (y = LANE_STEMS) ext_y(y, y + 0.6) ring_band2d(BR_RR - BRIDGE[1], LANE_LIP[0] + 0.01);   // ties to the stems
+        ext_y(REFL[0][0], LANE_STEMS[0] + 0.6) ring_band2d(BR_RW - BRIDGE[1], BR_RW);
+        ext_y(LANE_STEMS[0] + 0.3, FLOOR_LANE[3] + 0.01) ring_band2d(BR_RR - BRIDGE[1], BR_RR);
+        ext_y(REFL[0][0], LANE_STEMS[0] + 0.6) ring_band2d(-BR_RW, -BR_RW + BRIDGE[1]);
+        for (y = [REFL[0][0], LANE_STEMS[0]]) ext_y(y, y + (y == REFL[0][0] ? 0.4 : 0.6)) {
+            ring_band2d(BR_RR - BRIDGE[1], LANE_LIP[0] + 0.01); ring_band2d(-LANE_LIP[0] - 0.01, -BR_RW + BRIDGE[1]); }
     }
 }
 CAM_TUBE = [0.3, 0.2];                    // v37: tube end behind the board, crush tips' reach past the board's back
@@ -1347,24 +1382,24 @@ module frame3() {
                 for (j = J2) translate(j) circle(d = 6.0, $fn = 32);   // v20: 6.4 -> 6.0, clear of the shell wall
                 translate([-16, LENS_Z - 13.5]) square([34, 27]);               // behind the camera board and round the ribbon slot
             }
-            // reflector, strip wall and floor, all inside the channel
+            // slim5: strip walls both sides and the floor, all inside the channel (v18-v45: the sloping reflector and the outer wall)
             difference() {
                 union() {
-                    // the last step runs into the floor, so the reflector is one piece with the frame (v2 left a 0.24 mm gap)
-                    difference() {   // v18: one smooth slope (v2-v17: 0.5 mm stairs)
-                        union() { rfill(REFL[0][0], REFL[1][0], REFL[0][1], REFL[1][1]); ext_y(REFL[1][0] - 0.01, FLOOR3 + 0.01) offset(r = REFL[1][1]) ring_centre2d(); }
-                        ext_y(REFL[0][0] - 1, FLOOR3 + 1) offset(r = -FL3) ring_centre2d();
+                    ext_y(REFL[0][0], CH_BACK + 0.01) { ring_band2d(STRIP_T3[1], FL3); ring_band2d(-FL3, -STRIP_T3[1]); }
+                    ext_y(FLOOR46, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
+                    // lanes on both walls: a step in front of white 1 / white 2, a stem + forward lip behind them
+                    ext_y(REFL[0][0], REFL[0][0] + 0.4) { ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01); ring_band2d(-STRIP_T3[1] - 0.01, -LANE_LIP[0]); }
+                    let(y = LANE_STEMS[0]) {
+                        ext_y(y, y + 0.6) { ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01); ring_band2d(-STRIP_T3[1] - 0.01, -LANE_LIP[0]); }
+                        ext_y(y - 1.1, y + 0.01) { ring_band2d(LANE_LIP[0], LANE_LIP[1]); ring_band2d(-LANE_LIP[1], -LANE_LIP[0]); }
                     }
-                    ext_y(REFL[0][0], CH_BACK + 0.01) ring_band2d(STRIP_T3[1], FL3);
-                    ext_y(FLOOR3, CH_BACK + 0.01) ring_band2d(-FL3, FL3);
-                    // v18: lanes: a step in front of white 1, a stem + forward lip behind white 1 and white 2
-                    ext_y(REFL[0][0], REFL[0][0] + 0.4) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01);
-                    for (y = LANE_STEMS) { ext_y(y, y + 0.6) ring_band2d(LANE_LIP[0], STRIP_T3[1] + 0.01); ext_y(y - 1.1, y + 0.01) ring_band2d(LANE_LIP[0], LANE_LIP[1]); }
+                    // white 3's lane on the floor: rails and lips
+                    ext_y(FLOOR_LANE[3], FLOOR46 + 0.01) { ring_band2d(FLOOR_LANE[1], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[1]); }
+                    ext_y(FLOOR_LANE[3], FLOOR_LANE[3] + FLOOR_LANE[4]) { ring_band2d(FLOOR_LANE[0], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[0]); }
                 }
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
             }
-            difference() { rgb_nubs(); ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); } }   // v36
-            led_bridges();                                                // slim4
+            difference() { led_bridges(); ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); } }   // slim4, slim5
             ring_bumps();                                                 // v24: press the ring's flange forward all round
             // cross bars at the display tabs, with bosses down to the tabs
             // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
@@ -1379,7 +1414,7 @@ module frame3() {
             snap_arms();
         }
         snap_slots();
-        lead_slots();                                                     // v36 (v18-v35: clip pockets)
+        lead_slots46();                                                   // slim5 (v36-v45: lead_slots, outer half; v18-v35: clip pockets)
         clip_bays();                                                      // slim4: room for the strips' clip connectors
         ring_rim_notch();                                                 // v36: room for the light ring's rims
         for (t = tabs2) {
@@ -1416,19 +1451,23 @@ module ring_bumps() for (p = rb_pts()) translate([p[0], REFL[0][0] + 0.01, p[1]]
 // 90 deg countersink, wide end (d1) at y0, narrowing towards -y to d2: for a screw driven in from the back
 module csk_y(d1, d2, y0, x, z) translate([x, y0 + 0.01, z]) rotate([90, 0, 0]) cylinder(d1 = d1, d2 = d2, h = (d1 - d2)/2 + 0.01, $fn = 32);
 module strip_cut2d(s) translate([-s[4], RING_Z1 - CAM_KEEP[1]]) square([s[4] + s[5], 2*CAM_KEEP[1]]);
-module placed_strips3(kind) {
-    // white: T_EDGE thin board full width, full thickness only over the 3.7 yellow stripe (+0.5 each side for the COB dome)
-    for (s = STRIPS3) if (s[2] == kind)
-        ext_y(s[0], s[1]) difference() { ring_band2d(STRIP_T3[1] - (kind == "w" ? T_EDGE : s[3]), STRIP_T3[1]); strip_cut2d(s); }
-    for (s = STRIPS3) if (s[2] == kind && kind == "w")
-        ext_y(s[0] + (s[1] - s[0] - 4.7)/2, s[1] - (s[1] - s[0] - 4.7)/2) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
+// slim5: the four strips. White: T_EDGE thin board full width, full thickness only over the 3.7 yellow stripe (+0.5 each side for the
+// COB dome); RGB: full thickness. Ends cut at |x| end left / right on the top run.
+module strip46_2d(s, a, b) difference() { ring_band2d(a, b); translate([-s[5], RING_Z1 - CAM_KEEP[1]]) square([s[5] + s[6], 2*CAM_KEEP[1]]); }
+module strip46(s) let(w = s[3] - s[2], t = s[4], e = s[0] == "w" ? T_EDGE : t, m = (w - 4.7)/2) {
+    if (s[1] == "o") { ext_y(s[2], s[3]) strip46_2d(s, STRIP_T3[1] - e, STRIP_T3[1]); ext_y(s[2] + m, s[3] - m) strip46_2d(s, STRIP_T3[1] - t, STRIP_T3[1]); }
+    if (s[1] == "i") { ext_y(s[2], s[3]) strip46_2d(s, -STRIP_T3[1], -STRIP_T3[1] + e); ext_y(s[2] + m, s[3] - m) strip46_2d(s, -STRIP_T3[1], -STRIP_T3[1] + t); }
+    if (s[1] == "f") { ext_y(FLOOR46 - e, FLOOR46) strip46_2d(s, s[2], s[3]); ext_y(FLOOR46 - t, FLOOR46) strip46_2d(s, s[2] + m, s[3] - m); }
 }
-// v36: soldered joints with heat shrink on the strip ends (on the top run, at the camera), over the lead slot
-// slim4: the clip connectors on the fed ends, in the clip bays (white 1 and RGB left, white 2 right), lying on the strip wall from
-// x 21 out; the leads leave each clip towards the camera and bend back through the lead slot (v36-v44: soldered joints, JOINTS3)
-CLIPS45 = [[-1, 0, [16, 9.6, 4.3]], [1, 1, [16, 9.6, 4.3]], [-1, 2, [16.6, 6.8, 4.4]]];   // side, strip, [l, w, h] [C]
-module placed_clips3() for (c = CLIPS45) let(s = STRIPS3[c[1]], yc = (s[0] + s[1])/2)
-    translate([c[0] > 0 ? LEAD_SLOT[1] : -LEAD_SLOT[1] - c[2][0], yc - c[2][1]/2, RING_Z1 + STRIP_T3[1] - c[2][2]]) cube(c[2]);
+module placed_strips3(kind) for (s = STRIPS46) if (s[0] == kind) strip46(s);
+// slim5: the clip connectors on the fed ends, in the clip bays from x 21 out, the leads towards the camera and back through the slot:
+// [side, strip, [l, w, h], shift back] [C]
+CLIPS46 = [[-1, 0, [16, 9.6, 4.3]], [-1, 3, [16, 9.6, 4.3]], [1, 2, [16, 9.6, 4.3]], [1, 1, [16.6, 6.8, 4.4], 0.3]];   // RGB's 0.3 further back, clear of white 1
+module placed_clips3() for (c = CLIPS46) let(s = STRIPS46[c[1]], m = (s[2] + s[3])/2, l = c[2][0], w = c[2][1], h = c[2][2],
+                                             x0 = c[0] > 0 ? LEAD_SLOT[1] : -LEAD_SLOT[1] - l)
+    if (s[1] == "o") translate([x0, m - w/2 + (len(c) > 3 ? c[3] : 0), RING_Z1 + STRIP_T3[1] - h]) cube(c[2]);
+    else if (s[1] == "i") translate([x0, m - w/2, RING_Z1 - STRIP_T3[1]]) cube(c[2]);
+    else translate([x0, FLOOR46 - h, RING_Z1 + m - w/2]) cube([l, h, w]);
 module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
