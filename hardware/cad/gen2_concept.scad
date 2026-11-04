@@ -822,7 +822,7 @@ FLOOR3 = 27.4;                            // v18: 0.95 deeper (v2-v17: 26.45) fo
 // its own lane on the strip wall; its back edge goes in under a lip, its front edge presses down against the wall. The frame
 // prints back down, so a lip can only point forward. [M] Esben: white 8.1 wide with a 3.7 yellow (lit) stripe in the middle,
 // so 2.2 is dark each side and the lips take 1.0 of it; the RGB strip is lit right across, so it gets no lip (snug lane, reflector 0.3 above).
-STRIPS3 = [[4.7, 12.7, "w", 2.0, 17, 17], [13.5, 21.5, "w", 2.0, 17, 17], [22.3, 27.3, "rgb", 2.2, 17, 17]];   // v35: 17/34 by the clips
+STRIPS3 = [[4.7, 12.7, "w", 2.0, 21, 17], [13.5, 21.5, "w", 2.0, 17, 21], [22.3, 27.3, "rgb", 2.2, 21, 17]];   // v45: fed ends at 21, in their clips (v36-v44: 17)
 STRIP_T3 = [4.7, 6.9];                    // strip wall face at r 6.9; thickest strip reaches r 4.7
 // The white strip is thinner out at the dark edge than over the yellow stripe. The stems and lips only reach over that thin
 // edge, so a stem stands at most ~1.1 out from the wall (a flat shelf in the print; 2.5 in the first v18 draft was too much).
@@ -842,7 +842,26 @@ LEAD_SLOT = [CAM_KEEP[0], CAM_KEEP[0] + 4, 0.5, 22.4];
 // Only on the straight runs, none in the corners; the strip slides past them and they keep it within 0.2 of the wall, so the
 // top run's strip cannot sag off the wall. [x, z] points on the ring centre line, and whether the run is a side ("v") or not.
 RGB_NUB = [22.3, STRIP_T3[1] - 2.2 - 0.2, 3, 1.2];   // ... and the lead-in length at the front end
-RGB_NUBS = concat([for (sx = [-1, 1], z = [60, 125, 175, 240]) [sx, z, "v"]], [for (x = [-55, -30, 30, 55]) [x, 1, "t"]], [for (x = [-45, 0, 45]) [x, -1, "b"]]);
+RGB_NUBS = concat([for (sx = [-1, 1], z = [60, 125, 175, 240]) [sx, z, "v"]], [for (x = [-62, -46, 46, 62]) [x, 1, "t"]], [for (x = [-45, 0, 45]) [x, -1, "b"]]);
+// v45 (Esben 4 Nov: the strips' end connectors pushed the front off the LED channel, and the strips came loose in the corners,
+// where the light shows if a strip is not tight up against the wall). v36 counted on soldered leads; the strips in use have clip
+// connectors at their fed ends (as until v35: Ledproff start clip for 8 mm COB 16 x 9.6 x 4.3, Ledprodukter MiniClip 5 mm 3-pole
+// 16.6 x 6.8 x 4.4 [C]). A clip is wider than its strip, so it ran into the stems, the step in front of white 1 and the light ring's
+// flange (white 1's clip reached y 3.9, the flange's back is at 4.2), and the front stood off.
+// Clip bay at each end of the top run: from the camera keep-out (|x| 17) out to CLIP_BAY[0], everything on the strip wall (step,
+// stems, lips, nubs) is cut away from the wall face in to r CLIP_BAY[1], from y CLIP_BAY[2] (in front of the frame, into the ring)
+// to CLIP_BAY[3] (1.1 into the frame's back plate, for the RGB clip). The first 4 mm (the lead slot, x 17-21) is where the leads
+// leave each clip and bend back; the clip lies from x 21 on. Any strip's clip fits at either end, so a strip can be fed from either
+// side. The light ring gets the same notch at the back of its outer wall and flange (CLIP_BAY y 3.6-4.2): the clip no longer touches it.
+CLIP_BAY = [CAM_KEEP[0] + 4 + 16.6 + 0.9, STRIP_T3[1] - 4.4 - 0.4, 3.6, FLOOR3 + 1.1];   // |x| out to 38.5, r 2.1, y 3.6-28.5
+// LED bridges (Esben 4 Nov: "en tynd bro, som vi kan køre det under"): a thin bar standing STRIP thickness + BRIDGE[2] off the strip
+// wall, across all three lanes, from the step in front of white 1 to the floor, tied to the frame at the step, at both stems (in the
+// dark gaps between the strips, so nothing crosses a strip) and at the floor. The strips are threaded under it (bare end first; the
+// clip end never passes a bridge), which holds them tight against the wall where they want to straighten. Over the white lanes the bar
+// faces the COB dome (r 4.9), over the RGB lane the RGB face (r 4.7). Seen from the front only its 1.6 x 1.0 end shows, 3.7 behind
+// the diffuser. One at the 45 deg point of each corner (BRIDGES: ring-centre points, the normal points away from the box centre).
+BRIDGE = [1.6, 1.0, 0.25];                // width along the run, thickness, clearance over the strip's face
+BRIDGES = JOINTS;
 // v24 (Esben 26 Oct: two white strips give plenty of light): v18-v23's third white strip in a pocket at the front of the
 // sloping reflector is gone, with its pocket, lips, clip and lead hole, and the light ring's wedge that held its front edge.
 // The reflector's front face clamps the ring's inner flange again, as in v2-v17.
@@ -1182,7 +1201,8 @@ module front3() union() {
 // flange's back is flat, and the frame's crush bumps press it there as before.
 RING_BEV = 1.95;                          // walls straight to here, then 45 deg (v18)
 RIM = [1.2, 2.0, 0.1];                    // rim width, height behind the flange, notch clearance (each side and at the floor)
-module ring3() {
+module ring3() difference() { ring3_body(); clip_bays(CLIP_BAY[2], PT + 2); }   // v45: the clip bays' notch
+module ring3_body() {
     ext_y(RING_Y[0], RING_Y[0] + 0.3) ring3_2d(RF3 - 0.3);
     ext_y(RING_Y[0] + 0.29, RING_Y[1]) ring3_2d(RF3);
     ext_y(RING_Y[1] - 0.01, RING_BEV + 0.01) ring3_band(RF3 - RW3, RF3);
@@ -1192,6 +1212,7 @@ module ring3() {
     }
     difference() { ext_y(PT + 1 - 0.01, PT + 1 + RIM[1]) ring3_band(FL3 - RIM[0], FL3); rim_end_cut(); }
 }
+
 // Round each end the rim follows the arc, but on the outer half, from the tip to |x| RIM_END, the arc would run into the
 // strips' soldered ends on the strip wall (from |x| 17, r 4.7-6.9), so it stops there; the inner half and the
 // tip go all the way round. At RIM_END the arc is 7.5 out from the centre line, clear of the strip wall's face (6.9).
@@ -1258,6 +1279,23 @@ module rgb_nubs() intersection() {
 }
 module lead_slots() for (sx = [-1, 1]) translate([sx > 0 ? LEAD_SLOT[0] : -LEAD_SLOT[1], LEAD_SLOT[3], RING_Z1 + LEAD_SLOT[2]])
     cube([LEAD_SLOT[1] - LEAD_SLOT[0], FR_BACK + 1 - LEAD_SLOT[3], STRIP_T3[1] - LEAD_SLOT[2]]);
+// v45: clip bays (frame) and the same notch in the light ring
+module clip_bays(y0 = CLIP_BAY[2], y1 = CLIP_BAY[3]) for (sx = [-1, 1])
+    translate([sx > 0 ? CAM_KEEP[0] - 0.01 : -CLIP_BAY[0], y0, RING_Z1 + CLIP_BAY[1]])
+        cube([CLIP_BAY[0] - CAM_KEEP[0] + 0.01, y1 - y0, STRIP_T3[1] - CLIP_BAY[1] + 0.01]);
+// v45: the LED bridges, one plan-view slice per bridge (normal from the box centre through the point)
+module bridge_slice2d(p) translate(p) rotate(atan2(p[1] - (RING_Z0 + RING_Z1)/2, p[0]) - 90) square([BRIDGE[0], 40], center = true);
+BR_RW = STRIP_T3[1] - 2.0 - BRIDGE[2];    // 4.65: bar face over the white lanes (COB dome at r 4.9)
+BR_RR = STRIP_T3[1] - 2.2 - BRIDGE[2];    // 4.45: over the RGB lane
+module led_bridges() for (p = BRIDGES) intersection() {
+    ext_y(REFL[0][0], FLOOR3 + 0.01) bridge_slice2d(p);
+    union() {
+        ext_y(REFL[0][0], LANE_STEMS[1] + 0.3) ring_band2d(BR_RW - BRIDGE[1], BR_RW);
+        ext_y(LANE_STEMS[1] + 0.3 - 0.01, FLOOR3 + 0.01) ring_band2d(BR_RR - BRIDGE[1], BR_RR);
+        ext_y(REFL[0][0], REFL[0][0] + 0.4) ring_band2d(BR_RW - BRIDGE[1], LANE_LIP[0] + 0.01);   // tie to the step in front of white 1
+        for (y = LANE_STEMS) ext_y(y, y + 0.6) ring_band2d(BR_RR - BRIDGE[1], LANE_LIP[0] + 0.01);   // ties to the stems
+    }
+}
 CAM_TUBE = [0.3, 0.2];                    // v37: tube end behind the board, crush tips' reach past the board's back
 module cam_tube_tips(h) for (i = [0 : 2]) let(a = 90 + i*120)
     translate([h[0] + 1.75*cos(a), CAM_PCB_Y + CAM_PCB[2] - CAM_TUBE[1], LENS_Z + h[1] + 1.75*sin(a)]) rotate([-90, 0, 0])
@@ -1289,6 +1327,7 @@ module frame3() {
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
             }
             difference() { rgb_nubs(); ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); } }   // v36
+            led_bridges();                                                // v45
             ring_bumps();                                                 // v24: press the ring's flange forward all round
             // cross bars at the display tabs, with bosses down to the tabs
             // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
@@ -1304,6 +1343,7 @@ module frame3() {
         }
         snap_slots();
         lead_slots();                                                     // v36 (v18-v35: clip pockets)
+        clip_bays();                                                      // v45: room for the strips' clip connectors
         ring_rim_notch();                                                 // v36: room for the light ring's rims
         for (t = tabs2) {
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
@@ -1346,8 +1386,11 @@ module placed_strips3(kind) {
         ext_y(s[0] + (s[1] - s[0] - 4.7)/2, s[1] - (s[1] - s[0] - 4.7)/2) difference() { ring_band2d(STRIP_T3[1] - s[3], STRIP_T3[1]); strip_cut2d(s); }
 }
 // v36: soldered joints with heat shrink on the strip ends (on the top run, at the camera), over the lead slot
-module placed_clips3() for (j = JOINTS3) let(s = STRIPS3[j[1]], t = s[2] == "w" ? 2.0 : s[3])
-    translate([j[0] > 0 ? CAM_KEEP[0] : -CAM_KEEP[0] - j[2][0], s[0], RING_Z1 + STRIP_T3[1] - t - j[2][1]]) cube([j[2][0], s[1] - s[0], j[2][1]]);
+// v45: the clip connectors on the fed ends, in the clip bays (white 1 and RGB left, white 2 right), lying on the strip wall from
+// x 21 out; the leads leave each clip towards the camera and bend back through the lead slot (v36-v44: soldered joints, JOINTS3)
+CLIPS45 = [[-1, 0, [16, 9.6, 4.3]], [1, 1, [16, 9.6, 4.3]], [-1, 2, [16.6, 6.8, 4.4]]];   // side, strip, [l, w, h] [C]
+module placed_clips3() for (c = CLIPS45) let(s = STRIPS3[c[1]], yc = (s[0] + s[1])/2)
+    translate([c[0] > 0 ? LEAD_SLOT[1] : -LEAD_SLOT[1] - c[2][0], yc - c[2][1]/2, RING_Z1 + STRIP_T3[1] - c[2][2]]) cube(c[2]);
 module td2_10() {   // glass front face at y = 0, centred on x = 0, z = 0
     color([0.04, 0.04, 0.05]) hull() for (sx = [-1, 1], sz = [-1, 1])
         translate([sx*(TD10_GLASS[0]/2 - 5), 0, sz*(TD10_GLASS[1]/2 - 5)]) rotate([-90, 0, 0]) cylinder(r = 5, h = DSP_PANEL, $fn = 24);
