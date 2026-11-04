@@ -17,9 +17,8 @@ plate (see below); temperatures and the rest stay Bambu's own presets.
 
 Seams: v26-v35 used Bambu's "back" seam (+y on the plate) with a scarf seam, and every part was placed so that +y is the
 box's underside (the shell and the frame are still turned 180 degrees on the plate). That put every layer's start on one
-straight line across the part (v36 shell and front, v42 light ring), so since v42 these parts have Bambu's default
-"aligned" seam with no scarf (SEAM_ALIGNED) on the shell, front and light ring; the theme parts and the stand bracket still have
-"back" + scarf (SEAM).
+straight line across the part (v36 shell and front, v42 light ring), so since v42 every part has Bambu's default
+"aligned" seam with no scarf (SEAM_ALIGNED), as v18, which was sliced from plain STLs, had.
 
 Bambu projects (27 Oct, third round; Esben: "vi kan ikke loade de configs der er i 3mf filerne"): until then the files had no project
 config, so Bambu Studio 2.8.2 said "The 3mf file has invalid config, load geometry data only" and reset every object's
@@ -138,9 +137,8 @@ SOLID_FACE = {   # the visible face is the first layer (printed face down): one 
 # tip; v18, sliced from plain STLs with Bambu's defaults, had none). "back" on the flat underside put every layer's start on one
 # straight line across it. The shell and the front now use Bambu's default: "aligned" (the seam goes into a corner or edge of each
 # layer), no scarf.
-# v42 (Esben 3 Nov: the clear light ring now shows the same line, "den laver samlinger"): the ring gets "aligned" too. Only the
-# ring: the theme parts and the stand bracket keep "back" + scarf (Esben: "det skal du ikke", change only what was named).
-SEAM = {"seam_position": "back", "seam_slope_type": "external"}   # scarf seam on the outer contour, at the box's underside
+# v42 (Esben 3 Nov: the clear light ring now shows the same line, "den laver samlinger"; it was not there in the early versions):
+# the ring, the theme parts and the stand bracket still had "back" + scarf, so they get "aligned" too. No part uses "back" now.
 SEAM_ALIGNED = {"seam_position": "aligned", "seam_slope_type": "none"}
 NO_SUPPORT = {"enable_support": "0"}
 # v33 (Esben 27 Oct: "ikke bruge tid på at få indvendige ting og indersider flotte"): Bambu's own 2 walls and 15 % infill.
@@ -185,7 +183,7 @@ SETTINGS = {
                     **NO_SUPPORT},
     # theme parts: face down too (their back lies against the box); tree support (auto) under the straps
     "tema": {"layer_height": "0.2", **INSIDE, "bottom_shell_layers": "4", "enable_support": "1",
-             "support_type": "tree(auto)", **SOLID_FACE, **SEAM},
+             "support_type": "tree(auto)", **SOLID_FACE, **SEAM_ALIGNED},
     # printer hood and exit module (selfi-printer-v5): stood on an end, logo and text on the vertical front. Its panels
     # are 3.2 mm, so they are solid with 4 walls as with 8 (v32 review: 2 % faster at most, not changed)
     "printerkappe": {"layer_height": "0.2", "wall_loops": "8", "sparse_infill_density": "15%", **NO_SUPPORT},
@@ -193,7 +191,7 @@ SETTINGS = {
     # (3 sagged over the infill, see INSIDE)
     "stativbeslag": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "4", "top_shell_thickness": "0.8",
                      "bottom_shell_layers": "4", "sparse_infill_density": "30%", "sparse_infill_pattern": "gyroid",
-                     **SOLID_FACE, **SEAM, **NO_SUPPORT},
+                     **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
 }
 TURN = np.diag([-1.0, -1.0, 1.0])   # 180 degrees on the plate: the box's underside to +y (Bambu's "back" seam)
 
