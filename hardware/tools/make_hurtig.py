@@ -81,13 +81,13 @@ CORNER = ((-200, -200), (-46, -88))   # one front screw, the shell/front joint a
 COUPONS = [
     # ---- shell (printed back down: the height is from the outside of the back wall)
     ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 24,
-     "v40: bøjlen over hunstikket sidder 0,9 mm lavere, så stikket ikke kan gå op og ned (v38: ca. 1 mm), og hullet til "
-     "strømforsyningens stik er Ø10,8 med flad top i stedet for den store dråbe (Ø12,5). Skub hunstikket ind forfra: går det "
-     "ind uden at tvinge, og sidder det nu uden slør op og ned? Kør strømforsyningens stik op nedefra: rammer det hunstikket "
-     "uden at lede efter det?"),
+     "v43: kanalen til strømforsyningens stik nedefra er 1 mm større, Ø11,8 (v40-v42: Ø10,8), stadig med flad top. Bøjlen "
+     "over hunstikket er som v40. Kør strømforsyningens stik op nedefra: glider det op uden at tage fat, og rammer det "
+     "stadig hunstikket uden at lede efter det? Skub hunstikket ind forfra: sidder det stadig uden slør?"),
     ("sikring", ["skal"], ["sikring"], 8, "+6",
-     "v40: sikringsholderen på højre væg, nu uden luft og med knusribber på alle 4 vægge (0,5 i siderne, 0,4 i enderne) og "
-     "5,6 mm slidser, der klemmer om ledningstylerne (v38: 9 mm). Trykkes den ned og sidder fast? Kan låget stadig åbnes?"),
+     "v43: åbningerne i hver ende til sikringsholderens ledningsstudse er 7,5 mm brede (v40-v42: 5,6, så holderen ikke kunne "
+     "komme ned; du målte studsene til ca. 8 mm). Lommen og knusribberne er som v40. Trykkes den ned og sidder fast? Kan "
+     "låget stadig åbnes?"),
     ("wago-loekker", ["skal"], ((-90, 68), (90, 136)), 0, 28,
      "v40: Wago-lommerne efter dine mål (18,6 / 29,6 brede, 18,0 lange): skrå tænder med bred fod, der går 1,2 mm op over "
      "hullets 0,5 mm kant og 2 mm ind, knusribber i siderne (0,5) og bagved, og en lille kant over klemmens bagende i hvert "
@@ -110,9 +110,10 @@ COUPONS = [
      "Højre låseslids (12 mm tunge). Prøves med `proeve-laasetunge-hoejre` og `proeve-stativ-hylde`."),
     ("4g", ["skal"], ["modem4g"], 8, "+6", "4G-modemet i sin bakke (tilvalg)."),
     ("mikrofonkerne", ["skal"], ["lydkerne"], 8, "+6",
-     "v40: mikrofonkernen (XVF3800) i holderen med 1 mm højere sider og en fjedrende tand midt på hver kort ende. Tryk kortet "
-     "ned over pindene, til begge tænder klikker over printet: sidder det fast, når du vender stykket og banker det? Kan "
-     "USB-C, AUX og fladkablet stadig sættes i?"),
+     "v43: mikrofonkernens (XVF3800) tænder er de samme som v40 (samme pasform), men tappen under hver tand er stærkere: 10 mm "
+     "bred (v40: 6), 1,2 mm tyk ved roden og 0,8 ved tanden, med afskåret fod og 0,5 mm længere. Tryk kortet ned over "
+     "pindene, til begge tænder klikker over printet: holder tapperne, uden at knække? Sidder kortet fast, når du vender "
+     "stykket og banker det? Kan USB-C, AUX og fladkablet stadig sættes i?"),
     ("stoedsensor", ["skal"], ["sensor"], 8, "+6", "v36: stødsensoren (LIS3DH) i sin bakke til højre for 5 V-forsyningen."),
     ("mikrofonstrip", ["skal"], ["mikrofoner"], 8, "+6",
      "Mikrofonkortet i lommen i bunden: pindene gennem hullerne og kortet fladt på de 4 ringe (tilvalg)."),
@@ -169,18 +170,19 @@ COUPONS = [
 # the big screen/ring piece. Every piece is also its own 3MF.
 # v40 (Esben 2 Nov, after printing v38's set): plate 1 is only what v40 changed, the rest of the v37/v38 news is on plate 2
 # v41 (Esben 2 Nov, after printing v40's set): plate 1 is the snap and the deeper screw heads
-GROUP = {"klik": 1, "klik-bund": 1, "laas-reed": 1, "hjoerne": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v43 (Esben 4 Nov, after printing the mic holder and the power inlet): plate 1 is only the two v43 changes, the mic teeth's
+# tabs, the PSU plug's channel and the fuse holder's lead slots; v41/v42's snap, screws and light stack go to plate 2
+GROUP = {"mikrofonkerne": 1, "stroemindgang": 1, "sikring": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v42: lysringens søm, v41: klikket og skruerne; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v43: mikrofontænderne, strømstikkets kanal og sikringsholderen; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("lysstakken (front, lysring og bagrammens LED-kanal; v42: lysringens stykker printes uden den streg på tværs, som søm "
-               "og koncentriske baner gav i v41) og det, v41 ændrede (klikket mellem front og skal i siden og i bunden, låseskruens "
-               "hul, et hjørne med en frontskrue)")
+PLATE1_TEXT = ("det, v43 ændrede: mikrofonkernens holder med stærkere tappe under tænderne, strømindgangen med 1 mm større kanal "
+               "til strømforsyningens stik og sikringsholderen med 7,5 mm åbninger i enderne. Plade 2 har resten, også v41/v42's klik, skruer og lysstak")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
 
 
@@ -189,10 +191,11 @@ def slim_set():
     PARTS["pi-holder"] = (None, "sort", "hurtig")
     new = {
         "stroemindgang": (((-5, -154), (40, -50)), "slim1: strømindgangen er flyttet til x 17,65, mellem mikrofonkernen og "
-                          "højttaleren; bøjlen og hullet er som v40. Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: "
-                          "går begge ind uden at tvinge, og sidder hunstikket uden slør?"),
+                          "højttaleren; bøjlen er som v40. slim2 (som v43): kanalen til strømforsyningens stik er 1 mm større, Ø11,8 "
+                          "(slim1: Ø10,8). Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: går begge ind uden at "
+                          "tvinge, og sidder hunstikket uden slør?"),
         "sikring": (None, "slim1: sikringsholderen ligger nu på siden, bunden ind mod venstre væg (v42: stående på højre væg), med "
-                    "de samme knusribber og 5,6 mm slidser. Trykkes den ind og sidder fast? Kan låget åbnes, og kommer ledningerne ud i begge ender?"),
+                    "de samme knusribber. slim2 (som v43): slidserne i enderne er 7,5 mm (slim1: 5,6). Trykkes den ind og sidder fast? Kan låget åbnes, og kommer ledningerne ud i begge ender?"),
         "daemper": (None, "slim1: dæmperens printkort (DFR0457) ligger fladt på bagvæggen øverst til venstre (v42: på venstre væg), på de "
                     "samme 4 puder med 2 pinde og en tand pr. side. Klikker kortet på plads, og kan skrueklemmerne og Gravity-stikket nås?"),
         "4g": (None, "slim1: 4G-modemet ligger på tværs over 5 V-forsyningen (tilvalg). Klikker det i bakken?"),
@@ -210,13 +213,15 @@ def slim_set():
                        "indad, og kanaler i vægbeslaget og stativbeslaget ud for dem. Læg skal-stykket på hvert beslag-stykke: står "
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
-    GROUP = {"udluftning": 1, "stroemindgang": 1, "sikring": 1, "daemper": 1, "4g": 1, "stoedsensor": 1, "laas": 1, "hjoerne": 1,
+    GROUP = {"udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1, "stoedsensor": 1, "laas": 1, "hjoerne": 1,
              "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
+    GROUP_TEXT = {1: "slim2: mikrofontænderne, strømstikkets kanal og sikringen, slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
                   3: "tilvalg og skærmens kant"}
     PLATE1_TEXT = ("udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
                    "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "
-                   "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på")
+                   "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på. slim2 (som v43): "
+                   "mikrofonkernens holder med stærkere tappe under tænderne, 1 mm større kanal til strømforsyningens stik og 7,5 mm "
+                   "åbninger i sikringsholderens ender")
     CAD_FILE = "hardware/cad/gen2_slim.scad"
 
 
