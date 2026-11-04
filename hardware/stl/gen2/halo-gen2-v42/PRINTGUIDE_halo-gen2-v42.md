@@ -1,6 +1,6 @@
 # Selfi Halo gen 2, version v42: printguide
 
-**Version:** halo-gen2-v42 (3. nov. 2026). Alle filer i denne mappe starter med `halo-gen2-v42_`. Den erstatter halo-gen2-v41. **v42 fjerner den synlige samling (søm) på tværs af lysringen** (Esben 3. nov., foto). **Ingen dele er tegnet om**: alle STL'er er de samme som i v41, kun indstillingerne i lysringens 3MF er ændret. Hurtigsættet er `halo-gen2-v42-hurtig`. Det, der var nyt i v41, v40, v39, v38 og v37, står længere nede. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
+**Version:** halo-gen2-v42 (3. nov. 2026). Alle filer i denne mappe starter med `halo-gen2-v42_`. Den erstatter halo-gen2-v41. **v42 fjerner den synlige samling (søm) på tværs af lysringen** (Esben 3. nov., foto). **Ingen dele er tegnet om**: alle STL'er er de samme som i v41, kun indstillingerne i 3MF-filerne til lysring, stativbeslag og temadele er ændret. Hurtigsættet er `halo-gen2-v42-hurtig`. Det, der var nyt i v41, v40, v39, v38 og v37, står længere nede. CAD-kilden er `hardware/cad/gen2_concept.scad` i esbenchristensen/selfiebox.
 
 Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filerne ligger også i printretning. Én del pr. plade, 1 stk. af hver. Alle dele i PLA, lysringen i klart materiale.
 
@@ -8,8 +8,8 @@ Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filern
 
 Esben 3. nov. (foto af den klare lysring): *"Det er den begyndt på ja, det samme den gjorde i bunden af skallen. Den laver samlinger"*, og det var der ikke i de tidlige versioner.
 
-- **Årsagen er indstillingerne i 3MF'en, ikke tegningen.** Lysringens mesh er ét lukket legeme uden samlinger (tjekket), præcis som i v30 og v18. Men siden v26 har lysringens 3MF haft søm *"Back"* med scarf og **koncentriske baner** i alle lag. Hver bane og hver væg starter og slutter så samme sted bagud på pladen, lag efter lag, og i det klare materiale ses det som én streg på tværs af lysfladen og op over kanten. Det er det samme, der gav stregen under skallen og fronten, som v36 fjernede ved at skifte dem til *"Aligned"* (punkt 17 under v36). Lysringen blev dengang ikke skiftet.
-- **v42:** lysringen har nu Bambus egne baner (*Monotonic line* i forsiden, som i v18, som ikke havde stregen) og søm *"Aligned"* uden scarf. Kun lysringen er ændret; alle andre 3MF'er er som i v41. Alt andet (lag 0,16, 3 vægge, 100 % fyld, elefantfod 0,15, tekstureret PEI, ingen support) er som i v41.
+- **Årsagen er indstillingerne i 3MF'en, ikke tegningen.** Lysringens mesh er ét lukket legeme uden samlinger (tjekket), præcis som i v30 og v18. Men siden v26 har lysringens 3MF haft søm *"Back"* med scarf og **koncentriske baner** i alle lag. Hver bane og hver væg starter og slutter så samme sted bagud på pladen, lag efter lag, og i det klare materiale ses det som én streg på tværs af lysfladen og op over kanten. Det er det samme, der gav stregen under skallen og fronten, som v36 fjernede ved at skifte dem til *"Aligned"* (punkt 17 under v36). Lysringen, stativbeslaget og temadelene blev dengang ikke skiftet.
+- **v42:** lysringen har nu Bambus egne baner (*Monotonic line* i forsiden, som i v18, som ikke havde stregen) og søm *"Aligned"* uden scarf. Stativbeslaget og temadelene har også *"Aligned"* uden scarf. Ingen del bruger *"Back"* længere. Alt andet (lag 0,16, 3 vægge, 100 % fyld, elefantfod 0,15, tekstureret PEI, ingen support) er som i v41.
 - **Hold øje med:** *"Aligned"* lægger stadig sømmen ét sted pr. lag, men i et hjørne eller en kant af ringen i stedet for midt på en lige side. Banerne i forsiden går nu i én retning; se efter, om lyset gennem ringen får svage striber på langs, når den er tændt. Gør den det, så sig til.
 - Har du allerede et print fra v41-filen: stregen kan ikke slibes væk i den klare ring uden at gøre den mat. Print lysringen igen fra `halo-gen2-v42_lysring.3mf`.
 
@@ -825,7 +825,7 @@ Filerne er bygget og tjekket mod Bambu Studio 2.8.2's egen indlæsningskode, men
 | `halo-gen2-v42_wagoraekke-eftermontering.3mf` | Glat PEI | **0,28** | 2, top 4 / bund 3 | 15 % crosshatch | Enden ned; ingen support; ses ikke |
 | `halo-gen2-v42_tema-*.3mf` | Glat PEI | 0,2 | 2, top 4 / bund 4 | 15 % crosshatch | Forsiden som fronten; Tree-support (auto) under stropperne |
 
-**Søm:** skal og front (v36) og lysringen (v42) har Bambus standard *"Aligned"* uden scarf, fordi *"Back"* lagde hvert lags start på én lige linje på tværs af dem. Stativbeslag og temadele har stadig *"Back"* med scarf. Skal og bagramme ligger vendt 180° på pladen; drej ikke delene.
+**Søm:** alle dele har Bambus standard *"Aligned"* uden scarf (v36 skal og front, v42 lysring, stativbeslag og temadele). *"Back"* lagde hvert lags start på én lige linje bagud på pladen, og den kunne ses som en streg på tværs af delen. Skal og bagramme ligger stadig vendt 180° på pladen; drej ikke delene.
 
 **Sæt det selv** (hvis en fil kun indlæses som geometri, eller du printer fra STL). Vælg printer, proces og filament som ovenfor, slå **Advanced** til øverst i procesfeltet, og find hvert felt med **søgefeltet** (forstørrelsesglasset) under dets engelske navn. Der er én del pr. plade, så du kan sætte det i den globale proces; gem den som en proces pr. del (fx "Selfi front"), så skal det kun gøres én gang.
 
@@ -841,7 +841,7 @@ Filerne er bygget og tjekket mod Bambu Studio 2.8.2's egen indlæsningskode, men
 | Bottom surface pattern (Strength) | Monotonic line | | | | | | | Monotonic line |
 | Only one wall on first layer (Quality) | Til | | | | | | | Til |
 | Elephant foot compensation (Quality) | 0.15 | 0.15 | | | | | | |
-| Seam position / Scarf joint seam (Quality) | Aligned / None | Aligned / None | | Aligned / None | | | | Back / Contour |
+| Seam position / Scarf joint seam (Quality) | Aligned / None | Aligned / None | | Aligned / None | | | | Aligned / None |
 | Enable support (Support) | Fra | **Til** | Fra | **Til** | Fra | Fra | Fra | **Til** |
 | Type (Support) | | **Normal (manual)** | | **Tree (manual)** | | | | Tree (auto) |
 | On build plate only (Support) | | **Til** | | **Fra** | | | | |
