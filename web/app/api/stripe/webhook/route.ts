@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { alert } from "@/lib/alert";
 import { db, getHolds, getSettings, type RentalDoc, type RentalStatus } from "@/lib/udlejning/db";
 import { fits, usage } from "@/lib/udlejning/core";
 import { autoMail } from "@/lib/udlejning/mails";
@@ -21,13 +22,24 @@ type Charge = { payment_intent: string | null; amount: number; amount_refunded: 
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret) {
-    console.error("webhook: STRIPE_WEBHOOK_SECRET mangler");
+    await alert("Stripe-webhook: STRIPE_WEBHOOK_SECRET mangler i Vercel. Betalinger bliver ikke registreret.");
     return NextResponse.json({ error: "not configured" }, { status: 500 });
   }
   const raw = await req.text();
   const event = verifyWebhook<Event>(raw, req.headers.get("stripe-signature"), secret);
   if (!event) return NextResponse.json({ error: "bad signature" }, { status: 400 });
 
+  try {
+    await handle(event);
+  } catch (e) {
+    // 500 får Stripe til at prøve igen senere; alarmen sørger for, at nogen ser på det.
+    await alert(`Stripe-webhook fejlede på ${event.type} (${event.id}): ${(e as Error).message}`);
+    return NextResponse.json({ error: "failed" }, { status: 500 });
+  }
+  return NextResponse.json({ received: true });
+}
+
+async function handle(event: Event) {
   const d = await db();
   const rentals = d.collection<RentalDoc>("rentals");
   const log = (status: RentalStatus, note: string) => ({ at: new Date(), status, by: "stripe", note: `${note} (${event.id})` });
@@ -58,6 +70,7 @@ export async function POST(req: Request) {
         { $set: { ...stripeInfo, status: "paid", expiresAt: null, conflict, updatedAt: new Date() }, $push: { history: log("paid", conflict ? "Betalt, men datoerne var taget imens" : "Betalt") } },
       );
       await notify({ ...booking, status: "paid", conflict });
+      if (conflict) await alert(`Booking ${id} er betalt, men datoerne var taget imens. Skriv til kunden (konflikt-mail): https://admin.selfi.dk/admin/udlejning/${id}`);
       // When the dates were taken meanwhile, admin writes to the customer instead (the "konflikt" mail).
       if (!conflict) await autoMail(d, "bekraeftelse", { ...booking, status: "paid" }, { by: "stripe" });
       break;
@@ -99,7 +112,6 @@ export async function POST(req: Request) {
       break;
     }
   }
-  return NextResponse.json({ received: true });
 }
 
 /** A heads-up to Selfi (Slack, Make …) when a booking is paid. Best effort: the booking is already saved. */

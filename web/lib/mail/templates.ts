@@ -24,7 +24,8 @@ export type MailKind =
   | "refunderet"
   | "ikke_gennemfoert"
   | "fri_besked"
-  | "min_fest";
+  | "min_fest"
+  | "sletning_varsel";
 
 /** The parts of a mail admin can rewrite. {fornavn}, {periode} … are filled in from the booking. */
 export type MailTexts = { subject: string; preheader: string; heading: string; body: string; button: string };
@@ -57,6 +58,7 @@ export type MailContext = {
   portal: string; // https://foto.selfi.dk (setup portal and photo portal)
   phone?: string; // Selfi's phone, when set in company.ts
   refund?: number; // kr., for "refunderet" and "annulleret"
+  deleteOn?: string; // dagen billederne slettes, for "sletning_varsel"
   oldRange?: { from: string; to: string }; // for "ombooking"
 };
 
@@ -75,6 +77,7 @@ export const KINDS: Record<MailKind, { name: string; when: string; auto: boolean
   ikke_gennemfoert: { name: "Booking ikke gennemført", when: "Automatisk, når betalingssiden udløb uden betaling", auto: true, defaultOn: false },
   fri_besked: { name: "Fri besked", when: "Fra admin, når som helst", auto: false },
   min_fest: { name: "Link til Min fest", when: "Automatisk, når kunden beder om det på selfi.dk/min-fest", auto: false },
+  sletning_varsel: { name: "Billederne slettes snart", when: "Automatisk 14 dage før billederne på fotoportalen slettes", auto: true, defaultOn: true },
 };
 
 export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
@@ -176,6 +179,13 @@ export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
     body: "I bad om et link til jeres booking {booking}. På siden kan I se status og sporing, sætte boksen op, finde fotoportalen og se, hvornår boksen skal retur.\n\nHar I ikke bedt om linket, kan I se bort fra mailen.",
     button: "Åbn Min fest",
   },
+  sletning_varsel: {
+    subject: "Jeres billeder slettes om 14 dage",
+    preheader: "Hent de billeder, I vil gemme, inden {sletning}.",
+    heading: "Hent billederne inden {sletning}.",
+    body: "Fotoportalen fra jeres fest lukker {sletning}, og så sletter vi alle billeder og videoer fra boksen. Det kan ikke fortrydes.\n\nHent de billeder, I vil gemme, og sig det gerne til gæsterne, så de også kan nå det.",
+    button: "Se billederne",
+  },
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -200,6 +210,8 @@ export function returnBy(to: string): string {
   return k;
 }
 export const shipDay = (b: Pick<MailBooking, "from">, shipDaysBefore: number) => addDays(b.from, -shipDaysBefore);
+/** Dagen billederne slettes: sidste lejedag + 3 måneder (12 med tilvalget). Samme regel som fleet (monitor.cleanup). */
+export const deleteDay = (b: Pick<MailBooking, "to" | "keep">) => addDays(b.to, Math.round((b.keep ? 12 : 3) * 30.44) + 1);
 
 /** dao's tracking page. A tracking field that is already a link is used as it is. */
 export const trackingUrl = (t: string) => (/^https?:\/\//.test(t) ? t : `https://www.dao.as/privat/find-din-pakke?stregkode=${encodeURIComponent(t)}`);
@@ -236,6 +248,7 @@ export function variables(c: MailContext): Record<string, string> {
     opsaet_link: setupUrl(c),
     fotoportal_link: portalUrl(c) ?? "",
     min_fest_link: minFestUrl(c),
+    sletning: c.deleteOn ? dayName(c.deleteOn) : "",
   };
 }
 export const VARIABLE_HELP: Record<string, string> = {
@@ -255,6 +268,7 @@ export const VARIABLE_HELP: Record<string, string> = {
   opsaet_link: "Link til opsætningen",
   fotoportal_link: "Link til fotoportalen",
   min_fest_link: "Link til kundens side Min fest på selfi.dk",
+  sletning: "Dagen billederne slettes (kun i Billederne slettes snart)",
 };
 
 export const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (m, k: string) => (k in v ? v[k] : m));
@@ -403,6 +417,10 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
     case "fri_besked":
       intro();
       blocks.push({ type: "code", label: "Bookingnummer", value: b._id });
+      break;
+    case "sletning_varsel":
+      intro();
+      button(portal ?? minFestUrl(c));
       break;
     case "min_fest":
       intro();
