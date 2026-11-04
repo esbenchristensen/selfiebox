@@ -860,7 +860,11 @@ CLIP_BAY = [CAM_KEEP[0] + 4 + 16.6 + 0.9, STRIP_T3[1] - 4.4 - 0.4, 3.6, FLOOR3 +
 // clip end never passes a bridge), which holds them tight against the wall where they want to straighten. Over the white lanes the bar
 // faces the COB dome (r 4.9), over the RGB lane the RGB face (r 4.7). Seen from the front only its 1.6 x 1.0 end shows, 3.7 behind
 // the diffuser. One at the 45 deg point of each corner (BRIDGES: ring-centre points, the normal points away from the box centre).
-BRIDGE = [1.6, 1.0, 0.25];                // width along the run, thickness, clearance over the strip's face
+// v45-v46: BRIDGE = [1.6, 1.0, 0.25];              // width along the run, thickness, clearance over the strip's face
+// v48 (Esben 4 Nov: "De må ikke knække nemt"): 2.0 thick (towards the channel's middle, so the same 0.25 over the strips) and 2.4
+// wide. The wall bars print standing, so they bend across the layers: 1.0 x 1.6 broke at ~5 N by a beam estimate (20 MPa between
+// layers, 9 mm between ties), 2.0 x 2.4 at ~28 N
+BRIDGE = [2.4, 2.0, 0.25];
 BRIDGES = JOINTS;
 // v46 (Esben 4 Nov: "vi bruger alle tre LED-bånd" + RGB, and "droppede skråningen helt"): no reflector any more. The channel is a
 // box section: white 1 on the outer wall with RGB behind it, white 2 on the inner wall facing it, white 3 flat on the floor facing the
@@ -878,11 +882,17 @@ STRIPS46 = [["w", "o", 4.6, 12.7, 2.0, 21, 17], ["rgb", "o", 13.5, 18.5, 2.2, 38
 // white 3's lane on the floor: a rail each side with a lip 1.1 over its dark edge (2.2 dark each side, so no shade); the strip is
 // slid in under both lips from the front, or one edge under, then pressed flat. [lip r from, lip/rail r to, rail r to, lip y, lip thickness]
 FLOOR_LANE = [3.05, 4.15, 4.6, FLOOR46 - 0.6 - 0.5, 0.5];
+// v48 (Esben 4 Nov: "Vi klipper ikke i den. Find en anden løsning"): white 3 cannot bend round a corner in its own plane, so it
+// is twisted up on its edge through each corner: flat on the floor up to TWIST before the corner, twisted a quarter turn from there,
+// on edge in a slot between two fins in the middle of the corner (bending over its flat side there, as white 1 and 2 do on the
+// walls), and back down the same way. The floor's lips and rails stop where the twist begins.
+TWIST = 15;                               // the twist starts this far before the corner (the corner itself is SQ_A long)
+EDGE_SLOT = [1.3, 2.9, 12.5, 14];         // the corner slot: half width (white 3 is 2.0 with its COB), fins' outer r, fins' front y, length
 // bridges: the 4 corners (v45) and the middle of each side (Esben 4 Nov: "en i midten på hver side også"; the top's middle is the
 // camera, so one in the middle of each half): [x, z on the ring centre line, normal angle]
 BRIDGES46 = concat([for (p = JOINTS) [p[0], p[1], atan2(sign(p[1] - (RING_Z0 + RING_Z1)/2), sign(p[0]))]],
                    [[-RING_X, (RING_Z0 + RING_Z1)/2, 180], [RING_X, (RING_Z0 + RING_Z1)/2, 0], [0, RING_Z0, -90],
-                    [-(CLIP_BAY[0] + RING_X - SQ_A)/2, RING_Z1, 90], [(CLIP_BAY[0] + RING_X - SQ_A)/2, RING_Z1, 90]]);
+                    [-(CLIP_BAY[0] + RING_X - SQ_A - TWIST)/2, RING_Z1, 90], [(CLIP_BAY[0] + RING_X - SQ_A - TWIST)/2, RING_Z1, 90]]);   // v48: top ones at x ±46.5, where white 3 still lies flat (v46: ±54)
 // v24 (Esben 26 Oct: two white strips give plenty of light): v18-v23's third white strip in a pocket at the front of the
 // sloping reflector is gone, with its pocket, lips, clip and lead hole, and the light ring's wedge that held its front edge.
 // The reflector's front face clamps the ring's inner flange again, as in v2-v17.
@@ -1321,15 +1331,26 @@ module bridge_slice2d(p) translate([p[0], p[1]]) rotate(p[2] - 90) square([BRIDG
 BR_RW = STRIP_T3[1] - 2.0 - BRIDGE[2];    // 4.65: bar face over a white lane (COB dome at r 4.9)
 BR_RR = STRIP_T3[1] - 2.2 - BRIDGE[2];    // 4.45: over the RGB lane
 // v46: outer bar over white 1 and RGB, from the front step to white 3's rail; inner bar over white 2, from the step to its stem
-module led_bridges() for (p = BRIDGES46) intersection() {
+module led_bridges() for (i = [0 : len(BRIDGES46) - 1]) let(p = BRIDGES46[i]) intersection() {
     ext_y(REFL[0][0], FLOOR46 + 0.01) bridge_slice2d(p);
-    union() {
+    union() { if (i >= 4) floor_bar(); wall_bars(); }   // v48: no floor bar in the corners (white 3 stands on edge there)
+}
+// v48: the two fins of each corner's slot, from the floor forward, tied to the wall bars (they reach 0.25 into them)
+module edge_fins() for (i = [0 : 3]) let(p = BRIDGES46[i]) intersection() {
+    ext_y(EDGE_SLOT[2], FLOOR46 + 0.01) translate([p[0], p[1]]) rotate(p[2] - 90) square([EDGE_SLOT[3], 40], center = true);
+    ext_y(EDGE_SLOT[2], FLOOR46 + 0.01) { ring_band2d(EDGE_SLOT[0], EDGE_SLOT[1]); ring_band2d(-EDGE_SLOT[1], -EDGE_SLOT[0]); }
+}
+// v48: the floor bar over white 3: 1.0 thick, 0.25 over its COB, across the lane to both rails, with a post down to each rail
+module floor_bar() {
+    ext_y(FLOOR46 - 2.0 - BRIDGE[2] - BRIDGE[1], FLOOR46 - 2.0 - BRIDGE[2]) ring_band2d(-FLOOR_LANE[2], FLOOR_LANE[2]);
+    ext_y(FLOOR46 - 2.0 - BRIDGE[2] - BRIDGE[1], FLOOR_LANE[3] + 0.01) { ring_band2d(FLOOR_LANE[1], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[1]); }
+}
+module wall_bars() {
         ext_y(REFL[0][0], LANE_STEMS[0] + 0.6) ring_band2d(BR_RW - BRIDGE[1], BR_RW);
         ext_y(LANE_STEMS[0] + 0.3, FLOOR_LANE[3] + 0.01) ring_band2d(BR_RR - BRIDGE[1], BR_RR);
         ext_y(REFL[0][0], LANE_STEMS[0] + 0.6) ring_band2d(-BR_RW, -BR_RW + BRIDGE[1]);
         for (y = [REFL[0][0], LANE_STEMS[0]]) ext_y(y, y + (y == REFL[0][0] ? 0.4 : 0.6)) {
             ring_band2d(BR_RR - BRIDGE[1], LANE_LIP[0] + 0.01); ring_band2d(-LANE_LIP[0] - 0.01, -BR_RW + BRIDGE[1]); }
-    }
 }
 CAM_TUBE = [0.3, 0.2];                    // v37: tube end behind the board, crush tips' reach past the board's back
 module cam_tube_tips(h) for (i = [0 : 2]) let(a = 90 + i*120)
@@ -1357,12 +1378,17 @@ module frame3() {
                         ext_y(y - 1.1, y + 0.01) { ring_band2d(LANE_LIP[0], LANE_LIP[1]); ring_band2d(-LANE_LIP[1], -LANE_LIP[0]); }
                     }
                     // white 3's lane on the floor: rails and lips
-                    ext_y(FLOOR_LANE[3], FLOOR46 + 0.01) { ring_band2d(FLOOR_LANE[1], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[1]); }
-                    ext_y(FLOOR_LANE[3], FLOOR_LANE[3] + FLOOR_LANE[4]) { ring_band2d(FLOOR_LANE[0], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[0]); }
+                    difference() {   // v48: not where white 3 twists or stands on edge
+                        union() {
+                            ext_y(FLOOR_LANE[3], FLOOR46 + 0.01) { ring_band2d(FLOOR_LANE[1], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[1]); }
+                            ext_y(FLOOR_LANE[3], FLOOR_LANE[3] + FLOOR_LANE[4]) { ring_band2d(FLOOR_LANE[0], FLOOR_LANE[2]); ring_band2d(-FLOOR_LANE[2], -FLOOR_LANE[0]); }
+                        }
+                        ext_y(FLOOR_LANE[3] - 1, FLOOR46 + 1) floor_corners2d(TWIST);
+                    }
                 }
                 ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); }
             }
-            difference() { led_bridges(); ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); } }   // v45, v46
+            difference() { union() { led_bridges(); edge_fins(); } ext_y(0, CH_BACK + 1) { glass_keep2d(); cam_keep2d(); } }   // v45, v46
             ring_bumps();                                                 // v24: press the ring's flange forward all round
             // cross bars at the display tabs, with bosses down to the tabs
             // they stop 0.4 short of the front's channel wall, but behind it (CH_BACK on) they run 1 mm into the frame ring:
@@ -1419,8 +1445,18 @@ module strip46_2d(s, a, b) difference() { ring_band2d(a, b); translate([-s[5], R
 module strip46(s) let(w = s[3] - s[2], t = s[4], e = s[0] == "w" ? T_EDGE : t, m = (w - 4.7)/2) {
     if (s[1] == "o") { ext_y(s[2], s[3]) strip46_2d(s, STRIP_T3[1] - e, STRIP_T3[1]); ext_y(s[2] + m, s[3] - m) strip46_2d(s, STRIP_T3[1] - t, STRIP_T3[1]); }
     if (s[1] == "i") { ext_y(s[2], s[3]) strip46_2d(s, -STRIP_T3[1], -STRIP_T3[1] + e); ext_y(s[2] + m, s[3] - m) strip46_2d(s, -STRIP_T3[1], -STRIP_T3[1] + t); }
-    if (s[1] == "f") { ext_y(FLOOR46 - e, FLOOR46) strip46_2d(s, s[2], s[3]); ext_y(FLOOR46 - t, FLOOR46) strip46_2d(s, s[2] + m, s[3] - m); }
+    if (s[1] == "f") difference() {   // v48: flat only up to the twists
+        union() { ext_y(FLOOR46 - e, FLOOR46) strip46_2d(s, s[2], s[3]); ext_y(FLOOR46 - t, FLOOR46) strip46_2d(s, s[2] + m, s[3] - m); }
+        ext_y(FLOOR46 - t - 1, FLOOR46 + 1) floor_corners2d(TWIST);
+    }
+    if (s[1] == "f") for (i = [0 : 3]) let(p = BRIDGES46[i]) intersection() {   // v48: on edge in the corner slot (the twists are not drawn)
+        ext_y(FLOOR46 - (s[3] - s[2]), FLOOR46) translate([p[0], p[1]]) rotate(p[2] - 90) square([EDGE_SLOT[3], 40], center = true);
+        ext_y(FLOOR46 - (s[3] - s[2]), FLOOR46) ring_band2d(-t/2, t/2);
+    }
 }
+// v48: the corners plus e before them (white 3 twists from there)
+module floor_corners2d(e = 0) for (sx = [-1, 1], sz = [-1, 1])
+    translate([sx < 0 ? -RING_X - 20 : RING_X - SQ_A - e, sz < 0 ? RING_Z0 - 20 : RING_Z1 - SQ_A - e]) square([SQ_A + e + 20, SQ_A + e + 20]);
 module placed_strips3(kind) for (s = STRIPS46) if (s[0] == kind) strip46(s);
 // v46: the clip connectors on the fed ends, in the clip bays from x 21 out, the leads towards the camera and back through the slot:
 // [side, strip, [l, w, h], shift back] [C]
