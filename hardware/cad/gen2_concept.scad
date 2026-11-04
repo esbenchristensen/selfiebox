@@ -180,13 +180,19 @@ module mcore_model() translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rota
 // with a tooth: flat catch MC_TOOTH[2] over the PCB's top face (v35's lips stopped the board, so not 0.1), reaching MC_TOOTH[1] in over
 // the edge, a ramp over it, and the tab only MC_TOOTH[3] thick so it bends out when the board is pressed down over the pegs.
 MC_RAISE = 1.0;                            // v40: long walls higher
-MC_TOOTH = [6, 0.6, 0.2, 0.8, 1.4, 0.8, 1.5];   // v40: tab width (along the end), reach in from the wall face (0.45 over the PCB),
+MC_TOOTH = [6, 0.6, 0.2, 0.8, 1.4, 0.8, 2.0];   // v43: well 2.0 deep (v40 1.5)   // v40: tab width (along the end), reach in from the wall face (0.45 over the PCB),
                                            // catch over the PCB's top, tab thickness, ramp height, free slot each side, well depth: the tab
                                            // grows from the bottom of a 1.5 deep well in the back wall (3 thick, 1.5 left), clear of the
                                            // floor and the end wall all round, so it is 8.1 long and bends 0.6 at ~1.1 % strain
+// v43 (Esben 4 Nov, hurtigprint: "de passer egentlig fint nok ... de er bare lige en tand for tynde, så de knækker for den, når man
+// sætter dem ned"): the tooth is as v40 (6 wide, 0.6 reach, 0.2 catch, 1.4 ramp, same place), so the fit is the same. Only the tab
+// under it is stronger: MC_TAB[0] wide (v40 6), MC_TAB[1] thick at the root tapering to v40's 0.8 at the tooth (taper on the back,
+// the board side stays flat), an MC_TAB[2] chamfer on both sides of the root (no sharp corner where it broke), and the well 2.0 deep
+// (1.0 left of the 3 mm back), so it is 8.6 long. Root ~3.7x as strong (w*t^2), strain at 0.6 bend about the same (~1.2 %, tapered).
+MC_TAB = [10, 1.2, 0.5];                   // v43: tab width, root thickness, root chamfer
 module mcore_tab_wells() translate([MCORE_P[0], D - BACK_T + 0.01, MCORE_P[1]]) rotate([90, 0, 0])
     for (sx = [0, 1]) translate([sx > 0 ? MCORE[0] + 0.3 : 0, (MCORE[1] + 0.3)/2, 0]) mirror([sx, 0, 0])
-        translate([-1.6 - 0.01, -MC_TOOTH[0]/2 - MC_TOOTH[5], -MC_TOOTH[6] - 0.01]) cube([1.6 + 0.6 + 0.01, MC_TOOTH[0] + 2*MC_TOOTH[5], MC_TOOTH[6] + 0.03]);
+        translate([-2.0 - 0.01, -MC_TAB[0]/2 - MC_TOOTH[5], -MC_TOOTH[6] - 0.01]) cube([2.0 + 0.6 + 0.01, MC_TAB[0] + 2*MC_TOOTH[5], MC_TOOTH[6] + 0.03]);   // v43: wider, deeper
 module mcore_cradle() {
     sz = MCORE;  t = MC_PAD[1] + 1.2;  fl = 1.2;  hgt = fl + t + 0.1 + BOARD_LIP[3] + 0.3 + MC_RAISE;  pcb = fl + t;
     difference() {
@@ -195,8 +201,8 @@ module mcore_cradle() {
         for (sx = [0, 1]) translate([sx > 0 ? sz[0] + 0.3 - 0.01 : -2, -2, pcb - 0.2]) cube([2.01, sz[1] + 4.3, hgt]);   // low ends
         for (n = MC_CUTS, sy = [0, 1]) translate([n[0], sy > 0 ? sz[1] - 1 : -2, pcb]) cube([n[1] - n[0], 4, hgt]);   // v36: both walls
         translate([sz[0]/2 - 10 + 0.15, -2, fl]) cube([20, 4, hgt]);                 // FPC socket
-        for (sx = [0, 1]) translate([sx > 0 ? sz[0] + 0.3 - 0.6 : -2, (sz[1] + 0.3)/2 - MC_TOOTH[0]/2 - MC_TOOTH[5], -1])   // v40: free the tabs
-            cube([2.6, MC_TOOTH[0] + 2*MC_TOOTH[5], hgt + 2]);                       // (floor and end wall, down to the well)
+        for (sx = [0, 1]) translate([sx > 0 ? sz[0] + 0.3 - 0.6 : -2, (sz[1] + 0.3)/2 - MC_TAB[0]/2 - MC_TOOTH[5], -1])   // v40: free the tabs
+            cube([2.6, MC_TAB[0] + 2*MC_TOOTH[5], hgt + 2]);                       // (floor and end wall, down to the well)
     }
     for (h = MC_HOLES) translate([h[0] + 0.15, h[1] + 0.15, fl - 0.01]) {
         cylinder(d = MC_PAD[0], h = MC_PAD[1] + 0.01, $fn = 32);
@@ -205,7 +211,9 @@ module mcore_cradle() {
     // v40: a snap tab with a tooth in the middle of each short end (v36-v39: no lips, v24-v35: MC_LIPS on the long walls)
     w = MC_TOOTH[0];  tt = MC_TOOTH[3];  top = pcb;  ztop = top + MC_TOOTH[2] + MC_TOOTH[4];   // pcb = the PCB's top face
     for (sx = [0, 1]) translate([sx > 0 ? sz[0] + 0.3 : 0, (sz[1] + 0.3)/2, 0]) mirror([sx, 0, 0]) {
-        translate([-tt, -w/2, -MC_TOOTH[6] - 0.01]) cube([tt, w, ztop + MC_TOOTH[6] + 0.01]);   // the tab, from the well's bottom
+        d = MC_TOOTH[6];  tr = MC_TAB[1];  f = MC_TAB[2];                                 // v43: tapered tab with chamfered root
+        translate([0, MC_TAB[0]/2, 0]) rotate([90, 0, 0]) linear_extrude(MC_TAB[0])      // the tab, from the well's bottom
+            polygon([[-tr - f, -d - 0.3], [f, -d - 0.3], [f, -d], [0, -d + f], [0, ztop], [-tt, ztop], [-tr, -d + f], [-tr - f, -d]]);
         translate([0, w/2, top + MC_TOOTH[2]]) rotate([90, 0, 0]) linear_extrude(w)          // tooth: flat catch, ramp up to the tab's top
             polygon([[-0.01, 0], [MC_TOOTH[1], 0], [-0.01, MC_TOOTH[4]]]);
     }
@@ -489,7 +497,10 @@ PWR_BORE = 12.5;                                // plug bore Ø (v11-v39; v40: P
 // nemmere at ramme stikket, når man kører hanstikket op"): the Ø12.5 teardrop let the PSU plug (grip Ø10.15 [M]) wander 1.2 to the sides
 // and 3.7 towards the peak. Now Ø10.8 (0.3 round the grip), and the peak is cut flat 0.5 over the circle (as the stand bracket's insert
 // bore; the 3.6 wide flat bridges when the shell prints back down). The foot round it keeps its v37 size.
-PWR_PLUG_BORE = [10.8, 0.5];                    // v40: bore Ø, flat peak over the circle
+PWR_PLUG_BORE = [11.8, 0.5];                    // v40: bore Ø, flat peak over the circle (v43: Ø11.8, v40-v42 Ø10.8)
+// v43 (Esben 4 Nov, hurtigprint: "kanalen, som strømstikket udefra skal op i, den er måske lige en millimeter i diameter for tynd
+// ... hvis vi kan tilføje en millimeter i diameter der"): Ø10.8 -> Ø11.8, nothing else. The foot round it is still sized from the
+// old Ø12.5 bore, and the stand bracket's plug slot is 16 wide, so neither needs to change.
 // speaker: fires backwards through a grille into the wall gap, sound leaves round the box edges
 // [A] DFRobot FIT0502 3 W 8 ohm enclosed speaker (drawing KN-SP4030-05): 69.9 x 31, flange 3.7,
 //     4 x Ø3.0 ear holes on 63.6 x 24, front opening oval 38.5 x 27; depth 15–16 (spec/retailer)
@@ -1449,7 +1460,9 @@ FUSE_P = [99, 69];                        // centre x, z
 // that stood only 0.1 into it, on the long walls alone, and 9 mm lead slots round the Ø~6.5 lead nipples (photo sikring-forfra.jpg).
 // Now no clearance, 2 crush ribs on every wall (0.5 in on the long walls, 0.4 on the end walls, so the soft body is squeezed from
 // all 4 sides), and the lead slots 5.6 wide, so they pinch the nipples. Ribs are vertical when printed (shell back down).
-FUSE_C = [0, 1.6, 9, 5.6];                // clearance per side, wall, wall height, lead slot width (v36-v39: 0.15, 9)
+FUSE_C = [0, 1.6, 9, 7.5];                // clearance per side, wall, wall height, lead slot width (v36-v39: 0.15, 9; v40-v42: 5.6)
+// v43 (Esben 4 Nov, hurtigprint: the holder would not go down, the openings at each end were too narrow; he measured the ends
+// at ~8 mm on both sides, "måske 7,5"): lead slots 5.6 -> 7.5, so they squeeze 0.25 per side. Pocket and crush ribs as v40.
 FUSE_RIB = [0.5, 0.4];                    // v40: crush ribs, how far they stand in: long walls, end walls
 module fuse_holder() translate([FUSE_P[0], D - BACK_T + 0.01, FUSE_P[1]]) rotate([90, 0, 0]) {   // local: x across, y = z of the box, z out of the wall
     a = FUSE[0]/2 + FUSE_C[0];  b = FUSE[1]/2 + FUSE_C[0];  t = FUSE_C[1];
