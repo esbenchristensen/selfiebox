@@ -85,7 +85,7 @@ test("alle mails kan bygges, med og uden fotoportal, og linker aldrig til forsid
   };
   for (const kind of Object.keys(KINDS) as MailKind[]) {
     for (const party of [null, { slug: "ida-abcdefgh" }]) {
-      const m = buildMail(kind, { booking: { ...booking, party }, shipDaysBefore: 2, site: "https://www.selfi.dk", portal: "https://foto.selfi.dk", deleteOn: "2027-09-12" });
+      const m = buildMail(kind, { booking: { ...booking, party }, shipDaysBefore: 2, site: "https://www.selfi.dk", portal: "https://foto.selfi.dk", deleteOn: "2027-09-12", pay: { url: "https://checkout.stripe.com/x", amount: 500, reason: "Ridse i skærmen" } });
       assert.ok(m.subject && !/\{\w+\}/.test(m.subject + m.heading), `${kind}: tom eller ufyldt tekst`);
       const buttons = m.blocks.filter((b) => b.type === "button") as { href: string }[];
       assert.ok(buttons.every((b) => b.href !== "https://www.selfi.dk/"), `${kind}: knap til forsiden`);

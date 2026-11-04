@@ -50,6 +50,17 @@ async function handle(event: Event) {
       const s = event.data.object as unknown as CheckoutSession;
       const id = s.metadata?.booking ?? s.client_reference_id;
       if (!id) break;
+      // Ekstra betaling fra admin (skade, forsinket retur): kun betalingen markeres, bookingen ændres ikke.
+      if (s.metadata?.kind === "extra") {
+        const cur = await rentals.findOne({ _id: id }, { projection: { status: 1 } });
+        if (cur && s.payment_status === "paid") {
+          await rentals.updateOne(
+            { _id: id, "charges.sessionId": s.id, "charges.status": { $ne: "paid" } },
+            { $set: { "charges.$.status": "paid", "charges.$.paidAt": new Date(), updatedAt: new Date() }, $push: { history: log(cur.status, `Ekstra betaling ${(s.amount_total ?? 0) / 100} kr. betalt`) } },
+          );
+        }
+        break;
+      }
       const stripeInfo = { "stripe.sessionId": s.id, "stripe.paymentIntent": s.payment_intent, "stripe.paymentStatus": s.payment_status, "stripe.amountPaid": (s.amount_total ?? 0) / 100 };
       if (s.payment_status !== "paid") {
         // Paid with a method that settles later: keep holding the dates until Stripe says yes or no.

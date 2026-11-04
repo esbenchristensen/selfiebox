@@ -128,6 +128,14 @@ export default async function Booking({ params, searchParams }: { params: Promis
               </>
             )}
 
+            {(b.charges ?? []).filter((c) => c.status === "open").map((c) => (
+              <div className="mf-card" key={c.id}>
+                <b>Betaling: {kr(c.amount)}</b>
+                <p>{c.reason}. Er I uenige, så skriv til os, før I betaler.</p>
+                <a className="btn btn-primary" href={c.url}>Betal {kr(c.amount)}</a>
+              </div>
+            ))}
+
             <div className="bk-sum">
               <span className="label">Kvittering</span>
               <div className="bk-sum-lines">
@@ -145,6 +153,7 @@ export default async function Booking({ params, searchParams }: { params: Promis
               <p className="fine">
                 {DELIVERIES[b.delivery].name} · {PHOTO_TYPES[b.photoType].name}
                 {b.stripe.refunded ? ` · Refunderet ${kr(b.stripe.refunded)}` : ""}
+                {(b.charges ?? []).filter((c) => c.status === "paid").map((c) => ` · ${c.reason}: ${kr(c.amount)} betalt`).join("")}
               </p>
               <p className="fine">
                 Lejebetingelserne står på <a href="/lejebetingelser">selfi.dk/lejebetingelser</a>. Gem denne side: linket virker kun for jer.

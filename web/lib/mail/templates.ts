@@ -25,7 +25,8 @@ export type MailKind =
   | "ikke_gennemfoert"
   | "fri_besked"
   | "min_fest"
-  | "sletning_varsel";
+  | "sletning_varsel"
+  | "betaling";
 
 /** The parts of a mail admin can rewrite. {fornavn}, {periode} … are filled in from the booking. */
 export type MailTexts = { subject: string; preheader: string; heading: string; body: string; button: string };
@@ -59,6 +60,7 @@ export type MailContext = {
   phone?: string; // Selfi's phone, when set in company.ts
   refund?: number; // kr., for "refunderet" and "annulleret"
   deleteOn?: string; // dagen billederne slettes, for "sletning_varsel"
+  pay?: { url: string; amount: number; reason: string }; // for "betaling"
   oldRange?: { from: string; to: string }; // for "ombooking"
 };
 
@@ -78,6 +80,7 @@ export const KINDS: Record<MailKind, { name: string; when: string; auto: boolean
   fri_besked: { name: "Fri besked", when: "Fra admin, når som helst", auto: false },
   min_fest: { name: "Link til Min fest", when: "Automatisk, når kunden beder om det på selfi.dk/min-fest", auto: false },
   sletning_varsel: { name: "Billederne slettes snart", when: "Automatisk 14 dage før billederne på fotoportalen slettes", auto: true, defaultOn: true },
+  betaling: { name: "Betalingslink", when: "Fra admin, når kunden skal betale noget ekstra (fx en skade efter prislisten)", auto: false },
 };
 
 export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
@@ -186,6 +189,13 @@ export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
     body: "Fotoportalen fra jeres fest lukker {sletning}, og så sletter vi alle billeder og videoer fra boksen. Det kan ikke fortrydes.\n\nHent de billeder, I vil gemme, og sig det gerne til gæsterne, så de også kan nå det.",
     button: "Se billederne",
   },
+  betaling: {
+    subject: "Betaling for booking {booking}: {beloeb}",
+    preheader: "{aarsag}",
+    heading: "Der er {beloeb} at betale.",
+    body: "Vi har registreret følgende på jeres booking {booking}: **{aarsag}**. Beløbet er efter prislisten i lejebetingelserne.\n\nI kan betale med kort via knappen. Er I uenige, så svar på denne mail, før I betaler, så kigger vi på det igen.",
+    button: "Betal {beloeb}",
+  },
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -249,6 +259,8 @@ export function variables(c: MailContext): Record<string, string> {
     fotoportal_link: portalUrl(c) ?? "",
     min_fest_link: minFestUrl(c),
     sletning: c.deleteOn ? dayName(c.deleteOn) : "",
+    beloeb: c.pay ? kr(c.pay.amount) : "",
+    aarsag: c.pay?.reason ?? "",
   };
 }
 export const VARIABLE_HELP: Record<string, string> = {
@@ -269,6 +281,8 @@ export const VARIABLE_HELP: Record<string, string> = {
   fotoportal_link: "Link til fotoportalen",
   min_fest_link: "Link til kundens side Min fest på selfi.dk",
   sletning: "Dagen billederne slettes (kun i Billederne slettes snart)",
+  beloeb: "Beløbet, der skal betales (kun i Betalingslink)",
+  aarsag: "Hvad betalingen er for (kun i Betalingslink)",
 };
 
 export const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (m, k: string) => (k in v ? v[k] : m));
@@ -416,6 +430,11 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
       break;
     case "fri_besked":
       intro();
+      blocks.push({ type: "code", label: "Bookingnummer", value: b._id });
+      break;
+    case "betaling":
+      intro();
+      if (c.pay) button(c.pay.url);
       blocks.push({ type: "code", label: "Bookingnummer", value: b._id });
       break;
     case "sletning_varsel":
