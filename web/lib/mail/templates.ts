@@ -23,7 +23,8 @@ export type MailKind =
   | "annulleret"
   | "refunderet"
   | "ikke_gennemfoert"
-  | "fri_besked";
+  | "fri_besked"
+  | "min_fest";
 
 /** The parts of a mail admin can rewrite. {fornavn}, {periode} … are filled in from the booking. */
 export type MailTexts = { subject: string; preheader: string; heading: string; body: string; button: string };
@@ -73,6 +74,7 @@ export const KINDS: Record<MailKind, { name: string; when: string; auto: boolean
   refunderet: { name: "Refusion", when: "Automatisk, når Stripe har refunderet", auto: true, defaultOn: true },
   ikke_gennemfoert: { name: "Booking ikke gennemført", when: "Automatisk, når betalingssiden udløb uden betaling", auto: true, defaultOn: false },
   fri_besked: { name: "Fri besked", when: "Fra admin, når som helst", auto: false },
+  min_fest: { name: "Link til Min fest", when: "Automatisk, når kunden beder om det på selfi.dk/min-fest", auto: false },
 };
 
 export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
@@ -108,7 +110,7 @@ export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
     subject: "Tak for festen. Her er jeres billeder",
     preheader: "Alle billeder fra boksen ligger på jeres fotoportal.",
     heading: "Tak for festen, {fornavn}.",
-    body: "Alle billeder fra boksen ligger på jeres fotoportal. Del linket med gæsterne, så kan de hente deres egne. Portalen er åben i mindst 3 måneder, så hent de billeder, I vil gemme.",
+    body: "Alle billeder fra boksen ligger på jeres fotoportal. Del linket med gæsterne, så kan de hente deres egne. Portalen er åben i 3 måneder efter festen (12 måneder, hvis I har tilvalget), så hent de billeder, I vil gemme.",
     button: "Se billederne",
   },
   retur_paamindelse: {
@@ -167,6 +169,13 @@ export const DEFAULT_TEXTS: Record<MailKind, MailTexts> = {
     body: "",
     button: "",
   },
+  min_fest: {
+    subject: "Jeres link til Min fest",
+    preheader: "Status, opsætning, fotoportal og retur samlet ét sted.",
+    heading: "Her er jeres fest, {fornavn}.",
+    body: "I bad om et link til jeres booking {booking}. På siden kan I se status og sporing, sætte boksen op, finde fotoportalen og se, hvornår boksen skal retur.\n\nHar I ikke bedt om linket, kan I se bort fra mailen.",
+    button: "Åbn Min fest",
+  },
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -198,6 +207,14 @@ export const trackingUrl = (t: string) => (/^https?:\/\//.test(t) ? t : `https:/
 export const setupUrl = (c: MailContext) =>
   c.booking.token ? `${c.portal}/opsaet/${encodeURIComponent(c.booking._id)}?t=${encodeURIComponent(c.booking.token)}` : `${c.site}/`;
 export const portalUrl = (c: MailContext) => (c.booking.party?.slug ? `${c.portal}/f/${c.booking.party.slug}` : null);
+/** Kundens samlede side på selfi.dk: status, opsætning, fotoportal, retur. Uden token: siden, hvor man beder om et link. */
+export const minFestUrl = (c: MailContext) =>
+  c.booking.token ? `${c.site}/min-fest/${encodeURIComponent(c.booking._id)}?t=${encodeURIComponent(c.booking.token)}` : `${c.site}/min-fest`;
+/** Fotoportalen, eller Min fest, hvis festen ikke har fået en portal endnu. */
+const portalNote = (c: MailContext, portal: string | null) =>
+  portal
+    ? `Alle billeder fra boksen samles på [${portal.replace(/^https?:\/\//, "")}](${portal}). Boksen viser også en QR-kode dertil efter hvert billede, så gæsterne selv kan finde den.`
+    : `Alle billeder fra boksen samles på jeres fotoportal. Linket står på [Min fest](${minFestUrl(c)}), så snart I har sat boksen op.`;
 
 /** The {placeholders} admin can use in the texts, with what each one becomes for this booking. */
 export function variables(c: MailContext): Record<string, string> {
@@ -218,6 +235,7 @@ export function variables(c: MailContext): Record<string, string> {
     sporing: b.trackingOut ?? "",
     opsaet_link: setupUrl(c),
     fotoportal_link: portalUrl(c) ?? "",
+    min_fest_link: minFestUrl(c),
   };
 }
 export const VARIABLE_HELP: Record<string, string> = {
@@ -236,6 +254,7 @@ export const VARIABLE_HELP: Record<string, string> = {
   sporing: "Sporingsnummer ud",
   opsaet_link: "Link til opsætningen",
   fotoportal_link: "Link til fotoportalen",
+  min_fest_link: "Link til kundens side Min fest på selfi.dk",
 };
 
 export const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (m, k: string) => (k in v ? v[k] : m));
@@ -250,7 +269,9 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
   const blocks: Block[] = [];
   const intro = () => T(t.body) && blocks.push({ type: "text", text: T(t.body) });
   const button = (href: string | null, secondary = false) => t.button && href && blocks.push({ type: "button", label: T(t.button), href, secondary });
-  const help = c.phone ? `Ring på ${c.phone} eller svar på denne mail.` : "Svar på denne mail, så vender vi tilbage hurtigst muligt.";
+  const help = c.phone
+    ? `Ring på ${c.phone}, skriv i [chatten](${c.site}/#chat) eller svar på denne mail.`
+    : `Skriv i [chatten på selfi.dk](${c.site}/#chat), eller svar på denne mail, så vender vi tilbage hurtigst muligt.`;
 
   switch (kind) {
     case "bekraeftelse":
@@ -273,6 +294,8 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
           ],
         },
         { type: "note", label: "Bindende booking", text: "Bookingen er bindende. Der er ingen fortrydelsesret, fordi boksen er lejet til jeres fest på bestemte datoer, Senest 30 dage før første lejedag kan I flytte den gratis til andre ledige datoer eller afbestille den og få 50 % tilbage. Senere kan den hverken flyttes eller afbestilles. Lejebetingelserne står på selfi.dk/lejebetingelser." },
+        { type: "note", label: "Jeres fotoportal", text: portalNote(c, portal) },
+        { type: "note", label: "Min fest", text: `Status, sporing, opsætning, fotoportal og returdato står samlet på [Min fest](${minFestUrl(c)}). Gem linket.` },
         { type: "code", label: "Bookingnummer", value: b._id },
       );
       break;
@@ -297,6 +320,8 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
           ],
         },
         { type: "note", text: `Har I ikke sat boksen op endnu, kan I nå det nu: [sæt boksen op](${setupUrl(c)}).` },
+        { type: "note", label: "Jeres fotoportal", text: portalNote(c, portal) },
+        { type: "note", label: "Brug for hjælp", text: help },
       );
       break;
     case "klar_til_fest":
@@ -317,7 +342,7 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
       break;
     case "tak":
       intro();
-      button(portal ?? `${c.site}/`);
+      button(portal ?? minFestUrl(c));
       blocks.push({
         type: "steps",
         label: `Sådan sender I boksen retur senest ${shortDay(returnBy(b.to))}`,
@@ -330,11 +355,12 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
       break;
     case "retur_paamindelse":
       intro();
+      blocks.push({ type: "note", label: "Brug for hjælp", text: help });
       blocks.push({ type: "code", label: "Bookingnummer", value: b._id });
       break;
     case "modtaget":
       intro();
-      button(portal, true);
+      button(portal ?? minFestUrl(c), true);
       break;
     case "ombooking":
       intro();
@@ -376,6 +402,11 @@ export function buildMail(kind: MailKind, c: MailContext, texts?: Partial<MailTe
       break;
     case "fri_besked":
       intro();
+      blocks.push({ type: "code", label: "Bookingnummer", value: b._id });
+      break;
+    case "min_fest":
+      intro();
+      button(minFestUrl(c));
       blocks.push({ type: "code", label: "Bookingnummer", value: b._id });
       break;
   }

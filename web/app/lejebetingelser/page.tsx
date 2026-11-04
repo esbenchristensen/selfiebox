@@ -149,7 +149,7 @@ export default function Lejebetingelser() {
       <ul>
         <li>Billederne samles på jeres eventside, som kun kan ses af dem, der har linket. Vi bruger ikke billederne til noget og viser dem ikke for andre.</li>
         <li>Eventsiden er åben i {GALLERY_MONTHS} måneder efter festen. Har I købt tilvalget Billederne gemt i {KEEP_MONTHS} måneder, er den åben i {KEEP_MONTHS} måneder. Derefter sletter vi billederne, så hent dem, I vil gemme, inden da.</li>
-        <li>Vil en gæst have et billede fjernet, kan I slette det fra eventsiden, eller skrive til os, så gør vi det.</li>
+        <li>Vil en gæst have et billede fjernet, kan I skjule det for gæsterne på eventsiden med det samme (åbn den fra jeres opsætningslink), og skrive til os, så sletter vi det helt.</li>
       </ul>
 
       <h2>12. Klager</h2>

@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     d = await db();
   } catch (e) {
     console.error("lead db", e);
-    return NextResponse.json({ error: "Vi kunne ikke tage imod lige nu. Ring eller skriv til os, så går vi i gang alligevel." }, { status: 503 });
+    return NextResponse.json({ error: "Vi kunne ikke tage imod lige nu. Skriv til os i chatten eller på mail, så går vi i gang alligevel." }, { status: 503 });
   }
   const ip = ipHash(req);
   const recent = await d.collection("leads").countDocuments({ requests: { $elemMatch: { ip, at: { $gt: new Date(Date.now() - 3600_000) } } } });

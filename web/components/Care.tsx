@@ -11,7 +11,7 @@ const ours = [
   ["Overvågning", "Boksen melder sig til os hele tiden. Driller den, får vi en alarm."],
   ["Opdateringer", "Nye funktioner og rettelser kommer af sig selv. Boksen kører kun software, vi har signeret."],
   ["Ny boks", "Går en boks i stykker, sender vi en ny. Fejl og slitage koster jer ikke noget."],
-  ["Support døgnet rundt", "Ring eller skriv, også lørdag kl. 01."],
+  ["Support i chatten", "Sif svarer med det samme i chatten, også lørdag kl. 01, og en kollega tager over, når det kræver et menneske."],
   ["Gæsternes data", "Billeder og numre opbevares i EU efter en databehandleraftale og bruges kun til det, gæsten har sagt ja til."],
 ] as const;
 
