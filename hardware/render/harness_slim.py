@@ -75,23 +75,23 @@ def pin(n):
 
 K1s, K1f, K2s, K2f = K["K1"]["shell"], K["K1"]["frame"], K["K2"]["shell"], K["K2"]["frame"]
 # slim12 (as v53): the splice clamps for the strips' own leads (cad: EXT_H) IN FRONT of the frame's back plane (y 11.6-19.6, in
-# the frame's window), entries up; slim14 (v55): cast into the frame itself (frame_wagos), entries at z 262.2. The strips' leads come out of the
+# the frame's window), entries up; slim14 (v55): cast into the frame itself (frame_wagos); slim15 (as v56): the shell's Wago-row
+# pockets, clamps on a floor at z 244.2, entries to the back at y 29.6, levers up; the leads come in from behind the frame. The strips' leads come out of the
 # slots behind the frame's top band, down behind it and forward through the window into them; the extensions go back the same
 # way into FW (behind the frame, over the camera ribbon) and along to FL. From the left: white +, white − (221-415); RGB data,
 # GND, +5 V (221-413)
-EXT = {"hvid+": -28.4, "hvid-": 3.2, "rgb_d": 32.15, "rgb_gnd": 52.75, "rgb+": 73.35}
+EXT = {"hvid+": -30.1, "hvid-": 2.5, "rgb_d": 30.55, "rgb_gnd": 52.15, "rgb+": 73.75}   # slim15 (as v56)
 EXT_NAME = {"hvid+": "hvid +", "hvid-": "hvid −", "rgb_d": "RGB data", "rgb_gnd": "RGB GND", "rgb+": "RGB +5 V"}
 EXT_TYPE = {"hvid+": "221-415", "hvid-": "221-415", "rgb_d": "221-413", "rgb_gnd": "221-413", "rgb+": "221-413"}
 FW = lambda x: (x, 34.0, 276.0)
-WIN = lambda x: (x, 22.0, 272.0)       # through the frame's window, over the clamps
 
 
 def ext(n, dx=0.0):
-    return (EXT[n] + dx, 14.05, 262.2)
+    return (EXT[n] + dx, 29.6, 246.65)
 
 
 def to_ext(n, dx=0.0):    # from above, straight down into the entry
-    return [(EXT[n] + dx, 15.5, 268.0), ext(n, dx)]
+    return [(EXT[n] + dx, 34.5, 250.0), (EXT[n] + dx, 33.0, 246.65), ext(n, dx)]
 
 
 # slim12: the fuse's two clamps (cad: fuse_wagos), entries up: FWL on the left wall under the fuse (z 104), its entries across the
@@ -170,34 +170,34 @@ CABLES = [
      rev(w("W4", -4)) + rev(UP_R) + [R(160.0), R(100.0), (92.0, 44.0, 80.0), (60.0, 40.0, 80.0), P["wled_in"]], 15),
     # strips: their own leads (14-15 cm) end in the splice clamps on the upper cross bar (slim12, as v53); extensions through K1
     ("S1", "RGB", "RGB-strip +5 V (rød) → RGB-klemme +5 V", "RGB-strip", "RGB +5 V", "strippens ledning (14-15 cm)", ORG,
-     [P["hole_r"], (24.0, 34.0, 278.0), WIN(24.0)] + to_ext("rgb+", 0), 11),
+     [P["hole_r"], (24.0, 34.0, 278.0)] + to_ext("rgb+", 0), 11),
     ("S2", "RGB", "RGB-strip GND (hvid) → RGB-klemme GND", "RGB-strip", "RGB GND", "strippens ledning (14-15 cm)", BLK,
-     [P["hole_r"], (22.0, 34.0, 278.0), WIN(22.0)] + to_ext("rgb_gnd", 0), 11),
+     [P["hole_r"], (22.0, 34.0, 278.0)] + to_ext("rgb_gnd", 0), 11),
     ("S3", "RGB", "RGB-strip data (gul) → RGB-klemme data", "RGB-strip", "RGB data", "strippens ledning (14-15 cm)", GRN,
-     [P["hole_r"], (20.0, 34.0, 278.0), WIN(20.0)] + to_ext("rgb_d", 0), 11),
+     [P["hole_r"], (20.0, 34.0, 278.0)] + to_ext("rgb_d", 0), 11),
     ("S4", "hvid", "hvid strip 1 + (rød) → hvid + klemme", "hvid strip 1", "hvid +", "strippens ledning (14 cm)", RED,
-     [P["hole_l"], (-24.0, 34.0, 278.0), WIN(-24.0)] + to_ext("hvid+", 6), 11),
+     [P["hole_l"], (-24.0, 34.0, 278.0)] + to_ext("hvid+", 6), 11),
     ("S5", "hvid", "hvid strip 1 − (sort) → hvid − klemme", "hvid strip 1", "hvid −", "strippens ledning (14 cm)", BLK,
-     [P["hole_l"], (-22.0, 34.0, 278.0), WIN(-22.0)] + to_ext("hvid-", -6), 11),
+     [P["hole_l"], (-22.0, 34.0, 278.0)] + to_ext("hvid-", -6), 11),
     ("S6", "hvid", "hvid strip 2 + (rød) → hvid + klemme", "hvid strip 2", "hvid +", "strippens ledning (14 cm)", RED,
-     [P["hole_r"], (14.0, 34.0, 278.0), WIN(14.0)] + to_ext("hvid+", 12), 11),
+     [P["hole_r"], (14.0, 34.0, 278.0)] + to_ext("hvid+", 12), 11),
     ("S7", "hvid", "hvid strip 2 − (sort) → hvid − klemme", "hvid strip 2", "hvid −", "strippens ledning (14 cm)", BLK,
-     [P["hole_r"], (16.0, 34.0, 278.0), WIN(16.0)] + to_ext("hvid-", 6), 11),
+     [P["hole_r"], (16.0, 34.0, 278.0)] + to_ext("hvid-", 6), 11),
     ("S8", "hvid", "hvid strip 3 + (rød) → hvid + klemme", "hvid strip 3", "hvid +", "strippens ledning (14 cm)", RED,
-     [P["hole_l"], (-26.0, 34.0, 278.0), WIN(-26.0)] + to_ext("hvid+", 0), 11),
+     [P["hole_l"], (-26.0, 34.0, 278.0)] + to_ext("hvid+", 0), 11),
     ("S9", "hvid", "hvid strip 3 − (sort) → hvid − klemme", "hvid strip 3", "hvid −", "strippens ledning (14 cm)", BLK,
-     [P["hole_l"], (-20.0, 34.0, 278.0), WIN(-20.0)] + to_ext("hvid-", 0), 11),
+     [P["hole_l"], (-20.0, 34.0, 278.0)] + to_ext("hvid-", 0), 11),
     # slim12: the extensions, from the splice clamps back through the window, along behind the frame's top and down FL to K1
     ("E1", "hvid", "forlænger hvid + klemme → W6", "hvid + klemme", "W6", "0,75 mm² rød", RED,
-     rev(to_ext("hvid+", -12)) + [WIN(EXT["hvid+"]), FW(EXT["hvid+"]), FW(-86.0), FL(240.0)] + STRIP + w("W6", -4), 11),
+     rev(to_ext("hvid+", -12)) + [FW(EXT["hvid+"]), FW(-86.0), FL(240.0)] + STRIP + w("W6", -4), 11),
     ("E2", "hvid", "forlænger hvid − klemme → W5", "hvid − klemme", "W5", "0,75 mm² sort", BLK,
-     rev(to_ext("hvid-", -12)) + [WIN(EXT["hvid-"]), FW(EXT["hvid-"]), FW(-86.0), FL(240.0)] + STRIP + w("W5", -4), 11),
+     rev(to_ext("hvid-", -12)) + [FW(EXT["hvid-"]), FW(-86.0), FL(240.0)] + STRIP + w("W5", -4), 11),
     ("E3", "RGB", "forlænger RGB +5 V klemme → W3", "RGB +5 V klemme", "W3", "0,75 mm² rød, orange tape", ORG,
-     rev(to_ext("rgb+", -6)) + [WIN(EXT["rgb+"]), FW(EXT["rgb+"]), FW(-86.0), FL(240.0)] + STRIP + w("W3", -6), 11),
+     rev(to_ext("rgb+", -6)) + [FW(EXT["rgb+"]), FW(-86.0), FL(240.0)] + STRIP + w("W3", -6), 11),
     ("E4", "RGB", "forlænger RGB GND klemme → W4", "RGB GND klemme", "W4", "0,75 mm² sort", BLK,
-     rev(to_ext("rgb_gnd", -6)) + [WIN(EXT["rgb_gnd"]), FW(EXT["rgb_gnd"]), FW(-86.0), FL(240.0)] + STRIP + w("W4", -8), 11),
+     rev(to_ext("rgb_gnd", -6)) + [FW(EXT["rgb_gnd"]), FW(-86.0), FL(240.0)] + STRIP + w("W4", -8), 11),
     ("E5", "RGB", "forlænger RGB data klemme → RGB-styring GPIO16", "RGB data klemme", "Gledopto GPIO16", "0,5 mm² grøn eller gul", GRN,
-     rev(to_ext("rgb_d", -6)) + [WIN(EXT["rgb_d"]), FW(EXT["rgb_d"]), FW(-86.0), FL(240.0)] + STRIP + [T(52.8), (52.8, 36.0, 236.0), P["wled_out"]], 11),
+     rev(to_ext("rgb_d", -6)) + [FW(EXT["rgb_d"]), FW(-86.0), FL(240.0)] + STRIP + [T(52.8), (52.8, 36.0, 236.0), P["wled_out"]], 11),
     # data: the USB ports face down, so the 90 deg plugs send their cables left to K2 on the lower bar
     ("U1", "USB", "Pi USB-A → RGB-styring USB-C (styring)", "Pi 5 USB-A", "Gledopto USB-C", "USB-A 90° venstre → USB-C", BLU,
      [P["usb_a1"], (-80.0, 30.0, 92.0), (-80.0, 35.0, 78.0), K2f, "K2"] + K2_SHELL + BL_R + [R(160.0), R(186.0), (90.0, 40.0, 190.0), P["wled_usb"]], 0),

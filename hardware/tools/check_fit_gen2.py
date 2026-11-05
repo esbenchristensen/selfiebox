@@ -63,7 +63,7 @@ CONTACT = {
     ("x_stand", "x_cleat"): 1e9,       # v36: the stand bracket and the wall cleat are alternatives (never fitted together)
     ("x_stand", "s_wall"): 1e9,
     ("x_shell3", "c_fusewagos"): 80,   # v53: the fuse's two clamps in their pockets (teeth, ribs, lips)
-    ("x_frame3", "c_extwagos"): 150,   # v55: the splice clamps in the frame's racks (crush ribs on the fins and the end wall)
+    ("x_frame3", "c_extwagos"): 200,   # v55-v56: the splice clamps in the frame's pockets (v56: the shell row's teeth and crush ribs)
     ("x_frame3", "x_camera"): 1.5,     # v37: 3 crush tips on each camera tube reach 0.2 into the board's back (CAM_TUBE)
 }
 # (a, b, minimum gap, why)
@@ -95,8 +95,8 @@ CLEARANCES = [
     ("x_tema_top", "x_front3", 0.15, "top sign over the front"),
     ("x_tema_vinge_v", "x_front3", 0.15, "left wing beside the front"),
     ("c_wagos", "x_frame3", 14.0, "v29: Wago levers face the front: 16.5 to the frame, so a closed lever never touches it"),
-    ("c_extwagos", "x_fanguard", 3.0, "v55: the splice clamps' backs 3.7 over the fan guard's upper arm (the racks' end walls 2.1)"),
-    ("c_extwagos", "x_dsp_back", 2.5, "v55: the splice clamps 1.6 floor + 1.35 behind the display's back"),
+    ("c_extwagos", "x_fanguard", 3.0, "v56: the splice clamps on their floor 3.7 over the fan guard's upper arm (the floor plate 2.1)"),
+    ("c_extwagos", "x_dsp_back", 2.5, "v56: the splice clamps' backs on the end wall, 1.6 + 1.35 behind the display's back"),
     ("c_extwagos", "x_camera", 5.0, "v55: the splice clamps under the camera board"),
     ("c_extwagos", "x_shell3", 5.0, "v53: the splice clamps' levers clear of the shell's Wago row"),
     ("c_fusewagos", "c_fuse", 10.0, "v53: the fuse's clamps above the fuse holder, room for its leads to bend into the entries"),

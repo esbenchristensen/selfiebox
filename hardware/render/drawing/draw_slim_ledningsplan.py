@@ -109,8 +109,8 @@ ax.text(FX(0.0), 300, "stripledninger ud af bagrammen", fontsize=7, ha="center",
 # slim12: the splice clamps for the strips' own leads (in the frame's window, entries up); slim14: in pockets cast into the frame
 for n, x in getattr(hz, "EXT", {}).items():
     wd = 29.6 if hz.EXT_TYPE[n] == "221-415" else 18.6
-    ax.add_patch(mp.Rectangle((FX(x) - wd / 2, 244.2), wd, 18.0, fc="#ff922b", ec="#a65800", lw=1, zorder=4))
-    ax.text(FX(x), 251.7, hz.EXT_NAME[n].replace("RGB ", "RGB\n"), ha="center", va="center", fontsize=6.5, weight="bold", color="white", zorder=5)
+    ax.add_patch(mp.Rectangle((FX(x) - wd / 2, 244.2), wd, 8.0, fc="#ff922b", ec="#a65800", lw=1, zorder=4))
+    ax.text(FX(x), 248.2, hz.EXT_NAME[n].replace("RGB ", ""), ha="center", va="center", fontsize=6.0, weight="bold", color="white", zorder=5)
 for (x, z) in [(-76, 70.48), (-80, 230.48), (34, 230.48)]:
     for dz in (-3.8, 3.8):
         ax.add_patch(mp.Rectangle((FX(x) - 5.2, z + dz - 1.2), 10.4, 2.4, fc="white", ec=INK, lw=0.8, zorder=5))
