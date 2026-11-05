@@ -417,8 +417,7 @@ SINGLE = [("bagramme", "bagramme", True, "hvid", "glat"),
           ("tema-vinge-venstre-eksempel", "tema", False, "sort", "glat"),
           ("tema-vinge-hoejre-eksempel", "tema", False, "sort", "glat"),
           ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat"),
-          ("pi-holder", "piholder", False, "sort", "glat"),   # slim1
-          ("wagoholder-hvid", "wagoholder", False, "sort", "glat"), ("wagoholder-rgb", "wagoholder", False, "sort", "glat")]  # v53
+          ("pi-holder", "piholder", False, "sort", "glat")]   # slim1 (v53-v54 also the two wagoholder-*; v55: in the frame)
 
 
 def stand_3mf(folder, prefix=None):

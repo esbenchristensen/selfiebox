@@ -46,9 +46,7 @@ PARTS = {"skal": ("skal", "sort", "skal"), "front": ("front", "sort", "front"),
          "bagramme": ("ledskinne", "hvid", "bagramme"), "lysring": ("lysring", "natur", "lysring"),
          "vaegbeslag": ("vaegbeslag", "sort", "hurtig"), "stativbeslag": ("stativbeslag", "sort", "hurtig"),
          "blaeserhegn": (None, "sort", "blaeserhegn"),
-         "tema-vinge-venstre-eksempel": ("tema_vinge_v", "sort", "hurtig"),
-         # v53: the Wago holders for the strips' own leads lie on their side, so they are printed whole
-         "wagoholder-hvid": (None, "sort", "wagoholder"), "wagoholder-rgb": (None, "sort", "wagoholder")}
+         "tema-vinge-venstre-eksempel": ("tema_vinge_v", "sort", "hurtig")}   # v53-v54 also the wagoholder-* (v55: in the frame)
 
 # The draft profile (HURTIGPRINT.md section 5): 0.28 mm, 2 walls, 3 top/bottom layers (0.84 mm, at least 0.8), 10 %.
 # Crosshatch, not grid, and infill every layer: grid crossings and combined infill made the nozzle catch in v31-v33 (v34).
@@ -83,17 +81,13 @@ CORNER = ((-200, -200), (-46, -88))   # one front screw, the shell/front joint a
 #           "+m" = up to the top of the listed nodes in print orientation + m mm
 COUPONS = [
     # ---- v53: the splice clamps for the parts with their own short leads (the strips and the fuse holder)
-    ("wagoholder-hvid", ["wagoholder-hvid"], None, 0, "fuld",
-     "v53: Wago-holderen til de hvide strips' egne ledninger, hel: 2 lommer til 221-415 (hvid + og hvid −) med de samme tænder, "
-     "knusribber og hjørnekanter som Wago-rækken i skallen, bare vendt om: indgangene opad, håndtagene bagud. Sæt indgangsenden "
-     "ind over tænderne og tryk bagenden ned, til den klikker under kanterne. Klik holderen på `proeve-tvaerstykke` venstre for "
-     "midten: hægt den øverste arm over tværstykket og tryk den nederste på plads. Sidder den fast uden at vippe, og kan du "
-     "trække den af igen med fingrene?"),
-    ("wagoholder-rgb", ["wagoholder-rgb"], None, 0, "fuld",
-     "v53: Wago-holderen til RGB-strippens egne ledninger, hel: 3 lommer til 221-413 (data, GND, +5 V). Samme prøve som "
-     "`wagoholder-hvid`, på højre side af `proeve-tvaerstykke`."),
-    ("tvaerstykke", ["bagramme"], ((-64, 64), (86, 90)), 0, "fuld",
-     "v53: bagrammens øverste tværstykke (uændret), til at prøve de to Wago-holdere på. Blæserhegnet kan også klikkes på i midten."),
+    ("wagolommer", ["bagramme"], ((-62, 76), (86, 112)), 0, "fuld",
+     "v55: Wago-lommerne er nu støbt ind i bagrammen (v53-v54: to løse holdere, der klikkedes på): over det øverste "
+     "tværstykke, i rammens vindue bag skærmen, 2 lommer til 221-415 (hvid + og hvid −) til venstre og 3 til 221-413 (RGB data, "
+     "GND, +5 V) til højre. Klemmerne står på højkant med indgangene opad og håndtagene bagud, og de skubbes ind bagfra med "
+     "bunden mod skærmen. Skub en klemme i hver lomme: glider den ind med lidt modstand og klikker bag de små kanter, sidder "
+     "den uden slør, og kan håndtagene åbnes helt? Går en afisoleret ledning ned i indgangene forbi kanterne foroven? Klik "
+     "også blæserhegnet på tværstykket i midten: går dets øverste arm fri under lommerne?"),
     ("sikringsklemmer", ["skal"], ["wago_sikring"], 5, "+4",
      "v53: de to faste Wago-pladser (221-413) over sikringsholderen: én på 5 V-forsyningens væg og én på højre væg, indgangene "
      "nedad mod sikringen. Klik en klemme i hver: sidder de fast, kan håndtagene åbnes helt, og kan sikringens korte ledning "
@@ -213,18 +207,20 @@ COUPONS = [
 # seats
 # v54 (Esben 5 Nov: the kabellås is gone, back to v51 at the plug; no dowel holes): plate 1 is the shell's inlet and the stand
 # shelf with its v51 slot again; v53's holders go to plate 2
-GROUP = {"stroemindgang": 1, "stativ-hylde": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v55 (Esben 5 Nov: the Wago holders belong in the frame): plate 1 is the frame's new Wago pockets over the upper bar
+GROUP = {"wagolommer": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v54: skallens strømindgang uden kabellåsens skrueklods og stativbeslagets hylde med den gamle slids igen (som v51); print den først", 2: "de andre holdere og samlinger (også v53's Wago-holdere og v51's lysstak med kølekanalen)", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v55: bagrammens nye Wago-lommer over det øverste tværstykke (i stedet for v53's løse holdere); print den først", 2: "de andre holdere og samlinger (også v54's strømindgang, v53's sikringsklemmer og v51's lysstak med kølekanalen)", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("det, v54 har ført tilbage ved strømstikket: kabellåsen fra v52 er væk, så skallens strømindgang er uden "
-               "skrueklods igen, og stativbeslagets hylde har v51's slids til stikket. Bunden har ikke længere de to styrehuller. "
-               "Plade 2 har resten, også v53's Wago-holdere og v51's lysstak med kølekanalen")
+PLATE1_TEXT = ("bagrammens nye Wago-lommer: de 5 klemmer til strippenes egne ledninger sidder nu i lommer støbt ind i bagrammen "
+               "over det øverste tværstykke, i vinduet bag skærmen, i stedet for v53-v54's to løse holdere, der klikkedes på. Stykket "
+               "har tværstykket med, så blæserhegnet også kan klikkes på. Plade 2 har resten, også v54's strømindgang og v53's "
+               "faste Wago-pladser ved sikringen")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
 
 
@@ -245,14 +241,12 @@ def slim_set():
         "kabelloekker": (((-12, -90), (8, -65)), "slim1: velcroløkken over mikrofonkernen ved strømindgangen. Går en 10 mm velcrostrop igennem?"),
         "laas": (((-116, -36), (-64, 6)), "slim1: venstre sidelås mellem front og bagramme sidder nu 138 mm oppe (v42: 110), så Pi'ens "
                  "USB-porte og GPIO-stikkets ledninger går fri. Klikker begge arme, og kan de vippes fri med en lille skruetrækker?"),
-        "wagoholder-hvid": (None, "slim12 (som v53): Wago-holderen til de hvide strips' egne ledninger, hel: 2 lommer til 221-415 "
-                            "(hvid + og hvid −). I Slim står klemmerne FORAN bagrammens bagside, i rammens vindue over tværstykket "
-                            "(bag rammen er der ikke plads), indgangene opad og håndtagene bagud. Sæt indgangsenden ind over tænderne "
-                            "og tryk bagenden ned, til den klikker. Klik holderen på `proeve-tvaerstykke` lige venstre for midten "
-                            "(x −45 til 20): sidder den fast uden at vippe, og kan den trækkes af med fingrene?"),
-        "wagoholder-rgb": (None, "slim12 (som v53): Wago-holderen til RGB-strippens egne ledninger, hel: 3 lommer til 221-413 "
-                           "(data, GND, +5 V), også foran rammens bagside. Samme prøve som `wagoholder-hvid`, på højre side af "
-                           "`proeve-tvaerstykke` (x 21 til 84)."),
+        "wagolommer": (((-47, 76), (86, 112)), "slim14 (som v55): Wago-lommerne er nu støbt ind i bagrammen (slim12-13: to løse "
+                       "holdere): i rammens vindue over det øverste tværstykke, bag skærmen, 2 lommer til 221-415 (hvid + og −) fra "
+                       "x −45 til 20, lige over blæserhegnet, og 3 til 221-413 (RGB data, GND, +5 V) fra x 21 til 85. Indgangene "
+                       "opad, håndtagene bagud, og klemmerne skubbes ind bagfra med bunden mod skærmen. Skub en klemme i hver: "
+                       "glider den ind med lidt modstand og klikker bag de små kanter, sidder den uden slør, og kan håndtagene "
+                       "åbnes helt? Klik blæserhegnet på tværstykket: går dets øverste arm fri under de hvide lommer?"),
         "sikringsklemmer": (None, "slim12 (som v53): de to faste Wago-pladser (221-413) ved sikringsholderen, indgangene opad: FWL "
                             "på venstre væg lige under sikringen og FWR på bagvæggen til højre for den. Sæt sikringen i med den "
                             "korte ledning (6 cm) nedad: når den ned i FWL, og når den lange (15 cm) over holderen og ned i FWR? "
@@ -268,14 +262,13 @@ def slim_set():
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
     # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
-    GROUP = {"wagoholder-hvid": 1, "wagoholder-rgb": 1, "tvaerstykke": 1, "sikringsklemmer": 1, "stativ-hylde": 1, "lyskanal": 2, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
+    GROUP = {"wagolommer": 1, "lyskanal": 2, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim13 (som v54): strømindgangen uden kabellåsens skrueklods og stativbeslagets hylde med den gamle slids igen; slim12 (som v53): de to Wago-holdere til strippenes egne ledninger, tværstykket at klikke dem på og de to faste Wago-pladser ved sikringen; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim10's kølekanal og slim5-8's lysstak og klipslommer)",
+    GROUP_TEXT = {1: "slim14 (som v55): bagrammens nye Wago-lommer over det øverste tværstykke; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim13's strømindgang, slim12's sikringsklemmer, slim10's kølekanal og slim5-8's lysstak og klipslommer)",
                   3: "tilvalg og skærmens kant"}
-    PLATE1_TEXT = ("slim13 (som v54): kabellåsen fra slim11 er væk, så strømindgangen er uden skrueklods, og stativbeslagets "
-                   "hylde har den gamle slids igen. slim12 (som v53): de to Wago-holdere (hele) til strippenes egne ledninger, der i Slim står foran rammens "
-                   "bagside, et stykke af tværstykket at prøve dem på, og skallens to faste Wago-pladser ved sikringen (under og til "
-                   "højre for den). Desuden "
+    PLATE1_TEXT = ("slim14 (som v55): bagrammens nye Wago-lommer: de 5 klemmer til strippenes egne ledninger sidder nu i lommer "
+                   "støbt ind i bagrammen over det øverste tværstykke, i vinduet bag skærmen (slim12-13: to løse holdere), med "
+                   "tværstykket, så blæserhegnet kan prøves under dem. Desuden "
                    "udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
                    "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "
                    "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på. slim2 (som v43): "

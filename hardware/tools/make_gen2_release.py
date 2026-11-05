@@ -44,9 +44,7 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          # v36 (Esben 31 Oct): the stand bracket for the floor tripod is a fixed part of every print package, fit-checked
          # against this shell (check_fit_gen2.py); its logo panel on the plate as in make_stativbeslag.py's p_stand
          "stativbeslag": ("x_stand", DOWN),
-         # v53 (Esben 4-5 Nov): the two Wago holders for the strips' own leads, on their sides like the fan guard (the white one
-         # with its -x face on the plate, the RGB one, drawn mirrored, with its +x face)
-         "wagoholder-hvid": ("x_wagoh_hvid", SIDE), "wagoholder-rgb": ("x_wagoh_rgb", SIDE_R),
+         # v53-v54 had two clip-on Wago holders for the strips' own leads (wagoholder-hvid, -rgb); v55: cast into the frame
          # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test, face down; the top is 289 wide, so it lies
          # turned, along the plate's 320 mm
          "tema-dominance-top": ("x_dom_top", TURN_Z @ UP), "tema-dominance-stolpe-venstre": ("x_dom_vinge_v", UP),
@@ -54,7 +52,6 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
 # slim1 (cad/gen2_slim.scad): the Pi's own carrier, its front face on the plate
 if SCAD.stem == "gen2_slim":
     PRINT["pi-holder"] = ("x_piholder", UP)
-    PRINT["wagoholder-hvid"] = ("x_wagoh_hvid", SIDE_R)   # slim12: both holders drawn mirrored
 # inlays with their part's orientation and offset: name -> (view, part)
 LOGOS = {"logo-hvid": ("x_logo_w", "front"), "logo-groen": ("x_logo_g", "front"),
          "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag"),

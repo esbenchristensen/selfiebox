@@ -65,7 +65,10 @@ def main(old, new, zip_only=False):
     names = [n.replace(a, b) for n in zipfile.ZipFile(old / f"{a}_printfiler.zip").namelist()]
     with zipfile.ZipFile(new / f"{b}_printfiler.zip", "w", zipfile.ZIP_DEFLATED) as z:
         for n in names:
-            z.write(new / n, n)
+            if (new / n).exists():   # v55: a part the new version dropped (e.g. the wagoholder-*) is left out
+                z.write(new / n, n)
+            else:
+                print("  not in", b, ":", n)
     print(new)
 
 

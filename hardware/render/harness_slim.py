@@ -74,8 +74,8 @@ def pin(n):
 
 
 K1s, K1f, K2s, K2f = K["K1"]["shell"], K["K1"]["frame"], K["K2"]["shell"], K["K2"]["frame"]
-# slim12 (as v53): the splice clamps for the strips' own leads (cad: EXT_H), in two holders clicked on the upper cross bar, but
-# IN FRONT of the frame's back plane (y 11.6-19.6, in the frame's window), entries up at z 260.7. The strips' leads come out of the
+# slim12 (as v53): the splice clamps for the strips' own leads (cad: EXT_H) IN FRONT of the frame's back plane (y 11.6-19.6, in
+# the frame's window), entries up; slim14 (v55): cast into the frame itself (frame_wagos), entries at z 262.2. The strips' leads come out of the
 # slots behind the frame's top band, down behind it and forward through the window into them; the extensions go back the same
 # way into FW (behind the frame, over the camera ribbon) and along to FL. From the left: white +, white − (221-415); RGB data,
 # GND, +5 V (221-413)
@@ -87,7 +87,7 @@ WIN = lambda x: (x, 22.0, 272.0)       # through the frame's window, over the cl
 
 
 def ext(n, dx=0.0):
-    return (EXT[n] + dx, 14.05, 260.7)
+    return (EXT[n] + dx, 14.05, 262.2)
 
 
 def to_ext(n, dx=0.0):    # from above, straight down into the entry
