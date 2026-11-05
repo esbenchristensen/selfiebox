@@ -71,6 +71,28 @@ UB = lambda x: (x, 34.0, 230.5)
 GD = lambda z: (-40.0, 36.0, z)
 LB = lambda x: (x, 30.0, 84.0)
 K1s, K1f, K2s, K2f = K["K1"]["shell"], K["K1"]["frame"], K["K2"]["shell"], K["K2"]["frame"]
+# v53: the splice clamps for the strips' own leads (cad: EXT_H), on the upper cross bar, entries up at z 260.7; FW the lane
+# above them, along to FL. Pockets from the left: white +, white − (221-415); RGB data, GND, +5 V (221-413)
+EXT = {"hvid+": -43.4, "hvid-": -11.8, "rgb_d": 32.15, "rgb_gnd": 52.75, "rgb+": 73.35}
+EXT_NAME = {"hvid+": "hvid +", "hvid-": "hvid −", "rgb_d": "RGB data", "rgb_gnd": "RGB GND", "rgb+": "RGB +5 V"}
+EXT_TYPE = {"hvid+": "221-415", "hvid-": "221-415", "rgb_d": "221-413", "rgb_gnd": "221-413", "rgb+": "221-413"}
+FW = lambda x: (x, 37.0, 270.0)
+
+
+def ext(n, dx=0.0):
+    return (EXT[n] + dx, 35.75, 260.7)
+
+
+def to_ext(n, dx=0.0):    # from above, straight down into the entry
+    return [(EXT[n] + dx, 37.0, 268.0), ext(n, dx)]
+
+
+# v53: the fuse's two clamps above it (cad: fuse_wagos), entries down at z 112.8: FWL on the 5 V tray's wall, FWR on the right wall
+FUSEW = {"FWL": 78.25, "FWR": 105.2}
+
+
+def fw(n, k):             # entry k (0 at the back wall)
+    return (FUSEW[n], 63.9 - 6.2 * k, 112.8)
 P = {
     "jack": (0.0, 60.0, 77.0), "strain": (0.0, 60.0, 87.0),
     # RSD-60G-5 (Esben's photo 27 Oct): DC IN (FG, V-, V+) at its top end, DC OUT (+V, -V) at its bottom end, screws to the front
@@ -87,12 +109,12 @@ P = {
     "spk": (-41.0, 58.0, 143.0),
     "imu": (89.0, 62.0, 160.0),                    # v36: right of the 5 V supply, pins on its top edge (until v35: (0, 62, 231))
     # v36: inline fuse holder on the right wall (x 92-106, z 52-86), leads out of both ends
-    "fuse_lo": (99.0, 58.0, 44.0), "fuse_hi": (99.0, 58.0, 94.0),
+    "fuse_lo": (99.0, 61.0, 44.0), "fuse_hi": (99.0, 61.0, 94.0),
     # front unit
     "usb_a1": (-19.0, 26.0, 84.0), "usb_a2": (-1.0, 26.0, 84.0), "usb_a3": (-19.0, 30.0, 82.0),   # 90 deg plugs, cable out to the left
     "usb_c_pi": (50.0, 20.0, 167.0),               # Pi's power socket on its right edge, straight plug
-    # strip leads through the frame's lead slots at the ends of the top run (v36; until v35 a Ø4 hole at x +-19.5),
-    # white 1 + RGB left, white 2 right
+    # strip leads through the frame's lead slots at the ends of the top run (v36; until v35 a Ø4 hole at x +-19.5);
+    # v46: white 1 and white 3 left, white 2 and RGB right
     "hole_l": (-19.0, 33.0, 293.9), "hole_r": (19.0, 33.0, 293.9),
     "dsp_pwr": (12.0, 18.0, 205.0),                # Touch Display 2: power plug beside its flat cable
 }
@@ -118,12 +140,16 @@ BLU = "#1c7ed6"
 TRUNK = [P["jack"], P["strain"], M(112.0), M(124.0), M(136.0), M(156.0)]
 CABLES = [
     # 24 V side
-    # v36: the fuse holder sits low on the right wall; P1 comes over the 5 V supply and down the right edge to its lower lead,
-    # P1b leaves its upper lead up the right lane (until v35 the holder hung loose in P1)
-    ("P1", "24 V", "hunstik + → sikringsholder (nederste ledning)", "hunstik +", "sikring 3 A", "1,5 mm² rød", RED,
-     TRUNK + [RH(72.0), (104.0, 50.0, 156.0), (104.0, 50.0, 96.0), (106.0, 52.0, 40.0), P["fuse_lo"]], 15),
-    ("P1b", "24 V", "sikringsholder (øverste ledning) → W1", "sikring 3 A", "W1", "1,5 mm² rød", RED,
-     [P["fuse_hi"], RS(100.0), RS(140.0), (80.0, 50.0, 154.0)] + UP_R + w("W1"), 15),
+    # v36: the fuse holder sits low on the right wall (until v35 it hung loose in P1). v53: its own leads (~6 and 15 cm) end in two
+    # clamps above it (FWL, FWR); P1 comes over the 5 V supply into FWL, P1b leaves FWR up the right lane
+    ("P1", "24 V", "hunstik + → sikringsklemme FWL", "hunstik +", "FWL", "1,5 mm² rød", RED,
+     TRUNK + [RH(72.0), RS(140.0), RS(104.0), (80.0, 51.5, 104.0), fw("FWL", 2)], 11),
+    ("SL", "24 V", "sikringens lange ledning (nederst, 15 cm) → FWL", "sikring 3 A", "FWL", "sikringens ledning (15 cm)", RED,
+     [P["fuse_lo"], (94.0, 56.0, 40.0), (87.0, 52.0, 46.0), (84.0, 52.0, 100.0), (78.25, 57.7, 105.0), fw("FWL", 1)], 11),
+    ("SK", "24 V", "sikringens korte ledning (øverst, 6 cm) → FWR", "sikring 3 A", "FWR", "sikringens ledning (6 cm)", RED,
+     [P["fuse_hi"], (99.0, 61.0, 100.0), (105.2, 63.9, 104.0), fw("FWR", 0)], 11),
+    ("P1b", "24 V", "sikringsklemme FWR → W1", "FWR", "W1", "1,5 mm² rød", RED,
+     [fw("FWR", 2), (105.2, 51.5, 104.0), (92.0, 46.0, 100.0), RS(104.0), RS(140.0), (80.0, 50.0, 154.0)] + UP_R + w("W1"), 11),
     ("P2", "24 V", "hunstik − → W2", "hunstik −", "W2", "1,5 mm² sort", BLK, TRUNK + UP_R + w("W2"), 15),
     ("P3", "24 V", "W1 → 5 V-forsyning +Vin", "W1", "RSD-60G-5 +Vin", "1,5 mm² rød", RED, rev(w("W1", -3)) + rev(UP_R) + [RH(18.0), P["psu_vin+"]], 15),
     ("P4", "24 V", "W2 → 5 V-forsyning −Vin", "W2", "RSD-60G-5 −Vin", "1,5 mm² sort", BLK, rev(w("W2", -3)) + rev(UP_R) + [RH(26.0), P["psu_vin-"]], 15),
@@ -141,21 +167,36 @@ CABLES = [
      rev(w("W3", 4)) + DOWN_L + [Hh(-62.0), G(30.0), (-50.0, 46.0, 22.0), P["wled_in"]], 15),
     ("P14", "GND", "W4 → RGB-styring V−", "W4", "Gledopto V−", "0,75 mm² sort", BLK,
      rev(w("W4", -4)) + DOWN_L + [Hh(-62.0), G(30.0), (-50.0, 46.0, 22.0), P["wled_in"]], 15),
-    # strips (their own leads, through K1)
-    ("S1", "RGB", "RGB-strip +5 V (rød) → W3", "RGB-strip", "W3", "strippens ledning", ORG,
-     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W3", -6), 15),
-    ("S2", "RGB", "RGB-strip GND (hvid) → W4", "RGB-strip", "W4", "strippens ledning", BLK,
-     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W4", -8), 15),
-    ("S3", "RGB", "RGB-strip data (grøn) → RGB-styring GPIO16", "RGB-strip", "Gledopto GPIO16", "strippens ledning", GRN,
-     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-45.0), L(222.0), L(170.0), L(130.0), P["wled_out"]], 10),
-    ("S4", "hvid", "hvid strip 1 + → W6", "hvid strip 1", "W6", "strippens ledning", RED,
-     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W6", -4), 15),
-    ("S5", "hvid", "hvid strip 1 − → W5", "hvid strip 1", "W5", "strippens ledning", BLK,
-     [P["hole_l"], FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W5", -4), 15),
-    ("S6", "hvid", "hvid strip 2 + → W6", "hvid strip 2", "W6", "strippens ledning", RED,
-     [P["hole_r"], FT(19.5), FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W6", 4), 15),
-    ("S7", "hvid", "hvid strip 2 − → W5", "hvid strip 2", "W5", "strippens ledning", BLK,
-     [P["hole_r"], FT(19.5), FT(-80.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W5"), 15),
+    # strips: their own leads (14-15 cm) end in the splice clamps on the upper cross bar (v53); extensions from there through K1
+    ("S1", "RGB", "RGB-strip +5 V (rød) → RGB-klemme +5 V", "RGB-strip", "RGB +5 V", "strippens ledning (14-15 cm)", ORG,
+     [P["hole_r"], (24.0, 36.0, 280.0)] + to_ext("rgb+"), 11),
+    ("S2", "RGB", "RGB-strip GND (hvid) → RGB-klemme GND", "RGB-strip", "RGB GND", "strippens ledning (14-15 cm)", BLK,
+     [P["hole_r"], (22.0, 36.0, 280.0)] + to_ext("rgb_gnd"), 11),
+    ("S3", "RGB", "RGB-strip data (gul) → RGB-klemme data", "RGB-strip", "RGB data", "strippens ledning (14-15 cm)", GRN,
+     [P["hole_r"], (20.0, 36.0, 280.0)] + to_ext("rgb_d"), 11),
+    ("S4", "hvid", "hvid strip 1 + (rød) → hvid + klemme", "hvid strip 1", "hvid +", "strippens ledning (14 cm)", RED,
+     [P["hole_l"], (-24.0, 36.0, 280.0)] + to_ext("hvid+", 6), 11),
+    ("S5", "hvid", "hvid strip 1 − (sort) → hvid − klemme", "hvid strip 1", "hvid −", "strippens ledning (14 cm)", BLK,
+     [P["hole_l"], (-22.0, 36.0, 280.0)] + to_ext("hvid-", -6), 11),
+    ("S6", "hvid", "hvid strip 2 + (rød) → hvid + klemme", "hvid strip 2", "hvid +", "strippens ledning (14 cm)", RED,
+     [P["hole_r"], (14.0, 36.0, 280.0)] + to_ext("hvid+", 12), 11),
+    ("S7", "hvid", "hvid strip 2 − (sort) → hvid − klemme", "hvid strip 2", "hvid −", "strippens ledning (14 cm)", BLK,
+     [P["hole_r"], (16.0, 36.0, 280.0)] + to_ext("hvid-", 6), 11),
+    ("S8", "hvid", "hvid strip 3 + (rød) → hvid + klemme", "hvid strip 3", "hvid +", "strippens ledning (14 cm)", RED,
+     [P["hole_l"], (-26.0, 36.0, 280.0)] + to_ext("hvid+", 0), 11),
+    ("S9", "hvid", "hvid strip 3 − (sort) → hvid − klemme", "hvid strip 3", "hvid −", "strippens ledning (14 cm)", BLK,
+     [P["hole_l"], (-20.0, 36.0, 280.0)] + to_ext("hvid-", 0), 11),
+    # v53: the extensions, from the splice clamps up into FW, along to FL and down to K1
+    ("E1", "hvid", "forlænger hvid + klemme → W6", "hvid + klemme", "W6", "0,75 mm² rød", RED,
+     rev(to_ext("hvid+", -12)) + [FW(-43.4), FW(-80.0), FL(270.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W6", -4), 11),
+    ("E2", "hvid", "forlænger hvid − klemme → W5", "hvid − klemme", "W5", "0,75 mm² sort", BLK,
+     rev(to_ext("hvid-", -12)) + [FW(-11.8), FW(-80.0), FL(270.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W5", -4), 11),
+    ("E3", "RGB", "forlænger RGB +5 V klemme → W3", "RGB +5 V klemme", "W3", "0,75 mm² rød, orange tape", ORG,
+     rev(to_ext("rgb+", -6)) + [FW(73.35), FW(-80.0), FL(270.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W3", -6), 11),
+    ("E4", "RGB", "forlænger RGB GND klemme → W4", "RGB GND klemme", "W4", "0,75 mm² sort", BLK,
+     rev(to_ext("rgb_gnd", -6)) + [FW(52.75), FW(-80.0), FL(270.0), FL(240.0), K1f, "K1", K1s, T(-85.0)] + w("W4", -8), 11),
+    ("E5", "RGB", "forlænger RGB data klemme → RGB-styring GPIO16", "RGB data klemme", "Gledopto GPIO16", "0,5 mm² grøn eller gul", GRN,
+     rev(to_ext("rgb_d", -6)) + [FW(32.15), FW(-80.0), FL(270.0), FL(240.0), K1f, "K1", K1s, T(-45.0), L(222.0), L(170.0), L(130.0), P["wled_out"]], 11),
     # data
     ("U1", "USB", "Pi USB-A → RGB-styring USB-C (styring)", "Pi 5 USB-A", "Gledopto USB-C", "USB-A 90° venstre → USB-C", BLU,
      [P["usb_a1"], LB(-76.0), K2f, "K2", K2s, Hh(-80.0), Hh(-62.0), L(112.0), L(140.0), (-28.5, 46.0, 146.0), P["wled_usb"]], 0),

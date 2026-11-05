@@ -32,6 +32,7 @@ UP, DOWN = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], f
 FLIP = np.diag([1.0, -1.0, -1.0, 1.0])   # v29: upside down, the Wago row's end wall on the plate
 TURN_Z = np.array([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], float)   # v36: a quarter turn on the plate
 SIDE = np.array([[0, 0, -1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]], float)   # v26: on its side, the -x face on the bed
+SIDE_R = np.array([[0, 0, 1, 0], [0, 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1]], float)  # v53: on its other side, the +x face on the bed
 PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_ring3", UP), "bagramme": ("x_frame3", DOWN),
          "vaegbeslag": ("x_cleat", DOWN),   # v27: no camera sleeve (v20-v26: "kameraroer", x_camsleeve)
          "blaeserhegn": ("x_fanguard", SIDE),   # v26: on its side (v24/v25: UP, which put the arm tips on the bed and the grille on top)
@@ -46,6 +47,9 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          # v52 (Esben 5 Nov): the kabellås under the plug, as fitted (its top against the floor is up, the face with the screw head
          # on the plate)
          "kabellaas": ("x_kabellaas", np.eye(4)),
+         # v53 (Esben 4-5 Nov): the two Wago holders for the strips' own leads, on their sides like the fan guard (the white one
+         # with its -x face on the plate, the RGB one, drawn mirrored, with its +x face)
+         "wagoholder-hvid": ("x_wagoh_hvid", SIDE), "wagoholder-rgb": ("x_wagoh_rgb", SIDE_R),
          # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test, face down; the top is 289 wide, so it lies
          # turned, along the plate's 320 mm
          "tema-dominance-top": ("x_dom_top", TURN_Z @ UP), "tema-dominance-stolpe-venstre": ("x_dom_vinge_v", UP),
@@ -53,6 +57,7 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
 # slim1 (cad/gen2_slim.scad): the Pi's own carrier, its front face on the plate
 if SCAD.stem == "gen2_slim":
     PRINT["pi-holder"] = ("x_piholder", UP)
+    PRINT["wagoholder-hvid"] = ("x_wagoh_hvid", SIDE_R)   # slim12: both holders drawn mirrored
 # inlays with their part's orientation and offset: name -> (view, part)
 LOGOS = {"logo-hvid": ("x_logo_w", "front"), "logo-groen": ("x_logo_g", "front"),
          "stativbeslag_logo-hvid": ("x_stand_logo_w", "stativbeslag"), "stativbeslag_logo-groen": ("x_stand_logo_g", "stativbeslag"),
