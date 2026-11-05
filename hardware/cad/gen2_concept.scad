@@ -897,6 +897,32 @@ EDGE_SLOT = [1.1, 3.4, 12.5, 14];         // the corner slot: half width (white 
 BRIDGES46 = concat([for (p = JOINTS) [p[0], p[1], atan2(sign(p[1] - (RING_Z0 + RING_Z1)/2), sign(p[0]))]],
                    [[-RING_X, (RING_Z0 + RING_Z1)/2, 180], [RING_X, (RING_Z0 + RING_Z1)/2, 0], [0, RING_Z0, -90],
                     [-(CLIP_BAY[0] + RING_X - SQ_A - TWIST)/2, RING_Z1, 90], [(CLIP_BAY[0] + RING_X - SQ_A - TWIST)/2, RING_Z1, 90]]);   // v48: top ones at x ±46.5, where white 3 still lies flat (v46: ±54)
+// v51 (Esben 5 Nov: "lav noget som blæseren kan rotere luft igennem, den sætter vi jo til at køre altid, så køler de altid
+// lyskanalen", and "vi må ikke bruge noget eksternt"): the solid frame behind the channel floor is now a hollow tube round the ring,
+// closed to the channel (no light can get out that way) and open to the box through vents in the frame's back. The fan runs all
+// the time (box/system/install.sh in selfiebox-platform) and stirs the box air; the side runs stand upright, so the warm air in the
+// tube also rises by itself (chimney): in through the low vents (bottom run, low on the sides), out through the high ones (high on
+// the sides, the top run's outer ends). The tube is not coupled to the Pi's fan intake: the channel's warm air would heat the Pi
+// 6-9 deg at a busy party and 17-28 deg with strips queued (heat model 5 Nov, /mnt/project-files/lyskanal-varme/).
+// [half width (r), front y (2.4 behind the floor, 1.4 where floor_corners cuts 1 mm in), back y (2.1 back skin), top run ends |x|
+//  (clear of the clip bays and lead slots, |x| 17-38.5), vents' half width]
+COOL_TUBE = [6.0, FLOOR46 + 2.4, FR_BACK - 2.1, CLIP_BAY[0] + 2.5, 4.5];
+// vents through the back skin, [x0, x1, z0, z1] boxes cut with the tube's middle (r +-COOL_TUBE[4]); all have free air behind
+// them in the assembled box (checked against every part)
+COOL_VENTS = [[-64, -42, RING_Z0 - 12, RING_Z0 + 12], [-12, 12, RING_Z0 - 12, RING_Z0 + 12], [42, 64, RING_Z0 - 12, RING_Z0 + 12],
+              for (sx = [-1, 1]) [sx*RING_X - 12, sx*RING_X + 12, 40, 70],
+              for (sx = [-1, 1]) [sx*RING_X - 12, sx*RING_X + 12, 238, 268],
+              for (sx = [-1, 1]) [sx > 0 ? 46 : -66, sx > 0 ? 66 : -46, RING_Z1 - 12, RING_Z1 + 12]];
+module cool_tube() {
+    difference() {
+        ext_y(COOL_TUBE[1], COOL_TUBE[2]) ring_band2d(-COOL_TUBE[0], COOL_TUBE[0]);
+        ext_y(COOL_TUBE[1] - 1, COOL_TUBE[2] + 1) translate([-COOL_TUBE[3], RING_Z1 - 20]) square([2*COOL_TUBE[3], 40]);
+    }
+    ext_y(COOL_TUBE[2] - 0.01, FR_BACK + 1) intersection() {
+        ring_band2d(-COOL_TUBE[4], COOL_TUBE[4]);
+        for (v = COOL_VENTS) translate([v[0], v[2]]) square([v[1] - v[0], v[3] - v[2]]);
+    }
+}
 // v24 (Esben 26 Oct: two white strips give plenty of light): v18-v23's third white strip in a pocket at the front of the
 // sloping reflector is gone, with its pocket, lips, clip and lead hole, and the light ring's wedge that held its front edge.
 // The reflector's front face clamps the ring's inner flange again, as in v2-v17.
@@ -1409,6 +1435,7 @@ module frame3() {
         snap_slots();
         lead_slots46();                                                   // v46 (v36-v45: lead_slots, outer half; v18-v35: clip pockets)
         clip_bays();                                                      // v45: room for the strips' clip connectors
+        cool_tube();                                                      // v51: hollow, vented frame behind the floor
         ring_rim_notch();                                                 // v36: room for the light ring's rims
         for (t = tabs2) {
             hull() for (z = [t[1], t[2]], dz = [-DSP_SLOT_Z, DSP_SLOT_Z], dx = [-DSP_SLOT_X, DSP_SLOT_X]) cyl_y(2.9, TAB_Y - 1, FR_BACK + 1, t[0] + dx, z + dz);
