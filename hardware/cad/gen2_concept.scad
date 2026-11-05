@@ -407,8 +407,7 @@ module stand_bracket() {
         // v4 (print review 27 Oct): the bracket prints back face down, so these bores lie along the bed; teardrops with a 45 deg
         // peak to the front (up on the bed) keep the Ø20 flange seat round and free of support (v1-v3: round, the roof sagged)
         st_insert_bore(zs);   // v9 (v37): the heat-set insert, flush with the underside (v1-v8: T-nut barrel and flange seat)
-        translate([-ST_SLOT[0], ST_SLOT[1], zs - 1]) cube([2*ST_SLOT[0], yb - ST_SLOT[1] + 0.01, ST_SHELF[2] + 2]);   // power plug
-        translate([0, ST_SLOT[1], zs - 1]) cylinder(r = ST_SLOT[0], h = ST_SHELF[2] + 2, $fn = 32);
+        kl_slot(zs - 1, zs + ST_SHELF[2] + 1, yb);   // v52: the plug slot fits the kabellås plate (v1-v51: 2*ST_SLOT[0] wide from ST_SLOT[1])
         ext_y(yf - LOGO_D, yf + 1) translate([0, ST_LOGO_Z]) st_logo2d("all");   // pocket for the inlay
     }
 }
@@ -616,7 +615,7 @@ module power_inlet() translate([PWR_P[0], PWR_P[1], 0]) {   // the socket in its
     translate([-PWR_TERM[0]/2, yb - j[2], PWR_JTOP - PWR_TERM[1]]) cube([PWR_TERM[0], j[2], PWR_TERM[1]]);   // terminal
     cyl_z(10.15, 9, PWR_LEDGE - PWR_CH[2], 0, 0);                                                    // PSU plug grip [M] Ø10.15
     translate([0, 0, 1]) cylinder(d1 = 6, d2 = 8.5, h = 8.01, $fn = 32);                          // strain relief, inside the bore
-    cyl_z(4, -60, 1.01, 0, 0);                                                                    // lead, straight down
+    // v52: the lead below the bore is c_kl_lead (round the kabellås screw; v11-v51 straight down)
 }
 module placed_services() {
     // socket (mouth down) in its column and the PSU's straight plug from below
@@ -1559,6 +1558,7 @@ module shell3(top = UNIT_TOP) {
             if (WING_POCKET) wing_pockets();
             wing_groove_bosses();   // v30
             cable_loops(); strain_clip();                          // v23: cable routing (v37: strap loops again, v36 had round clips)
+            kl_boss();                                             // v52: the kabellås screw
             fuse_holder();                                         // v36
             wago_row();                                            // v29
         }
@@ -1567,6 +1567,7 @@ module shell3(top = UNIT_TOP) {
         wing_grooves();   // v28
         shell_snap_grooves();   // v37
         power_channel_keep();   // v37
+        kl_pilot();             // v52
         if (WING_POCKET) for (p = WING_P) translate([p[0] - WING_PK[0], D - BACK_T - WING_PK[1], p[1] - 4 - WING_PK[2]]) cube([2*WING_PK[0], WING_PK[1] + 0.01, 14 + WING_PK[2] + WING_PK[4]]);   // nothing else inside a pocket
         for (j = J2) { cyl_y(6.4, SKIRT - 1, FR_BACK - CRUSH[0] - 0.01, j[0], j[1]); cyl_y(FS_CLR, FR_BACK - 1, D + 1, j[0], j[1]); cyl_y(FS_CSK, D - FS_SINK, D + 1, j[0], j[1]); csk_y(FS_CSK, FS_CLR, D - FS_SINK, j[0], j[1]); }   // v27: head in the back face; v41: FS_SINK under it
     }
@@ -1735,6 +1736,73 @@ module strain_clip() translate([PWR_P[0], PWR_P[1], STRAIN[4]]) difference() {
     translate([0, 0, -1]) cylinder(d = STRAIN[0], h = STRAIN[2] + 2, $fn = 40);
     translate([-STRAIN[3]/2, -10, -1]) cube([STRAIN[3], 10, STRAIN[2] + 2]);
 }
+// ------------------------------------------------------------- kabellås ----
+// v52 (Esben 5 Nov: "Hvordan sikrer vi os at strømstikket ikke bare bliver taget ud ved b2b vægmontering?", "gælder selvfølgelig
+// også ved gulvstanderen"): the PSU's plug only sits by friction in the socket, 38 mm up in the floor, and its lead hangs straight
+// down, so a pull on the lead pulled the plug out. Now a printed plate under the floor takes the lead in a groove (closed by the
+// floor) round the shank of a third security screw (Bolte 88115, as at the locks): down out of the plug bore, forward along the
+// left leg, a U round the screw, back along the right leg and down out of the plate 10 mm in front of the wall. About 360 deg of
+// bends lie between a pull and the plug, so the pull ends in the screw, and the plate cannot come off without the Torx-pin bit.
+// The plate stands 8.5 under the floor, inside the outline at the back in the middle; on the floor stand it sits in the shelf's
+// plug slot, which is now cut to the plate's shape (KL_SLOT_C round it). The groove is 5.2 wide (the GST90A lead is ~5 [C]; crush
+// ribs make it 4.4 in 4 places) and the pocket under the bore is Ø11 x 7 deep, room for the plug's boot if it reaches out of the bore.
+// All in the plug's frame: x, y from PWR_P (the bore's axis), z from the floor's underside (0) down.
+KL_T = 8.5;                        // plate thickness under the floor
+KL_G = [5.2, 5.4];                 // groove width, depth (from the plate's top, which lies against the floor)
+KL_POCKET = [11.0, 7.0];           // pocket under the plug bore: Ø, depth
+KL_S = [2.95, -10.5];              // screw axis from the bore; the U turns round it
+KL_RU = 5.95;                      // the U's centre line radius: legs at x KL_S.x -/+ KL_RU (-3.0 and 8.9; the right leg clear of the bore)
+KL_EXIT = 4.0;                     // the right leg turns down here (y from the bore axis)
+KL_WALL = 1.0;                     // plate wall outside the groove
+KL_HEAD = [8.6, 0.5];              // countersink Ø at the face (head Ø8.1, as LOCK_HEAD), head face this far up in the plate
+KL_BOSS = [9.0, 22];               // the shell's boss round the pilot: Ø, top z (merges with the power column's foot)
+KL_PILOT = [3.4, 20];              // pilot Ø (as the locks'), to z
+KL_BOSS_Y0 = 0;                   // the boss's front face, y (v52: no clip (the frame is 20 mm in front))
+KL_RIB = 0.4;                      // crush ribs on the leg walls: height into the groove
+KL_SLOT_C = 0.5;                   // the stand shelf's slot round the plate
+function kl_x0() = KL_S[0] - KL_RU;
+function kl_x1() = KL_S[0] + KL_RU;
+function kl_ribs() = [[kl_x0(), -8], [kl_x1(), -8], [kl_x1(), -4], [kl_x1(), 0]];
+module kl_path2d(w) {              // the groove, w wide
+    hull() { circle(d = w, $fn = 24); translate([kl_x0(), 0]) circle(d = w, $fn = 24); }                 // under the bore to the left leg
+    translate([kl_x0() - w/2, KL_S[1]]) square([w, -KL_S[1]]);                                            // left leg
+    translate(KL_S) difference() { circle(r = KL_RU + w/2, $fn = 64); circle(r = KL_RU - w/2, $fn = 64); translate([-50, 0]) square(100); }   // the U, in front of the screw
+    translate([kl_x1() - w/2, KL_S[1]]) square([w, KL_EXIT - KL_S[1]]);                                   // right leg
+    translate([kl_x1(), KL_EXIT]) circle(d = w, $fn = 24);
+}
+module kl_plate2d() let(x0 = kl_x0() - KL_G[0]/2 - KL_WALL, x1 = kl_x1() + KL_G[0]/2 + KL_WALL,
+                        y0 = KL_S[1] - KL_RU - KL_G[0]/2 - KL_WALL, y1 = D - 0.5 - PWR_P[1])
+    offset(r = 3, $fn = 24) offset(delta = -3) translate([x0, y0]) square([x1 - x0, y1 - y0]);
+module kabellaas() translate([PWR_P[0], PWR_P[1], 0]) difference() {
+    translate([0, 0, -KL_T]) linear_extrude(KL_T) kl_plate2d();
+    translate([0, 0, -KL_G[1]]) linear_extrude(KL_G[1] + 1) difference() {
+        kl_path2d(KL_G[0]);
+        for (r = kl_ribs(), sx = [-1, 1]) translate([r[0] + sx*(KL_G[0]/2 + 0.6 - KL_RIB), r[1]]) circle(r = 0.6, $fn = 16);   // crush ribs
+    }
+    cyl_z(KL_POCKET[0], -KL_POCKET[1], 1, 0, 0);
+    cyl_z(KL_G[0], -KL_T - 1, 0, kl_x1(), KL_EXIT);                                                        // the lead's way out, down
+    // the screw: clearance, countersink with the head KL_HEAD[1] up in the plate
+    cyl_z(4.5, -KL_T - 1, 1, KL_S[0], KL_S[1]);
+    cyl_z(KL_HEAD[0], -KL_T - 1, -KL_T + KL_HEAD[1], KL_S[0], KL_S[1]);
+    translate([KL_S[0], KL_S[1], -KL_T + KL_HEAD[1] - 0.01]) cylinder(d1 = KL_HEAD[0], d2 = 4.4, h = (KL_HEAD[0] - 4.4)/2, $fn = 32);
+}
+module kl_boss() intersection() {
+    translate([PWR_P[0], PWR_P[1], 0]) cyl_z(KL_BOSS[0], WALL - 0.01, KL_BOSS[1], KL_S[0], KL_S[1]);
+    translate([-W/2, KL_BOSS_Y0, 0]) cube([W, D, KL_BOSS[1] + 1]);
+}
+module kl_pilot() translate([PWR_P[0], PWR_P[1], 0]) cyl_z(KL_PILOT[0], -1, KL_PILOT[1], KL_S[0], KL_S[1]);
+module kl_screw() translate([PWR_P[0] + KL_S[0], PWR_P[1] + KL_S[1], -KL_T + KL_HEAD[1]]) { cylinder(d1 = 8.1, d2 = 4.2, h = 1.95, $fn = 24); cylinder(d = 4.2, h = 25, $fn = 16); }
+// the stand shelf's slot: the plate's outline plus KL_SLOT_C, open to the back plate
+module kl_slot(z0, z1, yb) translate([PWR_P[0], PWR_P[1], z0]) linear_extrude(z1 - z0) hull() {
+    offset(delta = KL_SLOT_C) kl_plate2d();
+    translate([kl_x0() - KL_G[0]/2 - KL_WALL - KL_SLOT_C, 0]) square([2*KL_RU + KL_G[0] + 2*KL_WALL + 2*KL_SLOT_C, yb - PWR_P[1] + 0.01]);
+}
+// the PSU lead (Ø5) for the fit check: out of the bore, round the screw and down out of the plate
+module kl_lead() translate([PWR_P[0], PWR_P[1], 0]) {
+    cyl_z(5, -KL_G[1] + 0.2, 9, 0, 0);
+    translate([0, 0, -KL_G[1] + 0.2]) linear_extrude(5) kl_path2d(5);
+    cyl_z(5, -40, -KL_G[1] + 5.2, kl_x1(), KL_EXIT);
+}
 // the frame end of the service loop: two slots through a cross bar for one strap round the bundle. v24 (Esben 26 Oct: the Pi's
 // fan stopped, there were wires in it): the slots move from the upper cross bar (above the fan, so the loop hung across it) to
 // the lower one, below the Pi. The shell end stays at the main bundle's top loop (z 136), so the loop runs down from there and
@@ -1857,6 +1925,9 @@ if (VIEW == "x_elec")      { placed_electronics(); placed_services(); }
 if (VIEW == "x_cleat")     wall_cleat2();
 if (VIEW == "s_wall")      wall_screws();                                                // v28: the 6 wall screws, heads in the cleat's countersinks
 if (VIEW == "x_stand")     stand_bracket();
+if (VIEW == "x_kabellaas")  kabellaas();     // v52
+if (VIEW == "s_kabellaas")  kl_screw();
+if (VIEW == "c_kl_lead")    kl_lead();
 if (VIEW == "x_stand_logo_w") st_logo("white");
 if (VIEW == "x_stand_logo_g") st_logo("green");
 if (VIEW == "x_stand_mod") translate([-ST_SHELF[0] - 1, ST_SHELF[1] - 1, -ST_SHELF[2] - 1]) cube([2*ST_SHELF[0] + 2, D + GAP_WALL - ST_SHELF[1] + 2, ST_SHELF[2] + 31]);   // v37: 3MF modifier, solid shelf

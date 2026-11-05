@@ -57,6 +57,10 @@ PARTS = [
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skruer_pi",     "s_pi",          "Skruer, Pi-holder: 4 × M2,5 × 6 (Pi'en på holderen) + skærmsættets 2 (holderen på afstandsstykkerne)", "#c3c7cf", "Skruer", [0, 0, 40]),
     ("skrue_laas",    "s_lock",        "Låseskrue (4,2 × 25, forsænket)",     "#c3c7cf", "Skruer",     [0, -80, -90]),
+    # v52 (Esben 5 Nov): the kabellås under the power inlet; the PSU lead runs in a U round its security screw
+    ("kabellaas",     "x_kabellaas",   "Kabellås under strømstikket (sort): strømforsyningens ledning i en U om sikkerhedsskruen", "#2b2b30", "Kabinet", [0, -60, -90]),
+    ("skrue_kabellaas", "s_kabellaas", "Sikkerhedsskrue i kabellåsen (4,2 × 25 Torx med pin, forsænket)", "#c3c7cf", "Skruer", [0, -90, -90]),
+    ("ledning_kabellaas", "c_kl_lead", "Strømforsyningens ledning gennem kabellåsen", "#3f3f46", "Elektronik", [0, -60, -90]),
     # v28: the 6 wall screws (4.0 x 50 T20, the 2 new ones in the arms out to the locks)
     ("skruer_vaeg",   "s_wall",        "6 vægskruer i vægbeslaget (4,0 × 50 T20 + dybel), 2 af dem i armene ud mod låsene", "#c3c7cf", "Skruer", [0, 0, -260]),
     # v21: example theme parts on the hooks (skjult som standard i admin; vises med fluebenet)
@@ -82,7 +86,7 @@ PARTS = [
 ]
 DOM_VIEWS = {"x_dom_top", "x_dom_top_hvid", "x_dom_top_orange", "x_dom_vinge_v", "x_dom_vinge_v_hvid", "x_dom_vinge_v_orange",
              "x_dom_vinge_h", "x_dom_vinge_h_hvid", "x_dom_vinge_h_orange"}
-OPTIONAL = {"c_wagos", "c_fuse", "x_piholder", "s_pi", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+OPTIONAL = {"x_kabellaas", "s_kabellaas", "c_kl_lead", "c_wagos", "c_fuse", "x_piholder", "s_pi", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
             "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # left out if the STL dir has none (older versions)
 HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # off until ticked
 
