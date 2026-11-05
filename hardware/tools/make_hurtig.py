@@ -45,7 +45,7 @@ GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 PARTS = {"skal": ("skal", "sort", "skal"), "front": ("front", "sort", "front"),
          "bagramme": ("ledskinne", "hvid", "bagramme"), "lysring": ("lysring", "natur", "lysring"),
          "vaegbeslag": ("vaegbeslag", "sort", "hurtig"), "stativbeslag": ("stativbeslag", "sort", "hurtig"),
-         "blaeserhegn": (None, "sort", "blaeserhegn"),
+         "blaeserhegn": (None, "sort", "blaeserhegn"), "kabellaas": ("kabellaas", "sort", "hurtig"),
          "tema-vinge-venstre-eksempel": ("tema_vinge_v", "sort", "hurtig")}
 
 # The draft profile (HURTIGPRINT.md section 5): 0.28 mm, 2 walls, 3 top/bottom layers (0.84 mm, at least 0.8), 10 %.
@@ -80,10 +80,15 @@ CORNER = ((-200, -200), (-46, -88))   # one front screw, the shell/front joint a
 #           "+m" = up to the top of the listed nodes in print orientation + m mm
 COUPONS = [
     # ---- shell (printed back down: the height is from the outside of the back wall)
-    ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 24,
-     "v43: kanalen til strømforsyningens stik nedefra er 1 mm større, Ø11,8 (v40-v42: Ø10,8), stadig med flad top. Bøjlen "
-     "over hunstikket er som v40. Kør strømforsyningens stik op nedefra: glider det op uden at tage fat, og rammer det "
-     "stadig hunstikket uden at lede efter det? Skub hunstikket ind forfra: sidder det stadig uden slør?"),
+    ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 28,   # v52: 28 (v43: 24), the whole kabellås boss
+     "v52: kabellåsens skrueklods foran stikkets kanal (Ø9, forhul Ø3,4 til sikkerhedsskruen). Kanalen til strømforsyningens "
+     "stik (Ø11,8 med flad top) og bøjlen over hunstikket er som v43. Kør stikket op nedefra og skub hunstikket ind forfra som "
+     "før, og prøv kabellåsen på stykket (se `kabellaas`)."),
+    ("kabellaas", ["kabellaas"], ((-30, -175), (45, -150)), 0, "fuld",
+     "v52: kabellåsen under strømstikket, hel. Sæt strømforsyningens stik op i `proeve-stroemindgang`, læg ledningen ned i "
+     "sporet: frem i venstre side, rundt om skruehullet og tilbage i højre side og ned gennem hullet. Skru pladen fast med en "
+     "sikkerhedsskrue (4,2 × 25). Ligger ledningen i sporet uden at blive klemt flad, flugter pladen med bunden, og kan du "
+     "ikke trække stikket ud ved at hive i ledningen?"),
     ("sikring", ["skal"], ["sikring"], 8, "+6",
      "v43: åbningerne i hver ende til sikringsholderens ledningsstudse er 7,5 mm brede (v40-v42: 5,6, så holderen ikke kunne "
      "komme ned; du målte studsene til ca. 8 mm). Lommen og knusribberne er som v40. Trykkes den ned og sidder fast? Kan "
@@ -176,6 +181,7 @@ COUPONS = [
      "Skinnen øverst på vægbeslaget og stativbeslaget, som boksen hænger på. Prøves i `proeve-wago-loekker` (skallens "
      "udsparing til skinnen ligger i det stykke): glider skinnen ind uden at tvinge, og sidder den uden slør?"),
     ("stativ-hylde", ["stativbeslag"], ((-112, -168), (112, -108)), 0, "fuld",
+     "v52: slidsen i hylden har kabellåsens form (0,5 mm luft rundt om), så pladen sidder i den, når boksen står på stativet. "
      "v37: stativbeslagets hylde med hullet til gevindindsatsen (massiv som i den rigtige 3MF) og tungerne til skallens låse. "
      "Smelt indsatsen (1/4\"-20 × 12,7) i med loddekolben: går den lige ned og flugter med hylden? Skru kuglehovedets "
      "lynplade i, og prøv tungerne i `proeve-laas-reed` og `proeve-laas-hoejre`."),
@@ -189,18 +195,19 @@ COUPONS = [
 # tabs, the PSU plug's channel and the fuse holder's lead slots; v41/v42's snap, screws and light stack go to plate 2
 # v45 (Esben 4 Nov: clips and corners in the LED channel): plate 1 is the clip bay and the light stack with the corner bridge;
 # v43's three shell holders go to plate 2. v46 (no slope, four strips): the same, with the right clip bay too
-GROUP = {"lyskanal": 1, "klipslomme": 1, "klipslomme-hoejre": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v52 (kabellåsen): plate 1 is the plate itself, the shell's inlet with its new screw boss and the stand shelf's new slot;
+# v51's light stack goes to plate 2
+GROUP = {"kabellaas": 1, "stroemindgang": 1, "stativ-hylde": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v51: den hule kølekanal i bagrammen (i lysstakken), v49: hjørnet med hvid 3 på højkant og broerne med 1,8 mm under de hvide strips, og begge klipslommer; print den først", 2: "de andre holdere og samlinger", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v52: kabellåsen under strømstikket, skallens strømindgang med den nye skrueklods og stativbeslagets hylde med den nye slids; print den først", 2: "de andre holdere og samlinger (også v51's lysstak med kølekanalen)", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("det, v48-v51 ændrede i lyskanalen (v51: bagrammen er hul bag bunden med spalter bagud, så blæseren kan køle kanalen; v49: 1,8 mm under broerne over de hvide strips): lysstakken nederst til venstre med slidsen, hvor hvid 3 står på højkant gennem hjørnet, "
-               "de stærkere broer og broerne over hvid 3, og begge klipslommer ved kameraet. Plade 2 "
-               "har resten, også v43's mikrofonkerne, strømindgang og sikring")
+PLATE1_TEXT = ("det, v52 ændrede ved strømstikket: kabellåsen (hel), skallens strømindgang med kabellåsens skrueklods og "
+               "stativbeslagets hylde, hvor slidsen nu har kabellåsens form. Plade 2 har resten, også v51's lysstak med kølekanalen")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
 
 
@@ -210,8 +217,8 @@ def slim_set():
     new = {
         "stroemindgang": (((-5, -154), (40, -50)), "slim1: strømindgangen er flyttet til x 17,65, mellem mikrofonkernen og "
                           "højttaleren; bøjlen er som v40. slim2 (som v43): kanalen til strømforsyningens stik er 1 mm større, Ø11,8 "
-                          "(slim1: Ø10,8). Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: går begge ind uden at "
-                          "tvinge, og sidder hunstikket uden slør?"),
+                          "(slim1: Ø10,8). slim11 (som v52): kabellåsens skrueklods foran kanalen (Ø9, forhul Ø3,4). Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: går begge ind uden at "
+                          "tvinge, og sidder hunstikket uden slør? Prøv kabellåsen på stykket (se `kabellaas`)."),
         "sikring": (None, "slim1: sikringsholderen ligger nu på siden, bunden ind mod venstre væg (v42: stående på højre væg), med "
                     "de samme knusribber. slim2 (som v43): slidserne i enderne er 7,5 mm (slim1: 5,6). Trykkes den ind og sidder fast? Kan låget åbnes, og kommer ledningerne ud i begge ender?"),
         "daemper": (None, "slim1: dæmperens printkort (DFR0457) ligger fladt på bagvæggen øverst til venstre (v42: på venstre væg), på de "
@@ -232,16 +239,17 @@ def slim_set():
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
     # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
-    GROUP = {"lyskanal": 1, "klipslomme": 1, "klipslomme-hoejre": 1, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
+    GROUP = {"kabellaas": 1, "stativ-hylde": 1, "lyskanal": 1, "klipslomme": 1, "klipslomme-hoejre": 1, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim10: den hule kølekanal i bagrammen (i lysstakken), slim8/slim7: hjørnet med hvid 3 på højkant og de stærkere broer, slim5: begge klipslommer, slim2: mikrofontænderne, strømstikkets kanal og sikringen, slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
+    GROUP_TEXT = {1: "slim11: kabellåsen under strømstikket og stativbeslagets nye slids, slim10: den hule kølekanal i bagrammen (i lysstakken), slim8/slim7: hjørnet med hvid 3 på højkant og de stærkere broer, slim5: begge klipslommer, slim2: mikrofontænderne, strømstikkets kanal og sikringen, slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger",
                   3: "tilvalg og skærmens kant"}
     PLATE1_TEXT = ("udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
                    "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "
                    "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på. slim2 (som v43): "
                    "mikrofonkernens holder med stærkere tappe under tænderne, 1 mm større kanal til strømforsyningens stik og 7,5 mm "
                    "åbninger i sikringsholderens ender. slim7 (som v48): lysstakken nederst til venstre med hvid 3 på højkant i hjørnets "
-                   "slids og de stærkere broer, og begge klipslommer ved kameraet. slim10 (som v51): bagrammen er hul bag bunden med spalter bagud (kølekanalen)")
+                   "slids og de stærkere broer, og begge klipslommer ved kameraet. slim10 (som v51): bagrammen er hul bag bunden med spalter bagud (kølekanalen). slim11 (som v52): kabellåsen "
+                   "under strømstikket (hel), dens skrueklods i strømindgangen og stativbeslagets hylde med slidsen i kabellåsens form")
     CAD_FILE = "hardware/cad/gen2_slim.scad"
 
 

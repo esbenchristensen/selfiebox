@@ -43,6 +43,9 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          # v36 (Esben 31 Oct): the stand bracket for the floor tripod is a fixed part of every print package, fit-checked
          # against this shell (check_fit_gen2.py); its logo panel on the plate as in make_stativbeslag.py's p_stand
          "stativbeslag": ("x_stand", DOWN),
+         # v52 (Esben 5 Nov): the kabellås under the plug, as fitted (its top against the floor is up, the face with the screw head
+         # on the plate)
+         "kabellaas": ("x_kabellaas", np.eye(4)),
          # v36 (Esben 31 Oct): the Airtox Dominance theme kit, the main theme test, face down; the top is 289 wide, so it lies
          # turned, along the plate's 320 mm
          "tema-dominance-top": ("x_dom_top", TURN_Z @ UP), "tema-dominance-stolpe-venstre": ("x_dom_vinge_v", UP),
