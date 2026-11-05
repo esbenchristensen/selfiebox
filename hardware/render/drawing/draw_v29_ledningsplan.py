@@ -58,13 +58,17 @@ for key, txt, side in [("psu_vin-", "V−", "l"), ("psu_vin+", "V+", "r"), ("psu
                        ("wled_in", "ind V+ V−", "r"), ("wled_out", "GPIO16", "l"), ("wled_usb", "USB-C", "r"),
                        ("dim_vin", "VIN/GND/VOUT", "r"), ("dim_grav", "Gravity", "r"),
                        ("core_usb", "USB-C", "r"), ("core_aux", "aux", "l"), ("core_spk", "SPEAKER", "r"),
-                       ("fuse_lo", "P1", "l"), ("fuse_hi", "P1b", "l"), ("imu", "IMU", "l")]:
+                       ("fuse_lo", "lang", "l"), ("fuse_hi", "kort", "l"), ("imu", "IMU", "l")]:
     q = hz.P[key]
     ax.add_patch(mp.Circle((q[0], q[2]), 2.2, fc="#fab005", ec=INK, lw=0.7, zorder=8))
     ax.text(q[0] + (3.5 if side == "r" else -3.5), q[2] - 4, txt, fontsize=6.5, color=INK, ha="left" if side == "r" else "right",
             va="top", zorder=8, bbox=dict(boxstyle="round,pad=0.1", fc="#fff9db", ec="none"))
 ax.text(0, 66, "strømstik", ha="center", fontsize=8, color=INK, zorder=6)
 ax.text(99, 69, "sikring", ha="center", fontsize=7, color=INK, zorder=6, rotation=90)   # v36: on the right wall
+# v53: the fuse's two clamps above it, entries down
+for n, x in getattr(hz, "FUSEW", {}).items():
+    ax.add_patch(mp.Rectangle((x - 4, 112.8), 8, 18.0, fc="#ff922b", ec="#a65800", lw=1, zorder=4))
+    ax.text(x, 134, n, ha="center", va="bottom", fontsize=8, weight="bold", color=INK, zorder=5)
 # Wago row
 for n, x in hz.WAGO.items():
     w = {"221-413": 18.8, "221-414": 24.4, "221-415": 30.0}[hz.WAGO_TYPE[n]]
@@ -100,6 +104,11 @@ ax.text(FX(30.0) - 6, 158, "USB-C\n(strøm)", fontsize=7, ha="right", va="top", 
 for x in (-19.5, 19.5):
     ax.add_patch(mp.Circle((FX(x), 300.2), 3, fc="white", ec=INK, zorder=5))
 ax.text(FX(0.0), 314, "stripledninger ud af bagrammen", fontsize=7, ha="center", va="bottom", color=INK)
+# v53: the splice clamps for the strips' own leads, in two holders on the upper cross bar (entries up)
+for n, x in getattr(hz, "EXT", {}).items():
+    wd = 29.6 if hz.EXT_TYPE[n] == "221-415" else 18.6
+    ax.add_patch(mp.Rectangle((FX(x) - wd / 2, 242.7), wd, 18.0, fc="#ff922b", ec="#a65800", lw=1, zorder=4))
+    ax.text(FX(x), 251.7, hz.EXT_NAME[n].replace("RGB ", "RGB\n"), ha="center", va="center", fontsize=6.5, weight="bold", color="white", zorder=5)
 for (x, z) in [(-76, 70.48), (-76, 230.48), (34, 230.48)]:
     for dz in (-3.8, 3.8):
         ax.add_patch(mp.Rectangle((FX(x) - 5.2, z + dz - 1.2), 10.4, 2.4, fc="white", ec=INK, lw=0.8, zorder=5))

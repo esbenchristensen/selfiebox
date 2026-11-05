@@ -53,6 +53,11 @@ PARTS = [
     ("reed",          "c_reed",        "Løftesensor (reed + magnet)",     "#ec4899", "Tilvalg",    [0, 0, -90]),
     # v29: the six Wago clamps in their row on the wall cleat's block
     ("wago",          "c_wagos",       "6 Wago-klemmer i rækken på vægbeslagets klods (W6 W5 W3 W4 W2 W1)", "#ff922b", "Elektronik", [0, 0, -90]),
+    # v53 (Esben 4-5 Nov): the strips' own leads are spliced on the front unit, the fuse's leads above the fuse
+    ("wagoholder_hvid", "x_wagoh_hvid", "Wago-holder hvid (sort): klikkes på bagrammens øverste tværstykke, 2 × 221-415 til de hvide strips' egne ledninger", "#2b2b30", "Kabinet", [0, 0, -40]),
+    ("wagoholder_rgb", "x_wagoh_rgb", "Wago-holder RGB (sort): klikkes på bagrammens øverste tværstykke, 3 × 221-413 til RGB-strippens egne ledninger", "#2b2b30", "Kabinet", [0, 0, -40]),
+    ("wago_forl",     "c_extwagos",    "5 Wago-klemmer til stripledningerne (hvid +, hvid −, RGB data, GND, +5 V)", "#ff922b", "Elektronik", [0, 0, -40]),
+    ("wago_sikring",  "c_fusewagos",   "2 Wago 221-413 over sikringen (dens egne ledninger, 6 og 15 cm)", "#ff922b", "Elektronik", [0, 0, -90]),
     ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),
     ("skruer_pi",     "s_pi",          "Skruer, Pi-holder: 4 × M2,5 × 6 (Pi'en på holderen) + skærmsættets 2 (holderen på afstandsstykkerne)", "#c3c7cf", "Skruer", [0, 0, 40]),
@@ -86,7 +91,7 @@ PARTS = [
 ]
 DOM_VIEWS = {"x_dom_top", "x_dom_top_hvid", "x_dom_top_orange", "x_dom_vinge_v", "x_dom_vinge_v_hvid", "x_dom_vinge_v_orange",
              "x_dom_vinge_h", "x_dom_vinge_h_hvid", "x_dom_vinge_h_orange"}
-OPTIONAL = {"x_kabellaas", "s_kabellaas", "c_kl_lead", "c_wagos", "c_fuse", "x_piholder", "s_pi", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
+OPTIONAL = {"x_wagoh_hvid", "x_wagoh_rgb", "c_extwagos", "c_fusewagos", "x_kabellaas", "s_kabellaas", "c_kl_lead", "c_wagos", "c_fuse", "x_piholder", "s_pi", "x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "s_wall",
             "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # left out if the STL dir has none (older versions)
 HIDDEN = {"x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h", "x_stand", "x_stand_logo_w", "x_stand_logo_g", "x_insert"} | DOM_VIEWS   # off until ticked
 
@@ -124,7 +129,10 @@ H_OWNER = {"P1": "stik", "P1b": "sikring", "P2": "stik", "P3": "stroem", "P4": "
            "P9": "daemper", "P10": "daemper", "P11": "daemper", "P12": "stroem", "P13": "ledstyring", "P14": "ledstyring",
            "S1": "ledrgb", "S2": "ledrgb", "S3": "ledrgb", "S4": "ledhvid", "S5": "ledhvid", "S6": "ledhvid", "S7": "ledhvid",
            "U1": "ledstyring", "U2": "lydkerne", "U3": "modem4g", "G1": "daemper", "G2": "reed", "G3": "sensor", "G4": "skaerm",
-           "A1": "hoejttaler"}
+           "A1": "hoejttaler",
+           # v53: the strips' third lead pair, the extensions from the splice clamps, the fuse's own leads
+           "S8": "ledhvid", "S9": "ledhvid", "E1": "wago_forl", "E2": "wago_forl", "E3": "wago_forl", "E4": "wago_forl", "E5": "wago_forl",
+           "SL": "sikring", "SK": "sikring"}
 K_FOLD = {"K1": (-90.0, -1), "K2": (-84.0, 1)}     # x of the fold, and which way it runs from the frame end
 
 
@@ -158,7 +166,7 @@ def harness_cables():
             else:
                 pts.append(p)
         d = 2.8 if "1,0" in c[5] else 4.0 if c[0][0] == "U" else 2.2
-        out.append((H_OWNER[c[0]], f"{c[0]}: {c[2]}", d, pts))
+        out.append((H_OWNER.get(c[0], "wago"), f"{c[0]}: {c[2]}", d, pts))
     return out
 
 

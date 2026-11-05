@@ -33,12 +33,12 @@ out.append('<text x="40" y="84" font-size="17" fill="#444">Kun købedele, ingen 
 # 24 V in, left column
 box(40, 140, 270, 100, "Strømforsyning", "Mean Well GST90A24|24 V, lige stik nedefra")
 box(40, 290, 270, 100, "Hunstik 5,5/2,5", "i den åbne kanal i bunden (v36)|skrueklemmer + og −")
-box(40, 450, 270, 80, "Sikring 3 A", "inline-holder på højre væg (v36)|fladsikring ATO (violet), kun på +")
+box(40, 450, 270, 100, "Sikring 3 A", "ATO (violet), højre væg, kun på +|egne ledn.: lang 15 cm forneden,|kort 6 cm foroven → FWL / FWR")
 wire([(175, 240), (175, 290)], C["v24"], 6); lab(185, 270, "24 V", C["v24"])
 w1 = wago(560, 150, 3, "W1 · 24 V + ", C["v24"])
 w2 = wago(560, 430, 5, "W2 · GND ", C["gnd"], (550, 480, "end"))
-wire([(120, 390), (120, 450)], C["v24"]); lab(130, 425, "P1 · +", C["v24"])
-wire([(120, 530), (120, 600), (420, 600), (420, w1[0]), (560, w1[0])], C["v24"]); lab(430, w1[0]-6, "P1b · fra sikring", C["v24"])
+wire([(120, 390), (120, 450)], C["v24"]); lab(130, 425, "P1 → FWL ← lang ledning", C["v24"])
+wire([(120, 550), (120, 600), (420, 600), (420, w1[0]), (560, w1[0])], C["v24"]); lab(430, w1[0]-6, "P1b · fra FWR ← kort ledning", C["v24"])
 wire([(250, 390), (250, 420), (460, 420), (460, w2[0]), (560, w2[0])], C["gnd"]); lab(470, w2[0]-6, "P2 · fra hunstik −")
 lab(40, 640, "Strøm: 1,5 mm² RKUB (Biltema), v36", "#444")
 
@@ -62,10 +62,11 @@ wire([(1288, w3[2]), (1320, w3[2]), (1320, 600), (1440, 600)], C["v5"]); lab(143
 wire([(1288, w4[2]), (1340, w4[2]), (1340, 650), (1440, 650)], C["gnd"]); lab(1430, 644, "P14 · V−", "#222", "end")
 # v24 (26 Oct 2026, first assembly): the strip takes its power straight from W3/W4; the controller only drives DATA (GPIO16)
 box(1440, 860, 320, 100, "RGB-strip 5 V", "WS2812b COB 5 mm, MiniClip i IN-enden|strømloft 2 A (2000 mA) i WLED", fill="#f3e8ff")
-wire([(1288, w3[3]), (1400, w3[3]), (1400, 790), (1500, 790), (1500, 860)], C["v5"]); lab(1492, 820, "S1 · 5 V fra W3", C["v5"], "end")
-wire([(1600, 710), (1600, 860)], C["data"]); lab(1608, 790, "S3 · DATA (Gledopto GPIO16)", C["data"])
-wire([(1288, w4[4]), (1380, w4[4]), (1380, 840), (1700, 840), (1700, 860)], C["gnd"]); lab(1708, 832, "S2 · GND")
-lab(1600, 990, "RGB: strippens egne ledninger direkte i W3/W4", "#444", "middle")
+wire([(1288, w3[3]), (1400, w3[3]), (1400, 790), (1500, 790), (1500, 860)], C["v5"]); lab(1492, 820, "E3 → klemme → S1 · 5 V", C["v5"], "end")
+wire([(1600, 710), (1600, 860)], C["data"]); lab(1608, 790, "E5 → klemme → S3 · DATA (GPIO16)", C["data"])
+wire([(1288, w4[4]), (1380, w4[4]), (1380, 840), (1700, 840), (1700, 860)], C["gnd"]); lab(1708, 832, "E4 → klemme → S2 · GND")
+lab(1600, 990, "v53: strippens egne ledninger (14-15 cm) i 3 Wago 221-413", "#444", "middle")
+lab(1600, 1010, "på bagrammen, forlænget til W3, W4 og GPIO16 (E3-E5)", "#444", "middle")
 # control: a short USB-A to USB-C cable from the Pi (WLED JSON over serial), so it works without wifi at the venue
 wire([(1745, 450), (1745, 560)], C["sig"], 3); lab(1735, 520, "U1 · USB-A → USB-C", C["sig"], "end"); lab(1735, 540, "styring (serial)", C["sig"], "end")
 
@@ -79,19 +80,26 @@ wire([(618, w2[2]), (680, w2[2]), (680, 720), (840, 720)], C["gnd"]); lab(830, 7
 wire([(1440, 300), (1170, 300), (1170, 700), (1140, 700)], C["sig"], 3)
 wire([(1440, 330), (1185, 330), (1185, 760), (1140, 760)], C["sig"], 3)
 lab(1195, 700, "grøn → GPIO18 (ben 12), 20 kHz", C["sig"]); lab(1195, 760, "rød → 3V3 (ben 1) · sort → GND (ben 14)", C["sig"])
-lab(1195, 782, "G1: 3 ledere, 40 cm, hver crimp for sig på sit ben", C["sig"])
+lab(1195, 782, "G1: Gravity 30 cm + dupont han-hun 10 cm (samling i K2)", C["sig"])
 w6 = wago(960, 880, 3, "W6 · hvid + (dæmpet) ", C["sw"], (1030, 905, "start"))
 wire([(990, 800), (990, 860), (940, 860), (940, w6[0]), (960, w6[0])], C["sw"]); lab(1000, 845, "P11 · VOUT", "#555")
 w5 = wago(700, 880, 3, "W5 · hvid − ", C["gnd"])
 wire([(618, w2[4]), (640, w2[4]), (640, 860), (680, 860), (680, w5[0]), (700, w5[0])], C["gnd"]); lab(650, 850, "P8 · fra W2", "#222")
-box(1100, 1040, 300, 190, "Hvid strip 1 og 2", "Ledproff COB Ra95 24 V, 8 mm|klikstik, 0,35 mm²|(v24: kun 2, ingen strip|i reflektoren)", fill="#fffbe6")
-wire([(1018, w6[1]), (1180, w6[1]), (1180, 1040)], C["sw"]); lab(1190, w6[1]-6, "S4 · strip 1 +", "#555")
-wire([(1018, w6[2]), (1140, w6[2]), (1140, 1040)], C["sw"]); lab(1150, w6[2]+18, "S6 · strip 2 +", "#555")
-wire([(758, w5[1]), (800, w5[1]), (800, 1080), (1100, 1080)], C["gnd"]); lab(810, 1074, "S5 · strip 1 −", "#222")
-wire([(758, w5[2]), (780, w5[2]), (780, 1180), (1100, 1180)], C["gnd"]); lab(790, 1174, "S7 · strip 2 −", "#222")
+# v53: the strips' own leads (14 cm) end in two 221-415 on the frame's upper cross bar; E1/E2 extend them to W6/W5
+box(1190, 1040, 230, 190, "Hvid strip 1, 2, 3", "Ledproff COB Ra95 24 V|klikstik, egne ledninger|14 cm (rød +, sort −)", fill="#fffbe6")
+hp = wago(1060, 1060, 5, "hvid + på bagrammen", C["sw"], (1089, 1050, "middle"))
+hm = wago(800, 1060, 5, "hvid − på bagrammen", C["gnd"], (829, 1050, "middle"))
+wire([(1018, w6[1]), (1040, w6[1]), (1040, hp[0]), (1060, hp[0])], C["sw"]); lab(1030, w6[1]+18, "E1", "#555", "end")
+wire([(758, w5[1]), (780, w5[1]), (780, hm[0]), (800, hm[0])], C["gnd"]); lab(770, w5[1]+18, "E2", "#222", "end")
+for i, n in enumerate(["S4 · 1", "S6 · 2", "S8 · 3"]):
+    wire([(1118, hp[i + 1]), (1190, hp[i + 1])], C["sw"]); lab(1124, hp[i + 1] - 5, n + " +", "#555", size=12)
+for i, n in enumerate(["S5 · 1", "S7 · 2", "S9 · 3"]):
+    wire([(858, hm[i + 1]), (880 + 8*i, hm[i + 1]), (880 + 8*i, 1256 + 8*i), (1250 + 50*i, 1256 + 8*i), (1250 + 50*i, 1230)], C["gnd"])
+    lab(1254 + 50*i, 1250 + 8*i, n + " −", "#222", size=12)
 
 # legend + notes
-for i, t in enumerate(["W1 24 V +: 221-413", "W2 GND: 221-415", "W3 5 V +: 221-415", "W4 5 V GND: 221-415", "W5 hvid −: 221-413", "W6 hvid + dæmpet: 221-413"]):
+for i, t in enumerate(["W1 24 V +: 221-413", "W2 GND: 221-415", "W3 5 V +: 221-415", "W4 5 V GND: 221-415", "W5 hvid −: 221-413", "W6 hvid + dæmpet: 221-413",
+                       "v53 bagramme: hvid + / −: 221-415 · RGB: 3 × 221-413", "v53 ved sikringen: FWL, FWR: 221-413"]):
     lab(40, 980 + i*22, t, "#333", size=15)
 lx, ly = 40, 740
 for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip +, dæmpet (VOUT)"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):

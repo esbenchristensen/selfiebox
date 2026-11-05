@@ -181,6 +181,9 @@ SETTINGS = {
     "wagoraekke": {"_visible": False, "layer_height": "0.28", **INSIDE, **NO_SUPPORT},
     # slim1: the Pi's carrier, inside the box, its front face on the plate, bosses and ears straight up
     "piholder": {"_visible": False, "layer_height": "0.2", **INSIDE, "wall_loops": "3", **NO_SUPPORT},
+    # v53: the Wago holders for the strips' leads, on their side like the fan guard (arms, floor, teeth and lips straight up)
+    "wagoholder": {"_visible": False, "layer_height": "0.2", **INSIDE, "wall_loops": "3", "brim_type": "outer_only", "brim_width": "3",
+                   **NO_SUPPORT},
     "blaeserhegn": {"_visible": False, "layer_height": "0.2", **INSIDE, "brim_type": "outer_only", "brim_width": "3",
                     **NO_SUPPORT},
     # theme parts: face down too (their back lies against the box); tree support (auto) under the straps
@@ -420,7 +423,8 @@ SINGLE = [("bagramme", "bagramme", True, "hvid", "glat"),
           ("tema-vinge-hoejre-eksempel", "tema", False, "sort", "glat"),
           ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat"),
           ("pi-holder", "piholder", False, "sort", "glat"),   # slim1
-          ("kabellaas", "kabellaas", False, "sort", "glat")]  # v52
+          ("kabellaas", "kabellaas", False, "sort", "glat"),  # v52
+          ("wagoholder-hvid", "wagoholder", False, "sort", "glat"), ("wagoholder-rgb", "wagoholder", False, "sort", "glat")]  # v53
 
 
 def stand_3mf(folder, prefix=None):
