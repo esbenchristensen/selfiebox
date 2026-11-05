@@ -15,10 +15,11 @@ export default function Gaester() {
     <LegalPage
       label="Til gæster"
       title="Dine billeder og data i Selfi Boks."
-      lede="Her kan du læse, hvad der sker med dine billeder, videoer og dit telefonnummer, når du bruger en Selfi Boks, og hvordan du får dem slettet."
-      updated="19. oktober 2026"
+      lede="Her kan du læse, hvad der sker med dine billeder, videoer og dit telefonnummer, når du bruger en Selfi Boks, og hvordan du får dem slettet. Står boksen til en privat fest, så læs afsnittet om private fester."
+      updated="4. november 2026"
     >
       <h2>Hvem er ansvarlig?</h2>
+      <p>Det afhænger af, hvor boksen står: hos et sted (en bar, klub eller festival) eller til en privat fest. Private fester har <a href="#privat">sit eget afsnit</a>.</p>
       <p>
         Det sted, hvor boksen står (fx baren, klubben eller festivalen), er dataansvarlig for dine billeder og oplysninger og har ansvaret for, hvordan de bruges. Stedets navn står på
         boksens skærm og på skiltet ved boksen. Selfi leverer boksen og opbevarer data for stedet som databehandler, efter en databehandleraftale.
@@ -31,7 +32,12 @@ export default function Gaester() {
         <li><strong>Dit telefonnummer</strong>, hvis du vælger at få billedet på SMS.</li>
         <li><strong>Dine svar</strong>: om stedet må bruge billedet eller videoen, og om du vil høre fra stedet. Vi gemmer tidspunktet og den tekst, du sagde ja til, så det kan dokumenteres.</li>
       </ul>
-      <p>Boksen genkender ikke ansigter og bruger ikke dit ansigt til at finde ud af, hvem du er.</p>
+      <p>
+        <strong>Ansigter hos steder:</strong> Selve boksen genkender ikke, hvem du er. Billeder taget hos et sted bliver bagefter gennemgået på vores
+        server, som samler billeder af det samme ansigt i en gruppe. Det bruges kun til, at stedet og Selfi kan finde og slette alle billeder af dig,
+        hvis du beder om det. Ansigtsdata forlader aldrig serveren, kobles ikke til navn eller nummer og slettes sammen med billedet. Til private
+        fester bliver der ikke lavet ansigtsdata.
+      </p>
 
       <h2>Hvad bruges det til, og med hvilken ret?</h2>
       <table>
@@ -40,7 +46,7 @@ export default function Gaester() {
           <tr>
             <td>At give dig dit billede via QR-kode eller SMS</td>
             <td>Du har bedt om det (GDPR art. 6, stk. 1, litra b)</td>
-            <td>Billedet slettes senest 30 dage efter, det er taget. Et nummer, der kun er brugt til at sende billedet, slettes samtidig.</td>
+            <td>Hos et sted: billedet slettes senest 30 dage efter, det er taget, eller tidligere, hvis stedet har valgt det. Et nummer, der kun er brugt til at sende billedet, slettes samtidig. Til en privat fest: se <a href="#privat">private fester</a>.</td>
           </tr>
           <tr>
             <td>At stedet bruger billedet eller videoen på storskærme, sociale medier, hjemmeside, i nyhedsbreve og i annoncer, også redigeret og klippet sammen med andet (se <a href="/brugsvilkaar">vilkårene</a>)</td>
@@ -68,14 +74,27 @@ export default function Gaester() {
         Når du tager et billede, accepterer du <a href="/brugsvilkaar">vilkårene for brug af boksen</a>. Siger du nej til, at stedet må bruge billedet, får du det stadig selv. Du behøver ikke sige ja til markedsføring for at være med i en konkurrence i boksen.
       </p>
 
+      <h2 id="privat">Til en privat fest</h2>
+      <p>
+        Har nogen lejet boksen til en privat fest (fx et bryllup, en fødselsdag eller en konfirmation), er det værten, der har lejet den, der har
+        inviteret dig og bestemmer over festens billeder. Selfi opbevarer billederne for værten.
+      </p>
+      <ul>
+        <li><strong>Hvor ender billederne?</strong> På festens fotoportal. Den kan kun ses af dem, der har linket (fra QR-koden på boksen eller fra værten). Den kan ikke findes via Google.</li>
+        <li><strong>Hvor længe?</strong> Portalen og billederne gemmes i 3 måneder efter festen, eller 12 måneder, hvis værten har købt det. Derefter sletter vi dem.</li>
+        <li><strong>Ingen markedsføring.</strong> Hverken værten eller Selfi bruger billederne i reklamer, og der bliver ikke lavet ansigtsdata.</li>
+        <li><strong>Vil du have et billede væk?</strong> Sig det til værten. Værten kan skjule billedet for de andre gæster med det samme. Skriv også gerne til os på <a href={contactHref}>{contactText}</a> med festens link og hvilket billede, så sletter vi det helt.</li>
+      </ul>
+
       <h2>Børn</h2>
       <p>
         Er du under 15 år, så vælg &quot;Kun til mig&quot;. Stedet må kun bruge dit billede eller sende dig tilbud, hvis en forælder siger ja for dig.
+        Til en privat fest med børn (fx en konfirmation eller børnefødselsdag) ser kun dem med festens link billederne, og en forælder kan altid bede værten eller os om at fjerne et billede.
       </p>
 
       <h2>Hvem får dine data?</h2>
       <p>
-        Det sted, hvor boksen står. Selfi opbevarer data for stedet hos underdatabehandlere i EU og USA (se{" "}
+        Det sted, hvor boksen står, eller værten ved en privat fest. Selfi opbevarer data for stedet hos underdatabehandlere i EU og USA (se{" "}
         <a href="/databehandleraftale#underdatabehandlere">listen</a>). Overførsler til USA sker efter EU-USA-dataprivatlivsrammen og
         EU-Kommissionens standardkontraktbestemmelser. Data bliver aldrig solgt.
       </p>

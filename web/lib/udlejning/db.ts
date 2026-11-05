@@ -46,6 +46,7 @@ export type RentalDoc = {
   expiresAt: Date | null;
   conflict?: boolean; // paid while the dates were taken by someone else: admin must sort it out
   test?: boolean; // made with a test link from admin: no payment, left out of the accounts, can be deleted in admin
+  charges?: { id: string; reason: string; amount: number; url: string; sessionId: string; status: "open" | "paid"; at: Date; paidAt?: Date }[]; // ekstra betalinger fra admin
   history: { at: Date; status: RentalStatus; by: string; note?: string }[];
   createdAt: Date;
   updatedAt: Date;

@@ -174,6 +174,7 @@ export default async function Home() {
           { label: "Priser", href: "#priser" },
           { label: "Funktioner", href: "#funktioner" },
           { label: "Spørgsmål", href: "#faq" },
+          { label: "Min fest", href: "/min-fest" },
           { label: "Erhverv", href: "/erhverv" },
         ]}
         cta={{ label: "Se ledige datoer", href: "#book" }}

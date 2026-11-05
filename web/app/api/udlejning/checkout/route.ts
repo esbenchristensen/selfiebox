@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Sæt flueben ved lejebetingelserne." }, { status: 400 });
   }
 
-  const choice: Choice = { range: { from, to }, theme: str(body.theme, 60) || null, printer: body.printer === true, photoType, delivery, keep: body.keep === true };
+  const choice: Choice = { range: { from, to }, theme: null, printer: body.printer === true, photoType, delivery, keep: body.keep === true };
 
   let d;
   try {

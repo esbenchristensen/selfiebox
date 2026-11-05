@@ -23,6 +23,10 @@ export function Footer() {
           <a href="/cookies">Cookies</a>
           <a href="/">Lej en fotoboks til en privat fest</a>
           <a href="/lejebetingelser">Lejebetingelser</a>
+          <a href="/min-fest">Min fest</a>
+          <a href="https://foto.selfi.dk">Find billederne</a>
+          <a href="/gaester">Til gæster: dine billeder og data</a>
+          <a href="#chat">Skriv til os</a>
         </nav>
         <ThemeSwitch />
         <span className="footer-company">

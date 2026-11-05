@@ -22,7 +22,7 @@ const included = [
   ["Alle aktiviteter", "Titler, missioner, konkurrence, guldtid, skattejagt og rundtur."],
   ["Kontrolpanel", "Ramme, tekster, spørgsmål og præmier skiftes på nettet. Billeder og videoer hentes samme sted."],
   ["Overvågning og opdateringer", "Boksen melder sig til os, og ny software kommer af sig selv."],
-  ["Support og ny boks", "Ring døgnet rundt. Går boksen i stykker, sender vi en ny."],
+  ["Support og ny boks", "Skriv i chatten når som helst. Går boksen i stykker, sender vi en ny."],
 ] as const;
 
 export function Pricing() {

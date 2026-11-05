@@ -1,5 +1,5 @@
 // B2C rental: settings, prices and availability. Pure functions shared by the booking page, the API routes
-// and (as a copy in selfiebox-platform web/src/lib/udlejning.ts) the admin. Keep the two copies in sync.
+// and (as an exact copy in selfiebox-platform web/src/lib/udlejning/core.ts) the admin. Keep the two copies identical.
 //
 // Availability: every booking holds one box, and one printer when the printer is chosen, from the day it
 // leaves us until it is back and checked. With the post that is shipDaysBefore before the first day until

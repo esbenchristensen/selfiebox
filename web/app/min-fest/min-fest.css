@@ -1,0 +1,23 @@
+/* selfi.dk/min-fest: kundens egen side for en booking. */
+.mf { display: flex; flex-direction: column; gap: var(--space-5); max-width: 720px; }
+.mf-form { display: flex; flex-direction: column; gap: var(--space-4); max-width: 420px; }
+.mf-form label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.mf-form input { font: inherit; font-size: 16px; padding: 12px 14px; border-radius: var(--radius-m, 10px); border: 1px solid var(--line-strong); background: var(--surface-raised); color: var(--ink); }
+.mf-form input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.mf-form .btn { align-self: flex-start; }
+.mf-ok { color: var(--ink); }
+.mf-err { color: #c0392b; }
+.mf-help { display: flex; flex-direction: column; gap: var(--space-2); color: var(--ink-muted); font-size: 15px; }
+.mf-help a, .mf-card a:not(.btn) { color: inherit; text-decoration: underline; }
+.mf-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.mf-steps li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: var(--space-3); padding: 10px 0; border-bottom: 1px solid var(--line); }
+.mf-steps li::before { content: ""; width: 12px; height: 12px; margin-top: 5px; border-radius: 50%; border: 2px solid var(--line-strong); }
+.mf-steps li[data-s="done"]::before { background: var(--green); border-color: var(--green); }
+.mf-steps li[data-s="now"]::before { border-color: var(--ink); background: var(--ink); }
+.mf-steps li[data-s="todo"] { color: var(--ink-muted); }
+.mf-steps small { display: block; color: var(--ink-muted); font-size: 13px; }
+.mf-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.mf-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-5); border-radius: var(--radius-l); background: var(--surface-raised); border: 1px solid var(--line-strong); }
+.mf-card p { margin: 0; color: var(--ink-muted); font-size: 15px; }
+.mf-card .btn { align-self: flex-start; margin-top: auto; }
+@media (max-width: 720px) { .mf-cards { grid-template-columns: 1fr; } }
