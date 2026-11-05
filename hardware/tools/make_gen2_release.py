@@ -44,9 +44,6 @@ PRINT = {"skal": ("x_shell3", DOWN), "front": ("x_front3", UP), "lysring": ("x_r
          # v36 (Esben 31 Oct): the stand bracket for the floor tripod is a fixed part of every print package, fit-checked
          # against this shell (check_fit_gen2.py); its logo panel on the plate as in make_stativbeslag.py's p_stand
          "stativbeslag": ("x_stand", DOWN),
-         # v52 (Esben 5 Nov): the kabellås under the plug, as fitted (its top against the floor is up, the face with the screw head
-         # on the plate)
-         "kabellaas": ("x_kabellaas", np.eye(4)),
          # v53 (Esben 4-5 Nov): the two Wago holders for the strips' own leads, on their sides like the fan guard (the white one
          # with its -x face on the plate, the RGB one, drawn mirrored, with its +x face)
          "wagoholder-hvid": ("x_wagoh_hvid", SIDE), "wagoholder-rgb": ("x_wagoh_rgb", SIDE_R),
