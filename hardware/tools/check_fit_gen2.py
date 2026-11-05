@@ -25,12 +25,12 @@ import trimesh
 # GEN2_SCAD=<file> checks/builds a variant instead (kb1: cad/gen2_kamera_bund.scad, camera at the bottom)
 SCAD = Path(os.environ["GEN2_SCAD"]).resolve() if os.environ.get("GEN2_SCAD") else Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 
-PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard", "x_stand", "x_kabellaas",
-           "x_wagoh_hvid", "x_wagoh_rgb"]   # v24: fan guard; v27: no camera sleeve; v36: stand bracket; v52: kabellås; v53: Wago holders
+PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard", "x_stand",
+           "x_wagoh_hvid", "x_wagoh_rgb"]   # v24: fan guard; v27: no camera sleeve; v36: stand bracket; v53: Wago holders
 BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
           "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g",
-          "c_wagos", "s_kabellaas", "c_kl_lead", "c_extwagos", "c_fusewagos"]   # v53: the 5 splice clamps on the bar; v28: wall screws; v29: the 6 Wago clamps in their row; v52: the kabellås screw and the PSU lead
+          "c_wagos", "c_extwagos", "c_fusewagos"]   # v53: the 5 splice clamps on the bar; v28: wall screws; v29: the 6 Wago clamps in their row
 THEME = ["x_tema_top", "x_tema_vinge_v", "x_tema_vinge_h"]   # v21: example theme top and wings on the hooks
 DOM = ["x_dom_top", "x_dom_vinge_v", "x_dom_vinge_h"]          # v36: the Airtox Dominance theme kit (an alternative to THEME)
 # v27: keep-out bodies for the camera (no glass, open window): the lens's field of view in front of it, and the barrel
@@ -57,10 +57,6 @@ CONTACT = {
                                        # 24 entries), ribs 0.5 / 0.25 and the back lips 0.6 over the clamp
     ("x_shell3", "c_jack"): 30,        # v40: the bar 0.6 under the socket's drawn end (Esben: the printed socket had ~1 mm play)
     ("x_shell3", "c_mosfet"): 25,      # v36: the 2 pegs go through the dimmer PCB's holes (the board model has none)
-    ("x_kabellaas", "s_kabellaas"): 1e9, ("x_shell3", "s_kabellaas"): 1e9,   # v52: the kabellås screw through the plate into its pilot
-    ("x_kabellaas", "c_kl_lead"): 15,  # v52: the crush ribs press the Ø5 lead (4 pairs, 0.3 each)
-    ("c_kl_lead", "c_jack"): 1e9,      # v52: the lead leaves the PSU plug's grip (drawn in c_jack)
-    ("c_kl_lead", "s_kabellaas"): 0.0,
     ("x_stand", "s_lock"): 1e9,        # v36: the security screws go through the stand bracket's tongues, as through the cleat's
     ("x_shell3", "c_fuse"): 40,        # v36: crush ribs press the fuse holder into its cradle; v40: ribs on all 4 walls (0.5 / 0.4),
                                        # no clearance, 5.6 lead slots round the Ø6 lead stubs (Esben: soft plastic, squeeze it)
@@ -73,9 +69,6 @@ CONTACT = {
 }
 # (a, b, minimum gap, why)
 CLEARANCES = [
-    ("x_kabellaas", "x_stand", 0.4, "v52: the kabellås plate in the stand shelf's plug slot"),
-    ("x_kabellaas", "x_cleat", 0.5, "v52: the kabellås plate in front of the wall cleat"),
-    ("c_kl_lead", "x_stand", 0.3, "v52: the lead down through the stand shelf's slot"),
     ("x_ring3", "x_front3", 0.0, "v36: the ring's 45 deg collar in the front's seat"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame (v24: pressed by crush bumps)"),
     ("x_cam_lens", "x_front3", 0.6, "v37: the bore Ø10 behind a 1.0 lip of Ø8.6: 1.4 round the lens barrel (Ø7.25), 0.69 from the tip's edge to the lip"),

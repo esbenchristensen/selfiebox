@@ -45,7 +45,7 @@ GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
 PARTS = {"skal": ("skal", "sort", "skal"), "front": ("front", "sort", "front"),
          "bagramme": ("ledskinne", "hvid", "bagramme"), "lysring": ("lysring", "natur", "lysring"),
          "vaegbeslag": ("vaegbeslag", "sort", "hurtig"), "stativbeslag": ("stativbeslag", "sort", "hurtig"),
-         "blaeserhegn": (None, "sort", "blaeserhegn"), "kabellaas": ("kabellaas", "sort", "hurtig"),
+         "blaeserhegn": (None, "sort", "blaeserhegn"),
          "tema-vinge-venstre-eksempel": ("tema_vinge_v", "sort", "hurtig"),
          # v53: the Wago holders for the strips' own leads lie on their side, so they are printed whole
          "wagoholder-hvid": (None, "sort", "wagoholder"), "wagoholder-rgb": (None, "sort", "wagoholder")}
@@ -99,15 +99,10 @@ COUPONS = [
      "nedad mod sikringen. Klik en klemme i hver: sidder de fast, kan håndtagene åbnes helt, og kan sikringens korte ledning "
      "(6 cm) nå op i den højre?"),
     # ---- shell (printed back down: the height is from the outside of the back wall)
-    ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 28,   # v52: 28 (v43: 24), the whole kabellås boss
-     "v52: kabellåsens skrueklods foran stikkets kanal (Ø9, forhul Ø3,4 til sikkerhedsskruen). Kanalen til strømforsyningens "
-     "stik (Ø11,8 med flad top) og bøjlen over hunstikket er som v43. Kør stikket op nedefra og skub hunstikket ind forfra som "
-     "før, og prøv kabellåsen på stykket (se `kabellaas`)."),
-    ("kabellaas", ["kabellaas"], ((-30, -175), (45, -150)), 0, "fuld",
-     "v52: kabellåsen under strømstikket, hel. Sæt strømforsyningens stik op i `proeve-stroemindgang`, læg ledningen ned i "
-     "sporet: frem i venstre side, rundt om skruehullet og tilbage i højre side og ned gennem hullet. Skru pladen fast med en "
-     "sikkerhedsskrue (4,2 × 25). Ligger ledningen i sporet uden at blive klemt flad, flugter pladen med bunden, og kan du "
-     "ikke trække stikket ud ved at hive i ledningen?"),
+    ("stroemindgang", ["skal"], ((-22, -154), (22, -50)), 0, 24,
+     "v54: kabellåsens skrueklods fra v52 er væk igen, så strømindgangen er som i v51. v43: kanalen til strømforsyningens stik nedefra er 1 mm større, Ø11,8 (v40-v42: Ø10,8), stadig med flad top. Bøjlen "
+     "over hunstikket er som v40. Kør strømforsyningens stik op nedefra: glider det op uden at tage fat, og rammer det "
+     "stadig hunstikket uden at lede efter det? Skub hunstikket ind forfra: sidder det stadig uden slør?"),
     ("sikring", ["skal"], ["sikring"], 8, "+6",
      "v43: åbningerne i hver ende til sikringsholderens ledningsstudse er 7,5 mm brede (v40-v42: 5,6, så holderen ikke kunne "
      "komme ned; du målte studsene til ca. 8 mm). Lommen og knusribberne er som v40. Trykkes den ned og sidder fast? Kan "
@@ -200,7 +195,7 @@ COUPONS = [
      "Skinnen øverst på vægbeslaget og stativbeslaget, som boksen hænger på. Prøves i `proeve-wago-loekker` (skallens "
      "udsparing til skinnen ligger i det stykke): glider skinnen ind uden at tvinge, og sidder den uden slør?"),
     ("stativ-hylde", ["stativbeslag"], ((-112, -168), (112, -108)), 0, "fuld",
-     "v52: slidsen i hylden har kabellåsens form (0,5 mm luft rundt om), så pladen sidder i den, når boksen står på stativet. "
+     "v54: slidsen til strømstikket er som i v51 igen (16 mm bred), kabellåsens form fra v52 er væk. "
      "v37: stativbeslagets hylde med hullet til gevindindsatsen (massiv som i den rigtige 3MF) og tungerne til skallens låse. "
      "Smelt indsatsen (1/4\"-20 × 12,7) i med loddekolben: går den lige ned og flugter med hylden? Skru kuglehovedets "
      "lynplade i, og prøv tungerne i `proeve-laas-reed` og `proeve-laas-hoejre`."),
@@ -214,22 +209,22 @@ COUPONS = [
 # tabs, the PSU plug's channel and the fuse holder's lead slots; v41/v42's snap, screws and light stack go to plate 2
 # v45 (Esben 4 Nov: clips and corners in the LED channel): plate 1 is the clip bay and the light stack with the corner bridge;
 # v43's three shell holders go to plate 2. v46 (no slope, four strips): the same, with the right clip bay too
-# v52 (kabellåsen): plate 1 is the plate itself, the shell's inlet with its new screw boss and the stand shelf's new slot;
-# v51's light stack goes to plate 2
 # v53 (the strips' and the fuse's own leads): plate 1 is both Wago holders, the bar to try them on and the fuse's two clamp
-# seats; v52's kabellås goes to plate 2
-GROUP = {"wagoholder-hvid": 1, "wagoholder-rgb": 1, "tvaerstykke": 1, "sikringsklemmer": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# seats
+# v54 (Esben 5 Nov: the kabellås is gone, back to v51 at the plug; no dowel holes): plate 1 is the shell's inlet and the stand
+# shelf with its v51 slot again; v53's holders go to plate 2
+GROUP = {"stroemindgang": 1, "stativ-hylde": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v53: de to Wago-holdere til strippenes egne ledninger, bagrammens øverste tværstykke at klikke dem på og de to faste Wago-pladser over sikringen; print den først", 2: "de andre holdere og samlinger (også v52's kabellås og v51's lysstak med kølekanalen)", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v54: skallens strømindgang uden kabellåsens skrueklods og stativbeslagets hylde med den gamle slids igen (som v51); print den først", 2: "de andre holdere og samlinger (også v53's Wago-holdere og v51's lysstak med kølekanalen)", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("det, v53 har tilføjet til de dele, der har deres egne korte ledninger: de to Wago-holdere (hele), der klikkes på "
-               "bagrammens øverste tværstykke, et stykke af tværstykket at prøve dem på, og skallens to faste Wago-pladser over "
-               "sikringsholderen. Plade 2 har resten, også v52's kabellås og v51's lysstak med kølekanalen")
+PLATE1_TEXT = ("det, v54 har ført tilbage ved strømstikket: kabellåsen fra v52 er væk, så skallens strømindgang er uden "
+               "skrueklods igen, og stativbeslagets hylde har v51's slids til stikket. Bunden har ikke længere de to styrehuller. "
+               "Plade 2 har resten, også v53's Wago-holdere og v51's lysstak med kølekanalen")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
 
 
@@ -239,8 +234,8 @@ def slim_set():
     new = {
         "stroemindgang": (((-5, -154), (40, -50)), "slim1: strømindgangen er flyttet til x 17,65, mellem mikrofonkernen og "
                           "højttaleren; bøjlen er som v40. slim2 (som v43): kanalen til strømforsyningens stik er 1 mm større, Ø11,8 "
-                          "(slim1: Ø10,8). slim11 (som v52): kabellåsens skrueklods foran kanalen (Ø9, forhul Ø3,4). Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: går begge ind uden at "
-                          "tvinge, og sidder hunstikket uden slør? Prøv kabellåsen på stykket (se `kabellaas`)."),
+                          "(slim1: Ø10,8). slim13 (som v54): kabellåsens skrueklods fra slim11 er væk igen. Skub hunstikket ind forfra og kør strømforsyningens stik op nedefra: går begge ind uden at "
+                          "tvinge, og sidder hunstikket uden slør?"),
         "sikring": (None, "slim1: sikringsholderen ligger nu på siden, bunden ind mod venstre væg (v42: stående på højre væg), med "
                     "de samme knusribber. slim2 (som v43): slidserne i enderne er 7,5 mm (slim1: 5,6). Trykkes den ind og sidder fast? Kan låget åbnes, og kommer ledningerne ud i begge ender?"),
         "daemper": (None, "slim1: dæmperens printkort (DFR0457) ligger fladt på bagvæggen øverst til venstre (v42: på venstre væg), på de "
@@ -273,11 +268,12 @@ def slim_set():
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
     # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
-    GROUP = {"wagoholder-hvid": 1, "wagoholder-rgb": 1, "tvaerstykke": 1, "sikringsklemmer": 1, "kabellaas": 2, "stativ-hylde": 2, "lyskanal": 2, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
+    GROUP = {"wagoholder-hvid": 1, "wagoholder-rgb": 1, "tvaerstykke": 1, "sikringsklemmer": 1, "stativ-hylde": 1, "lyskanal": 2, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim12 (som v53): de to Wago-holdere til strippenes egne ledninger, tværstykket at klikke dem på og de to faste Wago-pladser ved sikringen; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (også slim11's kabellås og stativbeslagets slids, slim10's kølekanal og slim5-8's lysstak og klipslommer)",
+    GROUP_TEXT = {1: "slim13 (som v54): strømindgangen uden kabellåsens skrueklods og stativbeslagets hylde med den gamle slids igen; slim12 (som v53): de to Wago-holdere til strippenes egne ledninger, tværstykket at klikke dem på og de to faste Wago-pladser ved sikringen; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim10's kølekanal og slim5-8's lysstak og klipslommer)",
                   3: "tilvalg og skærmens kant"}
-    PLATE1_TEXT = ("slim12 (som v53): de to Wago-holdere (hele) til strippenes egne ledninger, der i Slim står foran rammens "
+    PLATE1_TEXT = ("slim13 (som v54): kabellåsen fra slim11 er væk, så strømindgangen er uden skrueklods, og stativbeslagets "
+                   "hylde har den gamle slids igen. slim12 (som v53): de to Wago-holdere (hele) til strippenes egne ledninger, der i Slim står foran rammens "
                    "bagside, et stykke af tværstykket at prøve dem på, og skallens to faste Wago-pladser ved sikringen (under og til "
                    "højre for den). Desuden "
                    "udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
@@ -285,8 +281,7 @@ def slim_set():
                    "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på. slim2 (som v43): "
                    "mikrofonkernens holder med stærkere tappe under tænderne, 1 mm større kanal til strømforsyningens stik og 7,5 mm "
                    "åbninger i sikringsholderens ender. slim7 (som v48): lysstakken nederst til venstre med hvid 3 på højkant i hjørnets "
-                   "slids og de stærkere broer, og begge klipslommer ved kameraet. slim10 (som v51): bagrammen er hul bag bunden med spalter bagud (kølekanalen). slim11 (som v52): kabellåsen "
-                   "under strømstikket (hel), dens skrueklods i strømindgangen og stativbeslagets hylde med slidsen i kabellåsens form")
+                   "slids og de stærkere broer, og begge klipslommer ved kameraet. slim10 (som v51): bagrammen er hul bag bunden med spalter bagud (kølekanalen)")
     CAD_FILE = "hardware/cad/gen2_slim.scad"
 
 

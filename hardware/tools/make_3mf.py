@@ -194,11 +194,6 @@ SETTINGS = {
     "printerkappe": {"layer_height": "0.2", "wall_loops": "8", "sparse_infill_density": "15%", **NO_SUPPORT},
     # stand bracket: carries the whole box; the logo panel lies on the plate. v6: 3 walls, 30 % gyroid; v7: 4 top layers
     # (3 sagged over the infill, see INSIDE)
-    # v52: the kabellås under the plug takes a pull on the PSU lead in its security screw: solid round the screw and the U
-    # (4 walls, 60 % gyroid), the face with the screw head (seen from below) on the plate
-    "kabellaas": {"layer_height": "0.2", "wall_loops": "4", "top_shell_layers": "4", "top_shell_thickness": "0.8",
-                  "bottom_shell_layers": "4", "sparse_infill_density": "60%", "sparse_infill_pattern": "gyroid",
-                  **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
     "stativbeslag": {"layer_height": "0.2", "wall_loops": "3", "top_shell_layers": "4", "top_shell_thickness": "0.8",
                      "bottom_shell_layers": "4", "sparse_infill_density": "30%", "sparse_infill_pattern": "gyroid",
                      **SOLID_FACE, **SEAM_ALIGNED, **NO_SUPPORT},
@@ -423,7 +418,6 @@ SINGLE = [("bagramme", "bagramme", True, "hvid", "glat"),
           ("tema-vinge-hoejre-eksempel", "tema", False, "sort", "glat"),
           ("wagoraekke-eftermontering", "wagoraekke", False, "sort", "glat"),
           ("pi-holder", "piholder", False, "sort", "glat"),   # slim1
-          ("kabellaas", "kabellaas", False, "sort", "glat"),  # v52
           ("wagoholder-hvid", "wagoholder", False, "sort", "glat"), ("wagoholder-rgb", "wagoholder", False, "sort", "glat")]  # v53
 
 
