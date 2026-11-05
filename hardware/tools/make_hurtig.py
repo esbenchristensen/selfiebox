@@ -69,9 +69,8 @@ HSET = {
 }
 # Modifier volumes the release 3MFs carry that change what a fit test shows (in the part's print coordinates): the shell's
 # support enforcers/blockers (make_3mf.SKAL_*) and the stand bracket's solid shelf round the heat-set insert (the insert
-# must melt into solid plastic as in the real part). The corner modifiers (v37, drop strength) are left out: they do not
-# change the fit and only cost time.
-SOLID_SHELF = {"wall_loops": "6", "sparse_infill_density": "100%"}
+# must melt into solid plastic as in the real part). The corner modifiers (v37-v56, drop strength) are gone (make_3mf.py).
+SOLID_SHELF = {"sparse_infill_density": "100%"}   # v57: infill only, no extra walls (make_3mf.WALL_KEYS)
 
 # glTF coordinates (assembled box): x across (seen from the front, + = right), y up (bottom of the box at -153.5),
 # z depth (front face at 0, back at -70). CAD z (height above the bottom) = y + 153.5.

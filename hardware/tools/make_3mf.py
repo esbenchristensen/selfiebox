@@ -219,6 +219,30 @@ def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filamen
     write_bambu_objects(path, [(object_name, parts, settings or {}, (dx, 0.0), turn)], filaments, plate, tower)
 
 
+# Esben 5 Nov: nothing may show on the outside, no seams ("samlinger") and no odd settings. Bambu Studio 2.8 splits a layer into
+# separate wall regions wherever a modifier volume changes any of these (src/libslic3r/Layer.cpp,
+# Layer::has_compatible_layer_regions, v02.08.02.61), and each region gets its own outer wall, which leaves a line on the
+# part's outside at the modifier's faces. So a modifier may change infill, never these; check_seams() refuses the file.
+WALL_KEYS = {"wall_filament", "wall_loops", "wall_sequence", "inner_wall_speed", "outer_wall_speed", "gap_infill_speed",
+             "bridge_speed", "detect_overhang_wall", "filter_out_gap_fill", "inner_wall_line_width",
+             "outer_wall_line_width", "detect_thin_wall", "infill_wall_overlap", "override_filament_scarf_seam_setting",
+             "seam_slope_type", "seam_slope_start_height", "seam_slope_gap", "seam_slope_min_length",
+             "seam_slope_conditional", "seam_slope_entire_loop", "seam_slope_steps", "seam_slope_inner_walls",
+             "initial_layer_flow_ratio", "seam_position"}
+
+
+def check_seams(object_name, settings, parts):
+    """Refuse what puts seams or lines on a part's outside: a modifier volume that changes the walls (WALL_KEYS), the
+    "back" seam (v36/v42: one straight line of seams across the part) and a scarf seam."""
+    bad = [f"{n}: {k}" for n, _, _, kind, own in parts if kind == "modifier_part" for k in own if k in WALL_KEYS]
+    if settings.get("seam_position") == "back":
+        bad.append("seam_position back")
+    if settings.get("seam_slope_type", "none") != "none":
+        bad.append(f"seam_slope_type {settings['seam_slope_type']}")
+    if bad:
+        raise SystemExit(f"{object_name}: would print seams on the outside ({'; '.join(bad)}); see make_3mf.WALL_KEYS")
+
+
 def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=None):
     """objects: list of (name, parts, settings, (dx, dy) from the bed centre, turn). One plate, each object as in
     write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default. The settings key "_face_down"
@@ -239,6 +263,7 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
     files, main_objs, nid = {}, [], 0
     for k, (object_name, parts, settings, (dx, dy), turn) in enumerate(objects):
         parts = [tuple(q) + (("normal_part", {})[len(q) - 3:]) for q in parts]
+        check_seams(object_name, settings, parts)
         solid = [m for _, m, _, kind, _ in parts if kind == "normal_part"]   # modifiers never move the object
         lo = np.min([m.bounds[0] for m in solid], axis=0)
         hi = np.max([m.bounds[1] for m in solid], axis=0)
@@ -303,7 +328,6 @@ def front_3mf(folder, prefix=None):
     folder = Path(folder)
     prefix = prefix or folder.name
     parts = [(name, trimesh.load(folder / f"{prefix}_{suffix}.stl"), slot) for suffix, name, slot, _ in FRONT_PARTS]
-    parts += corner_modifiers(parts[0][1])   # v37
     out = folder / f"{prefix}_front_flerfarvet.3mf"
     write_bambu_3mf(out, parts, f"{prefix}_front", SETTINGS["front"], filaments=("sort", "hvid", "groen"),
                     plate="tekstureret")
@@ -332,18 +356,11 @@ def _box(b):
     return trimesh.creation.box(bounds=[[x0, y0, z0], [x1, y1, z1]])
 
 
-# v37 (durability analysis 31 Oct, change 5; Esben 1 Nov "lav de ting der skal laves"): a drop lands on a corner. Each of the 4
-# corners of the shell and the front gets a modifier volume (CORNER mm square, the part's full height on the plate) with
-# 4 walls and 40 % infill, so the 3 mm walls there print solid; everything else keeps INSIDE's 2 walls and 15 %.
-CORNER = 35.0
-CORNER_SET = {"wall_loops": "4", "sparse_infill_density": "40%"}
-
-
-def corner_modifiers(mesh):
-    (x0, y0, z0), (x1, y1, z1) = mesh.bounds
-    c = CORNER
-    return [(f"forstærkning: hjørne {i + 1}", _box([xa, xa + c, ya, ya + c, z0, z1]), 1, "modifier_part", CORNER_SET)
-            for i, (xa, ya) in enumerate([(x0, y0), (x1 - c, y0), (x0, y1 - c), (x1 - c, y1 - c)])]
+# v37-v56 had a modifier volume with 4 walls and 40 % infill in each of the 4 corners of the shell and the front (drop
+# strength). Removed (Esben 5 Nov, photos: "6-8 samlinger i skallen"; v18 had none): a modifier that changes the walls
+# makes Bambu Studio slice the part as separate wall regions (Layer::has_compatible_layer_regions, see WALL_KEYS), so
+# the outer wall is broken off at each of the box's 2 faces through the wall, layer after layer, and shows as a line
+# where the corner's curve starts (35 mm in from each edge, 8 lines on the shell, 8 on the front).
 
 
 def skal_3mf(folder, prefix=None):
@@ -364,7 +381,6 @@ def skal_3mf(folder, prefix=None):
     parts = [("skal", skal, 1, "normal_part")]
     parts += [(n, _box(b), 1, "support_enforcer") for n, b in enforce]
     parts += [(n, _box(b), 1, "support_blocker") for n, b in SKAL_BLOCK]
-    parts += corner_modifiers(skal)   # v37
     out = folder / f"{prefix}_skal_support.3mf"
     write_bambu_3mf(out, parts, f"{prefix}_skal", SETTINGS["skal"], turn=True, filaments=("sort",))
     return out
@@ -429,11 +445,12 @@ def stand_3mf(folder, prefix=None):
              (("stativbeslag", "stativbeslag (sort)", 1), ("stativbeslag_logo-hvid", "logo hvid", 2),
               ("stativbeslag_logo-groen", "logo groen", 3))]
     # v37 (selfi-stativbeslag-v9): the shelf and the foot of the spine carry the box on the ball head; with the heat-set insert
-    # they print solid (6 walls, 100 %), so the insert's knurls melt into solid plastic and the shelf cannot flex
+    # they print solid (100 % infill), so the insert's knurls melt into solid plastic and the shelf cannot flex. v37-v56 also
+    # gave it 6 walls, which cut the bracket's outer wall at the box's sides (x = +-25); infill only keeps one wall (WALL_KEYS)
     lo, hi = parts[0][1].bounds   # the modifier stays inside the bracket's own box
     b = np.clip(trimesh.load(folder / f"{prefix}_stativbeslag_forstaerkning.stl").bounds, lo, hi)
     parts.append(("forstærkning: hylde og gevindindsats", _box([b[0][0], b[1][0], b[0][1], b[1][1], b[0][2], b[1][2]]), 1,
-                  "modifier_part", {"wall_loops": "6", "sparse_infill_density": "100%"}))
+                  "modifier_part", {"sparse_infill_density": "100%"}))   # v57: infill only, see WALL_KEYS
     out = folder / f"{prefix}_stativbeslag_flerfarvet.3mf"
     write_bambu_3mf(out, parts, f"{prefix}_stativbeslag", SETTINGS["stativbeslag"], filaments=("sort", "hvid", "groen"),
                     plate="tekstureret")

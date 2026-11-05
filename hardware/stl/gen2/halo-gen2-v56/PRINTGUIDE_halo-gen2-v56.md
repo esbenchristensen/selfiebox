@@ -4,6 +4,16 @@
 
 Printer: Bambu Lab H2C. **Print fra 3MF-filerne** (se Indstillinger); STL-filerne ligger også i printretning. Én del pr. plade, 1 stk. af hver. Alle dele i PLA, lysringen i klart materiale.
 
+## Rettet 5. nov.: ingen samlinger i skallen og fronten
+
+Esben 5. nov. (fotos): 6–8 lodrette samlinger på ydersiden af skallen, lige hvor hjørnets bue starter; v18 havde ingen.
+
+- **Årsagen:** fra v37 havde skallens og frontens 3MF en *modifier* i hvert hjørne (35 × 35 mm, hele højden) med **4 vægge** i stedet for 2. Bambu Studio slicer et område med et andet antal vægge som sin egen del, med sin egen ydervæg (`Layer::has_compatible_layer_regions` i Bambu Studios kildekode). Så blev ydervæggen brudt af ved hver af kassens to sider, lag efter lag. Kassens sider ligger 35 mm fra kanten, og der begynder hjørnets bue (målt i STL'en: 34–39 mm). Det giver 2 streger pr. hjørne, 8 på skallen og 8 på fronten.
+- **Rettet:** de 8 hjørne-modifiers er fjernet fra skallen og fronten. De printes nu som i v18 og v36: én ydervæg hele vejen rundt, 2 vægge og 15 % fyld overalt.
+- **Stativbeslaget** havde samme slags modifier om gevindindsatsen med **6 vægge**, og den gik ud gennem ydervæggen bagpå (x ±25). Den har nu kun **100 % fyld** og ingen ekstra vægge. Hylden om indsatsen er stadig massiv, og ydervæggen er hel.
+- **Vagt:** `make_3mf.py` nægter nu at lave en 3MF med en modifier, der ændrer vægge eller søm, eller med søm *"Back"* eller scarf. Det kan ikke komme igen i en ny version uden at bygningen stopper.
+- Ingen STL'er er ændret. Kun `_skal_support.3mf`, `_front_flerfarvet.3mf` og `_stativbeslag_flerfarvet.3mf` og hurtigsættets stativbeslag er lavet om. Hent dem igen.
+
 ## Hvad er nyt i v56: Wago-lommerne i bagrammen er som Wago-rækken i skallen
 
 Esben 5. nov. om v55: *"Du har ikke brugt korrekt wago klemme system, du skal bruge lignende det eksisterende der er i skallen"*. Lommerne over det øverste tværstykke er tegnet om med skallens system fra v40 (v55's ribber, klikkant og kanter foroven er væk):
@@ -1137,7 +1147,7 @@ Filerne er bygget og tjekket mod Bambu Studio 2.8.2's egen indlæsningskode, men
 
 | Fil | Plade | Lag | Vægge | Fyld | Andet |
 |---|---|---|---|---|---|
-| `halo-gen2-v56_front_flerfarvet.3mf` | Tekstureret PEI (glat kan bruges, se herunder) | 0,2 | 2, top 4 / bund 4 | 15 % crosshatch | Forsiden: *Monotonic line* og én væg i første lag; elefantfod 0,15; ingen brim, ingen support |
+| `halo-gen2-v56_front_flerfarvet.3mf` | Tekstureret PEI (glat kan bruges, se herunder) | 0,2 | 2, top 4 / bund 4 | 15 % crosshatch | Forsiden: *Monotonic line* og én væg i første lag; elefantfod 0,15; ingen brim, ingen support; ingen hjørne-modifiers (5. nov.) |
 | `halo-gen2-v56_lysring.3mf` | Tekstureret PEI | 0,16 | 3 | 100 % | Bambus egne baner (v42; v26–v41 koncentrisk, som gav en streg på tværs); elefantfod 0,15; **ingen support og én filament (klar)** (v36: kraven er 45° og printer uden support, som i v18) |
 | `halo-gen2-v56_bagramme.3mf` | Glat PEI | **0,28** | 2, top 4 / bund 3 | 15 % crosshatch | Ingen support; ses ikke: normalt første lag |
 | `halo-gen2-v56_skal_support.3mf` | Glat PEI | 0,2 | 2, top 4 / bund 3 | 15 % crosshatch | Support: Tree (manuel), kun ved de 2 enforcere, også fra modellen; brim 3 mm; normalt første lag (bagsiden) |

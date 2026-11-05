@@ -6,6 +6,16 @@ Printer: Bambu Lab H2C. **Print fra 3MF-filerne**; STL-filerne ligger også i pr
 
 ![slim1 forfra, fra siden og bagfra uden skal](halo-gen2-slim15_oversigt.png)
 
+## Rettet 5. nov.: ingen samlinger i skallen og fronten
+
+Esben 5. nov. (fotos): 6–8 lodrette samlinger på ydersiden af skallen, lige hvor hjørnets bue starter; v18 havde ingen.
+
+- **Årsagen:** fra v37 havde skallens og frontens 3MF en *modifier* i hvert hjørne (35 × 35 mm, hele højden) med **4 vægge** i stedet for 2. Bambu Studio slicer et område med et andet antal vægge som sin egen del, med sin egen ydervæg (`Layer::has_compatible_layer_regions` i Bambu Studios kildekode). Så blev ydervæggen brudt af ved hver af kassens to sider, lag efter lag. Kassens sider ligger 35 mm fra kanten, og der begynder hjørnets bue (målt i STL'en: 34–39 mm). Det giver 2 streger pr. hjørne, 8 på skallen og 8 på fronten.
+- **Rettet:** de 8 hjørne-modifiers er fjernet fra skallen og fronten. De printes nu som i v18 og v36: én ydervæg hele vejen rundt, 2 vægge og 15 % fyld overalt.
+- **Stativbeslaget** havde samme slags modifier om gevindindsatsen med **6 vægge**, og den gik ud gennem ydervæggen bagpå (x ±25). Den har nu kun **100 % fyld** og ingen ekstra vægge. Hylden om indsatsen er stadig massiv, og ydervæggen er hel.
+- **Vagt:** `make_3mf.py` nægter nu at lave en 3MF med en modifier, der ændrer vægge eller søm, eller med søm *"Back"* eller scarf. Det kan ikke komme igen i en ny version uden at bygningen stopper.
+- Ingen STL'er er ændret. Kun `_skal_support.3mf`, `_front_flerfarvet.3mf` og `_stativbeslag_flerfarvet.3mf` og hurtigsættets stativbeslag er lavet om. Hent dem igen.
+
 ## Hvad er nyt i slim15 (som v56): Wago-lommerne i bagrammen er som Wago-rækken i skallen
 
 Esben 5. nov.: *"du skal bruge lignende det eksisterende der er i skallen"*. Det samme som v56: en skrå tand ind i hver indgang, knusribber i siderne og bagved og en lille kant over bagenden i hvert hjørne. Klemmerne ligger med **håndtagene opad** og **indgangene bagud**; sæt indgangsenden ind over tænderne og tryk bagenden ned, til den klikker.
