@@ -1469,6 +1469,7 @@ module frame3() {
             // board and its focus module between 4 hard tubes and 4 hard bosses (until v36 the tubes ended on the board)
             for (h = CAM_HOLES_ROT) { cyl_y(4.6, CAM_PCB_Y + CAM_PCB[2] + CAM_TUBE[0], CH_BACK + 0.01, h[0], LENS_Z + h[1]); cam_tube_tips(h); }
             snap_arms();
+            frame_wagos();                                                // v55
         }
         snap_slots();
         lead_slots46();                                                   // slim5 (v36-v45: lead_slots, outer half; v18-v35: clip pockets)
@@ -1939,80 +1940,58 @@ module pi_screws() {
     for (h = PH_SO) if (h[0] > 0) screw_y(2.5, 5, [4.5, 1.7], h[0], PI_Y3 + PH_EAR[2], h[1], -1);
 }
 
-// v53 (Esben 4-5 Nov, hurtigprint v43: "der skal du altså lige have fundet en løsning, hvor vi kan forlænge dem, og der kan komme
-// holdere på det ... de skal også have en fast sædeplads"): the strips' own leads are only 14-15 cm (white 2 x black/red, RGB
-// white/red/yellow) and cannot reach the shell's Wago row, so they are spliced on the front unit, in two Wago holders that click
-// on the upper cross bar like the fan guard (no change to the frame): left of the fan guard 2 x 221-415 for the white strips (+ and
-// -: white 1, 2 and 3 and the extension to W6/W5, one spare), right of it 3 x 221-413 for the RGB strip (+5 V, GND, data). The
-// camera ribbon keeps x 5-21. The clamps stand on end behind the frame's back plane, above the bar: entries up, so the leads that
-// come down from the lead slots go straight in, levers to the back (with the box open the frame lies face down, levers up).
-// The pockets are wago_row's (v40 teeth, crush ribs, lips over the back corners) turned round, and like the fan guard each holder
-// prints on its side (left: -x face on the plate, right: +x): the arms, the floor, the end wall, the teeth and the lips are all
-// straight up from the plate. So the walls between the pockets are 2 mm triangles (45 deg on the side that would overhang, flat
-// against the next clamp), and the end wall stands full height at each pair of lip corners with a 45 deg lead-in.
-EXT_FL = 1.6;                              // floor plate on the frame's back plane
-EXT_PAD = FR_BACK + EXT_FL;                // 33.3: the clip's pad on the bar's back face
-EXT_YF = 11.6;                             // slim12: the clamps' floor IN FRONT of the frame's back plane: behind the frame there
-                                           // are only 4 mm to the shell's Wago row and the camera ribbon runs there, so the pockets
-                                           // stand in the frame's window over the bar, 1.4 behind the display's back (8.65 up here)
-EXT_FRONT = true;
-EXT_ZE = 260.7;                            // the clamps' entry face (up); the backs WG_LEN lower (242.7) on a 1.6 end wall (241.1),
-                                           // 0.6 over the fan guard's upper arm (240.5)
-EXT_EW = [1.6, 5.5, WG[1] + WG_LIP[2] + WG_LIP[3]];   // end wall: thickness, height, height at the lip corners (9.2)
-EXT_SEP = [2.0, 1.8, 1.6];                 // wall between pockets, wall after the last one (triangles), first wall (on the plate)
-// [name, wago widths, the face on the plate (x), the clip's far end (x), mirrored]
-// slim12: white mirrored too (plate face at x 19.6, clip x -10..19.6) to keep its clip off the fan guard (x -74..-33)
-EXT_H = [["hvid", [29.6, 29.6], -19.6, 10, true], ["rgb", [18.6, 18.6, 18.6], -84.25, -49, true]];
-function ext_px(h, i) = i == 0 ? h[2] + EXT_SEP[2] : ext_px(h, i - 1) + h[1][i - 1] + EXT_SEP[0];   // pocket i's lower x edge
-function ext_x1(h) = let(n = len(h[1])) ext_px(h, n - 1) + h[1][n - 1] + EXT_SEP[1];
+// v55 (Esben 5 Nov: "hvorfor har du sat wagorække som eftermontering i stedet for at lave det som en del af bagramme? Så kan du
+// bruge plads bag skærmen"): the splice clamps for the strips' own leads (v53: two holders clicked on the upper cross bar) are
+// now pockets cast into the frame itself, in its window over the upper bar, behind the display: the frame prints back face down
+// (FR_BACK on the plate), so each rack is walls standing straight up from the plate and the clamps lie with their floor towards
+// the display. The clamps stand on end, entries up (the strip leads come down from the lead slots in the top band straight in),
+// levers to the back: with the box open the frame lies face down and the levers face up. A clamp goes in from behind (-y), slides
+// between its two fins onto the floor plate and is held by crush ribs on the fins and the end wall plus a small snap ridge on
+// each fin near its top; ledges on the fins over the entry face's corners (outside the entries) hold it down when a lead pulls.
+// Print: the fins and the end wall stand on the plate, the floor plate (EXT_FL, 1.4 behind the display's back) is the top layer
+// bridging 18.6 / 29.6 between the fins, the ledges are 0.5 overhangs. The racks stand EXT_GAP over the bar on posts, so the
+// fan guard's upper arm (240.5) still lifts when it snaps on and the velcro straps still go over the bar.
+EXT_FL = 1.6;                              // floor plate (and the fuse clamps' floors in the shell, side_pocket)
+EXT_YF = 11.6;                             // the clamps' floor face: 1.4 + EXT_FL behind the display's back (8.65 up here)
+EXT_ZE = 262.2;                            // the clamps' entry face (up); the backs WG_LEN lower (244.2) on a 1.6 end wall (242.6)
+EXT_EW = [1.6, 5.5, WG[1] + WG_LIP[2] + WG_LIP[3]];   // side_pocket's end wall: thickness, height, at the lip corners
+EXT_SEP = [2.0, 1.8, 1.6];                 // side_pocket's walls (between, last, first)
+EXT_FIN = [1.6, 2.0, 2.0];                 // v55: the racks' fins: first, between two clamps, last
+EXT_TOP = [0.3, 1.2, 0.5, 6.0];            // v55: the ledges over the entry face: gap over it, thickness, reach in x, depth from the floor
+EXT_SNAP = [0.3, 1.5, 4.0];                // v55: snap ridge on each fin behind the clamp's back face: height, ramp length, z length (from EXT_ZE - 1)
+function ext_px(h, i) = i == 0 ? h[2] + EXT_FIN[0] : ext_px(h, i - 1) + h[1][i - 1] + EXT_FIN[1];   // pocket i's lower x edge
+function ext_x1(h) = let(n = len(h[1])) ext_px(h, n - 1) + h[1][n - 1] + EXT_FIN[2];
 module ext_xx(a, b) translate([a, 0, 0]) rotate([90, 0, 90]) linear_extrude(b - a) children();   // a (y, z) profile along x
-module ext_holder(h) mirror([h[4] ? 1 : 0, 0, 0]) {
-    n = len(h[1]);  x0 = h[2];  x1 = ext_x1(h);  cx1 = h[3];
-    zb = EXT_ZE - WG_LEN;  zw = zb - EXT_EW[0];
-    hb = WG_HOLE[0] - WG_HOLE[1]/2;  ht = hb + WG_TOOTH[0];
-    zt = EXT_ZE + WG_HOOK[1] + 0.5;            // the floor's top, past the teeth' feet
-    zs = EXT_ZE - 2.2;                         // side walls end 2.2 inside the clamp, as in the shell
-    za = XB_UP - 8 - FG_CLIP[0];               // the lower arm's underside
-    ytip = XB3_Y - FG_CLIP[2];
-    // floor, and down the bar's back face as the clip's pad
-    translate([x0, EXT_YF - EXT_FL, zw]) cube([x1 - x0, EXT_FL + 0.01, zt - zw]);
-    translate([x0, FR_BACK, za]) cube([cx1 - x0, EXT_FL + 0.01, zw - za + 0.01]);
-    if (EXT_FRONT) {   // slim: the pockets stand in the frame's window in front of the bar, on a plate over the bar's top
-        translate([x0, EXT_YF - EXT_FL, XB_UP + 8]) cube([x1 - x0, 22.0 - EXT_YF + EXT_FL, zw - XB_UP - 8 + 0.01]);
-        translate([x0, 21.9, XB_UP + 8]) cube([cx1 - x0, ytip - 21.9 + 0.01, zw - XB_UP - 8 + 0.01]);
-    }
-    // arms: the lower one flexes (as on the fan guard), the upper one lies on the bar and carries the end wall
-    translate([x0, ytip, za]) cube([cx1 - x0, EXT_PAD - ytip, FG_CLIP[0]]);
-    translate([x0, ytip, XB_UP + 8]) cube([cx1 - x0, EXT_PAD - ytip, zw - XB_UP - 8 + 0.01]);
-    for (s = [-1, 1]) let(zo = XB_UP + s*8) ext_xx(x0, cx1)   // lips with a ramp: 0 at the tip, FG_CLIP[1] behind the bar's front
-        polygon([[ytip, zo + s*0.01], [XB3_Y - FG_CLIP[3], zo + s*0.01], [XB3_Y - FG_CLIP[3], zo - s*FG_CLIP[1]], [ytip, zo]]);
-    // end wall under the clamps' backs, and its full-height corners
-    translate([x0, EXT_YF - 0.01, zw]) cube([x1 - x0, EXT_EW[1] + 0.01, EXT_EW[0]]);
-    translate([0, 0, zw]) linear_extrude(EXT_EW[0]) {
-        translate([x0, EXT_YF]) square([ext_px(h, 0) + WG_LIP[0] - x0, EXT_EW[2]]);
-        for (i = [0 : n - 1]) let(xe = ext_px(h, i) + h[1][i] - WG_LIP[0], xn = i < n - 1 ? ext_px(h, i + 1) + WG_LIP[0] : x1,
-                                 dy = EXT_EW[2] - EXT_EW[1])
-            polygon([[xe - dy, EXT_YF + EXT_EW[1] - 0.01], [xe, EXT_YF + EXT_EW[2]], [xn, EXT_YF + EXT_EW[2]], [xn, EXT_YF + EXT_EW[1] - 0.01]]);
-    }
-    // first wall (on the plate) full height; the others 45 deg triangles, flat against the next clamp
-    translate([x0, EXT_YF - 0.01, zw]) cube([EXT_SEP[2] + 0.01, WG[1] + 0.01, zs - zw]);
-    for (i = [0 : n - 1]) let(xa = ext_px(h, i) + h[1][i], t = i < n - 1 ? EXT_SEP[0] : EXT_SEP[1])
-        translate([0, 0, zw]) linear_extrude(zs - zw) polygon([[xa - 0.01, EXT_YF - 0.01], [xa + t, EXT_YF - 0.01], [xa + t, EXT_YF + t]]);
+module ext_rack(h) {
+    n = len(h[1]);  x0 = h[2];  x1 = ext_x1(h);
+    zb = EXT_ZE - WG_LEN;  zw = zb - EXT_EW[0];  zt = EXT_ZE + EXT_TOP[0] + EXT_TOP[1];
+    y0 = EXT_YF - EXT_FL;
+    translate([x0, y0, zw]) cube([x1 - x0, EXT_FL + 0.01, zt - zw]);               // floor plate (the print's top layer)
+    translate([x0, y0, zw]) cube([x1 - x0, FR_BACK - y0, EXT_EW[0]]);              // end wall, on the plate
+    for (i = [0 : n]) let(xa = i == 0 ? x0 : ext_px(h, i - 1) + h[1][i - 1], xb = i == n ? x1 : ext_px(h, i))
+        translate([xa, y0, zw]) cube([xb - xa, FR_BACK - y0, zt - zw]);           // fins, on the plate
+    for (p = h[3]) translate([p[0], XB3_Y, XB_UP + 8 - 0.5]) cube([p[1] - p[0], FR_BACK - XB3_Y, zw - XB_UP - 8 + 0.51]);   // posts on the bar
     for (i = [0 : n - 1]) let(px = ext_px(h, i), w = h[1][i]) {
-        // crush ribs: on the flat wall below each clamp (2) and on the end wall (2)
-        for (z = [EXT_ZE - 6, EXT_ZE - 14]) translate([px, EXT_YF - 0.01, z]) rotate([-90, 0, 0])
-            crush_rib(WG_RIB[0], i == 0 ? WG[1] - 1 : EXT_SEP[0]);
-        for (f = [0.25, 0.75]) translate([px + w*f, EXT_YF - 0.01, zb]) rotate([-90, 0, 0]) rotate([0, 0, 90]) crush_rib(WG_RIB[1], EXT_EW[1]);
-        // lips over the back corners, as in the shell's row
-        for (xa = [px, px + w - WG_LIP[0]]) ext_xx(xa, xa + WG_LIP[0])
-            polygon([[EXT_YF + WG[1] + WG_LIP[2], zb - 0.01], [EXT_YF + WG[1] + WG_LIP[2], zb + WG_LIP[1]], [EXT_YF + EXT_EW[2], zb - 0.01]]);
-        // teeth into the entries (wago_row's, mirrored: the entries face up)
-        for (k = [0 : 4]) if (k < (w > 20 ? 5 : 3)) let(xc = px + w*(k + 0.5)/(w > 20 ? 5 : 3)) ext_xx(xc - WG_HOOK[0]/2, xc + WG_HOOK[0]/2)
-            polygon([for (p = [[-WG_HOOK[1], -0.3], [0, -0.3], [0, hb], [0.5, hb + 0.5], [WG_TOOTH[1], hb + 0.65], [WG_TOOTH[1], ht],
-                               [-0.6, ht], [-WG_HOOK[1], 0.01]]) [EXT_YF + p[1], EXT_ZE - p[0]]]);
+        for (s = [0, 1]) let(xf = px + s*w, d = s ? -1 : 1) {
+            // crush ribs along the insertion (y), two per fin face, along the clamp, the lead-in at its back face
+            for (z = [EXT_ZE - 5, EXT_ZE - 13]) translate([xf, EXT_YF + 1, z]) rotate([-90, 0, 0]) crush_rib(WG_RIB[0], WG[1] - 1);
+            // the ledge over the entry face's corner
+            translate([s ? xf - EXT_TOP[2] : xf - 0.01, EXT_YF - 0.01, EXT_ZE + EXT_TOP[0]]) cube([EXT_TOP[2] + 0.01, EXT_TOP[3] + 0.01, EXT_TOP[1] + 0.01]);
+            // the snap ridge just behind the clamp's back face (flat side to the clamp, ramp to the back)
+            translate([0, 0, EXT_ZE - 1 - EXT_SNAP[2]]) linear_extrude(EXT_SNAP[2])
+                polygon([[xf - d*0.01, EXT_YF + WG[1] + 0.05], [xf + d*EXT_SNAP[0], EXT_YF + WG[1] + 0.05], [xf - d*0.01, EXT_YF + WG[1] + 0.05 + EXT_SNAP[1]]]);
+        }
+        // crush ribs on the end wall
+        for (f = [0.25, 0.75]) translate([px + w*f, EXT_YF + 1, zb]) rotate([-90, 0, 0]) crush_rib(WG_RIB[1], WG[1] - 1);
     }
 }
-module ext_wagos(h) mirror([h[4] ? 1 : 0, 0, 0]) for (i = [0 : len(h[1]) - 1])
+// [name, wago widths, the first fin's outer face (x), posts on the bar [x0, x1]]: slim12's x (white -43.2..18.0 over the fan
+// guard, RGB 22.85..82.65, its last fin into the ring's band); posts clear of the fan guard (-74..-33), K1's strap (-80 +-5.5)
+// and the Pi power strap (34 +-5.5)
+EXT_H = [["hvid", [29.6, 29.6], -44.8, [[-15.1, -10.1], [15.5, 20.0]]],
+         ["rgb", [18.6, 18.6, 18.6], 21.25, [[21.25, 26.25], [40.2, 45.2], [60.8, 65.8], [80.4, 84.65]]]];
+module frame_wagos() for (h = EXT_H) ext_rack(h);
+module ext_wagos(h) for (i = [0 : len(h[1]) - 1])
     translate([ext_px(h, i), EXT_YF, EXT_ZE - WG_LEN]) cube([h[1][i], WG[1], WG_LEN]);
 
 // v53: one clamp pocket on its own, as the holders' (teeth, crush ribs, lips, a 45 deg triangle for the outer side wall), for a
@@ -2070,7 +2049,6 @@ module main_unit() {        // gen 2 unit, without the wall cleat
     placed_pi3();
     color(C_BODY) pi_holder();   // slim1
     color(C_BODY) fan_guard();
-    color(C_BODY) for (h = EXT_H) ext_holder(h);   // v53
     color(C_BODY) shell3();
     placed_power3();
     placed_electronics();
@@ -2115,8 +2093,6 @@ if (VIEW == "x_display3")  placed_display3();
 if (VIEW == "x_cam_fov")   cam_fov();                                                     // v27: fit check, the lens's field of view
 if (VIEW == "x_cam_lens")  cam_lens();                                                    // v27: fit check, the lens barrel (Ø7.25)
 if (VIEW == "x_fanguard")  fan_guard();                                                   // v24
-if (VIEW == "x_wagoh_hvid") ext_holder(EXT_H[0]);                                           // v53 (slim12)
-if (VIEW == "x_wagoh_rgb")  ext_holder(EXT_H[1]);
 if (VIEW == "c_extwagos")   for (h = EXT_H) ext_wagos(h);
 if (VIEW == "c_fusewagos")  fuse_wago_models();
 if (VIEW == "x_piholder")  pi_holder();                                                   // slim1: the Pi's carrier

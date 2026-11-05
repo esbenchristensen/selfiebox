@@ -104,10 +104,10 @@ ax.text(FX(30.0) - 6, 158, "USB-C\n(strøm)", fontsize=7, ha="right", va="top", 
 for x in (-19.5, 19.5):
     ax.add_patch(mp.Circle((FX(x), 300.2), 3, fc="white", ec=INK, zorder=5))
 ax.text(FX(0.0), 314, "stripledninger ud af bagrammen", fontsize=7, ha="center", va="bottom", color=INK)
-# v53: the splice clamps for the strips' own leads, in two holders on the upper cross bar (entries up)
+# v53: the splice clamps for the strips' own leads (entries up); v55: in pockets cast into the frame over the upper cross bar
 for n, x in getattr(hz, "EXT", {}).items():
     wd = 29.6 if hz.EXT_TYPE[n] == "221-415" else 18.6
-    ax.add_patch(mp.Rectangle((FX(x) - wd / 2, 242.7), wd, 18.0, fc="#ff922b", ec="#a65800", lw=1, zorder=4))
+    ax.add_patch(mp.Rectangle((FX(x) - wd / 2, 244.2), wd, 18.0, fc="#ff922b", ec="#a65800", lw=1, zorder=4))
     ax.text(FX(x), 251.7, hz.EXT_NAME[n].replace("RGB ", "RGB\n"), ha="center", va="center", fontsize=6.5, weight="bold", color="white", zorder=5)
 for (x, z) in [(-76, 70.48), (-76, 230.48), (34, 230.48)]:
     for dz in (-3.8, 3.8):

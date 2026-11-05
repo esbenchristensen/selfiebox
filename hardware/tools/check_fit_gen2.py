@@ -25,8 +25,8 @@ import trimesh
 # GEN2_SCAD=<file> checks/builds a variant instead (kb1: cad/gen2_kamera_bund.scad, camera at the bottom)
 SCAD = Path(os.environ["GEN2_SCAD"]).resolve() if os.environ.get("GEN2_SCAD") else Path(__file__).resolve().parents[1] / "cad" / "gen2_concept.scad"
 
-PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard", "x_stand",
-           "x_wagoh_hvid", "x_wagoh_rgb"]   # v24: fan guard; v27: no camera sleeve; v36: stand bracket; v53: Wago holders
+PRINTED = ["x_front3", "x_ring3", "x_frame3", "x_shell3", "x_cleat", "x_fanguard", "x_stand"]
+# v24: fan guard; v27: no camera sleeve; v36: stand bracket; v53-v54: two Wago holders (v55: cast into the frame)
 BOUGHT = ["x_dsp_glass", "x_dsp_back", "x_camera", "x_strip_w", "x_strip_rgb", "c_clips",
           "c_pi_board", "c_cooler", "c_psu5", "c_wled", "c_mosfet", "c_jack", "c_4g", "c_mcore", "c_mics",
           "c_speaker", "c_imu", "c_reed", "s_front3", "s_display", "s_lock", "s_wall", "x_logo_w", "x_logo_g",
@@ -62,9 +62,8 @@ CONTACT = {
                                        # no clearance, 5.6 lead slots round the Ø6 lead stubs (Esben: soft plastic, squeeze it)
     ("x_stand", "x_cleat"): 1e9,       # v36: the stand bracket and the wall cleat are alternatives (never fitted together)
     ("x_stand", "s_wall"): 1e9,
-    ("x_wagoh_hvid", "x_frame3"): 1e9, ("x_wagoh_rgb", "x_frame3"): 1e9,   # v53: the Wago holders click onto the upper cross bar
     ("x_shell3", "c_fusewagos"): 80,   # v53: the fuse's two clamps in their pockets (teeth, ribs, lips)
-    ("x_wagoh_hvid", "c_extwagos"): 200, ("x_wagoh_rgb", "c_extwagos"): 200,   # v53: as the shell's row (teeth, ribs, lips)
+    ("x_frame3", "c_extwagos"): 150,   # v55: the splice clamps in the frame's racks (crush ribs on the fins and the end wall)
     ("x_frame3", "x_camera"): 1.5,     # v37: 3 crush tips on each camera tube reach 0.2 into the board's back (CAM_TUBE)
 }
 # (a, b, minimum gap, why)
@@ -96,9 +95,9 @@ CLEARANCES = [
     ("x_tema_top", "x_front3", 0.15, "top sign over the front"),
     ("x_tema_vinge_v", "x_front3", 0.15, "left wing beside the front"),
     ("c_wagos", "x_frame3", 14.0, "v29: Wago levers face the front: 16.5 to the frame, so a closed lever never touches it"),
-    ("x_wagoh_hvid", "x_fanguard", 0.5, "v53: the white Wago holder's end wall 0.6 over the fan guard's upper arm"),
-    ("x_wagoh_rgb", "x_fanguard", 0.3, "v53: the RGB Wago holder beside the fan guard"),
-    ("x_wagoh_hvid", "x_wagoh_rgb", 15.0, "v53: the camera ribbon goes down between the two holders (x 5-21)"),
+    ("c_extwagos", "x_fanguard", 3.0, "v55: the splice clamps' backs 3.7 over the fan guard's upper arm (the racks' end walls 2.1)"),
+    ("c_extwagos", "x_dsp_back", 2.5, "v55: the splice clamps 1.6 floor + 1.35 behind the display's back"),
+    ("c_extwagos", "x_camera", 5.0, "v55: the splice clamps under the camera board"),
     ("c_extwagos", "x_shell3", 5.0, "v53: the splice clamps' levers clear of the shell's Wago row"),
     ("c_fusewagos", "c_fuse", 10.0, "v53: the fuse's clamps above the fuse holder, room for its leads to bend into the entries"),
     ("c_fusewagos", "c_imu", 1.0, "v53: the fuse's clamps under the IMU tray"),
@@ -149,16 +148,9 @@ if SCAD.stem == "gen2_slim":
         ("c_4g", "x_frame3", 1.0, "slim1: the 4G HAT over the upper bar"),
     ]
     # slim12: the splice clamps stand in front of the frame's back plane, the fuse's clamps below and right of the fuse
-    SLIM12 = {("x_wagoh_hvid", "x_fanguard"), ("x_wagoh_rgb", "x_fanguard"), ("x_wagoh_hvid", "x_wagoh_rgb"),
-              ("c_fusewagos", "c_fuse"), ("c_fusewagos", "c_imu")}
+    SLIM12 = {("c_fusewagos", "c_fuse"), ("c_fusewagos", "c_imu")}
     CLEARANCES[:] = [c for c in CLEARANCES if (c[0], c[1]) not in SLIM12]
     CLEARANCES += [
-        ("x_wagoh_hvid", "x_fanguard", 0.3, "slim12: the white holder's plate on the bar 0.4 in front of the fan guard"),
-        ("x_wagoh_rgb", "x_fanguard", 0.3, "slim12: the RGB holder beside the fan guard"),
-        ("x_wagoh_hvid", "x_wagoh_rgb", 1.0, "slim12: the two holders side by side in the frame's window"),
-        ("x_wagoh_hvid", "x_dsp_back", 1.0, "slim12: the holders' floor 1.4 behind the display's back"),
-        ("x_wagoh_rgb", "x_dsp_back", 1.0, "slim12: the RGB holder behind the display"),
-        ("x_wagoh_hvid", "x_camera", 5.0, "slim12: the white holder under the camera"),
         ("c_fusewagos", "c_fuse", 8.0, "slim12: the fuse's clamps below and right of the fuse, room for its leads"),
         ("c_fusewagos", "c_reed", 1.0, "slim12: the fuse's clamps over the reed module"),
         ("c_fusewagos", "x_frame3", 3.0, "slim12: the fuse's clamps (levers) clear of the frame with the box closed"),
