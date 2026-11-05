@@ -54,7 +54,7 @@ PARTS = [
     # v29: the six Wago clamps in their row on the wall cleat's block
     ("wago",          "c_wagos",       "6 Wago-klemmer i rækken på vægbeslagets klods (W6 W5 W3 W4 W2 W1)", "#ff922b", "Elektronik", [0, 0, -90]),
     # v53 (Esben 4-5 Nov): the strips' own leads are spliced on the front unit, the fuse's leads above the fuse
-    ("wago_forl",     "c_extwagos",    "5 Wago-klemmer til stripledningerne (hvid +, hvid −, RGB data, GND, +5 V), i lommer i bagrammen over det øverste tværstykke", "#ff922b", "Elektronik", [0, 0, -40]),
+    ("wago_forl",     "c_extwagos",    "5 Wago-klemmer til stripledningerne (hvid +, hvid −, RGB data, GND, +5 V), i bagrammens Wago-lommer over det øverste tværstykke (som skallens række), indgangene bagud", "#ff922b", "Elektronik", [0, 0, -40]),
     ("wago_sikring",  "c_fusewagos",   "2 Wago 221-413 over sikringen (dens egne ledninger, 6 og 15 cm)", "#ff922b", "Elektronik", [0, 0, -90]),
     ("skruer_front",  "s_front3",      "4 skruer, front (4,0 × 50 T20, forsænket)",      "#c3c7cf", "Skruer",     [0, 0, -150]),
     ("skruer_skaerm", "s_display",     "4 skruer, skærm (M2,5 × 3–4 mm, hoved Ø4–5)", "#c3c7cf", "Skruer",  [0, 0, 40]),

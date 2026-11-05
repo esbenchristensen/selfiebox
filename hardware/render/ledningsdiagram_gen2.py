@@ -99,7 +99,7 @@ for i, n in enumerate(["S5 · 1", "S7 · 2", "S9 · 3"]):
 
 # legend + notes
 for i, t in enumerate(["W1 24 V +: 221-413", "W2 GND: 221-415", "W3 5 V +: 221-415", "W4 5 V GND: 221-415", "W5 hvid −: 221-413", "W6 hvid + dæmpet: 221-413",
-                       "v55 lommer i bagrammen: hvid + / −: 221-415 · RGB: 3 × 221-413", "v53 ved sikringen: FWL, FWR: 221-413"]):
+                       "v56 Wago-lommer i bagrammen: hvid + / −: 221-415 · RGB: 3 × 221-413", "v53 ved sikringen: FWL, FWR: 221-413"]):
     lab(40, 980 + i*22, t, "#333", size=15)
 lx, ly = 40, 740
 for i, (k, t) in enumerate([("v24", "24 V"), ("v5", "5 V"), ("gnd", "GND (fælles)"), ("sw", "hvid strip +, dæmpet (VOUT)"), ("sig", "styresignal fra Pi"), ("data", "data til RGB")]):
