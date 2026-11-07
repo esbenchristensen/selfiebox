@@ -70,7 +70,7 @@ CONTACT = {
 CLEARANCES = [
     ("x_ring3", "x_front3", 0.0, "v36: the ring's 45 deg collar in the front's seat"),
     ("x_ring3", "x_frame3", 0.0, "ring flange on the frame (v24: pressed by crush bumps)"),
-    ("x_cam_lens", "x_front3", 0.6, "v37: the bore Ø10 behind a 1.0 lip of Ø8.6: 1.4 round the lens barrel (Ø7.25), 0.69 from the tip's edge to the lip"),
+    ("x_cam_lens", "x_front3", 0.6, "v37: the bore Ø10 behind a lip of Ø8.6 (v58: 0.45, the tip 0.6 inside): 1.4 round the lens barrel (Ø7.25), 0.69 from the tip's edge to the lip"),
     ("x_cam_fov", "x_front3", 0.1, "v27: the Wide lens's 120 deg field of view clears the Ø8.6 bore's edge (0.31 across, 0.15 square to the 60 deg cone)"),
     ("x_fanguard", "c_cooler", 0.75, "v24: the grille 3.0 over the Active Cooler, the stop pegs 0.8 over the heat sink"),
     ("x_fanguard", "c_pi_board", 0.5, "v24: the guard clear of the Pi and its ports"),

@@ -144,9 +144,11 @@ COUPONS = [
      "front og skal helt sammen, når det klikker? Kanten er 0,45 mm her (0,6 i siderne), så klikket skal være lettere end i `klik`."),
     # ---- front + frame
     ("kamera", ["front", "bagramme"], ["kamera", "klikstik"], 8, "fuld",
-     "v37: kameraet på frontens tappe, linsen midt i hullet (Ø8,6 i den yderste 1 mm, Ø10 bagved), bagrammens 4 rør med "
-     "knusspidser trykker kortet let ned, kablet gennem slidsen og klikstikkene i deres lommer. Læg front og bagramme "
-     "sammen med kameraet imellem: rører linsen ingenting, og sidder kortet fast uden at bøje?"),
+     "v58: kameraet sidder 0,55 mm længere fremme (linsens spids 0,6 mm inde, før 1,15) bag en 0,45 mm kant på Ø8,6 (før "
+     "1,0), og 4 ribber midt på hver væg om den sorte linseholder centrerer linsen (0,1 mm luft pr. side). Tappene er Ø1,6 "
+     "(før 1,9), så de ikke trækker imod. Skub kameraet ind mellem ribberne og ned på tappene, og læg bagrammen på: sidder "
+     "linsen midt i hullet med lige stor sort ring hele vejen rundt, går linseholderen ind uden at skulle trykkes, og rører "
+     "linsen ingenting?"),
     ("laas", ["front", "bagramme"], ((-116, -64), (-64, -22)), 0, "fuld",
      "En sidelås mellem front og bagramme (venstre side): klikker begge arme, og kan de vippes fri med en lille skruetrækker?"),
     ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
@@ -210,16 +212,19 @@ COUPONS = [
 # v55 (Esben 5 Nov: the Wago holders belong in the frame): plate 1 is the frame's new Wago pockets over the upper bar;
 # v56 (Esben: "brug lignende det eksisterende der er i skallen"): the same piece with the shell row's pockets
 # v57 (Esben 7 Nov: the bridges were impossible to mount under): plate 1 is the light stack with a corner and the bottom bridge
-GROUP = {"lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v58 (Esben 7 Nov: the lens off centre and far back): the camera piece joins plate 1; v57's light stack stays there too
+GROUP = {"kamera": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v57: lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; print den først", 2: "de andre holdere og samlinger (også v56's Wago-lommer, v54's strømindgang, v53's sikringsklemmer og klipslommerne)", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v58: kameraet centreret og længere frem; v57: lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; print den først", 2: "de andre holdere og samlinger (også v56's Wago-lommer, v54's strømindgang, v53's sikringsklemmer og klipslommerne)", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("lysstakken nederst til venstre (front, bagramme og lysring) fra hjørnet ind til broen midt på bunden: ingen spor "
+PLATE1_TEXT = ("v58: kamerastykket (front og bagramme): linsen centreres nu af 4 ribber om linseholderen og sidder 0,55 mm "
+               "længere fremme bag en tyndere kant. Se, at den sorte ring om linsen er lige bred hele vejen rundt. v57: "
+               "lysstakken nederst til venstre (front, bagramme og lysring) fra hjørnet ind til broen midt på bunden: ingen spor "
                "længere, broerne 1 mm højere (3,2 mm fra væggene, 2,8 fra bunden) og 1,2-1,9 mm bredere åbninger, slidsen i hjørnet "
                "3,4 mm. Skub alle fire strips igennem med fingrene. Plade 2 har resten, også v56's Wago-lommer i bagrammen")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
@@ -263,11 +268,12 @@ def slim_set():
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
     # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
-    GROUP = {"wagolommer": 2, "lyskanal": 1, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
+    GROUP = {"kamera": 1, "wagolommer": 2, "lyskanal": 1, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim16 (som v57): lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim15's Wago-lommer, slim13's strømindgang, slim12's sikringsklemmer og klipslommerne)",
+    GROUP_TEXT = {1: "slim17 (som v58): kameraet centreret og længere frem; slim16 (som v57): lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim15's Wago-lommer, slim13's strømindgang, slim12's sikringsklemmer og klipslommerne)",
                   3: "tilvalg og skærmens kant"}
-    PLATE1_TEXT = ("slim16 (som v57): lysstakken nederst til venstre fra hjørnet ind til broen midt på bunden, uden spor, med "
+    PLATE1_TEXT = ("slim17 (som v58): kamerastykket, linsen centreret af 4 ribber om linseholderen og 0,55 mm længere fremme. "
+                   "slim16 (som v57): lysstakken nederst til venstre fra hjørnet ind til broen midt på bunden, uden spor, med "
                    "broerne 1 mm højere (3,2 mm fra væggene, 2,8 fra bunden), 1,2-1,9 mm bredere åbninger og en 3,4 mm slids i hjørnet. Desuden "
                    "udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
                    "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "

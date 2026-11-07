@@ -58,7 +58,9 @@ POWER_REVG = false;  CLIPS = [];   // v23: halo's cable-tie loops replaced by ca
 // v24-v26). v27 (Esben 27 Oct: no glass, and no big hole either, the camera must stay protected): the window is a plain
 // Ø8.6 bore round the lens barrel and the camera sits 1.95 further forward, so the lens tip is 1.15 inside the bore and the
 // Wide lens's 120 deg field of view clears the bore's edge at the face (see cam_window_cut). Nothing is in front of the lens.
-CAM_TIP_Y = 1.15;  // lens tip behind the front face (v24-v26: 3.1, 1.0 behind the glass; v19: 0.3)
+// v58 (Esben 7 Nov, photo of the printed front: "ret langt tilbage fra front kant"): the camera 0.55 further forward, the
+// lip in front of the lens thinner by as much (CAM_LIP), so the tip is still 0.15 behind the lip as in v37.
+CAM_TIP_Y = 0.6;  // lens tip behind the front face (v27-v57: 1.15; v24-v26: 3.1, 1.0 behind the glass; v19: 0.3)
 
 function se(t) = [pow(max(cos(t), 0), 2/SQ_N), pow(max(sin(t), 0), 2/SQ_N)];
 function sq_pts(w, h, a, n = 32) = let(hx = w/2 - a, hz = h/2 - a) concat(
@@ -441,9 +443,29 @@ CAM_BAY = CAM_HOLDER + 1.6;
 // towards the edge away from the ribbon, -x here). Only the 4 bosses round the holes touch the board's front.
 CAM_SHR_GAP = [1.2, 2.0];                  // walls to the board; over the sensor flex
 CAM_FLEX = [8.9, 7.3];                     // sensor flex below the holder: width, reach from the holder
+// v58 (Esben 7 Nov: "Kameraet er også dårligt centreret i front"): until v57 only the 4 pegs (Ø1.9 in the board's Ø2.2 holes,
+// 0.15 play) placed the camera, and the module's own tolerance between its holes and its lens adds to that, so the lens could
+// sit 0.3-0.4 off the Ø8.6 window. Now 4 ribs, one in the middle of each wall of the bay, reach to CAM_CTR from the lens
+// holder's 10.8 square: the holder itself, which carries the lens, centres it to ±0.1. They only guide (no press fit, the
+// focus motor is in the holder) and have a 0.6 lead-in at the back, where the camera comes in.
+CAM_CTR = [0.1, 1.0, 2.2, 0.6];            // gap to the holder per side, rib width at the tip, at the wall, lead-in
+module cam_centre_ribs() {
+    r0 = CAM_HOLDER/2 + CAM_CTR[0];  y1 = CAM_PCB_Y - CAM_SHR_GAP[0];
+    rib = [[r0, -CAM_CTR[1]/2], [r0, CAM_CTR[1]/2], [CAM_BAY/2 + 0.01, CAM_CTR[2]/2], [CAM_BAY/2 + 0.01, -CAM_CTR[2]/2]];
+    lead = [[r0 + 0.4, -CAM_CTR[1]/2], [r0 + 0.4, CAM_CTR[1]/2], [CAM_BAY/2 + 0.01, CAM_CTR[2]/2], [CAM_BAY/2 + 0.01, -CAM_CTR[2]/2]];
+    for (a = [0, 90, 180, 270]) rotate([0, -a, 0]) hull() {
+        ext_y(PT - 0.01, y1 - CAM_CTR[3]) polygon(rib);
+        ext_y(y1 - CAM_CTR[3], y1) polygon(lead);
+    }
+}
 module cam_shroud() translate([0, 0, LENS_Z]) difference() {
-    ext_y(PT - 0.01, CAM_PCB_Y - CAM_SHR_GAP[0]) square(CAM_BAY + 2.4, center = true);
-    ext_y(PT - 1, CAM_PCB_Y) square(CAM_BAY, center = true);
+    union() {
+        difference() {
+            ext_y(PT - 0.01, CAM_PCB_Y - CAM_SHR_GAP[0]) square(CAM_BAY + 2.4, center = true);
+            ext_y(PT - 1, CAM_PCB_Y) square(CAM_BAY, center = true);
+        }
+        cam_centre_ribs();   // v58
+    }
     translate([-CAM_HOLDER/2 - CAM_FLEX[1] - 1, CAM_PCB_Y - CAM_SHR_GAP[1], -CAM_FLEX[0]/2 - 2.5]) cube([CAM_FLEX[1] + 1, CAM_SHR_GAP[1] + 1, CAM_FLEX[0] + 5]);   // 1.45 off centre in the drawing: either way round
 }
 // mic ports: Ø1.0 through the floor (v8); over each a printed crush ring presses on the strip round the
@@ -993,7 +1015,7 @@ CRUSH = [0.2, 0.1, 3, 1.6, 0.6, 3.1];     // reach, face clearance, count, base 
 // 4 camera: an open window, no glass, no cord ring and no sleeve. The window is one straight Ø8.6 bore through the front
 // plate, no bigger than the lens barrel needs (Ø6.95 at the tip, Ø7.25 at most: 0.65-0.8 air all round, so the focus
 // motor's barrel touches nothing, as in v24). The lens tip sits 1.15 inside it, so the plate's edge shields the lens.
-// Field of view, front lens element Ø4 [C] at the tip (y 1.15): r 3.99 at the face, 0.31 inside the bore (x_cam_fov in
+// Field of view, front lens element Ø4 [C] at the tip (y 1.15; v58: 0.6, r 3.04 at the face): r 3.99 at the face, 0.31 inside the bore (x_cam_fov in
 // the fit check). v27's first draft kept v24-v26's Ø12.1 face opening with a 60 deg cone: far too big without the glass.
 CAM_WIN = 8.6;                            // bore Ø round the lens barrel, also the opening in the face
 // v37 (focus test 31 Oct on a v35 box: autofocus lands on a face at lens position ~10, before the shell 1.5-2, and nothing moves
@@ -1001,7 +1023,8 @@ CAM_WIN = 8.6;                            // bore Ø round the lens barrel, also
 // the face keeps CAM_WIN (0.15 in front of the lens tip, so the opening seen from outside is unchanged); behind it the bore is
 // CAM_WIN_IN, 1.4 air all round the barrel instead of 0.65, so a fat print or a camera sitting a little off centre can no longer
 // touch it. The board is no longer clamped hard from behind either (see CAM_TUBE).
-CAM_LIP = 1.0;  CAM_WIN_IN = 10.0;
+// v58: the lip follows the lens forward: always 0.15 in front of the tip (v37-v57: 1.0 with the tip at 1.15)
+CAM_LIP = CAM_TIP_Y - 0.15;  CAM_WIN_IN = 10.0;
 module cam_window_cut() { cyl_y(CAM_WIN, -1, PT + 1, 0, LENS_Z); cyl_y(CAM_WIN_IN, CAM_LIP, PT + 1, 0, LENS_Z); }
 // the lens's field of view (120 deg diagonal, from the Ø4 front element) to just in front of the face, and the lens barrel
 // with its largest diameter: fit-check bodies, nothing may touch them
@@ -1235,7 +1258,9 @@ module cam_caps() intersection() {
 }
 // v13 had 4 pegs Ø2.0 in the board's Ø2.2 holes; some printed a little fat and had to be trimmed with a knife.
 // v14 kept only 2. v15 (Esben 21 Oct): all 4 are back, Ø1.9 with a cone tip.
-CAM_PEGS = [0, 1, 2, 3];  CAM_PEG = [1.9, 0.6];   // peg Ø, cone length to Ø1.1
+// v58: Ø1.6 (v15-v57: 1.9): the pegs only hold the board in place now, the lens holder centres the lens (cam_centre_ribs),
+// so they get 0.3 play in the board's Ø2.2 holes and cannot pull the lens off the ribs
+CAM_PEGS = [0, 1, 2, 3];  CAM_PEG = [1.6, 0.6];   // peg Ø, cone length to Ø1.1
 module cam_peg(h) {
     cyl_y(CAM_PEG[0], CAM_PCB_Y - 0.01, CAM_PCB_Y + CAM_PCB[2] + 1.5 - CAM_PEG[1], h[0], LENS_Z + h[1]);
     translate([h[0], CAM_PCB_Y + CAM_PCB[2] + 1.5 - CAM_PEG[1] - 0.01, LENS_Z + h[1]]) rotate([-90, 0, 0]) cylinder(d1 = CAM_PEG[0], d2 = 1.1, h = CAM_PEG[1], $fn = 24);
@@ -1263,7 +1288,7 @@ module front3() union() {
         translate([-CAM_PCB[1], SKIRT - 0.1, CAM_TOP - 1]) cube([2*CAM_PCB[1], TONGUE_L + 0.2, 10]);
         for (j = J2) cyl_y(FS_PILOT, FS_TIP - 1.5, CH_BACK + 1, j[0], j[1]);   // v27: 4.0 x 50 T20 (until v26: Ø2.4 for 3.0)
         snap_windows();
-        translate([0, 0, LENS_Z]) ext_y(PT, CAM_PCB_Y) square(CAM_BAY, center = true);   // the caps keep clear of the lens holder
+        translate([0, 0, LENS_Z]) difference() { ext_y(PT, CAM_PCB_Y) square(CAM_BAY, center = true); cam_centre_ribs(); }   // the caps keep clear of the lens holder (v58: not the centring ribs)
     }
     glass_ribs();
     joint_rib();                                                          // v21: into the shell's groove
