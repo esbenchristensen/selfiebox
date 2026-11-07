@@ -152,15 +152,16 @@ COUPONS = [
     ("skaermhuller", ["bagramme"], ((-72, -93), (72, -74)), 0, "fuld",
      "Bagrammens nederste tværbjælke med de 2 nederste skruetårne til skærmen. Skru en M2,5 × 3–4 mm i hvert."),
     # v41 (Esben 2 Nov: "så vi kan teste lysring, front og LED-holder-modulet"): the front's piece joins the frame and the ring
-    ("lyskanal", ["front", "bagramme", "lysring"], ((-106, -148), (-40, -84)), 0, "fuld",
-     "v51: bagrammen er nu hul bag bunden, en kølekanal (12 × 8,6 mm) hele vejen rundt med spalter i bagsiden; stykket har "
-     "spalten i bunden og den nederste i venstre side. Er kanalens loft (12 mm bro, printet bagsiden ned) pænt og lukket, og kommer "
-     "der intet lys ud gennem spalterne, når en strip lyser i kanalen? Resten er som v49 (1,8 mm under broerne over de hvide strips): "
-     "hele lysstakken nederst til venstre med hjørnet: ingen skråning, hvid 1 på ydervæggen med RGB bag, hvid 2 på "
-     "indervæggen og hvid 3 på bunden. Hvid 3 ligger fladt under læberne, og 15 mm før hjørnet vrides den op på højkant ned i slidsen "
-     "mellem de to finner midt i hjørnet. Kan den vrides op og ned igen uden at slå bule eller løfte sig fra bunden, hvor læberne "
-     "begynder igen? Læg RGB, hvid 1 og hvid 2 i og træk dem ind under broen: ligger de tæt mod væggene? Broerne er nu 2,0 × 2,4 mm: "
-     "tryk hårdt på dem med en finger, de må ikke knække. Pres bagrammen ned på fronten med ringen i sædet: ligger ringen fast?"),
+    # v57: out to x 4, so the piece has both kinds of bridge: the corner's and the bottom run's middle one with its floor bar
+    ("lyskanal", ["front", "bagramme", "lysring"], ((-106, -148), (4, -84)), 0, "fuld",
+     "v57: mere plads under broerne og ingen spor. Stykket er lysstakken nederst til venstre fra hjørnet ind til broen midt "
+     "på bunden. Sporene er væk (ingen trin, stammer, læber eller skinner), og broerne står 1 mm længere fra strippene: 3,2 mm "
+     "fra begge vægge og 2,8 mm fra bunden (hvid er 2,0, RGB 2,2). Åbningerne er 1,2-1,9 mm bredere end strippene, og slidsen i "
+     "hjørnet er 3,4 mm (hvid 3 på højkant er 2,0). Bunden er 1 mm dybere (19,6), så hvid 1 og RGB ligger side om side under den "
+     "ydre bro. Skub hver strip igennem under broerne med fingrene, uden værktøj og uden at presse den ned: glider de let igennem, "
+     "også hvid 3 op på højkant i hjørnets slids? Ligger de stadig ind mod væggene og i deres baner? Broerne er 2,0 × 3,0 mm: tryk "
+     "hårdt på dem, de må ikke knække. Pres bagrammen ned på fronten med ringen i sædet: ligger ringen fast? v51's kølekanal bag "
+     "bunden er der stadig (1 mm lavere): kommer der intet lys ud gennem spalterne?"),
 
     # v45 (Esben 4 Nov: the strips' clip connectors pushed the front off): the clip bay at the left end of the top run;
     # v46: both bays, as each side now takes two clips
@@ -208,19 +209,19 @@ COUPONS = [
 # shelf with its v51 slot again; v53's holders go to plate 2
 # v55 (Esben 5 Nov: the Wago holders belong in the frame): plate 1 is the frame's new Wago pockets over the upper bar;
 # v56 (Esben: "brug lignende det eksisterende der er i skallen"): the same piece with the shell row's pockets
-GROUP = {"wagolommer": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
+# v57 (Esben 7 Nov: the bridges were impossible to mount under): plate 1 is the light stack with a corner and the bottom bridge
+GROUP = {"lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysring": 3}
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v56: bagrammens Wago-lommer over det øverste tværstykke, nu som Wago-rækken i skallen; print den først", 2: "de andre holdere og samlinger (også v54's strømindgang, v53's sikringsklemmer og v51's lysstak med kølekanalen)", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v57: lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; print den først", 2: "de andre holdere og samlinger (også v56's Wago-lommer, v54's strømindgang, v53's sikringsklemmer og klipslommerne)", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("bagrammens Wago-lommer til strippenes egne ledninger, nu med samme system som Wago-rækken i skallen: en skrå tand "
-               "ind i hver indgang, knusribber og en lille kant over bagenden i hvert hjørne. Klemmerne ligger med håndtagene opad og "
-               "indgangene bagud. Stykket har tværstykket med, så blæserhegnet også kan klikkes på. Plade 2 har resten, også v54's "
-               "strømindgang og v53's faste Wago-pladser ved sikringen")
+PLATE1_TEXT = ("lysstakken nederst til venstre (front, bagramme og lysring) fra hjørnet ind til broen midt på bunden: ingen spor "
+               "længere, broerne 1 mm højere (3,2 mm fra væggene, 2,8 fra bunden) og 1,2-1,9 mm bredere åbninger, slidsen i hjørnet "
+               "3,4 mm. Skub alle fire strips igennem med fingrene. Plade 2 har resten, også v56's Wago-lommer i bagrammen")
 CAD_FILE = "hardware/cad/gen2_concept.scad"
 
 
@@ -262,19 +263,17 @@ def slim_set():
                        "kanalerne ud for slidserne? Hæld lidt vand i renden med stykket stående som på væggen: løber det ud i enderne "
                        "uden at komme ind gennem slidserne?"))
     # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
-    GROUP = {"wagolommer": 1, "lyskanal": 2, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
+    GROUP = {"wagolommer": 2, "lyskanal": 1, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim15 (som v56): bagrammens Wago-lommer over det øverste tværstykke, nu som Wago-rækken i skallen; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim13's strømindgang, slim12's sikringsklemmer, slim10's kølekanal og slim5-8's lysstak og klipslommer)",
+    GROUP_TEXT = {1: "slim16 (som v57): lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim15's Wago-lommer, slim13's strømindgang, slim12's sikringsklemmer og klipslommerne)",
                   3: "tilvalg og skærmens kant"}
-    PLATE1_TEXT = ("slim15 (som v56): bagrammens Wago-lommer til strippenes egne ledninger, nu med samme system som Wago-rækken "
-                   "i skallen (tand i hver indgang, knusribber, kanter over bagenden), håndtagene opad og indgangene bagud, med "
-                   "tværstykket, så blæserhegnet kan prøves under dem. Desuden "
+    PLATE1_TEXT = ("slim16 (som v57): lysstakken nederst til venstre fra hjørnet ind til broen midt på bunden, uden spor, med "
+                   "broerne 1 mm højere (3,2 mm fra væggene, 2,8 fra bunden), 1,2-1,9 mm bredere åbninger og en 3,4 mm slids i hjørnet. Desuden "
                    "udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
                    "bagvæggen, 4G-modemet på tværs, stødsensoren på højre væg, venstre sidelås og et hjørne med den kortere frontskrue. "
                    "Pi-holderen printes hel (`pi-holder`) og prøves på skærmens afstandsstykker med Pi'en skruet på. slim2 (som v43): "
                    "mikrofonkernens holder med stærkere tappe under tænderne, 1 mm større kanal til strømforsyningens stik og 7,5 mm "
-                   "åbninger i sikringsholderens ender. slim7 (som v48): lysstakken nederst til venstre med hvid 3 på højkant i hjørnets "
-                   "slids og de stærkere broer, og begge klipslommer ved kameraet. slim10 (som v51): bagrammen er hul bag bunden med spalter bagud (kølekanalen)")
+                   "åbninger i sikringsholderens ender. slim15's Wago-lommer i bagrammen er på plade 2")
     CAD_FILE = "hardware/cad/gen2_slim.scad"
 
 
