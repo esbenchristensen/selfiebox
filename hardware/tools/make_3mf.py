@@ -25,8 +25,9 @@ config, so Bambu Studio 2.8.2 said "The 3mf file has invalid config, load geomet
 settings (Plater::priv::load_files: a config without a Bambu printer_model or nozzle_diameter is invalid, and with
 load_config off the objects' configs are reset, only the extruder is kept). Now every file is a Bambu Studio project:
 Application "BambuStudio-<version>" in the model and Metadata/project_settings.config naming Bambu's own system presets
-(Bambu Lab H2C 0.4 nozzle, 0.20mm Standard @BBL H2C, and per filament slot the material on the spool: Bambu PLA Basic,
-PETG Translucent for the clear light ring, MATERIALS; v31-v33 said Bambu ASA) with the bed type. On loading,
+(Bambu Lab H2C 0.4 nozzle, 0.20mm Standard @BBL H2C, and per filament slot the material on the spool: Bambu ASA
+since v59 (v34-v58 Bambu PLA Basic; v31-v33 said ASA with PLA on the spools), PETG Translucent for the clear light ring,
+MATERIALS) with the bed type. On loading,
 PresetCollection::load_external_preset() restores every key not listed in different_settings_to_system from the
 installed system preset, so the file only has to carry the names, the structure the loader checks (filament_diameter,
 filament_extruder_variant and filament_self_index sized to the filaments, the extruder variants) and the few process
@@ -79,22 +80,36 @@ PROCESS = {"print_settings_id": "0.20mm Standard @BBL H2C",
 FACE_DOWN_CHANGES = {"initial_layer_speed": ["30"] * 5, "initial_layer_infill_speed": ["30"] * 5}
 ALWAYS_CHANGES = {"reduce_crossing_wall": "1"}
 # v34 (28 Oct; Esben: "vi printer alt undtagen diffuseren i PLA"): the filament preset on each slot is the material that is
-# really on the spool. v31-v33 named Bambu ASA on every slot: 270 C nozzle, 100 C bed, part fan 10-35 % and, on the H2C,
-# chamber_temperatures 65, so the start G-code heats the chamber to 65 C (M141/M191) with the chamber fans off. PLA softens
-# at 55-60 C, so as the chamber warmed up the filament swelled in the extruder (heat creep) and the prints choked, strung
-# and blobbed late in the print. PLA Basic and PETG Translucent keep the chamber unheated (H2C chamber auto-cooling).
+# really on the spool. v31-v33 named Bambu ASA on every slot while PLA was on the spools: 270 C nozzle, 100 C bed, part fan
+# 10-35 % and, on the H2C, chamber_temperatures 65, so the start G-code heats the chamber to 65 C (M141/M191) with the chamber
+# fans off. PLA softens at 55-60 C, so as the chamber warmed up the filament swelled in the extruder (heat creep) and the
+# prints choked, strung and blobbed late in the print.
+# v59 / slim18 (Esben 9 Nov: "vi printer i hvert fald i ASA nu", for acetone smoothing of the outside and more heat; the light
+# ring stays in the clear material it has always had): every part is ASA now, so Bambu's own ASA preset is the right one on
+# every slot except the ring's. Its 65 C chamber, 270 C, 100 C bed and 10-35 % fan are what ASA wants (Tg ~100 C; the warm
+# chamber keeps it from warping and splitting between layers); the heat creep in v31-v33 came from PLA on the spool, not from
+# the preset. The ring keeps PETG Translucent (no chamber heat) on its own plate; no file mixes the two (project_settings).
 MATERIALS = {
     "PLA": {"filament_settings_id": "Bambu PLA Basic @BBL H2C", "filament_ids": "GFA00", "filament_type": "PLA"},
+    "ASA": {"filament_settings_id": "Bambu ASA @BBL H2C", "filament_ids": "GFB01", "filament_type": "ASA"},
     # the clear diffuser (light ring); Bambu's 0.4 mm variant of the preset (the plain one is for the 0.6 nozzle)
     "PETG-T": {"filament_settings_id": "Bambu PETG Translucent @BBL H2C 0.4 nozzle", "filament_ids": "GFG01",
                "filament_type": "PETG"},
 }
 FILAMENT_COMMON = {"filament_vendor": "Bambu Lab", "filament_diameter": "1.75", "filament_extruder_variant": "Direct Drive Standard"}
-COLOUR_MATERIAL = {"sort": "PLA", "hvid": "PLA", "groen": "PLA", "natur": "PETG-T", "orange": "PLA"}
-# what is actually printed (Esben 28 Oct): PLA, and PETG for the clear diffuser. Never write a preset of another type: an
-# ASA/ABS/PC preset heats the H2C's chamber (65 C), and PLA/PETG then soften in the extruder and fail late in the print.
-PRINTED_TYPES = {"PLA", "PETG"}
-assert all(m["filament_type"] in PRINTED_TYPES for m in MATERIALS.values()), "only PLA/PETG presets (heat creep, v34)"
+COLOUR_MATERIAL = {"sort": "ASA", "hvid": "ASA", "groen": "ASA", "natur": "PETG-T", "orange": "ASA"}
+# v59: ASA shrinks more than PLA as it cools (CTE ~90e-6/K from its ~100 C glass point, PLA ~70e-6/K from ~60 C: about
+# 0.7 % against 0.3 %). Every fit in the box (the clear PETG ring in the front, the snap, the Wago, PSU, Pi and camera holders,
+# the heat-set insert) was tried and tuned on PLA prints, so the ASA parts are scaled up in x and y by Bambu Studio's own
+# filament shrinkage compensation (filament_shrink: "94 % if you measure 94 mm instead of 100 mm", the slices are scaled by
+# 1/value; PrintObjectSlice.cpp, v02.08.02.61) to come out the size the PLA parts did. The geometry (STL) is not changed.
+# Height (z) is not compensated by Bambu; no fit in the box depends on a height within 0.1 mm over its length.
+ASA_SHRINK = "99.6%"
+FILAMENT_CHANGES = {"ASA": {"filament_shrink": ASA_SHRINK}}
+# what is actually printed (Esben 9 Nov): ASA, and PETG for the clear diffuser. PLA stays allowed for older releases. A
+# PLA/PETG preset must never heat the chamber, and ASA never shares a plate with PLA/PETG (its 65 C chamber, see v34).
+PRINTED_TYPES = {"PLA", "PETG", "ASA"}
+assert all(m["filament_type"] in PRINTED_TYPES for m in MATERIALS.values()), "only PLA/PETG/ASA presets"
 PLATES = {"glat": "High Temp Plate", "tekstureret": "Textured PEI Plate"}   # Bambu's names: smooth PEI, textured PEI
 
 
@@ -103,13 +118,23 @@ def project_settings(filaments, plate, tower=None, face_down=False):
     that equal Bambu's own defaults left out; the loader puts them back). filaments: COLOURS keys, slot 1 first."""
     n = len(filaments)
     changes = {**(FACE_DOWN_CHANGES if face_down else {}), **ALWAYS_CHANGES}
-    fil = [{**MATERIALS[COLOUR_MATERIAL[f]], **FILAMENT_COMMON} for f in filaments]
+    mats = [COLOUR_MATERIAL[f] for f in filaments]
+    fil = [{**MATERIALS[m], **FILAMENT_COMMON} for m in mats]
     if any(d["filament_type"] not in PRINTED_TYPES for d in fil):
-        raise SystemExit(f"{filaments}: a filament preset that is not PLA/PETG (it would heat the chamber; see v34)")
+        raise SystemExit(f"{filaments}: a filament preset that is not PLA/PETG/ASA")
+    types = {d["filament_type"] for d in fil}
+    if "ASA" in types and types - {"ASA"}:
+        raise SystemExit(f"{filaments}: ASA on the same plate as {types - {'ASA'}} (the ASA preset heats the chamber to 65 C)")
+    # v59: per filament the keys the box changes from Bambu's preset (filament_shrink for ASA), listed as different so the
+    # loader keeps them (PresetBundle::load_config_file_config: different_settings_to_system[1 + slot])
+    fch = [FILAMENT_CHANGES.get(m, {}) for m in mats]
+    fkeys = sorted({k for c in fch for k in c})
+    defaults = {"filament_shrink": "100%"}
     cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **changes,
            **{k: [d[k] for d in fil] for k in fil[0]},
+           **{k: [c.get(k, defaults[k]) for c in fch] for k in fkeys},
            "filament_colour": [COLOURS[f] for f in filaments], "filament_self_index": [str(i + 1) for i in range(n)],
-           "different_settings_to_system": [";".join(sorted(changes))] + [""] * (n + 1),
+           "different_settings_to_system": [";".join(sorted(changes))] + [";".join(sorted(c)) for c in fch] + [""],
            "curr_bed_type": PLATES[plate], "flush_multiplier": ["1", "1"],
            "flush_volumes_matrix": [("0" if i == j else "280") for _ in range(2) for i in range(n) for j in range(n)],
            "flush_volumes_vector": ["140"] * (2 * n)}

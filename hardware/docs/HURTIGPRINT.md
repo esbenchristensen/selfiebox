@@ -13,7 +13,7 @@ Tiden spares to steder, i denne rækkefølge:
 1. **Print kun det, der skal prøves (prøvestykker).** Et prøvestykke er en kasse skåret ud af den rigtige del rundt om det sted, hvor noget skal passe. Det tager typisk 10–45 minutter, hvor hele delen tager 3–16 timer.
 2. **Kladdeprofil.** 0,28 mm lag, 2 vægge, 3 top- og bundlag og 10 % fyld. Det giver ca. halv tid på hele dele.
 
-Fra v34 printes alle dele i PLA (lysringen i klar PETG), også de normale, så hurtigprint og normalt print er samme materiale.
+Fra v34 til v58 blev alle dele printet i PLA; fra v59 (slim18) printes alle dele i ASA (lysringen i klar PETG), også de normale, så hurtigprint og normalt print er samme materiale. ASA-pladserne har krympekompensation 99,6 % (make_3mf.ASA_SHRINK), så ASA-delene får samme mål som PLA-delene, pasformene blev prøvet på.
 
 ## 2. Prøvestykker
 
@@ -48,7 +48,7 @@ Find en fejl på et hurtigprint, så ret den i CAD og lav en ny version. Ret ald
 | Vægge | 2 | 2–3 (hjørner 4, stativbeslagets hylde 6) |
 | Top/bund | 3/3 (mindst 0,8 mm) | 4/3–4 |
 | Fyld | 10 % crosshatch | 15 % crosshatch, beslag 30–40 % gyroid |
-| Filament | PLA (lysringen klar PETG) | Samme |
+| Filament | ASA fra v59, krympning 99,6 % (lysringen klar PETG) | Samme |
 | Logo | Ingen (brug den normale `_flerfarvet.3mf`) | AMS, 3 farver |
 | Support | Kun skallen, ved de samme enforcere | Samme |
 
@@ -61,4 +61,4 @@ Find en fejl på et hurtigprint, så ret den i CAD og lav en ny version. Ret ald
 - 0,28 mm lag kan flytte en højde op til et halvt lag (0,14 mm). En pasform på 0,2 mm eller mindre i højden (klik, skyggefuge) bedømmes til sidst på et normalt print.
 - Et prøvestykke er stivere end den hele del, så klikkraft og hvor meget en væg giver efter bedømmes på det hele print.
 - Styrke, fald (de forstærkede hjørner), lys gennem lysringen og reflektorens hvidhed testes kun på normale print.
-- Skruer kan skrues i PLA til prøve, men ikke ind og ud mange gange.
+- Skruer kan skrues i til prøve, men ikke ind og ud mange gange.

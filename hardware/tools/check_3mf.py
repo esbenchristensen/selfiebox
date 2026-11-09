@@ -83,6 +83,7 @@ def check(path):
     n = len(cfg["filament_colour"])
     for k in ["filament_diameter", "filament_settings_id", "filament_type", "filament_ids", "filament_vendor"]:
         if len(cfg.get(k, [])) != n: errs.append(f"{k} size != {n}")
+    if "filament_shrink" in cfg and len(cfg["filament_shrink"]) != n: errs.append(f"filament_shrink size != {n}")
     fev, fsi = cfg["filament_extruder_variant"], cfg["filament_self_index"]
     if len(fev) != len(fsi) or len(fev) < n: errs.append("filament_extruder_variant / filament_self_index")
     if len(cfg.get("different_settings_to_system", [])) != n + 2: errs.append("different_settings_to_system size")
@@ -107,6 +108,17 @@ def check(path):
         # v34: a PLA/PETG preset must never heat the chamber (heat creep: ASA's 65 C on PLA ruined the v31-v33 prints)
         if fil["filament_type"][0] in ("PLA", "PETG") and int(fil.get("chamber_temperatures", ["0"])[0]) >= 40:
             errs.append(f"{fname} heats the chamber")
+        # v59: an ASA slot gets the ASA preset with its chamber heat, and its shrink compensation must reach the loader:
+        # a filament key that differs from the preset is kept only if different_settings_to_system[1 + slot] names it
+        diff = (cfg.get("different_settings_to_system") or [""] * (len(cfg["filament_settings_id"]) + 2))[1 + i].split(";")
+        for k in ("filament_shrink",):
+            if k in cfg and cfg[k][i] != fil.get(k, ["100%"])[0] and k not in diff:
+                errs.append(f"{fname}: {k} {cfg[k][i]} not in different_settings_to_system, the loader would reset it")
+        if "filament_shrink" in cfg and not 98.0 <= float(cfg["filament_shrink"][i].rstrip("%")) <= 100.0:
+            errs.append(f"{fname}: filament_shrink {cfg['filament_shrink'][i]} outside 98-100 %")
+    types = set(cfg["filament_type"])
+    if "ASA" in types and types - {"ASA"}:
+        errs.append(f"ASA on one plate with {sorted(types - {'ASA'})}: the ASA preset heats the chamber to 65 C")
     # model_settings
     ms = ET.fromstring(z.read("Metadata/model_settings.config"))
     for obj in ms.findall("object"):
