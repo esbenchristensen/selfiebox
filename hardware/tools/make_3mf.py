@@ -106,6 +106,15 @@ COLOUR_MATERIAL = {"sort": "ASA", "hvid": "ASA", "groen": "ASA", "natur": "PETG-
 # Height (z) is not compensated by Bambu; no fit in the box depends on a height within 0.1 mm over its length.
 ASA_SHRINK = "99.6%"
 FILAMENT_CHANGES = {"ASA": {"filament_shrink": ASA_SHRINK}}
+# v59 (Kasper 9 Nov, photos: the fan guard's grille "Asa har det svært med de der små stænger"): the guard prints on its side, so
+# its grille is 13 bars of 2.0 x 1.6 mm standing 41 mm up, each layer a row of tiny islands. With Bambu's ASA preset (65 C
+# chamber, 270 C, part fan 10-35 %) a bar never cools before the next layer lands on it, so the bars sagged, blobbed and strung
+# between each other. For that part only (its own plate): a cooler nozzle, a much stronger part fan and a chamber held at 45 C,
+# so each bar sets before the next layer. Geometry and object settings unchanged. Big flat ASA parts keep the preset (65 C
+# chamber against warping); the guard is small and has a 3 mm brim.
+THIN_BARS_ASA = {"nozzle_temperature": "255", "fan_min_speed": "60", "fan_max_speed": "90", "overhang_fan_speed": "100",
+                 "fan_cooling_layer_time": "60", "chamber_temperatures": "45"}
+FILAMENT_DEFAULTS = {"filament_shrink": "100%"}   # what a slot without the change gets (the presets' own values below)
 # what is actually printed (Esben 9 Nov): ASA, and PETG for the clear diffuser. PLA stays allowed for older releases. A
 # PLA/PETG preset must never heat the chamber, and ASA never shares a plate with PLA/PETG (its 65 C chamber, see v34).
 PRINTED_TYPES = {"PLA", "PETG", "ASA"}
@@ -113,7 +122,7 @@ assert all(m["filament_type"] in PRINTED_TYPES for m in MATERIALS.values()), "on
 PLATES = {"glat": "High Temp Plate", "tekstureret": "Textured PEI Plate"}   # Bambu's names: smooth PEI, textured PEI
 
 
-def project_settings(filaments, plate, tower=None, face_down=False):
+def project_settings(filaments, plate, tower=None, face_down=False, extra=None):
     """Metadata/project_settings.config: the project config Bambu Studio writes (PresetBundle::full_fff_config, keys
     that equal Bambu's own defaults left out; the loader puts them back). filaments: COLOURS keys, slot 1 first."""
     n = len(filaments)
@@ -127,12 +136,15 @@ def project_settings(filaments, plate, tower=None, face_down=False):
         raise SystemExit(f"{filaments}: ASA on the same plate as {types - {'ASA'}} (the ASA preset heats the chamber to 65 C)")
     # v59: per filament the keys the box changes from Bambu's preset (filament_shrink for ASA), listed as different so the
     # loader keeps them (PresetBundle::load_config_file_config: different_settings_to_system[1 + slot])
-    fch = [FILAMENT_CHANGES.get(m, {}) for m in mats]
+    # extra: per material, filament keys this one file changes on top (THIN_BARS_ASA for the fan guard)
+    fch = [{**FILAMENT_CHANGES.get(m, {}), **(extra or {}).get(m, {})} for m in mats]
     fkeys = sorted({k for c in fch for k in c})
-    defaults = {"filament_shrink": "100%"}
+    if any(k not in c for c in fch for k in fkeys):
+        raise SystemExit(f"{filaments}: the slots change different filament keys ({fkeys}); give every slot the same keys")
+    defaults = FILAMENT_DEFAULTS
     cfg = {"version": BAMBU_VERSION, "name": "project_settings", "from": "project", **PRINTER, **PROCESS, **changes,
            **{k: [d[k] for d in fil] for k in fil[0]},
-           **{k: [c.get(k, defaults[k]) for c in fch] for k in fkeys},
+           **{k: [c[k] if k in c else defaults[k] for c in fch] for k in fkeys},
            "filament_colour": [COLOURS[f] for f in filaments], "filament_self_index": [str(i + 1) for i in range(n)],
            "different_settings_to_system": [";".join(sorted(changes))] + [";".join(sorted(c)) for c in fch] + [""],
            "curr_bed_type": PLATES[plate], "flush_multiplier": ["1", "1"],
@@ -226,7 +238,7 @@ SETTINGS = {
 TURN = np.diag([-1.0, -1.0, 1.0])   # 180 degrees on the plate: the box's underside to +y (Bambu's "back" seam)
 
 
-def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filaments=("sort",), plate="glat"):
+def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filaments=("sort",), plate="glat", extra=None):
     """parts: list of (name, trimesh.Trimesh, filament slot[, subtype]). All meshes in one shared coordinate system;
     the object is moved as a whole so it sits on the plate (z = 0) in the middle of the bed. subtype is Bambu Studio's
     part type: "normal_part" (default), or "support_enforcer" / "support_blocker" for a support modifier volume.
@@ -241,7 +253,7 @@ def write_bambu_3mf(path, parts, object_name, settings=None, turn=False, filamen
         if x0 + width + 10 + PRIME_TOWER[0] <= x1:
             dx = x0 + width / 2 - BED_CENTRE[0]
             tower = (x0 + width + 10, PRIME_TOWER[1])
-    write_bambu_objects(path, [(object_name, parts, settings or {}, (dx, 0.0), turn)], filaments, plate, tower)
+    write_bambu_objects(path, [(object_name, parts, settings or {}, (dx, 0.0), turn)], filaments, plate, tower, extra)
 
 
 # Esben 5 Nov: nothing may show on the outside, no seams ("samlinger") and no odd settings. Bambu Studio 2.8 splits a layer into
@@ -268,7 +280,7 @@ def check_seams(object_name, settings, parts):
         raise SystemExit(f"{object_name}: would print seams on the outside ({'; '.join(bad)}); see make_3mf.WALL_KEYS")
 
 
-def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=None):
+def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=None, extra=None):
     """objects: list of (name, parts, settings, (dx, dy) from the bed centre, turn). One plate, each object as in
     write_bambu_3mf; tower: (x, y) of the prime tower or None for Bambu's default. The settings key "_face_down"
     (default False) on any object turns on FACE_DOWN_CHANGES for the plate ("_visible" only documents the part)."""
@@ -342,7 +354,7 @@ def write_bambu_objects(path, objects, filaments=("sort",), plate="glat", tower=
         "3D/3dmodel.model": main,
         **files,
         "Metadata/model_settings.config": "\n".join(cfg),
-        "Metadata/project_settings.config": project_settings(filaments, plate, tower, face_down),
+        "Metadata/project_settings.config": project_settings(filaments, plate, tower, face_down, extra),
     }
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
         for name, text in out.items():
@@ -520,7 +532,8 @@ def part_3mfs(folder, prefix=None):
     small = [(s, folder / f"{prefix}_{s}.stl") for s in ("blaeserhegn", "kameraroer")]
     if small[0][1].exists() and not small[1][1].exists():
         outs.append(folder / f"{prefix}_blaeserhegn.3mf")
-        write_bambu_3mf(outs[-1], [("blaeserhegn", trimesh.load(small[0][1]), 1)], f"{prefix}_blaeserhegn", SETTINGS["blaeserhegn"])
+        write_bambu_3mf(outs[-1], [("blaeserhegn", trimesh.load(small[0][1]), 1)], f"{prefix}_blaeserhegn", SETTINGS["blaeserhegn"],
+                        extra={"ASA": THIN_BARS_ASA})   # v59: the grille's thin bars (THIN_BARS_ASA)
     elif all(p.exists() for _, p in small):
         outs.append(folder / f"{prefix}_smaadele.3mf")
         write_bambu_objects(outs[-1], [(f"{prefix}_{s}", [(s, trimesh.load(p), 1)], SETTINGS[s], (0.0, 20.0 - 40.0*i), False)

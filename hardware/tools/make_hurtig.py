@@ -36,7 +36,7 @@ from pathlib import Path
 import numpy as np
 import trimesh
 
-from make_3mf import NO_SUPPORT, SETTINGS, SKAL_BLOCK, SKAL_ENFORCE, write_bambu_objects
+from make_3mf import NO_SUPPORT, SETTINGS, SKAL_BLOCK, SKAL_ENFORCE, THIN_BARS_ASA, write_bambu_objects
 
 HW = Path(__file__).resolve().parents[1]
 GEN2, OUT_ROOT = HW / "stl" / "gen2", HW / "stl" / "gen2-hurtig"
@@ -437,9 +437,9 @@ def fmt_t(m):
     return f"{m // 60} t {m % 60:02d} min" if m >= 60 else f"{m} min"
 
 
-def write_3mf(path, name, parts, settings, colour):
+def write_3mf(path, name, parts, settings, colour, extra=None):
     plate = "tekstureret" if colour == "natur" else "glat"
-    write_bambu_objects(path, [(name, parts, settings, (0.0, 0.0), False)], filaments=(colour,), plate=plate)
+    write_bambu_objects(path, [(name, parts, settings, (0.0, 0.0), False)], filaments=(colour,), plate=plate, extra=extra)
 
 
 def pack(items):
@@ -485,7 +485,8 @@ def main():
         st = {**HSET[key], **(BRIM if part == "skal" else {})}
         dst = out / f"{pre}_{part}.stl"
         shutil.copyfile(src / f"{ver}_{part}.stl", dst)
-        write_3mf(dst.with_suffix(".3mf"), f"{pre}_{part}", [(part, stl, 1)] + clip_modifiers(mods[part], *stl.bounds, 0), st, colour)
+        write_3mf(dst.with_suffix(".3mf"), f"{pre}_{part}", [(part, stl, 1)] + clip_modifiers(mods[part], *stl.bounds, 0), st, colour,
+                  {"ASA": THIN_BARS_ASA} if part == "blaeserhegn" else None)   # v59: the grille's thin bars
         est = estimate(dst, part == "skal", PROFILE_LYSRING if part == "lysring" else PROFILE)
         rows.append(("del", dst.with_suffix(".3mf").name, part, stl, colour, "", est))
         print(dst.with_suffix(".3mf").name, fmt_t(est[0]) if est else "")
