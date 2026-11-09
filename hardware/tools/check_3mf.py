@@ -84,7 +84,7 @@ def check(path):
     for k in ["filament_diameter", "filament_settings_id", "filament_type", "filament_ids", "filament_vendor"]:
         if len(cfg.get(k, [])) != n: errs.append(f"{k} size != {n}")
     for k in ("filament_shrink", "nozzle_temperature", "fan_min_speed", "fan_max_speed", "overhang_fan_speed",
-              "fan_cooling_layer_time", "chamber_temperatures", "slow_down_layer_time"):
+              "fan_cooling_layer_time", "chamber_temperatures", "slow_down_layer_time", "filament_max_volumetric_speed"):
         if k in cfg and len(cfg[k]) != n: errs.append(f"{k} size != {n}")
     fev, fsi = cfg["filament_extruder_variant"], cfg["filament_self_index"]
     if len(fev) != len(fsi) or len(fev) < n: errs.append("filament_extruder_variant / filament_self_index")
@@ -114,7 +114,7 @@ def check(path):
         # a filament key that differs from the preset is kept only if different_settings_to_system[1 + slot] names it
         diff = (cfg.get("different_settings_to_system") or [""] * (len(cfg["filament_settings_id"]) + 2))[1 + i].split(";")
         for k in ("filament_shrink", "nozzle_temperature", "fan_min_speed", "fan_max_speed", "overhang_fan_speed",
-                  "fan_cooling_layer_time", "chamber_temperatures", "slow_down_layer_time"):
+                  "fan_cooling_layer_time", "chamber_temperatures", "slow_down_layer_time", "filament_max_volumetric_speed"):
             if k in cfg and str(cfg[k][i]) != str(fil.get(k, ["100%"])[0]) and k not in diff:
                 errs.append(f"{fname}: {k} {cfg[k][i]} not in different_settings_to_system, the loader would reset it")
         if "filament_shrink" in cfg and not 98.0 <= float(cfg["filament_shrink"][i].rstrip("%")) <= 100.0:

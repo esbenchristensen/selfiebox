@@ -98,7 +98,7 @@ Fronten og stativbeslaget er uden logo i hurtigsættet (fordybningen står tom).
 
 ## Indstillinger (ligger i 3MF'erne)
 
-- **Kladde (alle sorte og hvide dele):** 0,28 mm lag, 2 vægge, 3 top- og bundlag (mindst 0,8 mm), 10 % crosshatch, ingen brim. Bambu ASA (v59; 270 °C, plade 100 °C, kammeret varmes op til 65 °C) med krympekompensation 99,6 %, glat PEI med et tyndt lag limstift. Lysringens stykker er klar PETG uden kammervarme og må aldrig ligge på en plade med ASA.
+- **Kladde (alle sorte og hvide dele):** 0,28 mm lag, 2 vægge, 3 top- og bundlag (mindst 0,8 mm), 10 % crosshatch, ingen brim. Bambu ASA (v59; 260 °C, første lag 270 °C, plade 100 °C, kammeret varmes op til 55 °C, højst 16 mm³/s) med krympekompensation 99,6 %, glat PEI med et tyndt lag limstift. Lysringens stykker er klar PETG uden kammervarme og må aldrig ligge på en plade med ASA.
 - **Små lag i ASA** (9. nov.): korte lag får op til 80 % køling og mindst 15 s pr. lag; store lag beholder ASA-profilens 10 %. Blæserhegnet og mikrofonstrippen (tynde stænger) printes ved 255 °C med 60–90 % køling og kammeret på 45 °C.
 - **Skallen** har support kun ved de samme enforcere som den normale skal (tree, manuel); prøvestykker uden et af de steder har ingen support. Den hele skal har 3 mm brim.
 - **Fronten** har elefantfodskompensation 0,15 som den normale, så skyggefugen ved lysringen bliver åben.
