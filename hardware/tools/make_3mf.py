@@ -105,7 +105,16 @@ COLOUR_MATERIAL = {"sort": "ASA", "hvid": "ASA", "groen": "ASA", "natur": "PETG-
 # 1/value; PrintObjectSlice.cpp, v02.08.02.61) to come out the size the PLA parts did. The geometry (STL) is not changed.
 # Height (z) is not compensated by Bambu; no fit in the box depends on a height within 0.1 mm over its length.
 ASA_SHRINK = "99.6%"
-FILAMENT_CHANGES = {"ASA": {"filament_shrink": ASA_SHRINK}}
+# v59, after the fan guard (Esben 9 Nov: "Hvad med alle andre filer?"): every part was sliced through layer by layer for the same
+# risk, small islands in short layers (the bagramme's 14 snap arms and camera posts are the top 10 mm of the frame on their
+# own, the wago row's teeth, and nearly every hurtig test piece is small). Bambu's ASA preset cools such layers with at most
+# 35 % fan, in a 65 C chamber, so they stay soft like the guard's bars. Bambu sets the fan by layer time: fan_min_speed (10 %)
+# for layers longer than fan_cooling_layer_time, rising to fan_max_speed at slow_down_layer_time and below (CoolingBuffer).
+# So a higher fan_max_speed, a lower fan_cooling_layer_time and a longer slow_down_layer_time act only on short layers: the
+# shell's, front's and frame's big layers keep 10 % fan and the 65 C chamber against warping, the small ones get up to 80 %
+# fan and at least 15 s each.
+SHORT_LAYERS_ASA = {"fan_max_speed": "80", "fan_cooling_layer_time": "30", "slow_down_layer_time": "15"}
+FILAMENT_CHANGES = {"ASA": {"filament_shrink": ASA_SHRINK, **SHORT_LAYERS_ASA}}
 # v59 (Kasper 9 Nov, photos: the fan guard's grille "Asa har det svært med de der små stænger"): the guard prints on its side, so
 # its grille is 13 bars of 2.0 x 1.6 mm standing 41 mm up, each layer a row of tiny islands. With Bambu's ASA preset (65 C
 # chamber, 270 C, part fan 10-35 %) a bar never cools before the next layer lands on it, so the bars sagged, blobbed and strung

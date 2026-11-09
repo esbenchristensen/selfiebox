@@ -437,6 +437,16 @@ def fmt_t(m):
     return f"{m // 60} t {m % 60:02d} min" if m >= 60 else f"{m} min"
 
 
+# v59 (fan guard in ASA, Kasper 9 Nov): pieces that are mostly thin bars get make_3mf.THIN_BARS_ASA on their file and plate, like
+# the fan guard: the mic strip pocket (14 bars over 31 mm, alone on plate 3). The other pieces get the short-layer cooling that
+# every ASA file has (make_3mf.SHORT_LAYERS_ASA).
+THIN_PIECES = ("blaeserhegn", "mikrofonstrip")
+
+
+def thin(name):
+    return {"ASA": THIN_BARS_ASA} if any(t in name for t in THIN_PIECES) else None
+
+
 def write_3mf(path, name, parts, settings, colour, extra=None):
     plate = "tekstureret" if colour == "natur" else "glat"
     write_bambu_objects(path, [(name, parts, settings, (0.0, 0.0), False)], filaments=(colour,), plate=plate, extra=extra)
@@ -524,7 +534,7 @@ def main():
             if ext[2] > 2.5 * min(ext[0], ext[1]):   # tall and thin: a brim keeps it on the plate
                 st.update(BRIM)
             parts3 = [(f"proeve-{name}{suffix}", piece, 1)] + mod
-            write_3mf(dst.with_suffix(".3mf"), dst.stem, parts3, st, colour)
+            write_3mf(dst.with_suffix(".3mf"), dst.stem, parts3, st, colour, thin(name))
             pad = 6.0 if st.get("brim_type", "no_brim") != "no_brim" else 0.0
             pieces.setdefault((GROUP.get(name, 2), colour), []).append((dst.stem, parts3, st, ext + pad))
             note = f" ({n} krop(pe), {dropped / 1000:.1f} cm3 svævende fjernet)" if dropped > 1 or n != 1 else ""
@@ -538,7 +548,8 @@ def main():
         packed = pack(items)
         for i, plate in enumerate(packed):
             f = out / f"{pre}_plade{g}-{GROUP_NAME[g]}_{colour}{f'-{i + 1}' if len(packed) > 1 else ''}.3mf"
-            write_bambu_objects(f, plate, filaments=(colour,), plate="tekstureret" if colour == "natur" else "glat")
+            write_bambu_objects(f, plate, filaments=(colour,), plate="tekstureret" if colour == "natur" else "glat",
+                                extra=next((thin(n) for n, *_ in plate if thin(n)), None))
             t = [est_of[name] for name, *_ in plate]
             tot = (sum(e[0] for e in t), sum(e[1] for e in t)) if all(t) else None
             plates.append((f.name, colour, [name for name, *_ in plate], tot, g))
@@ -598,6 +609,8 @@ def write_guide(ver, out, rows, plates):
           "- **Kladde (alle sorte og hvide dele):** 0,28 mm lag, 2 vægge, 3 top- og bundlag (mindst 0,8 mm), 10 % crosshatch, "
           "ingen brim. Bambu ASA (v59; 270 °C, plade 100 °C, kammeret varmes op til 65 °C) med krympekompensation 99,6 %, glat PEI "
           "med et tyndt lag limstift. Lysringens stykker er klar PETG uden kammervarme og må aldrig ligge på en plade med ASA.",
+          "- **Små lag i ASA** (9. nov.): korte lag får op til 80 % køling og mindst 15 s pr. lag; store lag beholder ASA-profilens 10 %. "
+          "Blæserhegnet og mikrofonstrippen (tynde stænger) printes ved 255 °C med 60–90 % køling og kammeret på 45 °C.",
           "- **Skallen** har support kun ved de samme enforcere som den normale skal (tree, manuel); prøvestykker uden et af de "
           "steder har ingen support. Den hele skal har 3 mm brim.",
           "- **Fronten** har elefantfodskompensation 0,15 som den normale, så skyggefugen ved lysringen bliver åben.",
