@@ -15,7 +15,8 @@ v37 (Esben 1 Nov: "Lav et hurtig print sæt, så vi kan få testet fit og alt de
 printe"): the set had not been made since v23, and the test pieces named parts that are gone (camera glass and sleeve,
 gasket cord). COUPONS now covers v37 (power inlet, fuse, Wago row and the strap loops under it, front/shell snap, both
 wall locks, the stand bracket's shelf with the heat-set insert, the theme groove and so on), and every piece and part
-is a Bambu Studio project (make_3mf.write_bambu_objects) with the draft settings inside, PLA as everything is printed,
+is a Bambu Studio project (make_3mf.write_bambu_objects) with the draft settings inside, in the material each part is printed in
+(v59: ASA, the clear ring PETG; v37-v58 PLA),
 plus a few full plates with all the test pieces of one colour, so a plate is one press on Print.
 
 Usage:  python3 hardware/tools/make_hurtig.py [version]   (default: the newest hardware/stl/gen2/halo-gen2-v<N>)
@@ -217,12 +218,18 @@ GROUP = {"kamera": 1, "lyskanal": 1, "4g": 3, "mikrofonstrip": 3, "skaerm-lysrin
 GROUP_NAME = {1: "nyt", 2: "resten", 3: "ekstra"}
 # v42 (Esben 3 Nov: a seam line across the clear ring): no part changed, only the ring's seam and patterns, so plate 1 is
 # still v41's, and its natural-colour plate is the ring test
-GROUP_TEXT = {1: "v58: kameraet centreret og længere frem; v57: lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; print den først", 2: "de andre holdere og samlinger (også v56's Wago-lommer, v54's strømindgang, v53's sikringsklemmer og klipslommerne)", 3: "tilvalg og skærmens kant"}
+GROUP_TEXT = {1: "v59: alt i ASA (lysringen klar PETG), prøv alt igen; v58: kameraet centreret og længere frem; v57: lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; print den først", 2: "de andre holdere og samlinger (også v56's Wago-lommer, v54's strømindgang, v53's sikringsklemmer og klipslommerne)", 3: "tilvalg og skærmens kant"}
 
 # slim1 (cad/gen2_slim.scad, 57 mm): the same set with this variant's places. Plate 1 is what slim moved or added: the back
 # vents behind the wall cleat, the power inlet at x 17.65, the fuse holder on its side, the dimmer flat on the back wall, the
 # turned 4G, the IMU on the right wall, the left side lock (now 138 mm up) and a corner with the shorter front screw.
-PLATE1_TEXT = ("v58: kamerastykket (front og bagramme): linsen centreres nu af 4 ribber om linseholderen og sidder 0,55 mm "
+# v59 / slim18 (Esben 9 Nov: everything in ASA, the ring still clear PETG): no part changed, only the material, so every fit
+# is new in ASA; plate 1 stays the camera piece and the light stack (the PETG ring in the ASA front), plate 2 must be tried too
+ASA_TEXT = ("v59: ingen dele er ændret, kun materialet: alt er nu ASA, lysringen stadig klar PETG. ASA krymper mere end PLA, og "
+            "3MF'erne retter for det (krympning 99,6 %), så målene skal blive som i PLA-prøverne. Derfor skal alle pasformer prøves "
+            "igen i ASA: print plade 1 først og så plade 2, og prøv især lysringen i fronten (PETG i ASA), klikket mellem front og "
+            "skal og Wago-lommerne. ")
+PLATE1_TEXT = ASA_TEXT + ("v58: kamerastykket (front og bagramme): linsen centreres nu af 4 ribber om linseholderen og sidder 0,55 mm "
                "længere fremme bag en tyndere kant. Se, at den sorte ring om linsen er lige bred hele vejen rundt. v57: "
                "lysstakken nederst til venstre (front, bagramme og lysring) fra hjørnet ind til broen midt på bunden: ingen spor "
                "længere, broerne 1 mm højere (3,2 mm fra væggene, 2,8 fra bunden) og 1,2-1,9 mm bredere åbninger, slidsen i hjørnet "
@@ -270,9 +277,9 @@ def slim_set():
     # slim4 (as v45): the clip bay and the light stack with the corner bridge; slim5 (as v46): both bays; slim's own moved parts stay on plate 1 too
     GROUP = {"kamera": 1, "wagolommer": 2, "lyskanal": 1, "klipslomme": 2, "klipslomme-hoejre": 2, "udluftning": 1, "stroemindgang": 1, "mikrofonkerne": 1, "sikring": 1, "daemper": 1, "4g": 1,
              "stoedsensor": 1, "laas": 1, "hjoerne": 1, "mikrofonstrip": 3, "skaerm-lysring": 3}
-    GROUP_TEXT = {1: "slim17 (som v58): kameraet centreret og længere frem; slim16 (som v57): lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim15's Wago-lommer, slim13's strømindgang, slim12's sikringsklemmer og klipslommerne)",
+    GROUP_TEXT = {1: "slim18 (som v59): alt i ASA (lysringen klar PETG), prøv alt igen; slim17 (som v58): kameraet centreret og længere frem; slim16 (som v57): lysstakken med et hjørne og broen midt på bunden, mere plads under broerne og ingen spor; slim1: udluftningen og alt det, der er flyttet; print den først", 2: "de andre holdere og samlinger (slim15's Wago-lommer, slim13's strømindgang, slim12's sikringsklemmer og klipslommerne)",
                   3: "tilvalg og skærmens kant"}
-    PLATE1_TEXT = ("slim17 (som v58): kamerastykket, linsen centreret af 4 ribber om linseholderen og 0,55 mm længere fremme. "
+    PLATE1_TEXT = ASA_TEXT.replace("v59:", "slim18 (som v59):") + ("slim17 (som v58): kamerastykket, linsen centreret af 4 ribber om linseholderen og 0,55 mm længere fremme. "
                    "slim16 (som v57): lysstakken nederst til venstre fra hjørnet ind til broen midt på bunden, uden spor, med "
                    "broerne 1 mm højere (3,2 mm fra væggene, 2,8 fra bunden), 1,2-1,9 mm bredere åbninger og en 3,4 mm slids i hjørnet. Desuden "
                    "udluftningen bagpå og alt det, slim-versionen har flyttet: strømindgangen, sikringen på siden, dæmperen fladt på "
@@ -288,11 +295,12 @@ PROFILE = ["--layer-height", "0.28", "--first-layer-height", "0.2", "--perimeter
 PROFILE_LYSRING = ["--layer-height", "0.2", "--first-layer-height", "0.2", "--perimeters", "3",
                    "--fill-density", "100%", "--fill-pattern", "rectilinear"]
 SUPPORT = ["--support-material", "--support-material-style", "organic", "--support-material-buildplate-only"]
-# H2C-like speeds and Bambu PLA Basic flow, only for the time estimate
+# H2C-like speeds and Bambu PLA Basic flow, only for the time estimate (v59: the density of the part's material, Bambu ASA
+# 1.05 or PETG Translucent 1.25, for the grams)
 SLICER_INI = """bed_shape = -160x-160,160x-160,160x160,-160x160
 nozzle_diameter = 0.4
 filament_diameter = 1.75
-filament_density = 1.24
+filament_density = {density}
 filament_max_volumetric_speed = 21
 temperature = 220
 bed_temperature = 55
@@ -408,7 +416,7 @@ def estimate(stl, support, profile=PROFILE):
         return None
     with tempfile.TemporaryDirectory() as d:
         ini, gc = Path(d) / "h.ini", Path(d) / "h.gcode"
-        ini.write_text(SLICER_INI)
+        ini.write_text(SLICER_INI.replace("{density}", "1.25" if profile is PROFILE_LYSRING else "1.05"))
         cmd = ["prusa-slicer", "--export-gcode", "--load", str(ini), *profile, *(SUPPORT if support else []), "-o", str(gc), str(stl)]
         if subprocess.run(cmd, capture_output=True).returncode or not gc.exists():
             return None
@@ -542,7 +550,7 @@ def main():
     print(out / f"{pre}.zip")
 
 
-COLOUR_NAME = {"sort": "PLA sort", "hvid": "PLA hvid", "natur": "klar PETG"}
+COLOUR_NAME = {"sort": "ASA sort", "hvid": "ASA hvid", "natur": "klar PETG"}   # v59 (v37-v58: PLA)
 
 
 def write_guide(ver, out, rows, plates):
@@ -587,7 +595,8 @@ def write_guide(ver, out, rows, plates):
           "brug de normale filer.", "",
           "## Indstillinger (ligger i 3MF'erne)", "",
           "- **Kladde (alle sorte og hvide dele):** 0,28 mm lag, 2 vægge, 3 top- og bundlag (mindst 0,8 mm), 10 % crosshatch, "
-          "ingen brim. Bambu PLA Basic, glat PEI. Ingen opvarmning af kammeret.",
+          "ingen brim. Bambu ASA (v59; 270 °C, plade 100 °C, kammeret varmes op til 65 °C) med krympekompensation 99,6 %, glat PEI "
+          "med et tyndt lag limstift. Lysringens stykker er klar PETG uden kammervarme og må aldrig ligge på en plade med ASA.",
           "- **Skallen** har support kun ved de samme enforcere som den normale skal (tree, manuel); prøvestykker uden et af de "
           "steder har ingen support. Den hele skal har 3 mm brim.",
           "- **Fronten** har elefantfodskompensation 0,15 som den normale, så skyggefugen ved lysringen bliver åben.",
