@@ -114,7 +114,16 @@ ASA_SHRINK = "99.6%"
 # shell's, front's and frame's big layers keep 10 % fan and the 65 C chamber against warping, the small ones get up to 80 %
 # fan and at least 15 s each.
 SHORT_LAYERS_ASA = {"fan_max_speed": "80", "fan_cooling_layer_time": "30", "slow_down_layer_time": "15"}
-FILAMENT_CHANGES = {"ASA": {"filament_shrink": ASA_SHRINK, **SHORT_LAYERS_ASA}}
+# v59 (Esben 9 Nov: Kalle mener temperaturerne er alt for høje): Bambu's H2C preset prints ASA at 270 C nozzle and heats the
+# chamber to 65 C. Bambu's own ASA datasheet gives 240-270 C nozzle, 45-60 C chamber, 80-100 C bed and printed its strength
+# specimens at 260 C (Polymaker PolyLite ASA: 240-260 C). 270 C is there for Bambu's top speeds (20 mm3/s on the H2C), and
+# 65 C is above Bambu's own range and heat-soaks the extruder (H2C heat creep / "not extruding normally" reports). So: 260 C
+# (the datasheet's test temperature, full layer strength) with the flow capped at 16 mm3/s so the cooler melt keeps up, and
+# the chamber at 55 C (middle of 45-60, still against warping on the shell and front). The first layer keeps the preset's
+# 270 C and the bed keeps 100 C for adhesion. A finished part's heat resistance (HDT ~92-100 C) is the material's, not the
+# print temperature's.
+NORMAL_ASA = {"nozzle_temperature": "260", "chamber_temperatures": "55", "filament_max_volumetric_speed": "16"}
+FILAMENT_CHANGES = {"ASA": {"filament_shrink": ASA_SHRINK, **SHORT_LAYERS_ASA, **NORMAL_ASA}}
 # v59 (Kasper 9 Nov, photos: the fan guard's grille "Asa har det svært med de der små stænger"): the guard prints on its side, so
 # its grille is 13 bars of 2.0 x 1.6 mm standing 41 mm up, each layer a row of tiny islands. With Bambu's ASA preset (65 C
 # chamber, 270 C, part fan 10-35 %) a bar never cools before the next layer lands on it, so the bars sagged, blobbed and strung
