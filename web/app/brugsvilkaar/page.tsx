@@ -17,8 +17,17 @@ export default function Brugsvilkaar() {
       label="Til gæster"
       title="Vilkår for brug af Selfi Boks."
       lede="Når du tager et billede eller en video i boksen, accepterer du disse vilkår. Stedet, hvor boksen står, kan have sine egne vilkår, som så står på skærmen."
-      updated="19. oktober 2026"
+      updated="4. november 2026"
     >
+      <h2 id="privat">Til en privat fest</h2>
+      <p>
+        Står boksen til en privat fest, er det værten, der har lejet den, der bestemmer over billederne. Billederne kommer på festens fotoportal,
+        som kun dem med linket kan se, og de gemmes i 3 måneder efter festen (12 måneder, hvis værten har købt det). Punkt 3 til 6 om
+        markedsføring gælder ikke: billederne bruges ikke i reklamer, hverken af værten eller af Selfi. Punkt 7 om opførsel gælder også her.
+        Vil du have et billede fjernet, så sig det til værten eller skriv til os. Mere på <a href="/gaester#privat">selfi.dk/gaester</a>.
+      </p>
+      <p>Resten af vilkårene gælder, når boksen står hos et sted, fx en bar, klub eller festival.</p>
+
       <h2>1. Hvem du har med at gøre</h2>
       <p>
         Boksen drives af det sted, hvor den står (fx klubben, baren eller festivalen). Stedets navn står på skærmen. Stedet bestemmer, hvad dine

@@ -15,7 +15,7 @@ export default function Vilkaar() {
     <LegalPage
       label="Handelsbetingelser"
       title="Handelsbetingelser for erhverv"
-      lede="Gælder for alle aftaler om Selfi Boks mellem Selfi og virksomheder, foreninger, arrangører og offentlige kunder. Selfi sælger ikke til forbrugere."
+      lede="Gælder for alle aftaler om Selfi Boks mellem Selfi og virksomheder, foreninger, arrangører og offentlige kunder. Private lejer er dækket af lejebetingelserne."
       updated="19. oktober 2026 (version 2)"
     >
       <h2>1. Parter og aftalen</h2>
@@ -94,7 +94,8 @@ export default function Vilkaar() {
       <p>
         Aftalen løber i den periode, der står i tilbuddet. Står der ikke en periode, kan begge parter opsige den skriftligt med 1 måneds varsel til
         udgangen af en måned. Ved væsentlig misligholdelse, som ikke er rettet senest 14 dage efter skriftligt påkrav, kan aftalen hæves. Når aftalen
-        slutter, henter Selfi boksen, og kunden giver adgang til det.
+        slutter, tager kunden boksen ned, pakker den i den kasse, den kom i, og sender den retur med den returlabel, Selfi sender. Selfi betaler
+        fragten. Boksen skal være sendt senest 14 dage efter, aftalen er slut.
       </p>
 
       <h2>11. Øvrigt</h2>

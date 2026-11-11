@@ -107,6 +107,16 @@ export function ChatWidget() {
 
   useEffect(() => setErhverv(location.pathname.startsWith("/erhverv")), [open]);
 
+  // Links fra mails og fra foto.selfi.dk ("Brug for hjælp?") åbner chatten direkte: selfi.dk/#chat eller ?chat=1.
+  useEffect(() => {
+    const check = () => {
+      if (location.hash === "#chat" || new URLSearchParams(location.search).has("chat")) setOpen(true);
+    };
+    check();
+    window.addEventListener("hashchange", check);
+    return () => window.removeEventListener("hashchange", check);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     setUnseen(0);

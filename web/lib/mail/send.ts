@@ -6,6 +6,7 @@
 
 import { randomUUID } from "node:crypto";
 import type { Db } from "mongodb";
+import { alert } from "../alert";
 import { renderEmail, type Company } from "./render";
 import { buildMail, DEFAULT_TEXTS, KINDS, type MailContext, type MailKind, type MailTexts } from "./templates";
 
@@ -92,7 +93,7 @@ export async function sendMail(
       Object.assign(doc, { status: "failed", error: (e as Error).message });
     }
   }
-  if (doc.status === "failed") console.error("mail", m.kind, m.rental, doc.error);
+  if (doc.status === "failed") await alert(`Mail kom ikke ud: ${m.kind} til booking ${m.rental} (${doc.error ?? "ukendt fejl"})`);
   await logs.insertOne(doc);
   return doc;
 }
